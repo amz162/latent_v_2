@@ -1,65 +1,25 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
 # next.js
-/.next/
+.next/
 /out/
-
 # production
 /build
-
 # misc
 .DS_Store
 *.pem
-
 # debug
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
+yarn-error.log
+# env files
 .env*
-
+next-env.d.ts
 # vercel
 .vercel
-
-
 # typescript
 *.tsbuildinfo
-next-env.d.ts
-local-*
-.claude
-.z-ai-config
-*.log
-dev.log
-dev.out.log
-test
-prompt
-
+# The raw SQLite DB (152MB) exceeds GitHub's 100MB limit — stored compressed as custom.db.gz
+db/custom.db
+# server log
 server.log
-# Skills directory
-/skills/
-# Large files / non-essential
-db/*.db
-skills/
-tool-results/
-lightning_logs/
-download/latent-backup.tar.gz
-download/latent-src/
-download/slides/
-download/*.pptx
-download/*.zip
-download/*.tar.gz
