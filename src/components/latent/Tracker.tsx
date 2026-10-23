@@ -256,6 +256,9 @@ export function Tracker() {
       rows = rows.filter((s) => s.outcome === "SL_HIT");
     } else if (outcomeFilter === "ACTIVE") {
       rows = rows.filter((s) => s.outcome === "ACTIVE");
+    } else {
+      // Default: show only HIT signals (TP/SL hit) — ACTIVE signals stay in the Signals tab
+      rows = rows.filter((s) => s.outcome && s.outcome !== "ACTIVE");
     }
     rows = [...rows].sort((a, b) => {
       if (historySort === "conf") return b.confidence - a.confidence;

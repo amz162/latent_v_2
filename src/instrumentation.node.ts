@@ -144,7 +144,19 @@ export async function register() {
         // Already ran today
         return;
       }
-      await runDailyUpdate("daily_5pm");
+      // Incremental DB refresh: fetch only NEW daily bars from psxdata API
+      // + append to OhlcvBar. Fast (~5 min for 908 stocks, cached).
+      console.log("[latent-scheduler] starting incremental DB refresh...");
+      try {
+        const { default: fetch } = await import("node-fetch");
+        const r = await fetch("http://127.0.0.1:3000/api/cron/refresh-ohlcv");
+        const d = await r.json() as any;
+        console.log(`[latent-scheduler] refresh done: ${d.stocksUpdated} stocks updated, ${d.newBarsAdded} new bars, ${d.totalBarsInDB} total in DB`);
+        await writeMarker("daily_refresh", `success: ${d.stocksUpdated} stocks, ${d.newBarsAdded} new bars`);
+      } catch (e: any) {
+        console.error("[latent-scheduler] refresh failed:", e?.message);
+        await writeMarker("daily_refresh", `error: ${e?.message?.slice(0, 200)}`);
+      }
     }
   }
 

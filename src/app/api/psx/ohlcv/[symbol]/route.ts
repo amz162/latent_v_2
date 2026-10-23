@@ -5,7 +5,9 @@ import { getHistorical } from "@/lib/latent/psxClient";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-// Normalise date input (string "YYYY-MM-DD" OR epoch-ms number) → epoch ms.
+// LIVE-FIRST OHLCV route: fetches from the psxdata API FIRST (live data),
+// falls back to the DB backup only if the API fails. This ensures the app
+// always works on LIVE data, not stale DB snapshots.
 function toEpochMs(date: unknown): number {
   if (typeof date === "number" && !isNaN(date)) return date;
   if (typeof date === "string") {
@@ -23,43 +25,10 @@ export async function GET(
   const sym = symbol.toUpperCase().replace(/XD$/, "");
   const start = Date.now();
 
-  // 1. DB-first — the OhlcvBar backup (backfilled from psxdata). This is the
-  //    fast path: ~2500 bars read locally in a few ms. Lets the chart + the
-  //    backtest engine run on ALL backed-up stocks without per-request live
-  //    fetches. Live/ticker data is still fetched live elsewhere (quotes).
-  try {
-    const rows = await db.ohlcvBar.findMany({
-      where: { symbol: sym },
-      orderBy: { date: "asc" },
-      take: 6000,
-    });
-    if (rows.length > 0) {
-      const ohlcv = rows.map((r) => ({
-        date: toEpochMs(r.date),
-        open: r.open,
-        high: r.high,
-        low: r.low,
-        close: r.close,
-        volume: r.volume,
-      }));
-      return NextResponse.json({
-        symbol: sym,
-        source: "db-backup (psxdata)",
-        rowsCount: ohlcv.length,
-        firstDate: ohlcv[0].date,
-        lastDate: ohlcv[ohlcv.length - 1].date,
-        ohlcv,
-        latencyMs: Date.now() - start,
-        cached: true,
-      });
-    }
-  } catch {}
-
-  // 2. Live fallback — fetch from the psxdata API (and opportunistically
-  //    backfill to the DB so the next call is fast).
+  // 1. LIVE FIRST — fetch from the psxdata API (real-time daily history)
   try {
     const hist = await getHistorical(sym);
-    if (hist.length > 0) {
+    if (hist && hist.length > 0) {
       const ohlcv = hist
         .map((d: any) => ({
           date: toEpochMs(d.date),
@@ -71,33 +40,71 @@ export async function GET(
         }))
         .filter((x) => !isNaN(x.date) && !isNaN(x.close))
         .sort((a, b) => a.date - b.date);
-      // Opportunistic backfill (fire-and-forget; don't block the response)
-      void db.ohlcvBar
-        .deleteMany({ where: { symbol: sym } })
-        .then(() =>
-          db.ohlcvBar.createMany({
-            data: hist.map((b: any) => ({
-              symbol: sym,
-              date: b.date,
-              open: Number(b.open),
-              high: Number(b.high),
-              low: Number(b.low),
-              close: Number(b.close),
-              volume: Number(b.volume || 0),
-              source: "psxdata",
-            })),
-          })
-        )
-        .catch(() => {});
+
+      if (ohlcv.length > 0) {
+        // Opportunistically backfill new bars to the DB (fire-and-forget)
+        void (async () => {
+          try {
+            const latest = await db.ohlcvBar.findFirst({
+              where: { symbol: sym },
+              orderBy: { date: "desc" },
+              select: { date: true },
+            });
+            const newBars = latest
+              ? hist.filter((b: any) => b.date > latest.date)
+              : hist;
+            for (const b of newBars) {
+              try {
+                await db.ohlcvBar.upsert({
+                  where: { symbol_date: { symbol: sym, date: b.date } },
+                  create: {
+                    symbol: sym, date: b.date,
+                    open: Number(b.open), high: Number(b.high),
+                    low: Number(b.low), close: Number(b.close),
+                    volume: Number(b.volume || 0), source: "psxdata",
+                  },
+                  update: {},
+                });
+              } catch {}
+            }
+          } catch {}
+        })();
+
+        return NextResponse.json({
+          symbol: sym,
+          source: "psxdata-api (live)",
+          rowsCount: ohlcv.length,
+          firstDate: ohlcv[0].date,
+          lastDate: ohlcv[ohlcv.length - 1].date,
+          ohlcv,
+          latencyMs: Date.now() - start,
+          cached: false,
+        });
+      }
+    }
+  } catch {}
+
+  // 2. DB FALLBACK — only if the live API failed
+  try {
+    const rows = await db.ohlcvBar.findMany({
+      where: { symbol: sym },
+      orderBy: { date: "asc" },
+      take: 6000,
+    });
+    if (rows.length > 0) {
+      const ohlcv = rows.map((r) => ({
+        date: toEpochMs(r.date),
+        open: r.open, high: r.high, low: r.low, close: r.close, volume: r.volume,
+      }));
       return NextResponse.json({
         symbol: sym,
-        source: "psxdata-api (live + auto-backfilled)",
+        source: "db-backup (psxdata API unavailable)",
         rowsCount: ohlcv.length,
         firstDate: ohlcv[0].date,
         lastDate: ohlcv[ohlcv.length - 1].date,
         ohlcv,
         latencyMs: Date.now() - start,
-        cached: false,
+        cached: true,
       });
     }
   } catch {}

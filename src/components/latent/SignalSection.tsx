@@ -243,6 +243,9 @@ export function SignalSection() {
         if (filter !== "ALL" && s.direction !== filter) return false;
         // Issue 3: confidence filter — hide signals below the user-selected threshold
         if (s.confidence < minConfidence) return false;
+        // Signal lifecycle: only ACTIVE signals stay in the Signals tab.
+        // Once SL/TP is hit, they move to the Tracker's Signal History.
+        if (s.outcome && s.outcome !== "ACTIVE") return false;
         return true;
       });
 
