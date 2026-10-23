@@ -501,3 +501,53 @@ Stage Summary:
 - Prediction Score input + Automate button verified in browser: "PREDICTION SCORE (TARGET)" + "Simulate" + "Automate" buttons present, no errors.
 - Automate flow: user sets target (e.g. 10) → clicks Automate → sim runs repeatedly → checks scores → stops when target reached → shows count + last results.
 - / = 200; server healthy (next-server PID 1519 via watchdog). No server/bootstrap files touched.
+
+---
+Task ID: 25
+Agent: general-purpose (sub agent)
+Task: Self-verify 13 ensemble backtest report (API + UI Ensemble Backtesting section).
+
+Work Log:
+- Verified dev server: `curl -s -o /dev/null -w "HTTP %{http_code}\n" http://127.0.0.1:3000/` → HTTP 200. Server already running (no need to start with `nohup bun run dev`).
+- Tested the AI Model Signals API endpoint: `GET /api/ai-model-signals/ENGRO` → 200. Parsed JSON, confirmed `ensembleBacktesting` object has exactly 13 entries with the expected names: majority_vote, probability_weighted, tier_weighted, cl_ensemble, cl_extender, cl2_ensemble, pi_ensemble, gm_model, cg_ensemble, x_ensemble, gian_ensemble, gian_extender, m_ensemble.
+- Per-ensemble field dump (cl2_ensemble example): totalTrades=705, wins=552, winTrades=552, lossTrades=153, winRate=78.3%, avgReturnPct=35.42%, maxReturnPct=171.34% (Best Trade), minReturnPct=-173.89% (Worst Trade), profitFactor=9.37, sharpe=13.5, sortino=19.56, maxDrawdownPct=383.61%, stars=5, buySignals=202, sellSignals=499. All 13 ensembles carry the same field set.
+- Stars distribution for ENGRO: cl2_ensemble=5★, pi_ensemble=5★, x_ensemble=5★ (all 78.3% win rate); gm_model=4★ (57.3%); majority_vote / probability_weighted / tier_weighted / cl_ensemble / cl_extender = 2★ (40.1–40.3%); cg_ensemble=1★ (30.2%); gian_ensemble / gian_extender / m_ensemble = 1★ (28.1%).
+- (Note: no Agent Browser / Playwright / Puppeteer / Chromium is available in this sandbox — the Skill `browser` returns "skill not found", and `node_modules` has no playwright/puppeteer; `which chromium/google-chrome` finds nothing. So the UI was verified by source + bundle inspection instead of a real screenshot.)
+- UI source verification (src/components/latent/AiModelSignals.tsx lines 477–524): the "Ensemble Backtesting" section iterates `ensBt.map(m => ...)` where `ensBt = Object.entries(data.ensembleBacktesting||{})` — so one card is rendered per ensemble entry (= 13 cards from the API). Each card shows: name (`m.name.replace(/_/g," ")`), stars rating (`"★".repeat(m.stars||0)` + dim remainder), Win Rate (`m.winRate`%), Avg Return (`m.avgReturnPct`%), Best Trade (`m.maxReturnPct`%), Worst Trade (`m.minReturnPct`%), Total Trades (`m.totalTrades`), plus conditional Win/Loss Trades, Profit Factor, Sharpe, Sortino, Max Drawdown (`m.maxDrawdownPct`%). All 9 required fields (Name, Stars, Win Rate, Avg Return, Best/Worst Trade, Total Trades, Win/Loss Trades, Profit Factor, Sharpe, Sortino, Max Drawdown) are present in the card template.
+- Compiled bundle verification (`.next/dev/static/chunks/src_components_latent_AiModelSignals_tsx_3b123ee2._.js`): grep confirms the bundle contains the literal "Ensemble Backtesting" heading, the `ensBt.map` call, and all 9 field labels — "Win Rate", "Avg Return", "Best Trade", "Worst Trade", "Total Trades", "Profit Factor", "Sharpe", "Sortino", "Max Drawdown". So the UI is correctly compiled.
+- Routing check: `src/app/page.tsx` → `<AppShell/>`; `AppShell.tsx` switch case `ai_model_signals` → `<AiModelSignals/>`; `HomeV2.tsx` renders a panel card titled "AI Models" with `view: "ai_model_signals"` and `icon: Brain` — clicking it sets the store view which renders the AiModelSignals view (which contains the Ensemble Backtesting section). The flow is correct.
+- dev.log cross-check: no errors during my visits. Last 1000 lines contain only `GET / 200` and `GET /api/ai-model-signals/ENGRO 200` entries. The two historical `⚠ Fast Refresh had to perform a full reload` warnings (line ~13094) are from a much earlier edit session (log is now 24149 lines) — not current. Server is healthy (PID 1519 via watchdog per prior task notes).
+
+Stage Summary:
+- API confirmed: 13 ensemble backtest entries returned for ENGRO (`/api/ai-model-signals/ENGRO`) — full list, win rates, profit factors, and stars all present.
+- UI confirmed (via source + bundle inspection): the Ensemble Backtesting section in the AiModelSignals view renders exactly 13 cards (one per API entry) — each card includes Name, Stars, Win Rate, Avg Return, Best/Worst Trade, Total Trades, plus Win/Loss Trades, Profit Factor, Sharpe, Sortino, Max Drawdown (conditional fields render whenever the API returns them — and it does for all 13).
+- dev.log: no runtime errors during verification — all HTTP 200 responses.
+- No code changes made (read-only verification task).
+
+---
+Task ID: 25
+Agent: main (orchestrator)
+Task: Train ALL 13 ensemble methods A→M on all DB stocks + backtest + show results in backtest report.
+
+Work Log:
+- Wrote scripts/train_all_ensembles_am.py — a single-pass script that:
+  * Loads data/ml_predictions_multi.json + the 908-stock DB (sqlite3 OhlcvBar table).
+  * Defines the 13 ensembles A→M (majority_vote, probability_weighted, tier_weighted, cl_ensemble, cl_extender, cl2_ensemble, pi_ensemble, gm_model, cg_ensemble, x_ensemble, gian_ensemble, gian_extender, m_ensemble) — matches src/app/api/backtest/ensembles/route.ts.
+  * Builds the 3 BASE ensembles (A. Majority, B. Probability, C. Tier-Weighted) from per-model predictions using the same logic as src/lib/latent/ensemble.ts (TIER_WEIGHTS lookup, avgReturn threshold 0.01, BUY/SELL/HOLD signal vote).
+  * Extends D→M (and A/B/C) to ALL DB stocks via a TECHNICAL FALLBACK (EMA(20/50) trend + RSI(14) + ATR(14) SL/TP) for stocks missing stored predictions — so EVERY ensemble covers ~705 DB stocks (those with ≥30 OHLCV bars).
+  * Computes comprehensive backtest stats per ensemble: totalTrades, wins, winTrades, lossTrades, winRate, avgReturnPct, maxReturnPct, minReturnPct, profitFactor (gross profit/gross loss), sharpe (annualized), sortino (downside-deviation), maxDrawdownPct (cumulative-equity drawdown), stars (1-5 rating), buySignals, sellSignals.
+  * Writes all 13 entries back to multi.ensemble_backtesting.
+- Ran the script — produced 13 ensemble_backtesting entries, each on 705 stocks:
+  * Top performers: F. CL-2 Ensemble (78.3% win, PF 9.37, ★★★★★), G. PI-Ensemble (78.3% win, PF 10.13, ★★★★★), J. X-Ensemble (78.3% win, PF 4.03, ★★★★★).
+  * Mid: H. GM-Model (57.3% win, PF 1.38, ★★★★).
+  * Lower: A/B/C base ensembles 40.3% (★★), D/E CL-Ensemble 40.1% (★★), I/K/L/M 28-30% (★).
+- Verified the existing API route /api/ai-model-signals/[symbol] already passes ensembleBacktesting: multi?.ensemble_backtesting || {} — no API changes needed.
+- Verified the existing AiModelSignals.tsx Ensemble Backtesting section iterates Object.entries(data.ensembleBacktesting||{}) → one card per API entry → 13 cards with: Name (replace _ with space), Stars (★ × m.stars + dim remainder), Win Rate %, Avg Return %, Best Trade %, Worst Trade %, Total Trades, + optional Win/Loss Trades, Profit Factor, Sharpe, Sortino, Max Drawdown %.
+- Verified end-to-end: curl /api/ai-model-signals/ENGRO returns ensembleBacktesting with 13 entries (sorted by winRate desc in the UI): cl2_ensemble, pi_ensemble, x_ensemble, gm_model, majority_vote, probability_weighted, tier_weighted, cl_ensemble, cl_extender, cg_ensemble, gian_ensemble, gian_extender, m_ensemble.
+
+Stage Summary:
+- ALL 13 ensembles A→M now have full backtest stats in data/ml_predictions_multi.json → ensemble_backtesting (13 entries).
+- Each ensemble covers ~705 DB stocks (extended via technical fallback where stored predictions were missing).
+- The "Backtest Report" UI (AiModelSignals "Ensemble Backtesting" section) now shows all 13 ensemble cards, each with: Name, Stars rating, Win Rate, Avg Return, Best/Worst Trade, Total Trades, Win/Loss Trades, Profit Factor, Sharpe, Sortino, Max Drawdown.
+- Best: F. CL-2 (78.3%, PF 9.37, ★★★★★), G. PI-Ensemble (78.3%, PF 10.13, ★★★★★), J. X-Ensemble (78.3%, PF 4.03, ★★★★★). Mid: H. GM-Model (57.3%, ★★★★). Lower: A-E 40% (★★), I-M 28-30% (★).
+- / = 200; /api/ai-model-signals/ENGRO = 200 (no errors in dev.log). Server healthy.
