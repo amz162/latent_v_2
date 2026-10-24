@@ -1,15 +1,75 @@
 ▲ Next.js 16.1.3 (Turbopack)
 - Local:         http://localhost:3000
-- Network:       http://21.0.13.254:3000
+- Network:       http://21.0.15.13:3000
 - Environments: .env
 
 ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
-✓ Ready in 665ms
+✓ Ready in 1296ms
 ○ Compiling / ...
- GET / 200 in 3.3s (compile: 2.9s, render: 413ms)
- GET / 200 in 61ms (compile: 2ms, render: 59ms)
+ GET / 200 in 6.9s (compile: 6.5s, render: 444ms)
+⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET / 200 in 60ms (compile: 4ms, render: 56ms)
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query INSERT INTO `main`.`PricePatternCache` (`symbol`, `patternsJson`, `summaryJson`, `computedAt`, `dataSourceDate`) VALUES (?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `patternsJson` = ?, `summaryJson` = ?, `computedAt` = ?, `dataSourceDate` = ? WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`
+ GET /api/price-patterns/ENGRO 200 in 21.6s (compile: 646ms, render: 20.9s)
+ GET /api/price-patterns/ENGRO 200 in 42ms (compile: 29ms, render: 13ms)
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/price-patterns/UNKNOWN1 404 in 17ms (compile: 4ms, render: 13ms)
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/price-patterns/DMIL 200 in 41ms (compile: 29ms, render: 12ms)
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+ GET / 200 in 64ms (compile: 3ms, render: 61ms)
+ GET /api/track-record 200 in 146ms (compile: 139ms, render: 7ms)
+[cache] Using in-memory cache (set REDIS_URL env var for production Redis)
+ GET /api/signals/all 200 in 5.6s (compile: 256ms, render: 5.4s)
+ GET /api/psx/companies 200 in 2.3s (compile: 49ms, render: 2.3s)
+ GET /api/psx/companies 200 in 17ms (compile: 4ms, render: 13ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/price-patterns/ENGRO 200 in 46ms (compile: 37ms, render: 9ms)
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 70ms (compile: 59ms, render: 12ms)
+ GET /api/psx/companies 200 in 9ms (compile: 3ms, render: 6ms)
+ GET /api/psx/companies 200 in 11ms (compile: 3ms, render: 8ms)
+ GET /api/psx/companies 200 in 13ms (compile: 2ms, render: 11ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/price-patterns/ENGRO 200 in 49ms (compile: 35ms, render: 13ms)
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 12ms (compile: 4ms, render: 8ms)
+ GET / 200 in 60ms (compile: 3ms, render: 57ms)
+ GET / 200 in 77ms (compile: 3ms, render: 74ms)
+ GET /api/track-record 200 in 6ms (compile: 2ms, render: 4ms)
+ GET /api/signals/all 200 in 2.2s (compile: 3ms, render: 2.2s)
+ GET / 200 in 117ms (compile: 3ms, render: 113ms)
+ GET / 200 in 60ms (compile: 3ms, render: 56ms)
+ GET / 200 in 48ms (compile: 3ms, render: 45ms)
+ GET / 200 in 48ms (compile: 2ms, render: 45ms)
+ GET / 200 in 43ms (compile: 1844µs, render: 41ms)
+ GET / 200 in 57ms (compile: 6ms, render: 51ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/price-patterns/ENGRO 200 in 48ms (compile: 32ms, render: 15ms)
+ GET / 200 in 61ms (compile: 4ms, render: 57ms)
+ GET /api/psx/companies 200 in 7ms (compile: 2ms, render: 4ms)
+ GET /api/psx/companies 200 in 14ms (compile: 6ms, render: 8ms)
+ GET /api/price-patterns/ENGRO 200 in 46ms (compile: 38ms, render: 8ms)
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+ GET /api/cron/check-tp-sl 200 in 13ms (compile: 3ms, render: 10ms)
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
