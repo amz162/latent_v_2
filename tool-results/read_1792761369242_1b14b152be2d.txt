@@ -1,0 +1,452 @@
+   600→        <AppNav />
+   601→        <div className="max-w-6xl mx-auto p-6 space-y-4">
+   602→          <Skeleton className="h-10 w-48 bg-white/[0.04]" />
+   603→          <Skeleton className="h-32 w-full bg-white/[0.04]" />
+   604→          <Skeleton className="h-64 w-full bg-white/[0.04]" />
+   605→        </div>
+   606→      </div>
+   607→    );
+   608→  }
+   609→
+   610→  return (
+   611→    <div className="min-h-screen bg-[#0A0E1A]">
+   612→      <AppNav />
+   613→      <main className="px-4 md:px-6 py-6 max-w-6xl mx-auto">
+   614→        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+   615→          <div>
+   616→            <h1 className="text-2xl font-bold text-[#F4F7FB]">Tracker</h1>
+   617→            <p className="text-sm text-[#94A3B8] mt-1">
+   618→              Real backtest stats across {COVERED_SYMBOLS.length} PSX stocks — signal tracker (model performance) + portfolio tracker (your P&amp;L).
+   619→            </p>
+   620→          </div>
+   621→          <Button
+   622→            onClick={handleDownload}
+   623→            className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold"
+   624→          >
+   625→            <Download className="h-4 w-4 mr-1.5" />
+   626→            Generate report
+   627→          </Button>
+   628→        </div>
+   629→
+   630→        <Tabs defaultValue="signal">
+   631→          <TabsList className="bg-[#131829] border border-white/[0.08] p-1 h-auto">
+   632→            <TabsTrigger value="signal" className="data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5">
+   633→              <Zap className="h-3 w-3" /> Signal Tracker
+   634→            </TabsTrigger>
+   635→            <TabsTrigger value="portfolio" className="data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5">
+   636→              <Briefcase className="h-3 w-3" /> Portfolio Tracker
+   637→            </TabsTrigger>
+   638→          </TabsList>
+   639→
+   640→          {/* Signal Tracker */}
+   641→          <TabsContent value="signal" className="mt-4">
+   642→            {!signalStats ? (
+   643→              <Card className="bg-[#131829] border-white/[0.08]">
+   644→                <CardContent className="p-12 text-center">
+   645→                  <Brain className="h-12 w-12 text-[#00E676]/30 mx-auto mb-3" />
+   646→                  <h3 className="font-semibold text-[#F4F7FB] mb-1">Backtest data unavailable</h3>
+   647→                  <p className="text-xs text-[#94A3B8]">
+   648→                    Run <code className="text-[#00E676]">python3 scripts/train_all_with_backtesting.py</code> to populate model predictions.
+   649→                  </p>
+   650→                </CardContent>
+   651→              </Card>
+   652→            ) : (
+   653→              <>
+   654→                {/* ─── Issue 17: Investment simulator moved to the TOP ─── */}
+   655→                <Card className="bg-[#131829] border-[#00E676]/20 mb-5">
+   656→                  <CardContent className="p-4">
+   657→                    <div className="flex items-center gap-1.5 mb-1">
+   658→                      <Wallet className="h-3.5 w-3.5 text-[#00E676]" />
+   659→                      <h3 className="font-semibold text-[#F4F7FB] text-sm">Investment simulator</h3>
+   660→                      <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#00E676]/30 text-[#00E676]/80 ml-1">
+   661→                        TOP
+   662→                      </Badge>
+   663→                    </div>
+   664→                    <p className="text-xs text-[#94A3B8] mb-3">
+   665→                      Enter a starting amount — we&apos;ll roll it through each actionable signal
+   666→                      ({stockSignals.length} trades) using the predicted return %, compounding trade-over-trade.
+   667→                    </p>
+   668→
+   669→                    <div className="flex flex-wrap items-end gap-2 mb-4">
+   670→                      <div className="flex flex-col gap-1">
+   671→                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">
+   672→                          Investment amount (PKR)
+   673→                        </label>
+   674→                        <div className="flex items-center gap-1.5 bg-[#0A0E1A] border border-white/[0.08] rounded-md px-3 py-2 focus-within:border-[#00E676]/40">
+   675→                          <span className="text-xs text-[#64748B] font-mono">Rs.</span>
+   676→                          <Input
+   677→                            value={simCapital}
+   678→                            onChange={(e) => setSimCapital(e.target.value)}
+   679→                            onKeyDown={(e) => {
+   680→                              if (e.key === "Enter") runSimulation();
+   681→                            }}
+   682→                            placeholder="100000"
+   683→                            inputMode="decimal"
+   684→                            className="h-7 w-40 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
+   685→                          />
+   686→                        </div>
+   687→                      </div>
+   688→                      <Button
+   689→                        onClick={runSimulation}
+   690→                        className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold h-9"
+   691→                      >
+   692→                        <Play className="h-3.5 w-3.5 mr-1.5" />
+   693→                        Simulate
+   694→                      </Button>
+   695→                      {simResult && (
+   696→                        <Button
+   697→                          onClick={resetSimulation}
+   698→                          variant="outline"
+   699→                          className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] h-9"
+   700→                        >
+   701→                          <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+   702→                          Reset
+   703→                        </Button>
+   704→                      )}
+   705→                      <div className="text-[10px] text-[#64748B] ml-auto self-center">
+   706→                        {stockSignals.length} trades · compounded
+   707→                      </div>
+   708→                    </div>
+   709→
+   710→                    {simResult && (
+   711→                      <>
+   712→                        {/* Summary line */}
+   713→                        <div className="rounded-lg border border-white/[0.06] bg-[#0A0E1A] p-3 mb-3">
+   714→                          <p className="text-sm text-[#F4F7FB] leading-relaxed">
+   715→                            If you invested{" "}
+   716→                            <span className="font-mono font-bold text-[#00E676]">{fmtPkr(simResult.initialAmount)}</span>{" "}
+   717→                            across{" "}
+   718→                            <span className="font-mono font-bold text-[#F4F7FB]">{simResult.rows.length} trades</span>, your
+   719→                            final amount would be{" "}
+   720→                            <span className={`font-mono font-bold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   721→                              {fmtPkr(simResult.finalAmount)}
+   722→                            </span>{" "}
+   723→                            (
+   724→                            <span className={`font-mono font-bold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   725→                              {simResult.totalPnl >= 0 ? "+" : ""}
+   726→                              {simResult.totalReturnPct.toFixed(2)}% {simResult.totalPnl >= 0 ? "gain" : "loss"}
+   727→                            </span>
+   728→                            )
+   729→                          </p>
+   730→                          <div className="flex flex-wrap items-center gap-4 mt-2 text-[11px]">
+   731→                            <span className="text-[#94A3B8]">
+   732→                              Total P&amp;L:{" "}
+   733→                              <span className={`font-mono font-semibold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   734→                                {simResult.totalPnl >= 0 ? "+" : ""}{fmtPkr(simResult.totalPnl)}
+   735→                              </span>
+   736→                            </span>
+   737→                            <span className="text-[#94A3B8]">
+   738→                              Wins: <span className="font-mono text-[#00E676]">{simResult.wins}</span>
+   739→                            </span>
+   740→                            <span className="text-[#94A3B8]">
+   741→                              Losses: <span className="font-mono text-[#FF5C5C]">{simResult.losses}</span>
+   742→                            </span>
+   743→                            <span className="text-[#94A3B8]">
+   744→                              Win rate:{" "}
+   745→                              <span className="font-mono text-[#F4F7FB]">
+   746→                                {simResult.rows.length > 0
+   747→                                  ? ((simResult.wins / simResult.rows.length) * 100).toFixed(1)
+   748→                                  : 0}
+   749→                                %
+   750→                              </span>
+   751→                            </span>
+   752→                          </div>
+   753→                        </div>
+   754→
+   755→                        {/* Trade-by-trade table */}
+   756→                        <div className="overflow-x-auto max-h-80 overflow-y-auto rounded-md border border-white/[0.06]">
+   757→                          <table className="w-full text-sm">
+   758→                            <thead className="sticky top-0 bg-[#131829]">
+   759→                              <tr className="text-[10px] uppercase tracking-wider text-[#64748B] border-b border-white/[0.06]">
+   760→                                <th className="text-left py-2 px-3 font-semibold">#</th>
+   761→                                <th className="text-left py-2 px-3 font-semibold">Symbol</th>
+   762→                                <th className="text-left py-2 px-3 font-semibold">Side</th>
+   763→                                <th className="text-right py-2 px-3 font-semibold">Entry amount</th>
+   764→                                <th className="text-right py-2 px-3 font-semibold">Return %</th>
+   765→                                <th className="text-right py-2 px-3 font-semibold">P&amp;L</th>
+   766→                                <th className="text-right py-2 px-3 font-semibold">Exit amount</th>
+   767→                              </tr>
+   768→                            </thead>
+   769→                            <tbody>
+   770→                              {simResult.rows.map((r) => (
+   771→                                <tr key={r.tradeNo} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+   772→                                  <td className="py-2 px-3 font-mono text-[#64748B]">{r.tradeNo}</td>
+   773→                                  <td className="py-2 px-3 font-mono font-semibold text-[#F4F7FB]">{r.symbol}</td>
+   774→                                  <td className="py-2 px-3">
+   775→                                    <Badge
+   776→                                      variant="outline"
+   777→                                      className={`text-[9px] py-0 h-4 ${r.side === "BUY" ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}
+   778→                                    >
+   779→                                      {r.side}
+   780→                                    </Badge>
+   781→                                  </td>
+   782→                                  <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">
+   783→                                    {fmtPkr(r.entryAmount)}
+   784→                                  </td>
+   785→                                  <td className={`py-2 px-3 text-right font-mono font-semibold ${r.returnPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   786→                                    {fmtPct(r.returnPct, true)}
+   787→                                  </td>
+   788→                                  <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   789→                                    {r.pnl >= 0 ? "+" : ""}{fmtPkr(r.pnl)}
+   790→                                  </td>
+   791→                                  <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   792→                                    {fmtPkr(r.exitAmount)}
+   793→                                  </td>
+   794→                                </tr>
+   795→                              ))}
+   796→                            </tbody>
+   797→                          </table>
+   798→                        </div>
+   799→                      </>
+   800→                    )}
+   801→                  </CardContent>
+   802→                </Card>
+   803→
+   804→                {/* Issue 13: removed the "Backtest" timeframe selector (TIMEFRAMES)
+   805→                    from the portfolio tracker — per user spec "portfolio tracker
+   806→                    remove backtest". The Investment Simulator above is the
+   807→                    replacement simulation UI. */}
+   808→                <div className="flex items-center gap-2 text-[11px] text-[#64748B] ml-auto flex-wrap">
+   809→                    <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#00E676]/40 text-[#00E676]">
+   810→                      LIVE
+   811→                    </Badge>
+   812→                    <span>
+   813→                      Last {timeframeLabel} backtest · {aiSignals.length} stocks · final consensus ensemble · {stockSignals.length} actionable signals
+   814→                    </span>
+   815→                  </div>
+   816→
+   817→                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+   818→                  <Card className="bg-gradient-to-br from-[#00E676]/[0.07] to-[#131829] border-[#00E676]/20">
+   819→                    <CardContent className="p-4">
+   820→                      <div className="flex items-center justify-between mb-1">
+   821→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Total signals</span>
+   822→                        <Zap className="h-3 w-3 text-[#00E676]" />
+   823→                      </div>
+   824→                      <div className="text-3xl font-bold text-[#F4F7FB] font-mono">{signalStats.total}</div>
+   825→                      <div className="text-[10px] text-[#94A3B8] mt-1">
+   826→                        {signalStats.wins}W / {signalStats.losses}L · ensemble final consensus
+   827→                      </div>
+   828→                    </CardContent>
+   829→                  </Card>
+   830→                  <Card className="bg-[#131829] border-white/[0.08]">
+   831→                    <CardContent className="p-4">
+   832→                      <div className="flex items-center justify-between mb-1">
+   833→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Win rate</span>
+   834→                        <Trophy className="h-3 w-3 text-[#00E676]" />
+   835→                      </div>
+   836→                      <div className="text-3xl font-bold text-[#00E676] font-mono">{signalStats.winRate}%</div>
+   837→                      <div className="text-[10px] text-[#94A3B8] mt-1">across {signalStats.total} closed trades</div>
+   838→                    </CardContent>
+   839→                  </Card>
+   840→                  <Card className="bg-[#131829] border-white/[0.08]">
+   841→                    <CardContent className="p-4">
+   842→                      <div className="flex items-center justify-between mb-1">
+   843→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Avg return</span>
+   844→                        <TrendingUp className="h-3 w-3 text-[#00E676]" />
+   845→                      </div>
+   846→                      <div className={`text-3xl font-bold font-mono ${signalStats.avgReturn >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   847→                        {fmtPct(signalStats.avgReturn, true)}
+   848→                      </div>
+   849→                      <div className="text-[10px] text-[#94A3B8] mt-1">per trade, last {timeframeLabel}</div>
+   850→                    </CardContent>
+   851→                  </Card>
+   852→                  <Card className="bg-[#131829] border-white/[0.08]">
+   853→                    <CardContent className="p-4">
+   854→                      <div className="flex items-center justify-between mb-1">
+   855→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Best / worst</span>
+   856→                        <Target className="h-3 w-3 text-[#00E676]" />
+   857→                      </div>
+   858→                      <div className="flex items-baseline gap-2 font-mono">
+   859→                        <span className="text-lg font-bold text-[#00E676]">{fmtPct(signalStats.best, true)}</span>
+   860→                        <span className="text-[#64748B] text-xs">/</span>
+   861→                        <span className="text-lg font-bold text-[#FF5C5C]">{fmtPct(signalStats.worst)}</span>
+   862→                      </div>
+   863→                      <div className="text-[10px] text-[#94A3B8] mt-1">best trade / worst trade</div>
+   864→                    </CardContent>
+   865→                  </Card>
+   866→                </div>
+   867→
+   868→                {/* Issue 14: Signal History — final ensemble consensus for ALL
+   869→                    ~361 stocks (not the hardcoded 8). Fetches /api/signals/all,
+   870→                    which already overlays LIVE prices + evaluates the TP1/TP2/TP3
+   871→                    /SL outcome server-side. Filters: outcome, min confidence,
+   872→                    plus sort by R:R / confidence / live P&L. */}
+   873→                <Card className="bg-[#131829] border-white/[0.08] mb-5">
+   874→                  <CardContent className="p-0">
+   875→                    <div className="p-4 border-b border-white/[0.06]">
+   876→                      <div className="flex items-center justify-between gap-3 flex-wrap">
+   877→                        <div>
+   878→                          <h3 className="font-semibold text-[#F4F7FB] flex items-center gap-1.5">
+   879→                            <History className="h-4 w-4 text-[#00E676]" />
+   880→                            Signal History
+   881→                          </h3>
+   882→                          <p className="text-xs text-[#94A3B8] mt-0.5">
+   883→                            Final ensemble consensus across {signalHistory.length} PSX stocks · live price overlay · TP/SL outcome evaluated
+   884→                          </p>
+   885→                        </div>
+   886→                        <Button
+   887→                          size="sm"
+   888→                          variant="outline"
+   889→                          onClick={() => refreshHistory(true)}
+   890→                          disabled={historyLoading}
+   891→                          className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] h-8"
+   892→                        >
+   893→                          <RefreshCw className={`h-3 w-3 mr-1.5 ${historyLoading ? "animate-spin" : ""}`} />
+   894→                          Refresh
+   895→                        </Button>
+   896→                      </div>
+   897→
+   898→                      {/* Filters */}
+   899→                      <div className="flex flex-wrap items-end gap-3 mt-3">
+   900→                        <div>
+   901→                          <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Outcome</label>
+   902→                          <select
+   903→                            value={outcomeFilter}
+   904→                            onChange={(e) => setOutcomeFilter(e.target.value as "ALL" | "TP" | "SL" | "ACTIVE")}
+   905→                            className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs w-[110px]"
+   906→                          >
+   907→                            <option value="ALL">All</option>
+   908→                            <option value="TP">TP hit</option>
+   909→                            <option value="SL">SL hit</option>
+   910→                            <option value="ACTIVE">Active</option>
+   911→                          </select>
+   912→                        </div>
+   913→                        <div>
+   914→                          <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Sort by</label>
+   915→                          <select
+   916→                            value={historySort}
+   917→                            onChange={(e) => setHistorySort(e.target.value as "rr" | "conf" | "pnl")}
+   918→                            className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs w-[150px]"
+   919→                          >
+   920→                            <option value="rr">R:R (high → low)</option>
+   921→                            <option value="conf">Confidence (high → low)</option>
+   922→                            <option value="pnl">Live P&amp;L % (high → low)</option>
+   923→                          </select>
+   924→                        </div>
+   925→                        <div className="flex-1 min-w-[180px]">
+   926→                          <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">
+   927→                            Min confidence: <span className="text-[#00E676] font-mono">{confFilter}%</span>
+   928→                          </label>
+   929→                          <input
+   930→                            type="range"
+   931→                            min={0}
+   932→                            max={100}
+   933→                            step={5}
+   934→                            value={confFilter}
+   935→                            onChange={(e) => setConfFilter(parseInt(e.target.value))}
+   936→                            className="w-full accent-[#00E676] h-1"
+   937→                          />
+   938→                        </div>
+   939→                        <div className="text-[10px] text-[#64748B] ml-auto self-center">
+   940→                          {filteredHistory.length} of {signalHistory.length} signals
+   941→                        </div>
+   942→                      </div>
+   943→                    </div>
+   944→
+   945→                    {historyError ? (
+   946→                      <div className="p-6 text-center text-xs text-[#FF5C5C]">{historyError}</div>
+   947→                    ) : historyLoading ? (
+   948→                      <div className="p-6 space-y-2">
+   949→                        {[1, 2, 3, 4, 5].map((i) => (
+   950→                          <Skeleton key={i} className="h-8 w-full bg-white/[0.04]" />
+   951→                        ))}
+   952→                      </div>
+   953→                    ) : (
+   954→                      <div className="overflow-x-auto max-h-96 overflow-y-auto">
+   955→                        <table className="w-full text-sm">
+   956→                          <thead className="sticky top-0 bg-[#131829]">
+   957→                            <tr className="text-[10px] uppercase tracking-wider text-[#64748B] border-b border-white/[0.06]">
+   958→                              <th className="text-left py-2 px-3 font-semibold">Symbol</th>
+   959→                              <th className="text-left py-2 px-3 font-semibold">Side</th>
+   960→                              <th className="text-right py-2 px-3 font-semibold">Entry</th>
+   961→                              <th className="text-right py-2 px-3 font-semibold">Live</th>
+   962→                              <th className="text-right py-2 px-3 font-semibold">SL</th>
+   963→                              <th className="text-right py-2 px-3 font-semibold">TP1</th>
+   964→                              <th className="text-right py-2 px-3 font-semibold">TP2</th>
+   965→                              <th className="text-right py-2 px-3 font-semibold">TP3</th>
+   966→                              <th className="text-right py-2 px-3 font-semibold">R:R</th>
+   967→                              <th className="text-right py-2 px-3 font-semibold">Conf.</th>
+   968→                              <th className="text-left py-2 px-3 font-semibold">Outcome</th>
+   969→                            </tr>
+   970→                          </thead>
+   971→                          <tbody>
+   972→                            {filteredHistory.length === 0 && (
+   973→                              <tr>
+   974→                                <td colSpan={11} className="py-6 text-center text-[#64748B] text-xs">
+   975→                                  No signals match the current filters.
+   976→                                </td>
+   977→                              </tr>
+   978→                            )}
+   979→                            {filteredHistory.map((s) => {
+   980→                              const isBuy = s.signal === "BUY";
+   981→                              const outcomeClass =
+   982→                                s.outcome === "TP3_HIT"
+   983→                                  ? "bg-[#00E676]/15 border-[#00E676]/40 text-[#00E676]"
+   984→                                  : s.outcome === "TP2_HIT"
+   985→                                  ? "bg-[#00E676]/10 border-[#00E676]/30 text-[#00E676]"
+   986→                                  : s.outcome === "TP1_HIT"
+   987→                                  ? "bg-[#00E676]/8 border-[#00E676]/25 text-[#00E676]/90"
+   988→                                  : s.outcome === "SL_HIT"
+   989→                                  ? "bg-[#FF5C5C]/15 border-[#FF5C5C]/40 text-[#FF5C5C]"
+   990→                                  : "bg-white/[0.04] border-white/[0.12] text-[#94A3B8]";
+   991→                              const pnlColor = s.pnlPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]";
+   992→                              return (
+   993→                                <tr key={s.symbol} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+   994→                                  <td className="py-2.5 px-3 font-mono font-semibold text-[#F4F7FB]">
+   995→                                    {s.symbol}
+   996→                                    {s.stockName && s.stockName !== s.symbol && (
+   997→                                      <div className="text-[9px] text-[#64748B] font-normal truncate max-w-[120px]">{s.stockName}</div>
+   998→                                    )}
+   999→                                  </td>
+  1000→                                  <td className="py-2.5 px-3">
+  1001→                                    <Badge variant="outline" className={`text-[9px] py-0 h-4 ${isBuy ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}>
+  1002→                                      {s.signal}
+  1003→                                    </Badge>
+  1004→                                  </td>
+  1005→                                  <td className="py-2.5 px-3 text-right font-mono text-[#94A3B8]">{s.entry.toFixed(2)}</td>
+  1006→                                  <td className="py-2.5 px-3 text-right font-mono text-[#F4F7FB]">
+  1007→                                    {s.livePrice != null ? s.livePrice.toFixed(2) : <span className="text-[#64748B]">—</span>}
+  1008→                                  </td>
+  1009→                                  <td className="py-2.5 px-3 text-right font-mono text-[#FF5C5C]/80">{s.sl.toFixed(2)}</td>
+  1010→                                  <td className="py-2.5 px-3 text-right font-mono text-[#00E676]/80">{s.tp1.toFixed(2)}</td>
+  1011→                                  <td className="py-2.5 px-3 text-right font-mono text-[#00E676]/90">{s.tp2.toFixed(2)}</td>
+  1012→                                  <td className="py-2.5 px-3 text-right font-mono text-[#00E676]">{s.tp3.toFixed(2)}</td>
+  1013→                                  <td className="py-2.5 px-3 text-right font-mono text-[#94A3B8]">{s.riskReward.toFixed(2)}</td>
+  1014→                                  <td className="py-2.5 px-3 text-right font-mono text-[#94A3B8]">{s.confidence}%</td>
+  1015→                                  <td className="py-2.5 px-3">
+  1016→                                    <Badge variant="outline" className={`text-[9px] py-0 h-4 border ${outcomeClass}`}>
+  1017→                                      {s.outcome.replace("_", " ")}
+  1018→                                      <span className={`ml-1 font-mono ${pnlColor}`}>
+  1019→                                        {s.pnlPct >= 0 ? "+" : ""}{s.pnlPct.toFixed(2)}%
+  1020→                                      </span>
+  1021→                                    </Badge>
+  1022→                                  </td>
+  1023→                                </tr>
+  1024→                              );
+  1025→                            })}
+  1026→                          </tbody>
+  1027→                        </table>
+  1028→                      </div>
+  1029→                    )}
+  1030→                  </CardContent>
+  1031→                </Card>
+  1032→              </>
+  1033→            )}
+  1034→          </TabsContent>
+  1035→
+  1036→          {/* Portfolio Tracker */}
+  1037→          <TabsContent value="portfolio" className="mt-4">
+  1038→            {portfolioPositions.length === 0 && closedTrades.length === 0 ? (
+  1039→              <Card className="bg-[#131829] border-white/[0.08]">
+  1040→                <CardContent className="p-12 text-center">
+  1041→                  <Briefcase className="h-12 w-12 text-[#00E676]/30 mx-auto mb-3" />
+  1042→                  <h3 className="font-semibold text-[#F4F7FB] mb-1">No portfolio positions yet</h3>
+  1043→                  <p className="text-xs text-[#94A3B8]">
+  1044→                    Add stocks with buy prices and share counts to see your live P&amp;L, win rate, and ROI% here.
+  1045→                  </p>
+  1046→                </CardContent>
+  1047→              </Card>
+  1048→            ) : (
+  1049→              <>
+
+[showing lines 600-1049 of 1452; use offset=1050 with limit to continue reading]

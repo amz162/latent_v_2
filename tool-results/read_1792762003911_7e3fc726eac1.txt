@@ -1,0 +1,656 @@
+     1→"use client";
+     2→
+     3→import { useEffect, useState } from "react";
+     4→import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     5→import { Button } from "@/components/ui/button";
+     6→import { Badge } from "@/components/ui/badge";
+     7→import { Skeleton } from "@/components/ui/skeleton";
+     8→import { AppNav } from "./AppNav";
+     9→import { useLatentStore } from "@/lib/latent/store";
+    10→import { Signal } from "@/lib/latent/types";
+    11→import {
+    12→  ArrowLeft,
+    13→  Brain,
+    14→  BookOpen,
+    15→  Newspaper,
+    16→  CheckCircle2,
+    17→  AlertTriangle,
+    18→  TrendingUp,
+    19→  TrendingDown,
+    20→  ArrowRight,
+    21→  Loader2,
+    22→  Sparkles,
+    23→  Target,
+    24→  Eye,
+    25→  RefreshCw,
+    26→} from "lucide-react";
+    27→import { toast } from "sonner";
+    28→
+    29→// LLM-enriched explanation type (matches /api/llm/explain-signal/[symbol] response)
+    30→interface LlmExplanation {
+    31→  summary: string;
+    32→  technicalLayman: string;
+    33→  fundamentalContext: string;
+    34→  newsContext: string;
+    35→  actionLayman: string;
+    36→  riskFactors: string[];
+    37→  watchLevels: { level: string; price: number; significance: string }[];
+    38→  confidenceInterpretation: string;
+    39→  symbol: string;
+    40→  direction: string;
+    41→  horizon: string;
+    42→  confidence: number;
+    43→  entryPrice: number;
+    44→  targetPrice: number;
+    45→  stopLoss: number;
+    46→  model: string;
+    47→  latencyMs: number;
+    48→  cached: boolean;
+    49→  cachedUntil: string;
+    50→}
+    51→
+    52→export function SignalDetail() {
+    53→  const selectedSignalId = useLatentStore((s) => s.selectedSignalId);
+    54→  const selectedSymbol = useLatentStore((s) => s.selectedSymbol);
+    55→  const setView = useLatentStore((s) => s.setView);
+    56→  const userId = useLatentStore((s) => s.userId);
+    57→
+    58→  const [signal, setSignal] = useState<Signal | null>(null);
+    59→  const [loading, setLoading] = useState(true);
+    60→  const [llmExplanation, setLlmExplanation] = useState<LlmExplanation | null>(null);
+    61→  const [llmLoading, setLlmLoading] = useState(false);
+    62→  const [llmError, setLlmError] = useState<string | null>(null);
+    63→
+    64→  // Determine the source of the signal:
+    65→  // - If selectedSymbol is set (route from SignalSection "View in depth"), fetch XGBoost signal
+    66→  // - Else if selectedSignalId is set (legacy mock path), fetch by ID
+    67→  useEffect(() => {
+    68→    let cancelled = false;
+    69→
+    70→    // Reset state
+    71→    setSignal(null);
+    72→    setLlmExplanation(null);
+    73→    setLlmError(null);
+    74→    setLoading(true);
+    75→
+    76→    if (selectedSymbol) {
+    77→      // XGBoost-backed flow — fetch from /api/ml/signal/[symbol]
+    78→      fetch(`/api/ml/signal/${encodeURIComponent(selectedSymbol)}`)
+    79→        .then((r) => {
+    80→          if (!r.ok) throw new Error(`Failed to load signal: ${r.status}`);
+    81→          return r.json();
+    82→        })
+    83→        .then((d) => {
+    84→          if (cancelled) return;
+    85→          if (d.signal) {
+    86→            setSignal(d.signal);
+    87→            setLoading(false);
+    88→          } else {
+    89→            setLoading(false);
+    90→          }
+    91→        })
+    92→        .catch((err) => {
+    93→          if (cancelled) return;
+    94→          console.error("Signal fetch error:", err);
+    95→          setLoading(false);
+    96→        });
+    97→    } else if (selectedSignalId) {
+    98→      // Legacy mock signal flow
+    99→      fetch(`/api/signals/${selectedSignalId}`)
+   100→        .then((r) => r.json())
+   101→        .then((d) => {
+   102→          if (cancelled) return;
+   103→          setSignal(d.signal || null);
+   104→          setLoading(false);
+   105→        })
+   106→        .catch(() => {
+   107→          if (!cancelled) setLoading(false);
+   108→        });
+   109→    } else {
+   110→      // No selection — go back to signals list
+   111→      setView("signals_v2");
+   112→      setLoading(false);
+   113→    }
+   114→
+   115→    return () => {
+   116→      cancelled = true;
+   117→    };
+   118→  }, [selectedSignalId, selectedSymbol, setView]);
+   119→
+   120→  // LLM enrichment — triggered on demand via "Generate with LLM" button
+   121→  const handleGenerateLlm = async () => {
+   122→    if (!selectedSymbol && !signal?.symbol) {
+   123→      toast.error("No symbol selected for LLM analysis");
+   124→      return;
+   125→    }
+   126→    const symbol = selectedSymbol || signal!.symbol;
+   127→    setLlmLoading(true);
+   128→    setLlmError(null);
+   129→    setLlmExplanation(null);
+   130→    try {
+   131→      const res = await fetch(`/api/llm/explain-signal/${encodeURIComponent(symbol)}`);
+   132→      if (!res.ok) {
+   133→        const err = await res.json().catch(() => ({}));
+   134→        throw new Error(err.detail || err.error || `LLM call failed (${res.status})`);
+   135→      }
+   136→      const data = await res.json();
+   137→      setLlmExplanation(data);
+   138→      toast.success(
+   139→        `LLM analysis generated in ${data.latencyMs}ms${data.cached ? " (cached)" : ""}`
+   140→      );
+   141→    } catch (err) {
+   142→      const msg = err instanceof Error ? err.message : "LLM call failed";
+   143→      setLlmError(msg);
+   144→      toast.error(msg);
+   145→    } finally {
+   146→      setLlmLoading(false);
+   147→    }
+   148→  };
+   149→
+   150→
+   151→  if (loading) {
+   152→    return (
+   153→      <div className="min-h-screen bg-[#0A0E1A]">
+   154→        <AppNav />
+   155→        <div className="max-w-4xl mx-auto p-6 space-y-4">
+   156→          <Skeleton className="h-10 w-32 bg-white/[0.04]" />
+   157→          <Skeleton className="h-32 w-full bg-white/[0.04]" />
+   158→          <Skeleton className="h-64 w-full bg-white/[0.04]" />
+   159→        </div>
+   160→      </div>
+   161→    );
+   162→  }
+   163→
+   164→  if (!signal) {
+   165→    return (
+   166→      <div className="min-h-screen bg-[#0A0E1A]">
+   167→        <AppNav />
+   168→        <div className="max-w-4xl mx-auto p-6 text-center">
+   169→          <p className="text-sm text-[#94A3B8]">Signal not found.</p>
+   170→          <Button onClick={() => setView("signals_v2")} className="mt-4">
+   171→            Back to signals
+   172→          </Button>
+   173→        </div>
+   174→      </div>
+   175→    );
+   176→  }
+   177→
+   178→  const upside = ((signal.targetPrice - signal.entryPrice) / signal.entryPrice) * 100;
+   179→  const downside = ((signal.entryPrice - signal.stopLoss) / signal.entryPrice) * 100;
+   180→  const riskReward = upside / Math.abs(downside);
+   181→
+   182→  const impactColor = (i: string) =>
+   183→    i === "positive" ? "text-[#00E676]" : i === "negative" ? "text-[#FF5C5C]" : "text-[#94A3B8]";
+   184→
+   185→  const impactIcon = (i: string) =>
+   186→    i === "positive" ? <TrendingUp className="h-3 w-3" /> : i === "negative" ? <TrendingDown className="h-3 w-3" /> : null;
+   187→
+   188→  const handleExecute = () => {
+   189→    if (!userId) {
+   190→      toast.info("Demo mode — execute flow shows the simulated broker experience.");
+   191→    }
+   192→    setView("execute");
+   193→  };
+   194→
+   195→  return (
+   196→    <div className="min-h-screen bg-[#0A0E1A]">
+   197→      <AppNav />
+   198→
+   199→      <main className="max-w-4xl mx-auto px-4 md:px-6 py-6">
+   200→        <Button
+   201→          variant="ghost"
+   202→          size="sm"
+   203→          onClick={() => setView("signals_v2")}
+   204→          className="text-[#94A3B8] hover:text-[#F4F7FB] mb-4 -ml-2"
+   205→        >
+   206→          <ArrowLeft className="h-4 w-4 mr-1" />
+   207→          Back to signals
+   208→        </Button>
+   209→
+   210→        {/* Header */}
+   211→        <Card className="bg-[#131829] border-white/[0.08] mb-4">
+   212→          <CardContent className="p-5">
+   213→            <div className="flex items-start gap-4 mb-4">
+   214→              <div className="h-14 w-14 rounded-lg bg-[#00E676]/10 flex items-center justify-center font-mono font-bold text-[#00E676] text-lg">
+   215→                {signal.symbol.slice(0, 4)}
+   216→              </div>
+   217→              <div className="flex-1">
+   218→                <div className="flex items-center gap-2 flex-wrap">
+   219→                  <h1 className="text-xl font-bold text-[#F4F7FB]">{signal.symbol}</h1>
+   220→                  <Badge variant="outline" className="border-[#00E676]/40 text-[#00E676] text-[10px]">
+   221→                    {signal.horizon}
+   222→                  </Badge>
+   223→                  <Badge variant="outline" className="border-white/[0.12] text-[#94A3B8] text-[10px]">
+   224→                    {signal.direction}
+   225→                  </Badge>
+   226→                  {signal.status === "TRIGGERED" && (
+   227→                    <Badge variant="outline" className="border-amber-500/40 text-amber-400 text-[10px]">
+   228→                      ENTRY CLOSED
+   229→                    </Badge>
+   230→                  )}
+   231→                </div>
+   232→                <p className="text-sm text-[#94A3B8] mt-1">{signal.stockName}</p>
+   233→              </div>
+   234→              <div className="text-right">
+   235→                <div className="text-2xl font-bold text-[#00E676] font-mono">+{upside.toFixed(1)}%</div>
+   236→                <div className="text-[10px] text-[#64748B] uppercase">To target</div>
+   237→              </div>
+   238→            </div>
+   239→
+   240→            {/* Trade parameters */}
+   241→            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+   242→              <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3">
+   243→                <div className="text-[10px] uppercase text-[#64748B] mb-0.5">Entry price</div>
+   244→                <div className="text-lg font-mono font-bold text-[#F4F7FB]">{signal.entryPrice}</div>
+   245→              </div>
+   246→              <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3">
+   247→                <div className="text-[10px] uppercase text-[#64748B] mb-0.5">Target</div>
+   248→                <div className="text-lg font-mono font-bold text-[#00E676]">{signal.targetPrice}</div>
+   249→              </div>
+   250→              <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3">
+   251→                <div className="text-[10px] uppercase text-[#64748B] mb-0.5">Stop-loss</div>
+   252→                <div className="text-lg font-mono font-bold text-[#FF5C5C]">{signal.stopLoss}</div>
+   253→              </div>
+   254→              <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3">
+   255→                <div className="text-[10px] uppercase text-[#64748B] mb-0.5">Risk/reward</div>
+   256→                <div className="text-lg font-mono font-bold text-[#F4F7FB]">{riskReward.toFixed(1)}:1</div>
+   257→              </div>
+   258→            </div>
+   259→
+   260→            {/* Confidence + Action button */}
+   261→            <div className="flex items-center justify-between flex-wrap gap-3">
+   262→              <div className="flex items-center gap-3">
+   263→                <div className="text-xs text-[#94A3B8]">
+   264→                  Confidence: <span className="text-[#00E676] font-mono font-bold">{signal.confidenceScore}/100</span>
+   265→                </div>
+   266→                <div className="text-xs text-[#94A3B8]">
+   267→                  Setup score: <span className="text-[#F4F7FB] font-mono">{signal.setupScore}</span>
+   268→                </div>
+   269→              </div>
+   270→              <Button
+   271→                onClick={handleExecute}
+   272→                disabled={signal.status === "TRIGGERED"}
+   273→                className={`font-semibold ${
+   274→                  signal.status === "TRIGGERED"
+   275→                    ? "bg-white/[0.05] text-[#64748B] cursor-not-allowed"
+   276→                    : "bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881]"
+   277→                }`}
+   278→              >
+   279→                {signal.status === "TRIGGERED" ? "Entry closed" : "Execute this trade"}
+   280→                <ArrowRight className="h-4 w-4 ml-1.5" />
+   281→              </Button>
+   282→            </div>
+   283→          </CardContent>
+   284→        </Card>
+   285→
+   286→        {/* Summary card */}
+   287→        <Card className="bg-gradient-to-br from-[#00E676]/[0.07] to-[#131829] border-[#00E676]/20 mb-4">
+   288→          <CardContent className="p-5">
+   289→            <div className="text-[10px] uppercase tracking-wider text-[#00E676] mb-2 font-semibold">
+   290→              The signal in one paragraph
+   291→            </div>
+   292→            <p className="text-sm text-[#F4F7FB] leading-relaxed">{signal.explanation.summary}</p>
+   293→          </CardContent>
+   294→        </Card>
+   295→
+   296→        {/* Technical analysis (layman) */}
+   297→        <Card className="bg-[#131829] border-white/[0.08] mb-4">
+   298→          <CardHeader className="pb-3">
+   299→            <div className="flex items-center gap-2">
+   300→              <div className="h-7 w-7 rounded-md bg-[#00E676]/10 flex items-center justify-center">
+   301→                <Brain className="h-3.5 w-3.5 text-[#00E676]" />
+   302→              </div>
+   303→              <CardTitle className="text-base text-[#F4F7FB]">Technical analysis in plain words</CardTitle>
+   304→            </div>
+   305→          </CardHeader>
+   306→          <CardContent className="pt-0">
+   307→            <p className="text-sm text-[#94A3B8] leading-relaxed mb-4">
+   308→              {signal.explanation.technicalLayman}
+   309→            </p>
+   310→            <div className="space-y-2">
+   311→              <div className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1">
+   312→                Term glossary
+   313→              </div>
+   314→              {signal.explanation.technicalTerms.map((t) => (
+   315→                <div key={t.term} className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3">
+   316→                  <div className="flex items-center justify-between mb-1">
+   317→                    <span className="text-sm font-semibold text-[#00E676]">{t.term}</span>
+   318→                    <span className="text-xs text-[#94A3B8] font-mono">{t.current}</span>
+   319→                  </div>
+   320→                  <div className="text-xs text-[#94A3B8] mb-1.5">{t.meaning}</div>
+   321→                  <div className="text-[11px] text-[#64748B] italic">
+   322→                    <span className="text-[#94A3B8]">Impact:</span> {t.impact}
+   323→                  </div>
+   324→                </div>
+   325→              ))}
+   326→            </div>
+   327→          </CardContent>
+   328→        </Card>
+   329→
+   330→        {/* Fundamental analysis (layman) */}
+   331→        <Card className="bg-[#131829] border-white/[0.08] mb-4">
+   332→          <CardHeader className="pb-3">
+   333→            <div className="flex items-center gap-2">
+   334→              <div className="h-7 w-7 rounded-md bg-[#00E676]/10 flex items-center justify-center">
+   335→                <BookOpen className="h-3.5 w-3.5 text-[#00E676]" />
+   336→              </div>
+   337→              <CardTitle className="text-base text-[#F4F7FB]">Fundamentals in plain words</CardTitle>
+   338→            </div>
+   339→          </CardHeader>
+   340→          <CardContent className="pt-0">
+   341→            <p className="text-sm text-[#94A3B8] leading-relaxed mb-4">
+   342→              {signal.explanation.fundamentalLayman}
+   343→            </p>
+   344→            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+   345→              {signal.explanation.fundamentalFactors.map((f) => (
+   346→                <div
+   347→                  key={f.label}
+   348→                  className="flex items-center justify-between rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3"
+   349→                >
+   350→                  <span className="text-xs text-[#94A3B8]">{f.label}</span>
+   351→                  <div className={`flex items-center gap-1.5 ${impactColor(f.impact)}`}>
+   352→                    {impactIcon(f.impact)}
+   353→                    <span className="text-xs font-mono font-semibold">{f.value}</span>
+   354→                  </div>
+   355→                </div>
+   356→              ))}
+   357→            </div>
+   358→          </CardContent>
+   359→        </Card>
+   360→
+   361→        {/* News impact */}
+   362→        <Card className="bg-[#131829] border-white/[0.08] mb-4">
+   363→          <CardHeader className="pb-3">
+   364→            <div className="flex items-center justify-between">
+   365→              <div className="flex items-center gap-2">
+   366→                <div className="h-7 w-7 rounded-md bg-[#00E676]/10 flex items-center justify-center">
+   367→                  <Newspaper className="h-3.5 w-3.5 text-[#00E676]" />
+   368→                </div>
+   369→                <CardTitle className="text-base text-[#F4F7FB]">News & its impact</CardTitle>
+   370→              </div>
+   371→              <Button size="sm" variant="outline" onClick={() => { setView("fundamental_news"); }}
+   372→                className="border-[#00E676]/30 text-[#00E676] text-[10px]">
+   373→                View All News →
+   374→              </Button>
+   375→            </div>
+   376→          </CardHeader>
+   377→          <CardContent className="pt-0">
+   378→            <p className="text-sm text-[#94A3B8] leading-relaxed mb-4">
+   379→              {signal.explanation.newsLayman}
+   380→            </p>
+   381→            <div className="space-y-2">
+   382→              {signal.explanation.newsItems.slice(0, 5).map((n, i) => (
+   383→                <div key={i} className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3">
+   384→                  <div className="flex items-start justify-between gap-2 mb-1.5">
+   385→                    <span className="text-sm font-medium text-[#F4F7FB]">{n.headline}</span>
+   386→                    <div className={`flex items-center gap-1 ${impactColor(n.impact)} flex-shrink-0`}>
+   387→                      {impactIcon(n.impact)}
+   388→                      <span className="text-[10px] uppercase font-semibold">{n.impact}</span>
+   389→                    </div>
+   390→                  </div>
+   391→                  <div className="text-[11px] text-[#64748B] flex items-center gap-2">
+   392→                    <span className="font-mono">{n.source}</span>
+   393→                    <span>·</span>
+   394→                    <span>Affects: {n.affectedStocks.join(", ")}</span>
+   395→                  </div>
+   396→                </div>
+   397→              ))}
+   398→            </div>
+   399→            {signal.explanation.newsItems.length > 5 && (
+   400→              <div className="mt-3 text-center">
+   401→                <Button size="sm" variant="ghost" onClick={() => setView("fundamental_news")}
+   402→                  className="text-[#00E676] text-xs">
+   403→                  + {signal.explanation.newsItems.length - 5} more news — View All →
+   404→                </Button>
+   405→              </div>
+   406→            )}
+   407→          </CardContent>
+   408→        </Card>
+   409→
+   410→        {/* Action plan */}
+   411→        <Card className="bg-[#131829] border-[#00E676]/30 mb-4">
+   412→          <CardHeader className="pb-3">
+   413→            <div className="flex items-center gap-2">
+   414→              <div className="h-7 w-7 rounded-md bg-[#00E676]/10 flex items-center justify-center">
+   415→                <CheckCircle2 className="h-3.5 w-3.5 text-[#00E676]" />
+   416→              </div>
+   417→              <CardTitle className="text-base text-[#F4F7FB]">Your action</CardTitle>
+   418→            </div>
+   419→          </CardHeader>
+   420→          <CardContent className="pt-0">
+   421→            <p className="text-sm text-[#F4F7FB] leading-relaxed mb-4 font-medium">
+   422→              {signal.explanation.actionLayman}
+   423→            </p>
+   424→            <div className="space-y-1.5">
+   425→              <div className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1">
+   426→                Risk factors to know
+   427→              </div>
+   428→              {signal.explanation.riskFactors.map((r, i) => (
+   429→                <div key={i} className="flex items-start gap-2 text-xs text-[#94A3B8]">
+   430→                  <AlertTriangle className="h-3 w-3 text-amber-400 flex-shrink-0 mt-0.5" />
+   431→                  <span>{r}</span>
+   432→                </div>
+   433→              ))}
+   434→            </div>
+   435→          </CardContent>
+   436→        </Card>
+   437→
+   438→        {/* LLM-enriched analysis panel */}
+   439→        <Card className="bg-gradient-to-br from-[#00E676]/[0.07] to-[#131829] border-[#00E676]/20 mb-4">
+   440→          <CardHeader>
+   441→            <div className="flex items-center justify-between flex-wrap gap-3">
+   442→              <div className="flex items-center gap-2">
+   443→                <div className="h-7 w-7 rounded-md bg-[#00E676]/15 flex items-center justify-center">
+   444→                  <Sparkles className="h-3.5 w-3.5 text-[#00E676]" />
+   445→                </div>
+   446→                <CardTitle className="text-base text-[#F4F7FB]">
+   447→                  LLM-Enriched Analysis
+   448→                </CardTitle>
+   449→                <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#00E676]/40 text-[#00E676]">
+   450→                  GLM-4
+   451→                </Badge>
+   452→              </div>
+   453→              <Button
+   454→                size="sm"
+   455→                variant="outline"
+   456→                onClick={handleGenerateLlm}
+   457→                disabled={llmLoading}
+   458→                className="border-[#00E676]/40 text-[#00E676] hover:bg-[#00E676]/10 h-7"
+   459→              >
+   460→                {llmLoading ? (
+   461→                  <>
+   462→                    <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+   463→                    Generating...
+   464→                  </>
+   465→                ) : llmExplanation ? (
+   466→                  <>
+   467→                    <RefreshCw className="h-3 w-3 mr-1.5" />
+   468→                    Regenerate
+   469→                  </>
+   470→                ) : (
+   471→                  <>
+   472→                    <Sparkles className="h-3 w-3 mr-1.5" />
+   473→                    Generate with LLM
+   474→                  </>
+   475→                )}
+   476→              </Button>
+   477→            </div>
+   478→            <p className="text-xs text-[#94A3B8] mt-1">
+   479→              GLM-4 takes the XGBoost model output above and explains it in richer plain language.
+   480→              Cached for 1 hour per symbol.
+   481→            </p>
+   482→          </CardHeader>
+   483→          <CardContent className="pt-0">
+   484→            {llmError && (
+   485→              <div className="rounded-md bg-[#FF5C5C]/[0.07] border border-[#FF5C5C]/20 p-3 text-xs text-[#FF5C5C]">
+   486→                <span className="font-semibold">LLM error:</span> {llmError}
+   487→              </div>
+   488→            )}
+   489→
+   490→            {llmLoading && !llmExplanation && (
+   491→              <div className="space-y-3">
+   492→                <Skeleton className="h-4 w-3/4 bg-white/[0.04]" />
+   493→                <Skeleton className="h-4 w-full bg-white/[0.04]" />
+   494→                <Skeleton className="h-4 w-5/6 bg-white/[0.04]" />
+   495→                <p className="text-xs text-[#64748B] flex items-center gap-1.5">
+   496→                  <Loader2 className="h-3 w-3 animate-spin" />
+   497→                  GLM-4 analyzing technical + fundamental readings...
+   498→                </p>
+   499→              </div>
+   500→            )}
+   501→
+   502→            {llmExplanation && (
+   503→              <div className="space-y-4">
+   504→                {/* Meta */}
+   505→                <div className="flex items-center justify-between flex-wrap gap-2 text-[10px] font-mono text-[#64748B]">
+   506→                  <div className="flex items-center gap-3">
+   507→                    <span>{llmExplanation.model}</span>
+   508→                    <span>·</span>
+   509→                    <span>{llmExplanation.latencyMs}ms</span>
+   510→                    {llmExplanation.cached && (
+   511→                      <>
+   512→                        <span>·</span>
+   513→                        <span className="text-[#00E676]">cached</span>
+   514→                      </>
+   515→                    )}
+   516→                  </div>
+   517→                  <span>Cached until {new Date(llmExplanation.cachedUntil).toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" })}</span>
+   518→                </div>
+   519→
+   520→                {/* Summary */}
+   521→                <div className="rounded-md bg-[#0A0E1A] border border-[#00E676]/15 p-3">
+   522→                  <div className="text-[10px] uppercase tracking-wider text-[#00E676] font-semibold mb-1">
+   523→                    Summary
+   524→                  </div>
+   525→                  <p className="text-sm text-[#F4F7FB] leading-relaxed">{llmExplanation.summary}</p>
+   526→                </div>
+   527→
+   528→                {/* Technical layman */}
+   529→                <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3">
+   530→                  <div className="flex items-center gap-1.5 mb-1">
+   531→                    <Brain className="h-3 w-3 text-[#00E676]" />
+   532→                    <span className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold">
+   533→                      Technicals in plain words
+   534→                    </span>
+   535→                  </div>
+   536→                  <p className="text-xs text-[#94A3B8] leading-relaxed">{llmExplanation.technicalLayman}</p>
+   537→                </div>
+   538→
+   539→                {/* Fundamental context */}
+   540→                <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3">
+   541→                  <div className="flex items-center gap-1.5 mb-1">
+   542→                    <BookOpen className="h-3 w-3 text-[#00E676]" />
+   543→                    <span className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold">
+   544→                      Fundamental context
+   545→                    </span>
+   546→                  </div>
+   547→                  <p className="text-xs text-[#94A3B8] leading-relaxed">{llmExplanation.fundamentalContext}</p>
+   548→                </div>
+   549→
+   550→                {/* News context */}
+   551→                {llmExplanation.newsContext && (
+   552→                  <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3">
+   553→                    <div className="flex items-center gap-1.5 mb-1">
+   554→                      <Newspaper className="h-3 w-3 text-[#00E676]" />
+   555→                      <span className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold">
+   556→                        News to watch
+   557→                      </span>
+   558→                    </div>
+   559→                    <p className="text-xs text-[#94A3B8] leading-relaxed">{llmExplanation.newsContext}</p>
+   560→                  </div>
+   561→                )}
+   562→
+   563→                {/* Action plan */}
+   564→                <div className="rounded-md bg-[#00E676]/[0.07] border border-[#00E676]/20 p-3">
+   565→                  <div className="flex items-center gap-1.5 mb-1">
+   566→                    <CheckCircle2 className="h-3 w-3 text-[#00E676]" />
+   567→                    <span className="text-[10px] uppercase tracking-wider text-[#00E676] font-semibold">
+   568→                      Action plan (plain English)
+   569→                    </span>
+   570→                  </div>
+   571→                  <p className="text-xs text-[#F4F7FB] leading-relaxed font-medium">{llmExplanation.actionLayman}</p>
+   572→                </div>
+   573→
+   574→                {/* Confidence interpretation */}
+   575→                <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3">
+   576→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1">
+   577→                    What the confidence score means
+   578→                  </div>
+   579→                  <p className="text-xs text-[#94A3B8] leading-relaxed italic">{llmExplanation.confidenceInterpretation}</p>
+   580→                </div>
+   581→
+   582→                {/* Watch levels */}
+   583→                {llmExplanation.watchLevels.length > 0 && (
+   584→                  <div>
+   585→                    <div className="flex items-center gap-1.5 mb-2">
+   586→                      <Eye className="h-3 w-3 text-[#00E676]" />
+   587→                      <span className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold">
+   588→                        Price levels to watch
+   589→                      </span>
+   590→                    </div>
+   591→                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+   592→                      {llmExplanation.watchLevels.slice(0, 3).map((lvl, i) => (
+   593→                        <div key={i} className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5">
+   594→                          <div className="flex items-center justify-between mb-0.5">
+   595→                            <span className="text-[10px] uppercase text-[#64748B]">{lvl.level}</span>
+   596→                            <Target className="h-3 w-3 text-[#00E676]" />
+   597→                          </div>
+   598→                          <div className="text-sm font-mono font-bold text-[#F4F7FB]">{lvl.price}</div>
+   599→                          <div className="text-[10px] text-[#94A3B8] mt-0.5">{lvl.significance}</div>
+   600→                        </div>
+   601→                      ))}
+   602→                    </div>
+   603→                  </div>
+   604→                )}
+   605→
+   606→                {/* LLM-specific risk factors */}
+   607→                {llmExplanation.riskFactors.length > 0 && (
+   608→                  <div className="rounded-md bg-[#FF5C5C]/[0.05] border border-[#FF5C5C]/15 p-3">
+   609→                    <div className="flex items-center gap-1.5 mb-1.5">
+   610→                      <AlertTriangle className="h-3 w-3 text-[#FF5C5C]" />
+   611→                      <span className="text-[10px] uppercase tracking-wider text-[#FF5C5C] font-semibold">
+   612→                        Setup-specific risks (LLM)
+   613→                      </span>
+   614→                    </div>
+   615→                    <ul className="space-y-1">
+   616→                      {llmExplanation.riskFactors.map((r, i) => (
+   617→                        <li key={i} className="text-xs text-[#94A3B8] flex items-start gap-2">
+   618→                          <span className="text-[#FF5C5C]">•</span>
+   619→                          <span>{r}</span>
+   620→                        </li>
+   621→                      ))}
+   622→                    </ul>
+   623→                  </div>
+   624→                )}
+   625→              </div>
+   626→            )}
+   627→
+   628→            {!llmLoading && !llmExplanation && !llmError && (
+   629→              <div className="text-center py-6">
+   630→                <Sparkles className="h-8 w-8 text-[#00E676]/30 mx-auto mb-2" />
+   631→                <p className="text-xs text-[#94A3B8] mb-3">
+   632→                  Click <span className="text-[#00E676]">Generate with LLM</span> to get a
+   633→                  richer plain-English explanation of the signal above, including
+   634→                  fundamental context, watch levels, and setup-specific risks.
+   635→                </p>
+   636→                <p className="text-[10px] text-[#64748B]">
+   637→                  GLM-4 takes ~3 seconds. Cached for 1 hour per symbol.
+   638→                </p>
+   639→              </div>
+   640→            )}
+   641→          </CardContent>
+   642→        </Card>
+   643→
+   644→        {/* Disclaimer */}
+   645→        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed">
+   646→          <span className="text-[#94A3B8] font-semibold">Disclaimer:</span> This signal is
+   647→          generated by Latent.pk&apos;s predictive algorithm and is for informational purposes
+   648→          only. It is not licensed investment advice under SECP rules. Trading on the PSX carries
+   649→          risk — past performance does not guarantee future returns. Always do your own research
+   650→          and consult a licensed advisor before making investment decisions.
+   651→        </div>
+   652→      </main>
+   653→    </div>
+   654→  );
+   655→}
+   656→

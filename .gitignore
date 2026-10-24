@@ -1,0 +1,19 @@
+# Only exclude: (1) files >100MB that GitHub hard-blocks, (2) OS junk.
+# Everything else is pushed (source, .env, db .gz backup, data, dev.log, etc.)
+.DS_Store
+db/custom.db
+dev.log
+.zscripts/dev.log
+.next/dev/logs/next-development.log
+.next/dev/cache/turbopack/731ace46/00000847.sst
+.next/dev/cache/turbopack/731ace46/00000848.sst
+.next/dev/cache/turbopack/731ace46/00000695.sst
+.next/dev/cache/turbopack/731ace46/00000696.sst
+.next/dev/cache/turbopack/731ace46/00000507.sst
+.next/dev/cache/turbopack/731ace46/00000508.sst
+.next/dev/cache/turbopack/731ace46/00000271.sst
+.next/dev/cache/turbopack/731ace46/00000272.sst
+.next/dev/cache/turbopack/731ace46/00000111.sst
+.next/dev/cache/turbopack/731ace46/00000112.sst
+node_modules/@next/swc-linux-x64-gnu/next-swc.linux-x64-gnu.node
+node_modules/@next/swc-linux-x64-musl/next-swc.linux-x64-musl.node
