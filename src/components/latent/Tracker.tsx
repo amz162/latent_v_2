@@ -28,6 +28,7 @@ import {
   RefreshCw,
   Calendar,
   PiggyBank,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -333,73 +334,54 @@ export function Tracker() {
   //  - Each trade uses the final-ensemble-consensus signal (entry/SL/TP1/2/3).
   //  - Holds for the user's time-period input (day/month/year → trading days).
   //  - Optional monthly SIP adds to the total capital pool.
-  interface SimTrade {
+  // One row in the simulation results table — a real TRADE or a monthly SIP
+  // deposit (rendered as its own amber row, in month order).
+  interface SimRow {
     tradeNo: number;
+    type: "TRADE" | "SIP";
+    month: number;
     symbol: string;
-    side: "BUY" | "SELL";
-    direction: "LONG" | "SHORT";
+    side: "BUY" | "SELL" | "SIP";
+    direction: "LONG" | "SHORT" | "SIP";
     entryDate: number;
     entryPrice: number;
     exitDate: number;
     exitPrice: number;
-    exitReason: "TP1_HIT" | "TP2_HIT" | "TP3_HIT" | "SL_HIT" | "TIME_UP";
-    sl: number;
-    tp1: number;
-    tp2: number;
-    tp3: number;
-    shares: number;
-    notional: number;
-    netPnl: number;
-    netPnlPct: number;
+    exitReason: string;
+    entryAmount: number;
+    exitAmount: number;
+    returnPct: number;
+    pnl: number;
     isWin: boolean;
   }
-  interface SimMetrics {
-    startingCapital: number;
-    amountPerTrade: number;
-    totalTrades: number;
-    numDays: number;
-    winTrades: number;
-    lossTrades: number;
-    winRate: number;
-    avgWinPct: number;
-    avgLossPct: number;
-    grossProfit: number;
-    grossLoss: number;
-    totalCosts: number;
-    grossBeforeCosts: number;
-    netPnL: number;
-    finalValue: number;
-    roiPct: number;
-    maxDrawdownPct: number;
-    profitFactor: number;
-    sharpe: number;
-    sortino: number;
-    equityCurve: { tradeNo: number; value: number }[];
-  }
-  interface SimConfig {
-    initialCapital: number;
-    periodValue: number;
-    periodUnit: PeriodUnit;
-    monthlySip: number;
-    numDays: number;
-    numMonths: number;
-    totalSipContribution: number;
-    totalCapital: number;
-    amountPerTrade: number;
-    numSignalsAvailable: number;
-    numTrades: number;
-    seed: number;
-  }
   interface SimResponse {
-    config: SimConfig;
-    metrics: SimMetrics;
-    trades: SimTrade[];
+    initialAmount: number;
+    finalAmount: number;
+    totalPnl: number;
+    totalReturnPct: number;
+    wins: number;
+    losses: number;
+    totalSip: number; // total SIP contributed over the whole period
+    totalInvested: number; // initial capital + total SIP
+    tradeCount: number; // real trades (SIP deposit rows excluded)
+    rows: SimRow[];
+    config?: {
+      numDays: number;
+      numMonths: number;
+      numTrades: number;
+      tradesPerMonth: number;
+      amountPerTrade: number;
+      numSignalsAvailable: number;
+    };
   }
 
   const [simCapital, setSimCapital] = useState<string>("100000");
   const [simPeriodValue, setSimPeriodValue] = useState<string>("3");
   const [simPeriodUnit, setSimPeriodUnit] = useState<PeriodUnit>("month");
   const [simMonthlySip, setSimMonthlySip] = useState<string>("0");
+  const [simNumTrades, setSimNumTrades] = useState<string>("40");
+  const [simMinConfidence, setSimMinConfidence] = useState<string>("0");
+  const [simDirection, setSimDirection] = useState<"BOTH" | "LONG" | "SHORT">("BOTH");
   const [simResult, setSimResult] = useState<SimResponse | null>(null);
   const [simLoading, setSimLoading] = useState(false);
 
@@ -407,6 +389,8 @@ export function Tracker() {
     const capital = parseFloat(simCapital.replace(/[,\s]/g, ""));
     const periodValue = parseInt(simPeriodValue, 10);
     const monthlySip = parseFloat(simMonthlySip.replace(/[,\s]/g, "")) || 0;
+    const numTrades = parseInt(simNumTrades, 10) || 0;
+    const minConfidence = parseFloat(simMinConfidence) || 0;
     if (!Number.isFinite(capital) || capital <= 0) {
       toast.error("Enter a valid capital amount");
       return;
@@ -415,9 +399,17 @@ export function Tracker() {
       toast.error("Enter a valid time period");
       return;
     }
+    if (!Number.isFinite(numTrades) || numTrades <= 0) {
+      toast.error("Enter a valid number of trades");
+      return;
+    }
+    if (minConfidence < 0 || minConfidence > 100) {
+      toast.error("Min confidence must be between 0 and 100");
+      return;
+    }
     setSimLoading(true);
     try {
-      const qs = `capital=${encodeURIComponent(simCapital)}&periodValue=${encodeURIComponent(simPeriodValue)}&periodUnit=${encodeURIComponent(simPeriodUnit)}&monthlySip=${encodeURIComponent(simMonthlySip)}`;
+      const qs = `capital=${encodeURIComponent(simCapital)}&periodValue=${encodeURIComponent(simPeriodValue)}&periodUnit=${encodeURIComponent(simPeriodUnit)}&monthlySip=${encodeURIComponent(simMonthlySip)}&numTrades=${encodeURIComponent(numTrades)}&minConfidence=${encodeURIComponent(minConfidence)}&direction=${encodeURIComponent(simDirection)}`;
       const r = await fetch(`/api/backtest/investment-simulator?${qs}`);
       const j = await r.json();
       if (j.error) {
@@ -426,7 +418,7 @@ export function Tracker() {
       }
       setSimResult(j as SimResponse);
       toast.success(
-        `Simulated ${j.config.numTrades} trades over ${j.config.numDays} days — ROI ${j.metrics.roiPct}%`
+        `Simulated ${j.tradeCount ?? 0} trades over ${j.config?.numMonths ?? "?"} consecutive months — ROI ${(j.totalReturnPct ?? 0).toFixed(2)}%`
       );
     } catch (e) {
       toast.error("Simulation failed");
@@ -666,10 +658,11 @@ export function Tracker() {
                       ({stockSignals.length} trades) using the predicted return %, compounding trade-over-trade.
                     </p>
 
-                    <div className="flex flex-wrap items-end gap-2 mb-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-2 items-end">
+                      {/* Investment amount */}
                       <div className="flex flex-col gap-1">
                         <label className="text-[10px] uppercase tracking-wider text-[#64748B]">
-                          Investment amount (PKR)
+                          Investment (PKR)
                         </label>
                         <div className="flex items-center gap-1.5 bg-[#0A0E1A] border border-white/[0.08] rounded-md px-3 py-2 focus-within:border-[#00E676]/40">
                           <span className="text-xs text-[#64748B] font-mono">Rs.</span>
@@ -681,16 +674,128 @@ export function Tracker() {
                             }}
                             placeholder="100000"
                             inputMode="decimal"
-                            className="h-7 w-40 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
+                            className="h-7 w-full min-w-0 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
                           />
                         </div>
                       </div>
+                      {/* Time period: value + unit */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">
+                          Time period
+                        </label>
+                        <div className="flex items-center gap-1">
+                          <Input
+                            value={simPeriodValue}
+                            onChange={(e) => setSimPeriodValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") runSimulation();
+                            }}
+                            placeholder="3"
+                            inputMode="numeric"
+                            className="h-9 w-12 shrink-0 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB] focus-visible:ring-0 focus-visible:border-[#00E676]/40"
+                          />
+                          <select
+                            value={simPeriodUnit}
+                            onChange={(e) => setSimPeriodUnit(e.target.value as PeriodUnit)}
+                            aria-label="Time period unit"
+                            className="h-9 flex-1 min-w-0 bg-[#0A0E1A] border border-white/[0.08] rounded-md px-1.5 text-xs font-mono text-[#F4F7FB] focus:outline-none focus:border-[#00E676]/40"
+                          >
+                            {PERIOD_UNITS.map((u) => (
+                              <option key={u.value} value={u.value} className="bg-[#0A0E1A]">
+                                {u.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      {/* Monthly SIP */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">
+                          Monthly SIP
+                        </label>
+                        <div className="flex items-center gap-1.5 bg-[#0A0E1A] border border-white/[0.08] rounded-md px-3 py-2 focus-within:border-[#00E676]/40">
+                          <PiggyBank className="h-3 w-3 text-[#FBBF24] shrink-0" />
+                          <Input
+                            value={simMonthlySip}
+                            onChange={(e) => setSimMonthlySip(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") runSimulation();
+                            }}
+                            placeholder="0"
+                            inputMode="decimal"
+                            className="h-7 w-full min-w-0 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
+                          />
+                        </div>
+                      </div>
+                      {/* No. of trades */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">
+                          No. of trades
+                        </label>
+                        <Input
+                          value={simNumTrades}
+                          onChange={(e) => setSimNumTrades(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") runSimulation();
+                          }}
+                          placeholder="40"
+                          inputMode="numeric"
+                          className="h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB] focus-visible:ring-0 focus-visible:border-[#00E676]/40"
+                        />
+                      </div>
+                      {/* Min confidence */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">
+                          Min confidence
+                        </label>
+                        <Input
+                          value={simMinConfidence}
+                          onChange={(e) => setSimMinConfidence(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") runSimulation();
+                          }}
+                          placeholder="0"
+                          inputMode="numeric"
+                          className="h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB] focus-visible:ring-0 focus-visible:border-[#00E676]/40"
+                        />
+                      </div>
+                      {/* Direction toggle */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">
+                          Direction
+                        </label>
+                        <div className="flex bg-[#0A0E1A] border border-white/[0.08] rounded-md overflow-hidden">
+                          {(["BOTH", "LONG", "SHORT"] as const).map((d) => (
+                            <button
+                              key={d}
+                              type="button"
+                              onClick={() => setSimDirection(d)}
+                              aria-pressed={simDirection === d}
+                              className={`flex-1 px-1.5 py-2 text-[10px] font-semibold uppercase tracking-wide transition-colors ${
+                                simDirection === d
+                                  ? "bg-[#00E676]/15 text-[#00E676]"
+                                  : "text-[#64748B] hover:text-[#94A3B8]"
+                              }`}
+                            >
+                              {d === "BOTH" ? "Both" : d === "LONG" ? "Long" : "Short"}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Action row */}
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
                       <Button
                         onClick={runSimulation}
+                        disabled={simLoading}
                         className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold h-9"
                       >
-                        <Play className="h-3.5 w-3.5 mr-1.5" />
-                        Simulate
+                        {simLoading ? (
+                          <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                        ) : (
+                          <Play className="h-3.5 w-3.5 mr-1.5" />
+                        )}
+                        {simLoading ? "Simulating…" : "Simulate"}
                       </Button>
                       {simResult && (
                         <Button
@@ -703,7 +808,14 @@ export function Tracker() {
                         </Button>
                       )}
                       <div className="text-[10px] text-[#64748B] ml-auto self-center">
-                        {stockSignals.length} trades · compounded
+                        {simDirection === "BOTH"
+                          ? "Buy + Sell"
+                          : simDirection === "LONG"
+                            ? "Long (BUY) only"
+                            : "Short (SELL) only"}
+                        {parseFloat(simMinConfidence) > 0
+                          ? ` · confidence ≥ ${simMinConfidence}`
+                          : ""} · consecutive monthly · compounded
                       </div>
                     </div>
 
@@ -715,7 +827,7 @@ export function Tracker() {
                             If you invested{" "}
                             <span className="font-mono font-bold text-[#00E676]">{fmtPkr(simResult.initialAmount)}</span>{" "}
                             across{" "}
-                            <span className="font-mono font-bold text-[#F4F7FB]">{simResult.rows.length} trades</span>, your
+                            <span className="font-mono font-bold text-[#F4F7FB]">{simResult.tradeCount} trades</span>, your
                             final amount would be{" "}
                             <span className={`font-mono font-bold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
                               {fmtPkr(simResult.finalAmount)}
@@ -735,6 +847,12 @@ export function Tracker() {
                               </span>
                             </span>
                             <span className="text-[#94A3B8]">
+                              Total SIP: <span className="font-mono font-semibold text-[#FBBF24]">+{fmtPkr(simResult.totalSip)}</span>
+                            </span>
+                            <span className="text-[#94A3B8]">
+                              Total invested: <span className="font-mono font-semibold text-[#F4F7FB]">{fmtPkr(simResult.totalInvested)}</span>
+                            </span>
+                            <span className="text-[#94A3B8]">
                               Wins: <span className="font-mono text-[#00E676]">{simResult.wins}</span>
                             </span>
                             <span className="text-[#94A3B8]">
@@ -743,9 +861,9 @@ export function Tracker() {
                             <span className="text-[#94A3B8]">
                               Win rate:{" "}
                               <span className="font-mono text-[#F4F7FB]">
-                                {simResult.rows.length > 0
-                                  ? ((simResult.wins / simResult.rows.length) * 100).toFixed(1)
-                                  : 0}
+                                {simResult.wins + simResult.losses > 0
+                                  ? ((simResult.wins / (simResult.wins + simResult.losses)) * 100).toFixed(1)
+                                  : "0.0"}
                                 %
                               </span>
                             </span>
@@ -767,32 +885,57 @@ export function Tracker() {
                               </tr>
                             </thead>
                             <tbody>
-                              {simResult.rows.map((r) => (
-                                <tr key={r.tradeNo} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
-                                  <td className="py-2 px-3 font-mono text-[#64748B]">{r.tradeNo}</td>
-                                  <td className="py-2 px-3 font-mono font-semibold text-[#F4F7FB]">{r.symbol}</td>
-                                  <td className="py-2 px-3">
-                                    <Badge
-                                      variant="outline"
-                                      className={`text-[9px] py-0 h-4 ${r.side === "BUY" ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}
-                                    >
-                                      {r.side}
-                                    </Badge>
-                                  </td>
-                                  <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">
-                                    {fmtPkr(r.entryAmount)}
-                                  </td>
-                                  <td className={`py-2 px-3 text-right font-mono font-semibold ${r.returnPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
-                                    {fmtPct(r.returnPct, true)}
-                                  </td>
-                                  <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
-                                    {r.pnl >= 0 ? "+" : ""}{fmtPkr(r.pnl)}
-                                  </td>
-                                  <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
-                                    {fmtPkr(r.exitAmount)}
-                                  </td>
-                                </tr>
-                              ))}
+                              {simResult.rows.map((r) =>
+                                r.type === "SIP" ? (
+                                  <tr key={`sip-${r.tradeNo}`} className="border-b border-white/[0.04] bg-[#FBBF24]/[0.05]">
+                                    <td className="py-2 px-3 font-mono text-[#64748B]">{r.tradeNo}</td>
+                                    <td className="py-2 px-3 font-mono font-semibold text-[#FBBF24]">
+                                      Month {r.month} deposit
+                                    </td>
+                                    <td className="py-2 px-3">
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]"
+                                      >
+                                        SIP
+                                      </Badge>
+                                    </td>
+                                    <td className="py-2 px-3 text-right font-mono text-[#FBBF24]">
+                                      +{fmtPkr(r.entryAmount)}
+                                    </td>
+                                    <td className="py-2 px-3 text-right font-mono text-[#64748B]">—</td>
+                                    <td className="py-2 px-3 text-right font-mono text-[#64748B]">—</td>
+                                    <td className="py-2 px-3 text-right font-mono text-[#FBBF24]">
+                                      +{fmtPkr(r.exitAmount)}
+                                    </td>
+                                  </tr>
+                                ) : (
+                                  <tr key={r.tradeNo} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                                    <td className="py-2 px-3 font-mono text-[#64748B]">{r.tradeNo}</td>
+                                    <td className="py-2 px-3 font-mono font-semibold text-[#F4F7FB]">{r.symbol}</td>
+                                    <td className="py-2 px-3">
+                                      <Badge
+                                        variant="outline"
+                                        className={`text-[9px] py-0 h-4 ${r.side === "BUY" ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}
+                                      >
+                                        {r.side}
+                                      </Badge>
+                                    </td>
+                                    <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">
+                                      {fmtPkr(r.entryAmount)}
+                                    </td>
+                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.returnPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                      {fmtPct(r.returnPct, true)}
+                                    </td>
+                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                      {r.pnl >= 0 ? "+" : ""}{fmtPkr(r.pnl)}
+                                    </td>
+                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                      {fmtPkr(r.exitAmount)}
+                                    </td>
+                                  </tr>
+                                )
+                              )}
                             </tbody>
                           </table>
                         </div>
