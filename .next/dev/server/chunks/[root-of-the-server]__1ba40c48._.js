@@ -256,6 +256,8 @@ __turbopack_context__.s([
     ()=>ALL_MODELS,
     "TIER_WEIGHTS",
     ()=>TIER_WEIGHTS,
+    "clampConfidence",
+    ()=>clampConfidence,
     "computeFinalConsensus",
     ()=>computeFinalConsensus,
     "majorityVoteEnsemble",
@@ -716,6 +718,10 @@ const TIER_WEIGHTS = {
 function avg(arr, fallback = 0) {
     return arr.length > 0 ? arr.reduce((s, v)=>s + v, 0) / arr.length : fallback;
 }
+function clampConfidence(v) {
+    if (!Number.isFinite(v)) return 0;
+    return Math.min(100, Math.max(0, Math.round(v)));
+}
 function emptyEnsemble(method, label) {
     return {
         method,
@@ -801,9 +807,9 @@ function probabilityWeightedEnsemble(preds) {
         methodLabel: "B. Probability-Weighted",
         signal,
         direction,
-        // Issue 40: cap confidence at 100 (was Math.round(Math.abs(avgRet) * 1000)
-        // which exceeds 100 when avgReturn > 10%). Now: 0-100.
-        confidence: Math.min(100, Math.round(Math.abs(avgRet) * 1000)),
+        // avgReturn is a decimal fraction (0.28 = 28%); scale to 0-100 and CLAMP
+        // so confidence can never exceed 100 (issue: STL showed 281/100).
+        confidence: clampConfidence(Math.abs(avgRet) * 1000),
         predictedPrice: avg([
             ...tp1s,
             ...tp2s,
@@ -849,9 +855,8 @@ function tierWeightedEnsemble(preds) {
         methodLabel: "C. Tier-Weighted",
         signal,
         direction,
-        // Issue 40: cap confidence at 100 (was Math.round(Math.abs(wr) * 1000)
-        // which exceeds 100 when weighted-avgReturn > 10%). Now: 0-100.
-        confidence: Math.min(100, Math.round(Math.abs(wr) * 1000)),
+        // Same clamp as Probability-Weighted — keeps confidence in 0-100.
+        confidence: clampConfidence(Math.abs(wr) * 1000),
         predictedPrice: avg([
             ...tp1s,
             ...tp2s,
@@ -886,7 +891,8 @@ function computeFinalConsensus(ens) {
     return {
         signal,
         direction,
-        confidence: ens.length > 0 ? Math.round(ens.reduce((s, e)=>s + e.confidence, 0) / ens.length) : 0,
+        // Final safety clamp — the consensus confidence is always 0-100.
+        confidence: ens.length > 0 ? clampConfidence(ens.reduce((s, e)=>s + e.confidence, 0) / ens.length) : 0,
         agreement: Math.round(Math.max(buyV, sellV, holdV) / ens.length * 100),
         predictedPriceRange: {
             min: predictedPrices.length ? Math.min(...predictedPrices) : entry,
@@ -1327,9 +1333,7 @@ function buildSignalList(multi) {
             stockName: symbol,
             signal: fc.signal,
             direction: fc.direction === "SHORT" ? "SHORT" : "LONG",
-            // Issue 40: cap confidence at 100 (defensive — should already be ≤ 100
-            // since each ensemble's confidence is now capped in ensemble.ts).
-            confidence: Math.min(100, Math.max(0, fc.confidence)),
+            confidence: fc.confidence,
             currentPrice,
             entry,
             sl,

@@ -4,7 +4,9 @@
 
 __turbopack_context__.s([
     "PatternFinder",
-    ()=>PatternFinder
+    ()=>PatternFinder,
+    "StockDeepDive",
+    ()=>StockDeepDive
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
@@ -13,6 +15,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$b
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/badge.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/skeleton.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tooltip$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/tooltip.tsx [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/AppNav.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/StockSearch.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$mock$2d$company$2d$results$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/latent/mock-company-results.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$mock$2d$stocks$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/latent/mock-stocks.ts [app-client] (ecmascript)");
@@ -31,6 +34,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$di
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -107,273 +111,287 @@ function PatternFinder() {
     const refresh = ()=>{
         if (selectedSymbol) handleSelect(selectedSymbol);
     };
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-        className: "px-4 md:px-6 py-6 max-w-6xl mx-auto",
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "min-h-screen bg-[#0A0E1A]",
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center justify-between mb-6 flex-wrap gap-3",
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AppNav"], {}, void 0, false, {
+                fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                lineNumber: 101,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
+                className: "px-4 md:px-6 py-6 max-w-6xl mx-auto",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center justify-between mb-6 flex-wrap gap-3",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                className: "text-2xl font-bold text-[#F4F7FB]",
-                                children: "Pattern Finder"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                        className: "text-2xl font-bold text-[#F4F7FB]",
+                                        children: "Pattern Finder"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                        lineNumber: 106,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-sm text-[#94A3B8] mt-1",
+                                        children: "Discover earnings, dividend, and margin patterns in quarterly results — explained in plain English."
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                        lineNumber: 107,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 103,
-                                columnNumber: 13
+                                lineNumber: 105,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: "text-sm text-[#94A3B8] mt-1",
-                                children: "Discover earnings, dividend, and margin patterns in quarterly results — explained in plain English."
-                            }, void 0, false, {
+                            selectedSymbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                variant: "outline",
+                                size: "sm",
+                                onClick: refresh,
+                                disabled: loading,
+                                className: "border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB]",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
+                                        className: `h-3.5 w-3.5 mr-1.5 ${loading ? "animate-spin" : ""}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                        lineNumber: 119,
+                                        columnNumber: 15
+                                    }, this),
+                                    "Refresh"
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 104,
+                                lineNumber: 112,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 102,
-                        columnNumber: 11
+                        lineNumber: 104,
+                        columnNumber: 9
                     }, this),
-                    selectedSymbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
-                        variant: "outline",
-                        size: "sm",
-                        onClick: refresh,
-                        disabled: loading,
-                        className: "border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB]",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
-                                className: `h-3.5 w-3.5 mr-1.5 ${loading ? "animate-spin" : ""}`
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 116,
-                                columnNumber: 15
-                            }, this),
-                            "Refresh"
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 109,
-                        columnNumber: 13
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 101,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
-                className: "bg-[#131829] border-white/[0.08] mb-4",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
-                    className: "p-4",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex items-center gap-2 mb-2",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
+                        className: "bg-[#131829] border-white/[0.08] mb-4",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
+                            className: "p-4",
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Search$3e$__["Search"], {
-                                    className: "h-4 w-4 text-[#00E676]"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 126,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "text-sm font-semibold text-[#F4F7FB]",
-                                    children: "Search any PSX-listed company"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 127,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
-                                    variant: "outline",
-                                    className: "text-[9px] border-[#00E676]/40 text-[#00E676] ml-auto",
-                                    children: "1000+ stocks"
-                                }, void 0, false, {
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center gap-2 mb-2",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Search$3e$__["Search"], {
+                                            className: "h-4 w-4 text-[#00E676]"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                            lineNumber: 129,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "text-sm font-semibold text-[#F4F7FB]",
+                                            children: "Search any PSX-listed company"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                            lineNumber: 130,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
+                                            variant: "outline",
+                                            className: "text-[9px] border-[#00E676]/40 text-[#00E676] ml-auto",
+                                            children: "1000+ stocks"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                            lineNumber: 131,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
                                     lineNumber: 128,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StockSearch"], {
+                                    value: selectedSymbol || "",
+                                    onChange: handleSelect,
+                                    placeholder: "Search by symbol or name — e.g. ENGRO, Hub Power, Systems...",
+                                    className: "w-full"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                    lineNumber: 135,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "text-[10px] text-[#64748B] mt-2 flex items-center gap-1.5 flex-wrap",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: "Quick try:"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                            lineNumber: 142,
+                                            columnNumber: 15
+                                        }, this),
+                                        POPULAR_SUGGESTIONS.map((s)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>handleSelect(s),
+                                                className: "font-mono text-[10px] text-[#94A3B8] hover:text-[#00E676] underline-offset-2 hover:underline",
+                                                children: s
+                                            }, s, false, {
+                                                fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                                lineNumber: 144,
+                                                columnNumber: 17
+                                            }, this))
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                    lineNumber: 141,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                            lineNumber: 127,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                        lineNumber: 126,
+                        columnNumber: 9
+                    }, this),
+                    loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
+                        className: "bg-[#131829] border-white/[0.08]",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
+                            className: "p-6 space-y-4",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center gap-2 text-sm text-[#94A3B8]",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
+                                            className: "h-4 w-4 animate-spin text-[#00E676]"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                            lineNumber: 161,
+                                            columnNumber: 17
+                                        }, this),
+                                        "Fetching quarterly results for ",
+                                        selectedSymbol,
+                                        "..."
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                    lineNumber: 160,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "grid grid-cols-2 md:grid-cols-4 gap-3",
+                                    children: Array.from({
+                                        length: 8
+                                    }).map((_, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
+                                            className: "h-16 bg-white/[0.04]"
+                                        }, i, false, {
+                                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                            lineNumber: 166,
+                                            columnNumber: 19
+                                        }, this))
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                    lineNumber: 164,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
+                                    className: "h-64 w-full bg-white/[0.04]"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                    lineNumber: 169,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 125,
+                            lineNumber: 159,
                             columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StockSearch"], {
-                            value: selectedSymbol || "",
-                            onChange: handleSelect,
-                            placeholder: "Search by symbol or name — e.g. ENGRO, Hub Power, Systems...",
-                            className: "w-full"
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 132,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "text-[10px] text-[#64748B] mt-2 flex items-center gap-1.5 flex-wrap",
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                        lineNumber: 158,
+                        columnNumber: 11
+                    }, this),
+                    !loading && error && results.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
+                        className: "bg-[#131829] border-white/[0.08]",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
+                            className: "p-6 text-center",
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    children: "Quick try:"
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__["AlertTriangle"], {
+                                    className: "h-8 w-8 text-[#FF5C5C] mx-auto mb-2"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 139,
+                                    lineNumber: 178,
                                     columnNumber: 15
                                 }, this),
-                                POPULAR_SUGGESTIONS.map((s)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        onClick: ()=>handleSelect(s),
-                                        className: "font-mono text-[10px] text-[#94A3B8] hover:text-[#00E676] underline-offset-2 hover:underline",
-                                        children: s
-                                    }, s, false, {
-                                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 141,
-                                        columnNumber: 17
-                                    }, this))
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 138,
-                            columnNumber: 13
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                    lineNumber: 124,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 123,
-                columnNumber: 9
-            }, this),
-            loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
-                className: "bg-[#131829] border-white/[0.08]",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
-                    className: "p-6 space-y-4",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex items-center gap-2 text-sm text-[#94A3B8]",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
-                                    className: "h-4 w-4 animate-spin text-[#00E676]"
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-sm font-semibold text-[#F4F7FB] mb-1",
+                                    children: "Could not load results"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 158,
-                                    columnNumber: 17
+                                    lineNumber: 179,
+                                    columnNumber: 15
                                 }, this),
-                                "Fetching quarterly results for ",
-                                selectedSymbol,
-                                "..."
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-xs text-[#64748B] max-w-md mx-auto",
+                                    children: error
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                    lineNumber: 180,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-[10px] text-[#64748B] mt-2",
+                                    children: "The askanalyst.com.pk upstream may be rate-limited. Try again or pick another stock."
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                                    lineNumber: 181,
+                                    columnNumber: 15
+                                }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 157,
-                            columnNumber: 15
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "grid grid-cols-2 md:grid-cols-4 gap-3",
-                            children: Array.from({
-                                length: 8
-                            }).map((_, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
-                                    className: "h-16 bg-white/[0.04]"
-                                }, i, false, {
-                                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 163,
-                                    columnNumber: 19
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 161,
-                            columnNumber: 15
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
-                            className: "h-64 w-full bg-white/[0.04]"
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 166,
-                            columnNumber: 15
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                    lineNumber: 156,
-                    columnNumber: 13
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 155,
-                columnNumber: 11
-            }, this),
-            !loading && error && results.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
-                className: "bg-[#131829] border-white/[0.08]",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
-                    className: "p-6 text-center",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__["AlertTriangle"], {
-                            className: "h-8 w-8 text-[#FF5C5C] mx-auto mb-2"
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 175,
-                            columnNumber: 15
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-sm font-semibold text-[#F4F7FB] mb-1",
-                            children: "Could not load results"
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 176,
-                            columnNumber: 15
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-xs text-[#64748B] max-w-md mx-auto",
-                            children: error
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
                             lineNumber: 177,
-                            columnNumber: 15
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-[10px] text-[#64748B] mt-2",
-                            children: "The askanalyst.com.pk upstream may be rate-limited. Try again or pick another stock."
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 178,
-                            columnNumber: 15
+                            columnNumber: 13
                         }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                    lineNumber: 174,
-                    columnNumber: 13
-                }, this)
-            }, void 0, false, {
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                        lineNumber: 176,
+                        columnNumber: 11
+                    }, this),
+                    !loading && !error && results.length > 0 && selectedSymbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(StockDeepDive, {
+                        results: results,
+                        symbol: selectedSymbol,
+                        company: company,
+                        onBack: ()=>handleSelect("")
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                        lineNumber: 190,
+                        columnNumber: 11
+                    }, this),
+                    !loading && !selectedSymbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
+                        onPickSymbol: handleSelect
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/latent/PatternFinder.tsx",
+                        lineNumber: 199,
+                        columnNumber: 41
+                    }, this)
+                ]
+            }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 173,
-                columnNumber: 11
-            }, this),
-            !loading && !error && results.length > 0 && selectedSymbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(StockDeepDive, {
-                results: results,
-                symbol: selectedSymbol,
-                company: company,
-                onBack: ()=>handleSelect("")
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 187,
-                columnNumber: 11
-            }, this),
-            !loading && !selectedSymbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
-                onPickSymbol: handleSelect
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 196,
-                columnNumber: 41
+                lineNumber: 102,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 99,
+        lineNumber: 100,
         columnNumber: 5
     }, this);
 }
@@ -394,12 +412,12 @@ function EmptyState({ onPickSymbol }) {
                             className: "h-5 w-5 text-[#00E676]"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 210,
+                            lineNumber: 214,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 209,
+                        lineNumber: 213,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -407,7 +425,7 @@ function EmptyState({ onPickSymbol }) {
                         children: "Search any stock above"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 212,
+                        lineNumber: 216,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -415,7 +433,7 @@ function EmptyState({ onPickSymbol }) {
                         children: "Pick any of 361 PSX-listed companies to see quarterly patterns, seasonality, growth rates, dividend trends, and margin trajectory — all explained in plain English."
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 213,
+                        lineNumber: 217,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -429,7 +447,7 @@ function EmptyState({ onPickSymbol }) {
                                         children: s.symbol
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 224,
+                                        lineNumber: 228,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -437,7 +455,7 @@ function EmptyState({ onPickSymbol }) {
                                         children: s.name
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 225,
+                                        lineNumber: 229,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -445,18 +463,18 @@ function EmptyState({ onPickSymbol }) {
                                         children: s.sector
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 226,
+                                        lineNumber: 230,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, s.symbol, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 219,
+                                lineNumber: 223,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 217,
+                        lineNumber: 221,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -464,13 +482,13 @@ function EmptyState({ onPickSymbol }) {
                         children: "Data fetched on-demand from askanalyst.com.pk income-statement endpoint."
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 230,
+                        lineNumber: 234,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 208,
+                lineNumber: 212,
                 columnNumber: 11
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "space-y-3",
@@ -483,7 +501,7 @@ function EmptyState({ onPickSymbol }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 236,
+                        lineNumber: 240,
                         columnNumber: 13
                     }, this),
                     groups.map((g)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -498,7 +516,7 @@ function EmptyState({ onPickSymbol }) {
                                             children: g.symbol
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                            lineNumber: 246,
+                                            lineNumber: 250,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -506,7 +524,7 @@ function EmptyState({ onPickSymbol }) {
                                             children: g.company
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                            lineNumber: 247,
+                                            lineNumber: 251,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -518,13 +536,13 @@ function EmptyState({ onPickSymbol }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                            lineNumber: 248,
+                                            lineNumber: 252,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 245,
+                                    lineNumber: 249,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -535,34 +553,34 @@ function EmptyState({ onPickSymbol }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 252,
+                                    lineNumber: 256,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, g.symbol, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 240,
+                            lineNumber: 244,
                             columnNumber: 15
                         }, this))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 235,
+                lineNumber: 239,
                 columnNumber: 11
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-            lineNumber: 206,
+            lineNumber: 210,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 205,
+        lineNumber: 209,
         columnNumber: 5
     }, this);
 }
 _c1 = EmptyState;
-function StockDeepDive({ results, symbol, company, onBack }) {
+function StockDeepDive({ results, symbol, company, onBack, hideBack }) {
     const patterns = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$mock$2d$company$2d$results$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["detectPatterns"])(results);
     const quarters = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$mock$2d$company$2d$results$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["generateQuarterlySummary"])(results, symbol);
     const yearsBetween = results.length >= 2 ? (new Date(results[results.length - 1].periodEnd).getTime() - new Date(results[0].periodEnd).getTime()) / (365 * 24 * 60 * 60 * 1000) : 0;
@@ -641,7 +659,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-start gap-3",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                            !hideBack && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                 variant: "outline",
                                 size: "sm",
                                 onClick: onBack,
@@ -651,15 +669,15 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                         className: "h-3.5 w-3.5 mr-1.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 318,
-                                        columnNumber: 15
+                                        lineNumber: 325,
+                                        columnNumber: 17
                                     }, this),
                                     " Back"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 312,
-                                columnNumber: 13
+                                lineNumber: 319,
+                                columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex-1 min-w-0",
@@ -672,7 +690,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                 children: symbol
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                lineNumber: 322,
+                                                lineNumber: 330,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -680,13 +698,13 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                 children: company
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                lineNumber: 323,
+                                                lineNumber: 331,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 321,
+                                        lineNumber: 329,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -709,29 +727,29 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 325,
+                                        lineNumber: 333,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 320,
+                                lineNumber: 328,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 311,
+                        lineNumber: 317,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                    lineNumber: 310,
+                    lineNumber: 316,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 309,
+                lineNumber: 315,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -744,12 +762,12 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                         explanation: s.explanation
                     }, i, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 338,
+                        lineNumber: 346,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 336,
+                lineNumber: 344,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -763,19 +781,19 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 346,
+                                    lineNumber: 354,
                                     columnNumber: 13
                                 }, this),
                                 "Revenue · Profit · EPS trend (normalized 0–100)"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 345,
+                            lineNumber: 353,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 344,
+                        lineNumber: 352,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -783,18 +801,18 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                             results: results
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 351,
+                            lineNumber: 359,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 350,
+                        lineNumber: 358,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 343,
+                lineNumber: 351,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -808,19 +826,19 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 359,
+                                    lineNumber: 367,
                                     columnNumber: 13
                                 }, this),
                                 "Quarterly seasonal pattern"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 358,
+                            lineNumber: 366,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 357,
+                        lineNumber: 365,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -829,7 +847,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                             children: "Need at least 4 quarters (ideally spanning multiple FYs) to compute seasonality."
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 365,
+                            lineNumber: 373,
                             columnNumber: 13
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3",
@@ -837,23 +855,23 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     q: q
                                 }, q.quarter, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 371,
+                                    lineNumber: 379,
                                     columnNumber: 17
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 369,
+                            lineNumber: 377,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 363,
+                        lineNumber: 371,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 356,
+                lineNumber: 364,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -867,19 +885,19 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 382,
+                                    lineNumber: 390,
                                     columnNumber: 13
                                 }, this),
                                 "Revenue by quarter (PKR, color-coded by FY)"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 381,
+                            lineNumber: 389,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 380,
+                        lineNumber: 388,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -887,18 +905,18 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                             results: results
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 387,
+                            lineNumber: 395,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 386,
+                        lineNumber: 394,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 379,
+                lineNumber: 387,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -912,19 +930,19 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 395,
+                                    lineNumber: 403,
                                     columnNumber: 13
                                 }, this),
                                 "EPS bars + net margin overlay"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 394,
+                            lineNumber: 402,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 393,
+                        lineNumber: 401,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -932,18 +950,18 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                             results: results
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 400,
+                            lineNumber: 408,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 399,
+                        lineNumber: 407,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 392,
+                lineNumber: 400,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -957,19 +975,19 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 408,
+                                    lineNumber: 416,
                                     columnNumber: 13
                                 }, this),
                                 "YoY growth — Revenue vs EPS"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 407,
+                            lineNumber: 415,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 406,
+                        lineNumber: 414,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -977,18 +995,18 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                             results: results
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 413,
+                            lineNumber: 421,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 412,
+                        lineNumber: 420,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 405,
+                lineNumber: 413,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1002,7 +1020,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 421,
+                                    lineNumber: 429,
                                     columnNumber: 13
                                 }, this),
                                 "Detected patterns (",
@@ -1024,7 +1042,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 432,
+                                                    lineNumber: 440,
                                                     columnNumber: 25
                                                 }, this),
                                                 bear > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1035,7 +1053,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 435,
+                                                    lineNumber: 443,
                                                     columnNumber: 25
                                                 }, this),
                                                 neutr > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1046,7 +1064,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 438,
+                                                    lineNumber: 446,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1054,7 +1072,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "·"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 440,
+                                                    lineNumber: 448,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1071,7 +1089,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 441,
+                                                    lineNumber: 449,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
@@ -1079,18 +1097,18 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     })()
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 424,
+                                    lineNumber: 432,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 420,
+                            lineNumber: 428,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 419,
+                        lineNumber: 427,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1099,7 +1117,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                             children: "No strong patterns detected yet — need more quarters or larger moves to trigger detection rules."
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 455,
+                            lineNumber: 463,
                             columnNumber: 13
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "space-y-2",
@@ -1107,23 +1125,23 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                     pattern: p
                                 }, i, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 461,
+                                    lineNumber: 469,
                                     columnNumber: 17
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 459,
+                            lineNumber: 467,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 453,
+                        lineNumber: 461,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 418,
+                lineNumber: 426,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1135,12 +1153,12 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                             children: "Full quarterly history"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 471,
+                            lineNumber: 479,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 470,
+                        lineNumber: 478,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1159,7 +1177,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "Period"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 478,
+                                                    lineNumber: 486,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1167,7 +1185,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "Revenue"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 479,
+                                                    lineNumber: 487,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1175,7 +1193,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "PAT"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 480,
+                                                    lineNumber: 488,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1183,7 +1201,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "EPS"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 481,
+                                                    lineNumber: 489,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1191,7 +1209,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "Rev YoY"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 482,
+                                                    lineNumber: 490,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1199,7 +1217,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "EPS YoY"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 483,
+                                                    lineNumber: 491,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1207,7 +1225,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "N. margin"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 484,
+                                                    lineNumber: 492,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1215,18 +1233,18 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                     children: "DPS"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                    lineNumber: 485,
+                                                    lineNumber: 493,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                            lineNumber: 477,
+                                            lineNumber: 485,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 476,
+                                        lineNumber: 484,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -1238,7 +1256,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         children: r.period
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 491,
+                                                        lineNumber: 499,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1246,7 +1264,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         children: fmtNum(r.metrics.revenue)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 492,
+                                                        lineNumber: 500,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1254,7 +1272,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         children: fmtNum(r.metrics.profitAfterTax)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 493,
+                                                        lineNumber: 501,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1262,7 +1280,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         children: r.metrics.eps.toFixed(2)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 494,
+                                                        lineNumber: 502,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1274,7 +1292,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 495,
+                                                        lineNumber: 503,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1286,7 +1304,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 503,
+                                                        lineNumber: 511,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1297,7 +1315,7 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 511,
+                                                        lineNumber: 519,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1305,46 +1323,46 @@ function StockDeepDive({ results, symbol, company, onBack }) {
                                                         children: r.metrics.dividendPerShare.toFixed(2)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                        lineNumber: 512,
+                                                        lineNumber: 520,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, i, true, {
                                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                                lineNumber: 490,
+                                                lineNumber: 498,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 488,
+                                        lineNumber: 496,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 475,
+                                lineNumber: 483,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 474,
+                            lineNumber: 482,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 473,
+                        lineNumber: 481,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 469,
+                lineNumber: 477,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 307,
+        lineNumber: 313,
         columnNumber: 5
     }, this);
 }
@@ -1364,7 +1382,7 @@ function SummaryStat({ label, value, sub, tone = "neutral", explanation }) {
                             children: label
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 543,
+                            lineNumber: 551,
                             columnNumber: 11
                         }, this),
                         explanation && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tooltip$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Tooltip"], {
@@ -1379,17 +1397,17 @@ function SummaryStat({ label, value, sub, tone = "neutral", explanation }) {
                                             className: "h-3 w-3"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                            lineNumber: 552,
+                                            lineNumber: 560,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                        lineNumber: 547,
+                                        lineNumber: 555,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 546,
+                                    lineNumber: 554,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tooltip$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TooltipContent"], {
@@ -1398,19 +1416,19 @@ function SummaryStat({ label, value, sub, tone = "neutral", explanation }) {
                                     children: explanation
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 555,
+                                    lineNumber: 563,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 545,
+                            lineNumber: 553,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                    lineNumber: 542,
+                    lineNumber: 550,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1418,7 +1436,7 @@ function SummaryStat({ label, value, sub, tone = "neutral", explanation }) {
                     children: value
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                    lineNumber: 564,
+                    lineNumber: 572,
                     columnNumber: 9
                 }, this),
                 sub && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1426,18 +1444,18 @@ function SummaryStat({ label, value, sub, tone = "neutral", explanation }) {
                     children: sub
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                    lineNumber: 565,
+                    lineNumber: 573,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-            lineNumber: 541,
+            lineNumber: 549,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 540,
+        lineNumber: 548,
         columnNumber: 5
     }, this);
 }
@@ -1456,7 +1474,7 @@ function QuarterSummaryCard({ q }) {
                         children: q.quarterLabel
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 578,
+                        lineNumber: 586,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1465,13 +1483,13 @@ function QuarterSummaryCard({ q }) {
                         children: q.monthsLabel
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 579,
+                        lineNumber: 587,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 577,
+                lineNumber: 585,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1479,7 +1497,7 @@ function QuarterSummaryCard({ q }) {
                 children: q.summary
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 583,
+                lineNumber: 591,
                 columnNumber: 7
             }, this),
             q.causeSummary && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1489,7 +1507,7 @@ function QuarterSummaryCard({ q }) {
                         className: "h-3 w-3 mt-0.5 shrink-0"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 586,
+                        lineNumber: 594,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1499,20 +1517,20 @@ function QuarterSummaryCard({ q }) {
                                 children: "Why this happens: "
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 588,
+                                lineNumber: 596,
                                 columnNumber: 13
                             }, this),
                             q.causeSummary
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 587,
+                        lineNumber: 595,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 585,
+                lineNumber: 593,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1530,13 +1548,13 @@ function QuarterSummaryCard({ q }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 595,
+                                lineNumber: 603,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 594,
+                        lineNumber: 602,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1551,25 +1569,25 @@ function QuarterSummaryCard({ q }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 598,
+                                lineNumber: 606,
                                 columnNumber: 18
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 597,
+                        lineNumber: 605,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 593,
+                lineNumber: 601,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 576,
+        lineNumber: 584,
         columnNumber: 5
     }, this);
 }
@@ -1581,19 +1599,19 @@ function PatternRow({ pattern }) {
         className: "h-3.5 w-3.5 text-[#00E676]"
     }, void 0, false, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 609,
+        lineNumber: 617,
         columnNumber: 5
     }, this) : isNegative ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__["AlertTriangle"], {
         className: "h-3.5 w-3.5 text-[#FF5C5C]"
     }, void 0, false, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 611,
+        lineNumber: 619,
         columnNumber: 5
     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$info$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Info$3e$__["Info"], {
         className: "h-3.5 w-3.5 text-[#94A3B8]"
     }, void 0, false, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 613,
+        lineNumber: 621,
         columnNumber: 5
     }, this);
     const sevClass = isPositive ? "border-[#00E676]/30 text-[#00E676] bg-[#00E676]/[0.06]" : isNegative ? "border-[#FF5C5C]/30 text-[#FF5C5C] bg-[#FF5C5C]/[0.06]" : "border-white/[0.08] text-[#94A3B8] bg-white/[0.02]";
@@ -1623,13 +1641,13 @@ function PatternRow({ pattern }) {
                                 children: pattern.label
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 652,
+                                lineNumber: 660,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 650,
+                        lineNumber: 658,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1641,7 +1659,7 @@ function PatternRow({ pattern }) {
                                 children: strength
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 656,
+                                lineNumber: 664,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1650,19 +1668,19 @@ function PatternRow({ pattern }) {
                                 children: isPositive ? "bullish" : isNegative ? "bearish" : "neutral"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 660,
+                                lineNumber: 668,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 654,
+                        lineNumber: 662,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 649,
+                lineNumber: 657,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1670,7 +1688,7 @@ function PatternRow({ pattern }) {
                 children: pattern.detail
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 667,
+                lineNumber: 675,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1686,12 +1704,12 @@ function PatternRow({ pattern }) {
                             }
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 670,
+                            lineNumber: 678,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 669,
+                        lineNumber: 677,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1702,13 +1720,13 @@ function PatternRow({ pattern }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 675,
+                        lineNumber: 683,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 668,
+                lineNumber: 676,
                 columnNumber: 7
             }, this),
             pattern.supportingData && pattern.supportingData.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1721,7 +1739,7 @@ function PatternRow({ pattern }) {
                                 children: d.label
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 683,
+                                lineNumber: 691,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1730,18 +1748,18 @@ function PatternRow({ pattern }) {
                                 children: d.value
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 684,
+                                lineNumber: 692,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, i, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 682,
+                        lineNumber: 690,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 680,
+                lineNumber: 688,
                 columnNumber: 9
             }, this),
             pattern.laymanSummary && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1751,7 +1769,7 @@ function PatternRow({ pattern }) {
                         className: "h-3.5 w-3.5 mt-0.5 shrink-0 text-[#00E676]"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 692,
+                        lineNumber: 700,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1761,7 +1779,7 @@ function PatternRow({ pattern }) {
                                 children: "In plain English"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 694,
+                                lineNumber: 702,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1769,19 +1787,19 @@ function PatternRow({ pattern }) {
                                 children: pattern.laymanSummary
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 697,
+                                lineNumber: 705,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 693,
+                        lineNumber: 701,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 691,
+                lineNumber: 699,
                 columnNumber: 9
             }, this),
             pattern.affectedQuarters.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1792,7 +1810,7 @@ function PatternRow({ pattern }) {
                         children: "Triggered:"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 703,
+                        lineNumber: 711,
                         columnNumber: 11
                     }, this),
                     pattern.affectedQuarters.map((q, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1801,19 +1819,19 @@ function PatternRow({ pattern }) {
                             children: q
                         }, i, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 705,
+                            lineNumber: 713,
                             columnNumber: 13
                         }, this))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 702,
+                lineNumber: 710,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 648,
+        lineNumber: 656,
         columnNumber: 5
     }, this);
 }
@@ -1882,7 +1900,7 @@ function MultiLineChart({ results }) {
                                     stopOpacity: "0.25"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 770,
+                                    lineNumber: 778,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
@@ -1891,18 +1909,18 @@ function MultiLineChart({ results }) {
                                     stopOpacity: "0"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 771,
+                                    lineNumber: 779,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 769,
+                            lineNumber: 777,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 768,
+                        lineNumber: 776,
                         columnNumber: 9
                     }, this),
                     gridLines.map((y, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1915,7 +1933,7 @@ function MultiLineChart({ results }) {
                             strokeDasharray: "2 4"
                         }, i, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 776,
+                            lineNumber: 784,
                             columnNumber: 11
                         }, this)),
                     results.map((r, i)=>i % labelStep === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("text", {
@@ -1928,7 +1946,7 @@ function MultiLineChart({ results }) {
                             children: r.period
                         }, i, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 790,
+                            lineNumber: 798,
                             columnNumber: 13
                         }, this) : null),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -1936,7 +1954,7 @@ function MultiLineChart({ results }) {
                         fill: "url(#revFill)"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 804,
+                        lineNumber: 812,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -1946,7 +1964,7 @@ function MultiLineChart({ results }) {
                         strokeWidth: "2"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 806,
+                        lineNumber: 814,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -1957,7 +1975,7 @@ function MultiLineChart({ results }) {
                         strokeDasharray: "6 4"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 808,
+                        lineNumber: 816,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -1968,7 +1986,7 @@ function MultiLineChart({ results }) {
                         strokeDasharray: "2 3"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 810,
+                        lineNumber: 818,
                         columnNumber: 9
                     }, this),
                     revs.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -1978,7 +1996,7 @@ function MultiLineChart({ results }) {
                         fill: "#00E676"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 813,
+                        lineNumber: 821,
                         columnNumber: 11
                     }, this),
                     profits.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -1988,7 +2006,7 @@ function MultiLineChart({ results }) {
                         fill: "#3B82F6"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 816,
+                        lineNumber: 824,
                         columnNumber: 11
                     }, this),
                     epss.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -1998,13 +2016,13 @@ function MultiLineChart({ results }) {
                         fill: "#FBBF24"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 819,
+                        lineNumber: 827,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 767,
+                lineNumber: 775,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2017,14 +2035,14 @@ function MultiLineChart({ results }) {
                                 className: "h-0.5 w-4 bg-[#00E676] inline-block"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 825,
+                                lineNumber: 833,
                                 columnNumber: 11
                             }, this),
                             "Revenue (PKR)"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 824,
+                        lineNumber: 832,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2037,14 +2055,14 @@ function MultiLineChart({ results }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 829,
+                                lineNumber: 837,
                                 columnNumber: 11
                             }, this),
                             "Profit after tax (PKR)"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 828,
+                        lineNumber: 836,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2057,14 +2075,14 @@ function MultiLineChart({ results }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 833,
+                                lineNumber: 841,
                                 columnNumber: 11
                             }, this),
                             "EPS (PKR)"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 832,
+                        lineNumber: 840,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2072,19 +2090,19 @@ function MultiLineChart({ results }) {
                         children: "Each line scaled to its own min–max for trend comparison."
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 836,
+                        lineNumber: 844,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 823,
+                lineNumber: 831,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 766,
+        lineNumber: 774,
         columnNumber: 5
     }, this);
 }
@@ -2112,7 +2130,7 @@ function RevenueBars({ results }) {
                                 children: fmtNum(r.metrics.revenue)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 859,
+                                lineNumber: 867,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2127,12 +2145,12 @@ function RevenueBars({ results }) {
                                     title: `${r.period}: ${fmtNum(r.metrics.revenue)}`
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 861,
+                                    lineNumber: 869,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 860,
+                                lineNumber: 868,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2140,19 +2158,19 @@ function RevenueBars({ results }) {
                                 children: r.period
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 871,
+                                lineNumber: 879,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, i, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 858,
+                        lineNumber: 866,
                         columnNumber: 13
                     }, this);
                 })
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 853,
+                lineNumber: 861,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2167,7 +2185,7 @@ function RevenueBars({ results }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 882,
+                                lineNumber: 890,
                                 columnNumber: 13
                             }, this),
                             "FY",
@@ -2175,18 +2193,18 @@ function RevenueBars({ results }) {
                         ]
                     }, fy, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 881,
+                        lineNumber: 889,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 879,
+                lineNumber: 887,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 852,
+        lineNumber: 860,
         columnNumber: 5
     }, this);
 }
@@ -2234,7 +2252,7 @@ function EpsMarginChart({ results }) {
                             strokeDasharray: "2 4"
                         }, i, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 921,
+                            lineNumber: 929,
                             columnNumber: 11
                         }, this)),
                     results.map((r, i)=>{
@@ -2252,7 +2270,7 @@ function EpsMarginChart({ results }) {
                                     opacity: "0.85"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 939,
+                                    lineNumber: 947,
                                     columnNumber: 15
                                 }, this),
                                 i % labelStep === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("text", {
@@ -2265,13 +2283,13 @@ function EpsMarginChart({ results }) {
                                     children: r.period
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 948,
+                                    lineNumber: 956,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, i, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 938,
+                            lineNumber: 946,
                             columnNumber: 13
                         }, this);
                     }),
@@ -2282,7 +2300,7 @@ function EpsMarginChart({ results }) {
                         strokeWidth: "2"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 963,
+                        lineNumber: 971,
                         columnNumber: 9
                     }, this),
                     margins.map((m, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2292,13 +2310,13 @@ function EpsMarginChart({ results }) {
                             fill: "#FBBF24"
                         }, i, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 965,
+                            lineNumber: 973,
                             columnNumber: 11
                         }, this))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 918,
+                lineNumber: 926,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2311,14 +2329,14 @@ function EpsMarginChart({ results }) {
                                 className: "h-2.5 w-2.5 rounded-sm inline-block bg-[#00E676]"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 976,
+                                lineNumber: 984,
                                 columnNumber: 11
                             }, this),
                             "EPS (PKR, positive)"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 975,
+                        lineNumber: 983,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2328,14 +2346,14 @@ function EpsMarginChart({ results }) {
                                 className: "h-2.5 w-2.5 rounded-sm inline-block bg-[#FF5C5C]"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 980,
+                                lineNumber: 988,
                                 columnNumber: 11
                             }, this),
                             "EPS (loss)"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 979,
+                        lineNumber: 987,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2348,26 +2366,26 @@ function EpsMarginChart({ results }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 984,
+                                lineNumber: 992,
                                 columnNumber: 11
                             }, this),
                             "Net margin (%)"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 983,
+                        lineNumber: 991,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 974,
+                lineNumber: 982,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 917,
+        lineNumber: 925,
         columnNumber: 5
     }, this);
 }
@@ -2381,7 +2399,7 @@ function YoYGrowthChart({ results }) {
             children: "No YoY growth data available (need 4+ quarters)."
         }, void 0, false, {
             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-            lineNumber: 998,
+            lineNumber: 1006,
             columnNumber: 12
         }, this);
     }
@@ -2421,7 +2439,7 @@ function YoYGrowthChart({ results }) {
                         strokeWidth: "1"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 1025,
+                        lineNumber: 1033,
                         columnNumber: 9
                     }, this),
                     Array.from({
@@ -2436,7 +2454,7 @@ function YoYGrowthChart({ results }) {
                             strokeDasharray: "2 4"
                         }, i, false, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 1035,
+                            lineNumber: 1043,
                             columnNumber: 11
                         }, this)),
                     items.map((r, i)=>{
@@ -2456,7 +2474,7 @@ function YoYGrowthChart({ results }) {
                                     opacity: "0.85"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 1055,
+                                    lineNumber: 1063,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
@@ -2468,7 +2486,7 @@ function YoYGrowthChart({ results }) {
                                     opacity: "0.85"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 1063,
+                                    lineNumber: 1071,
                                     columnNumber: 15
                                 }, this),
                                 i % labelStep === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("text", {
@@ -2481,20 +2499,20 @@ function YoYGrowthChart({ results }) {
                                     children: r.period
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                    lineNumber: 1072,
+                                    lineNumber: 1080,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, i, true, {
                             fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                            lineNumber: 1054,
+                            lineNumber: 1062,
                             columnNumber: 13
                         }, this);
                     })
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 1023,
+                lineNumber: 1031,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2507,14 +2525,14 @@ function YoYGrowthChart({ results }) {
                                 className: "h-2.5 w-2.5 rounded-sm inline-block bg-[#00E676]"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 1089,
+                                lineNumber: 1097,
                                 columnNumber: 11
                             }, this),
                             "Revenue YoY"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 1088,
+                        lineNumber: 1096,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2524,14 +2542,14 @@ function YoYGrowthChart({ results }) {
                                 className: "h-2.5 w-2.5 rounded-sm inline-block bg-[#FBBF24]"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                                lineNumber: 1093,
+                                lineNumber: 1101,
                                 columnNumber: 11
                             }, this),
                             "EPS YoY"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 1092,
+                        lineNumber: 1100,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2539,19 +2557,19 @@ function YoYGrowthChart({ results }) {
                         children: "Negative growth shown in red (below zero line)."
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                        lineNumber: 1096,
+                        lineNumber: 1104,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PatternFinder.tsx",
-                lineNumber: 1087,
+                lineNumber: 1095,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PatternFinder.tsx",
-        lineNumber: 1022,
+        lineNumber: 1030,
         columnNumber: 5
     }, this);
 }

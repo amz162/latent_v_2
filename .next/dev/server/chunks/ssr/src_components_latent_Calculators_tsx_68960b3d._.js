@@ -16,6 +16,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$l
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/tabs.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/select.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/table.tsx [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/AppNav.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/StockSearch.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$calculator$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Calculator$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/calculator.js [app-ssr] (ecmascript) <export default as Calculator>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$coins$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Coins$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/coins.js [app-ssr] (ecmascript) <export default as Coins>");
@@ -31,6 +32,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chart$2d$pie$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__PieChart$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chart-pie.js [app-ssr] (ecmascript) <export default as PieChart>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/sonner/dist/index.mjs [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -157,19 +159,19 @@ function CgtCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 154,
+                                    lineNumber: 155,
                                     columnNumber: 13
                                 }, this),
                                 "Trade Inputs"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 153,
+                            lineNumber: 154,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 152,
+                        lineNumber: 153,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -186,7 +188,7 @@ function CgtCalculator() {
                                                 children: "Buy price (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 161,
+                                                lineNumber: 162,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -199,13 +201,13 @@ function CgtCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 162,
+                                                lineNumber: 163,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 160,
+                                        lineNumber: 161,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -216,7 +218,7 @@ function CgtCalculator() {
                                                 children: "Sell price (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 170,
+                                                lineNumber: 171,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -229,13 +231,13 @@ function CgtCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 171,
+                                                lineNumber: 172,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 169,
+                                        lineNumber: 170,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -246,7 +248,7 @@ function CgtCalculator() {
                                                 children: "Quantity (shares)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 179,
+                                                lineNumber: 180,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -259,13 +261,13 @@ function CgtCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 180,
+                                                lineNumber: 181,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 178,
+                                        lineNumber: 179,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -276,7 +278,7 @@ function CgtCalculator() {
                                                 children: "Brokerage (%)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 188,
+                                                lineNumber: 189,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -290,13 +292,13 @@ function CgtCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 189,
+                                                lineNumber: 190,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 187,
+                                        lineNumber: 188,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -309,14 +311,14 @@ function CgtCalculator() {
                                                         className: "h-3 w-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 199,
+                                                        lineNumber: 200,
                                                         columnNumber: 17
                                                     }, this),
                                                     " Buy date"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 198,
+                                                lineNumber: 199,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -329,13 +331,13 @@ function CgtCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 201,
+                                                lineNumber: 202,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 197,
+                                        lineNumber: 198,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -348,14 +350,14 @@ function CgtCalculator() {
                                                         className: "h-3 w-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 210,
+                                                        lineNumber: 211,
                                                         columnNumber: 17
                                                     }, this),
                                                     " Sell date"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 209,
+                                                lineNumber: 210,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -368,19 +370,19 @@ function CgtCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 212,
+                                                lineNumber: 213,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 208,
+                                        lineNumber: 209,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 159,
+                                lineNumber: 160,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -391,7 +393,7 @@ function CgtCalculator() {
                                         children: "Filer status"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 222,
+                                        lineNumber: 223,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -408,7 +410,7 @@ function CgtCalculator() {
                                                 children: "Filer"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 224,
+                                                lineNumber: 225,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -422,19 +424,19 @@ function CgtCalculator() {
                                                 children: "Non-Filer"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 236,
+                                                lineNumber: 237,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 223,
+                                        lineNumber: 224,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 221,
+                                lineNumber: 222,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -444,7 +446,7 @@ function CgtCalculator() {
                                         className: "h-3.5 w-3.5 text-[#00E676] shrink-0 mt-0.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 252,
+                                        lineNumber: 253,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -456,7 +458,7 @@ function CgtCalculator() {
                                                 children: "≤12mo = 15% / 22.5%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 254,
+                                                lineNumber: 255,
                                                 columnNumber: 35
                                             }, this),
                                             ",",
@@ -467,7 +469,7 @@ function CgtCalculator() {
                                                 children: "12.5% / 18.75%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 255,
+                                                lineNumber: 256,
                                                 columnNumber: 30
                                             }, this),
                                             ",",
@@ -477,13 +479,13 @@ function CgtCalculator() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 253,
+                                        lineNumber: 254,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 251,
+                                lineNumber: 252,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -495,26 +497,26 @@ function CgtCalculator() {
                                         className: "h-3.5 w-3.5 mr-1.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 265,
+                                        lineNumber: 266,
                                         columnNumber: 13
                                     }, this),
                                     "Calculate CGT"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 260,
+                                lineNumber: 261,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 158,
+                        lineNumber: 159,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 151,
+                lineNumber: 152,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -528,19 +530,19 @@ function CgtCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 275,
+                                    lineNumber: 276,
                                     columnNumber: 13
                                 }, this),
                                 "Tax & Profit Summary"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 274,
+                            lineNumber: 275,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 273,
+                        lineNumber: 274,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -555,7 +557,7 @@ function CgtCalculator() {
                                             value: fmtMoney(r.buyValue)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 283,
+                                            lineNumber: 284,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -563,7 +565,7 @@ function CgtCalculator() {
                                             value: fmtMoney(r.sellValue)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 284,
+                                            lineNumber: 285,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -572,7 +574,7 @@ function CgtCalculator() {
                                             tone: r.grossGain >= 0 ? "pos" : "neg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 285,
+                                            lineNumber: 286,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -581,13 +583,13 @@ function CgtCalculator() {
                                             tone: "neg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 286,
+                                            lineNumber: 287,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 282,
+                                    lineNumber: 283,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -601,7 +603,7 @@ function CgtCalculator() {
                                                     children: "Holding period"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 291,
+                                                    lineNumber: 292,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -610,13 +612,13 @@ function CgtCalculator() {
                                                     children: r.months > 0 ? `${r.months.toFixed(1)} months` : "Set buy & sell dates"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 292,
+                                                    lineNumber: 293,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 290,
+                                            lineNumber: 291,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -628,7 +630,7 @@ function CgtCalculator() {
                                                     children: r.band
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 297,
+                                                    lineNumber: 298,
                                                     columnNumber: 29
                                                 }, this),
                                                 " · ",
@@ -641,19 +643,19 @@ function CgtCalculator() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 298,
+                                                    lineNumber: 299,
                                                     columnNumber: 32
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 296,
+                                            lineNumber: 297,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 289,
+                                    lineNumber: 290,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -665,7 +667,7 @@ function CgtCalculator() {
                                             tone: r.netGainBeforeTax >= 0 ? "pos" : "neg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 303,
+                                            lineNumber: 304,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -674,13 +676,13 @@ function CgtCalculator() {
                                             tone: r.cgt > 0 ? "neg" : "neutral"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 304,
+                                            lineNumber: 305,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 302,
+                                    lineNumber: 303,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -691,7 +693,7 @@ function CgtCalculator() {
                                             children: "Net Profit after CGT"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 308,
+                                            lineNumber: 309,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -699,7 +701,7 @@ function CgtCalculator() {
                                             children: fmtMoney(r.netProfit)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 309,
+                                            lineNumber: 310,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -715,7 +717,7 @@ function CgtCalculator() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 313,
+                                                    lineNumber: 314,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -726,19 +728,19 @@ function CgtCalculator() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 316,
+                                                    lineNumber: 317,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 312,
+                                            lineNumber: 313,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 307,
+                                    lineNumber: 308,
                                     columnNumber: 15
                                 }, this)
                             ]
@@ -749,7 +751,7 @@ function CgtCalculator() {
                                     className: "h-10 w-10 text-[#64748B] mb-3 opacity-40"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 324,
+                                    lineNumber: 325,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -757,7 +759,7 @@ function CgtCalculator() {
                                     children: "No results yet"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 325,
+                                    lineNumber: 326,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -765,30 +767,30 @@ function CgtCalculator() {
                                     children: 'Fill in trade inputs and click "Calculate CGT" to see the tax & profit summary.'
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 326,
+                                    lineNumber: 327,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 323,
+                            lineNumber: 324,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 279,
+                        lineNumber: 280,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 272,
+                lineNumber: 273,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 149,
+        lineNumber: 150,
         columnNumber: 5
     }, this);
 }
@@ -848,19 +850,19 @@ function DividendCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 377,
+                                    lineNumber: 378,
                                     columnNumber: 13
                                 }, this),
                                 "Dividend Details"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 376,
+                            lineNumber: 377,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 375,
+                        lineNumber: 376,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -877,7 +879,7 @@ function DividendCalculator() {
                                                 children: "Gross DPS (Rs/share)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 384,
+                                                lineNumber: 385,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -891,13 +893,13 @@ function DividendCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 385,
+                                                lineNumber: 386,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 383,
+                                        lineNumber: 384,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -908,7 +910,7 @@ function DividendCalculator() {
                                                 children: "Shares held"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 394,
+                                                lineNumber: 395,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -921,19 +923,19 @@ function DividendCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 395,
+                                                lineNumber: 396,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 393,
+                                        lineNumber: 394,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 382,
+                                lineNumber: 383,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -944,7 +946,7 @@ function DividendCalculator() {
                                         children: "Tax category"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 405,
+                                        lineNumber: 406,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -962,13 +964,13 @@ function DividendCalculator() {
                                                 children: DIV_TAX_RATES[k].label.split(" ")[0]
                                             }, k, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 410,
+                                                lineNumber: 411,
                                                 columnNumber: 19
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 406,
+                                        lineNumber: 407,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -980,7 +982,7 @@ function DividendCalculator() {
                                                 children: DIV_TAX_RATES[cat].label
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 427,
+                                                lineNumber: 428,
                                                 columnNumber: 25
                                             }, this),
                                             " · ",
@@ -993,19 +995,19 @@ function DividendCalculator() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 428,
+                                                lineNumber: 429,
                                                 columnNumber: 32
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 426,
+                                        lineNumber: 427,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 404,
+                                lineNumber: 405,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1015,7 +1017,7 @@ function DividendCalculator() {
                                         className: "h-3.5 w-3.5 text-[#00E676] shrink-0 mt-0.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 433,
+                                        lineNumber: 434,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1027,7 +1029,7 @@ function DividendCalculator() {
                                                 children: "Filer 15%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 435,
+                                                lineNumber: 436,
                                                 columnNumber: 49
                                             }, this),
                                             ",",
@@ -1038,20 +1040,20 @@ function DividendCalculator() {
                                                 children: "Company 39%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 436,
+                                                lineNumber: 437,
                                                 columnNumber: 35
                                             }, this),
                                             " (incl. super tax). Tax is deducted at source by the company paying the dividend."
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 434,
+                                        lineNumber: 435,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 432,
+                                lineNumber: 433,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1063,26 +1065,26 @@ function DividendCalculator() {
                                         className: "h-3.5 w-3.5 mr-1.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 446,
+                                        lineNumber: 447,
                                         columnNumber: 13
                                     }, this),
                                     "Calculate Dividend Tax"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 441,
+                                lineNumber: 442,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 381,
+                        lineNumber: 382,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 374,
+                lineNumber: 375,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1096,19 +1098,19 @@ function DividendCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 455,
+                                    lineNumber: 456,
                                     columnNumber: 13
                                 }, this),
                                 "Payout Summary"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 454,
+                            lineNumber: 455,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 453,
+                        lineNumber: 454,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1124,7 +1126,7 @@ function DividendCalculator() {
                                             tone: "pos"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 463,
+                                            lineNumber: 464,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -1133,7 +1135,7 @@ function DividendCalculator() {
                                             tone: "neg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 464,
+                                            lineNumber: 465,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -1142,13 +1144,13 @@ function DividendCalculator() {
                                             tone: "pos"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 465,
+                                            lineNumber: 466,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 462,
+                                    lineNumber: 463,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1159,7 +1161,7 @@ function DividendCalculator() {
                                             value: `Rs ${fmtNum(parseFloat(dps) || 0)}`
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 469,
+                                            lineNumber: 470,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniStat, {
@@ -1167,7 +1169,7 @@ function DividendCalculator() {
                                             value: `Rs ${fmtNum((parseFloat(dps) || 0) * (1 - r.rate / 100))}`
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 470,
+                                            lineNumber: 471,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniStat, {
@@ -1175,13 +1177,13 @@ function DividendCalculator() {
                                             value: `${r.rate}%`
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 471,
+                                            lineNumber: 472,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 468,
+                                    lineNumber: 469,
                                     columnNumber: 15
                                 }, this)
                             ]
@@ -1192,7 +1194,7 @@ function DividendCalculator() {
                                     className: "h-10 w-10 text-[#64748B] mb-3 opacity-40"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 476,
+                                    lineNumber: 477,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1200,7 +1202,7 @@ function DividendCalculator() {
                                     children: "No results yet"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 477,
+                                    lineNumber: 478,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1208,30 +1210,30 @@ function DividendCalculator() {
                                     children: 'Enter dividend details and click "Calculate Dividend Tax" to see the payout summary.'
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 478,
+                                    lineNumber: 479,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 475,
+                            lineNumber: 476,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 459,
+                        lineNumber: 460,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 452,
+                lineNumber: 453,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 373,
+        lineNumber: 374,
         columnNumber: 5
     }, this);
 }
@@ -1389,19 +1391,19 @@ function SipCalculator() {
                                             className: "h-4 w-4 text-[#00E676]"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 622,
+                                            lineNumber: 623,
                                             columnNumber: 15
                                         }, this),
                                         "SIP Inputs"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 621,
+                                    lineNumber: 622,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 620,
+                                lineNumber: 621,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1418,7 +1420,7 @@ function SipCalculator() {
                                                         children: "Monthly investment (Rs)"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 629,
+                                                        lineNumber: 630,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1431,13 +1433,13 @@ function SipCalculator() {
                                                         className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 630,
+                                                        lineNumber: 631,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 628,
+                                                lineNumber: 629,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1452,13 +1454,13 @@ function SipCalculator() {
                                                                 children: "· optional"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 640,
+                                                                lineNumber: 641,
                                                                 columnNumber: 19
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 638,
+                                                        lineNumber: 639,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1473,7 +1475,7 @@ function SipCalculator() {
                                                         className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 642,
+                                                        lineNumber: 643,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1483,20 +1485,20 @@ function SipCalculator() {
                                                                 className: "h-2.5 w-2.5 mt-0.5 shrink-0 text-[#00E676]/70"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 651,
+                                                                lineNumber: 652,
                                                                 columnNumber: 19
                                                             }, this),
                                                             returnHint
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 650,
+                                                        lineNumber: 651,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 637,
+                                                lineNumber: 638,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1507,7 +1509,7 @@ function SipCalculator() {
                                                         children: "Duration (years)"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 656,
+                                                        lineNumber: 657,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1520,13 +1522,13 @@ function SipCalculator() {
                                                         className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 659,
+                                                        lineNumber: 660,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 655,
+                                                lineNumber: 656,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1541,13 +1543,13 @@ function SipCalculator() {
                                                                 children: "· optional"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 669,
+                                                                lineNumber: 670,
                                                                 columnNumber: 19
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 667,
+                                                        lineNumber: 668,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1561,7 +1563,7 @@ function SipCalculator() {
                                                         className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 671,
+                                                        lineNumber: 672,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1571,26 +1573,26 @@ function SipCalculator() {
                                                                 className: "h-2.5 w-2.5 mt-0.5 shrink-0 text-[#00E676]/70"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 679,
+                                                                lineNumber: 680,
                                                                 columnNumber: 19
                                                             }, this),
                                                             "Optional — defaults to 10%. Set 0% for a flat monthly investment."
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 678,
+                                                        lineNumber: 679,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 666,
+                                                lineNumber: 667,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 627,
+                                        lineNumber: 628,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1600,7 +1602,7 @@ function SipCalculator() {
                                                 children: "Quick presets"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 686,
+                                                lineNumber: 687,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1621,7 +1623,7 @@ function SipCalculator() {
                                                                         children: p.label
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                        lineNumber: 703,
+                                                                        lineNumber: 704,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1629,13 +1631,13 @@ function SipCalculator() {
                                                                         children: isActive ? "●" : "○"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                        lineNumber: 706,
+                                                                        lineNumber: 707,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 702,
+                                                                lineNumber: 703,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1652,19 +1654,19 @@ function SipCalculator() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 716,
+                                                                lineNumber: 717,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, p.id, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 691,
+                                                        lineNumber: 692,
                                                         columnNumber: 21
                                                     }, this);
                                                 })
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 687,
+                                                lineNumber: 688,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1672,13 +1674,13 @@ function SipCalculator() {
                                                 children: "Pick a preset to auto-fill the inputs — then tweak as needed."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 723,
+                                                lineNumber: 724,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 685,
+                                        lineNumber: 686,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1688,7 +1690,7 @@ function SipCalculator() {
                                                 className: "h-3.5 w-3.5 text-[#00E676] shrink-0 mt-0.5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 729,
+                                                lineNumber: 730,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1696,13 +1698,13 @@ function SipCalculator() {
                                                 children: "SIP = Systematic Investment Plan. Invest a fixed amount monthly, step it up yearly to beat inflation, and let compounding grow your corpus over time."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 730,
+                                                lineNumber: 731,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 728,
+                                        lineNumber: 729,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1714,26 +1716,26 @@ function SipCalculator() {
                                                 className: "h-3.5 w-3.5 mr-1.5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 741,
+                                                lineNumber: 742,
                                                 columnNumber: 15
                                             }, this),
                                             "Calculate SIP"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 736,
+                                        lineNumber: 737,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 626,
+                                lineNumber: 627,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 619,
+                        lineNumber: 620,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1747,19 +1749,19 @@ function SipCalculator() {
                                             className: "h-4 w-4 text-[#00E676]"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 751,
+                                            lineNumber: 752,
                                             columnNumber: 15
                                         }, this),
                                         "SIP Results"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 750,
+                                    lineNumber: 751,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 749,
+                                lineNumber: 750,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1774,7 +1776,7 @@ function SipCalculator() {
                                                     value: fmtMoney(r.totalContributed)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 759,
+                                                    lineNumber: 760,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -1783,13 +1785,13 @@ function SipCalculator() {
                                                     tone: "pos"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 760,
+                                                    lineNumber: 761,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 758,
+                                            lineNumber: 759,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1800,7 +1802,7 @@ function SipCalculator() {
                                                     children: "Final corpus"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 764,
+                                                    lineNumber: 765,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1808,7 +1810,7 @@ function SipCalculator() {
                                                     children: fmtMoney(r.corpus)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 765,
+                                                    lineNumber: 766,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1819,13 +1821,13 @@ function SipCalculator() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 766,
+                                                    lineNumber: 767,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 763,
+                                            lineNumber: 764,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1836,7 +1838,7 @@ function SipCalculator() {
                                                     value: `Rs ${fmtNum(parseFloat(monthly) || 0, 0)}`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 770,
+                                                    lineNumber: 771,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniStat, {
@@ -1844,7 +1846,7 @@ function SipCalculator() {
                                                     value: `${annual || 0}%`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 771,
+                                                    lineNumber: 772,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniStat, {
@@ -1852,13 +1854,13 @@ function SipCalculator() {
                                                     value: `${stepUp || 0}%`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 772,
+                                                    lineNumber: 773,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 769,
+                                            lineNumber: 770,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1870,7 +1872,7 @@ function SipCalculator() {
                                                     tone: "pos"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 776,
+                                                    lineNumber: 777,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -1879,13 +1881,13 @@ function SipCalculator() {
                                                     tone: "pos"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 777,
+                                                    lineNumber: 778,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 775,
+                                            lineNumber: 776,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -1896,7 +1898,7 @@ function SipCalculator() {
                                             className: "h-10 w-10 text-[#64748B] mb-3 opacity-40"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 783,
+                                            lineNumber: 784,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1904,7 +1906,7 @@ function SipCalculator() {
                                             children: "No results yet"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 784,
+                                            lineNumber: 785,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1912,30 +1914,30 @@ function SipCalculator() {
                                             children: 'Enter SIP inputs and click "Calculate SIP" to see the projected corpus.'
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 785,
+                                            lineNumber: 786,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 782,
+                                    lineNumber: 783,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 755,
+                                lineNumber: 756,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 748,
+                        lineNumber: 749,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 617,
+                lineNumber: 618,
                 columnNumber: 7
             }, this),
             calculated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1949,19 +1951,19 @@ function SipCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 799,
+                                    lineNumber: 800,
                                     columnNumber: 15
                                 }, this),
                                 "Year-by-year Corpus Growth"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 798,
+                            lineNumber: 799,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 797,
+                        lineNumber: 798,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1980,7 +1982,7 @@ function SipCalculator() {
                                                     children: "Year"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 809,
+                                                    lineNumber: 810,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1988,7 +1990,7 @@ function SipCalculator() {
                                                     children: "Monthly (Rs)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 810,
+                                                    lineNumber: 811,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1996,7 +1998,7 @@ function SipCalculator() {
                                                     children: "Year contrib."
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 811,
+                                                    lineNumber: 812,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2004,7 +2006,7 @@ function SipCalculator() {
                                                     children: "Cumulative (Rs)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 812,
+                                                    lineNumber: 813,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2012,18 +2014,18 @@ function SipCalculator() {
                                                     children: "Corpus (Rs)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 813,
+                                                    lineNumber: 814,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                            lineNumber: 808,
+                                            lineNumber: 809,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 807,
+                                        lineNumber: 808,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -2035,7 +2037,7 @@ function SipCalculator() {
                                                         children: row.year
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 819,
+                                                        lineNumber: 820,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2043,7 +2045,7 @@ function SipCalculator() {
                                                         children: fmtNum(row.monthlyThisYear, 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 820,
+                                                        lineNumber: 821,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2051,7 +2053,7 @@ function SipCalculator() {
                                                         children: fmtMoney(row.contributed)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 821,
+                                                        lineNumber: 822,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2059,7 +2061,7 @@ function SipCalculator() {
                                                         children: fmtMoney(row.cumulativeContributed)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 822,
+                                                        lineNumber: 823,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2067,40 +2069,40 @@ function SipCalculator() {
                                                         children: fmtMoney(row.corpus)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 823,
+                                                        lineNumber: 824,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, row.year, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 818,
+                                                lineNumber: 819,
                                                 columnNumber: 21
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 816,
+                                        lineNumber: 817,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 806,
+                                lineNumber: 807,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 805,
+                            lineNumber: 806,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 803,
+                        lineNumber: 804,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 796,
+                lineNumber: 797,
                 columnNumber: 9
             }, this),
             calculated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2114,19 +2116,19 @@ function SipCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 838,
+                                    lineNumber: 839,
                                     columnNumber: 15
                                 }, this),
                                 "Corpus Growth Chart"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 837,
+                            lineNumber: 838,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 836,
+                        lineNumber: 837,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2135,24 +2137,24 @@ function SipCalculator() {
                             maxCorpus: r.maxCorpus
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 843,
+                            lineNumber: 844,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 842,
+                        lineNumber: 843,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 835,
+                lineNumber: 836,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 615,
+        lineNumber: 616,
         columnNumber: 5
     }, this);
 }
@@ -2175,7 +2177,7 @@ function SipCalculator() {
             children: "Add inputs and click Calculate SIP to see the chart."
         }, void 0, false, {
             fileName: "[project]/src/components/latent/Calculators.tsx",
-            lineNumber: 868,
+            lineNumber: 869,
             columnNumber: 12
         }, this);
     }
@@ -2222,7 +2224,7 @@ function SipCalculator() {
                                     stopOpacity: "0.35"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 902,
+                                    lineNumber: 903,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
@@ -2231,18 +2233,18 @@ function SipCalculator() {
                                     stopOpacity: "0"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 903,
+                                    lineNumber: 904,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 901,
+                            lineNumber: 902,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 900,
+                        lineNumber: 901,
                         columnNumber: 9
                     }, this),
                     gridLines.map((y, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2255,7 +2257,7 @@ function SipCalculator() {
                             strokeDasharray: "2 4"
                         }, i, false, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 908,
+                            lineNumber: 909,
                             columnNumber: 11
                         }, this)),
                     yTicks.map((t, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("text", {
@@ -2268,7 +2270,7 @@ function SipCalculator() {
                             children: t.label >= 1_00_00_000 ? `Rs ${(t.label / 1_00_00_000).toFixed(2)}Cr` : t.label >= 1_00_000 ? `Rs ${(t.label / 1_00_000).toFixed(1)}L` : t.label >= 1_000 ? `Rs ${(t.label / 1_000).toFixed(0)}k` : `Rs ${t.label.toFixed(0)}`
                         }, i, false, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 912,
+                            lineNumber: 913,
                             columnNumber: 11
                         }, this)),
                     rows.map((row, i)=>i % labelStep === 0 || i === rows.length - 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("text", {
@@ -2284,7 +2286,7 @@ function SipCalculator() {
                             ]
                         }, row.year, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 925,
+                            lineNumber: 926,
                             columnNumber: 13
                         }, this) : null),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -2292,7 +2294,7 @@ function SipCalculator() {
                         fill: "url(#sipCorpusFill)"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 939,
+                        lineNumber: 940,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -2303,7 +2305,7 @@ function SipCalculator() {
                         strokeDasharray: "6 4"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 941,
+                        lineNumber: 942,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -2313,7 +2315,7 @@ function SipCalculator() {
                         strokeWidth: "2.5"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 943,
+                        lineNumber: 944,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2323,7 +2325,7 @@ function SipCalculator() {
                         fill: "#00E676"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 945,
+                        lineNumber: 946,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2333,7 +2335,7 @@ function SipCalculator() {
                         fill: "#FBBF24"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 946,
+                        lineNumber: 947,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("text", {
@@ -2347,13 +2349,13 @@ function SipCalculator() {
                         children: fmtMoney(rows[rows.length - 1].corpus)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 948,
+                        lineNumber: 949,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 899,
+                lineNumber: 900,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2366,14 +2368,14 @@ function SipCalculator() {
                                 className: "h-0.5 w-4 bg-[#00E676] inline-block"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 963,
+                                lineNumber: 964,
                                 columnNumber: 11
                             }, this),
                             "Corpus value (incl. returns)"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 962,
+                        lineNumber: 963,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2386,14 +2388,14 @@ function SipCalculator() {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 967,
+                                lineNumber: 968,
                                 columnNumber: 11
                             }, this),
                             "Cumulative invested"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 966,
+                        lineNumber: 967,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2401,19 +2403,19 @@ function SipCalculator() {
                         children: "The widening gap between the two lines = your compounding profit."
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 970,
+                        lineNumber: 971,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 961,
+                lineNumber: 962,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 898,
+        lineNumber: 899,
         columnNumber: 5
     }, this);
 }
@@ -2818,19 +2820,19 @@ function FairValueCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 1410,
+                                    lineNumber: 1411,
                                     columnNumber: 13
                                 }, this),
                                 "Fair Value Inputs"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 1409,
+                            lineNumber: 1410,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 1408,
+                        lineNumber: 1409,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2844,7 +2846,7 @@ function FairValueCalculator() {
                                         children: "Select stock"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1416,
+                                        lineNumber: 1417,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["StockSearch"], {
@@ -2854,13 +2856,13 @@ function FairValueCalculator() {
                                         className: "w-full"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1417,
+                                        lineNumber: 1418,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1415,
+                                lineNumber: 1416,
                                 columnNumber: 11
                             }, this),
                             loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2870,7 +2872,7 @@ function FairValueCalculator() {
                                         className: "h-3.5 w-3.5 text-[#00E676] animate-spin"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1427,
+                                        lineNumber: 1428,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2882,13 +2884,13 @@ function FairValueCalculator() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1428,
+                                        lineNumber: 1429,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1426,
+                                lineNumber: 1427,
                                 columnNumber: 13
                             }, this),
                             error && !loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2898,7 +2900,7 @@ function FairValueCalculator() {
                                         className: "h-3.5 w-3.5 text-[#FF5C5C] shrink-0 mt-0.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1434,
+                                        lineNumber: 1435,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2906,13 +2908,13 @@ function FairValueCalculator() {
                                         children: error
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1435,
+                                        lineNumber: 1436,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1433,
+                                lineNumber: 1434,
                                 columnNumber: 13
                             }, this),
                             symbol && !loading && !error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2922,7 +2924,7 @@ function FairValueCalculator() {
                                         className: "h-3.5 w-3.5 text-[#00E676] shrink-0 mt-0.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1441,
+                                        lineNumber: 1442,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2935,13 +2937,13 @@ function FairValueCalculator() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1442,
+                                        lineNumber: 1443,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1440,
+                                lineNumber: 1441,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2954,7 +2956,7 @@ function FairValueCalculator() {
                                                 className: "h-3 w-3"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1452,
+                                                lineNumber: 1453,
                                                 columnNumber: 15
                                             }, this),
                                             " Sector",
@@ -2963,13 +2965,13 @@ function FairValueCalculator() {
                                                 children: "(auto-detected · drives default multiples & weighting)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1453,
+                                                lineNumber: 1454,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1451,
+                                        lineNumber: 1452,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -2982,12 +2984,12 @@ function FairValueCalculator() {
                                                     placeholder: "Select sector..."
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 1457,
+                                                    lineNumber: 1458,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1456,
+                                                lineNumber: 1457,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -3007,24 +3009,24 @@ function FairValueCalculator() {
                                                         ]
                                                     }, s.code, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 1461,
+                                                        lineNumber: 1462,
                                                         columnNumber: 19
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1459,
+                                                lineNumber: 1460,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1455,
+                                        lineNumber: 1456,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1450,
+                                lineNumber: 1451,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3032,7 +3034,7 @@ function FairValueCalculator() {
                                 children: "Per-share metrics"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1470,
+                                lineNumber: 1471,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3046,7 +3048,7 @@ function FairValueCalculator() {
                                                 children: "EPS — latest annual (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1473,
+                                                lineNumber: 1474,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3060,13 +3062,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1474,
+                                                lineNumber: 1475,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1472,
+                                        lineNumber: 1473,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3077,7 +3079,7 @@ function FairValueCalculator() {
                                                 children: "BVPS — book value / share (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1483,
+                                                lineNumber: 1484,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3091,13 +3093,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1484,
+                                                lineNumber: 1485,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1482,
+                                        lineNumber: 1483,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3108,7 +3110,7 @@ function FairValueCalculator() {
                                                 children: "DPS — dividend / share (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1493,
+                                                lineNumber: 1494,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3122,13 +3124,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1494,
+                                                lineNumber: 1495,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1492,
+                                        lineNumber: 1493,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3139,7 +3141,7 @@ function FairValueCalculator() {
                                                 children: "Current price (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1503,
+                                                lineNumber: 1504,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3153,19 +3155,19 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1504,
+                                                lineNumber: 1505,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1502,
+                                        lineNumber: 1503,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1471,
+                                lineNumber: 1472,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3173,7 +3175,7 @@ function FairValueCalculator() {
                                 children: "Company metrics (PKR million)"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1515,
+                                lineNumber: 1516,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3187,7 +3189,7 @@ function FairValueCalculator() {
                                                 children: "Free Cash Flow (PKR Mn)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1518,
+                                                lineNumber: 1519,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3201,13 +3203,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1519,
+                                                lineNumber: 1520,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1517,
+                                        lineNumber: 1518,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3218,7 +3220,7 @@ function FairValueCalculator() {
                                                 children: "Shares Outstanding (Mn)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1528,
+                                                lineNumber: 1529,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3232,13 +3234,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1529,
+                                                lineNumber: 1530,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1527,
+                                        lineNumber: 1528,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3249,7 +3251,7 @@ function FairValueCalculator() {
                                                 children: "Net Debt (PKR Mn)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1538,
+                                                lineNumber: 1539,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3263,13 +3265,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1539,
+                                                lineNumber: 1540,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1537,
+                                        lineNumber: 1538,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3280,7 +3282,7 @@ function FairValueCalculator() {
                                                 children: "EBITDA (PKR Mn)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1548,
+                                                lineNumber: 1549,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3294,19 +3296,19 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1549,
+                                                lineNumber: 1550,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1547,
+                                        lineNumber: 1548,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1516,
+                                lineNumber: 1517,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3314,7 +3316,7 @@ function FairValueCalculator() {
                                 children: "Risk & capital structure"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1560,
+                                lineNumber: 1561,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3328,7 +3330,7 @@ function FairValueCalculator() {
                                                 children: "Beta (default 1.0)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1563,
+                                                lineNumber: 1564,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3342,13 +3344,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1564,
+                                                lineNumber: 1565,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1562,
+                                        lineNumber: 1563,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3359,7 +3361,7 @@ function FairValueCalculator() {
                                                 children: "ROE (decimal, e.g. 0.15)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1573,
+                                                lineNumber: 1574,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3373,13 +3375,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1574,
+                                                lineNumber: 1575,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1572,
+                                        lineNumber: 1573,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3390,7 +3392,7 @@ function FairValueCalculator() {
                                                 children: "Growth rate — EPS CAGR (%)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1583,
+                                                lineNumber: 1584,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3404,13 +3406,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1584,
+                                                lineNumber: 1585,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1582,
+                                        lineNumber: 1583,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3421,7 +3423,7 @@ function FairValueCalculator() {
                                                 children: "Debt ratio (default 0.30)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1593,
+                                                lineNumber: 1594,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3435,13 +3437,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1594,
+                                                lineNumber: 1595,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1592,
+                                        lineNumber: 1593,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3452,7 +3454,7 @@ function FairValueCalculator() {
                                                 children: "Cost of debt (default 0.15)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1603,
+                                                lineNumber: 1604,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3466,13 +3468,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1604,
+                                                lineNumber: 1605,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1602,
+                                        lineNumber: 1603,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3483,7 +3485,7 @@ function FairValueCalculator() {
                                                 children: "Tax rate (default 0.29)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1613,
+                                                lineNumber: 1614,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3497,19 +3499,19 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1614,
+                                                lineNumber: 1615,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1612,
+                                        lineNumber: 1613,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1561,
+                                lineNumber: 1562,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3517,7 +3519,7 @@ function FairValueCalculator() {
                                 children: "Target multiples (sector defaults pre-filled)"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1625,
+                                lineNumber: 1626,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3533,14 +3535,14 @@ function FairValueCalculator() {
                                                         className: "h-3 w-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 1629,
+                                                        lineNumber: 1630,
                                                         columnNumber: 17
                                                     }, this),
                                                     " Target P/E"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1628,
+                                                lineNumber: 1629,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3554,13 +3556,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1631,
+                                                lineNumber: 1632,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1627,
+                                        lineNumber: 1628,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3571,7 +3573,7 @@ function FairValueCalculator() {
                                                 children: "Target P/B"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1640,
+                                                lineNumber: 1641,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3585,13 +3587,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1641,
+                                                lineNumber: 1642,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1639,
+                                        lineNumber: 1640,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3602,7 +3604,7 @@ function FairValueCalculator() {
                                                 children: "Target EV/EBITDA"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1650,
+                                                lineNumber: 1651,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -3616,19 +3618,19 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1651,
+                                                lineNumber: 1652,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1649,
+                                        lineNumber: 1650,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1626,
+                                lineNumber: 1627,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3638,7 +3640,7 @@ function FairValueCalculator() {
                                         className: "h-3.5 w-3.5 text-[#00E676] shrink-0 mt-0.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1662,
+                                        lineNumber: 1663,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3649,20 +3651,20 @@ function FairValueCalculator() {
                                                 children: "Multi-method blend:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1664,
+                                                lineNumber: 1665,
                                                 columnNumber: 15
                                             }, this),
                                             " POST /api/fair-value runs 7 valuation models (DDM, DCF, Residual Income, P/E, P/B, EV/EBITDA, Graham) and weights each by sector. Pakistan macro assumptions baked in: RF 12%, ERP 8%, Terminal Growth 6%, Margin of Safety 25%."
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1663,
+                                        lineNumber: 1664,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1661,
+                                lineNumber: 1662,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -3675,32 +3677,32 @@ function FairValueCalculator() {
                                         className: "h-3.5 w-3.5 mr-1.5 animate-spin"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1677,
+                                        lineNumber: 1678,
                                         columnNumber: 15
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$landmark$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Landmark$3e$__["Landmark"], {
                                         className: "h-3.5 w-3.5 mr-1.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1679,
+                                        lineNumber: 1680,
                                         columnNumber: 15
                                     }, this),
                                     calculating ? "Computing..." : "Calculate Fair Value"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1670,
+                                lineNumber: 1671,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 1414,
+                        lineNumber: 1415,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 1407,
+                lineNumber: 1408,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -3714,19 +3716,19 @@ function FairValueCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 1690,
+                                    lineNumber: 1691,
                                     columnNumber: 13
                                 }, this),
                                 "Fair Value Result"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 1689,
+                            lineNumber: 1690,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 1688,
+                        lineNumber: 1689,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3739,7 +3741,7 @@ function FairValueCalculator() {
                                         className: "h-3.5 w-3.5 text-[#FF5C5C] shrink-0 mt-0.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1697,
+                                        lineNumber: 1698,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3747,13 +3749,13 @@ function FairValueCalculator() {
                                         children: resultError
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1698,
+                                        lineNumber: 1699,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1696,
+                                lineNumber: 1697,
                                 columnNumber: 13
                             }, this),
                             calculated && result ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -3766,7 +3768,7 @@ function FairValueCalculator() {
                                                 children: "Fair Value (multi-method blend)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1706,
+                                                lineNumber: 1707,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3777,7 +3779,7 @@ function FairValueCalculator() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1709,
+                                                lineNumber: 1710,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3790,13 +3792,13 @@ function FairValueCalculator() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1720,
+                                                lineNumber: 1721,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1705,
+                                        lineNumber: 1706,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3812,7 +3814,7 @@ function FairValueCalculator() {
                                                                 children: "Verdict"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 1739,
+                                                                lineNumber: 1740,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3821,13 +3823,13 @@ function FairValueCalculator() {
                                                                 children: v.label
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 1740,
+                                                                lineNumber: 1741,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 1738,
+                                                        lineNumber: 1739,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3838,7 +3840,7 @@ function FairValueCalculator() {
                                                                 children: upside >= 0 ? "Upside" : "Downside"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 1754,
+                                                                lineNumber: 1755,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3850,19 +3852,19 @@ function FairValueCalculator() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 1757,
+                                                                lineNumber: 1758,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 1753,
+                                                        lineNumber: 1754,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1737,
+                                                lineNumber: 1738,
                                                 columnNumber: 17
                                             }, this),
                                             result.verdict && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3870,13 +3872,13 @@ function FairValueCalculator() {
                                                 children: result.verdict
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1767,
+                                                lineNumber: 1768,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1728,
+                                        lineNumber: 1729,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3887,7 +3889,7 @@ function FairValueCalculator() {
                                                 value: `Rs. ${fmtNum(result.price ?? parseFloat(currentPrice) ?? 0)}`
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1773,
+                                                lineNumber: 1774,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -3896,7 +3898,7 @@ function FairValueCalculator() {
                                                 tone: "pos"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1774,
+                                                lineNumber: 1775,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -3904,7 +3906,7 @@ function FairValueCalculator() {
                                                 value: `Rs. ${fmtNum(result.low)}`
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1775,
+                                                lineNumber: 1776,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -3912,7 +3914,7 @@ function FairValueCalculator() {
                                                 value: `Rs. ${fmtNum(result.high)}`
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1776,
+                                                lineNumber: 1777,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -3920,7 +3922,7 @@ function FairValueCalculator() {
                                                 value: `${(result.ke * 100).toFixed(1)}%`
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1777,
+                                                lineNumber: 1778,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -3928,13 +3930,13 @@ function FairValueCalculator() {
                                                 value: `${(result.wacc * 100).toFixed(1)}%`
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1778,
+                                                lineNumber: 1779,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1772,
+                                        lineNumber: 1773,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3947,14 +3949,14 @@ function FairValueCalculator() {
                                                         className: "h-3 w-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                        lineNumber: 1784,
+                                                        lineNumber: 1785,
                                                         columnNumber: 19
                                                     }, this),
                                                     " Method breakdown"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1783,
+                                                lineNumber: 1784,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3970,7 +3972,7 @@ function FairValueCalculator() {
                                                                         children: "Method"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                        lineNumber: 1790,
+                                                                        lineNumber: 1791,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableHead"], {
@@ -3978,7 +3980,7 @@ function FairValueCalculator() {
                                                                         children: "Value"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                        lineNumber: 1791,
+                                                                        lineNumber: 1792,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableHead"], {
@@ -3986,7 +3988,7 @@ function FairValueCalculator() {
                                                                         children: "Weight"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                        lineNumber: 1792,
+                                                                        lineNumber: 1793,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableHead"], {
@@ -3994,18 +3996,18 @@ function FairValueCalculator() {
                                                                         children: "Contribution"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                        lineNumber: 1793,
+                                                                        lineNumber: 1794,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 1789,
+                                                                lineNumber: 1790,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                            lineNumber: 1788,
+                                                            lineNumber: 1789,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableBody"], {
@@ -4017,12 +4019,12 @@ function FairValueCalculator() {
                                                                     children: "No methods produced a value for this stock."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                    lineNumber: 1799,
+                                                                    lineNumber: 1800,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                lineNumber: 1798,
+                                                                lineNumber: 1799,
                                                                 columnNumber: 25
                                                             }, this) : methodRows.map((row)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableRow"], {
                                                                     className: "border-white/[0.06]",
@@ -4032,7 +4034,7 @@ function FairValueCalculator() {
                                                                             children: row.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                            lineNumber: 1806,
+                                                                            lineNumber: 1807,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableCell"], {
@@ -4043,7 +4045,7 @@ function FairValueCalculator() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                            lineNumber: 1807,
+                                                                            lineNumber: 1808,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableCell"], {
@@ -4054,7 +4056,7 @@ function FairValueCalculator() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                            lineNumber: 1810,
+                                                                            lineNumber: 1811,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$table$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TableCell"], {
@@ -4068,45 +4070,45 @@ function FairValueCalculator() {
                                                                                     }
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                                    lineNumber: 1815,
+                                                                                    lineNumber: 1816,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                                lineNumber: 1814,
+                                                                                lineNumber: 1815,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                            lineNumber: 1813,
+                                                                            lineNumber: 1814,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
                                                                 }, row.code, true, {
                                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                                    lineNumber: 1805,
+                                                                    lineNumber: 1806,
                                                                     columnNumber: 27
                                                                 }, this))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                            lineNumber: 1796,
+                                                            lineNumber: 1797,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                    lineNumber: 1787,
+                                                    lineNumber: 1788,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1786,
+                                                lineNumber: 1787,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1782,
+                                        lineNumber: 1783,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4116,21 +4118,12 @@ function FairValueCalculator() {
                                                 className: "h-3 w-3 text-[#64748B] shrink-0"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1831,
+                                                lineNumber: 1832,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 className: "text-[9px] uppercase tracking-wider text-[#64748B]",
                                                 children: "Macro assumptions:"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1832,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                                variant: "outline",
-                                                className: "text-[9px] font-mono px-1.5 py-0 h-4 border-white/[0.12] bg-white/[0.03] text-[#94A3B8]",
-                                                children: "RF 12%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
                                                 lineNumber: 1833,
@@ -4139,7 +4132,7 @@ function FairValueCalculator() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
                                                 variant: "outline",
                                                 className: "text-[9px] font-mono px-1.5 py-0 h-4 border-white/[0.12] bg-white/[0.03] text-[#94A3B8]",
-                                                children: "ERP 8%"
+                                                children: "RF 12%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
                                                 lineNumber: 1834,
@@ -4148,7 +4141,7 @@ function FairValueCalculator() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
                                                 variant: "outline",
                                                 className: "text-[9px] font-mono px-1.5 py-0 h-4 border-white/[0.12] bg-white/[0.03] text-[#94A3B8]",
-                                                children: "Terminal G 6%"
+                                                children: "ERP 8%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
                                                 lineNumber: 1835,
@@ -4157,16 +4150,25 @@ function FairValueCalculator() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
                                                 variant: "outline",
                                                 className: "text-[9px] font-mono px-1.5 py-0 h-4 border-white/[0.12] bg-white/[0.03] text-[#94A3B8]",
-                                                children: "MoS 25%"
+                                                children: "Terminal G 6%"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
                                                 lineNumber: 1836,
+                                                columnNumber: 17
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                variant: "outline",
+                                                className: "text-[9px] font-mono px-1.5 py-0 h-4 border-white/[0.12] bg-white/[0.03] text-[#94A3B8]",
+                                                children: "MoS 25%"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                                lineNumber: 1837,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1830,
+                                        lineNumber: 1831,
                                         columnNumber: 15
                                     }, this)
                                 ]
@@ -4177,7 +4179,7 @@ function FairValueCalculator() {
                                         className: "h-10 w-10 text-[#64748B] mb-3 opacity-40"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1841,
+                                        lineNumber: 1842,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4185,7 +4187,7 @@ function FairValueCalculator() {
                                         children: "No fair value yet"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1842,
+                                        lineNumber: 1843,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4193,31 +4195,31 @@ function FairValueCalculator() {
                                         children: symbol ? `Fields auto-filled for ${symbol}. Click "Calculate Fair Value" to run the multi-method blend.` : `Select a stock to auto-fill the inputs, then click "Calculate Fair Value".`
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1843,
+                                        lineNumber: 1844,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1840,
+                                lineNumber: 1841,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 1694,
+                        lineNumber: 1695,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 1687,
+                lineNumber: 1688,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 1405,
+        lineNumber: 1406,
         columnNumber: 5
     }, this);
 }
@@ -4320,19 +4322,19 @@ function FairValueCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 1934,
+                                    lineNumber: 1935,
                                     columnNumber: 13
                                 }, this),
                                 "Trade Setup"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 1933,
+                            lineNumber: 1934,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 1932,
+                        lineNumber: 1933,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4349,7 +4351,7 @@ function FairValueCalculator() {
                                                 children: "Total capital (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1941,
+                                                lineNumber: 1942,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -4359,13 +4361,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1942,
+                                                lineNumber: 1943,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1940,
+                                        lineNumber: 1941,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4376,7 +4378,7 @@ function FairValueCalculator() {
                                                 children: "Entry price (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1950,
+                                                lineNumber: 1951,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -4387,13 +4389,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1951,
+                                                lineNumber: 1952,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1949,
+                                        lineNumber: 1950,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4404,7 +4406,7 @@ function FairValueCalculator() {
                                                 children: "Stop-loss (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1960,
+                                                lineNumber: 1961,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -4415,13 +4417,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1961,
+                                                lineNumber: 1962,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1959,
+                                        lineNumber: 1960,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4432,7 +4434,7 @@ function FairValueCalculator() {
                                                 children: "Risk per trade (%)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1970,
+                                                lineNumber: 1971,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -4443,13 +4445,13 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1971,
+                                                lineNumber: 1972,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1969,
+                                        lineNumber: 1970,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4460,7 +4462,7 @@ function FairValueCalculator() {
                                                 children: "Target price (Rs)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1980,
+                                                lineNumber: 1981,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -4471,19 +4473,19 @@ function FairValueCalculator() {
                                                 className: "bg-[#0A0E1A] border-white/[0.08] text-[#F4F7FB] font-mono"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 1981,
+                                                lineNumber: 1982,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1979,
+                                        lineNumber: 1980,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1939,
+                                lineNumber: 1940,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4494,7 +4496,7 @@ function FairValueCalculator() {
                                         children: "Auto-detected direction"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1993,
+                                        lineNumber: 1994,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4503,13 +4505,13 @@ function FairValueCalculator() {
                                         children: r.isLong ? "▲ LONG" : "▼ SHORT"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 1994,
+                                        lineNumber: 1995,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 1992,
+                                lineNumber: 1993,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4519,7 +4521,7 @@ function FairValueCalculator() {
                                         className: "h-3.5 w-3.5 text-[#00E676] shrink-0 mt-0.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2007,
+                                        lineNumber: 2008,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4534,25 +4536,25 @@ function FairValueCalculator() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2008,
+                                        lineNumber: 2009,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2006,
+                                lineNumber: 2007,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 1938,
+                        lineNumber: 1939,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 1931,
+                lineNumber: 1932,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -4566,19 +4568,19 @@ function FairValueCalculator() {
                                     className: "h-4 w-4 text-[#00E676]"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Calculators.tsx",
-                                    lineNumber: 2020,
+                                    lineNumber: 2021,
                                     columnNumber: 13
                                 }, this),
                                 "Position Sizing"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 2019,
+                            lineNumber: 2020,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2018,
+                        lineNumber: 2019,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4593,7 +4595,7 @@ function FairValueCalculator() {
                                         tone: "neg"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2026,
+                                        lineNumber: 2027,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -4602,7 +4604,7 @@ function FairValueCalculator() {
                                         tone: "pos"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2027,
+                                        lineNumber: 2028,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -4611,7 +4613,7 @@ function FairValueCalculator() {
                                         tone: "neg"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2028,
+                                        lineNumber: 2029,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Stat, {
@@ -4620,13 +4622,13 @@ function FairValueCalculator() {
                                         tone: "pos"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2029,
+                                        lineNumber: 2030,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2025,
+                                lineNumber: 2026,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4640,7 +4642,7 @@ function FairValueCalculator() {
                                                 children: "Position size"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2034,
+                                                lineNumber: 2035,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4651,7 +4653,7 @@ function FairValueCalculator() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2035,
+                                                lineNumber: 2036,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4662,13 +4664,13 @@ function FairValueCalculator() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2036,
+                                                lineNumber: 2037,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2033,
+                                        lineNumber: 2034,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4679,7 +4681,7 @@ function FairValueCalculator() {
                                                 children: "R:R ratio"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2039,
+                                                lineNumber: 2040,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4687,7 +4689,7 @@ function FairValueCalculator() {
                                                 children: rrFormatted
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2040,
+                                                lineNumber: 2041,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4695,19 +4697,19 @@ function FairValueCalculator() {
                                                 children: "Reward ÷ Risk"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2041,
+                                                lineNumber: 2042,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2038,
+                                        lineNumber: 2039,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2032,
+                                lineNumber: 2033,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4720,7 +4722,7 @@ function FairValueCalculator() {
                                                 children: "Trade quality"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2048,
+                                                lineNumber: 2049,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4731,13 +4733,13 @@ function FairValueCalculator() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                                lineNumber: 2049,
+                                                lineNumber: 2050,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2047,
+                                        lineNumber: 2048,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4746,13 +4748,13 @@ function FairValueCalculator() {
                                         children: rrFormatted
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2053,
+                                        lineNumber: 2054,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2046,
+                                lineNumber: 2047,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4764,7 +4766,7 @@ function FairValueCalculator() {
                                         tone: "pos"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2060,
+                                        lineNumber: 2061,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniStat, {
@@ -4773,7 +4775,7 @@ function FairValueCalculator() {
                                         tone: "neg"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2061,
+                                        lineNumber: 2062,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniStat, {
@@ -4781,31 +4783,31 @@ function FairValueCalculator() {
                                         value: `${r.capitalDeployedPct.toFixed(1)}%`
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2062,
+                                        lineNumber: 2063,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2059,
+                                lineNumber: 2060,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2024,
+                        lineNumber: 2025,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2017,
+                lineNumber: 2018,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 1930,
+        lineNumber: 1931,
         columnNumber: 5
     }, this);
 }
@@ -4821,7 +4823,7 @@ function FairValueCalculator() {
                 children: label
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2088,
+                lineNumber: 2089,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4829,13 +4831,13 @@ function FairValueCalculator() {
                 children: value
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2089,
+                lineNumber: 2090,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 2087,
+        lineNumber: 2088,
         columnNumber: 5
     }, this);
 }
@@ -4849,7 +4851,7 @@ function MiniStat({ label, value, tone = "neutral" }) {
                 children: label
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2107,
+                lineNumber: 2108,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4857,240 +4859,254 @@ function MiniStat({ label, value, tone = "neutral" }) {
                 children: value
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2108,
+                lineNumber: 2109,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 2106,
+        lineNumber: 2107,
         columnNumber: 5
     }, this);
 }
 function Calculators() {
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-        className: "px-4 md:px-6 py-6 max-w-5xl mx-auto text-[#F4F7FB]",
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "min-h-screen bg-[#0A0E1A] text-[#F4F7FB]",
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "mb-5",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                        className: "text-2xl font-bold text-[#F4F7FB] flex items-center gap-2",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$calculator$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Calculator$3e$__["Calculator"], {
-                                className: "h-5 w-5 text-[#00E676]"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2122,
-                                columnNumber: 13
-                            }, this),
-                            "Tax & Trading Calculators"
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2121,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "text-sm text-[#94A3B8] mt-1",
-                        children: "Pakistan-specific calculators for PSX investors — CGT, dividend tax, SIP compounding, and position sizing."
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2125,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppNav"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2120,
-                columnNumber: 9
+                lineNumber: 2121,
+                columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tabs"], {
-                defaultValue: "cgt",
-                className: "w-full",
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
+                className: "px-4 md:px-6 py-6 max-w-5xl mx-auto",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsList"], {
-                        className: "bg-[#131829] border border-white/[0.08] h-auto p-1 flex flex-wrap gap-1 w-full justify-start",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "mb-5",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "cgt",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                className: "text-2xl font-bold text-[#F4F7FB] flex items-center gap-2",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$calculator$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Calculator$3e$__["Calculator"], {
-                                        className: "h-3.5 w-3.5"
+                                        className: "h-5 w-5 text-[#00E676]"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2136,
-                                        columnNumber: 15
+                                        lineNumber: 2125,
+                                        columnNumber: 13
                                     }, this),
-                                    "CGT"
+                                    "Tax & Trading Calculators"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2132,
-                                columnNumber: 13
+                                lineNumber: 2124,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "dividend",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$coins$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Coins$3e$__["Coins"], {
-                                        className: "h-3.5 w-3.5"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2143,
-                                        columnNumber: 15
-                                    }, this),
-                                    "Dividend Tax"
-                                ]
-                            }, void 0, true, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                className: "text-sm text-[#94A3B8] mt-1",
+                                children: "Pakistan-specific calculators for PSX investors — CGT, dividend tax, SIP compounding, and position sizing."
+                            }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2139,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "sip",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
-                                        className: "h-3.5 w-3.5"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2150,
-                                        columnNumber: 15
-                                    }, this),
-                                    "SIP"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2146,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "position",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$crosshair$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Crosshair$3e$__["Crosshair"], {
-                                        className: "h-3.5 w-3.5"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2157,
-                                        columnNumber: 15
-                                    }, this),
-                                    "Position Size"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2153,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "fairvalue",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$landmark$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Landmark$3e$__["Landmark"], {
-                                        className: "h-3.5 w-3.5"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                                        lineNumber: 2164,
-                                        columnNumber: 15
-                                    }, this),
-                                    "Fair Value"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Calculators.tsx",
-                                lineNumber: 2160,
-                                columnNumber: 13
+                                lineNumber: 2128,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2131,
-                        columnNumber: 11
+                        lineNumber: 2123,
+                        columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "cgt",
-                        className: "mt-4",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(CgtCalculator, {}, void 0, false, {
-                            fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 2170,
-                            columnNumber: 13
-                        }, this)
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tabs"], {
+                        defaultValue: "cgt",
+                        className: "w-full",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsList"], {
+                                className: "bg-[#131829] border border-white/[0.08] h-auto p-1 flex flex-wrap gap-1 w-full justify-start",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "cgt",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$calculator$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Calculator$3e$__["Calculator"], {
+                                                className: "h-3.5 w-3.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                                lineNumber: 2139,
+                                                columnNumber: 15
+                                            }, this),
+                                            "CGT"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Calculators.tsx",
+                                        lineNumber: 2135,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "dividend",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$coins$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Coins$3e$__["Coins"], {
+                                                className: "h-3.5 w-3.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                                lineNumber: 2146,
+                                                columnNumber: 15
+                                            }, this),
+                                            "Dividend Tax"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Calculators.tsx",
+                                        lineNumber: 2142,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "sip",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
+                                                className: "h-3.5 w-3.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                                lineNumber: 2153,
+                                                columnNumber: 15
+                                            }, this),
+                                            "SIP"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Calculators.tsx",
+                                        lineNumber: 2149,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "position",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$crosshair$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Crosshair$3e$__["Crosshair"], {
+                                                className: "h-3.5 w-3.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                                lineNumber: 2160,
+                                                columnNumber: 15
+                                            }, this),
+                                            "Position Size"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Calculators.tsx",
+                                        lineNumber: 2156,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "fairvalue",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$landmark$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Landmark$3e$__["Landmark"], {
+                                                className: "h-3.5 w-3.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                                lineNumber: 2167,
+                                                columnNumber: 15
+                                            }, this),
+                                            "Fair Value"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Calculators.tsx",
+                                        lineNumber: 2163,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                lineNumber: 2134,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "cgt",
+                                className: "mt-4",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(CgtCalculator, {}, void 0, false, {
+                                    fileName: "[project]/src/components/latent/Calculators.tsx",
+                                    lineNumber: 2173,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                lineNumber: 2172,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "dividend",
+                                className: "mt-4",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DividendCalculator, {}, void 0, false, {
+                                    fileName: "[project]/src/components/latent/Calculators.tsx",
+                                    lineNumber: 2176,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                lineNumber: 2175,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "sip",
+                                className: "mt-4",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(SipCalculator, {}, void 0, false, {
+                                    fileName: "[project]/src/components/latent/Calculators.tsx",
+                                    lineNumber: 2179,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                lineNumber: 2178,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "position",
+                                className: "mt-4",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(PositionSizeCalculator, {}, void 0, false, {
+                                    fileName: "[project]/src/components/latent/Calculators.tsx",
+                                    lineNumber: 2182,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                lineNumber: 2181,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "fairvalue",
+                                className: "mt-4",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(FairValueCalculator, {}, void 0, false, {
+                                    fileName: "[project]/src/components/latent/Calculators.tsx",
+                                    lineNumber: 2185,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/Calculators.tsx",
+                                lineNumber: 2184,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/latent/Calculators.tsx",
+                        lineNumber: 2133,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
+                        className: "mt-8 pt-4 border-t border-white/[0.06] text-[10px] text-[#64748B] text-center",
+                        children: "Rates as per Pakistan Finance Act 2024 · For education only — verify with FBR / SECP for filing."
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2169,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "dividend",
-                        className: "mt-4",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DividendCalculator, {}, void 0, false, {
-                            fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 2173,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2172,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "sip",
-                        className: "mt-4",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(SipCalculator, {}, void 0, false, {
-                            fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 2176,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2175,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "position",
-                        className: "mt-4",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(PositionSizeCalculator, {}, void 0, false, {
-                            fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 2179,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2178,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "fairvalue",
-                        className: "mt-4",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(FairValueCalculator, {}, void 0, false, {
-                            fileName: "[project]/src/components/latent/Calculators.tsx",
-                            lineNumber: 2182,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/latent/Calculators.tsx",
-                        lineNumber: 2181,
-                        columnNumber: 11
+                        lineNumber: 2189,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2130,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
-                className: "mt-8 pt-4 border-t border-white/[0.06] text-[10px] text-[#64748B] text-center",
-                children: "Rates as per Pakistan Finance Act 2024 · For education only — verify with FBR / SECP for filing."
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/Calculators.tsx",
-                lineNumber: 2186,
-                columnNumber: 9
+                lineNumber: 2122,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Calculators.tsx",
-        lineNumber: 2119,
+        lineNumber: 2120,
         columnNumber: 5
     }, this);
 }

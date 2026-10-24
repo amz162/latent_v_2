@@ -4,79 +4,13 @@
 - Environments: .env
 
 ✓ Starting...
-✓ Ready in 1088ms
-○ Compiling / ...
- GET / 200 in 5.7s (compile: 5.3s, render: 356ms)
+✓ Ready in 794ms
 [cache] Using in-memory cache (set REDIS_URL env var for production Redis)
 prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
 prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
- GET /api/ai-model-signals/ANNT?refresh=1 200 in 1036ms (compile: 884ms, render: 152ms)
-prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
-prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
-prisma:query INSERT INTO `main`.`ModelPredictionCache` (`symbol`, `predictionsJson`, `computedAt`, `dataSourceDate`) VALUES (?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `predictionsJson` = ?, `dataSourceDate` = ?, `computedAt` = ? WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `predictionsJson` AS `predictionsJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`
-prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
- GET /api/ai-model-signals/ENGRO 200 in 242ms (compile: 30ms, render: 211ms)
- GET /api/signals/all 200 in 16.2s (compile: 63ms, render: 16.2s)
- GET / 200 in 519ms (compile: 211ms, render: 308ms)
-prisma:query SELECT 1
+ GET /api/ai-model-signals/ANNT 200 in 1193ms (compile: 1051ms, render: 142ms)
 prisma:query SELECT `main`.`ResultPatternCache`.`symbol`, `main`.`ResultPatternCache`.`resultsJson`, `main`.`ResultPatternCache`.`patternsJson`, `main`.`ResultPatternCache`.`summaryJson`, `main`.`ResultPatternCache`.`computedAt`, `main`.`ResultPatternCache`.`dataSourceDate` FROM `main`.`ResultPatternCache` WHERE (`main`.`ResultPatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
-prisma:query INSERT INTO `main`.`ResultPatternCache` (`symbol`, `resultsJson`, `patternsJson`, `summaryJson`, `computedAt`, `dataSourceDate`) VALUES (?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `resultsJson` = ?, `patternsJson` = ?, `summaryJson` = ?, `dataSourceDate` = ?, `computedAt` = ? WHERE (`main`.`ResultPatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `resultsJson` AS `resultsJson`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`
- GET /api/result-patterns/ENGRO 200 in 8.1s (compile: 673ms, render: 7.4s)
-prisma:query SELECT `main`.`ResultPatternCache`.`symbol`, `main`.`ResultPatternCache`.`resultsJson`, `main`.`ResultPatternCache`.`patternsJson`, `main`.`ResultPatternCache`.`summaryJson`, `main`.`ResultPatternCache`.`computedAt`, `main`.`ResultPatternCache`.`dataSourceDate` FROM `main`.`ResultPatternCache` WHERE (`main`.`ResultPatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
- GET /api/result-patterns/ENGRO 200 in 40ms (compile: 32ms, render: 8ms)
-prisma:query SELECT 1
+ GET /api/result-patterns/ENGRO 200 in 565ms (compile: 545ms, render: 20ms)
 prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
- GET /api/price-patterns/ENGRO 200 in 581ms (compile: 557ms, render: 24ms)
- GET / 200 in 214ms (compile: 6ms, render: 209ms)
-⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
-Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[cache] Using in-memory cache (set REDIS_URL env var for production Redis)
- GET /api/track-record 200 in 94ms (compile: 77ms, render: 17ms)
- GET /api/signals/all 200 in 5.5s (compile: 137ms, render: 5.3s)
- GET /api/signals/all 200 in 25ms (compile: 10ms, render: 15ms)
- GET /api/psx/companies 200 in 2.4s (compile: 89ms, render: 2.4s)
- GET /api/psx/companies 200 in 58ms (compile: 25ms, render: 33ms)
-prisma:query SELECT 1
-prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
-prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
- GET /api/psx/live?symbol=ENGRO 200 in 555ms (compile: 132ms, render: 422ms)
- GET /api/ai-model-signals/ENGRO 200 in 553ms (compile: 71ms, render: 482ms)
-prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
-prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
- GET /api/psx/live?symbol=ANNT 404 in 629ms (compile: 4ms, render: 625ms)
- GET /api/ai-model-signals/ANNT 200 in 722ms (compile: 60ms, render: 662ms)
-prisma:query SELECT 1
-prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
-prisma:query BEGIN IMMEDIATE
-prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
-prisma:query COMMIT
- GET /api/cron/check-tp-sl 200 in 54ms (compile: 40ms, render: 14ms)
- GET /api/ai-model-signals/ENGRO 200 in 146ms (compile: 45ms, render: 102ms)
-[cache] Using in-memory cache (set REDIS_URL env var for production Redis)
-prisma:query SELECT 1
-prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
-prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
- GET /api/ai-model-signals/ENGRO?refresh=1 200 in 578ms (compile: 173ms, render: 405ms)
- GET /api/psx/companies 200 in 15ms (compile: 8ms, render: 8ms)
- GET /api/psx/companies 200 in 12ms (compile: 3ms, render: 9ms)
-prisma:query SELECT 1
-prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
- GET /api/price-patterns/ENGRO 200 in 91ms (compile: 71ms, render: 20ms)
-prisma:query SELECT 1
-prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
-prisma:query BEGIN IMMEDIATE
-prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
-prisma:query COMMIT
- GET /api/cron/check-tp-sl 200 in 12ms (compile: 3ms, render: 9ms)
-prisma:query SELECT `main`.`ResultPatternCache`.`symbol`, `main`.`ResultPatternCache`.`resultsJson`, `main`.`ResultPatternCache`.`patternsJson`, `main`.`ResultPatternCache`.`summaryJson`, `main`.`ResultPatternCache`.`computedAt`, `main`.`ResultPatternCache`.`dataSourceDate` FROM `main`.`ResultPatternCache` WHERE (`main`.`ResultPatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
- GET /api/result-patterns/ENGRO 200 in 104ms (compile: 77ms, render: 27ms)
-
-thread 'tokio-runtime-worker' (9949) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:412:31:
-range end index 805306369 out of range for slice of length 45321
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-thread 'tokio-runtime-worker' (10099) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
-range start index 1655023 out of range for slice of length 1654903
-
-thread 'tokio-runtime-worker' (10099) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
-range start index 1655011 out of range for slice of length 1654903
+ GET /api/price-patterns/ENGRO 200 in 732ms (compile: 706ms, render: 26ms)
+ GET /api/signals/all 200 in 5.0s (compile: 40ms, render: 5.0s)

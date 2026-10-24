@@ -10,6 +10,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/card.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/badge.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/button.tsx [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/AppNav.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/StockSearch.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$store$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/latent/store.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/refresh-cw.js [app-ssr] (ecmascript) <export default as RefreshCw>");
@@ -34,6 +35,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$CartesianGrid$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/recharts/es6/cartesian/CartesianGrid.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$ReferenceLine$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/recharts/es6/cartesian/ReferenceLine.js [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -176,804 +178,818 @@ function TechnicalAnalysis() {
         setViewMode("index");
     };
     const isIndex = INDEX_SYMBOLS.has(selected);
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-        className: "px-4 md:px-6 py-6 max-w-6xl mx-auto",
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "min-h-screen bg-[#0A0E1A]",
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center justify-between mb-6 flex-wrap gap-3",
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppNav"], {}, void 0, false, {
+                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                lineNumber: 84,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
+                className: "px-4 md:px-6 py-6 max-w-6xl mx-auto",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center justify-between mb-6 flex-wrap gap-3",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                className: "text-2xl font-bold text-[#F4F7FB]",
-                                children: "Technical Analysis"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                        className: "text-2xl font-bold text-[#F4F7FB]",
+                                        children: "Technical Analysis"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                        lineNumber: 88,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-sm text-[#94A3B8] mt-1",
+                                        children: "Real price history (up to 10 years) from psxdata-api + askanalyst.com.pk — Daily / Weekly / Monthly chart, indicators matrix, and AI prediction in layman terms."
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                        lineNumber: 89,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 85,
-                                columnNumber: 13
+                                lineNumber: 87,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: "text-sm text-[#94A3B8] mt-1",
-                                children: "Real price history (up to 10 years) from psxdata-api + askanalyst.com.pk — Daily / Weekly / Monthly chart, indicators matrix, and AI prediction in layman terms."
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                variant: "outline",
+                                size: "sm",
+                                onClick: ()=>__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info("Chart refresh triggered — data updated"),
+                                className: "border-white/[0.12] text-[#94A3B8]",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
+                                        className: "h-3 w-3 mr-1.5"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                        lineNumber: 99,
+                                        columnNumber: 13
+                                    }, this),
+                                    "Refresh"
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 86,
-                                columnNumber: 13
+                                lineNumber: 93,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 84,
-                        columnNumber: 11
+                        lineNumber: 86,
+                        columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
-                        variant: "outline",
-                        size: "sm",
-                        onClick: ()=>__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info("Chart refresh triggered — data updated"),
-                        className: "border-white/[0.12] text-[#94A3B8]",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
-                                className: "h-3 w-3 mr-1.5"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 96,
-                                columnNumber: 13
-                            }, this),
-                            "Refresh"
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 90,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 83,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "grid grid-cols-2 md:grid-cols-4 gap-2 mb-5",
-                children: INDEXES.map((idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        onClick: ()=>handleIndexClick(idx),
-                        className: `text-left p-3 rounded-lg border transition-colors ${viewMode === "index" && selected === idx.symbol ? "bg-[#00E676]/[0.07] border-[#00E676]/40" : "bg-[#131829] border-white/[0.08] hover:border-white/[0.15]"}`,
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex items-center justify-between mb-1",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "grid grid-cols-2 md:grid-cols-4 gap-2 mb-5",
+                        children: INDEXES.map((idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>handleIndexClick(idx),
+                                className: `text-left p-3 rounded-lg border transition-colors ${viewMode === "index" && selected === idx.symbol ? "bg-[#00E676]/[0.07] border-[#00E676]/40" : "bg-[#131829] border-white/[0.08] hover:border-white/[0.15]"}`,
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "text-xs font-semibold text-[#F4F7FB]",
-                                        children: idx.symbol
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 114,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: `text-[10px] font-mono ${idx.changePct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`,
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex items-center justify-between mb-1",
                                         children: [
-                                            idx.changePct >= 0 ? "+" : "",
-                                            idx.changePct,
-                                            "%"
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "text-xs font-semibold text-[#F4F7FB]",
+                                                children: idx.symbol
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                lineNumber: 117,
+                                                columnNumber: 17
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: `text-[10px] font-mono ${idx.changePct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`,
+                                                children: [
+                                                    idx.changePct >= 0 ? "+" : "",
+                                                    idx.changePct,
+                                                    "%"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                lineNumber: 118,
+                                                columnNumber: 17
+                                            }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 115,
-                                        columnNumber: 17
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 113,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-lg font-bold text-[#F4F7FB] font-mono",
-                                children: idx.value.toLocaleString()
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 119,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-[10px] text-[#64748B] truncate",
-                                children: idx.name
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 120,
-                                columnNumber: 15
-                            }, this)
-                        ]
-                    }, idx.symbol, true, {
-                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 104,
-                        columnNumber: 13
-                    }, this))
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 102,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
-                className: "bg-[#131829] border-white/[0.08] mb-4",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
-                    className: "p-4",
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center gap-3 flex-wrap",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex-1 min-w-[220px]",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                        className: "text-[10px] uppercase tracking-wider text-[#64748B] block mb-1.5",
-                                        children: "Select Stock (any of 1000+ PSX-listed companies)"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 130,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["StockSearch"], {
-                                        value: viewMode === "stock" ? selected : "",
-                                        onChange: handleStockSelect,
-                                        placeholder: "Search any PSX stock by symbol or name..."
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 133,
-                                        columnNumber: 17
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 129,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-right shrink-0",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-[10px] uppercase text-[#64748B]",
-                                        children: "Currently viewing"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 140,
-                                        columnNumber: 17
+                                        lineNumber: 116,
+                                        columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-sm font-mono font-bold text-[#F4F7FB]",
-                                        children: viewMode === "stock" ? selected : `${selected} (index summary)`
+                                        className: "text-lg font-bold text-[#F4F7FB] font-mono",
+                                        children: idx.value.toLocaleString()
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 141,
-                                        columnNumber: 17
+                                        lineNumber: 122,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "text-[10px] text-[#64748B] truncate",
+                                        children: idx.name
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                        lineNumber: 123,
+                                        columnNumber: 15
                                     }, this)
                                 ]
-                            }, void 0, true, {
+                            }, idx.symbol, true, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 139,
-                                columnNumber: 15
-                            }, this)
-                        ]
-                    }, void 0, true, {
+                                lineNumber: 107,
+                                columnNumber: 13
+                            }, this))
+                    }, void 0, false, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 128,
-                        columnNumber: 13
-                    }, this)
-                }, void 0, false, {
-                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                    lineNumber: 127,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 126,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "grid lg:grid-cols-3 gap-4",
-                children: [
+                        lineNumber: 105,
+                        columnNumber: 9
+                    }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
-                        className: "lg:col-span-2 bg-[#131829] border-white/[0.08]",
+                        className: "bg-[#131829] border-white/[0.08] mb-4",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
+                            className: "p-4",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex items-center gap-3 flex-wrap",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex-1 min-w-[220px]",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                                className: "text-[10px] uppercase tracking-wider text-[#64748B] block mb-1.5",
+                                                children: "Select Stock (any of 1000+ PSX-listed companies)"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                lineNumber: 133,
+                                                columnNumber: 17
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["StockSearch"], {
+                                                value: viewMode === "stock" ? selected : "",
+                                                onChange: handleStockSelect,
+                                                placeholder: "Search any PSX stock by symbol or name..."
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                lineNumber: 136,
+                                                columnNumber: 17
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                        lineNumber: 132,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "text-right shrink-0",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "text-[10px] uppercase text-[#64748B]",
+                                                children: "Currently viewing"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                lineNumber: 143,
+                                                columnNumber: 17
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "text-sm font-mono font-bold text-[#F4F7FB]",
+                                                children: viewMode === "stock" ? selected : `${selected} (index summary)`
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                lineNumber: 144,
+                                                columnNumber: 17
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                        lineNumber: 142,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                lineNumber: 131,
+                                columnNumber: 13
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                            lineNumber: 130,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                        lineNumber: 129,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "grid lg:grid-cols-3 gap-4",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex items-center justify-between flex-wrap gap-2",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
-                                            className: "text-base text-[#F4F7FB] flex items-center gap-2",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
+                                className: "lg:col-span-2 bg-[#131829] border-white/[0.08]",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center justify-between flex-wrap gap-2",
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$activity$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Activity$3e$__["Activity"], {
-                                                    className: "h-4 w-4 text-[#00E676]"
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
+                                                    className: "text-base text-[#F4F7FB] flex items-center gap-2",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$activity$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Activity$3e$__["Activity"], {
+                                                            className: "h-4 w-4 text-[#00E676]"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                            lineNumber: 158,
+                                                            columnNumber: 19
+                                                        }, this),
+                                                        selected,
+                                                        " · Full Price History"
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                    lineNumber: 157,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                    variant: "outline",
+                                                    className: "border-[#00E676]/40 text-[#00E676] text-[10px]",
+                                                    children: "LIVE"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                    lineNumber: 155,
-                                                    columnNumber: 19
-                                                }, this),
-                                                selected,
-                                                " · Full Price History"
+                                                    lineNumber: 161,
+                                                    columnNumber: 17
+                                                }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 154,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                            variant: "outline",
-                                            className: "border-[#00E676]/40 text-[#00E676] text-[10px]",
-                                            children: "LIVE"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 158,
-                                            columnNumber: 17
+                                            lineNumber: 156,
+                                            columnNumber: 15
                                         }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 153,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 152,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
-                                children: [
-                                    viewMode === "stock" && !isIndex ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(HistoricalOhlcvChart, {
-                                        symbol: selected,
-                                        height: 360
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 165,
-                                        columnNumber: 17
-                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "h-80 rounded-lg bg-[#0A0E1A] border border-white/[0.06] flex flex-col items-center justify-center text-center text-xs text-[#64748B] p-6",
+                                        lineNumber: 155,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$brain$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Brain$3e$__["Brain"], {
-                                                className: "h-10 w-10 text-[#64748B]/40 mb-3"
+                                            viewMode === "stock" && !isIndex ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(HistoricalOhlcvChart, {
+                                                symbol: selected,
+                                                height: 360
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                 lineNumber: 168,
-                                                columnNumber: 19
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                className: "font-semibold text-[#F4F7FB] mb-1",
-                                                children: "Index aggregate view"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 169,
-                                                columnNumber: 19
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                className: "max-w-md",
+                                                columnNumber: 17
+                                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "h-80 rounded-lg bg-[#0A0E1A] border border-white/[0.06] flex flex-col items-center justify-center text-center text-xs text-[#64748B] p-6",
                                                 children: [
-                                                    selected,
-                                                    " is a market index — psxdata-api / askanalyst.com.pk serve individual PSX-listed stocks, not index aggregates. Pick any stock above (ENGRO, OGDC, HUBC, LUCK, etc.) for real price history."
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$brain$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Brain$3e$__["Brain"], {
+                                                        className: "h-10 w-10 text-[#64748B]/40 mb-3"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 171,
+                                                        columnNumber: 19
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                        className: "font-semibold text-[#F4F7FB] mb-1",
+                                                        children: "Index aggregate view"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 172,
+                                                        columnNumber: 19
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                        className: "max-w-md",
+                                                        children: [
+                                                            selected,
+                                                            " is a market index — psxdata-api / askanalyst.com.pk serve individual PSX-listed stocks, not index aggregates. Pick any stock above (ENGRO, OGDC, HUBC, LUCK, etc.) for real price history."
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 173,
+                                                        columnNumber: 19
+                                                    }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                 lineNumber: 170,
-                                                columnNumber: 19
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 167,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center gap-4 mt-3 text-[10px] text-[#64748B] flex-wrap",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "flex items-center gap-1",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "h-1.5 w-3 bg-[#00E676] inline-block"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 180,
-                                                        columnNumber: 59
-                                                    }, this),
-                                                    "Price"
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 180,
                                                 columnNumber: 17
                                             }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "flex items-center gap-1",
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "flex items-center gap-4 mt-3 text-[10px] text-[#64748B] flex-wrap",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "h-0.5 w-3 bg-[#22E881] inline-block",
-                                                        style: {
-                                                            borderTop: "1px dashed"
-                                                        }
-                                                    }, void 0, false, {
+                                                        className: "flex items-center gap-1",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "h-1.5 w-3 bg-[#00E676] inline-block"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 183,
+                                                                columnNumber: 59
+                                                            }, this),
+                                                            "Price"
+                                                        ]
+                                                    }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 181,
-                                                        columnNumber: 59
+                                                        lineNumber: 183,
+                                                        columnNumber: 17
                                                     }, this),
-                                                    "50-DMA"
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 181,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "flex items-center gap-1",
-                                                children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "h-0.5 w-3 bg-[#94A3B8] inline-block",
-                                                        style: {
-                                                            borderTop: "1px dashed"
-                                                        }
-                                                    }, void 0, false, {
+                                                        className: "flex items-center gap-1",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "h-0.5 w-3 bg-[#22E881] inline-block",
+                                                                style: {
+                                                                    borderTop: "1px dashed"
+                                                                }
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 184,
+                                                                columnNumber: 59
+                                                            }, this),
+                                                            "50-DMA"
+                                                        ]
+                                                    }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 182,
-                                                        columnNumber: 59
+                                                        lineNumber: 184,
+                                                        columnNumber: 17
                                                     }, this),
-                                                    "200-DMA"
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "flex items-center gap-1",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "h-0.5 w-3 bg-[#94A3B8] inline-block",
+                                                                style: {
+                                                                    borderTop: "1px dashed"
+                                                                }
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 185,
+                                                                columnNumber: 59
+                                                            }, this),
+                                                            "200-DMA"
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 185,
+                                                        columnNumber: 17
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "flex items-center gap-1",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "h-0.5 w-3 bg-[#FBBF24] inline-block",
+                                                                style: {
+                                                                    borderTop: "1px dashed"
+                                                                }
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 186,
+                                                                columnNumber: 59
+                                                            }, this),
+                                                            "Resistance"
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 186,
+                                                        columnNumber: 17
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "flex items-center gap-1",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "h-0.5 w-3 bg-[#FF5C5C] inline-block",
+                                                                style: {
+                                                                    borderTop: "1px dashed"
+                                                                }
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 187,
+                                                                columnNumber: 59
+                                                            }, this),
+                                                            "Support"
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 187,
+                                                        columnNumber: 17
+                                                    }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                 lineNumber: 182,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "flex items-center gap-1",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "h-0.5 w-3 bg-[#FBBF24] inline-block",
-                                                        style: {
-                                                            borderTop: "1px dashed"
-                                                        }
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 183,
-                                                        columnNumber: 59
-                                                    }, this),
-                                                    "Resistance"
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 183,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "flex items-center gap-1",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "h-0.5 w-3 bg-[#FF5C5C] inline-block",
-                                                        style: {
-                                                            borderTop: "1px dashed"
-                                                        }
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 184,
-                                                        columnNumber: 59
-                                                    }, this),
-                                                    "Support"
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 184,
-                                                columnNumber: 17
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 179,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "mt-4 rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-4",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-2 mb-2",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$brain$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Brain$3e$__["Brain"], {
-                                                        className: "h-4 w-4 text-[#00E676]"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 190,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-sm font-semibold text-[#F4F7FB]",
-                                                        children: "AI prediction (next 5 days)"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 191,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 189,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                className: "text-xs text-[#94A3B8] leading-relaxed mb-2",
-                                                children: [
-                                                    selected,
-                                                    " analysis: review the chart above for current support/resistance levels. The 50-DMA crossing above the 200-DMA would confirm a golden-cross bullish signal; crossing below would be a death-cross bearish signal. Watch volume bars for conviction on any breakout/breakdown move."
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 193,
-                                                columnNumber: 17
+                                                columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-3 mt-2 text-xs",
+                                                className: "mt-4 rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-4",
                                                 children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[#64748B]",
-                                                        children: "Bias:"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 200,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[#00E676] font-semibold flex items-center gap-1",
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "flex items-center gap-2 mb-2",
                                                         children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
-                                                                className: "h-3 w-3"
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$brain$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Brain$3e$__["Brain"], {
+                                                                className: "h-4 w-4 text-[#00E676]"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                                lineNumber: 202,
-                                                                columnNumber: 21
+                                                                lineNumber: 193,
+                                                                columnNumber: 19
                                                             }, this),
-                                                            " See Signal Section for full model call"
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-sm font-semibold text-[#F4F7FB]",
+                                                                children: "AI prediction (next 5 days)"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 194,
+                                                                columnNumber: 19
+                                                            }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 201,
-                                                        columnNumber: 19
+                                                        lineNumber: 192,
+                                                        columnNumber: 17
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                        className: "text-xs text-[#94A3B8] leading-relaxed mb-2",
+                                                        children: [
+                                                            selected,
+                                                            " analysis: review the chart above for current support/resistance levels. The 50-DMA crossing above the 200-DMA would confirm a golden-cross bullish signal; crossing below would be a death-cross bearish signal. Watch volume bars for conviction on any breakout/breakdown move."
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 196,
+                                                        columnNumber: 17
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "flex items-center gap-3 mt-2 text-xs",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-[#64748B]",
+                                                                children: "Bias:"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 203,
+                                                                columnNumber: 19
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-[#00E676] font-semibold flex items-center gap-1",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
+                                                                        className: "h-3 w-3"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                        lineNumber: 205,
+                                                                        columnNumber: 21
+                                                                    }, this),
+                                                                    " See Signal Section for full model call"
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 204,
+                                                                columnNumber: 19
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                        lineNumber: 202,
+                                                        columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 199,
-                                                columnNumber: 17
+                                                lineNumber: 191,
+                                                columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 188,
-                                        columnNumber: 15
+                                        lineNumber: 166,
+                                        columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 163,
-                                columnNumber: 13
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 151,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
-                        className: "bg-[#131829] border-white/[0.08]",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
-                                    className: "text-base text-[#F4F7FB]",
-                                    children: "Indicators matrix"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 212,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 211,
-                                columnNumber: 13
+                                lineNumber: 154,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
-                                className: "space-y-2",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
+                                className: "bg-[#131829] border-white/[0.08]",
                                 children: [
-                                    INDICATORS.map((ind)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "flex items-center justify-between mb-0.5",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
+                                            className: "text-base text-[#F4F7FB]",
+                                            children: "Indicators matrix"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                            lineNumber: 215,
+                                            columnNumber: 15
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                        lineNumber: 214,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
+                                        className: "space-y-2",
+                                        children: [
+                                            INDICATORS.map((ind)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5",
                                                     children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "text-xs font-semibold text-[#F4F7FB]",
-                                                            children: ind.name
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                            lineNumber: 218,
-                                                            columnNumber: 21
-                                                        }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "flex items-center gap-1.5",
+                                                            className: "flex items-center justify-between mb-0.5",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "text-[11px] font-mono text-[#94A3B8]",
-                                                                    children: ind.value
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                                    lineNumber: 220,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: `text-[10px] font-bold uppercase ${ind.signal === "BUY" ? "text-[#00E676]" : ind.signal === "SELL" ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`,
-                                                                    children: ind.signal
+                                                                    className: "text-xs font-semibold text-[#F4F7FB]",
+                                                                    children: ind.name
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                                     lineNumber: 221,
-                                                                    columnNumber: 23
+                                                                    columnNumber: 21
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                    className: "flex items-center gap-1.5",
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                            className: "text-[11px] font-mono text-[#94A3B8]",
+                                                                            children: ind.value
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                            lineNumber: 223,
+                                                                            columnNumber: 23
+                                                                        }, this),
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                            className: `text-[10px] font-bold uppercase ${ind.signal === "BUY" ? "text-[#00E676]" : ind.signal === "SELL" ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`,
+                                                                            children: ind.signal
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                            lineNumber: 224,
+                                                                            columnNumber: 23
+                                                                        }, this)
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                    lineNumber: 222,
+                                                                    columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                            lineNumber: 219,
-                                                            columnNumber: 21
+                                                            lineNumber: 220,
+                                                            columnNumber: 19
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "text-[10px] text-[#64748B]",
+                                                            children: ind.note
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                            lineNumber: 233,
+                                                            columnNumber: 19
                                                         }, this)
                                                     ]
-                                                }, void 0, true, {
+                                                }, ind.name, true, {
                                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                    lineNumber: 217,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "text-[10px] text-[#64748B]",
-                                                    children: ind.note
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                    lineNumber: 230,
-                                                    columnNumber: 19
-                                                }, this)
-                                            ]
-                                        }, ind.name, true, {
-                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 216,
-                                            columnNumber: 17
-                                        }, this)),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "rounded-md bg-[#00E676]/[0.07] border border-[#00E676]/20 p-3 mt-2",
-                                        children: [
+                                                    lineNumber: 219,
+                                                    columnNumber: 17
+                                                }, this)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "text-[10px] uppercase text-[#00E676] font-semibold mb-1",
-                                                children: "Indicators summary"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 236,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center justify-between text-xs",
+                                                className: "rounded-md bg-[#00E676]/[0.07] border border-[#00E676]/20 p-3 mt-2",
                                                 children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[#94A3B8]",
-                                                        children: [
-                                                            "Buy: ",
-                                                            INDICATORS.filter((i)=>i.signal === "BUY").length
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                        lineNumber: 238,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[#94A3B8]",
-                                                        children: [
-                                                            "Neutral: ",
-                                                            INDICATORS.filter((i)=>i.signal === "NEUTRAL").length
-                                                        ]
-                                                    }, void 0, true, {
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "text-[10px] uppercase text-[#00E676] font-semibold mb-1",
+                                                        children: "Indicators summary"
+                                                    }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                         lineNumber: 239,
-                                                        columnNumber: 19
+                                                        columnNumber: 17
                                                     }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[#94A3B8]",
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "flex items-center justify-between text-xs",
                                                         children: [
-                                                            "Sell: ",
-                                                            INDICATORS.filter((i)=>i.signal === "SELL").length
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-[#94A3B8]",
+                                                                children: [
+                                                                    "Buy: ",
+                                                                    INDICATORS.filter((i)=>i.signal === "BUY").length
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 241,
+                                                                columnNumber: 19
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-[#94A3B8]",
+                                                                children: [
+                                                                    "Neutral: ",
+                                                                    INDICATORS.filter((i)=>i.signal === "NEUTRAL").length
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 242,
+                                                                columnNumber: 19
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-[#94A3B8]",
+                                                                children: [
+                                                                    "Sell: ",
+                                                                    INDICATORS.filter((i)=>i.signal === "SELL").length
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                                lineNumber: 243,
+                                                                columnNumber: 19
+                                                            }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                         lineNumber: 240,
-                                                        columnNumber: 19
+                                                        columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                lineNumber: 237,
-                                                columnNumber: 17
+                                                lineNumber: 238,
+                                                columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                        lineNumber: 235,
-                                        columnNumber: 15
+                                        lineNumber: 217,
+                                        columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 214,
-                                columnNumber: 13
+                                lineNumber: 213,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 210,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 149,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
-                className: "bg-[#131829] border-white/[0.08] mt-4",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
-                    className: "p-5",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                            className: "font-semibold text-[#F4F7FB] mb-3",
-                            children: "Indicators vs AI model"
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 250,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "grid grid-cols-2 gap-3",
+                        lineNumber: 152,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
+                        className: "bg-[#131829] border-white/[0.08] mt-4",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
+                            className: "p-5",
                             children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                    className: "font-semibold text-[#F4F7FB] mb-3",
+                                    children: "Indicators vs AI model"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                    lineNumber: 253,
+                                    columnNumber: 13
+                                }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-4",
+                                    className: "grid grid-cols-2 gap-3",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "text-[10px] uppercase tracking-wider text-[#64748B] mb-1",
-                                            children: "What indicators say"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 253,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex items-center gap-2",
+                                            className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-4",
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
-                                                    className: "h-5 w-5 text-[#00E676]"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                    lineNumber: 255,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-xl font-bold text-[#00E676]",
-                                                    children: "UP"
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "text-[10px] uppercase tracking-wider text-[#64748B] mb-1",
+                                                    children: "What indicators say"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                     lineNumber: 256,
-                                                    columnNumber: 19
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center gap-2",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
+                                                            className: "h-5 w-5 text-[#00E676]"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                            lineNumber: 258,
+                                                            columnNumber: 19
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-xl font-bold text-[#00E676]",
+                                                            children: "UP"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                            lineNumber: 259,
+                                                            columnNumber: 19
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                    lineNumber: 257,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-xs text-[#94A3B8] mt-1",
+                                                    children: "6 of 8 indicators bullish, 2 neutral. Classic trend-following setup."
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                    lineNumber: 261,
+                                                    columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 254,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "text-xs text-[#94A3B8] mt-1",
-                                            children: "6 of 8 indicators bullish, 2 neutral. Classic trend-following setup."
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 258,
-                                            columnNumber: 17
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 252,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-4",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "text-[10px] uppercase tracking-wider text-[#64748B] mb-1",
-                                            children: "What our AI model says"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 263,
-                                            columnNumber: 17
+                                            lineNumber: 255,
+                                            columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex items-center gap-2",
+                                            className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-4",
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
-                                                    className: "h-5 w-5 text-[#00E676]"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                                    lineNumber: 265,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-xl font-bold text-[#00E676]",
-                                                    children: "UP"
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "text-[10px] uppercase tracking-wider text-[#64748B] mb-1",
+                                                    children: "What our AI model says"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                                                     lineNumber: 266,
-                                                    columnNumber: 19
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center gap-2",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
+                                                            className: "h-5 w-5 text-[#00E676]"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                            lineNumber: 268,
+                                                            columnNumber: 19
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-xl font-bold text-[#00E676]",
+                                                            children: "UP"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                            lineNumber: 269,
+                                                            columnNumber: 19
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                    lineNumber: 267,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-xs text-[#94A3B8] mt-1",
+                                                    children: "Model confirms indicators. 73% probability of upside within 5 days."
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                                    lineNumber: 271,
+                                                    columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 264,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "text-xs text-[#94A3B8] mt-1",
-                                            children: "Model confirms indicators. 73% probability of upside within 5 days."
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 268,
-                                            columnNumber: 17
+                                            lineNumber: 265,
+                                            columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 262,
-                                    columnNumber: 15
+                                    lineNumber: 254,
+                                    columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 251,
-                            columnNumber: 13
+                            lineNumber: 252,
+                            columnNumber: 11
                         }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                    lineNumber: 249,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 248,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        className: "text-[#94A3B8] font-semibold",
-                        children: "Real chart data:"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 277,
-                        columnNumber: 11
+                        lineNumber: 251,
+                        columnNumber: 9
                     }, this),
-                    " Daily price pulled live from psxdata-api.fastapicloud.dev (with askanalyst.com.pk fallback) via",
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
-                        className: "text-[#00E676]",
-                        children: " /api/psx/ohlcv/[symbol]"
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-[#94A3B8] font-semibold",
+                                children: "Real chart data:"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                lineNumber: 280,
+                                columnNumber: 11
+                            }, this),
+                            " Daily price pulled live from psxdata-api.fastapicloud.dev (with askanalyst.com.pk fallback) via",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
+                                className: "text-[#00E676]",
+                                children: " /api/psx/ohlcv/[symbol]"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
+                                lineNumber: 282,
+                                columnNumber: 11
+                            }, this),
+                            ". Chart shows the full historical range available (up to 10 years) with Daily / Weekly / Monthly timeframes, 50-DMA, 200-DMA, support, resistance, volume area, drag-to-pan + brush-to-zoom. Use the StockSearch above to view any of the 1000+ PSX-listed companies. Indicator matrix values shown to the right are illustrative — actual computed values will be wired in from the same data pipeline in a future iteration."
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
                         lineNumber: 279,
-                        columnNumber: 11
-                    }, this),
-                    ". Chart shows the full historical range available (up to 10 years) with Daily / Weekly / Monthly timeframes, 50-DMA, 200-DMA, support, resistance, volume area, drag-to-pan + brush-to-zoom. Use the StockSearch above to view any of the 1000+ PSX-listed companies. Indicator matrix values shown to the right are illustrative — actual computed values will be wired in from the same data pipeline in a future iteration."
+                        columnNumber: 9
+                    }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 276,
-                columnNumber: 9
+                lineNumber: 85,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-        lineNumber: 82,
+        lineNumber: 83,
         columnNumber: 5
     }, this);
 }
@@ -1172,7 +1188,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Time"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 491,
+                                lineNumber: 495,
                                 columnNumber: 11
                             }, this),
                             TIMEFRAMES.map((tf)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1181,13 +1197,13 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     children: tf.label
                                 }, tf.id, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 493,
+                                    lineNumber: 497,
                                     columnNumber: 13
                                 }, this))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 490,
+                        lineNumber: 494,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1198,7 +1214,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Type"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 497,
+                                lineNumber: 501,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1207,7 +1223,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Line"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 498,
+                                lineNumber: 502,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1216,19 +1232,19 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Candlestick"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 499,
+                                lineNumber: 503,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 496,
+                        lineNumber: 500,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 489,
+                lineNumber: 493,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1246,7 +1262,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             children: r === "1m" ? "1M" : r === "6m" ? "6M" : r === "1y" ? "1Y" : r === "5y" ? "5Y" : "ALL"
                         }, r, false, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 505,
+                            lineNumber: 509,
                             columnNumber: 11
                         }, this)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1261,12 +1277,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 508,
+                                    lineNumber: 512,
                                     columnNumber: 256
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 508,
+                                lineNumber: 512,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1278,12 +1294,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 509,
+                                    lineNumber: 513,
                                     columnNumber: 246
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 509,
+                                lineNumber: 513,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1295,12 +1311,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 510,
+                                    lineNumber: 514,
                                     columnNumber: 244
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 510,
+                                lineNumber: 514,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1312,12 +1328,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 511,
+                                    lineNumber: 515,
                                     columnNumber: 258
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 511,
+                                lineNumber: 515,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1328,13 +1344,13 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "RESET"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 512,
+                                lineNumber: 516,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 507,
+                        lineNumber: 511,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1356,7 +1372,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 515,
+                                    lineNumber: 519,
                                     columnNumber: 62
                                 }, this)
                             ]
@@ -1369,13 +1385,13 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                         }, void 0, true)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 514,
+                        lineNumber: 518,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 503,
+                lineNumber: 507,
                 columnNumber: 7
             }, this)
         ]
@@ -1394,7 +1410,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             className: "h-8 w-8 text-[#00E676] animate-spin mb-3"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 529,
+                            lineNumber: 533,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1408,7 +1424,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 530,
+                            lineNumber: 534,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1416,19 +1432,19 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             children: INTRADAY_TFS.includes(timeframe) ? "Fetching real intraday candles from pypsx" : "Fetching daily candles from the DB backup"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 533,
+                            lineNumber: 537,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                    lineNumber: 525,
+                    lineNumber: 529,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-            lineNumber: 523,
+            lineNumber: 527,
             columnNumber: 7
         }, this);
     }
@@ -1447,7 +1463,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             children: "Chart unavailable"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 549,
+                            lineNumber: 553,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1455,7 +1471,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             children: error
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 550,
+                            lineNumber: 554,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1463,19 +1479,19 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             children: "Pick another stock above, or switch the timeframe/range — controls stay visible."
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 551,
+                            lineNumber: 555,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                    lineNumber: 545,
+                    lineNumber: 549,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-            lineNumber: 543,
+            lineNumber: 547,
             columnNumber: 7
         }, this);
     }
@@ -1494,13 +1510,13 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                    lineNumber: 563,
+                    lineNumber: 567,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-            lineNumber: 561,
+            lineNumber: 565,
             columnNumber: 7
         }, this);
     }
@@ -1530,7 +1546,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Time"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 581,
+                                lineNumber: 585,
                                 columnNumber: 11
                             }, this),
                             TIMEFRAMES.map((tf)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1539,13 +1555,13 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     children: tf.label
                                 }, tf.id, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 583,
+                                    lineNumber: 587,
                                     columnNumber: 13
                                 }, this))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 580,
+                        lineNumber: 584,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1556,7 +1572,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Type"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 597,
+                                lineNumber: 601,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1565,7 +1581,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Line"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 598,
+                                lineNumber: 602,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1574,19 +1590,19 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "Candlestick"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 608,
+                                lineNumber: 612,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 596,
+                        lineNumber: 600,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 579,
+                lineNumber: 583,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1604,7 +1620,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                             children: r === "1m" ? "1M" : r === "6m" ? "6M" : r === "1y" ? "1Y" : r === "5y" ? "5Y" : "ALL"
                         }, r, false, {
                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                            lineNumber: 624,
+                            lineNumber: 628,
                             columnNumber: 11
                         }, this)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1619,12 +1635,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 644,
+                                    lineNumber: 648,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 638,
+                                lineNumber: 642,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1636,12 +1652,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 652,
+                                    lineNumber: 656,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 646,
+                                lineNumber: 650,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1653,12 +1669,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 660,
+                                    lineNumber: 664,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 654,
+                                lineNumber: 658,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1670,12 +1686,12 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                     className: "h-3 w-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 668,
+                                    lineNumber: 672,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 662,
+                                lineNumber: 666,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1686,13 +1702,13 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 children: "RESET"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 670,
+                                lineNumber: 674,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 637,
+                        lineNumber: 641,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1714,19 +1730,19 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 681,
+                                lineNumber: 685,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 679,
+                        lineNumber: 683,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 622,
+                lineNumber: 626,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1760,7 +1776,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                             stopOpacity: 0.35
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 695,
+                                            lineNumber: 699,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
@@ -1769,18 +1785,18 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                             stopOpacity: 0
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                            lineNumber: 696,
+                                            lineNumber: 700,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                    lineNumber: 694,
+                                    lineNumber: 698,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 693,
+                                lineNumber: 697,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$CartesianGrid$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CartesianGrid"], {
@@ -1788,7 +1804,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 stroke: "rgba(255,255,255,0.04)"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 699,
+                                lineNumber: 703,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$XAxis$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["XAxis"], {
@@ -1806,7 +1822,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 minTickGap: 40
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 700,
+                                lineNumber: 704,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$YAxis$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["YAxis"], {
@@ -1828,7 +1844,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 width: 50
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 709,
+                                lineNumber: 713,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$YAxis$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["YAxis"], {
@@ -1841,7 +1857,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 719,
+                                lineNumber: 723,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$component$2f$Tooltip$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tooltip"], {
@@ -1883,7 +1899,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 725,
+                                lineNumber: 729,
                                 columnNumber: 13
                             }, this),
                             support != null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$ReferenceLine$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ReferenceLine"], {
@@ -1900,7 +1916,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 749,
+                                lineNumber: 753,
                                 columnNumber: 15
                             }, this),
                             resistance != null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$ReferenceLine$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ReferenceLine"], {
@@ -1917,7 +1933,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 759,
+                                lineNumber: 763,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$Area$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Area"], {
@@ -1930,7 +1946,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 isAnimationActive: false
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 769,
+                                lineNumber: 773,
                                 columnNumber: 13
                             }, this),
                             chartType === "candle" ? // Candlestick mode: range Bar (low → high) with custom shape drawing
@@ -1949,7 +1965,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 isAnimationActive: false
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 783,
+                                lineNumber: 787,
                                 columnNumber: 15
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$Line$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Line"], {
                                 yAxisId: "price",
@@ -1962,7 +1978,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 isAnimationActive: false
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 794,
+                                lineNumber: 798,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$Line$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Line"], {
@@ -1978,7 +1994,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 connectNulls: true
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 806,
+                                lineNumber: 810,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$Line$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Line"], {
@@ -1994,23 +2010,23 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                                 connectNulls: true
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                                lineNumber: 818,
+                                lineNumber: 822,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 689,
+                        lineNumber: 693,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                    lineNumber: 688,
+                    lineNumber: 692,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 687,
+                lineNumber: 691,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2022,20 +2038,20 @@ function HistoricalOhlcvChart({ symbol, height = 360 }) {
                         children: source
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                        lineNumber: 840,
+                        lineNumber: 844,
                         columnNumber: 17
                     }, this),
                     brushSel ? ` · zoomed ${brushEnd - brushStart + 1} of ${total} bars` : " · showing all bars"
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 839,
+                lineNumber: 843,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-        lineNumber: 577,
+        lineNumber: 581,
         columnNumber: 5
     }, this);
 }
@@ -2171,7 +2187,7 @@ function renderCandle(props) {
             strokeWidth: 1
         }, void 0, false, {
             fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-            lineNumber: 973,
+            lineNumber: 977,
             columnNumber: 7
         }, this);
     }
@@ -2198,7 +2214,7 @@ function renderCandle(props) {
                 strokeWidth: 1
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 993,
+                lineNumber: 997,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
@@ -2212,13 +2228,13 @@ function renderCandle(props) {
                 strokeWidth: 0.5
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-                lineNumber: 995,
+                lineNumber: 999,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/TechnicalAnalysis.tsx",
-        lineNumber: 991,
+        lineNumber: 995,
         columnNumber: 5
     }, this);
 }

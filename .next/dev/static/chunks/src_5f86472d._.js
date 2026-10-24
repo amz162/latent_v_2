@@ -474,11 +474,6 @@ const dict = {
         roman_urdu: "Pattern Finder",
         urdu: "پیٹرن فائنڈر"
     },
-    "nav.dashboard": {
-        en: "Dashboard",
-        roman_urdu: "Dashboard",
-        urdu: "ڈیش بورڈ"
-    },
     // Common
     "common.loading": {
         en: "Loading...",

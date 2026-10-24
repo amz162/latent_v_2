@@ -14,6 +14,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$b
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/skeleton.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/input.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/tabs.tsx [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/AppNav.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$store$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/latent/store.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$newspaper$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Newspaper$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/newspaper.js [app-ssr] (ecmascript) <export default as Newspaper>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$building$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Building2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/building-2.js [app-ssr] (ecmascript) <export default as Building2>");
@@ -30,6 +31,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sparkles$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Sparkles$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/sparkles.js [app-ssr] (ecmascript) <export default as Sparkles>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/sonner/dist/index.mjs [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -126,822 +128,836 @@ function FundamentalNews() {
             className: "h-3 w-3"
         }, void 0, false, {
             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-            lineNumber: 153,
+            lineNumber: 154,
             columnNumber: 24
         }, this) : i === "negative" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingDown$3e$__["TrendingDown"], {
             className: "h-3 w-3"
         }, void 0, false, {
             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-            lineNumber: 153,
+            lineNumber: 154,
             columnNumber: 80
         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$minus$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Minus$3e$__["Minus"], {
             className: "h-3 w-3"
         }, void 0, false, {
             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-            lineNumber: 153,
+            lineNumber: 154,
             columnNumber: 119
         }, this);
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-        className: "px-4 md:px-6 py-6 max-w-7xl mx-auto",
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "min-h-screen bg-[#0A0E1A]",
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center justify-between mb-6 flex-wrap gap-3",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                className: "text-2xl font-bold text-[#F4F7FB]",
-                                children: "Fundamental News"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 160,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: "text-sm text-[#94A3B8] mt-1",
-                                children: "International + national news, company announcements & results — each interpreted in layman terms with stock-impact analysis."
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 161,
-                                columnNumber: 13
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 159,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
-                        variant: "outline",
-                        size: "sm",
-                        onClick: load,
-                        disabled: loading,
-                        className: "border-white/[0.12] text-[#94A3B8]",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
-                                className: `h-3 w-3 mr-1.5 ${loading ? "animate-spin" : ""}`
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 172,
-                                columnNumber: 13
-                            }, this),
-                            "Refresh"
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 165,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppNav"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
                 lineNumber: 158,
-                columnNumber: 9
+                columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
-                className: "bg-[#131829] border-[#00E676]/20 mb-4",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
-                    className: "p-5",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex items-center gap-2 mb-3",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "h-8 w-8 rounded-md bg-[#00E676]/10 flex items-center justify-center",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$link$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Link2$3e$__["Link2"], {
-                                        className: "h-4 w-4 text-[#00E676]"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 182,
-                                        columnNumber: 17
-                                    }, this)
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 181,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                            className: "font-semibold text-[#F4F7FB]",
-                                            children: "Interpret a news link"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 185,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "text-xs text-[#94A3B8]",
-                                            children: "Paste any news article URL to get an AI interpretation of its stock impact"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 186,
-                                            columnNumber: 17
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 184,
-                                    columnNumber: 15
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 180,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-2",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
-                                    value: interpretUrl,
-                                    onChange: (e)=>setInterpretUrl(e.target.value),
-                                    placeholder: "Paste news article URL: https://www.dawn.com/news/...",
-                                    className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] font-mono text-sm"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 190,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "grid grid-cols-1 md:grid-cols-2 gap-2",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
-                                            value: interpretHeadline,
-                                            onChange: (e)=>setInterpretHeadline(e.target.value),
-                                            placeholder: "...or paste just the headline (optional)",
-                                            className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] text-sm h-9"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 197,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
-                                            value: interpretSummary,
-                                            onChange: (e)=>setInterpretSummary(e.target.value),
-                                            placeholder: "Summary text (optional)",
-                                            className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] text-sm h-9"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 203,
-                                            columnNumber: 17
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 196,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    className: "text-[11px] text-[#64748B]",
-                                    children: [
-                                        "Powered by GLM-4 (Z.ai open-weights model) — not ChatGPT or Claude. To swap to a self-hosted LLM in production (Ollama + Llama 3.2), see the comment in ",
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
-                                            className: "text-[#94A3B8]",
-                                            children: "/api/llm/interpret-news/route.ts"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 211,
-                                            columnNumber: 169
-                                        }, this),
-                                        "."
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 210,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex items-center gap-2 pt-1",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
-                                        onClick: handleInterpret,
-                                        disabled: interpreting || !interpretUrl.trim() && !interpretHeadline.trim(),
-                                        className: "bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold",
-                                        children: interpreting ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
-                                                    className: "h-3.5 w-3.5 mr-1.5 animate-spin"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 221,
-                                                    columnNumber: 23
-                                                }, this),
-                                                "Analyzing with GLM-4..."
-                                            ]
-                                        }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
-                                            children: [
-                                                "Interpret with LLM",
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
-                                                    className: "h-3.5 w-3.5 ml-1.5"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 227,
-                                                    columnNumber: 23
-                                                }, this)
-                                            ]
-                                        }, void 0, true)
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 214,
-                                        columnNumber: 17
-                                    }, this)
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 213,
-                                    columnNumber: 15
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 189,
-                            columnNumber: 13
-                        }, this),
-                        interpretResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "mt-4 rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-4 space-y-3",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex items-center justify-between flex-wrap gap-2",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex items-center gap-2",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: `flex items-center gap-1.5 ${impactColor(interpretResult.impact)} capitalize font-semibold text-sm`,
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ImpactIcon, {
-                                                            i: interpretResult.impact
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                            lineNumber: 239,
-                                                            columnNumber: 23
-                                                        }, this),
-                                                        interpretResult.impact,
-                                                        " impact"
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 238,
-                                                    columnNumber: 21
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                                    variant: "outline",
-                                                    className: `text-[9px] h-4 uppercase ${interpretResult.impactStrength === "strong" ? "border-[#FF5C5C]/40 text-[#FF5C5C]" : interpretResult.impactStrength === "moderate" ? "border-amber-400/40 text-amber-400" : "border-white/[0.12] text-[#94A3B8]"}`,
-                                                    children: interpretResult.impactStrength
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 242,
-                                                    columnNumber: 21
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 237,
-                                            columnNumber: 19
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-[10px] text-[#64748B] font-mono",
-                                            children: [
-                                                interpretResult.model,
-                                                " · ",
-                                                interpretResult.latencyMs,
-                                                "ms"
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 250,
-                                            columnNumber: 19
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 236,
-                                    columnNumber: 17
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1",
-                                            children: "Why this matters (in plain words)"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 257,
-                                            columnNumber: 19
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "text-xs text-[#F4F7FB] leading-relaxed",
-                                            children: interpretResult.laymanExplanation
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 260,
-                                            columnNumber: 19
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 256,
-                                    columnNumber: 17
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1",
-                                            children: "Short-term outlook"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 265,
-                                            columnNumber: 19
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "text-xs text-[#94A3B8] leading-relaxed",
-                                            children: interpretResult.shortTermOutlook
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 268,
-                                            columnNumber: 19
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 264,
-                                    columnNumber: 17
-                                }, this),
-                                interpretResult.affectedStocks.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1.5",
-                                            children: [
-                                                "Affected stocks (",
-                                                interpretResult.affectedStocks.length,
-                                                ")"
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 274,
-                                            columnNumber: 21
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex items-center gap-1.5 flex-wrap mb-3",
-                                            children: interpretResult.affectedStocks.map((s)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                    onClick: ()=>{
-                                                        setView("signals_v2");
-                                                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Looking up signal for ${s}...`);
-                                                    },
-                                                    className: "text-[10px] font-mono text-[#00E676] hover:underline border border-[#00E676]/40 rounded px-2 py-0.5",
-                                                    children: s
-                                                }, s, false, {
-                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 279,
-                                                    columnNumber: 25
-                                                }, this))
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 277,
-                                            columnNumber: 21
-                                        }, this),
-                                        interpretResult.sectorBreakdown && interpretResult.sectorBreakdown.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "space-y-1.5",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "text-[10px] uppercase tracking-wider text-[#64748B]",
-                                                    children: "By sector"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 293,
-                                                    columnNumber: 25
-                                                }, this),
-                                                interpretResult.sectorBreakdown.map((sb)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "text-xs",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "text-[#94A3B8]",
-                                                                children: [
-                                                                    sb.sector,
-                                                                    ":"
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                                lineNumber: 298,
-                                                                columnNumber: 29
-                                                            }, this),
-                                                            " ",
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "font-mono text-[#F4F7FB]",
-                                                                children: sb.stocks.join(", ")
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                                lineNumber: 299,
-                                                                columnNumber: 29
-                                                            }, this)
-                                                        ]
-                                                    }, sb.sector, true, {
-                                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                        lineNumber: 297,
-                                                        columnNumber: 27
-                                                    }, this))
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 292,
-                                            columnNumber: 23
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 273,
-                                    columnNumber: 19
-                                }, this),
-                                interpretResult.riskFactors && interpretResult.riskFactors.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "rounded-md bg-[#FF5C5C]/[0.05] border border-[#FF5C5C]/15 p-3",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "text-[10px] uppercase tracking-wider text-[#FF5C5C] font-semibold mb-1",
-                                            children: "Risk factors"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 310,
-                                            columnNumber: 21
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                                            className: "text-xs text-[#94A3B8] leading-relaxed space-y-0.5",
-                                            children: interpretResult.riskFactors.map((r, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                                    children: [
-                                                        "• ",
-                                                        r
-                                                    ]
-                                                }, i, true, {
-                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 315,
-                                                    columnNumber: 25
-                                                }, this))
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 313,
-                                            columnNumber: 21
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 309,
-                                    columnNumber: 19
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 234,
-                            columnNumber: 15
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                    lineNumber: 179,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 178,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tabs"], {
-                value: tab,
-                onValueChange: setTab,
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
+                className: "px-4 md:px-6 py-6 max-w-7xl mx-auto",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsList"], {
-                        className: "bg-[#131829] border border-white/[0.08] p-1 h-auto",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center justify-between mb-6 flex-wrap gap-3",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "general",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$globe$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Globe$3e$__["Globe"], {
-                                        className: "h-3 w-3 mr-1.5"
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                        className: "text-2xl font-bold text-[#F4F7FB]",
+                                        children: "Fundamental News"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 329,
-                                        columnNumber: 15
+                                        lineNumber: 163,
+                                        columnNumber: 13
                                     }, this),
-                                    " International & National"
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-sm text-[#94A3B8] mt-1",
+                                        children: "International + national news, company announcements & results — each interpreted in layman terms with stock-impact analysis."
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                        lineNumber: 164,
+                                        columnNumber: 13
+                                    }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 328,
-                                columnNumber: 13
+                                lineNumber: 162,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "company_news",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                variant: "outline",
+                                size: "sm",
+                                onClick: load,
+                                disabled: loading,
+                                className: "border-white/[0.12] text-[#94A3B8]",
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$building$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Building2$3e$__["Building2"], {
-                                        className: "h-3 w-3 mr-1.5"
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
+                                        className: `h-3 w-3 mr-1.5 ${loading ? "animate-spin" : ""}`
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 332,
-                                        columnNumber: 15
+                                        lineNumber: 175,
+                                        columnNumber: 13
                                     }, this),
-                                    " Company News"
+                                    "Refresh"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 331,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
-                                value: "company_results",
-                                className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__["FileText"], {
-                                        className: "h-3 w-3 mr-1.5"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 335,
-                                        columnNumber: 15
-                                    }, this),
-                                    " Company Results"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 334,
-                                columnNumber: 13
+                                lineNumber: 168,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 327,
-                        columnNumber: 11
+                        lineNumber: 161,
+                        columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "general",
-                        className: "mt-4",
-                        children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-3",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
+                        className: "bg-[#131829] border-[#00E676]/20 mb-4",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
+                            className: "p-5",
                             children: [
-                                1,
-                                2,
-                                3,
-                                4
-                            ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
-                                    className: "h-24 bg-white/[0.04]"
-                                }, i, false, {
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center gap-2 mb-3",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "h-8 w-8 rounded-md bg-[#00E676]/10 flex items-center justify-center",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$link$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Link2$3e$__["Link2"], {
+                                                className: "h-4 w-4 text-[#00E676]"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                lineNumber: 185,
+                                                columnNumber: 17
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 184,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                                    className: "font-semibold text-[#F4F7FB]",
+                                                    children: "Interpret a news link"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 188,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-xs text-[#94A3B8]",
+                                                    children: "Paste any news article URL to get an AI interpretation of its stock impact"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 189,
+                                                    columnNumber: 17
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 187,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 343,
-                                    columnNumber: 42
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 342,
-                            columnNumber: 15
-                        }, this) : news.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
-                            message: "No news items scraped. Try refreshing, or scraper upstream may be down."
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 346,
-                            columnNumber: 15
-                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-3",
-                            children: news.map((n)=>{
-                                return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
-                                    className: "bg-[#131829] border-white/[0.08] hover:border-white/[0.15] transition-colors",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
-                                        className: "p-4",
-                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex items-start justify-between gap-4",
+                                    lineNumber: 183,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "space-y-2",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
+                                            value: interpretUrl,
+                                            onChange: (e)=>setInterpretUrl(e.target.value),
+                                            placeholder: "Paste news article URL: https://www.dawn.com/news/...",
+                                            className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] font-mono text-sm"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 193,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "grid grid-cols-1 md:grid-cols-2 gap-2",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
+                                                    value: interpretHeadline,
+                                                    onChange: (e)=>setInterpretHeadline(e.target.value),
+                                                    placeholder: "...or paste just the headline (optional)",
+                                                    className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] text-sm h-9"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 200,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
+                                                    value: interpretSummary,
+                                                    onChange: (e)=>setInterpretSummary(e.target.value),
+                                                    placeholder: "Summary text (optional)",
+                                                    className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] text-sm h-9"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 206,
+                                                    columnNumber: 17
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 199,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                            className: "text-[11px] text-[#64748B]",
+                                            children: [
+                                                "Powered by GLM-4 (Z.ai open-weights model) — not ChatGPT or Claude. To swap to a self-hosted LLM in production (Ollama + Llama 3.2), see the comment in ",
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
+                                                    className: "text-[#94A3B8]",
+                                                    children: "/api/llm/interpret-news/route.ts"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 214,
+                                                    columnNumber: 169
+                                                }, this),
+                                                "."
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 213,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center gap-2 pt-1",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                                onClick: handleInterpret,
+                                                disabled: interpreting || !interpretUrl.trim() && !interpretHeadline.trim(),
+                                                className: "bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold",
+                                                children: interpreting ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
+                                                            className: "h-3.5 w-3.5 mr-1.5 animate-spin"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                            lineNumber: 224,
+                                                            columnNumber: 23
+                                                        }, this),
+                                                        "Analyzing with GLM-4..."
+                                                    ]
+                                                }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                                                    children: [
+                                                        "Interpret with LLM",
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
+                                                            className: "h-3.5 w-3.5 ml-1.5"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                            lineNumber: 230,
+                                                            columnNumber: 23
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                lineNumber: 217,
+                                                columnNumber: 17
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 216,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 192,
+                                    columnNumber: 13
+                                }, this),
+                                interpretResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "mt-4 rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-4 space-y-3",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center justify-between flex-wrap gap-2",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "flex-1 min-w-0",
+                                                    className: "flex items-center gap-2",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "flex items-center gap-2 mb-1.5",
+                                                            className: `flex items-center gap-1.5 ${impactColor(interpretResult.impact)} capitalize font-semibold text-sm`,
                                                             children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                                                    variant: "outline",
-                                                                    className: `text-[9px] py-0 h-4 uppercase ${n.category === "international" ? "border-blue-400/40 text-blue-400" : n.category === "national" ? "border-amber-400/40 text-amber-400" : "border-white/[0.12] text-[#94A3B8]"}`,
-                                                                    children: n.category
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ImpactIcon, {
+                                                                    i: interpretResult.impact
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                                    lineNumber: 356,
-                                                                    columnNumber: 31
+                                                                    lineNumber: 242,
+                                                                    columnNumber: 23
                                                                 }, this),
-                                                                n.publishedAt && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "text-[10px] text-[#64748B] font-mono",
-                                                                    children: n.publishedAt
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                                    lineNumber: 364,
-                                                                    columnNumber: 33
-                                                                }, this)
+                                                                interpretResult.impact,
+                                                                " impact"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                            lineNumber: 355,
-                                                            columnNumber: 29
+                                                            lineNumber: 241,
+                                                            columnNumber: 21
                                                         }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                                            className: "font-semibold text-[#F4F7FB] text-sm leading-snug mb-1.5",
-                                                            children: n.title
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                            variant: "outline",
+                                                            className: `text-[9px] h-4 uppercase ${interpretResult.impactStrength === "strong" ? "border-[#FF5C5C]/40 text-[#FF5C5C]" : interpretResult.impactStrength === "moderate" ? "border-amber-400/40 text-amber-400" : "border-white/[0.12] text-[#94A3B8]"}`,
+                                                            children: interpretResult.impactStrength
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                            lineNumber: 367,
-                                                            columnNumber: 29
-                                                        }, this),
-                                                        n.summary && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                            className: "text-xs text-[#94A3B8] leading-relaxed mb-2 line-clamp-2",
-                                                            children: n.summary
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                            lineNumber: 371,
-                                                            columnNumber: 31
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AiInterpretationSection, {
-                                                            title: n.title,
-                                                            summary: n.summary,
-                                                            link: n.link,
-                                                            onOpenStock: (s)=>{
-                                                                setView("signals_v2");
-                                                                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Looking up signal for ${s}...`);
-                                                            }
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                            lineNumber: 376,
-                                                            columnNumber: 29
+                                                            lineNumber: 245,
+                                                            columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 354,
-                                                    columnNumber: 27
+                                                    lineNumber: 240,
+                                                    columnNumber: 19
                                                 }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                                    href: n.link,
-                                                    target: "_blank",
-                                                    rel: "noopener noreferrer",
-                                                    className: "text-[#64748B] hover:text-[#F4F7FB] shrink-0",
-                                                    title: "Read full article",
-                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$external$2d$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ExternalLink$3e$__["ExternalLink"], {
-                                                        className: "h-4 w-4"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                        lineNumber: 393,
-                                                        columnNumber: 29
-                                                    }, this)
-                                                }, void 0, false, {
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "text-[10px] text-[#64748B] font-mono",
+                                                    children: [
+                                                        interpretResult.model,
+                                                        " · ",
+                                                        interpretResult.latencyMs,
+                                                        "ms"
+                                                    ]
+                                                }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                    lineNumber: 386,
-                                                    columnNumber: 27
+                                                    lineNumber: 253,
+                                                    columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 353,
-                                            columnNumber: 25
+                                            lineNumber: 239,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1",
+                                                    children: "Why this matters (in plain words)"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 260,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-xs text-[#F4F7FB] leading-relaxed",
+                                                    children: interpretResult.laymanExplanation
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 263,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 259,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1",
+                                                    children: "Short-term outlook"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 268,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-xs text-[#94A3B8] leading-relaxed",
+                                                    children: interpretResult.shortTermOutlook
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 271,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 267,
+                                            columnNumber: 17
+                                        }, this),
+                                        interpretResult.affectedStocks.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "text-[10px] uppercase tracking-wider text-[#64748B] font-semibold mb-1.5",
+                                                    children: [
+                                                        "Affected stocks (",
+                                                        interpretResult.affectedStocks.length,
+                                                        ")"
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 277,
+                                                    columnNumber: 21
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center gap-1.5 flex-wrap mb-3",
+                                                    children: interpretResult.affectedStocks.map((s)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                            onClick: ()=>{
+                                                                setView("signals_v2");
+                                                                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Looking up signal for ${s}...`);
+                                                            },
+                                                            className: "text-[10px] font-mono text-[#00E676] hover:underline border border-[#00E676]/40 rounded px-2 py-0.5",
+                                                            children: s
+                                                        }, s, false, {
+                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                            lineNumber: 282,
+                                                            columnNumber: 25
+                                                        }, this))
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 280,
+                                                    columnNumber: 21
+                                                }, this),
+                                                interpretResult.sectorBreakdown && interpretResult.sectorBreakdown.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "space-y-1.5",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "text-[10px] uppercase tracking-wider text-[#64748B]",
+                                                            children: "By sector"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                            lineNumber: 296,
+                                                            columnNumber: 25
+                                                        }, this),
+                                                        interpretResult.sectorBreakdown.map((sb)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "text-xs",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                        className: "text-[#94A3B8]",
+                                                                        children: [
+                                                                            sb.sector,
+                                                                            ":"
+                                                                        ]
+                                                                    }, void 0, true, {
+                                                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                        lineNumber: 301,
+                                                                        columnNumber: 29
+                                                                    }, this),
+                                                                    " ",
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                        className: "font-mono text-[#F4F7FB]",
+                                                                        children: sb.stocks.join(", ")
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                        lineNumber: 302,
+                                                                        columnNumber: 29
+                                                                    }, this)
+                                                                ]
+                                                            }, sb.sector, true, {
+                                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                lineNumber: 300,
+                                                                columnNumber: 27
+                                                            }, this))
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 295,
+                                                    columnNumber: 23
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 276,
+                                            columnNumber: 19
+                                        }, this),
+                                        interpretResult.riskFactors && interpretResult.riskFactors.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "rounded-md bg-[#FF5C5C]/[0.05] border border-[#FF5C5C]/15 p-3",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "text-[10px] uppercase tracking-wider text-[#FF5C5C] font-semibold mb-1",
+                                                    children: "Risk factors"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 313,
+                                                    columnNumber: 21
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
+                                                    className: "text-xs text-[#94A3B8] leading-relaxed space-y-0.5",
+                                                    children: interpretResult.riskFactors.map((r, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                            children: [
+                                                                "• ",
+                                                                r
+                                                            ]
+                                                        }, i, true, {
+                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                            lineNumber: 318,
+                                                            columnNumber: 25
+                                                        }, this))
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 316,
+                                                    columnNumber: 21
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 312,
+                                            columnNumber: 19
                                         }, this)
-                                    }, void 0, false, {
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 237,
+                                    columnNumber: 15
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                            lineNumber: 182,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                        lineNumber: 181,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tabs"], {
+                        value: tab,
+                        onValueChange: setTab,
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsList"], {
+                                className: "bg-[#131829] border border-white/[0.08] p-1 h-auto",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "general",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$globe$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Globe$3e$__["Globe"], {
+                                                className: "h-3 w-3 mr-1.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                lineNumber: 332,
+                                                columnNumber: 15
+                                            }, this),
+                                            " International & National"
+                                        ]
+                                    }, void 0, true, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 352,
-                                        columnNumber: 23
+                                        lineNumber: 331,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "company_news",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$building$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Building2$3e$__["Building2"], {
+                                                className: "h-3 w-3 mr-1.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                lineNumber: 335,
+                                                columnNumber: 15
+                                            }, this),
+                                            " Company News"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                        lineNumber: 334,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
+                                        value: "company_results",
+                                        className: "data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__["FileText"], {
+                                                className: "h-3 w-3 mr-1.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                lineNumber: 338,
+                                                columnNumber: 15
+                                            }, this),
+                                            " Company Results"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                        lineNumber: 337,
+                                        columnNumber: 13
                                     }, this)
-                                }, n.link, false, {
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                lineNumber: 330,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "general",
+                                className: "mt-4",
+                                children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "space-y-3",
+                                    children: [
+                                        1,
+                                        2,
+                                        3,
+                                        4
+                                    ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
+                                            className: "h-24 bg-white/[0.04]"
+                                        }, i, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 346,
+                                            columnNumber: 42
+                                        }, this))
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 345,
+                                    columnNumber: 15
+                                }, this) : news.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
+                                    message: "No news items scraped. Try refreshing, or scraper upstream may be down."
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 349,
+                                    columnNumber: 15
+                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "space-y-3",
+                                    children: news.map((n)=>{
+                                        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
+                                            className: "bg-[#131829] border-white/[0.08] hover:border-white/[0.15] transition-colors",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
+                                                className: "p-4",
+                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-start justify-between gap-4",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "flex-1 min-w-0",
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                    className: "flex items-center gap-2 mb-1.5",
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                            variant: "outline",
+                                                                            className: `text-[9px] py-0 h-4 uppercase ${n.category === "international" ? "border-blue-400/40 text-blue-400" : n.category === "national" ? "border-amber-400/40 text-amber-400" : "border-white/[0.12] text-[#94A3B8]"}`,
+                                                                            children: n.category
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                            lineNumber: 359,
+                                                                            columnNumber: 31
+                                                                        }, this),
+                                                                        n.publishedAt && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                            className: "text-[10px] text-[#64748B] font-mono",
+                                                                            children: n.publishedAt
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                            lineNumber: 367,
+                                                                            columnNumber: 33
+                                                                        }, this)
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                    lineNumber: 358,
+                                                                    columnNumber: 29
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                                                    className: "font-semibold text-[#F4F7FB] text-sm leading-snug mb-1.5",
+                                                                    children: n.title
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                    lineNumber: 370,
+                                                                    columnNumber: 29
+                                                                }, this),
+                                                                n.summary && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                    className: "text-xs text-[#94A3B8] leading-relaxed mb-2 line-clamp-2",
+                                                                    children: n.summary
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                    lineNumber: 374,
+                                                                    columnNumber: 31
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AiInterpretationSection, {
+                                                                    title: n.title,
+                                                                    summary: n.summary,
+                                                                    link: n.link,
+                                                                    onOpenStock: (s)=>{
+                                                                        setView("signals_v2");
+                                                                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Looking up signal for ${s}...`);
+                                                                    }
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                    lineNumber: 379,
+                                                                    columnNumber: 29
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                            lineNumber: 357,
+                                                            columnNumber: 27
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                                            href: n.link,
+                                                            target: "_blank",
+                                                            rel: "noopener noreferrer",
+                                                            className: "text-[#64748B] hover:text-[#F4F7FB] shrink-0",
+                                                            title: "Read full article",
+                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$external$2d$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ExternalLink$3e$__["ExternalLink"], {
+                                                                className: "h-4 w-4"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                                lineNumber: 396,
+                                                                columnNumber: 29
+                                                            }, this)
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                            lineNumber: 389,
+                                                            columnNumber: 27
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                    lineNumber: 356,
+                                                    columnNumber: 25
+                                                }, this)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                                lineNumber: 355,
+                                                columnNumber: 23
+                                            }, this)
+                                        }, n.link, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 354,
+                                            columnNumber: 21
+                                        }, this);
+                                    })
+                                }, void 0, false, {
                                     fileName: "[project]/src/components/latent/FundamentalNews.tsx",
                                     lineNumber: 351,
-                                    columnNumber: 21
-                                }, this);
-                            })
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 348,
-                            columnNumber: 15
-                        }, this)
-                    }, void 0, false, {
+                                    columnNumber: 15
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                lineNumber: 343,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "company_news",
+                                className: "mt-4",
+                                children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "space-y-3",
+                                    children: [
+                                        1,
+                                        2,
+                                        3
+                                    ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
+                                            className: "h-24 bg-white/[0.04]"
+                                        }, i, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 411,
+                                            columnNumber: 39
+                                        }, this))
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 410,
+                                    columnNumber: 15
+                                }, this) : companyNews.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
+                                    message: "No company announcements scraped. Try refreshing."
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 414,
+                                    columnNumber: 15
+                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "space-y-3",
+                                    children: companyNews.map((a)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AnnouncementCard, {
+                                            announcement: a,
+                                            onOpenSignal: (symbol)=>{
+                                                setView("signals_v2");
+                                                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Opening signal for ${symbol}...`);
+                                            }
+                                        }, a.id, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 418,
+                                            columnNumber: 19
+                                        }, this))
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 416,
+                                    columnNumber: 15
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                lineNumber: 408,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
+                                value: "company_results",
+                                className: "mt-4",
+                                children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "space-y-3",
+                                    children: [
+                                        1,
+                                        2,
+                                        3
+                                    ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
+                                            className: "h-32 bg-white/[0.04]"
+                                        }, i, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 431,
+                                            columnNumber: 39
+                                        }, this))
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 430,
+                                    columnNumber: 15
+                                }, this) : companyResults.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
+                                    message: "No company results scraped. Try refreshing."
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 434,
+                                    columnNumber: 15
+                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "space-y-3",
+                                    children: companyResults.map((a)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ResultCard, {
+                                            announcement: a,
+                                            onOpenSignal: (symbol)=>{
+                                                setView("signals_v2");
+                                                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Opening signal for ${symbol}...`);
+                                            }
+                                        }, a.id, false, {
+                                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                            lineNumber: 438,
+                                            columnNumber: 19
+                                        }, this))
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                    lineNumber: 436,
+                                    columnNumber: 15
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                lineNumber: 428,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 340,
-                        columnNumber: 11
+                        lineNumber: 329,
+                        columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "company_news",
-                        className: "mt-4",
-                        children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-3",
-                            children: [
-                                1,
-                                2,
-                                3
-                            ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
-                                    className: "h-24 bg-white/[0.04]"
-                                }, i, false, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 408,
-                                    columnNumber: 39
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 407,
-                            columnNumber: 15
-                        }, this) : companyNews.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
-                            message: "No company announcements scraped. Try refreshing."
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 411,
-                            columnNumber: 15
-                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-3",
-                            children: companyNews.map((a)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AnnouncementCard, {
-                                    announcement: a,
-                                    onOpenSignal: (symbol)=>{
-                                        setView("signals_v2");
-                                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Opening signal for ${symbol}...`);
-                                    }
-                                }, a.id, false, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 415,
-                                    columnNumber: 19
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 413,
-                            columnNumber: 15
-                        }, this)
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-[#94A3B8] font-semibold",
+                                children: "Scraper:"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
+                                lineNumber: 450,
+                                columnNumber: 11
+                            }, this),
+                            " News + announcements scraped from investify.pk Mon–Fri 09:00–17:00 PKT. AI remarks are template-based in this MVP — will be replaced with RAG-grounded LLM call once your API key is configured."
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 405,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
-                        value: "company_results",
-                        className: "mt-4",
-                        children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-3",
-                            children: [
-                                1,
-                                2,
-                                3
-                            ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
-                                    className: "h-32 bg-white/[0.04]"
-                                }, i, false, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 428,
-                                    columnNumber: 39
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 427,
-                            columnNumber: 15
-                        }, this) : companyResults.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EmptyState, {
-                            message: "No company results scraped. Try refreshing."
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 431,
-                            columnNumber: 15
-                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-3",
-                            children: companyResults.map((a)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ResultCard, {
-                                    announcement: a,
-                                    onOpenSignal: (symbol)=>{
-                                        setView("signals_v2");
-                                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].info(`Opening signal for ${symbol}...`);
-                                    }
-                                }, a.id, false, {
-                                    fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 435,
-                                    columnNumber: 19
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                            lineNumber: 433,
-                            columnNumber: 15
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 425,
-                        columnNumber: 11
+                        lineNumber: 449,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 326,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        className: "text-[#94A3B8] font-semibold",
-                        children: "Scraper:"
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 447,
-                        columnNumber: 11
-                    }, this),
-                    " News + announcements scraped from investify.pk Mon–Fri 09:00–17:00 PKT. AI remarks are template-based in this MVP — will be replaced with RAG-grounded LLM call once your API key is configured."
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 446,
-                columnNumber: 9
+                lineNumber: 159,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-        lineNumber: 156,
+        lineNumber: 157,
         columnNumber: 5
     }, this);
 }
@@ -953,7 +969,7 @@ function EmptyState({ message }) {
                 className: "h-10 w-10 text-[#00E676]/30 mx-auto mb-3"
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 456,
+                lineNumber: 460,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -961,13 +977,13 @@ function EmptyState({ message }) {
                 children: message
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 457,
+                lineNumber: 461,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-        lineNumber: 455,
+        lineNumber: 459,
         columnNumber: 5
     }, this);
 }
@@ -991,7 +1007,7 @@ function AnnouncementCard({ announcement, onOpenSignal }) {
                                         children: announcement.symbol || "—"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 472,
+                                        lineNumber: 476,
                                         columnNumber: 15
                                     }, this),
                                     announcement.publishedAt && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -999,13 +1015,13 @@ function AnnouncementCard({ announcement, onOpenSignal }) {
                                         children: announcement.publishedAt
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 476,
+                                        lineNumber: 480,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 471,
+                                lineNumber: 475,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1013,7 +1029,7 @@ function AnnouncementCard({ announcement, onOpenSignal }) {
                                 children: announcement.title
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 479,
+                                lineNumber: 483,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AiInterpretationSection, {
@@ -1024,7 +1040,7 @@ function AnnouncementCard({ announcement, onOpenSignal }) {
                                 onOpenStock: onOpenSignal
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 483,
+                                lineNumber: 487,
                                 columnNumber: 13
                             }, this),
                             announcement.symbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1039,19 +1055,19 @@ function AnnouncementCard({ announcement, onOpenSignal }) {
                                         className: "h-3 w-3 ml-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 498,
+                                        lineNumber: 502,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 491,
+                                lineNumber: 495,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 470,
+                        lineNumber: 474,
                         columnNumber: 11
                     }, this),
                     announcement.pdfLink && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1065,7 +1081,7 @@ function AnnouncementCard({ announcement, onOpenSignal }) {
                                 className: "h-5 w-5"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 510,
+                                lineNumber: 514,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1073,29 +1089,29 @@ function AnnouncementCard({ announcement, onOpenSignal }) {
                                 children: "PDF"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 511,
+                                lineNumber: 515,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 503,
+                        lineNumber: 507,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 469,
+                lineNumber: 473,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-            lineNumber: 468,
+            lineNumber: 472,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-        lineNumber: 467,
+        lineNumber: 471,
         columnNumber: 5
     }, this);
 }
@@ -1119,7 +1135,7 @@ function ResultCard({ announcement, onOpenSignal }) {
                                         children: "Result"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 530,
+                                        lineNumber: 534,
                                         columnNumber: 15
                                     }, this),
                                     announcement.symbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1128,7 +1144,7 @@ function ResultCard({ announcement, onOpenSignal }) {
                                         children: announcement.symbol
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 534,
+                                        lineNumber: 538,
                                         columnNumber: 17
                                     }, this),
                                     announcement.publishedAt && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1136,13 +1152,13 @@ function ResultCard({ announcement, onOpenSignal }) {
                                         children: announcement.publishedAt
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 539,
+                                        lineNumber: 543,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 529,
+                                lineNumber: 533,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1150,7 +1166,7 @@ function ResultCard({ announcement, onOpenSignal }) {
                                 children: announcement.title
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 542,
+                                lineNumber: 546,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1161,7 +1177,7 @@ function ResultCard({ announcement, onOpenSignal }) {
                                         children: "Result terms — what they mean"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 547,
+                                        lineNumber: 551,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1191,7 +1207,7 @@ function ResultCard({ announcement, onOpenSignal }) {
                                                         children: t.term
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                        lineNumber: 558,
+                                                        lineNumber: 562,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1199,24 +1215,24 @@ function ResultCard({ announcement, onOpenSignal }) {
                                                         children: t.meaning
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                        lineNumber: 559,
+                                                        lineNumber: 563,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, t.term, true, {
                                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                                lineNumber: 557,
+                                                lineNumber: 561,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 550,
+                                        lineNumber: 554,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 546,
+                                lineNumber: 550,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AiInterpretationSection, {
@@ -1227,7 +1243,7 @@ function ResultCard({ announcement, onOpenSignal }) {
                                 onOpenStock: onOpenSignal
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 565,
+                                lineNumber: 569,
                                 columnNumber: 13
                             }, this),
                             announcement.symbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1242,19 +1258,19 @@ function ResultCard({ announcement, onOpenSignal }) {
                                         className: "h-3 w-3 ml-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 580,
+                                        lineNumber: 584,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 573,
+                                lineNumber: 577,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 528,
+                        lineNumber: 532,
                         columnNumber: 11
                     }, this),
                     announcement.pdfLink && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1268,7 +1284,7 @@ function ResultCard({ announcement, onOpenSignal }) {
                                 className: "h-5 w-5"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 592,
+                                lineNumber: 596,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1276,29 +1292,29 @@ function ResultCard({ announcement, onOpenSignal }) {
                                 children: "PDF"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 593,
+                                lineNumber: 597,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 585,
+                        lineNumber: 589,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 527,
+                lineNumber: 531,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-            lineNumber: 526,
+            lineNumber: 530,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-        lineNumber: 525,
+        lineNumber: 529,
         columnNumber: 5
     }, this);
 }
@@ -1426,7 +1442,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 className: "h-3 w-3 text-[#00E676]"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 712,
+                                lineNumber: 716,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1434,13 +1450,13 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 children: "AI Interpretation"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 713,
+                                lineNumber: 717,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 711,
+                        lineNumber: 715,
                         columnNumber: 9
                     }, this),
                     result && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1449,13 +1465,13 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                         children: sentimentLabel(result.impact)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 718,
+                        lineNumber: 722,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 710,
+                lineNumber: 714,
                 columnNumber: 7
             }, this),
             !result && !interpreting && !error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -1465,7 +1481,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                         children: "Get a plain-English interpretation of this news: what it means in simple language, market sentiment, and which stocks are affected."
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 730,
+                        lineNumber: 734,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1478,14 +1494,14 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 className: "h-3 w-3 mr-1.5"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 740,
+                                lineNumber: 744,
                                 columnNumber: 13
                             }, this),
                             "Interpret with LLM"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 734,
+                        lineNumber: 738,
                         columnNumber: 11
                     }, this)
                 ]
@@ -1497,14 +1513,14 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                         className: "h-3 w-3 animate-spin"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 749,
+                        lineNumber: 753,
                         columnNumber: 11
                     }, this),
                     "Analyzing with GLM-4…"
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 748,
+                lineNumber: 752,
                 columnNumber: 9
             }, this),
             error && !interpreting && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1514,7 +1530,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                         children: error
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 757,
+                        lineNumber: 761,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1523,13 +1539,13 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                         children: "Retry"
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 758,
+                        lineNumber: 762,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 756,
+                lineNumber: 760,
                 columnNumber: 9
             }, this),
             result && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1540,7 +1556,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                         children: result.laymanExplanation
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 771,
+                        lineNumber: 775,
                         columnNumber: 11
                     }, this),
                     affectedStocks.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1551,7 +1567,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 children: "Stocks impacted:"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 778,
+                                lineNumber: 782,
                                 columnNumber: 15
                             }, this),
                             affectedStocks.map((s)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1560,7 +1576,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                     children: s
                                 }, s, false, {
                                     fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 782,
+                                    lineNumber: 786,
                                     columnNumber: 17
                                 }, this)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1571,13 +1587,13 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 790,
+                                lineNumber: 794,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 777,
+                        lineNumber: 781,
                         columnNumber: 13
                     }, this),
                     result.sectorBreakdown && result.sectorBreakdown.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1588,7 +1604,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 children: "By sector"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 799,
+                                lineNumber: 803,
                                 columnNumber: 15
                             }, this),
                             result.sectorBreakdown.map((sb)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1602,7 +1618,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 804,
+                                            lineNumber: 808,
                                             columnNumber: 19
                                         }, this),
                                         " ",
@@ -1611,19 +1627,19 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                             children: sb.stocks.join(", ")
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                            lineNumber: 805,
+                                            lineNumber: 809,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, sb.sector, true, {
                                     fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                    lineNumber: 803,
+                                    lineNumber: 807,
                                     columnNumber: 17
                                 }, this))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 798,
+                        lineNumber: 802,
                         columnNumber: 13
                     }, this),
                     result.shortTermOutlook && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1637,14 +1653,14 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 814,
+                                lineNumber: 818,
                                 columnNumber: 15
                             }, this),
                             result.shortTermOutlook
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 813,
+                        lineNumber: 817,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1661,7 +1677,7 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 823,
+                                lineNumber: 827,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1672,32 +1688,32 @@ function AiInterpretationSection({ title, summary, link, symbol, onOpenStock }) 
                                         className: "h-2.5 w-2.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                        lineNumber: 833,
+                                        lineNumber: 837,
                                         columnNumber: 15
                                     }, this),
                                     "Re-interpret"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                                lineNumber: 829,
+                                lineNumber: 833,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                        lineNumber: 822,
+                        lineNumber: 826,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-                lineNumber: 769,
+                lineNumber: 773,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/FundamentalNews.tsx",
-        lineNumber: 709,
+        lineNumber: 713,
         columnNumber: 5
     }, this);
 }

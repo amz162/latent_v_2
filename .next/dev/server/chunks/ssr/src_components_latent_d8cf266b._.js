@@ -2772,16 +2772,15 @@ function StockSearch({ value, onChange, placeholder = "Search stock by symbol or
     const [open, setOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [highlighted, setHighlighted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [companies, setCompanies] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [recent, setRecent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const inputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        setLoading(true);
         fetch("/api/psx/companies").then((r)=>r.ok ? r.json() : null).then((d)=>{
             if (d?.companies) setCompanies(d.companies);
         }).catch(()=>{}).finally(()=>setLoading(false));
-        setRecent(loadRecent());
+        Promise.resolve().then(()=>setRecent(loadRecent()));
     }, []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const h = (e)=>{
@@ -3630,7 +3629,7 @@ function SignalSection() {
                                 min: 0,
                                 max: 100,
                                 step: 5,
-                                className: "[&_[role=slider]]:bg-[#00E676] [&_[role=slider]]:border-[#00E676] [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2"
+                                className: "[&_[role=slider]]:bg-[#00E676] [&_[role=slider]]:border-[#00E676] [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2 [&_[data-slot=slider-track]]:bg-white/[0.18] [&_[data-slot=slider-range]]:bg-[#00E676]"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
                                 lineNumber: 353,
@@ -3868,7 +3867,7 @@ function SignalSection() {
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     className: `font-mono font-bold ${directionColor(s.direction)}`,
                                                     children: [
-                                                        s.confidence,
+                                                        Math.min(100, Math.max(0, Math.round(s.confidence))),
                                                         "/100"
                                                     ]
                                                 }, void 0, true, {
@@ -3883,20 +3882,20 @@ function SignalSection() {
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "h-1.5 bg-white/[0.06] rounded-full overflow-hidden mb-3",
+                                            className: "h-2 bg-white/[0.18] rounded-full overflow-hidden mb-3",
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: `h-full ${s.direction === "BUY" ? "bg-[#00E676]" : "bg-[#FF5C5C]"}`,
+                                                className: `h-full ${s.direction === "BUY" ? "bg-gradient-to-r from-[#00E676] to-[#22E881]" : "bg-gradient-to-r from-[#FF5C5C] to-[#FF7C7C]"}`,
                                                 style: {
                                                     width: `${Math.min(100, Math.max(0, s.confidence))}%`
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                lineNumber: 440,
+                                                lineNumber: 441,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                            lineNumber: 439,
+                                            lineNumber: 440,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3909,7 +3908,7 @@ function SignalSection() {
                                                             children: "Live"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 449,
+                                                            lineNumber: 450,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3917,13 +3916,13 @@ function SignalSection() {
                                                             children: (s.livePrice ?? s.price).toFixed(2)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 450,
+                                                            lineNumber: 451,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 448,
+                                                    lineNumber: 449,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3933,7 +3932,7 @@ function SignalSection() {
                                                             children: "Stop (SL)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 455,
+                                                            lineNumber: 456,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3941,13 +3940,13 @@ function SignalSection() {
                                                             children: s.stopLoss.toFixed(2)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 456,
+                                                            lineNumber: 457,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 454,
+                                                    lineNumber: 455,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3957,7 +3956,7 @@ function SignalSection() {
                                                             children: "TP1 (5d)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 459,
+                                                            lineNumber: 460,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3965,13 +3964,13 @@ function SignalSection() {
                                                             children: s.tp1.toFixed(2)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 460,
+                                                            lineNumber: 461,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 458,
+                                                    lineNumber: 459,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3981,7 +3980,7 @@ function SignalSection() {
                                                             children: "TP2 (10d)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 463,
+                                                            lineNumber: 464,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3989,13 +3988,13 @@ function SignalSection() {
                                                             children: s.tp2.toFixed(2)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 464,
+                                                            lineNumber: 465,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 462,
+                                                    lineNumber: 463,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4005,7 +4004,7 @@ function SignalSection() {
                                                             children: "TP3 (21d)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 467,
+                                                            lineNumber: 468,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4013,19 +4012,19 @@ function SignalSection() {
                                                             children: s.tp3.toFixed(2)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 468,
+                                                            lineNumber: 469,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 466,
+                                                    lineNumber: 467,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                            lineNumber: 447,
+                                            lineNumber: 448,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4035,7 +4034,7 @@ function SignalSection() {
                                                     className: "h-2.5 w-2.5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 474,
+                                                    lineNumber: 475,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4052,7 +4051,7 @@ function SignalSection() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                                    lineNumber: 478,
+                                                                    lineNumber: 479,
                                                                     columnNumber: 45
                                                                 }, this),
                                                                 " / ",
@@ -4064,7 +4063,7 @@ function SignalSection() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                                    lineNumber: 478,
+                                                                    lineNumber: 479,
                                                                     columnNumber: 106
                                                                 }, this),
                                                                 " / ",
@@ -4076,7 +4075,7 @@ function SignalSection() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                                    lineNumber: 478,
+                                                                    lineNumber: 479,
                                                                     columnNumber: 168
                                                                 }, this)
                                                             ]
@@ -4084,13 +4083,13 @@ function SignalSection() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 475,
+                                                    lineNumber: 476,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                            lineNumber: 473,
+                                            lineNumber: 474,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4103,14 +4102,14 @@ function SignalSection() {
                                                             className: "h-3 w-3"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 486,
+                                                            lineNumber: 487,
                                                             columnNumber: 23
                                                         }, this),
                                                         " Risk : Reward"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 485,
+                                                    lineNumber: 486,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4121,13 +4120,13 @@ function SignalSection() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 488,
+                                                    lineNumber: 489,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                            lineNumber: 484,
+                                            lineNumber: 485,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4135,7 +4134,7 @@ function SignalSection() {
                                             children: s.reason
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                            lineNumber: 494,
+                                            lineNumber: 495,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4149,7 +4148,7 @@ function SignalSection() {
                                                             children: "Fundamental"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 501,
+                                                            lineNumber: 502,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4157,13 +4156,13 @@ function SignalSection() {
                                                             children: s.fundamentalCall
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 502,
+                                                            lineNumber: 503,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 500,
+                                                    lineNumber: 501,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4174,7 +4173,7 @@ function SignalSection() {
                                                             children: "Technical"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 505,
+                                                            lineNumber: 506,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4182,13 +4181,13 @@ function SignalSection() {
                                                             children: s.technicalCall
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 506,
+                                                            lineNumber: 507,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 504,
+                                                    lineNumber: 505,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4199,7 +4198,7 @@ function SignalSection() {
                                                             children: "AI Model"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 509,
+                                                            lineNumber: 510,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4207,19 +4206,19 @@ function SignalSection() {
                                                             children: s.aiCall
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                            lineNumber: 510,
+                                                            lineNumber: 511,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 508,
+                                                    lineNumber: 509,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                            lineNumber: 499,
+                                            lineNumber: 500,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -4237,13 +4236,13 @@ function SignalSection() {
                                                     className: "h-3 w-3 ml-1.5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                                    lineNumber: 528,
+                                                    lineNumber: 529,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                            lineNumber: 517,
+                                            lineNumber: 518,
                                             columnNumber: 19
                                         }, this)
                                     ]
@@ -4270,7 +4269,7 @@ function SignalSection() {
                                 children: "Filter policy:"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 538,
+                                lineNumber: 539,
                                 columnNumber: 11
                             }, this),
                             " Only actionable BUY and SELL signals are shown — HOLD is suppressed. Signals are further filtered to setups with a Risk:Reward ratio of ",
@@ -4279,7 +4278,7 @@ function SignalSection() {
                                 children: "≥ 1:2"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 540,
+                                lineNumber: 541,
                                 columnNumber: 58
                             }, this),
                             " (reward ≥ 2× risk, using TP3 (21-day max target) as the reward target). SL = 1.5 × ATR(14-day). TP1/2/3 = +1/+2/+3 × ATR. Consensus comes from the ",
@@ -4288,7 +4287,7 @@ function SignalSection() {
                                 children: "Final Consensus"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 542,
+                                lineNumber: 543,
                                 columnNumber: 36
                             }, this),
                             " across 10 ensembles (Majority Vote, Probability-Weighted, Tier-Weighted, CL-Ensemble, CL-Extender, ",
@@ -4297,7 +4296,7 @@ function SignalSection() {
                                 children: "CL-2 Ensemble"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 543,
+                                lineNumber: 544,
                                 columnNumber: 90
                             }, this),
                             ", ",
@@ -4306,7 +4305,7 @@ function SignalSection() {
                                 children: "PI-Ensemble"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 543,
+                                lineNumber: 544,
                                 columnNumber: 145
                             }, this),
                             ", ",
@@ -4315,7 +4314,7 @@ function SignalSection() {
                                 children: "GM-Model Ensembler"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 543,
+                                lineNumber: 544,
                                 columnNumber: 198
                             }, this),
                             ", ",
@@ -4324,7 +4323,7 @@ function SignalSection() {
                                 children: "CG-Ensemble"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 543,
+                                lineNumber: 544,
                                 columnNumber: 258
                             }, this),
                             ", ",
@@ -4333,14 +4332,14 @@ function SignalSection() {
                                 children: "X-Ensemble"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/SignalSection.tsx",
-                                lineNumber: 543,
+                                lineNumber: 544,
                                 columnNumber: 311
                             }, this),
                             ") computed from 51 trained models on real PSX OHLCV across 361 stocks. The X-Ensemble is a meta-labeling ensemble on top of the CG-Ensemble, with 10 complementary strategies (trend/breakout/ pullback/divergence/mean-reversion/vol-contraction/relative-strength/regime/meta-label/triple-barrier). The CG-Ensemble is a swing-trading classifier (LightGBM + XGBoost) with triple-barrier labels, 10-day horizon, 1R/2R/3R TPs, walk-forward CV, and full cost model (50 bps round-trip + 15% CGT on gains). The CL-2, PI, GM, CG, and X tiers all use proper chronological methodology with purge+embargo and an untouched out-of-sample test period. Past performance does not guarantee future returns."
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/SignalSection.tsx",
-                        lineNumber: 537,
+                        lineNumber: 538,
                         columnNumber: 9
                     }, this)
                 ]
@@ -6179,7 +6178,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AiModelSignals$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/AiModelSignals.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$Calculators$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/Calculators.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$PatternFinder$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/PatternFinder.tsx [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$PricePatternFinder$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/latent/PricePatternFinder.tsx [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -6203,97 +6204,103 @@ function AppShell() {
         case "landing":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$HomeV2$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["HomeV2"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 25,
+                lineNumber: 26,
                 columnNumber: 14
             }, this);
         case "onboarding":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$Onboarding$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Onboarding"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 27,
+                lineNumber: 28,
                 columnNumber: 14
             }, this);
         case "dashboard":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$Dashboard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dashboard"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 29,
+                lineNumber: 30,
                 columnNumber: 14
             }, this);
         case "fundamental_news":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$FundamentalNews$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FundamentalNews"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 31,
+                lineNumber: 32,
                 columnNumber: 14
             }, this);
         case "technical_analysis":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$TechnicalAnalysis$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TechnicalAnalysis"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 33,
+                lineNumber: 34,
                 columnNumber: 14
             }, this);
         case "signals_v2":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$SignalSection$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SignalSection"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 35,
+                lineNumber: 36,
                 columnNumber: 14
             }, this);
         case "portfolio":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$PortfolioTab$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PortfolioTab"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 37,
+                lineNumber: 38,
                 columnNumber: 14
             }, this);
         case "strategy":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$InvestmentStrategy$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["InvestmentStrategy"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 39,
+                lineNumber: 40,
                 columnNumber: 14
             }, this);
         case "dividends":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$Dividends$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dividends"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 41,
+                lineNumber: 42,
                 columnNumber: 14
             }, this);
         case "tracker":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$Tracker$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tracker"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 43,
+                lineNumber: 44,
                 columnNumber: 14
             }, this);
         case "signal_detail":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$SignalDetail$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SignalDetail"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 45,
+                lineNumber: 46,
                 columnNumber: 14
             }, this);
         case "execute":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$ExecuteFlow$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ExecuteFlow"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 47,
+                lineNumber: 48,
                 columnNumber: 14
             }, this);
         case "ai_model_signals":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AiModelSignals$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AiModelSignals"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 49,
+                lineNumber: 50,
                 columnNumber: 14
             }, this);
         case "calculators":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$Calculators$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Calculators"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 51,
+                lineNumber: 52,
                 columnNumber: 14
             }, this);
         case "pattern_finder":
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$PricePatternFinder$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PricePatternFinder"], {}, void 0, false, {
+                fileName: "[project]/src/components/latent/AppShell.tsx",
+                lineNumber: 54,
+                columnNumber: 14
+            }, this);
+        case "pattern_finder_financial":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$PatternFinder$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PatternFinder"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 53,
+                lineNumber: 56,
                 columnNumber: 14
             }, this);
         default:
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$HomeV2$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["HomeV2"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/AppShell.tsx",
-                lineNumber: 55,
+                lineNumber: 58,
                 columnNumber: 14
             }, this);
     }
