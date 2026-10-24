@@ -70,3 +70,13 @@ prisma:query COMMIT
  GET /api/cron/check-tp-sl 200 in 12ms (compile: 3ms, render: 9ms)
 prisma:query SELECT `main`.`ResultPatternCache`.`symbol`, `main`.`ResultPatternCache`.`resultsJson`, `main`.`ResultPatternCache`.`patternsJson`, `main`.`ResultPatternCache`.`summaryJson`, `main`.`ResultPatternCache`.`computedAt`, `main`.`ResultPatternCache`.`dataSourceDate` FROM `main`.`ResultPatternCache` WHERE (`main`.`ResultPatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
  GET /api/result-patterns/ENGRO 200 in 104ms (compile: 77ms, render: 27ms)
+
+thread 'tokio-runtime-worker' (9949) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:412:31:
+range end index 805306369 out of range for slice of length 45321
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-runtime-worker' (10099) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
+range start index 1655023 out of range for slice of length 1654903
+
+thread 'tokio-runtime-worker' (10099) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
+range start index 1655011 out of range for slice of length 1654903
