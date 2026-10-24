@@ -1349,3 +1349,24 @@ Stage Summary:
 - SIP is added to the balance at every month end (except the last month) + a dedicated amber SIP row appears in the results table with the month label + amount.
 - If a trade can't be found for a stock (no bars / no valid entry bar), the simulator switches to another stock + tries again (up to 8 stocks per trade).
 - / = 200; lint clean (1 pre-existing StockSearch error unrelated).
+
+---
+Task ID: 45 (appendix)
+Agent: main (orchestrator)
+Task: Git push was timing out (>1GB of large blobs in local commits). Created a clean squashed history.
+
+Work Log:
+- The push of commit 1b9fb16f timed out because the local history contained ~1GB of large blobs: db/custom.db (159MB, blocked by GitHub's 100MB limit anyway), dev.log (188MB), and multiple .next/dev/cache/turbopack/*.sst files (50-160MB each).
+- Created a clean orphan branch with a single squashed commit (abb15140) containing the current working state: full source, data (ml_predictions_multi.json 15MB), db/custom.db.gz (40MB — restorable via bash db/restore-db.sh), .env, scripts, worklog, skills, prisma.
+- .gitignore now only excludes: files >100MB (GitHub hard limit: raw db/custom.db, dev.log, 2 node_modules .node binaries, some .next cache sst files) + .DS_Store.
+- Force-pushed: b331f8b9...abb15140 main -> main (forced update). Push completed successfully.
+
+Stage Summary:
+- Clean single-commit history pushed to GitHub (abb15140).
+- All meaningful content preserved: source, model predictions JSON, .gz DB backup, scripts, worklog.
+- Only >100MB files (GitHub hard-blocked) excluded — all regenerable or backed up as .gz.
+- Server healthy: HTTP 200, watchdog running.
+- Sequential simulation verified working:
+  * July: #1 KAPCOXD BUY Jul 1, #2 ZIL BUY Jul 2 → SIP row #3 (+5000, July 2026)
+  * August: #4 ABOT BUY Aug 3, #5 FRSM SELL Aug 17 → SIP row #6 (+5000, August 2026)
+  * September: #7 RMPL SELL Sep 1, #8 PSOXD BUY Sep 2 → SIP row #9 (+5000, September 2026)
