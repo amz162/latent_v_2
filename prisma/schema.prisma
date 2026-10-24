@@ -93,3 +93,15 @@ model OhlcvBar {
   @@index([symbol])
   @@index([date])
 }
+
+// Cached output of the Price Pattern Finder engine (+ optional LLM layer).
+// One row per symbol; recomputed when older than 24h or via ?refresh=1.
+model PricePatternCache {
+  symbol         String   @id
+  // JSON: full PricePatternAnalysis (patterns + seasonality + zones + gaps ...)
+  patternsJson   String
+  // JSON: LLM layer { overallSummary, notableObservations, patternExplanations } or null
+  summaryJson    String
+  computedAt     DateTime @default(now())
+  dataSourceDate String? // last bar date the analysis was computed on
+}

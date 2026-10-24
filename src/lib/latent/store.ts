@@ -19,7 +19,8 @@ export type LatentView =
   | "execute"
   | "ai_model_signals"
   | "calculators"
-  | "pattern_finder";
+  | "pattern_finder"
+  | "pattern_finder_financial";
 
 export interface PortfolioPosition {
   symbol: string;

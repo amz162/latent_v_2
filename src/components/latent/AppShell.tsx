@@ -16,6 +16,7 @@ import { ExecuteFlow } from "./ExecuteFlow";
 import { AiModelSignals } from "./AiModelSignals";
 import { Calculators } from "./Calculators";
 import { PatternFinder } from "./PatternFinder";
+import { PricePatternFinder } from "./PricePatternFinder";
 
 export function AppShell() {
   const view = useLatentStore((s) => s.view);
@@ -50,6 +51,8 @@ export function AppShell() {
     case "calculators":
       return <Calculators />;
     case "pattern_finder":
+      return <PricePatternFinder />;
+    case "pattern_finder_financial":
       return <PatternFinder />;
     default:
       return <HomeV2 />;
