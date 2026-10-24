@@ -11,16 +11,16 @@ import {
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
 
 // GET /api/price-patterns/[symbol]
-// Task 47 — Price Pattern Finder:
+// Task 47 + Issue 3 — Price Pattern Finder:
 //   1. Load full daily history (open/close/volume only — high/low are NULL in DB)
 //   2. Run the pure-TS detection engine (6 detectors)
 //   3. Pass ONLY the resulting pattern JSON to GLM for layman explanations
-//   4. Cache everything in PricePatternCache for 24h (?refresh=1 forces recompute)
+//   4. Cache PERMANENTLY in PricePatternCache — rows are never deleted or
+//      expired by the server. Recomputed ONLY via ?refresh=1 (explicit user
+//      action) or the precompute script (which upserts, never deletes).
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 interface LlmSummary {
   overallSummary: string;
@@ -65,11 +65,12 @@ export async function GET(
   const stock = MOCK_STOCKS.find((s) => s.symbol === symbol);
   const companyName = stock?.name ?? symbol;
 
-  // 1) Cache check (unless ?refresh=1)
+  // 1) Permanent cache check (unless ?refresh=1) — any age is served so a
+  //    repeat visit NEVER recalculates or re-calls the LLM.
   if (!forceRefresh) {
     try {
       const cached = await db.pricePatternCache.findUnique({ where: { symbol } });
-      if (cached && Date.now() - cached.computedAt.getTime() < CACHE_TTL_MS) {
+      if (cached) {
         const analysis = JSON.parse(cached.patternsJson) as PricePatternAnalysis;
         const summary = safeParseSummary(cached.summaryJson);
         return NextResponse.json({

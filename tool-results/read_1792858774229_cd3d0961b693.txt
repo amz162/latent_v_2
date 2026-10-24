@@ -1,0 +1,580 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import { useEffect, useState } from "react";
+     4→     4→import { Card, CardContent } from "@/components/ui/card";
+     5→     5→import { Button } from "@/components/ui/button";
+     6→     6→import { Badge } from "@/components/ui/badge";
+     7→     7→import { Skeleton } from "@/components/ui/skeleton";
+     8→     8→import { AppNav } from "./AppNav";
+     9→     9→import { StockSearch } from "./StockSearch";
+    10→    10→import { useLatentStore } from "@/lib/latent/store";
+    11→    11→import { Slider } from "@/components/ui/slider";
+    12→    12→import {
+    13→    13→  Zap,
+    14→    14→  ArrowRight,
+    15→    15→  Info,
+    16→    16→  RefreshCw,
+    17→    17→  Scale,
+    18→    18→  Activity,
+    19→    19→} from "lucide-react";
+    20→    20→import { toast } from "sonner";
+    21→    21→
+    22→    22→type Direction = "BUY" | "SELL";
+    23→    23→
+    24→    24→interface StockSignal {
+    25→    25→  symbol: string;
+    26→    26→  name: string;
+    27→    27→  direction: Direction;
+    28→    28→  confidence: number;
+    29→    29→  price: number;
+    30→    30→  targetPrice: number;
+    31→    31→  stopLoss: number;
+    32→    32→  horizon: string;
+    33→    33→  reason: string;
+    34→    34→  fundamentalCall: "BUY" | "SELL" | "NEUTRAL";
+    35→    35→  technicalCall: "BUY" | "SELL" | "NEUTRAL";
+    36→    36→  aiCall: Direction;
+    37→    37→  riskReward: number; // |tp3-entry| / |entry-sl| (TP3 = 21-day target, max potential)
+    38→    38→  tp1: number;
+    39→    39→  tp2: number;
+    40→    40→  tp3: number;
+    41→    41→  // LIVE overlay (issues 2, 3) — live price + TP/SL outcome from /api/signals/all
+    42→    42→  livePrice?: number | null;
+    43→    43→  outcome?: "TP3_HIT" | "TP2_HIT" | "TP1_HIT" | "SL_HIT" | "ACTIVE";
+    44→    44→  pnlPct?: number; // signed P&L vs entry in the signal's direction (live)
+    45→    45→  // Provenance — how the final consensus was reached (for transparency)
+    46→    46→  ensembleBuyCount?: number; // how many of the 5 ensembles voted BUY
+    47→    47→  ensembleSellCount?: number; // how many of the 5 ensembles voted SELL
+    48→    48→  ensembleHoldCount?: number; // how many of the 5 ensembles voted HOLD
+    49→    49→  modelBuyCount?: number; // how many of 22 trained models voted BUY
+    50→    50→  modelSellCount?: number; // how many of 22 trained models voted SELL
+    51→    51→  modelHoldCount?: number; // how many of 22 trained models voted HOLD
+    52→    52→}
+    53→    53→
+    54→    54→// Filter policy:
+    55→    55→//   - Only BUY and SELL signals (HOLD suppressed)
+    56→    56→//   - R:R ≥ 1:2 (reward ≥ 2× risk), using TP3 (21-day target) as the reward target
+    57→    57→// The batch endpoint /api/signals/all applies this filter server-side, so the
+    58→    58→// SignalSection list and the Dashboard's "active signals" KPI always agree.
+    59→    59→const MIN_RISK_REWARD = 1.99; // 1.99 to avoid floating-point edge cases
+    60→    60→
+    61→    61→function computeRiskReward(entry: number, target: number, stop: number): number {
+    62→    62→  const reward = Math.abs(target - entry);
+    63→    63→  const risk = Math.abs(entry - stop);
+    64→    64→  if (risk <= 0) return 0;
+    65→    65→  return reward / risk;
+    66→    66→}
+    67→    67→
+    68→    68→// Build a one-line layman summary from the ensemble consensus fields.
+    69→    69→function buildReason(
+    70→    70→  symbol: string,
+    71→    71→  direction: Direction,
+    72→    72→  confidence: number,
+    73→    73→  rr: number,
+    74→    74→  avgReturn?: number,
+    75→    75→  modelBuyCount?: number,
+    76→    76→  modelSellCount?: number,
+    77→    77→  modelHoldCount?: number
+    78→    78→): string {
+    79→    79→  const verb = direction === "BUY" ? "Bullish" : "Bearish";
+    80→    80→  const ret =
+    81→    81→    typeof avgReturn === "number" && isFinite(avgReturn)
+    82→    82→      ? ` · projected ${avgReturn >= 0 ? "+" : ""}${(avgReturn * 100).toFixed(1)}% avg return`
+    83→    83→      : "";
+    84→    84→  const modelVote =
+    85→    85→    typeof modelBuyCount === "number" &&
+    86→    86→    typeof modelSellCount === "number" &&
+    87→    87→    typeof modelHoldCount === "number"
+    88→    88→      ? ` · ${modelBuyCount + modelSellCount + modelHoldCount}-model consensus: ${modelBuyCount} BUY / ${modelSellCount} SELL / ${modelHoldCount} HOLD`
+    89→    89→      : "";
+    90→    90→  return `${verb} ensemble consensus on ${symbol} — confidence ${confidence}/100, R:R 1:${rr.toFixed(2)} (TP3 target, 21-day). SL = 1.5 × ATR (14-day).${ret}${modelVote}`;
+    91→    91→}
+    92→    92→
+    93→    93→export function SignalSection() {
+    94→    94→  const [search, setSearch] = useState("");
+    95→    95→  const [filter, setFilter] = useState<"ALL" | Direction>("ALL");
+    96→    96→  // Issue 3: confidence-score filter — lets users filter out low-confidence signals.
+    97→    97→  const [minConfidence, setMinConfidence] = useState(0);
+    98→    98→  const [signals, setSignals] = useState<StockSignal[]>([]);
+    99→    99→  const [loading, setLoading] = useState(true);
+   100→   100→  const [singleLoading, setSingleLoading] = useState(false);
+   101→   101→  const [singleSignal, setSingleSignal] = useState<StockSignal | null>(null);
+   102→   102→  const selectSymbol = useLatentStore((s) => s.selectSymbol);
+   103→   103→  const pushNotification = useLatentStore((s) => s.pushNotification);
+   104→   104→  const setView = useLatentStore((s) => s.setView);
+   105→   105→
+   106→   106→  // Fetch ALL actionable signals from the batch endpoint (single API call).
+   107→   107→  // The endpoint iterates all 361 stocks, computes finalConsensus per stock
+   108→   108→  // (same as the AI Models tab), and filters server-side by BUY/SELL with R:R ≥ 1:2.
+   109→   109→  // The `?refresh=1` query param forces a cache-bypass on the server side.
+   110→   110→  const fetchAllSignals = async (opts?: { refresh?: boolean }) => {
+   111→   111→    setLoading(true);
+   112→   112→    try {
+   113→   113→      const url = opts?.refresh ? "/api/signals/all?refresh=1" : "/api/signals/all";
+   114→   114→      const res = await fetch(url);
+   115→   115→      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+   116→   116→      const data = await res.json();
+   117→   117→      const list: StockSignal[] = (data.signals || []).map((s: any) => ({
+   118→   118→        symbol: s.symbol,
+   119→   119→        name: s.stockName || s.symbol,
+   120→   120→        direction: s.signal as Direction,
+   121→   121→        confidence: s.confidence ?? 0,
+   122→   122→        price: s.currentPrice ?? s.entry,
+   123→   123→        targetPrice: s.tp3,
+   124→   124→        stopLoss: s.sl,
+   125→   125→        horizon: "SWING",
+   126→   126→        reason: buildReason(s.symbol, s.signal, s.confidence, s.riskReward, s.avgReturn, s.modelBuyCount, s.modelSellCount, s.modelHoldCount),
+   127→   127→        fundamentalCall: "NEUTRAL",
+   128→   128→        technicalCall: "NEUTRAL",
+   129→   129→        aiCall: s.signal as Direction,
+   130→   130→        riskReward: s.riskReward,
+   131→   131→        tp1: s.tp1,
+   132→   132→        tp2: s.tp2,
+   133→   133→        tp3: s.tp3,
+   134→   134→        livePrice: s.livePrice ?? null,
+   135→   135→        outcome: s.outcome ?? "ACTIVE",
+   136→   136→        pnlPct: s.pnlPct ?? 0,
+   137→   137→        ensembleBuyCount: s.ensembleBuyCount,
+   138→   138→        ensembleSellCount: s.ensembleSellCount,
+   139→   139→        ensembleHoldCount: s.ensembleHoldCount,
+   140→   140→        modelBuyCount: s.modelBuyCount,
+   141→   141→        modelSellCount: s.modelSellCount,
+   142→   142→        modelHoldCount: s.modelHoldCount,
+   143→   143→      }));
+   144→   144→      setSignals(list);
+   145→   145→      if (list.length > 0) {
+   146→   146→        pushNotification({
+   147→   147→          type: "signal",
+   148→   148→          title: `${list.length} actionable signals loaded`,
+   149→   149→          body: `${list.filter((s) => s.direction === "BUY").length} BUY · ${list.filter((s) => s.direction === "SELL").length} SELL — all ≥ 1:2 R:R`,
+   150→   150→          linkView: "signals_v2",
+   151→   151→        });
+   152→   152→      }
+   153→   153→    } catch {
+   154→   154→      setSignals([]);
+   155→   155→    } finally {
+   156→   156→      setLoading(false);
+   157→   157→    }
+   158→   158→  };
+   159→   159→
+   160→   160→  const loadAll = async () => {
+   161→   161→    // Pass refresh=true to force a server-side cache-bypass — useful when the
+   162→   162→    // underlying ml_predictions_multi.json has been regenerated and the user
+   163→   163→    // wants to see fresh signals immediately (rather than waiting up to 5 min
+   164→   164→    // for the cache TTL to expire).
+   165→   165→    await fetchAllSignals({ refresh: true });
+   166→   166→  };
+   167→   167→
+   168→   168→  // Single-stock search — fetch the per-symbol AI Model Signals endpoint and
+   169→   169→  // use its `finalConsensus` field (per Issue 6: "use the final ensemble
+   170→   170→  // consensus"). Same BUY/SELL + R:R ≥ 1:2 filter as the batch endpoint.
+   171→   171→  useEffect(() => {
+   172→   172→    if (!search) {
+   173→   173→      setSingleSignal(null);
+   174→   174→      return;
+   175→   175→    }
+   176→   176→    let cancelled = false;
+   177→   177→    setSingleLoading(true);
+   178→   178→    fetch(`/api/ai-model-signals/${encodeURIComponent(search)}`)
+   179→   179→      .then((r) => {
+   180→   180→        if (!r.ok) return null;
+   181→   181→        return r.json();
+   182→   182→      })
+   183→   183→      .then((data) => {
+   184→   184→        if (cancelled) return;
+   185→   185→        const fc = data?.finalConsensus;
+   186→   186→        if (!fc) {
+   187→   187→          setSingleSignal(null);
+   188→   188→          return;
+   189→   189→        }
+   190→   190→        // Only BUY/SELL signals pass (HOLD is suppressed per filter policy)
+   191→   191→        if (fc.signal !== "BUY" && fc.signal !== "SELL") {
+   192→   192→          setSingleSignal(null);
+   193→   193→          return;
+   194→   194→        }
+   195→   195→        const rr = computeRiskReward(fc.entry, fc.tp3, fc.sl);
+   196→   196→        if (rr < MIN_RISK_REWARD) {
+   197→   197→          setSingleSignal(null);
+   198→   198→          return;
+   199→   199→        }
+   200→   200→        // Per-stock finalConsensus doesn't return model vote counts in the
+   201→   201→        // current /api/ai-model-signals/[symbol] response shape, so we omit
+   202→   202→        // them here — the batch endpoint (used when not searching) includes
+   203→   203→        // them, which is where they're most useful.
+   204→   204→        setSingleSignal({
+   205→   205→          symbol: data.symbol,
+   206→   206→          name: data.stockName || data.symbol,
+   207→   207→          direction: fc.signal as Direction,
+   208→   208→          confidence: fc.confidence ?? 0,
+   209→   209→          price: data.currentPrice ?? fc.entry,
+   210→   210→          targetPrice: fc.tp3,
+   211→   211→          stopLoss: fc.sl,
+   212→   212→          horizon: "SWING",
+   213→   213→          reason: buildReason(data.symbol, fc.signal, fc.confidence, rr),
+   214→   214→          fundamentalCall: "NEUTRAL",
+   215→   215→          technicalCall: "NEUTRAL",
+   216→   216→          aiCall: fc.signal as Direction,
+   217→   217→          riskReward: rr,
+   218→   218→          tp1: fc.tp1,
+   219→   219→          tp2: fc.tp2,
+   220→   220→          tp3: fc.tp3,
+   221→   221→        });
+   222→   222→      })
+   223→   223→      .catch(() => {
+   224→   224→        if (!cancelled) setSingleSignal(null);
+   225→   225→      })
+   226→   226→      .finally(() => {
+   227→   227→        if (!cancelled) setSingleLoading(false);
+   228→   228→      });
+   229→   229→    return () => {
+   230→   230→      cancelled = true;
+   231→   231→    };
+   232→   232→  }, [search]);
+   233→   233→
+   234→   234→  useEffect(() => {
+   235→   235→    fetchAllSignals();
+   236→   236→  }, []);
+   237→   237→
+   238→   238→  // When user selects a single stock via StockSearch, show ONLY that signal.
+   239→   239→  // Guard against stale data: only show singleSignal if it matches the current search.
+   240→   240→  const visible = search
+   241→   241→    ? (singleSignal && singleSignal.symbol === search.toUpperCase() ? [singleSignal] : [])
+   242→   242→    : signals.filter((s) => {
+   243→   243→        if (filter !== "ALL" && s.direction !== filter) return false;
+   244→   244→        // Issue 3: confidence filter — hide signals below the user-selected threshold
+   245→   245→        if (s.confidence < minConfidence) return false;
+   246→   246→        // Signal lifecycle: only ACTIVE signals stay in the Signals tab.
+   247→   247→        // Once SL/TP is hit, they move to the Tracker's Signal History.
+   248→   248→        if (s.outcome && s.outcome !== "ACTIVE") return false;
+   249→   249→        return true;
+   250→   250→      });
+   251→   251→
+   252→   252→  const directionColor = (d: Direction) =>
+   253→   253→    d === "BUY" ? "text-[#00E676]" : "text-[#FF5C5C]";
+   254→   254→  const directionBg = (d: Direction) =>
+   255→   255→    d === "BUY"
+   256→   256→      ? "bg-[#00E676]/10 border-[#00E676]/40 text-[#00E676]"
+   257→   257→      : "bg-[#FF5C5C]/10 border-[#FF5C5C]/40 text-[#FF5C5C]";
+   258→   258→
+   259→   259→  return (
+   260→   260→    <div className="min-h-screen bg-[#0A0E1A]">
+   261→   261→      <AppNav />
+   262→   262→      <main className="px-4 md:px-6 py-6 max-w-7xl mx-auto">
+   263→   263→        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+   264→   264→          <div>
+   265→   265→            <h1 className="text-2xl font-bold text-[#F4F7FB]">Signal Section</h1>
+   266→   266→            <p className="text-sm text-[#94A3B8] mt-1">
+   267→   267→              Actionable BUY/SELL signals only — filtered to setups with R:R ≥ 1:2 (reward ≥ 2× risk, TP3 target).
+   268→   268→              Sourced from the <span className="text-[#F4F7FB]">Final Consensus</span> (10 ensembles across 51 trained models, including the CL-2, PI, GM 4-Pillar, CG swing-trader, and X 10-strategy meta-labeling tiers) for all 361 PSX-listed stocks.
+   269→   269→            </p>
+   270→   270→          </div>
+   271→   271→          <Button
+   272→   272→            variant="outline"
+   273→   273→            size="sm"
+   274→   274→            onClick={loadAll}
+   275→   275→            disabled={loading}
+   276→   276→            className="border-white/[0.12] text-[#94A3B8]"
+   277→   277→          >
+   278→   278→            <RefreshCw className={`h-3 w-3 mr-1.5 ${loading ? "animate-spin" : ""}`} />
+   279→   279→            Refresh signals
+   280→   280→          </Button>
+   281→   281→        </div>
+   282→   282→
+   283→   283→        {/* KPI summary — only BUY + SELL counts now */}
+   284→   284→        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
+   285→   285→          <Card className="bg-[#131829] border-white/[0.08]">
+   286→   286→            <CardContent className="p-4">
+   287→   287→              <div className="text-[10px] uppercase tracking-wider text-[#64748B]">BUY signals</div>
+   288→   288→              <div className="text-2xl font-bold text-[#00E676] font-mono">
+   289→   289→                {signals.filter((s) => s.direction === "BUY").length}
+   290→   290→              </div>
+   291→   291→            </CardContent>
+   292→   292→          </Card>
+   293→   293→          <Card className="bg-[#131829] border-white/[0.08]">
+   294→   294→            <CardContent className="p-4">
+   295→   295→              <div className="text-[10px] uppercase tracking-wider text-[#64748B]">SELL signals</div>
+   296→   296→              <div className="text-2xl font-bold text-[#FF5C5C] font-mono">
+   297→   297→                {signals.filter((s) => s.direction === "SELL").length}
+   298→   298→              </div>
+   299→   299→            </CardContent>
+   300→   300→          </Card>
+   301→   301→          <Card className="bg-[#131829] border-white/[0.08]">
+   302→   302→            <CardContent className="p-4">
+   303→   303→              <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Min R:R filter</div>
+   304→   304→              <div className="text-2xl font-bold text-[#F4F7FB] font-mono">1:2</div>
+   305→   305→            </CardContent>
+   306→   306→          </Card>
+   307→   307→        </div>
+   308→   308→
+   309→   309→        {/* StockSearch + filters */}
+   310→   310→        <div className="flex items-center gap-3 mb-4 flex-wrap">
+   311→   311→          <div className="flex-1 min-w-[240px]">
+   312→   312→            <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">
+   313→   313→              Search any PSX stock (1000+ companies)
+   314→   314→            </label>
+   315→   315→            <StockSearch
+   316→   316→              value={search}
+   317→   317→              onChange={(sym) => setSearch(sym)}
+   318→   318→              placeholder="Search stock by symbol or name to view its signal..."
+   319→   319→            />
+   320→   320→          </div>
+   321→   321→          {!search && (
+   322→   322→            <div className="flex items-center gap-1 overflow-x-auto latent-no-scrollbar self-end">
+   323→   323→              {(["ALL", "BUY", "SELL"] as const).map((f) => (
+   324→   324→                <Button
+   325→   325→                  key={f}
+   326→   326→                  variant={filter === f ? "default" : "outline"}
+   327→   327→                  size="sm"
+   328→   328→                  onClick={() => setFilter(f)}
+   329→   329→                  className={`shrink-0 h-9 text-xs ${
+   330→   330→                    filter === f
+   331→   331→                      ? "bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881]"
+   332→   332→                      : "border-white/[0.12] text-[#94A3B8]"
+   333→   333→                  }`}
+   334→   334→                >
+   335→   335→                  {f}
+   336→   336→                </Button>
+   337→   337→              ))}
+   338→   338→            </div>
+   339→   339→          )}
+   340→   340→        </div>
+   341→   341→
+   342→   342→        {/* Issue 3: confidence-score filter */}
+   343→   343→        {!search && (
+   344→   344→          <div className="mb-4 rounded-lg bg-[#131829] border border-white/[0.08] p-3">
+   345→   345→            <div className="flex items-center justify-between mb-2">
+   346→   346→              <label className="text-[10px] uppercase tracking-wider text-[#64748B] flex items-center gap-1.5">
+   347→   347→                <Scale className="h-3 w-3 text-[#00E676]" /> Minimum confidence
+   348→   348→              </label>
+   349→   349→              <span className="text-xs font-mono font-bold text-[#00E676]">
+   350→   350→                {minConfidence}{minConfidence === 0 ? "+" : ""}
+   351→   351→              </span>
+   352→   352→            </div>
+   353→   353→            <Slider
+   354→   354→              value={[minConfidence]}
+   355→   355→              onValueChange={(v) => setMinConfidence(v[0] ?? 0)}
+   356→   356→              min={0}
+   357→   357→              max={100}
+   358→   358→              step={5}
+   359→   359→              className="[&_[role=slider]]:bg-[#00E676] [&_[role=slider]]:border-[#00E676] [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2"
+   360→   360→            />
+   361→   361→            <div className="flex items-center justify-between mt-1.5 text-[10px] text-[#64748B]">
+   362→   362→              <span>0 (all)</span>
+   363→   363→              <span>
+   364→   364→                showing <span className="text-[#F4F7FB] font-mono">{visible.length}</span> of {signals.length}
+   365→   365→              </span>
+   366→   366→              <span>100</span>
+   367→   367→            </div>
+   368→   368→          </div>
+   369→   369→        )}
+   370→   370→
+   371→   371→        {/* Signals grid */}
+   372→   372→        {search && singleLoading ? (
+   373→   373→          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+   374→   374→            <Skeleton className="h-48 bg-white/[0.04]" />
+   375→   375→          </div>
+   376→   376→        ) : loading && !search ? (
+   377→   377→          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+   378→   378→            {[1, 2, 3, 4, 5, 6].map((i) => <Skeleton key={i} className="h-48 bg-white/[0.04]" />)}
+   379→   379→          </div>
+   380→   380→        ) : visible.length === 0 ? (
+   381→   381→          <div className="text-center py-16">
+   382→   382→            <Zap className="h-10 w-10 text-[#00E676]/30 mx-auto mb-3" />
+   383→   383→            <p className="text-sm text-[#94A3B8]">
+   384→   384→              {search
+   385→   385→                ? `No actionable BUY/SELL signal (≥ 1:2 R:R) for ${search}.`
+   386→   386→                : "No signals match your filter (need BUY/SELL with R:R ≥ 1:2)."}
+   387→   387→            </p>
+   388→   388→            {search && (
+   389→   389→              <p className="text-[11px] text-[#64748B] mt-1 max-w-md mx-auto">
+   390→   390→                Either the ensemble consensus is HOLD, or the current setup&apos;s TP3 doesn&apos;t
+   391→   391→                offer 2× the risk. Try another stock.
+   392→   392→              </p>
+   393→   393→            )}
+   394→   394→          </div>
+   395→   395→        ) : (
+   396→   396→          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+   397→   397→            {visible.map((s) => (
+   398→   398→              <Card key={s.symbol} className="bg-[#131829] border-white/[0.08] hover:border-[#00E676]/30 transition-colors">
+   399→   399→                <CardContent className="p-5">
+   400→   400→                  {/* Top: symbol + direction */}
+   401→   401→                  <div className="flex items-start justify-between mb-3">
+   402→   402→                    <div className="flex items-center gap-2.5">
+   403→   403→                      <div className="h-10 w-10 rounded-lg bg-[#00E676]/10 flex items-center justify-center font-mono font-bold text-[#00E676] text-sm">
+   404→   404→                        {s.symbol.slice(0, 4)}
+   405→   405→                      </div>
+   406→   406→                      <div>
+   407→   407→                        <div className="font-bold text-[#F4F7FB]">{s.symbol}</div>
+   408→   408→                        <div className="text-[11px] text-[#94A3B8] truncate max-w-[140px]">{s.name}</div>
+   409→   409→                      </div>
+   410→   410→                    </div>
+   411→   411→                    <Badge variant="outline" className={`${directionBg(s.direction)} text-xs font-bold`}>
+   412→   412→                      {s.direction}
+   413→   413→                    </Badge>
+   414→   414→                  </div>
+   415→   415→
+   416→   416→                  {/* Issue 14: live outcome badge (TP1/TP2/TP3 hit / SL hit / active) */}
+   417→   417→                  {s.outcome && s.outcome !== "ACTIVE" && (
+   418→   418→                    <div className="mb-3">
+   419→   419→                      <Badge variant="outline" className={`${outcomeBg(s.outcome)} text-[10px] font-bold`}>
+   420→   420→                        {outcomeLabel(s.outcome)}{s.pnlPct != null && ` · ${s.pnlPct >= 0 ? "+" : ""}${s.pnlPct.toFixed(1)}%`}
+   421→   421→                      </Badge>
+   422→   422→                    </div>
+   423→   423→                  )}
+   424→   424→                  {s.outcome === "ACTIVE" && s.livePrice != null && s.pnlPct != null && (
+   425→   425→                    <div className="mb-3">
+   426→   426→                      <Badge variant="outline" className="bg-white/[0.04] border-white/[0.12] text-[#94A3B8] text-[10px] font-bold">
+   427→   427→                        LIVE · {s.pnlPct >= 0 ? "+" : ""}{s.pnlPct.toFixed(1)}%
+   428→   428→                      </Badge>
+   429→   429→                    </div>
+   430→   430→                  )}
+   431→   431→
+   432→   432→                  {/* Confidence */}
+   433→   433→                  <div className="flex items-center justify-between mb-3">
+   434→   434→                    <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Confidence</span>
+   435→   435→                    <span className={`font-mono font-bold ${directionColor(s.direction)}`}>
+   436→   436→                      {s.confidence}/100
+   437→   437→                    </span>
+   438→   438→                  </div>
+   439→   439→                  <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden mb-3">
+   440→   440→                    <div
+   441→   441→                      className={`h-full ${s.direction === "BUY" ? "bg-[#00E676]" : "bg-[#FF5C5C]"}`}
+   442→   442→                      style={{ width: `${Math.min(100, Math.max(0, s.confidence))}%` }}
+   443→   443→                    />
+   444→   444→                  </div>
+   445→   445→
+   446→   446→                  {/* Trade params — Entry, SL, TP1, TP2, TP3 */}
+   447→   447→                  <div className="grid grid-cols-5 gap-1.5 mb-2 text-center">
+   448→   448→                    <div>
+   449→   449→                      <div className="text-[8px] uppercase text-[#64748B]">Live</div>
+   450→   450→                      <div className="text-xs font-mono font-semibold text-[#F4F7FB]">
+   451→   451→                        {(s.livePrice ?? s.price).toFixed(2)}
+   452→   452→                      </div>
+   453→   453→                    </div>
+   454→   454→                    <div>
+   455→   455→                      <div className="text-[8px] uppercase text-[#64748B]">Stop (SL)</div>
+   456→   456→                      <div className="text-xs font-mono font-semibold text-[#FF5C5C]">{s.stopLoss.toFixed(2)}</div>
+   457→   457→                    </div>
+   458→   458→                    <div>
+   459→   459→                      <div className="text-[8px] uppercase text-[#64748B]">TP1 (5d)</div>
+   460→   460→                      <div className="text-xs font-mono font-semibold text-[#00E676]">{s.tp1.toFixed(2)}</div>
+   461→   461→                    </div>
+   462→   462→                    <div>
+   463→   463→                      <div className="text-[8px] uppercase text-[#64748B]">TP2 (10d)</div>
+   464→   464→                      <div className="text-xs font-mono font-semibold text-[#00E676]">{s.tp2.toFixed(2)}</div>
+   465→   465→                    </div>
+   466→   466→                    <div>
+   467→   467→                      <div className="text-[8px] uppercase text-[#64748B]">TP3 (21d)</div>
+   468→   468→                      <div className="text-xs font-mono font-semibold text-[#00E676]">{s.tp3.toFixed(2)}</div>
+   469→   469→                    </div>
+   470→   470→                  </div>
+   471→   471→
+   472→   472→                  {/* SL basis explanation + model vote tally for transparency */}
+   473→   473→                  <div className="text-[9px] text-[#64748B] mb-2 flex items-center gap-1">
+   474→   474→                    <Info className="h-2.5 w-2.5" />
+   475→   475→                    <span>
+   476→   476→                      SL/TP = avg across all 22 models (per-model: SL = 1.5×ATR(14d), TP1/2/3 = ±1R/±2R/±3R, R = 1×ATR).
+   477→   477→                      {s.modelBuyCount !== undefined && s.modelSellCount !== undefined && s.modelHoldCount !== undefined && (
+   478→   478→                        <> · 22-model vote: <span className="text-[#00E676]">{s.modelBuyCount}B</span> / <span className="text-[#FF5C5C]">{s.modelSellCount}S</span> / <span className="text-[#94A3B8]">{s.modelHoldCount}H</span></>
+   479→   479→                      )}
+   480→   480→                    </span>
+   481→   481→                  </div>
+   482→   482→
+   483→   483→                  {/* R:R badge — prominently displayed */}
+   484→   484→                  <div className="rounded-md bg-[#0A0E1A] border border-[#00E676]/20 p-2 mb-3 flex items-center justify-between">
+   485→   485→                    <span className="text-[10px] uppercase tracking-wider text-[#64748B] flex items-center gap-1">
+   486→   486→                      <Scale className="h-3 w-3" /> Risk : Reward
+   487→   487→                    </span>
+   488→   488→                    <span className="text-xs font-mono font-bold text-[#00E676]">
+   489→   489→                      1 : {s.riskReward.toFixed(2)}
+   490→   490→                    </span>
+   491→   491→                  </div>
+   492→   492→
+   493→   493→                  {/* Reason */}
+   494→   494→                  <p className="text-xs text-[#94A3B8] leading-relaxed line-clamp-2 mb-3">
+   495→   495→                    {s.reason}
+   496→   496→                  </p>
+   497→   497→
+   498→   498→                  {/* Three calls */}
+   499→   499→                  <div className="grid grid-cols-3 gap-1.5 mb-3 pt-3 border-t border-white/[0.06]">
+   500→   500→                    <div className="text-center">
+   501→   501→                      <div className="text-[9px] uppercase text-[#64748B]">Fundamental</div>
+   502→   502→                      <div className={`text-xs font-bold ${callColor(s.fundamentalCall)}`}>{s.fundamentalCall}</div>
+   503→   503→                    </div>
+   504→   504→                    <div className="text-center">
+   505→   505→                      <div className="text-[9px] uppercase text-[#64748B]">Technical</div>
+   506→   506→                      <div className={`text-xs font-bold ${callColor(s.technicalCall)}`}>{s.technicalCall}</div>
+   507→   507→                    </div>
+   508→   508→                    <div className="text-center">
+   509→   509→                      <div className="text-[9px] uppercase text-[#64748B]">AI Model</div>
+   510→   510→                      <div className={`text-xs font-bold ${directionColor(s.aiCall)}`}>{s.aiCall}</div>
+   511→   511→                    </div>
+   512→   512→                  </div>
+   513→   513→
+   514→   514→                  {/* CTA — View in depth (opens the AI Model Signals view for
+   515→   515→                      the full ensemble breakdown, which works for any of 361
+   516→   516→                      stocks, not just the 8 in ml_predictions.json). */}
+   517→   517→                  <Button
+   518→   518→                    size="sm"
+   519→   519→                    variant="outline"
+   520→   520→                    onClick={() => {
+   521→   521→                      selectSymbol(s.symbol);
+   522→   522→                      setView("ai_model_signals");
+   523→   523→                      toast.info(`Opening AI model breakdown for ${s.symbol}...`);
+   524→   524→                    }}
+   525→   525→                    className="w-full border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] h-8"
+   526→   526→                  >
+   527→   527→                    View in depth
+   528→   528→                    <ArrowRight className="h-3 w-3 ml-1.5" />
+   529→   529→                  </Button>
+   530→   530→                </CardContent>
+   531→   531→              </Card>
+   532→   532→            ))}
+   533→   533→          </div>
+   534→   534→        )}
+   535→   535→
+   536→   536→        {/* Disclaimer */}
+   537→   537→        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6">
+   538→   538→          <span className="text-[#94A3B8] font-semibold">Filter policy:</span> Only
+   539→   539→          actionable BUY and SELL signals are shown — HOLD is suppressed. Signals are further
+   540→   540→          filtered to setups with a Risk:Reward ratio of <span className="text-[#00E676] font-mono">≥ 1:2</span> (reward ≥ 2× risk,
+   541→   541→          using TP3 (21-day max target) as the reward target). SL = 1.5 × ATR(14-day). TP1/2/3 = +1/+2/+3 × ATR.
+   542→   542→          Consensus comes from the <span className="text-[#F4F7FB]">Final Consensus</span> across 10 ensembles
+   543→   543→          (Majority Vote, Probability-Weighted, Tier-Weighted, CL-Ensemble, CL-Extender, <span className="text-[#00E676]">CL-2 Ensemble</span>, <span className="text-[#00E676]">PI-Ensemble</span>, <span className="text-[#00E676]">GM-Model Ensembler</span>, <span className="text-[#00E676]">CG-Ensemble</span>, <span className="text-[#00E676]">X-Ensemble</span>)
+   544→   544→          computed from 51 trained models on real PSX OHLCV across 361 stocks. The X-Ensemble is a
+   545→   545→          meta-labeling ensemble on top of the CG-Ensemble, with 10 complementary strategies (trend/breakout/
+   546→   546→          pullback/divergence/mean-reversion/vol-contraction/relative-strength/regime/meta-label/triple-barrier).
+   547→   547→          The CG-Ensemble is a swing-trading classifier (LightGBM + XGBoost) with triple-barrier labels,
+   548→   548→          10-day horizon, 1R/2R/3R TPs, walk-forward CV, and full cost model (50 bps round-trip + 15% CGT on gains).
+   549→   549→          The CL-2, PI, GM, CG, and X tiers all use proper chronological methodology with purge+embargo
+   550→   550→          and an untouched out-of-sample test period. Past performance does not guarantee future returns.
+   551→   551→        </div>
+   552→   552→      </main>
+   553→   553→    </div>
+   554→   554→  );
+   555→   555→}
+   556→   556→
+   557→   557→function callColor(call: "BUY" | "SELL" | "NEUTRAL") {
+   558→   558→  return call === "BUY" ? "text-[#00E676]" : call === "SELL" ? "text-[#FF5C5C]" : "text-[#94A3B8]";
+   559→   559→}
+   560→   560→
+   561→   561→// Issue 14: outcome badge styling + labels (TP-tier hit / SL hit / live)
+   562→   562→function outcomeLabel(o: string): string {
+   563→   563→  switch (o) {
+   564→   564→    case "TP3_HIT": return "TP3 HIT";
+   565→   565→    case "TP2_HIT": return "TP2 HIT";
+   566→   566→    case "TP1_HIT": return "TP1 HIT";
+   567→   567→    case "SL_HIT": return "SL HIT";
+   568→   568→    default: return "ACTIVE";
+   569→   569→  }
+   570→   570→}
+   571→   571→function outcomeBg(o: string): string {
+   572→   572→  switch (o) {
+   573→   573→    case "TP3_HIT": return "bg-[#00E676]/15 border-[#00E676]/50 text-[#00E676]";
+   574→   574→    case "TP2_HIT": return "bg-[#00E676]/12 border-[#00E676]/40 text-[#00E676]";
+   575→   575→    case "TP1_HIT": return "bg-[#00E676]/[0.08] border-[#00E676]/30 text-[#00E676]";
+   576→   576→    case "SL_HIT": return "bg-[#FF5C5C]/15 border-[#FF5C5C]/50 text-[#FF5C5C]";
+   577→   577→    default: return "bg-white/[0.04] border-white/[0.12] text-[#94A3B8]";
+   578→   578→  }
+   579→   579→}
+   580→   580→

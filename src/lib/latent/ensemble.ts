@@ -115,6 +115,13 @@ function avg(arr: number[], fallback: number = 0): number {
   return arr.length > 0 ? arr.reduce((s, v) => s + v, 0) / arr.length : fallback;
 }
 
+// Confidence is ALWAYS displayed as "X / 100" — clamp every ensemble's
+// confidence into 0-100 so the UI never shows values above 100.
+export function clampConfidence(v: number): number {
+  if (!Number.isFinite(v)) return 0;
+  return Math.min(100, Math.max(0, Math.round(v)));
+}
+
 function emptyEnsemble(method: string, label: string): EnsembleResult {
   return {
     method, methodLabel: label, signal: "HOLD", direction: "LONG", confidence: 0,
@@ -162,7 +169,9 @@ export function probabilityWeightedEnsemble(preds: ModelPrediction[]): EnsembleR
   const sls = trained.filter(p => p.sl).map(p => p.sl as number);
   return {
     method: "PROBABILITY_WEIGHTED", methodLabel: "B. Probability-Weighted", signal, direction,
-    confidence: Math.round(Math.abs(avgRet) * 1000),
+    // avgReturn is a decimal fraction (0.28 = 28%); scale to 0-100 and CLAMP
+    // so confidence can never exceed 100 (issue: STL showed 281/100).
+    confidence: clampConfidence(Math.abs(avgRet) * 1000),
     predictedPrice: avg([...tp1s, ...tp2s, ...tp3s]), entry,
     sl: avg(sls, entry), tp1: avg(tp1s, entry), tp2: avg(tp2s, entry), tp3: avg(tp3s, entry),
     modelCount: trained.length,
@@ -193,7 +202,8 @@ export function tierWeightedEnsemble(preds: ModelPrediction[]): EnsembleResult {
   const sls = trained.filter(p => p.sl).map(p => p.sl as number);
   return {
     method: "TIER_WEIGHTED", methodLabel: "C. Tier-Weighted", signal, direction,
-    confidence: Math.round(Math.abs(wr) * 1000),
+    // Same clamp as Probability-Weighted — keeps confidence in 0-100.
+    confidence: clampConfidence(Math.abs(wr) * 1000),
     predictedPrice: avg([...tp1s, ...tp2s, ...tp3s]), entry,
     sl: avg(sls, entry), tp1: avg(tp1s, entry), tp2: avg(tp2s, entry), tp3: avg(tp3s, entry),
     modelCount: trained.length,
@@ -215,7 +225,8 @@ export function computeFinalConsensus(ens: EnsembleResult[]) {
   const predictedPrices = ens.map(e => e.predictedPrice).filter(p => p > 0);
   return {
     signal, direction,
-    confidence: ens.length > 0 ? Math.round(ens.reduce((s, e) => s + e.confidence, 0) / ens.length) : 0,
+    // Final safety clamp — the consensus confidence is always 0-100.
+    confidence: ens.length > 0 ? clampConfidence(ens.reduce((s, e) => s + e.confidence, 0) / ens.length) : 0,
     agreement: Math.round(Math.max(buyV, sellV, holdV) / ens.length * 100),
     predictedPriceRange: { min: predictedPrices.length ? Math.min(...predictedPrices) : entry, max: predictedPrices.length ? Math.max(...predictedPrices) : entry },
     entry,

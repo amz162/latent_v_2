@@ -356,7 +356,7 @@ export function SignalSection() {
               min={0}
               max={100}
               step={5}
-              className="[&_[role=slider]]:bg-[#00E676] [&_[role=slider]]:border-[#00E676] [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2"
+              className="[&_[role=slider]]:bg-[#00E676] [&_[role=slider]]:border-[#00E676] [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2 [&_[data-slot=slider-track]]:bg-white/[0.18] [&_[data-slot=slider-range]]:bg-[#00E676]"
             />
             <div className="flex items-center justify-between mt-1.5 text-[10px] text-[#64748B]">
               <span>0 (all)</span>
@@ -433,12 +433,13 @@ export function SignalSection() {
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Confidence</span>
                     <span className={`font-mono font-bold ${directionColor(s.direction)}`}>
-                      {s.confidence}/100
+                      {Math.min(100, Math.max(0, Math.round(s.confidence)))}/100
                     </span>
                   </div>
-                  <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden mb-3">
+                  {/* Track brightened from bg-white/[0.06] (nearly invisible on the dark card) */}
+                  <div className="h-2 bg-white/[0.18] rounded-full overflow-hidden mb-3">
                     <div
-                      className={`h-full ${s.direction === "BUY" ? "bg-[#00E676]" : "bg-[#FF5C5C]"}`}
+                      className={`h-full ${s.direction === "BUY" ? "bg-gradient-to-r from-[#00E676] to-[#22E881]" : "bg-gradient-to-r from-[#FF5C5C] to-[#FF7C7C]"}`}
                       style={{ width: `${Math.min(100, Math.max(0, s.confidence))}%` }}
                     />
                   </div>

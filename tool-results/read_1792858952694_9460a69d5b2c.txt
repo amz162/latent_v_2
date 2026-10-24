@@ -1,0 +1,926 @@
+     1→"use client";
+     2→
+     3→// Task 47 — Price Pattern Finder (main "Pattern Finder" view)
+     4→// Sub-experience 1 (default): PRICE patterns — statistical detectors over the
+     5→//   OhlcvBar corpus + LLM layman explanations (/api/price-patterns/[symbol]).
+     6→// Sub-experience 2: the original quarterly FINANCIAL pattern finder
+     7→//   (src/components/latent/PatternFinder.tsx), still importable + hosted at
+     8→//   its own view ("pattern_finder_financial") so its full-screen layout with
+     9→//   AppNav stays intact — the tab button just switches the store view.
+    10→
+    11→import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+    12→import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+    13→import { Button } from "@/components/ui/button";
+    14→import { Badge } from "@/components/ui/badge";
+    15→import { Skeleton } from "@/components/ui/skeleton";
+    16→import { AppNav } from "./AppNav";
+    17→import { StockSearch } from "./StockSearch";
+    18→import { PatternFinder } from "./PatternFinder";
+    19→import { useLatentStore } from "@/lib/latent/store";
+    20→import type {
+    21→  PricePatternAnalysis,
+    22→  PricePattern,
+    23→  SeasonalityMonth,
+    24→  KeyZone,
+    25→} from "@/lib/latent/price-patterns";
+    26→import {
+    27→  Search,
+    28→  RefreshCw,
+    29→  Loader2,
+    30→  CalendarDays,
+    31→  BarChart3,
+    32→  Activity,
+    33→  Layers,
+    34→  ArrowUpRight,
+    35→  ArrowDownRight,
+    36→  Sparkles,
+    37→  ShieldCheck,
+    38→  Info,
+    39→  AlertTriangle,
+    40→  History,
+    41→  GitBranch,
+    42→} from "lucide-react";
+    43→import { toast } from "sonner";
+    44→
+    45→const POPULAR = ["ENGRO", "OGDC", "LUCK", "HUBC", "SYS", "MEBL", "PSO", "PPL"];
+    46→
+    47→const TYPE_META: Record<string, { label: string; color: string }> = {
+    48→  seasonality: { label: "Seasonality", color: "#2DD4BF" },
+    49→  volume_spike: { label: "Volume", color: "#FBBF24" },
+    50→  pressure: { label: "Pressure", color: "#F472B6" },
+    51→  key_zone: { label: "Key Zones", color: "#00E676" },
+    52→  gap: { label: "Gaps", color: "#A78BFA" },
+    53→  drift: { label: "Post-event", color: "#FB923C" },
+    54→};
+    55→
+    56→const CONF_META: Record<string, string> = {
+    57→  high: "border-[#00E676]/40 bg-[#00E676]/10 text-[#00E676]",
+    58→  medium: "border-[#FBBF24]/40 bg-[#FBBF24]/10 text-[#FBBF24]",
+    59→  low: "border-white/[0.12] bg-white/[0.05] text-[#94A3B8]",
+    60→};
+    61→
+    62→const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    63→
+    64→interface LlmSummary {
+    65→  overallSummary: string;
+    66→  notableObservations: string[];
+    67→  patternExplanations: Record<string, string>;
+    68→}
+    69→
+    70→type ApiResult = PricePatternAnalysis & {
+    71→  companyName?: string;
+    72→  llmSummary: LlmSummary | null;
+    73→  llmError?: string | null;
+    74→  suggestions?: string[];
+    75→  cached?: boolean;
+    76→  computedAt?: string;
+    77→  latencyMs?: number;
+    78→};
+    79→
+    80→function fmtPct(n: number, digits = 1): string {
+    81→  const s = n.toFixed(digits);
+    82→  return n > 0 ? `+${s}%` : `${s}%`;
+    83→}
+    84→
+    85→function fmtNum(n: number): string {
+    86→  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
+    87→  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+    88→  return n.toFixed(0);
+    89→}
+    90→
+    91→function confidenceOf(occurrences: number): "high" | "medium" | "low" {
+    92→  if (occurrences >= 12) return "high";
+    93→  if (occurrences >= 6) return "medium";
+    94→  return "low";
+    95→}
+    96→
+    97→export function PricePatternFinder() {
+    98→  const setView = useLatentStore((s) => s.setView);
+    99→  const [symbol, setSymbol] = useState<string>("");
+   100→  const [data, setData] = useState<ApiResult | null>(null);
+   101→  const [loading, setLoading] = useState(false);
+   102→  const [refreshing, setRefreshing] = useState(false);
+   103→  const [error, setError] = useState<string | null>(null);
+   104→  const [typeFilter, setTypeFilter] = useState<string>("all");
+   105→  const [showEvidence, setShowEvidence] = useState(true);
+   106→  const reqIdRef = useRef(0);
+   107→
+   108→  const fetchPatterns = useCallback(async (sym: string, force = false) => {
+   109→    if (!sym) return;
+   110→    const reqId = ++reqIdRef.current;
+   111→    if (force) setRefreshing(true);
+   112→    else setLoading(true);
+   113→    setError(null);
+   114→    try {
+   115→      const res = await fetch(`/api/price-patterns/${encodeURIComponent(sym)}${force ? "?refresh=1" : ""}`);
+   116→      const json = await res.json();
+   117→      if (reqId !== reqIdRef.current) return;
+   118→      if (!res.ok) {
+   119→        setData(null);
+   120→        setError(json?.error || `Could not load patterns for ${sym}`);
+   121→        return;
+   122→      }
+   123→      setData(json as ApiResult);
+   124→      if (force) toast.success(`Patterns recomputed for ${sym}`);
+   125→    } catch (err) {
+   126→      if (reqId !== reqIdRef.current) return;
+   127→      setData(null);
+   128→      setError(err instanceof Error ? err.message : "Network error");
+   129→    } finally {
+   130→      if (reqId === reqIdRef.current) {
+   131→        setLoading(false);
+   132→        setRefreshing(false);
+   133→      }
+   134→    }
+   135→  }, []);
+   136→
+   137→  useEffect(() => {
+   138→    if (symbol) void fetchPatterns(symbol);
+   139→  }, [symbol, fetchPatterns]);
+   140→
+   141→  const onSelect = (sym: string) => {
+   142→    setSymbol(sym.toUpperCase());
+   143→    setData(null);
+   144→    setTypeFilter("all");
+   145→  };
+   146→
+   147→  const filteredPatterns = useMemo(() => {
+   148→    if (!data) return [];
+   149→    return typeFilter === "all" ? data.patterns : data.patterns.filter((p) => p.type === typeFilter);
+   150→  }, [data, typeFilter]);
+   151→
+   152→  const availableTypes = useMemo(() => {
+   153→    const set = new Set((data?.patterns || []).map((p) => p.type));
+   154→    return [...set];
+   155→  }, [data]);
+   156→
+   157→  return (
+   158→    <div className="min-h-screen bg-[#0A0E1A] flex flex-col">
+   159→      <AppNav />
+   160→      <main className="flex-1 w-full px-4 md:px-6 py-6 max-w-6xl mx-auto">
+   161→        {/* View header + experience switch */}
+   162→        <div className="flex items-start justify-between flex-wrap gap-3 mb-5">
+   163→          <div>
+   164→            <h1 className="text-2xl font-bold text-[#F4F7FB] flex items-center gap-2">
+   165→              <Search className="h-6 w-6 text-[#00E676]" /> Pattern Finder
+   166→            </h1>
+   167→            <p className="text-sm text-[#94A3B8] mt-1">
+   168→              Recurring price-history patterns for any PSX stock — monthly seasonality, volume events, key price zones, gaps and post-event behavior, explained in plain English.
+   169→            </p>
+   170→          </div>
+   171→          <div className="flex items-center gap-1 bg-[#131829] border border-white/[0.08] rounded-lg p-1">
+   172→            <span className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#00E676]/10 text-[#00E676]">Price Patterns</span>
+   173→            <button
+   174→              onClick={() => setView("pattern_finder_financial")}
+   175→              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#94A3B8] hover:text-[#F4F7FB] hover:bg-white/[0.04] transition-colors"
+   176→            >
+   177→              Financial Patterns
+   178→            </button>
+   179→          </div>
+   180→        </div>
+   181→
+   182→        {!symbol && <SearchHero onSelect={onSelect} />}
+   183→
+   184→        {symbol && (
+   185→          <>
+   186→            {/* Stock picker + header row */}
+   187→            <Card className="bg-[#131829] border-white/[0.06] mb-5">
+   188→              <CardContent className="p-4 md:p-5">
+   189→                <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+   190→                  <div className="flex-1 min-w-0">
+   191→                    <label className="text-[10px] uppercase tracking-wider text-[#64748B] mb-1.5 block">Stock</label>
+   192→                    <StockSearch value={symbol} onChange={(s) => s && onSelect(s)} placeholder="Search another stock…" />
+   193→                  </div>
+   194→                  <div className="flex items-center gap-2">
+   195→                    <Button
+   196→                      size="sm"
+   197→                      onClick={() => void fetchPatterns(symbol)}
+   198→                      disabled={loading || refreshing}
+   199→                      className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#00E676]/85 font-semibold"
+   200→                    >
+   201→                      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Search className="h-3.5 w-3.5 mr-1.5" />}
+   202→                      Analyze
+   203→                    </Button>
+   204→                    <Button
+   205→                      size="sm"
+   206→                      variant="outline"
+   207→                      onClick={() => void fetchPatterns(symbol, true)}
+   208→                      disabled={loading || refreshing}
+   209→                      className="border-white/[0.12] bg-transparent text-[#F4F7FB] hover:bg-white/[0.05]"
+   210→                    >
+   211→                      <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin text-[#00E676]" : ""}`} />
+   212→                      Refresh
+   213→                    </Button>
+   214→                  </div>
+   215→                </div>
+   216→
+   217→                {loading && (
+   218→                  <div className="mt-4 space-y-2">
+   219→                    <Skeleton className="h-6 w-64 bg-white/[0.06]" />
+   220→                    <Skeleton className="h-4 w-96 max-w-full bg-white/[0.06]" />
+   221→                  </div>
+   222→                )}
+   223→
+   224→                {!loading && data && !data.insufficient && (
+   225→                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+   226→                    <div>
+   227→                      <span className="text-xl font-bold text-[#F4F7FB] font-mono">{data.symbol}</span>
+   228→                      <span className="text-sm text-[#94A3B8] ml-2">{data.companyName && data.companyName !== data.symbol ? data.companyName : ""}</span>
+   229→                    </div>
+   230→                    <Badge variant="outline" className="border-white/[0.12] text-[#94A3B8] gap-1">
+   231→                      <History className="h-3 w-3" /> {data.dataStart} → {data.dataEnd} · {data.totalBars.toLocaleString()} trading days
+   232→                    </Badge>
+   233→                    {data.cached && (
+   234→                      <Badge variant="outline" className="border-[#FBBF24]/30 text-[#FBBF24] text-[10px]">
+   235→                        cached {data.computedAt ? new Date(data.computedAt).toLocaleString() : ""}
+   236→                      </Badge>
+   237→                    )}
+   238→                    {data.llmSummary && (
+   239→                      <Badge className="bg-[#00E676]/10 text-[#00E676] border border-[#00E676]/30 text-[10px] gap-1">
+   240→                        <Sparkles className="h-3 w-3" /> AI explanations
+   241→                      </Badge>
+   242→                    )}
+   243→                    {!data.llmSummary && data.llmError && (
+   244→                      <Badge variant="outline" className="border-white/[0.12] text-[#64748B] text-[10px]">engine-only (LLM unavailable — press Refresh to retry)</Badge>
+   245→                    )}
+   246→                  </div>
+   247→                )}
+   248→              </CardContent>
+   249→            </Card>
+   250→
+   251→            {error && <ErrorCard message={error} suggestions={(data as ApiResult | null)?.suggestions || []} onSelect={onSelect} />}
+   252→
+   253→            {loading && <LoadingSkeletons />}
+   254→
+   255→            {!loading && data && data.insufficient && (
+   256→              <Card className="bg-[#131829] border-[#FBBF24]/25 mb-5">
+   257→                <CardContent className="p-6">
+   258→                  <div className="flex items-start gap-3">
+   259→                    <AlertTriangle className="h-5 w-5 text-[#FBBF24] shrink-0 mt-0.5" />
+   260→                    <div>
+   261→                      <p className="text-sm text-[#F4F7FB] font-medium">Not enough data for {data.symbol}</p>
+   262→                      <p className="text-sm text-[#94A3B8] mt-1">{data.message}</p>
+   263→                      <div className="flex flex-wrap gap-2 mt-3">
+   264→                        {(data.suggestions || POPULAR).map((s) => (
+   265→                          <button key={s} onClick={() => onSelect(s)} className="px-2.5 py-1 rounded-md text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-[#94A3B8] hover:text-[#00E676] hover:border-[#00E676]/40 transition-colors">
+   266→                            {s}
+   267→                          </button>
+   268→                        ))}
+   269→                      </div>
+   270→                    </div>
+   271→                  </div>
+   272→                </CardContent>
+   273→              </Card>
+   274→            )}
+   275→
+   276→            {!loading && data && !data.insufficient && (
+   277→              <div className="space-y-5">
+   278→                {data.llmSummary?.overallSummary && (
+   279→                  <Card className="bg-[#131829] border-[#00E676]/20">
+   280→                    <CardContent className="p-4 md:p-5">
+   281→                      <div className="flex items-center gap-2 mb-2">
+   282→                        <Sparkles className="h-4 w-4 text-[#00E676]" />
+   283→                        <span className="text-xs font-semibold uppercase tracking-wider text-[#00E676]">Plain-English overview</span>
+   284→                        <span className="text-[10px] text-[#64748B]">(AI summary of the engine's findings — historical observation, not advice)</span>
+   285→                      </div>
+   286→                      <p className="text-sm text-[#F4F7FB] leading-relaxed">{data.llmSummary.overallSummary}</p>
+   287→                      {data.llmSummary.notableObservations.length > 0 && (
+   288→                        <ul className="mt-3 space-y-1.5">
+   289→                          {data.llmSummary.notableObservations.map((o, i) => (
+   290→                            <li key={i} className="text-xs text-[#94A3B8] flex items-start gap-2">
+   291→                              <Info className="h-3.5 w-3.5 text-[#FBBF24] shrink-0 mt-0.5" /> {o}
+   292→                            </li>
+   293→                          ))}
+   294→                        </ul>
+   295→                      )}
+   296→                    </CardContent>
+   297→                  </Card>
+   298→                )}
+   299→
+   300→                {data.patterns.length === 0 ? (
+   301→                  <Card className="bg-[#131829] border-white/[0.06]">
+   302→                    <CardContent className="p-6 text-sm text-[#94A3B8]">
+   303→                      No recurring patterns met the minimum sample size (2+ occurrences) for this stock — its history is likely too short or too irregular. Try a heavily traded symbol like {POPULAR.slice(0, 3).join(", ")}.
+   304→                    </CardContent>
+   305→                  </Card>
+   306→                ) : (
+   307→                  <>
+   308→                    {/* Filters + evidence toggle */}
+   309→                    <div className="flex items-center justify-between flex-wrap gap-3">
+   310→                      <div className="flex items-center gap-1.5 flex-wrap">
+   311→                        <FilterChip active={typeFilter === "all"} onClick={() => setTypeFilter("all")} label={`All (${data.patterns.length})`} color="#94A3B8" />
+   312→                        {availableTypes.map((t) => (
+   313→                          <FilterChip
+   314→                            key={t}
+   315→                            active={typeFilter === t}
+   316→                            onClick={() => setTypeFilter(t)}
+   317→                            label={`${TYPE_META[t]?.label ?? t} (${data.patterns.filter((p) => p.type === t).length})`}
+   318→                            color={TYPE_META[t]?.color ?? "#94A3B8"}
+   319→                          />
+   320→                        ))}
+   321→                      </div>
+   322→                      <button
+   323→                        onClick={() => setShowEvidence((v) => !v)}
+   324→                        className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${showEvidence ? "border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10" : "border-white/[0.12] text-[#64748B] hover:text-[#94A3B8]"}`}
+   325→                      >
+   326→                        Evidence on chart: {showEvidence ? "ON" : "OFF"}
+   327→                      </button>
+   328→                    </div>
+   329→
+   330→                    {/* Pattern cards */}
+   331→                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+   332→                      {filteredPatterns.map((p) => (
+   333→                        <PatternCard key={p.key} pattern={p} llmText={data.llmSummary?.patternExplanations?.[p.key]} />
+   334→                      ))}
+   335→                    </div>
+   336→                    {filteredPatterns.length === 0 && (
+   337→                      <p className="text-sm text-[#64748B] text-center py-4">No patterns of this type for {data.symbol}.</p>
+   338→                    )}
+   339→
+   340→                    {/* Seasonality heatmap */}
+   341→                    {data.seasonality && <SeasonalityHeatmap months={data.seasonality} symbol={data.symbol} />}
+   342→
+   343→                    {/* Price chart with overlays */}
+   344→                    <PatternChart data={data} showEvidence={showEvidence} filteredPatterns={filteredPatterns} />
+   345→
+   346→                    {/* Key price zones + pressure/gaps */}
+   347→                    {data.keyZones.length > 0 && <KeyZonesPanel zones={data.keyZones} />}
+   348→
+   349→                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+   350→                      {data.pressure && <PressurePanel data={data.pressure} />}
+   351→                      {data.gaps && <GapStatsPanel gaps={data.gaps} />}
+   352→                    </div>
+   353→
+   354→                    {data.drift && data.drift.length > 0 && <DriftCards drift={data.drift} />}
+   355→                  </>
+   356→                )}
+   357→              </div>
+   358→            )}
+   359→          </>
+   360→        )}
+   361→      </main>
+   362→
+   363→      {/* Compliance footer (sticky to viewport bottom on short pages) */}
+   364→      <footer className="mt-auto w-full border-t border-white/[0.06] bg-[#0D1220]">
+   365→        <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+   366→          <div className="flex items-center gap-2">
+   367→            <ShieldCheck className="h-4 w-4 text-[#00E676] shrink-0" />
+   368→            <span className="text-xs font-medium text-[#F4F7FB]">Historical pattern, informational only, not investment advice</span>
+   369→          </div>
+   370→          <p className="text-[10px] text-[#64748B] leading-relaxed sm:ml-auto sm:text-right">
+   371→            Price-pattern statistics are computed from past PSX trading data (open/close/volume). Past behavior may not repeat. Latent.pk is an analytics tool, not an SECP-licensed investment adviser — consult a licensed adviser before making decisions.
+   372→          </p>
+   373→        </div>
+   374→      </footer>
+   375→    </div>
+   376→  );
+   377→}
+   378→
+   379→// ─────────────────────────────────────────────────────────────────────────────
+   380→
+   381→function SearchHero({ onSelect }: { onSelect: (s: string) => void }) {
+   382→  return (
+   383→    <Card className="bg-[#131829] border-white/[0.06]">
+   384→      <CardContent className="p-6 md:p-8">
+   385→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] mb-2 block">Pick a stock to find its recurring price patterns</label>
+   386→        <StockSearch value="" onChange={(s) => s && onSelect(s)} placeholder="Search stock by symbol or name…" autoFocus />
+   387→        <div className="flex flex-wrap gap-2 mt-4">
+   388→          {POPULAR.map((s) => (
+   389→            <button key={s} onClick={() => onSelect(s)} className="px-3 py-1.5 rounded-md text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-[#94A3B8] hover:text-[#00E676] hover:border-[#00E676]/40 transition-colors">
+   390→              {s}
+   391→            </button>
+   392→          ))}
+   393→        </div>
+   394→        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+   395→          {[
+   396→            { icon: CalendarDays, title: "Monthly seasonality", desc: "Which calendar months historically moved up or down — and how consistently." },
+   397→            { icon: Activity, title: "Volume & pressure events", desc: "Unusual volume days, buying/selling pressure (inferred from price + volume) and what followed." },
+   398→            { icon: Layers, title: "Zones, gaps & drift", desc: "Key price zones where closes cluster, gap-fill behavior, and returns after 52-week extremes." },
+   399→          ].map((c) => (
+   400→            <div key={c.title} className="rounded-lg border border-white/[0.06] bg-[#0D1220] p-4">
+   401→              <c.icon className="h-4 w-4 text-[#00E676] mb-2" />
+   402→              <p className="text-sm font-medium text-[#F4F7FB]">{c.title}</p>
+   403→              <p className="text-xs text-[#64748B] mt-1 leading-relaxed">{c.desc}</p>
+   404→            </div>
+   405→          ))}
+   406→        </div>
+   407→        <p className="text-[10px] text-[#64748B] mt-5 flex items-center gap-1.5">
+   408→          <ShieldCheck className="h-3.5 w-3.5 text-[#00E676]" /> Historical pattern, informational only, not investment advice.
+   409→        </p>
+   410→      </CardContent>
+   411→    </Card>
+   412→  );
+   413→}
+   414→
+   415→function ErrorCard({ message, suggestions, onSelect }: { message: string; suggestions: string[]; onSelect: (s: string) => void }) {
+   416→  return (
+   417→    <Card className="bg-[#131829] border-[#FF5C5C]/30 mb-5">
+   418→      <CardContent className="p-6">
+   419→        <div className="flex items-start gap-3">
+   420→          <AlertTriangle className="h-5 w-5 text-[#FF5C5C] shrink-0 mt-0.5" />
+   421→          <div>
+   422→            <p className="text-sm text-[#F4F7FB] font-medium">{message}</p>
+   423→            {suggestions.length > 0 && (
+   424→              <>
+   425→                <p className="text-xs text-[#64748B] mt-1">Try one of these heavily traded symbols:</p>
+   426→                <div className="flex flex-wrap gap-2 mt-2">
+   427→                  {suggestions.map((s) => (
+   428→                    <button key={s} onClick={() => onSelect(s)} className="px-2.5 py-1 rounded-md text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-[#94A3B8] hover:text-[#00E676] hover:border-[#00E676]/40 transition-colors">
+   429→                      {s}
+   430→                    </button>
+   431→                  ))}
+   432→                </div>
+   433→              </>
+   434→            )}
+   435→          </div>
+   436→        </div>
+   437→      </CardContent>
+   438→    </Card>
+   439→  );
+   440→}
+   441→
+   442→function LoadingSkeletons() {
+   443→  return (
+   444→    <div className="space-y-5">
+   445→      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+   446→        {[0, 1, 2, 3].map((i) => (
+   447→          <Card key={i} className="bg-[#131829] border-white/[0.06]">
+   448→            <CardContent className="p-4 space-y-3">
+   449→              <Skeleton className="h-4 w-40 bg-white/[0.06]" />
+   450→              <Skeleton className="h-3 w-full bg-white/[0.06]" />
+   451→              <Skeleton className="h-3 w-4/5 bg-white/[0.06]" />
+   452→              <Skeleton className="h-2 w-full bg-white/[0.06]" />
+   453→            </CardContent>
+   454→          </Card>
+   455→        ))}
+   456→      </div>
+   457→      <Card className="bg-[#131829] border-white/[0.06]">
+   458→        <CardContent className="p-4">
+   459→          <Skeleton className="h-40 w-full bg-white/[0.06]" />
+   460→        </CardContent>
+   461→      </Card>
+   462→    </div>
+   463→  );
+   464→}
+   465→
+   466→function FilterChip({ active, onClick, label, color }: { active: boolean; onClick: () => void; label: string; color: string }) {
+   467→  return (
+   468→    <button
+   469→      onClick={onClick}
+   470→      className={`text-xs px-3 py-1.5 rounded-md border transition-colors flex items-center gap-1.5 ${active ? "bg-white/[0.08] text-[#F4F7FB] border-white/[0.2]" : "border-white/[0.08] text-[#64748B] hover:text-[#94A3B8]"}`}
+   471→    >
+   472→      <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+   473→      {label}
+   474→    </button>
+   475→  );
+   476→}
+   477→
+   478→function PatternCard({ pattern: p, llmText }: { pattern: PricePattern; llmText?: string }) {
+   479→  const meta = TYPE_META[p.type] ?? { label: p.type, color: "#94A3B8" };
+   480→  const barColor = p.success_rate >= 60 ? "#00E676" : p.success_rate >= 40 ? "#FBBF24" : "#FF5C5C";
+   481→  const positive = p.avg_move_pct >= 0;
+   482→  const desc = llmText || p.description;
+   483→  return (
+   484→    <Card className="bg-[#131829] border-white/[0.06] hover:border-white/[0.12] transition-colors">
+   485→      <CardContent className="p-4 md:p-5 flex flex-col gap-3">
+   486→        <div className="flex items-start justify-between gap-2">
+   487→          <div className="flex items-center gap-2 flex-wrap">
+   488→            <Badge variant="outline" className="text-[10px] gap-1 border-white/[0.12]" style={{ color: meta.color }}>
+   489→              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: meta.color }} />
+   490→              {meta.label}
+   491→            </Badge>
+   492→            <Badge variant="outline" className={`text-[10px] uppercase tracking-wide ${CONF_META[p.confidence]}`}>
+   493→              {p.confidence} confidence
+   494→            </Badge>
+   495→          </div>
+   496→        </div>
+   497→        <div>
+   498→          <h3 className="text-sm font-semibold text-[#F4F7FB] leading-snug">{p.title}</h3>
+   499→          <p className="text-xs text-[#94A3B8] mt-1.5 leading-relaxed">{desc}</p>
+   500→        </div>
+   501→        <div className="grid grid-cols-3 gap-2 text-center">
+   502→          <div className="rounded-md bg-[#0D1220] border border-white/[0.05] px-2 py-1.5">
+   503→            <p className="text-[9px] uppercase tracking-wider text-[#64748B]">Sample size</p>
+   504→            <p className="text-sm font-semibold text-[#F4F7FB]">{p.occurrences} <span className="text-[10px] font-normal text-[#64748B]">events</span></p>
+   505→          </div>
+   506→          <div className="rounded-md bg-[#0D1220] border border-white/[0.05] px-2 py-1.5">
+   507→            <p className="text-[9px] uppercase tracking-wider text-[#64748B]">Years seen</p>
+   508→            <p className="text-sm font-semibold text-[#F4F7FB]">{p.years_seen}</p>
+   509→          </div>
+   510→          <div className="rounded-md bg-[#0D1220] border border-white/[0.05] px-2 py-1.5">
+   511→            <p className="text-[9px] uppercase tracking-wider text-[#64748B]">Avg move</p>
+   512→            <p className={`text-sm font-semibold ${positive ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>{fmtPct(p.avg_move_pct)}</p>
+   513→          </div>
+   514→        </div>
+   515→        <div>
+   516→          <div className="flex items-center justify-between text-[10px] text-[#64748B] mb-1">
+   517→            <span>How often it worked</span>
+   518→            <span className="font-semibold" style={{ color: barColor }}>{p.success_rate.toFixed(1)}%</span>
+   519→          </div>
+   520→          <div className="h-1.5 w-full rounded-full bg-white/[0.06] overflow-hidden">
+   521→            <div className="h-full rounded-full transition-all" style={{ width: `${Math.max(2, Math.min(100, p.success_rate))}%`, backgroundColor: barColor }} />
+   522→          </div>
+   523→        </div>
+   524→        <div className="flex items-center justify-between text-[10px] text-[#64748B] mt-auto pt-1 border-t border-white/[0.05]">
+   525→          <span>Period: {p.period}</span>
+   526→          <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-[#00E676]" /> Historical pattern — informational only</span>
+   527→        </div>
+   528→      </CardContent>
+   529→    </Card>
+   530→  );
+   531→}
+   532→
+   533→function seasonalityColor(avg: number, positive: boolean): string {
+   534→  const intensity = Math.min(0.55, Math.max(0.1, Math.abs(avg) / 5));
+   535→  return positive ? `rgba(0, 230, 118, ${intensity.toFixed(2)})` : `rgba(255, 92, 92, ${intensity.toFixed(2)})`;
+   536→}
+   537→
+   538→function SeasonalityHeatmap({ months, symbol }: { months: SeasonalityMonth[]; symbol: string }) {
+   539→  const flagged = months.filter((m) => m.flagged);
+   540→  return (
+   541→    <Card className="bg-[#131829] border-white/[0.06]">
+   542→      <CardHeader className="pb-3 px-4 md:px-5 pt-4">
+   543→        <CardTitle className="text-sm font-semibold text-[#F4F7FB] flex items-center gap-2">
+   544→          <CalendarDays className="h-4 w-4 text-[#2DD4BF]" /> Monthly seasonality — {symbol}
+   545→          <span className="text-[10px] font-normal text-[#64748B]">(avg close-to-close return per calendar month, all years)</span>
+   546→        </CardTitle>
+   547→      </CardHeader>
+   548→      <CardContent className="px-4 md:px-5 pb-4">
+   549→        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
+   550→          {months.map((m) => {
+   551→            const positive = m.avgReturnPct >= 0;
+   552→            return (
+   553→              <div
+   554→                key={m.month}
+   555→                className={`rounded-lg border p-2.5 text-center ${m.flagged ? "border-[#00E676]/70 ring-1 ring-[#00E676]/50" : "border-white/[0.06]"}`}
+   556→                style={{ backgroundColor: m.samples ? seasonalityColor(m.avgReturnPct, positive) : "rgba(255,255,255,0.02)" }}
+   557→                title={m.samples ? `${MONTH_ABBR[m.month]}: avg ${fmtPct(m.avgReturnPct)}, positive in ${Math.round((m.winRate / 100) * m.samples)} of ${m.samples} years` : "No data"}
+   558→              >
+   559→                <p className="text-[10px] font-semibold text-[#F4F7FB]">{MONTH_ABBR[m.month]}</p>
+   560→                <p className={`text-xs font-bold mt-0.5 ${m.samples ? (positive ? "text-[#EAFFEF]" : "text-[#FFE9E9]") : "text-[#64748B]"}`}>
+   561→                  {m.samples ? fmtPct(m.avgReturnPct) : "—"}
+   562→                </p>
+   563→                <p className="text-[9px] text-[#F4F7FB]/70 mt-0.5">{m.samples ? `win ${m.winRate.toFixed(0)}%` : ""}</p>
+   564→                <p className="text-[9px] text-[#F4F7FB]/60">n={m.samples}</p>
+   565→                {m.flagged && <p className="text-[8px] font-semibold text-[#00E676] mt-1 uppercase tracking-wide">recurring</p>}
+   566→              </div>
+   567→            );
+   568→          })}
+   569→        </div>
+   570→        <div className="flex items-center gap-3 mt-3 text-[10px] text-[#64748B]">
+   571→          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm" style={{ background: "rgba(0,230,118,0.45)" }} /> positive avg month</span>
+   572→          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm" style={{ background: "rgba(255,92,92,0.45)" }} /> negative avg month</span>
+   573→          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm ring-1 ring-[#00E676]" /> recurring (same direction in ≥4 of last 5 years)</span>
+   574→        </div>
+   575→      </CardContent>
+   576→    </Card>
+   577→  );
+   578→}
+   579→
+   580→// ── Chart ────────────────────────────────────────────────────────────────────
+   581→
+   582→const VB_W = 1000;
+   583→const VB_H = 340;
+   584→const PAD = { top: 16, right: 16, bottom: 28, left: 56 };
+   585→
+   586→function PatternChart({
+   587→  data,
+   588→  showEvidence,
+   589→  filteredPatterns,
+   590→}: {
+   591→  data: ApiResult;
+   592→  showEvidence: boolean;
+   593→  filteredPatterns: PricePattern[];
+   594→}) {
+   595→  const [hover, setHover] = useState<{ i: number; x: number } | null>(null);
+   596→  const svgRef = useRef<SVGSVGElement>(null);
+   597→  const chart = data.chart;
+   598→
+   599→  const model = useMemo(() => {
+   600→    if (chart.length < 2) return null;
+   601→    const closes = chart.map((c) => c.close);
+   602→    let min = Math.min(...closes);
+   603→    let max = Math.max(...closes);
+   604→    const zones = (data.keyZones || []).slice(0, 5).map((z) => ({ ...z, show: z.high >= min && z.low <= max }));
+   605→    for (const z of zones) {
+   606→      if (z.show) {
+   607→        min = Math.min(min, z.low);
+   608→        max = Math.max(max, z.high);
+   609→      }
+   610→    }
+   611→    const pad = (max - min) * 0.05 || 1;
+   612→    min -= pad;
+   613→    max += pad;
+   614→    const plotW = VB_W - PAD.left - PAD.right;
+   615→    const plotH = VB_H - PAD.top - PAD.bottom;
+   616→    const x = (i: number) => PAD.left + (i / (chart.length - 1)) * plotW;
+   617→    const y = (v: number) => PAD.top + (1 - (v - min) / (max - min)) * plotH;
+   618→    const line = chart.map((c, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(2)},${y(c.close).toFixed(2)}`).join(" ");
+   619→    const area = `${line} L${x(chart.length - 1).toFixed(2)},${(VB_H - PAD.bottom).toFixed(2)} L${PAD.left},${(VB_H - PAD.bottom).toFixed(2)} Z`;
+   620→    const dateIdx = new Map<string, number>();
+   621→    chart.forEach((c, i) => dateIdx.set(c.date, i));
+   622→    const evidencePatterns = filteredPatterns
+   623→      .filter((p) => showEvidence && p.evidence_dates.length > 0)
+   624→      .slice(0, 3)
+   625→      .map((p) => ({
+   626→        pattern: p,
+   627→        color: TYPE_META[p.type]?.color ?? "#94A3B8",
+   628→        points: p.evidence_dates
+   629→          .map((d) => {
+   630→            const i = dateIdx.get(d);
+   631→            return i !== undefined ? { i, x: x(i), y: y(chart[i].close) } : null;
+   632→          })
+   633→          .filter((v): v is { i: number; x: number; y: number } => v !== null),
+   634→      }))
+   635→      .filter((g) => g.points.length > 0);
+   636→    const gridValues = [0, 0.25, 0.5, 0.75, 1].map((f) => min + f * (max - min));
+   637→    return { min, max, x, y, line, area, zones, evidencePatterns, gridValues, plotW, plotH, dateIdx };
+   638→  }, [chart, data.keyZones, filteredPatterns, showEvidence]);
+   639→
+   640→  if (!model || chart.length < 2) return null;
+   641→
+   642→  const xLabelIdxs = [0, Math.floor(chart.length * 0.2), Math.floor(chart.length * 0.4), Math.floor(chart.length * 0.6), Math.floor(chart.length * 0.8), chart.length - 1];
+   643→
+   644→  const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
+   645→    const rect = svgRef.current?.getBoundingClientRect();
+   646→    if (!rect) return;
+   647→    const vx = ((e.clientX - rect.left) / rect.width) * VB_W;
+   648→    const frac = (vx - PAD.left) / model.plotW;
+   649→    const i = Math.round(frac * (chart.length - 1));
+   650→    if (i >= 0 && i < chart.length) setHover({ i, x: model.x(i) });
+   651→  };
+   652→
+   653→  const hoverPoint = hover ? chart[hover.i] : null;
+   654→
+   655→  return (
+   656→    <Card className="bg-[#131829] border-white/[0.06]">
+   657→      <CardHeader className="pb-2 px-4 md:px-5 pt-4">
+   658→        <CardTitle className="text-sm font-semibold text-[#F4F7FB] flex items-center gap-2 flex-wrap">
+   659→          <GitBranch className="h-4 w-4 text-[#00E676]" /> Price history with pattern overlays
+   660→          <span className="text-[10px] font-normal text-[#64748B]">daily closes (last ~2 years) · green bands = key price zones · dots = pattern evidence dates</span>
+   661→        </CardTitle>
+   662→      </CardHeader>
+   663→      <CardContent className="px-2 md:px-3 pb-4">
+   664→        <div className="overflow-x-auto custom-scroll">
+   665→          <div className="min-w-[720px] relative">
+   666→            <svg
+   667→              ref={svgRef}
+   668→              viewBox={`0 0 ${VB_W} ${VB_H}`}
+   669→              className="w-full h-auto select-none"
+   670→              onMouseMove={onMove}
+   671→              onMouseLeave={() => setHover(null)}
+   672→              role="img"
+   673→              aria-label={`Daily closing price for ${data.symbol} with key price zones and pattern evidence markers`}
+   674→            >
+   675→              <defs>
+   676→                <linearGradient id="ppArea" x1="0" y1="0" x2="0" y2="1">
+   677→                  <stop offset="0%" stopColor="#00E676" stopOpacity="0.18" />
+   678→                  <stop offset="100%" stopColor="#00E676" stopOpacity="0" />
+   679→                </linearGradient>
+   680→              </defs>
+   681→
+   682→              {/* Key price zone bands */}
+   683→              {model.zones.filter((z) => z.show).map((z, idx) => {
+   684→                const yTop = model.y(z.high);
+   685→                const yBot = model.y(z.low);
+   686→                return (
+   687→                  <g key={`zone-${idx}`}>
+   688→                    <rect x={PAD.left} y={yTop} width={VB_W - PAD.left - PAD.right} height={Math.max(2, yBot - yTop)} fill="#00E676" opacity="0.07" />
+   689→                    <line x1={PAD.left} x2={VB_W - PAD.right} y1={yTop} y2={yTop} stroke="#00E676" strokeOpacity="0.25" strokeDasharray="4 4" strokeWidth="1" />
+   690→                    <line x1={PAD.left} x2={VB_W - PAD.right} y1={yBot} y2={yBot} stroke="#00E676" strokeOpacity="0.25" strokeDasharray="4 4" strokeWidth="1" />
+   691→                    <text x={VB_W - PAD.right - 4} y={yTop + 11} textAnchor="end" fontSize="9" fill="#00E676" opacity="0.85">
+   692→                      zone Rs.{z.low.toFixed(0)}-{z.high.toFixed(0)} · {z.touches} touches
+   693→                    </text>
+   694→                  </g>
+   695→                );
+   696→              })}
+   697→
+   698→              {/* Grid + y labels */}
+   699→              {model.gridValues.map((v, i) => (
+   700→                <g key={`grid-${i}`}>
+   701→                  <line x1={PAD.left} x2={VB_W - PAD.right} y1={model.y(v)} y2={model.y(v)} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+   702→                  <text x={PAD.left - 6} y={model.y(v) + 3} textAnchor="end" fontSize="10" fill="#64748B">
+   703→                    {v.toFixed(v >= 1000 ? 0 : 1)}
+   704→                  </text>
+   705→                </g>
+   706→              ))}
+   707→
+   708→              {/* Price area + line */}
+   709→              <path d={model.area} fill="url(#ppArea)" />
+   710→              <path d={model.line} fill="none" stroke="#00E676" strokeWidth="1.6" strokeLinejoin="round" />
+   711→
+   712→              {/* Evidence markers */}
+   713→              {model.evidencePatterns.map((g, gi) => (
+   714→                <g key={`ev-${gi}`}>
+   715→                  {g.points.map((pt, pi) => (
+   716→                    <circle key={pi} cx={pt.x} cy={pt.y} r="3.2" fill={g.color} stroke="#0A0E1A" strokeWidth="1" opacity="0.9" />
+   717→                  ))}
+   718→                </g>
+   719→              ))}
+   720→
+   721→              {/* X labels */}
+   722→              {xLabelIdxs.map((i) => (
+   723→                <text key={`x-${i}`} x={model.x(i)} y={VB_H - 8} textAnchor="middle" fontSize="10" fill="#64748B">
+   724→                  {chart[i].date.slice(0, 7)}
+   725→                </text>
+   726→              ))}
+   727→
+   728→              {/* Hover guide */}
+   729→              {hover && (
+   730→                <g>
+   731→                  <line x1={hover.x} x2={hover.x} y1={PAD.top} y2={VB_H - PAD.bottom} stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
+   732→                  <circle cx={hover.x} cy={model.y(chart[hover.i].close)} r="3.5" fill="#F4F7FB" stroke="#0A0E1A" strokeWidth="1" />
+   733→                </g>
+   734→              )}
+   735→            </svg>
+   736→
+   737→            {hover && hoverPoint && (
+   738→              <div
+   739→                className="absolute pointer-events-none bg-[#0A0E1A] border border-white/[0.12] rounded-md px-2.5 py-1.5 text-[10px] shadow-xl z-10"
+   740→                style={{ left: `${(hover.x / VB_W) * 100}%`, top: 8, transform: "translateX(-50%)" }}
+   741→              >
+   742→                <p className="text-[#64748B] font-mono">{hoverPoint.date}</p>
+   743→                <p className="text-[#F4F7FB] font-semibold">Rs. {hoverPoint.close.toFixed(2)}</p>
+   744→                <p className="text-[#64748B]">vol {fmtNum(hoverPoint.volume)}</p>
+   745→              </div>
+   746→            )}
+   747→          </div>
+   748→        </div>
+   749→
+   750→        {/* Legend */}
+   751→        {model.evidencePatterns.length > 0 && (
+   752→          <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5 mt-2 px-2">
+   753→            {model.evidencePatterns.map((g, i) => (
+   754→              <span key={i} className="flex items-center gap-1.5 text-[10px] text-[#94A3B8]">
+   755→                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: g.color }} />
+   756→                {g.pattern.title.length > 44 ? `${g.pattern.title.slice(0, 44)}…` : g.pattern.title}
+   757→              </span>
+   758→            ))}
+   759→          </div>
+   760→        )}
+   761→        <p className="text-[10px] text-[#64748B] mt-2 px-2">
+   762→          Zones are computed from close-price clustering over the last 3 years; markers show the most recent dates where the top detected patterns manifested. Hover for daily detail.
+   763→        </p>
+   764→      </CardContent>
+   765→    </Card>
+   766→  );
+   767→}
+   768→
+   769→// ── Panels ───────────────────────────────────────────────────────────────────
+   770→
+   771→function KeyZonesPanel({ zones }: { zones: KeyZone[] }) {
+   772→  return (
+   773→    <Card className="bg-[#131829] border-white/[0.06]">
+   774→      <CardHeader className="pb-3 px-4 md:px-5 pt-4">
+   775→        <CardTitle className="text-sm font-semibold text-[#F4F7FB] flex items-center gap-2">
+   776→          <Layers className="h-4 w-4 text-[#00E676]" /> Key price zones
+   777→          <span className="text-[10px] font-normal text-[#64748B]">(price bands where closing prices clustered most often — last 3 years)</span>
+   778→        </CardTitle>
+   779→      </CardHeader>
+   780→      <CardContent className="px-4 md:px-5 pb-4">
+   781→        <div className="max-h-80 overflow-y-auto custom-scroll pr-1 space-y-2">
+   782→          {zones.map((z, i) => (
+   783→            <div key={i} className="rounded-lg border border-white/[0.06] bg-[#0D1220] p-3">
+   784→              <div className="flex items-center justify-between flex-wrap gap-2">
+   785→                <span className="text-sm font-mono font-semibold text-[#F4F7FB]">Rs. {z.low.toFixed(2)} – {z.high.toFixed(2)}</span>
+   786→                <Badge variant="outline" className="text-[10px] border-[#00E676]/30 text-[#00E676]">{z.touches} touches</Badge>
+   787→              </div>
+   788→              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 text-center">
+   789→                <div><p className="text-[9px] uppercase tracking-wider text-[#64748B]">Visits</p><p className="text-xs font-semibold text-[#F4F7FB]">{z.visits}</p></div>
+   790→                <div><p className="text-[9px] uppercase tracking-wider text-[#64748B]">Moved up & away</p><p className="text-xs font-semibold text-[#00E676]">{z.bounces}</p></div>
+   791→                <div><p className="text-[9px] uppercase tracking-wider text-[#64748B]">Moved down through</p><p className="text-xs font-semibold text-[#FF5C5C]">{z.rejections}</p></div>
+   792→                <div><p className="text-[9px] uppercase tracking-wider text-[#64748B]">Touch-day volume</p><p className="text-xs font-semibold text-[#F4F7FB]">{z.volumeVsAvg >= 1 ? `+${Math.round((z.volumeVsAvg - 1) * 100)}%` : `−${Math.round((1 - z.volumeVsAvg) * 100)}%`} vs normal</p></div>
+   793→              </div>
+   794→            </div>
+   795→          ))}
+   796→        </div>
+   797→        <p className="text-[10px] text-[#64748B] mt-3">Zones are statistical clusters of past closing prices — a historical observation, not a prediction of where the price will stop.</p>
+   798→      </CardContent>
+   799→    </Card>
+   800→  );
+   801→}
+   802→
+   803→interface PressureSummaryUi {
+   804→  buyingDays: number;
+   805→  sellingDays: number;
+   806→  buyingAvgNext5Pct: number;
+   807→  sellingAvgNext5Pct: number;
+   808→  buyingHitRate: number;
+   809→  sellingHitRate: number;
+   810→  recentBuying: { date: string; volumeRatio: number; dayMovePct: number; next5MovePct: number | null }[];
+   811→  recentSelling: { date: string; volumeRatio: number; dayMovePct: number; next5MovePct: number | null }[];
+   812→}
+   813→
+   814→function PressurePanel({ data: p }: { data: PressureSummaryUi }) {
+   815→  const rows = [
+   816→    { kind: "buying" as const, icon: ArrowUpRight, color: "#00E676", days: p.buyingDays, avg: p.buyingAvgNext5Pct, hit: p.buyingHitRate, recent: p.recentBuying, label: "Buying pressure", sub: "heavy volume + price flat or up" },
+   817→    { kind: "selling" as const, icon: ArrowDownRight, color: "#FF5C5C", days: p.sellingDays, avg: p.sellingAvgNext5Pct, hit: p.sellingHitRate, recent: p.recentSelling, label: "Selling pressure", sub: "heavy volume + price flat or down" },
+   818→  ];
+   819→  return (
+   820→    <Card className="bg-[#131829] border-white/[0.06]">
+   821→      <CardHeader className="pb-3 px-4 md:px-5 pt-4">
+   822→        <CardTitle className="text-sm font-semibold text-[#F4F7FB] flex items-center gap-2">
+   823→          <Activity className="h-4 w-4 text-[#F472B6]" /> Buying / selling pressure
+   824→          <span className="text-[10px] font-normal text-[#64748B]">(inferred from price + volume)</span>
+   825→        </CardTitle>
+   826→      </CardHeader>
+   827→      <CardContent className="px-4 md:px-5 pb-4 space-y-3">
+   828→        {rows.map((r) => (
+   829→          <div key={r.kind} className="rounded-lg border border-white/[0.06] bg-[#0D1220] p-3">
+   830→            <div className="flex items-center justify-between flex-wrap gap-2">
+   831→              <span className={`text-sm font-medium flex items-center gap-1.5 ${r.kind === "buying" ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   832→                <r.icon className="h-4 w-4" /> {r.label}
+   833→              </span>
+   834→              <span className="text-[10px] text-[#64748B]">{r.days} days ({r.sub})</span>
+   835→            </div>
+   836→            <div className="grid grid-cols-2 gap-2 mt-2 text-center">
+   837→              <div><p className="text-[9px] uppercase tracking-wider text-[#64748B]">Avg next-5-day move</p><p className={`text-sm font-semibold ${r.avg >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>{fmtPct(r.avg)}</p></div>
+   838→              <div><p className="text-[9px] uppercase tracking-wider text-[#64748B]">Followed through</p><p className="text-sm font-semibold text-[#F4F7FB]">{r.hit.toFixed(0)}%</p></div>
+   839→            </div>
+   840→            {r.recent.length > 0 && (
+   841→              <p className="text-[10px] text-[#64748B] mt-2">
+   842→                Recent: {r.recent.slice(0, 4).map((d) => d.date).join(" · ")}
+   843→              </p>
+   844→            )}
+   845→          </div>
+   846→        ))}
+   847→        <p className="text-[10px] text-[#64748B]">Pressure days = volume ≥30% above its recent norm. This is a price + volume inference, not a confirmation of actual buyer/seller activity.</p>
+   848→      </CardContent>
+   849→    </Card>
+   850→  );
+   851→}
+   852→
+   853→function GapStatsPanel({ gaps }: { gaps: NonNullable<PricePatternAnalysis["gaps"]> }) {
+   854→  const cells = [
+   855→    { label: "Gap-up openings", value: String(gaps.gapUps), sub: `avg gap ${fmtPct(gaps.avgGapUpPct)}`, color: "#00E676" },
+   856→    { label: "Gap-up fill rate", value: `${gaps.gapUpFillRate.toFixed(0)}%`, sub: `${gaps.gapUpFilled} of ${gaps.gapUps} filled`, color: "#F4F7FB" },
+   857→    { label: "Gap-down openings", value: String(gaps.gapDowns), sub: `avg gap ${fmtPct(gaps.avgGapDownPct)}`, color: "#FF5C5C" },
+   858→    { label: "Gap-down fill rate", value: `${gaps.gapDownFillRate.toFixed(0)}%`, sub: `${gaps.gapDownFilled} of ${gaps.gapDowns} filled`, color: "#F4F7FB" },
+   859→  ];
+   860→  return (
+   861→    <Card className="bg-[#131829] border-white/[0.06]">
+   862→      <CardHeader className="pb-3 px-4 md:px-5 pt-4">
+   863→        <CardTitle className="text-sm font-semibold text-[#F4F7FB] flex items-center gap-2">
+   864→          <BarChart3 className="h-4 w-4 text-[#A78BFA]" /> Gap behavior
+   865→          <span className="text-[10px] font-normal text-[#64748B]">(|open vs prior close| ≥ 0.5%)</span>
+   866→        </CardTitle>
+   867→      </CardHeader>
+   868→      <CardContent className="px-4 md:px-5 pb-4">
+   869→        <div className="grid grid-cols-2 gap-2">
+   870→          {cells.map((c) => (
+   871→            <div key={c.label} className="rounded-lg border border-white/[0.06] bg-[#0D1220] p-3 text-center">
+   872→              <p className="text-[9px] uppercase tracking-wider text-[#64748B]">{c.label}</p>
+   873→              <p className="text-lg font-bold mt-0.5" style={{ color: c.color }}>{c.value}</p>
+   874→              <p className="text-[9px] text-[#64748B]">{c.sub}</p>
+   875→            </div>
+   876→          ))}
+   877→        </div>
+   878→        <p className="text-[10px] text-[#64748B] mt-3">"Filled" = the closing price returned to the pre-gap close within {gaps.windowDays} trading days (close-based check).</p>
+   879→      </CardContent>
+   880→    </Card>
+   881→  );
+   882→}
+   883→
+   884→function DriftCards({ drift }: { drift: NonNullable<PricePatternAnalysis["drift"]> }) {
+   885→  const titles: Record<string, string> = {
+   886→    volume_spike: "After a heavy-volume day",
+   887→    high_52w: "After a 52-week-high close",
+   888→    low_52w: "After a 52-week-low close",
+   889→  };
+   890→  return (
+   891→    <div>
+   892→      <h3 className="text-sm font-semibold text-[#F4F7FB] flex items-center gap-2 mb-3">
+   893→        <GitBranch className="h-4 w-4 text-[#FB923C]" /> Post-event drift
+   894→        <span className="text-[10px] font-normal text-[#64748B]">(average price path after historical events — observation, not advice)</span>
+   895→      </h3>
+   896→      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+   897→        {drift.map((d) => (
+   898→          <Card key={d.trigger} className="bg-[#131829] border-white/[0.06]">
+   899→            <CardContent className="p-4">
+   900→              <p className="text-xs font-semibold text-[#F4F7FB]">{titles[d.trigger]}</p>
+   901→              <p className="text-[10px] text-[#64748B] mt-0.5">{d.count} occurrences</p>
+   902→              <div className="grid grid-cols-2 gap-2 mt-3 text-center">
+   903→                <div className="rounded-md bg-[#0D1220] border border-white/[0.05] py-2">
+   904→                  <p className="text-[9px] uppercase tracking-wider text-[#64748B]">Next 5 days</p>
+   905→                  <p className={`text-sm font-bold ${d.avg5dPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>{fmtPct(d.avg5dPct)}</p>
+   906→                  <p className="text-[9px] text-[#64748B]">up {d.hit5d.toFixed(0)}% of time</p>
+   907→                </div>
+   908→                <div className="rounded-md bg-[#0D1220] border border-white/[0.05] py-2">
+   909→                  <p className="text-[9px] uppercase tracking-wider text-[#64748B]">Next 20 days</p>
+   910→                  <p className={`text-sm font-bold ${d.avg20dPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>{fmtPct(d.avg20dPct)}</p>
+   911→                  <p className="text-[9px] text-[#64748B]">up {d.hit20d.toFixed(0)}% of time</p>
+   912→                </div>
+   913→              </div>
+   914→              <p className="text-[9px] text-[#64748B] mt-2">Historical pattern — informational only</p>
+   915→            </CardContent>
+   916→          </Card>
+   917→        ))}
+   918→      </div>
+   919→    </div>
+   920→  );
+   921→}
+   922→
+   923→// Financial patterns tab lives at its own full-screen view (reuses the
+   924→// original component untouched, including its own AppNav).
+   925→export { PatternFinder as FinancialPatternFinder };
+   926→

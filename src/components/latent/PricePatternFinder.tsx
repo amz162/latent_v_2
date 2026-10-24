@@ -1,12 +1,16 @@
 "use client";
 
-// Task 47 — Price Pattern Finder (main "Pattern Finder" view)
-// Sub-experience 1 (default): PRICE patterns — statistical detectors over the
-//   OhlcvBar corpus + LLM layman explanations (/api/price-patterns/[symbol]).
-// Sub-experience 2: the original quarterly FINANCIAL pattern finder
-//   (src/components/latent/PatternFinder.tsx), still importable + hosted at
-//   its own view ("pattern_finder_financial") so its full-screen layout with
-//   AppNav stays intact — the tab button just switches the store view.
+// Issue 3 — Pattern Finder (main view), restructured:
+//   1. Stock search (all PSX symbols) at the top — ALWAYS visible.
+//   2. Below it: tabs "Price Pattern" (statistical detectors over daily
+//      OHLCV + LLM explanations, /api/price-patterns) and "Result Pattern"
+//      (recurring patterns in quarterly financial results,
+//      /api/result-patterns). Switch tabs to see either analysis for the
+//      selected stock.
+//   3. BOTH tabs are permanently cached per-symbol in the app DB
+//      (PricePatternCache + ResultPatternCache) — repeat visits are pure DB
+//      reads: no recalculation, no LLM calls. Rows are never deleted by the
+//      server; only an explicit Refresh (?refresh=1) recomputes.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,14 +19,14 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppNav } from "./AppNav";
 import { StockSearch } from "./StockSearch";
-import { PatternFinder } from "./PatternFinder";
-import { useLatentStore } from "@/lib/latent/store";
+import { StockDeepDive } from "./PatternFinder";
 import type {
   PricePatternAnalysis,
   PricePattern,
   SeasonalityMonth,
   KeyZone,
 } from "@/lib/latent/price-patterns";
+import type { QuarterlyResult, DetectedPattern } from "@/lib/latent/mock-company-results";
 import {
   Search,
   RefreshCw,
@@ -94,19 +98,43 @@ function confidenceOf(occurrences: number): "high" | "medium" | "low" {
   return "low";
 }
 
+type PatternTab = "price" | "result";
+
+interface ResultLlmSummaryUi {
+  laymanSummary: string;
+  patternExplanations: Record<string, string>;
+  watchNext: string;
+}
+
+interface ResultApiResult {
+  symbol: string;
+  company: string;
+  results: QuarterlyResult[];
+  patterns: DetectedPattern[];
+  llmSummary: ResultLlmSummaryUi | null;
+  llmError?: string | null;
+  cached?: boolean;
+  computedAt?: string;
+  latencyMs?: number;
+  error?: string;
+}
+
 export function PricePatternFinder() {
-  const setView = useLatentStore((s) => s.setView);
   const [symbol, setSymbol] = useState<string>("");
-  const [data, setData] = useState<ApiResult | null>(null);
+  const [tab, setTab] = useState<PatternTab>("price");
+  const [priceData, setPriceData] = useState<ApiResult | null>(null);
+  const [resultData, setResultData] = useState<ResultApiResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [showEvidence, setShowEvidence] = useState(true);
   const reqIdRef = useRef(0);
+  // Session-level caches — switching tabs never refetches an already-loaded symbol.
+  const priceCache = useRef<Map<string, ApiResult>>(new Map());
+  const resultCache = useRef<Map<string, ResultApiResult>>(new Map());
 
-  const fetchPatterns = useCallback(async (sym: string, force = false) => {
-    if (!sym) return;
+  const fetchPrice = useCallback(async (sym: string, force = false) => {
     const reqId = ++reqIdRef.current;
     if (force) setRefreshing(true);
     else setLoading(true);
@@ -116,15 +144,16 @@ export function PricePatternFinder() {
       const json = await res.json();
       if (reqId !== reqIdRef.current) return;
       if (!res.ok) {
-        setData(null);
+        setPriceData(null);
         setError(json?.error || `Could not load patterns for ${sym}`);
         return;
       }
-      setData(json as ApiResult);
-      if (force) toast.success(`Patterns recomputed for ${sym}`);
+      priceCache.current.set(sym, json as ApiResult);
+      setPriceData(json as ApiResult);
+      if (force) toast.success(`Price patterns recomputed for ${sym}`);
     } catch (err) {
       if (reqId !== reqIdRef.current) return;
-      setData(null);
+      setPriceData(null);
       setError(err instanceof Error ? err.message : "Network error");
     } finally {
       if (reqId === reqIdRef.current) {
@@ -134,229 +163,408 @@ export function PricePatternFinder() {
     }
   }, []);
 
+  const fetchResult = useCallback(async (sym: string, force = false) => {
+    const reqId = ++reqIdRef.current;
+    if (force) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/result-patterns/${encodeURIComponent(sym)}${force ? "?refresh=1" : ""}`);
+      const json = await res.json();
+      if (reqId !== reqIdRef.current) return;
+      if (!res.ok) {
+        setResultData(null);
+        setError(json?.error || `Could not load result patterns for ${sym}`);
+        return;
+      }
+      resultCache.current.set(sym, json as ResultApiResult);
+      setResultData(json as ResultApiResult);
+      if (force) toast.success(`Result patterns recomputed for ${sym}`);
+    } catch (err) {
+      if (reqId !== reqIdRef.current) return;
+      setResultData(null);
+      setError(err instanceof Error ? err.message : "Network error");
+    } finally {
+      if (reqId === reqIdRef.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    }
+  }, []);
+
+  // Load (or restore from the session cache) the ACTIVE tab's data.
+  const loadForTab = useCallback(
+    (sym: string, t: PatternTab, force = false) => {
+      if (!sym) return;
+      if (t === "price") {
+        const cached = force ? undefined : priceCache.current.get(sym);
+        if (cached) {
+          setPriceData(cached);
+          setError(null);
+          return;
+        }
+        setPriceData(null);
+        void fetchPrice(sym, force);
+      } else {
+        const cached = force ? undefined : resultCache.current.get(sym);
+        if (cached) {
+          setResultData(cached);
+          setError(null);
+          return;
+        }
+        setResultData(null);
+        void fetchResult(sym, force);
+      }
+    },
+    [fetchPrice, fetchResult]
+  );
+
   useEffect(() => {
-    if (symbol) void fetchPatterns(symbol);
-  }, [symbol, fetchPatterns]);
+    if (symbol) loadForTab(symbol, tab);
+  }, [symbol, tab, loadForTab]);
 
   const onSelect = (sym: string) => {
-    setSymbol(sym.toUpperCase());
-    setData(null);
+    const s = (sym || "").toUpperCase();
+    if (!s || s === symbol) return;
+    setSymbol(s);
     setTypeFilter("all");
+    setError(null);
   };
 
   const filteredPatterns = useMemo(() => {
-    if (!data) return [];
-    return typeFilter === "all" ? data.patterns : data.patterns.filter((p) => p.type === typeFilter);
-  }, [data, typeFilter]);
+    if (!priceData) return [];
+    return typeFilter === "all" ? priceData.patterns : priceData.patterns.filter((p) => p.type === typeFilter);
+  }, [priceData, typeFilter]);
 
   const availableTypes = useMemo(() => {
-    const set = new Set((data?.patterns || []).map((p) => p.type));
+    const set = new Set((priceData?.patterns || []).map((p) => p.type));
     return [...set];
-  }, [data]);
+  }, [priceData]);
 
   return (
     <div className="min-h-screen bg-[#0A0E1A] flex flex-col">
       <AppNav />
       <main className="flex-1 w-full px-4 md:px-6 py-6 max-w-6xl mx-auto">
-        {/* View header + experience switch */}
-        <div className="flex items-start justify-between flex-wrap gap-3 mb-5">
-          <div>
-            <h1 className="text-2xl font-bold text-[#F4F7FB] flex items-center gap-2">
-              <Search className="h-6 w-6 text-[#00E676]" /> Pattern Finder
-            </h1>
-            <p className="text-sm text-[#94A3B8] mt-1">
-              Recurring price-history patterns for any PSX stock — monthly seasonality, volume events, key price zones, gaps and post-event behavior, explained in plain English.
-            </p>
-          </div>
-          <div className="flex items-center gap-1 bg-[#131829] border border-white/[0.08] rounded-lg p-1">
-            <span className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#00E676]/10 text-[#00E676]">Price Patterns</span>
-            <button
-              onClick={() => setView("pattern_finder_financial")}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#94A3B8] hover:text-[#F4F7FB] hover:bg-white/[0.04] transition-colors"
-            >
-              Financial Patterns
-            </button>
-          </div>
+        {/* Header */}
+        <div className="mb-5">
+          <h1 className="text-2xl font-bold text-[#F4F7FB] flex items-center gap-2">
+            <Search className="h-6 w-6 text-[#00E676]" /> Pattern Finder
+          </h1>
+          <p className="text-sm text-[#94A3B8] mt-1">
+            Search any PSX stock, then switch between its <span className="text-[#F4F7FB]">Price patterns</span> (daily
+            price history) and <span className="text-[#F4F7FB]">Result patterns</span> (quarterly results) — all
+            explained in plain English and permanently cached in the app database.
+          </p>
         </div>
 
+        {/* 1) Stock search — always visible (all PSX symbols) */}
+        <Card className="bg-[#131829] border-white/[0.06] mb-4">
+          <CardContent className="p-4 md:p-5">
+            <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+              <div className="flex-1 min-w-0">
+                <label className="text-[10px] uppercase tracking-wider text-[#64748B] mb-1.5 block">
+                  Stock — search all PSX-listed symbols
+                </label>
+                <StockSearch
+                  value={symbol}
+                  onChange={(s) => s && onSelect(s)}
+                  placeholder="Search stock by symbol or name — e.g. ENGRO, Hub Power, Systems…"
+                />
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  <span className="text-[10px] text-[#64748B]">Quick try:</span>
+                  {POPULAR.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => onSelect(s)}
+                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.05] border border-white/[0.08] text-[#94A3B8] hover:text-[#00E676] hover:border-[#00E676]/40 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => symbol && loadForTab(symbol, tab)}
+                  disabled={loading || refreshing || !symbol}
+                  className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#00E676]/85 font-semibold"
+                >
+                  {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Search className="h-3.5 w-3.5 mr-1.5" />}
+                  Analyze
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => symbol && loadForTab(symbol, tab, true)}
+                  disabled={loading || refreshing || !symbol}
+                  className="border-white/[0.12] bg-transparent text-[#F4F7FB] hover:bg-white/[0.05]"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin text-[#00E676]" : ""}`} />
+                  Refresh
+                </Button>
+              </div>
+            </div>
+
+            {/* Price-tab stock meta */}
+            {!loading && tab === "price" && priceData && !priceData.insufficient && (
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <div>
+                  <span className="text-xl font-bold text-[#F4F7FB] font-mono">{priceData.symbol}</span>
+                  <span className="text-sm text-[#94A3B8] ml-2">{priceData.companyName && priceData.companyName !== priceData.symbol ? priceData.companyName : ""}</span>
+                </div>
+                <Badge variant="outline" className="border-white/[0.12] text-[#94A3B8] gap-1">
+                  <History className="h-3 w-3" /> {priceData.dataStart} → {priceData.dataEnd} · {priceData.totalBars.toLocaleString()} trading days
+                </Badge>
+                {priceData.cached && (
+                  <Badge variant="outline" className="border-[#FBBF24]/30 text-[#FBBF24] text-[10px]">
+                    cached {priceData.computedAt ? new Date(priceData.computedAt).toLocaleString() : ""}
+                  </Badge>
+                )}
+                {priceData.llmSummary && (
+                  <Badge className="bg-[#00E676]/10 text-[#00E676] border border-[#00E676]/30 text-[10px] gap-1">
+                    <Sparkles className="h-3 w-3" /> AI explanations
+                  </Badge>
+                )}
+                {!priceData.llmSummary && priceData.llmError && (
+                  <Badge variant="outline" className="border-white/[0.12] text-[#64748B] text-[10px]">engine-only (LLM unavailable — press Refresh to retry)</Badge>
+                )}
+              </div>
+            )}
+
+            {/* Result-tab stock meta */}
+            {!loading && tab === "result" && resultData && (
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <div>
+                  <span className="text-xl font-bold text-[#F4F7FB] font-mono">{resultData.symbol}</span>
+                  <span className="text-sm text-[#94A3B8] ml-2">{resultData.company && resultData.company !== resultData.symbol ? resultData.company : ""}</span>
+                </div>
+                <Badge variant="outline" className="border-white/[0.12] text-[#94A3B8] gap-1">
+                  <History className="h-3 w-3" /> {resultData.results.length} quarterly results
+                </Badge>
+                {resultData.cached && (
+                  <Badge variant="outline" className="border-[#FBBF24]/30 text-[#FBBF24] text-[10px]">
+                    cached {resultData.computedAt ? new Date(resultData.computedAt).toLocaleString() : ""}
+                  </Badge>
+                )}
+                {resultData.llmSummary && (
+                  <Badge className="bg-[#00E676]/10 text-[#00E676] border border-[#00E676]/30 text-[10px] gap-1">
+                    <Sparkles className="h-3 w-3" /> AI explanations
+                  </Badge>
+                )}
+                {!resultData.llmSummary && resultData.llmError && (
+                  <Badge variant="outline" className="border-white/[0.12] text-[#64748B] text-[10px]">engine-only (LLM unavailable — press Refresh to retry)</Badge>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 2) Tabs — Price Pattern | Result Pattern */}
+        <div className="flex items-center gap-1 bg-[#131829] border border-white/[0.08] rounded-lg p-1 mb-5 w-fit">
+          <button
+            onClick={() => setTab("price")}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              tab === "price" ? "bg-[#00E676]/10 text-[#00E676]" : "text-[#94A3B8] hover:text-[#F4F7FB] hover:bg-white/[0.04]"
+            }`}
+          >
+            Price Pattern
+          </button>
+          <button
+            onClick={() => setTab("result")}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              tab === "result" ? "bg-[#00E676]/10 text-[#00E676]" : "text-[#94A3B8] hover:text-[#F4F7FB] hover:bg-white/[0.04]"
+            }`}
+          >
+            Result Pattern
+          </button>
+        </div>
+
+        {/* 3) Hint when no stock selected */}
         {!symbol && <SearchHero onSelect={onSelect} />}
 
-        {symbol && (
-          <>
-            {/* Stock picker + header row */}
-            <Card className="bg-[#131829] border-white/[0.06] mb-5">
-              <CardContent className="p-4 md:p-5">
-                <div className="flex flex-col lg:flex-row lg:items-end gap-4">
-                  <div className="flex-1 min-w-0">
-                    <label className="text-[10px] uppercase tracking-wider text-[#64748B] mb-1.5 block">Stock</label>
-                    <StockSearch value={symbol} onChange={(s) => s && onSelect(s)} placeholder="Search another stock…" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => void fetchPatterns(symbol)}
-                      disabled={loading || refreshing}
-                      className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#00E676]/85 font-semibold"
-                    >
-                      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Search className="h-3.5 w-3.5 mr-1.5" />}
-                      Analyze
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => void fetchPatterns(symbol, true)}
-                      disabled={loading || refreshing}
-                      className="border-white/[0.12] bg-transparent text-[#F4F7FB] hover:bg-white/[0.05]"
-                    >
-                      <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin text-[#00E676]" : ""}`} />
-                      Refresh
-                    </Button>
+        {symbol && error && (
+          <ErrorCard message={error} suggestions={tab === "price" ? priceData?.suggestions || [] : POPULAR} onSelect={onSelect} />
+        )}
+
+        {symbol && loading && <LoadingSkeletons />}
+
+        {/* ── PRICE PATTERN TAB ─────────────────────────────────────────── */}
+        {symbol && tab === "price" && !loading && priceData && priceData.insufficient && (
+          <Card className="bg-[#131829] border-[#FBBF24]/25 mb-5">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-[#FBBF24] shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-[#F4F7FB] font-medium">Not enough data for {priceData.symbol}</p>
+                  <p className="text-sm text-[#94A3B8] mt-1">{priceData.message}</p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {(priceData.suggestions || POPULAR).map((s) => (
+                      <button key={s} onClick={() => onSelect(s)} className="px-2.5 py-1 rounded-md text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-[#94A3B8] hover:text-[#00E676] hover:border-[#00E676]/40 transition-colors">
+                        {s}
+                      </button>
+                    ))}
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-                {loading && (
-                  <div className="mt-4 space-y-2">
-                    <Skeleton className="h-6 w-64 bg-white/[0.06]" />
-                    <Skeleton className="h-4 w-96 max-w-full bg-white/[0.06]" />
+        {symbol && tab === "price" && !loading && priceData && !priceData.insufficient && (
+          <div className="space-y-5">
+            {priceData.llmSummary?.overallSummary && (
+              <Card className="bg-[#131829] border-[#00E676]/20">
+                <CardContent className="p-4 md:p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="h-4 w-4 text-[#00E676]" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00E676]">Plain-English overview</span>
+                    <span className="text-[10px] text-[#64748B]">(AI summary of the engine's findings — historical observation, not advice)</span>
                   </div>
-                )}
-
-                {!loading && data && !data.insufficient && (
-                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-                    <div>
-                      <span className="text-xl font-bold text-[#F4F7FB] font-mono">{data.symbol}</span>
-                      <span className="text-sm text-[#94A3B8] ml-2">{data.companyName && data.companyName !== data.symbol ? data.companyName : ""}</span>
-                    </div>
-                    <Badge variant="outline" className="border-white/[0.12] text-[#94A3B8] gap-1">
-                      <History className="h-3 w-3" /> {data.dataStart} → {data.dataEnd} · {data.totalBars.toLocaleString()} trading days
-                    </Badge>
-                    {data.cached && (
-                      <Badge variant="outline" className="border-[#FBBF24]/30 text-[#FBBF24] text-[10px]">
-                        cached {data.computedAt ? new Date(data.computedAt).toLocaleString() : ""}
-                      </Badge>
-                    )}
-                    {data.llmSummary && (
-                      <Badge className="bg-[#00E676]/10 text-[#00E676] border border-[#00E676]/30 text-[10px] gap-1">
-                        <Sparkles className="h-3 w-3" /> AI explanations
-                      </Badge>
-                    )}
-                    {!data.llmSummary && data.llmError && (
-                      <Badge variant="outline" className="border-white/[0.12] text-[#64748B] text-[10px]">engine-only (LLM unavailable — press Refresh to retry)</Badge>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {error && <ErrorCard message={error} suggestions={(data as ApiResult | null)?.suggestions || []} onSelect={onSelect} />}
-
-            {loading && <LoadingSkeletons />}
-
-            {!loading && data && data.insufficient && (
-              <Card className="bg-[#131829] border-[#FBBF24]/25 mb-5">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-[#FBBF24] shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-[#F4F7FB] font-medium">Not enough data for {data.symbol}</p>
-                      <p className="text-sm text-[#94A3B8] mt-1">{data.message}</p>
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {(data.suggestions || POPULAR).map((s) => (
-                          <button key={s} onClick={() => onSelect(s)} className="px-2.5 py-1 rounded-md text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-[#94A3B8] hover:text-[#00E676] hover:border-[#00E676]/40 transition-colors">
-                            {s}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  <p className="text-sm text-[#F4F7FB] leading-relaxed">{priceData.llmSummary.overallSummary}</p>
+                  {priceData.llmSummary.notableObservations.length > 0 && (
+                    <ul className="mt-3 space-y-1.5">
+                      {priceData.llmSummary.notableObservations.map((o, i) => (
+                        <li key={i} className="text-xs text-[#94A3B8] flex items-start gap-2">
+                          <Info className="h-3.5 w-3.5 text-[#FBBF24] shrink-0 mt-0.5" /> {o}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </CardContent>
               </Card>
             )}
 
-            {!loading && data && !data.insufficient && (
-              <div className="space-y-5">
-                {data.llmSummary?.overallSummary && (
-                  <Card className="bg-[#131829] border-[#00E676]/20">
-                    <CardContent className="p-4 md:p-5">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Sparkles className="h-4 w-4 text-[#00E676]" />
-                        <span className="text-xs font-semibold uppercase tracking-wider text-[#00E676]">Plain-English overview</span>
-                        <span className="text-[10px] text-[#64748B]">(AI summary of the engine's findings — historical observation, not advice)</span>
-                      </div>
-                      <p className="text-sm text-[#F4F7FB] leading-relaxed">{data.llmSummary.overallSummary}</p>
-                      {data.llmSummary.notableObservations.length > 0 && (
-                        <ul className="mt-3 space-y-1.5">
-                          {data.llmSummary.notableObservations.map((o, i) => (
-                            <li key={i} className="text-xs text-[#94A3B8] flex items-start gap-2">
-                              <Info className="h-3.5 w-3.5 text-[#FBBF24] shrink-0 mt-0.5" /> {o}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </CardContent>
-                  </Card>
+            {priceData.patterns.length === 0 ? (
+              <Card className="bg-[#131829] border-white/[0.06]">
+                <CardContent className="p-6 text-sm text-[#94A3B8]">
+                  No recurring patterns met the minimum sample size (2+ occurrences) for this stock — its history is likely too short or too irregular. Try a heavily traded symbol like {POPULAR.slice(0, 3).join(", ")}.
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Filters + evidence toggle */}
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <FilterChip active={typeFilter === "all"} onClick={() => setTypeFilter("all")} label={`All (${priceData.patterns.length})`} color="#94A3B8" />
+                    {availableTypes.map((t) => (
+                      <FilterChip
+                        key={t}
+                        active={typeFilter === t}
+                        onClick={() => setTypeFilter(t)}
+                        label={`${TYPE_META[t]?.label ?? t} (${priceData.patterns.filter((p) => p.type === t).length})`}
+                        color={TYPE_META[t]?.color ?? "#94A3B8"}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setShowEvidence((v) => !v)}
+                    className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${showEvidence ? "border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10" : "border-white/[0.12] text-[#64748B] hover:text-[#94A3B8]"}`}
+                  >
+                    Evidence on chart: {showEvidence ? "ON" : "OFF"}
+                  </button>
+                </div>
+
+                {/* Pattern cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {filteredPatterns.map((p) => (
+                    <PatternCard key={p.key} pattern={p} llmText={priceData.llmSummary?.patternExplanations?.[p.key]} />
+                  ))}
+                </div>
+                {filteredPatterns.length === 0 && (
+                  <p className="text-sm text-[#64748B] text-center py-4">No patterns of this type for {priceData.symbol}.</p>
                 )}
 
-                {data.patterns.length === 0 ? (
-                  <Card className="bg-[#131829] border-white/[0.06]">
-                    <CardContent className="p-6 text-sm text-[#94A3B8]">
-                      No recurring patterns met the minimum sample size (2+ occurrences) for this stock — its history is likely too short or too irregular. Try a heavily traded symbol like {POPULAR.slice(0, 3).join(", ")}.
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <>
-                    {/* Filters + evidence toggle */}
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <FilterChip active={typeFilter === "all"} onClick={() => setTypeFilter("all")} label={`All (${data.patterns.length})`} color="#94A3B8" />
-                        {availableTypes.map((t) => (
-                          <FilterChip
-                            key={t}
-                            active={typeFilter === t}
-                            onClick={() => setTypeFilter(t)}
-                            label={`${TYPE_META[t]?.label ?? t} (${data.patterns.filter((p) => p.type === t).length})`}
-                            color={TYPE_META[t]?.color ?? "#94A3B8"}
-                          />
-                        ))}
-                      </div>
-                      <button
-                        onClick={() => setShowEvidence((v) => !v)}
-                        className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${showEvidence ? "border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10" : "border-white/[0.12] text-[#64748B] hover:text-[#94A3B8]"}`}
-                      >
-                        Evidence on chart: {showEvidence ? "ON" : "OFF"}
-                      </button>
-                    </div>
+                {/* Seasonality heatmap */}
+                {priceData.seasonality && <SeasonalityHeatmap months={priceData.seasonality} symbol={priceData.symbol} />}
 
-                    {/* Pattern cards */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      {filteredPatterns.map((p) => (
-                        <PatternCard key={p.key} pattern={p} llmText={data.llmSummary?.patternExplanations?.[p.key]} />
-                      ))}
-                    </div>
-                    {filteredPatterns.length === 0 && (
-                      <p className="text-sm text-[#64748B] text-center py-4">No patterns of this type for {data.symbol}.</p>
-                    )}
+                {/* Price chart with overlays */}
+                <PatternChart data={priceData} showEvidence={showEvidence} filteredPatterns={filteredPatterns} />
 
-                    {/* Seasonality heatmap */}
-                    {data.seasonality && <SeasonalityHeatmap months={data.seasonality} symbol={data.symbol} />}
+                {/* Key price zones + pressure/gaps */}
+                {priceData.keyZones.length > 0 && <KeyZonesPanel zones={priceData.keyZones} />}
 
-                    {/* Price chart with overlays */}
-                    <PatternChart data={data} showEvidence={showEvidence} filteredPatterns={filteredPatterns} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {priceData.pressure && <PressurePanel data={priceData.pressure} />}
+                  {priceData.gaps && <GapStatsPanel gaps={priceData.gaps} />}
+                </div>
 
-                    {/* Key price zones + pressure/gaps */}
-                    {data.keyZones.length > 0 && <KeyZonesPanel zones={data.keyZones} />}
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      {data.pressure && <PressurePanel data={data.pressure} />}
-                      {data.gaps && <GapStatsPanel gaps={data.gaps} />}
-                    </div>
-
-                    {data.drift && data.drift.length > 0 && <DriftCards drift={data.drift} />}
-                  </>
-                )}
-              </div>
+                {priceData.drift && priceData.drift.length > 0 && <DriftCards drift={priceData.drift} />}
+              </>
             )}
-          </>
+          </div>
+        )}
+
+        {/* ── RESULT PATTERN TAB ────────────────────────────────────────── */}
+        {symbol && tab === "result" && !loading && resultData && (
+          <div className="space-y-5">
+            {resultData.llmSummary?.laymanSummary && (
+              <Card className="bg-[#131829] border-[#00E676]/20">
+                <CardContent className="p-4 md:p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="h-4 w-4 text-[#00E676]" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00E676]">Plain-English overview</span>
+                    <span className="text-[10px] text-[#64748B]">(AI summary of the results-pattern engine — historical observation, not advice)</span>
+                  </div>
+                  <p className="text-sm text-[#F4F7FB] leading-relaxed">{resultData.llmSummary.laymanSummary}</p>
+                  {resultData.llmSummary.watchNext && (
+                    <p className="text-xs text-[#94A3B8] mt-3 flex items-start gap-2">
+                      <Info className="h-3.5 w-3.5 text-[#FBBF24] shrink-0 mt-0.5" />
+                      <span><span className="font-semibold text-[#F4F7FB]">Watch next: </span>{resultData.llmSummary.watchNext}</span>
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {resultData.llmSummary && Object.keys(resultData.llmSummary.patternExplanations || {}).length > 0 && (
+              <Card className="bg-[#131829] border-white/[0.06]">
+                <CardHeader className="pb-3 px-4 md:px-5 pt-4">
+                  <CardTitle className="text-sm font-semibold text-[#F4F7FB] flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-[#00E676]" /> AI explanations of detected result patterns
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-4 md:px-5 pb-4 space-y-2.5">
+                  {resultData.patterns
+                    .filter((p) => resultData.llmSummary?.patternExplanations?.[p.label])
+                    .map((p) => (
+                      <div key={p.label} className="rounded-lg border border-white/[0.06] bg-[#0D1220] p-3">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className="text-xs font-semibold text-[#F4F7FB]">{p.label}</span>
+                          <Badge variant="outline" className={`text-[9px] py-0 h-4 ${
+                            p.severity === "positive"
+                              ? "border-[#00E676]/40 text-[#00E676]"
+                              : p.severity === "negative"
+                                ? "border-[#FF5C5C]/40 text-[#FF5C5C]"
+                                : "border-white/[0.12] text-[#94A3B8]"
+                          }`}>
+                            {p.severity}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-[#94A3B8] leading-relaxed">{resultData.llmSummary?.patternExplanations?.[p.label]}</p>
+                      </div>
+                    ))}
+                </CardContent>
+              </Card>
+            )}
+
+            {resultData.patterns.length === 0 && (
+              <Card className="bg-[#131829] border-white/[0.06]">
+                <CardContent className="p-6 text-sm text-[#94A3B8]">
+                  No recurring result patterns detected for {resultData.symbol} — need more quarterly history or larger moves to trigger the detection rules.
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Full results deep dive (reused from the original Pattern Finder) */}
+            <StockDeepDive
+              results={resultData.results}
+              symbol={resultData.symbol}
+              company={resultData.company}
+              onBack={() => {}}
+              hideBack
+            />
+          </div>
         )}
       </main>
 
@@ -919,7 +1127,4 @@ function DriftCards({ drift }: { drift: NonNullable<PricePatternAnalysis["drift"
     </div>
   );
 }
-
-// Financial patterns tab lives at its own full-screen view (reuses the
-// original component untouched, including its own AppNav).
-export { PatternFinder as FinancialPatternFinder };
+// ─────────────────────────────────────────────────────────────────────────────

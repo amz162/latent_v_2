@@ -265,16 +265,18 @@ function EmptyState({ onPickSymbol }: { onPickSymbol: (s: string) => void }) {
   );
 }
 
-function StockDeepDive({
+export function StockDeepDive({
   results,
   symbol,
   company,
   onBack,
+  hideBack,
 }: {
   results: QuarterlyResult[];
   symbol: string;
   company: string;
   onBack: () => void;
+  hideBack?: boolean; // embedded mode (Result Pattern tab) — no back button
 }) {
   const patterns = detectPatterns(results);
   const quarters = generateQuarterlySummary(results, symbol);
@@ -313,14 +315,16 @@ function StockDeepDive({
       <Card className="bg-[#131829] border-white/[0.08]">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onBack}
-              className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] shrink-0"
-            >
-              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back
-            </Button>
+            {!hideBack && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onBack}
+                className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] shrink-0"
+              >
+                <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back
+              </Button>
+            )}
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-2 flex-wrap">
                 <h2 className="text-xl font-bold text-[#F4F7FB]">{symbol}</h2>

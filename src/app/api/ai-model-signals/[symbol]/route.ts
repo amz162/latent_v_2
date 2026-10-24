@@ -13,6 +13,7 @@ import {
   computeFinalConsensus,
 } from "@/lib/latent/ensemble";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { buildSymbolFallbackPredictions } from "@/lib/latent/fallback-predictions";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -128,6 +129,84 @@ export async function GET(req: Request, { params }: { params: Promise<{ symbol: 
     } as ModelPrediction;
   });
 
+  // ---- Issue 2: EXTENDED TRAINING MERGE (DB-cached) ------------------------
+  // Stocks outside the original ML-trained universe (new / low-data PSX
+  // listings) previously showed "No prediction for X" for every model. They
+  // now get deterministic indicator-based predictions for ALL 65 models + 10
+  // stored ensembles from the ModelPredictionCache table (precomputed by
+  // scripts/train_missing_stocks.ts; self-healed on-demand here if missing).
+  // Rows are NEVER deleted — repeat visits are pure DB reads.
+  let extendedCount = 0;
+  let extendedAt: string | null = null;
+  let fbModels: Record<string, any> = {};
+  let fbEnsembles: Record<string, any> = {};
+  try {
+    let cacheRow = await db.modelPredictionCache.findUnique({ where: { symbol: sym } });
+    if (!cacheRow) {
+      // On-demand self-heal: build + persist so the next visit is a pure DB read.
+      const bars = await db.ohlcvBar.findMany({
+        where: { symbol: sym },
+        orderBy: { date: "asc" },
+        select: { date: true, close: true, volume: true },
+      });
+      const built = buildSymbolFallbackPredictions(
+        bars.map((b) => ({ date: b.date, close: b.close, volume: b.volume }))
+      );
+      if (built) {
+        const json = JSON.stringify({ models: built.models, ensembles: built.ensembles });
+        await db.modelPredictionCache.upsert({
+          where: { symbol: sym },
+          create: { symbol: sym, predictionsJson: json, dataSourceDate: built.dataSourceDate },
+          update: { predictionsJson: json, dataSourceDate: built.dataSourceDate, computedAt: new Date() },
+        });
+        cacheRow = { symbol: sym, predictionsJson: json, computedAt: new Date(), dataSourceDate: built.dataSourceDate } as any;
+      }
+    }
+    if (cacheRow) {
+      const fb = JSON.parse(cacheRow.predictionsJson || "{}") as {
+        models?: Record<string, any>;
+        ensembles?: Record<string, any>;
+      };
+      fbModels = fb.models || {};
+      fbEnsembles = fb.ensembles || {};
+      extendedAt = cacheRow.computedAt ? new Date(cacheRow.computedAt).toISOString() : null;
+      for (let i = 0; i < predictions.length; i++) {
+        const meta = predictions[i];
+        // already has a real prediction from the Python pipeline → keep it
+        if (meta.trained && (meta as any).signal) continue;
+        const fp =
+          fbModels[meta.name] ||
+          fbModels[meta.name.replace(" (CL)", "")] ||
+          fbModels[meta.name.replace(" (X)", "")] ||
+          fbModels[meta.name.replace(/\s+/g, "")];
+        if (fp) {
+          predictions[i] = {
+            ...meta,
+            trained: true,
+            extended: true,
+            untrainedReason: undefined,
+            signal: fp.signal,
+            direction: fp.direction,
+            confidence: fp.confidence,
+            currentPrice: fp.currentPrice,
+            entry: fp.entry,
+            sl: fp.sl,
+            tp1: fp.tp1,
+            tp2: fp.tp2,
+            tp3: fp.tp3,
+            avgReturn: fp.avgReturn,
+            ...(fp.raw_prob !== undefined ? { raw_prob: fp.raw_prob } : {}),
+            ...(fp.exp_win_rate !== undefined ? { exp_win_rate: fp.exp_win_rate } : {}),
+            ...(fp.agreement !== undefined ? { agreement: fp.agreement } : {}),
+          } as ModelPrediction;
+          extendedCount++;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(`[ai-model-signals] extended-training merge failed for ${sym}:`, e);
+  }
+
   // ---- Build ensembles array (6 ensembles now: 3 base + CL + CL-Extender + CL-2)
   const baseEnsembles = [
     majorityVoteEnsemble(predictions),
@@ -135,16 +214,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ symbol: 
     tierWeightedEnsemble(predictions),
   ];
 
-  const clEnsPred = multi?.cl_ensemble_predictions?.[sym];
-  const clExtPred = multi?.cl_extender_predictions?.[sym];
-  const cl2EnsPred = multi?.cl2_ensemble_predictions?.[sym];
-  const piEnsPred = multi?.pi_ensemble_predictions?.[sym];
-  const gmEnsPred = multi?.gm_model_predictions?.[sym];
-  const cgEnsPred = multi?.cg_ensemble_predictions?.[sym];
-  const xEnsPred = multi?.x_ensemble_predictions?.[sym];
-  const gianEnsPred = multi?.gian_ensemble_predictions?.[sym];
-  const gianExtPred = multi?.gian_extender_predictions?.[sym];
-  const mEnsPred = multi?.m_ensemble_predictions?.[sym];
+  const clEnsPred = multi?.cl_ensemble_predictions?.[sym] ?? fbEnsembles["cl_ensemble"];
+  const clExtPred = multi?.cl_extender_predictions?.[sym] ?? fbEnsembles["cl_extender"];
+  const cl2EnsPred = multi?.cl2_ensemble_predictions?.[sym] ?? fbEnsembles["cl2_ensemble"];
+  const piEnsPred = multi?.pi_ensemble_predictions?.[sym] ?? fbEnsembles["pi_ensemble"];
+  const gmEnsPred = multi?.gm_model_predictions?.[sym] ?? fbEnsembles["gm_model"];
+  const cgEnsPred = multi?.cg_ensemble_predictions?.[sym] ?? fbEnsembles["cg_ensemble"];
+  const xEnsPred = multi?.x_ensemble_predictions?.[sym] ?? fbEnsembles["x_ensemble"];
+  const gianEnsPred = multi?.gian_ensemble_predictions?.[sym] ?? fbEnsembles["gian_ensemble"];
+  const gianExtPred = multi?.gian_extender_predictions?.[sym] ?? fbEnsembles["gian_extender"];
+  const mEnsPred = multi?.m_ensemble_predictions?.[sym] ?? fbEnsembles["m_ensemble"];
 
   const clEnsEntry = clEnsPred
     ? {
@@ -505,6 +584,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ symbol: 
     models: predictions.filter((p) => p.tier === t),
   }));
 
+  // Issue 2: merge DB-cached extended-universe backtests (cover ALL stocks,
+  // incl. new / low-data listings) — DB values take precedence over the file.
+  let dbModelBacktests: Record<string, any> = {};
+  let dbEnsBacktests: Record<string, any> = {};
+  try {
+    const btRows = await db.modelBacktestCache.findMany();
+    for (const r of btRows) {
+      const stats = JSON.parse(r.payloadJson);
+      if (r.kind === "ensemble") dbEnsBacktests[r.key] = stats;
+      else dbModelBacktests[r.key] = stats;
+    }
+  } catch {}
+
   const resp = {
     symbol: sym,
     stockName,
@@ -513,11 +605,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ symbol: 
     ensembles,
     finalConsensus,
     fallbackNote,
+    // Issue 2: extended-training transparency
+    extendedCount,
+    extendedAt,
     trainedModelCount: predictions.filter((p) => p.trained).length,
     totalModelCount: predictions.length,
     trainedAt: multi?.trained_at,
-    backtesting: multi?.backtesting || {},
-    ensembleBacktesting: multi?.ensemble_backtesting || {},
+    backtesting: { ...(multi?.backtesting || {}), ...dbModelBacktests },
+    ensembleBacktesting: { ...(multi?.ensemble_backtesting || {}), ...dbEnsBacktests },
+    backtestSource: Object.keys(dbModelBacktests).length > 0 ? "db-extended-universe" : "file",
     walkForward: multi?.walk_forward_backtesting || {},
     clEnsemble: multi?.cl_ensemble_backtest || {},
     clEnsembleAll: multi?.cl_ensemble_backtest_all || {},
