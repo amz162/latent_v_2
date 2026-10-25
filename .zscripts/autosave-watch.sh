@@ -1,49 +1,23 @@
 #!/usr/bin/env bash
-# autosave-watch.sh — server-side change-persistence watchdog.
-#
-# Background: file-system changes that are NOT committed to the local git
-# repo are lost when the sandbox environment resets. To stop that, this
-# script snapshots the working tree into .git on a fixed cadence so
-# uncommitted edits survive a reset. It runs as a detached background
-# process (setsid) and is idempotent — only one instance lives at a time
-# (enforced via flock on this very file).
-#
-# It NEVER pushes to any remote — the user has explicitly asked that GitHub
-# pushes happen only on their instruction. Commits land in the local repo
-# only. Remote pushes are a manual step the user triggers.
-#
-# Schedule: every 5 minutes. Commit message is timestamped. If there are
-# no changes, it is a no-op (git commit exits non-zero, we swallow it).
-
+# autosave-watch.sh — durability watchdog. Commits working-tree changes to
+# LOCAL git every 5 min AND pushes to origin/main. Why push: the sandbox
+# environment resets wipe the local .git too (proven — Tasks 29-32 local
+# commits were gone after a reset, only the GitHub push survived). So local-
+# only commits are NOT enough; GitHub is the only durable store. Push is
+# the user's explicit instruction ("update my github repo ... so it will
+# not delete the progress or data").
 set -u
 cd /home/z/my-project || exit 1
-
 LOG=/home/z/my-project/.zscripts/autosave.log
-PIDFILE=/home/z/my-project/.zscripts/autosave.pid
-
-# Single-instance guard via flock on this script.
-exec 9<"$0"
-if ! flock -n 9; then
-  echo "$(date -Iseconds) another autosave-watch is already running; exit" >> "$LOG"
-  exit 0
-fi
-
-echo "$(date -Iseconds) autosave-watch started (5-min cadence, local commits only, no push)" >> "$LOG"
-echo $$ > "$PIDFILE"
-
+exec 9<"$0"; flock -n 9 || { echo "$(date -Iseconds) dup autosave; exit 0"; }
+echo "$(date -Iseconds) autosave-watch started (5-min cadence, commit+push)" >> "$LOG"
+echo $$ > /home/z/my-project/.zscripts/autosave.pid
 while true; do
-  sleep 300  # 5 minutes
+  sleep 300
   ts="$(date -Iseconds)"
-  # Stage everything except the heavy/ephemeral paths that should never be
-  # committed (dev caches, logs, pid files). These are also in .gitignore
-  # but we double-guard here.
   git add -A 2>/dev/null
-  if git diff --cached --quiet 2>/dev/null; then
-    continue  # nothing to commit
-  fi
-  if git commit -m "autosave-watch snapshot ${ts}" >/dev/null 2>&1; then
-    echo "${ts} snapshot committed (local only, no push)" >> "$LOG"
-  else
-    echo "${ts} commit failed (likely empty or locked) — will retry next cycle" >> "$LOG"
+  if git diff --cached --quiet 2>/dev/null; then continue; fi
+  if git commit -m "autosave ${ts}" >/dev/null 2>&1; then
+    git push origin main >/dev/null 2>&1 && echo "${ts} committed+pushed" >> "$LOG" || echo "${ts} committed, push failed" >> "$LOG"
   fi
 done
