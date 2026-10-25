@@ -678,3 +678,291 @@ prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ResultPattern
 prisma:query SELECT `main`.`ResultPatternCache`.`symbol`, `main`.`ResultPatternCache`.`resultsJson`, `main`.`ResultPatternCache`.`patternsJson`, `main`.`ResultPatternCache`.`summaryJson`, `main`.`ResultPatternCache`.`computedAt`, `main`.`ResultPatternCache`.`dataSourceDate` FROM `main`.`ResultPatternCache` WHERE 1=1 ORDER BY `main`.`ResultPatternCache`.`symbol` ASC LIMIT ? OFFSET ?
  GET / 200 in 90ms (compile: 8ms, render: 82ms)
  GET / 200 in 65ms (compile: 19ms, render: 46ms)
+ GET / 200 in 91ms (compile: 3ms, render: 87ms)
+ GET / 200 in 103ms (compile: 7ms, render: 96ms)
+ GET / 200 in 59ms (compile: 10ms, render: 49ms)
+ GET /api/track-record 200 in 12ms (compile: 4ms, render: 8ms)
+ GET /api/signals/all 200 in 5.2s (compile: 8ms, render: 5.2s)
+ GET /api/psx/companies 200 in 8ms (compile: 3ms, render: 5ms)
+ GET /api/psx/companies 200 in 6ms (compile: 1831µs, render: 4ms)
+prisma:query SELECT 1
+ GET /api/price-patterns/LUCK 200 in 56ms (compile: 44ms, render: 12ms)
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/psx/live/batch?symbols=TISL%2CLUCK 200 in 315ms (compile: 2ms, render: 313ms)
+ GET /api/portfolio/news-digest?symbols=TISL,LUCK&limit=2 200 in 532ms (compile: 8ms, render: 524ms)
+ GET /api/psx/companies 200 in 7ms (compile: 2ms, render: 4ms)
+ GET /api/psx/companies 200 in 5ms (compile: 1818µs, render: 4ms)
+prisma:query SELECT 1
+prisma:query UPDATE `main`.`PricePatternCache` SET `summaryJson` = ? WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`
+[price-patterns] self-healed LLM summary for LUCK
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/price-patterns/LUCK 200 in 61ms (compile: 49ms, render: 12ms)
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/price-patterns/OGDC 200 in 52ms (compile: 40ms, render: 11ms)
+ GET /api/price-patterns/SELECT 200 in 51ms (compile: 42ms, render: 9ms)
+prisma:query SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 16ms (compile: 4ms, render: 13ms)
+prisma:query UPDATE `main`.`PricePatternCache` SET `summaryJson` = ? WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`
+[price-patterns] self-healed LLM summary for SELECT
+prisma:query SELECT `main`.`ResultPatternCache`.`symbol`, `main`.`ResultPatternCache`.`resultsJson`, `main`.`ResultPatternCache`.`patternsJson`, `main`.`ResultPatternCache`.`summaryJson`, `main`.`ResultPatternCache`.`computedAt`, `main`.`ResultPatternCache`.`dataSourceDate` FROM `main`.`ResultPatternCache` WHERE (`main`.`ResultPatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/result-patterns/SELECT 404 in 406ms (compile: 43ms, render: 364ms)
+prisma:query UPDATE `main`.`PricePatternCache` SET `summaryJson` = ? WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`
+[price-patterns] self-healed LLM summary for OGDC
+ GET /api/result-patterns/OGDC 200 in 49ms (compile: 40ms, render: 9ms)
+prisma:query SELECT `main`.`ResultPatternCache`.`symbol`, `main`.`ResultPatternCache`.`resultsJson`, `main`.`ResultPatternCache`.`patternsJson`, `main`.`ResultPatternCache`.`summaryJson`, `main`.`ResultPatternCache`.`computedAt`, `main`.`ResultPatternCache`.`dataSourceDate` FROM `main`.`ResultPatternCache` WHERE (`main`.`ResultPatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainWithLlm (src/app/api/result-patterns/[symbol]/route.ts:218:23)
+    at async (src/app/api/result-patterns/[symbol]/route.ts:86:27)
+  216 |   ];
+  217 |
+> 218 |   const completion = (await Promise.race([
+      |                       ^
+  219 |     client.chat.completions.create({ messages, temperature: 0.3, max_tokens: 1600 }),
+  220 |     new Promise<never>((_, reject) =>
+  221 |       setTimeout(() => reject(new Error("LLM timeout after 40s")), LLM_TIMEOUT_MS)
+[result-patterns] self-heal LLM failed for OGDC: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query SELECT 1
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainWithLlm (src/app/api/price-patterns/[symbol]/route.ts:244:23)
+    at async GET (src/app/api/price-patterns/[symbol]/route.ts:163:20)
+  242 |   ];
+  243 |
+> 244 |   const completion = (await Promise.race([
+      |                       ^
+  245 |     client.chat.completions.create({ messages, temperature: 0.3, max_tokens: 2000 }),
+  246 |     new Promise<never>((_, reject) =>
+  247 |       setTimeout(() => reject(new Error("LLM timeout after 40s")), LLM_TIMEOUT_MS)
+[price-patterns] LLM failed for OGDC: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainWithLlm (src/app/api/price-patterns/[symbol]/route.ts:244:23)
+    at async GET (src/app/api/price-patterns/[symbol]/route.ts:163:20)
+  242 |   ];
+  243 |
+> 244 |   const completion = (await Promise.race([
+      |                       ^
+  245 |     client.chat.completions.create({ messages, temperature: 0.3, max_tokens: 2000 }),
+  246 |     new Promise<never>((_, reject) =>
+  247 |       setTimeout(() => reject(new Error("LLM timeout after 40s")), LLM_TIMEOUT_MS)
+prisma:query INSERT INTO `main`.`PricePatternCache` (`symbol`, `patternsJson`, `summaryJson`, `computedAt`, `dataSourceDate`) VALUES (?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `patternsJson` = ?, `summaryJson` = ?, `computedAt` = ?, `dataSourceDate` = ? WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`
+ GET /api/price-patterns/OGDC?refresh=1 200 in 553ms (compile: 42ms, render: 510ms)
+ GET /api/psx/companies 200 in 7ms (compile: 2ms, render: 5ms)
+ GET /api/psx/companies 200 in 6ms (compile: 2ms, render: 4ms)
+ GET /api/psx/live/batch?symbols=TISL%2CLUCK 200 in 320ms (compile: 13ms, render: 307ms)
+ GET /api/portfolio/news-digest?symbols=TISL,LUCK&limit=2 200 in 537ms (compile: 4ms, render: 533ms)
+ GET /api/track-record 200 in 10ms (compile: 2ms, render: 7ms)
+ GET /api/signals/all 200 in 9ms (compile: 3ms, render: 6ms)
+ GET /api/psx/companies 200 in 6ms (compile: 2ms, render: 4ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/HUBC?refresh=1&timeframe=1m 200 in 364ms (compile: 40ms, render: 324ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/ENGRO?refresh=1&timeframe=1m 200 in 495ms (compile: 5ms, render: 491ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/LUCK?refresh=1&timeframe=1m 200 in 235ms (compile: 4ms, render: 231ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/SYS?refresh=1&timeframe=1m 200 in 580ms (compile: 4ms, render: 576ms)
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/PSO?refresh=1&timeframe=1m 200 in 635ms (compile: 5ms, render: 630ms)
+ GET /api/ai-model-signals/MEBL?refresh=1&timeframe=1m 200 in 633ms (compile: 8ms, render: 625ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/OGDC?refresh=1&timeframe=1m 200 in 181ms (compile: 42ms, render: 139ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/PPL?refresh=1&timeframe=1m 200 in 250ms (compile: 40ms, render: 209ms)
+ GET /api/signals/all 200 in 67ms (compile: 61ms, render: 6ms)
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 9ms (compile: 2ms, render: 7ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 5.0s (compile: 1902µs, render: 5.0s)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 15ms (compile: 12ms, render: 3ms)
+ GET /api/portfolio/news-digest?symbols=DGKC,OGDC,NPL,SELECT,SYS,PRL&limit=2 200 in 7.0s (compile: 6ms, render: 7.0s)
+ GET /api/psx/companies 200 in 58ms (compile: 50ms, render: 7ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/HUBC?refresh=1&timeframe=1m 200 in 732ms (compile: 46ms, render: 686ms)
+ GET /api/ai-model-signals/ENGRO?refresh=1&timeframe=1m 200 in 798ms (compile: 41ms, render: 757ms)
+ GET /api/ai-model-signals/SYS?refresh=1&timeframe=1m 200 in 795ms (compile: 48ms, render: 747ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/LUCK?refresh=1&timeframe=1m 200 in 1003ms (compile: 5ms, render: 999ms)
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/MEBL?refresh=1&timeframe=1m 200 in 1030ms (compile: 6ms, render: 1024ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/PSO?refresh=1&timeframe=1m 200 in 1011ms (compile: 6ms, render: 1005ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/OGDC?refresh=1&timeframe=1m 200 in 408ms (compile: 41ms, render: 367ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 8ms (compile: 4ms, render: 3ms)
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/PPL?refresh=1&timeframe=1m 200 in 475ms (compile: 4ms, render: 471ms)
+ GET /api/signals/all 200 in 5.4s (compile: 4ms, render: 5.4s)
+ GET /api/psx/live/batch?symbols=TISL%2CLUCK 200 in 7ms (compile: 3ms, render: 4ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 10ms (compile: 4ms, render: 6ms)
+ GET /api/portfolio/news-digest?symbols=DGKC,OGDC,NPL,SELECT,SYS,PRL&limit=2 200 in 1464ms (compile: 12ms, render: 1451ms)
+ GET /api/psx/companies 200 in 9ms (compile: 3ms, render: 6ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 14ms (compile: 4ms, render: 10ms)
+ GET /api/psx/live/batch?symbols=TISL%2CLUCK 200 in 289ms (compile: 1963µs, render: 287ms)
+ GET /api/psx/companies 200 in 7ms (compile: 3ms, render: 4ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 319ms (compile: 3ms, render: 316ms)
+ GET /api/psx/live?symbol=DGKC 200 in 296ms (compile: 4ms, render: 292ms)
+ GET /api/psx/companies 200 in 6ms (compile: 2ms, render: 3ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/SYS?refresh=1&timeframe=1m 200 in 643ms (compile: 44ms, render: 599ms)
+ GET /api/ai-model-signals/ENGRO?refresh=1&timeframe=1m 200 in 648ms (compile: 50ms, render: 598ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/HUBC?refresh=1&timeframe=1m 200 in 783ms (compile: 8ms, render: 775ms)
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/PSO?refresh=1&timeframe=1m 200 in 822ms (compile: 11ms, render: 811ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/MEBL?refresh=1&timeframe=1m 200 in 950ms (compile: 4ms, render: 946ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/LUCK?refresh=1&timeframe=1m 200 in 1048ms (compile: 26ms, render: 1022ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/signals/all 200 in 6ms (compile: 1936µs, render: 4ms)
+ GET /api/ai-model-signals/OGDC?refresh=1&timeframe=1m 200 in 501ms (compile: 69ms, render: 432ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 33ms (compile: 31ms, render: 3ms)
+ GET /api/ai-model-signals/PPL?refresh=1&timeframe=1m 200 in 333ms (compile: 12ms, render: 321ms)
+ GET /api/psx/live/batch?symbols=TISL%2CLUCK 200 in 6ms (compile: 2ms, render: 3ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 6ms (compile: 3ms, render: 3ms)
+ GET /api/psx/companies 200 in 7ms (compile: 4ms, render: 3ms)
+ GET /api/portfolio/news-digest?symbols=DGKC,OGDC,NPL,SELECT,SYS,PRL&limit=2 200 in 1536ms (compile: 4ms, render: 1532ms)
+ GET /api/psx/companies 200 in 7ms (compile: 3ms, render: 4ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 10ms (compile: 2ms, render: 8ms)
+ GET /api/psx/live/batch?symbols=TISL%2CLUCK 200 in 318ms (compile: 2ms, render: 316ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 335ms (compile: 3ms, render: 332ms)
+ GET / 200 in 74ms (compile: 4ms, render: 70ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 312ms (compile: 3ms, render: 309ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 7ms (compile: 2ms, render: 5ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 340ms (compile: 3ms, render: 337ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 11ms (compile: 4ms, render: 7ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 4ms (compile: 1635µs, render: 3ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 317ms (compile: 1938µs, render: 316ms)
+ GET /api/psx/companies 200 in 5ms (compile: 2ms, render: 3ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/SYS?refresh=1&timeframe=1m 200 in 511ms (compile: 41ms, render: 470ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/ENGRO?refresh=1&timeframe=1m 200 in 780ms (compile: 7ms, render: 773ms)
+ GET /api/ai-model-signals/PSO?refresh=1&timeframe=1m 200 in 777ms (compile: 9ms, render: 769ms)
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/HUBC?refresh=1&timeframe=1m 200 in 1034ms (compile: 7ms, render: 1027ms)
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/LUCK?refresh=1&timeframe=1m 200 in 1092ms (compile: 7ms, render: 1085ms)
+ GET /api/ai-model-signals/MEBL?refresh=1&timeframe=1m 200 in 1082ms (compile: 4ms, render: 1078ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/OGDC?refresh=1&timeframe=1m 200 in 173ms (compile: 42ms, render: 131ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/PPL?refresh=1&timeframe=1m 200 in 117ms (compile: 2ms, render: 115ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 85ms (compile: 76ms, render: 9ms)
+ GET /api/signals/all 200 in 5.1s (compile: 2ms, render: 5.1s)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 12ms (compile: 3ms, render: 9ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 322ms (compile: 2ms, render: 320ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 322ms (compile: 2ms, render: 320ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 6ms (compile: 2ms, render: 3ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 776ms (compile: 3ms, render: 773ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 8ms (compile: 2ms, render: 6ms)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 5.0s (compile: 1903µs, render: 5.0s)
+ GET /api/psx/live/batch?symbols=DGKC%2COGDC%2CNPL%2CSELECT%2CSYS%2CPRL 200 in 9ms (compile: 3ms, render: 6ms)
+ GET / 200 in 54ms (compile: 3ms, render: 51ms)
+ GET / 200 in 55ms (compile: 2ms, render: 52ms)
+ GET / 200 in 52ms (compile: 5ms, render: 47ms)
+ GET / 200 in 44ms (compile: 2ms, render: 42ms)
+ GET / 200 in 46ms (compile: 2ms, render: 44ms)
+ GET / 200 in 44ms (compile: 5ms, render: 39ms)
+ GET / 200 in 39ms (compile: 4ms, render: 35ms)
+ GET / 200 in 42ms (compile: 2ms, render: 40ms)
+ GET / 200 in 39ms (compile: 2ms, render: 36ms)
+ GET / 200 in 55ms (compile: 6ms, render: 50ms)
+ GET / 200 in 42ms (compile: 2ms, render: 40ms)
+ GET / 200 in 45ms (compile: 3ms, render: 41ms)
+ GET / 200 in 41ms (compile: 2ms, render: 39ms)
+ GET / 200 in 40ms (compile: 5ms, render: 36ms)
+ GET / 200 in 39ms (compile: 2ms, render: 37ms)
+ GET / 200 in 53ms (compile: 5ms, render: 47ms)
+ GET / 200 in 41ms (compile: 2ms, render: 39ms)
+ GET / 200 in 42ms (compile: 2ms, render: 39ms)
+ GET / 200 in 43ms (compile: 3ms, render: 40ms)
+ GET / 200 in 42ms (compile: 2ms, render: 39ms)
+ GET / 200 in 46ms (compile: 3ms, render: 43ms)
+ GET / 200 in 44ms (compile: 5ms, render: 39ms)
+ GET / 200 in 43ms (compile: 5ms, render: 39ms)
+ GET / 200 in 43ms (compile: 3ms, render: 40ms)
+ GET / 200 in 42ms (compile: 2ms, render: 40ms)
+ GET / 200 in 49ms (compile: 3ms, render: 46ms)
+ GET / 200 in 43ms (compile: 5ms, render: 38ms)
+ GET / 200 in 38ms (compile: 2ms, render: 36ms)
+ GET / 200 in 41ms (compile: 4ms, render: 36ms)
+ GET / 200 in 41ms (compile: 3ms, render: 39ms)
+ GET / 200 in 46ms (compile: 3ms, render: 43ms)
+ GET / 200 in 40ms (compile: 4ms, render: 36ms)
+ GET / 200 in 40ms (compile: 3ms, render: 37ms)
+ GET / 200 in 35ms (compile: 2ms, render: 33ms)
