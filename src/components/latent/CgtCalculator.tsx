@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { AppNav } from "./AppNav";
 import { useLatentStore } from "@/lib/latent/store";
 import { calculateCGT, calculateAggregatedCGT, type FilerStatus, type RealizedTrade } from "@/lib/latent/tax";
 import { Calculator, TrendingUp, TrendingDown, Info, AlertCircle, Coins, Receipt } from "lucide-react";
@@ -90,7 +89,6 @@ export function CgtCalculator() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-[#F4F7FB] flex items-center gap-2">

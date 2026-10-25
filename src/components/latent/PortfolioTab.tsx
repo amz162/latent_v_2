@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { AppNav } from "./AppNav";
 import { StockSearch } from "./StockSearch";
 import { useLatentStore, getBuyLots, mergeBuyLots, type PortfolioPosition, type BuyLot } from "@/lib/latent/store";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
@@ -537,7 +536,6 @@ export function PortfolioTab() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
@@ -869,16 +867,16 @@ export function PortfolioTab() {
                                       key={`${p.symbol}-lot-${li}`}
                                       className="text-[10px] text-[#64748B] font-mono leading-[1.5]"
                                     >
-                                      Buy {li + 1}: {lot.price.toFixed(2)} × {lot.shares.toLocaleString()}
+                                      Buy {li + 1}: PKR {lot.price.toFixed(2)} × {lot.shares.toLocaleString()} = PKR {(lot.price * lot.shares).toLocaleString()}
                                     </div>
                                   ))}
                                   <div className="text-[10px] font-mono font-semibold leading-[1.5] text-[#00E676]/90">
-                                    Avg buy: {lotsAvg.toFixed(2)} × {lotsTotalShares.toLocaleString()} total
+                                    Avg: Rs {lotsAvg.toFixed(2)} × {lotsTotalShares.toLocaleString()} = PKR {lots.reduce((n, l) => n + l.price * l.shares, 0).toLocaleString()}
                                   </div>
                                 </div>
                               ) : (
                                 <div className="text-[10px] text-[#64748B] mt-0.5 font-mono">
-                                  Buy: {p.buyPrice} × {p.shares} = PKR {((p.buyPrice as number) * p.shares).toLocaleString()}
+                                  Buy: PKR {(p.buyPrice as number).toFixed(2)} × {p.shares.toLocaleString()} = PKR {((p.buyPrice as number) * p.shares).toLocaleString()}
                                 </div>
                               )}
                             </button>

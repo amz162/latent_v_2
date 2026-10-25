@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppNav } from "./AppNav";
 import { StockSearch } from "./StockSearch";
 import { useLatentStore } from "@/lib/latent/store";
 import { Slider } from "@/components/ui/slider";
@@ -258,7 +257,6 @@ export function SignalSection() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>

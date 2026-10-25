@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { AppNav } from "./AppNav";
 import { useLatentStore } from "@/lib/latent/store";
 import { Target, ArrowRight, Coins, TrendingUp, Zap, Activity, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
@@ -85,7 +84,6 @@ export function InvestmentStrategy() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-[#F4F7FB]">Investment Strategy</h1>

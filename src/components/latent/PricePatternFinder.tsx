@@ -17,7 +17,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppNav } from "./AppNav";
 import { StockSearch } from "./StockSearch";
 import { StockDeepDive } from "./PatternFinder";
 import type {
@@ -243,7 +242,6 @@ export function PricePatternFinder() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A] flex flex-col">
-      <AppNav />
       <main className="flex-1 w-full px-4 md:px-6 py-6 max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-5">
@@ -587,19 +585,27 @@ export function PricePatternFinder() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SearchHero({ onSelect }: { onSelect: (s: string) => void }) {
+  // Issue: "in pattern finder it is showing me all stock search component 2
+  // times, change it. it must be showing 1 time". The full stock search box
+  // + quick-try chips already live in the ALWAYS-VISIBLE card above. This
+  // empty-state panel below is intentionally a HINT only — feature cards +
+  // compliance note, NO second search input.
   return (
     <Card className="bg-[#131829] border-white/[0.06]">
       <CardContent className="p-6 md:p-8">
-        <label className="text-[10px] uppercase tracking-wider text-[#64748B] mb-2 block">Pick a stock to find its recurring price patterns</label>
-        <StockSearch value="" onChange={(s) => s && onSelect(s)} placeholder="Search stock by symbol or name…" autoFocus />
-        <div className="flex flex-wrap gap-2 mt-4">
+        <p className="text-sm text-[#94A3B8] mb-4">
+          Pick a stock in the search box above, then switch between its{" "}
+          <span className="text-[#F4F7FB]">Price patterns</span> and{" "}
+          <span className="text-[#F4F7FB]">Result patterns</span> tabs. Quick try:
+        </p>
+        <div className="flex flex-wrap gap-2 mb-6">
           {POPULAR.map((s) => (
             <button key={s} onClick={() => onSelect(s)} className="px-3 py-1.5 rounded-md text-xs font-mono bg-white/[0.05] border border-white/[0.08] text-[#94A3B8] hover:text-[#00E676] hover:border-[#00E676]/40 transition-colors">
               {s}
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             { icon: CalendarDays, title: "Monthly seasonality", desc: "Which calendar months historically moved up or down — and how consistently." },
             { icon: Activity, title: "Volume & pressure events", desc: "Unusual volume days, buying/selling pressure (inferred from price + volume) and what followed." },

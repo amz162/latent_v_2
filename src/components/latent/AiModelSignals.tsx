@@ -5,7 +5,6 @@ import{Button}from"@/components/ui/button";
 import{Badge}from"@/components/ui/badge";
 import{Skeleton}from"@/components/ui/skeleton";
 import{Dialog,DialogContent,DialogHeader,DialogTitle}from"@/components/ui/dialog";
-import{AppNav}from"./AppNav";
 import{StockSearch}from"./StockSearch";
 import{useLatentStore}from"@/lib/latent/store";
 import{Brain,Sparkles,Layers,Cpu,BarChart3,DollarSign,Play,Loader2,Eye,ChevronLeft,TrendingUp,TrendingDown}from"lucide-react";
@@ -82,7 +81,7 @@ export function AiModelSignals(){
  const indBt=data?Object.entries(data.backtesting||{}).map(([name,b]:[string,any])=>({name,...b})).sort((a,b)=>b.winRate-a.winRate):[];
  const ensBt=data?Object.entries(data.ensembleBacktesting||{}).map(([name,b]:[string,any])=>({name,...b})):[];
 
- return(<div className="min-h-screen bg-[#0A0E1A]"><AppNav/>
+ return(<div className="min-h-screen bg-[#0A0E1A]">
  <main className="px-3 md:px-6 py-4 md:py-6 max-w-5xl mx-auto">
   <div className="mb-4 md:mb-6">
    <h1 className="text-xl md:text-2xl font-bold text-[#F4F7FB] flex items-center gap-2"><Brain className="h-5 w-5 md:h-6 md:w-6 text-[#00E676]"/>AI Model Signals</h1>

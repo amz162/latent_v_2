@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { AppNav } from "./AppNav";
 import { useLatentStore } from "@/lib/latent/store";
+import { normalizeSector } from "@/lib/latent/sector";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Trophy,
@@ -643,11 +643,12 @@ export function Tracker() {
       const price = typeof live === "number" ? live : buy;
       if (price <= 0 || p.shares <= 0) continue;
       const value = price * p.shares;
-      // Task 28-C: unknown/missing sector → exactly "Others".
-      const sector =
-        (p.sector && p.sector.trim()) ||
-        sectorMap[p.symbol] ||
-        "Others";
+      // Issue: "don't use the Conglomerate … add that stock in other
+      // category". normalizeSector() folds Conglomerate(s) + empty/missing
+      // into "Others" so the donut never shows a Conglomerate slice.
+      const sector = normalizeSector(
+        (p.sector && p.sector.trim()) || sectorMap[p.symbol] || "Others"
+      );
       m.set(sector, (m.get(sector) || 0) + value);
     }
     const total = Array.from(m.values()).reduce((s, v) => s + v, 0);
@@ -752,7 +753,6 @@ export function Tracker() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0A0E1A]">
-        <AppNav />
         <div className="max-w-6xl mx-auto p-6 space-y-4">
           <Skeleton className="h-10 w-48 bg-white/[0.04]" />
           <Skeleton className="h-32 w-full bg-white/[0.04]" />
@@ -764,7 +764,6 @@ export function Tracker() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
@@ -1511,11 +1510,11 @@ export function Tracker() {
                             key={p.symbol}
                             position={p}
                             livePrice={livePriceMap[p.symbol.toUpperCase()]}
-                            sectorLabel={
+                            sectorLabel={normalizeSector(
                               (p.sector && p.sector.trim()) ||
                               sectorMap[p.symbol] ||
                               "Others"
-                            }
+                            )}
                           />
                         ))
                       )}
@@ -1719,12 +1718,23 @@ function PortfolioRow({ position, livePrice, sectorLabel }: PortfolioRowProps) {
   const pnlPct = pnl !== null && invested > 0 ? (pnl / invested) * 100 : null;
   const isWin = pnl !== null && pnl > 0;
   const isLoss = pnl !== null && pnl < 0;
-  // Task 28-C: multi-lot positions show a compact "N buys · avg X" hint;
-  // single-lot / legacy positions keep the "Buy: X · N shares" line.
-  const buyLine =
+  // Issue: "add avg buying price when any stock buy multiple time i.e
+  // buy 1 : pkr100*12=pkr 1200, buy 2: pkr 102*10=pkr 1020 and avg price
+  // Rs 101*22=Pkr 2222 show like this". Multi-lot rows render EVERY lot
+  // with its cost (= price × shares) on its own line, then the weighted
+  // average × total shares = total cost on a highlighted line. Single-lot
+  // / legacy positions keep the one-line "Buy: X × N = PKR Y" form.
+  const totalLotCost = validLots.reduce((s, l) => s + l.price * l.shares, 0);
+  const multiLotLines =
     validLots.length > 1
-      ? `${validLots.length} buys · avg ${buy > 0 ? buy.toFixed(2) : "—"}`
-      : `Buy: ${buy > 0 ? buy.toFixed(2) : "—"} · ${position.shares.toLocaleString()} shares`;
+      ? validLots.map((l, i) => ({
+          text: `Buy ${i + 1}: PKR ${l.price.toFixed(2)} × ${l.shares.toLocaleString()} = PKR ${(l.price * l.shares).toLocaleString()}`,
+        }))
+      : [];
+  const avgLine =
+    validLots.length > 1
+      ? `Avg: Rs ${buy.toFixed(2)} × ${lotShares.toLocaleString()} = PKR ${totalLotCost.toLocaleString()}`
+      : `Buy: PKR ${buy > 0 ? buy.toFixed(2) : "—"} × ${position.shares.toLocaleString()} = PKR ${(buy > 0 ? buy * position.shares : 0).toLocaleString()}`;
 
   return (
     <div className="p-4 hover:bg-white/[0.02]">
@@ -1745,10 +1755,30 @@ function PortfolioRow({ position, livePrice, sectorLabel }: PortfolioRowProps) {
                 </Badge>
               )}
             </div>
-            <div className="text-[11px] text-[#94A3B8] mt-0.5 truncate">
-              {buyLine}
+            <div className="mt-1">
+              {multiLotLines.length > 0 ? (
+                <div>
+                  {multiLotLines.map((l, i) => (
+                    <div
+                      key={i}
+                      className="text-[10px] text-[#64748B] font-mono leading-[1.55]"
+                    >
+                      {l.text}
+                    </div>
+                  ))}
+                  <div className="text-[10px] font-mono font-semibold leading-[1.55] text-[#00E676]/90">
+                    {avgLine}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-[11px] text-[#94A3B8] font-mono">
+                  {avgLine}
+                </div>
+              )}
               {typeof livePrice === "number" && (
-                <span className="text-[#64748B]"> · Live: {livePrice.toFixed(2)}</span>
+                <div className="text-[10px] text-[#64748B] font-mono mt-0.5">
+                  Live: PKR {livePrice.toFixed(2)}
+                </div>
               )}
             </div>
           </div>

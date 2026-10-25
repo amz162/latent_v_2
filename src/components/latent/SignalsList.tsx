@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppNav } from "./AppNav";
 import { useLatentStore } from "@/lib/latent/store";
 import { Signal, TradeHorizon } from "@/lib/latent/types";
 import { Filter, Zap, RefreshCw } from "lucide-react";
@@ -37,7 +36,6 @@ export function SignalsList() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>

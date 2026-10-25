@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppNav } from "./AppNav";
 import { useLatentStore } from "@/lib/latent/store";
 import { Signal, Broker } from "@/lib/latent/types";
 import {
@@ -65,7 +64,6 @@ export function ExecuteFlow() {
   if (!signal) {
     return (
       <div className="min-h-screen bg-[#0A0E1A]">
-        <AppNav />
         <div className="max-w-3xl mx-auto p-6 space-y-4">
           <Skeleton className="h-10 w-32 bg-white/[0.04]" />
           <Skeleton className="h-48 w-full bg-white/[0.04]" />
@@ -125,7 +123,6 @@ export function ExecuteFlow() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="max-w-3xl mx-auto px-4 md:px-6 py-6">
         <Button
           variant="ghost"

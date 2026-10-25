@@ -11,6 +11,7 @@ type Dict = Record<string, { en: string; roman_urdu: string; urdu: string }>;
 
 const dict: Dict = {
   // Nav
+  "nav.dashboard": { en: "Dashboard", roman_urdu: "Dashboard", urdu: "ڈیش بورڈ" },
   "nav.fundamental_news": { en: "Fundamental News", roman_urdu: "Bunyadi Khabrein", urdu: "بنیادی خبریں" },
   "nav.technical_analysis": { en: "Technical Analysis", roman_urdu: "Technical Tajzea", urdu: "تکنیکی تجزیہ" },
   "nav.signals": { en: "Signals", roman_urdu: "Signals", urdu: "اشارات" },

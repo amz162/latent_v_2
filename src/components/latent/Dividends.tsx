@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { AppNav } from "./AppNav";
 import { StockSearch } from "./StockSearch";
 import { useLatentStore } from "@/lib/latent/store";
 import {
@@ -242,7 +241,6 @@ export function Dividends() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-5xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-[#F4F7FB] flex items-center gap-2">

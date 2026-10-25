@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AppNav } from "./AppNav";
 import { useLatentStore } from "@/lib/latent/store";
 import { Plan } from "@/lib/latent/types";
 import { Target, RefreshCw, BookOpen, Calendar } from "lucide-react";
@@ -16,7 +15,6 @@ export function PlanView() {
   if (!plan) {
     return (
       <div className="min-h-screen bg-[#0A0E1A]">
-        <AppNav />
         <div className="max-w-4xl mx-auto px-6 py-16 text-center">
           <Target className="h-12 w-12 text-[#00E676]/30 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-[#F4F7FB] mb-2">No plan yet</h2>
@@ -36,7 +34,6 @@ export function PlanView() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">

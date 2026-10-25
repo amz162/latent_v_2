@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppNav } from "./AppNav";
 import { StockSearch } from "./StockSearch";
 import { useLatentStore } from "@/lib/latent/store";
 import { RefreshCw, TrendingUp, TrendingDown, Brain, Loader2, Activity, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from "lucide-react";
@@ -81,7 +80,6 @@ export function TechnicalAnalysis() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="px-4 md:px-6 py-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>

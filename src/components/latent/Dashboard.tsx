@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppNav } from "./AppNav";
 import { useLatentStore } from "@/lib/latent/store";
 import { TrackRecordStats } from "@/lib/latent/types";
 import { TrendingUp, Target, Activity, Zap, ArrowRight, Sparkles, LineChart } from "lucide-react";
@@ -65,8 +64,6 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
-
       <main className="px-4 md:px-6 py-6 max-w-7xl mx-auto">
         {/* Greeting */}
         <div className="mb-6">

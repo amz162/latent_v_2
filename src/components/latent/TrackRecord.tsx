@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppNav } from "./AppNav";
 import { Trade, TrackRecordStats } from "@/lib/latent/types";
 import {
   BarChart3,
@@ -80,7 +79,6 @@ export function TrackRecord() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0A0E1A]">
-        <AppNav />
         <div className="max-w-5xl mx-auto p-6 space-y-4">
           <Skeleton className="h-10 w-48 bg-white/[0.04]" />
           <Skeleton className="h-32 w-full bg-white/[0.04]" />
@@ -94,7 +92,6 @@ export function TrackRecord() {
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
-      <AppNav />
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">

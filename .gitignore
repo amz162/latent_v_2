@@ -23,3 +23,11 @@ next-env.d.ts
 db/custom.db
 # server log
 server.log
+
+# Ephemeral runtime files (logs, pids, dev cache) — never track these.
+# The autosave-watch must NOT snapshot constant log churn into git.
+dev.log
+.zscripts/*.log
+.zscripts/*.pid
+.next/dev/
+.zscripts/autosave.pid
