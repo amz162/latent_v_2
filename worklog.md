@@ -685,3 +685,20 @@ Stage Summary:
 - New files: scripts/precompute_all_pattern_caches.ts, .zscripts/llm-enrich-loop.sh, src/app/api/price-patterns/route.ts, src/app/api/result-patterns/route.ts.
 - Modified: src/app/api/price-patterns/[symbol]/route.ts + src/app/api/result-patterns/[symbol]/route.ts (after() self-heal), src/lib/latent/store.ts + src/components/latent/PortfolioTab.tsx (mergeBuyLots integration on top of 28-B).
 - LLM enrichment running in background with rate-limit resilience.
+
+---
+Task ID: 28 (orchestrator additions)
+Agent: main (orchestrator)
+Task: Final integration, end-to-end browser verification, git commit + push.
+
+Work Log:
+- End-to-end agent-browser verification (desktop 1280x800 + mobile 375x812):
+  * Portfolio (Issue B): added PPL watch-only → re-add attempt blocked with "PPL is already in your watchlist" message; added 100 sh @ 216 → moved from Watchlist to Holdings; added 50 sh @ 220 → ONE merged row "Buy 1: 216.00 × 100 / Buy 2: 220.00 × 50 / Avg buy: 217.33 × 150 total"; live P&L (210.17 − 217.33) × 150 = −1,074.5 exact; close dialog settles on avg (217.33 × 150), net −1,169 recorded, position reset to watch-only appearing once.
+  * Tracker (Issue C): pie chart renders a full bright donut for a single stock (previously nothing); live prices fetched for ALL portfolio symbols (PPL outside the 8 hardcoded); unknown sector → "Others" (100% slice, legend swatch #00E676); closed trades aggregated to ONE row per stock ("1 close · 150 shares sold · avg buy 217.33 · last sold 210.17"); Total P&L −2,535 = open −1,366 + closed −1,169 exact.
+  * Pattern Finder (Issue A): ENGRO Price Pattern tab (cached, gaps/pressure/seasonality rendered) + Result Pattern tab (cached, 63 quarters Mar 2009 → Sept 2024) — both served from the precomputed DB tables.
+- Added 10-minute per-symbol self-heal cooldown to both per-symbol pattern routes (prevents doomed 40s LLM attempts hammering the rate-limited endpoint on every visit).
+- Committed everything (11 files, +1625/−117) as 287a797a and pushed to origin/main on github.com/amz162/latent_v_2.git — changes are now permanently saved on the server.
+- Background: dev-watch (port 3000) and llm-enrich-loop both alive; LLM enrichment continues retrying through the current 429 throttle window and will fill remaining summaries as the quota recovers.
+
+Stage Summary:
+- All 3 issues implemented, browser-verified, committed, and pushed to the user's GitHub. Dev server healthy (200). Lint clean. No page errors.
