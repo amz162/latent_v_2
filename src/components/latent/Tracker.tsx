@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,7 @@ import {
   Calendar,
   PiggyBank,
   Loader2,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -140,6 +141,87 @@ function fmtPct(v: number, withSign = false): string {
 
 function fmtPkr(v: number): string {
   return `Rs. ${Math.round(v).toLocaleString("en-PK")}`;
+}
+
+// ─── Task 28-C: live quotes for EVERY portfolio symbol ──────────────────────
+// Patterned after usePortfolioLiveQuotes (PortfolioTab.tsx): fetches
+// /api/psx/live/batch whenever the symbol SET changes, auto-refreshes every
+// 60s (matching getLiveQuote's 60s server-side cache), and exposes a manual
+// refresh(). All setState calls happen inside .then/.catch callbacks — never
+// synchronously in the effect body.
+function useTrackerPortfolioQuotes(symbols: string[]): {
+  prices: Record<string, number>;
+  isLoading: boolean;
+  refresh: () => void;
+  lastUpdated: Date | null;
+} {
+  const key = symbols.join(",");
+  const [state, setState] = useState<{
+    key: string;
+    prices: Record<string, number>;
+    lastUpdated: Date | null;
+    loading: boolean;
+  }>({ key: "", prices: {}, lastUpdated: null, loading: false });
+  const [refreshTick, setRefreshTick] = useState(0);
+
+  useEffect(() => {
+    if (!key) return;
+    let cancelled = false;
+    const symbolsList = key.split(",");
+    fetch(`/api/psx/live/batch?symbols=${encodeURIComponent(symbolsList.join(","))}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (cancelled) return;
+        if (d && d.prices && typeof d.prices === "object") {
+          setState({
+            key,
+            prices: d.prices as Record<string, number>,
+            lastUpdated: new Date(d.fetchedAt || Date.now()),
+            loading: false,
+          });
+        } else {
+          // No prices resolved — still mark this key as fetched so rows show
+          // "no live price" instead of a spinner forever.
+          setState({ key, prices: {}, lastUpdated: new Date(), loading: false });
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        // Keep stale prices for THIS key (if any); otherwise clear.
+        setState((s) => ({
+          key,
+          prices: s.key === key ? s.prices : {},
+          lastUpdated: new Date(),
+          loading: false,
+        }));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [key, refreshTick]);
+
+  // Auto-refresh every 60s — matches getLiveQuote's 60s cache TTL so the
+  // portfolio P&L stays current without manual button clicks.
+  useEffect(() => {
+    if (!key) return;
+    const id = setInterval(() => setRefreshTick((t) => t + 1), 60_000);
+    return () => clearInterval(id);
+  }, [key]);
+
+  const refresh = useCallback(() => {
+    setRefreshTick((t) => t + 1);
+    setState((s) => ({ ...s, loading: true }));
+  }, []);
+
+  // Prices are only valid for the CURRENT symbol key — avoids stale prices
+  // from a previous portfolio flashing in after positions change.
+  const hasData = state.key === key;
+  return {
+    prices: hasData ? state.prices : {},
+    lastUpdated: hasData ? state.lastUpdated : null,
+    isLoading: !!key && (!hasData || state.loading),
+    refresh,
+  };
 }
 
 export function Tracker() {
@@ -448,13 +530,45 @@ export function Tracker() {
   // Portfolio tracker — only positions with buyPrice != null && shares > 0
   // are tracked. Closed positions remain in the list and contribute to P&L.
   // Issue 23: keep closed trades visible + reflect them in top card stats.
+  //
+  // ─── Task 28-C: live quotes for EVERY portfolio symbol ─────────────────
+  // Previously livePriceMap was built ONLY from aiSignals (8 hardcoded
+  // COVERED_SYMBOLS) — any other held stock had NO live price, so market
+  // value / P&L showed "—" and the pie chart had no data. Now every open
+  // position + watch-only symbol (deduped) is batch-fetched from
+  // /api/psx/live/batch, with 60s auto-refresh + a manual refresh button.
+  const portfolioSymbols = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          portfolio.map((p) => (p.symbol || "").trim().toUpperCase()).filter(Boolean)
+        )
+      ),
+    [portfolio]
+  );
+  const {
+    prices: portfolioBatchPrices,
+    isLoading: portfolioPricesLoading,
+    refresh: refreshPortfolioPrices,
+    lastUpdated: portfolioPricesUpdatedAt,
+  } = useTrackerPortfolioQuotes(portfolioSymbols);
+
+  // Merged live-price map used EVERYWHERE in the Portfolio Tracker tab
+  // (stat cards, open-position rows, sector pie). Batch prices take
+  // priority; aiSignals prices are the fallback for anything the batch
+  // endpoint couldn't resolve.
   const livePriceMap = useMemo(() => {
     const m: Record<string, number> = {};
     for (const s of aiSignals) {
-      if (s.symbol && typeof s.currentPrice === "number") m[s.symbol] = s.currentPrice;
+      if (s.symbol && typeof s.currentPrice === "number") {
+        m[s.symbol.toUpperCase()] = s.currentPrice;
+      }
+    }
+    for (const [sym, price] of Object.entries(portfolioBatchPrices)) {
+      if (typeof price === "number" && price > 0) m[sym.toUpperCase()] = price;
     }
     return m;
-  }, [aiSignals]);
+  }, [aiSignals, portfolioBatchPrices]);
 
   const portfolioPositions = useMemo(
     () => portfolio.filter((p) => p.buyPrice !== null && p.shares > 0),
@@ -475,7 +589,7 @@ export function Tracker() {
       const invested = buy * p.shares;
       totalInvested += invested;
       openCount++;
-      const live = livePriceMap[p.symbol];
+      const live = livePriceMap[p.symbol.toUpperCase()];
       if (typeof live === "number") {
         const val = live * p.shares;
         totalValue += val;
@@ -524,15 +638,16 @@ export function Tracker() {
   const sectorData = useMemo(() => {
     const m = new Map<string, number>();
     for (const p of portfolioPositions) {
-      const live = livePriceMap[p.symbol];
+      const live = livePriceMap[p.symbol.toUpperCase()];
       const buy = (p.buyPrice as number) || 0;
       const price = typeof live === "number" ? live : buy;
       if (price <= 0 || p.shares <= 0) continue;
       const value = price * p.shares;
+      // Task 28-C: unknown/missing sector → exactly "Others".
       const sector =
         (p.sector && p.sector.trim()) ||
         sectorMap[p.symbol] ||
-        "Other";
+        "Others";
       m.set(sector, (m.get(sector) || 0) + value);
     }
     const total = Array.from(m.values()).reduce((s, v) => s + v, 0);
@@ -541,6 +656,54 @@ export function Tracker() {
       .map(([sector, value]) => ({ sector, value, pct: (value / total) * 100 }))
       .sort((a, b) => b.value - a.value);
   }, [portfolioPositions, livePriceMap, sectorMap]);
+
+  // ─── Task 28-C: closed trades — ONE row per stock ──────────────────────
+  // Aggregate every close event of a symbol into a single row: number of
+  // closes, TOTAL net P&L (green/red), total shares sold, weighted average
+  // buy price (Σ buyPrice×shares / Σ shares), last sell price + last close
+  // date. The individual close events remain available via the expandable
+  // row detail. Per-record net P&L results are untouched — only summed.
+  const [expandedClosedSymbol, setExpandedClosedSymbol] = useState<string | null>(null);
+  const closedStockRows = useMemo(() => {
+    const map = new Map<string, ClosedStockRowData>();
+    for (const t of closedTrades) {
+      const prev = map.get(t.symbol);
+      map.set(
+        t.symbol,
+        prev
+          ? {
+              symbol: t.symbol,
+              name: t.name || prev.name,
+              closes: prev.closes + 1,
+              totalNetPnl: prev.totalNetPnl + t.netPnl,
+              totalBuyCost: prev.totalBuyCost + t.buyCost,
+              totalSharesSold: prev.totalSharesSold + t.shares,
+              lastSellPrice: t.closedAt > prev.lastClosedAt ? t.sellPrice : prev.lastSellPrice,
+              lastClosedAt: t.closedAt > prev.lastClosedAt ? t.closedAt : prev.lastClosedAt,
+              trades: [...prev.trades, t],
+            }
+          : {
+              symbol: t.symbol,
+              name: t.name,
+              closes: 1,
+              totalNetPnl: t.netPnl,
+              totalBuyCost: t.buyCost,
+              totalSharesSold: t.shares,
+              lastSellPrice: t.sellPrice,
+              lastClosedAt: t.closedAt,
+              trades: [t],
+            }
+      );
+    }
+    return Array.from(map.values())
+      .map((g) => ({
+        ...g,
+        trades: [...g.trades].sort((a, b) => (a.closedAt < b.closedAt ? 1 : -1)),
+        avgBuy: g.totalSharesSold > 0 ? g.totalBuyCost / g.totalSharesSold : 0,
+        totalNetPnlPct: g.totalBuyCost > 0 ? (g.totalNetPnl / g.totalBuyCost) * 100 : 0,
+      }))
+      .sort((a, b) => (a.lastClosedAt < b.lastClosedAt ? 1 : -1));
+  }, [closedTrades]);
 
   const handleDownload = () => {
     if (!signalStats) return;
@@ -1190,6 +1353,29 @@ export function Tracker() {
               </Card>
             ) : (
               <>
+                {/* Task 28-C: live-price refresh — the batch endpoint covers
+                    EVERY portfolio symbol (not just the 8 covered ones) and
+                    auto-refreshes every 60s. */}
+                <div className="flex items-center justify-end gap-2 mb-3 flex-wrap">
+                  {portfolioPricesUpdatedAt && (
+                    <span className="text-[10px] text-[#64748B] font-mono">
+                      Live prices updated{" "}
+                      {portfolioPricesUpdatedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={refreshPortfolioPrices}
+                    disabled={portfolioPricesLoading}
+                    className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] h-7"
+                  >
+                    <RefreshCw
+                      className={`h-3 w-3 mr-1.5 ${portfolioPricesLoading ? "animate-spin" : ""}`}
+                    />
+                    Refresh
+                  </Button>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                   <Card className="bg-[#131829] border-white/[0.08]">
                     <CardContent className="p-4">
@@ -1310,7 +1496,7 @@ export function Tracker() {
                     <div className="p-4 border-b border-white/[0.06]">
                       <h3 className="font-semibold text-[#F4F7FB]">Open positions ({portfolioPositions.length})</h3>
                       <p className="text-xs text-[#94A3B8] mt-0.5">
-                        Live P&amp;L based on current PSX prices for covered stocks · to close a position, use the
+                        Live P&amp;L from current PSX prices for every held stock · to close a position, use the
                         wallet-icon close flow in the <span className="text-[#00E676]">Portfolio</span> tab.
                       </p>
                     </div>
@@ -1324,11 +1510,11 @@ export function Tracker() {
                           <PortfolioRow
                             key={p.symbol}
                             position={p}
-                            livePrice={livePriceMap[p.symbol]}
+                            livePrice={livePriceMap[p.symbol.toUpperCase()]}
                             sectorLabel={
                               (p.sector && p.sector.trim()) ||
                               sectorMap[p.symbol] ||
-                              undefined
+                              "Others"
                             }
                           />
                         ))
@@ -1337,24 +1523,38 @@ export function Tracker() {
                   </CardContent>
                 </Card>
 
-                {/* Issue 18: Closed trades card (from close flow in PortfolioTab) */}
+                {/* Task 28-C: closed trades — ONE row per stock (aggregated
+                    across every close event). Click a row to expand the
+                    individual closes. */}
                 <Card className="bg-[#131829] border-white/[0.08]">
                   <CardContent className="p-0">
                     <div className="p-4 border-b border-white/[0.06]">
-                      <h3 className="font-semibold text-[#F4F7FB]">Closed trades ({closedTrades.length})</h3>
+                      <h3 className="font-semibold text-[#F4F7FB]">
+                        Closed trades ({closedStockRows.length} {closedStockRows.length === 1 ? "stock" : "stocks"} ·{" "}
+                        {closedTrades.length} {closedTrades.length === 1 ? "close" : "closes"})
+                      </h3>
                       <p className="text-xs text-[#94A3B8] mt-0.5">
-                        Each row is a trade closed via the Portfolio tab&apos;s close flow — recorded with buy/sell
-                        prices, broker commission (0.15% × sell × 2), CGT (15% if ≤12mo, 0% if &gt;12mo),
-                        and net P&amp;L.
+                        One row per stock — totals across every close made via the Portfolio tab&apos;s close flow
+                        (broker commission 0.15% × sell × 2, CGT 15% if ≤12mo / 0% if &gt;12mo). Click a row
+                        to expand each close event.
                       </p>
                     </div>
                     <div className="divide-y divide-white/[0.04]">
-                      {closedTrades.length === 0 ? (
+                      {closedStockRows.length === 0 ? (
                         <div className="p-6 text-center text-xs text-[#64748B]">
                           No closed trades yet. Close a position from the Portfolio tab to see it here.
                         </div>
                       ) : (
-                        closedTrades.map((t) => <ClosedTradeRow key={t.id} trade={t} />)
+                        closedStockRows.map((row) => (
+                          <ClosedStockRow
+                            key={row.symbol}
+                            row={row}
+                            expanded={expandedClosedSymbol === row.symbol}
+                            onToggle={() =>
+                              setExpandedClosedSymbol((s) => (s === row.symbol ? null : row.symbol))
+                            }
+                          />
+                        ))
                       )}
                     </div>
                   </CardContent>
@@ -1377,10 +1577,27 @@ export function Tracker() {
 }
 
 // ─── Issue 18: SVG-based donut pie chart for sector distribution ──────────
+// Task 28-C: brighter, high-distinction categorical palette — 14 vivid
+// colors with strong contrast on the #131829 card, alternating warm/cool
+// hues so no two ADJACENT slices look similar (same-family hues such as
+// yellow/amber or green/mint are spread far apart in the list). The legend
+// swatches use the exact same index mapping (SECTOR_COLORS[i % len]) as the
+// pie slices themselves, so a sector keeps its color in both places.
 const SECTOR_COLORS = [
-  "#00E676", "#FBBF24", "#FF5C5C", "#22E881", "#4ADE80",
-  "#94A3B8", "#F59E0B", "#10B981", "#EF4444", "#8B5CF6",
-  "#3B82F6", "#EC4899", "#14B8A6", "#A855F7", "#6366F1",
+  "#00E676", //  1 vivid green
+  "#FFD60A", //  2 bright yellow
+  "#2DD4FF", //  3 electric cyan
+  "#FF5C5C", //  4 coral red
+  "#06D6A0", //  5 bright teal
+  "#FF8C42", //  6 tangerine orange
+  "#F72585", //  7 hot magenta
+  "#B4F461", //  8 lime
+  "#C77DFF", //  9 vivid violet
+  "#FF5D8F", // 10 salmon pink
+  "#FFB627", // 11 golden amber
+  "#8AFFC1", // 12 mint
+  "#F4F7FB", // 13 ice white
+  "#FF7EDB", // 14 orchid pink
 ];
 
 function SectorPieChart({ data }: { data: { sector: string; value: number; pct: number }[] }) {
@@ -1390,14 +1607,14 @@ function SectorPieChart({ data }: { data: { sector: string; value: number; pct: 
   const r = 65;
   const innerR = 30; // donut hole
 
-  // SVG arc paths for each sector slice. Cumulative angle is computed
-  // functionally from the preceding slices' percentages (no mutation) to
-  // satisfy react-hooks/immutability.
-  const slices = data.map((d, i) => {
-    const cumulativeBeforePct = data.slice(0, i).reduce((s, x) => s + x.pct, 0);
-    const startAngle = -Math.PI / 2 + (cumulativeBeforePct / 100) * 2 * Math.PI;
-    const angleSpan = (d.pct / 100) * 2 * Math.PI;
-    const endAngle = startAngle + angleSpan;
+  // SVG arc path for a donut slice spanning [startPct, startPct+spanPct]
+  // of the ring. Cumulative angle is computed functionally from the
+  // preceding slices' percentages (no mutation) to satisfy
+  // react-hooks/immutability.
+  const pathFor = (startPct: number, spanPct: number) => {
+    const startAngle = -Math.PI / 2 + (startPct / 100) * 2 * Math.PI;
+    const endAngle = -Math.PI / 2 + ((startPct + spanPct) / 100) * 2 * Math.PI;
+    const angleSpan = endAngle - startAngle;
 
     // Outer arc endpoints
     const x1 = cx + r * Math.cos(startAngle);
@@ -1412,8 +1629,25 @@ function SectorPieChart({ data }: { data: { sector: string; value: number; pct: 
 
     const largeArc = angleSpan > Math.PI ? 1 : 0;
     // Donut slice path: outer arc forward + line in + inner arc backward + close
-    const path = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${xi1} ${yi1} Z`;
-    return { path, color: SECTOR_COLORS[i % SECTOR_COLORS.length], ...d };
+    return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${xi1} ${yi1} Z`;
+  };
+
+  const slices = data.flatMap((d, i) => {
+    const color = SECTOR_COLORS[i % SECTOR_COLORS.length];
+    const cumulativeBeforePct = data.slice(0, i).reduce((s, x) => s + x.pct, 0);
+
+    // Task 28-C: a single ~360° slice degenerates — the arc path has
+    // start point == end point and SVG renders NOTHING (the "1 stock
+    // added, graph shows nothing" bug). Render the full donut as ONE path
+    // with two subpaths (outer circle + inner circle) using fill-rule
+    // "evenodd", which punches a clean hole and always renders.
+    if (data.length === 1 || d.pct >= 99.9) {
+      const circle = (radius: number) =>
+        `M ${cx - radius} ${cy} A ${radius} ${radius} 0 1 1 ${cx + radius} ${cy} A ${radius} ${radius} 0 1 1 ${cx - radius} ${cy} Z`;
+      return [{ path: `${circle(r)} ${circle(innerR)}`, color, evenOdd: true, ...d }];
+    }
+
+    return [{ path: pathFor(cumulativeBeforePct, d.pct), color, evenOdd: false, ...d }];
   });
 
   return (
@@ -1430,6 +1664,7 @@ function SectorPieChart({ data }: { data: { sector: string; value: number; pct: 
           key={i}
           d={s.path}
           fill={s.color}
+          fillRule={s.evenOdd ? "evenodd" : undefined}
           stroke="#0A0E1A"
           strokeWidth={1.5}
         >
@@ -1459,7 +1694,24 @@ interface PortfolioRowProps {
 }
 
 function PortfolioRow({ position, livePrice, sectorLabel }: PortfolioRowProps) {
-  const buy = (position.buyPrice as number) || 0;
+  // Task 28-B (parallel work): positions may carry per-lot buy history in
+  // an optional `buys` field. Read it defensively — it may be absent on
+  // positions persisted before that field existed.
+  const lots = (position as { buys?: { price: number; shares: number; at: string }[] }).buys;
+  const validLots = Array.isArray(lots)
+    ? lots.filter(
+        (l) =>
+          l &&
+          typeof l.price === "number" &&
+          l.price > 0 &&
+          typeof l.shares === "number" &&
+          l.shares > 0
+      )
+    : [];
+  const lotShares = validLots.reduce((s, l) => s + l.shares, 0);
+  const lotAvgBuy =
+    lotShares > 0 ? validLots.reduce((s, l) => s + l.price * l.shares, 0) / lotShares : null;
+  const buy = (position.buyPrice as number) || lotAvgBuy || 0;
   const referencePrice: number | null = typeof livePrice === "number" ? livePrice : null;
   const positionValue = referencePrice !== null ? referencePrice * position.shares : null;
   const invested = buy * position.shares;
@@ -1467,6 +1719,12 @@ function PortfolioRow({ position, livePrice, sectorLabel }: PortfolioRowProps) {
   const pnlPct = pnl !== null && invested > 0 ? (pnl / invested) * 100 : null;
   const isWin = pnl !== null && pnl > 0;
   const isLoss = pnl !== null && pnl < 0;
+  // Task 28-C: multi-lot positions show a compact "N buys · avg X" hint;
+  // single-lot / legacy positions keep the "Buy: X · N shares" line.
+  const buyLine =
+    validLots.length > 1
+      ? `${validLots.length} buys · avg ${buy > 0 ? buy.toFixed(2) : "—"}`
+      : `Buy: ${buy > 0 ? buy.toFixed(2) : "—"} · ${position.shares.toLocaleString()} shares`;
 
   return (
     <div className="p-4 hover:bg-white/[0.02]">
@@ -1488,7 +1746,7 @@ function PortfolioRow({ position, livePrice, sectorLabel }: PortfolioRowProps) {
               )}
             </div>
             <div className="text-[11px] text-[#94A3B8] mt-0.5 truncate">
-              Buy: {buy > 0 ? buy.toFixed(2) : "—"} · {position.shares.toLocaleString()} shares
+              {buyLine}
               {typeof livePrice === "number" && (
                 <span className="text-[#64748B]"> · Live: {livePrice.toFixed(2)}</span>
               )}
@@ -1517,17 +1775,23 @@ function PortfolioRow({ position, livePrice, sectorLabel }: PortfolioRowProps) {
   );
 }
 
-// ─── Issue 18: Closed trade row (from the Portfolio close flow) ────────────
-interface ClosedTradeRowProps {
-  trade: {
+// ─── Task 28-C: closed trades aggregated — ONE row per stock ────────────────
+// Aggregate shape: everything summed across a stock's close events, plus the
+// per-event records kept for the expandable detail.
+interface ClosedStockRowData {
+  symbol: string;
+  name: string;
+  closes: number;
+  totalNetPnl: number;
+  totalBuyCost: number;
+  totalSharesSold: number;
+  lastSellPrice: number;
+  lastClosedAt: string;
+  trades: {
     id: string;
-    symbol: string;
-    name: string;
     buyPrice: number;
     shares: number;
     sellPrice: number;
-    buyCost: number;
-    sellValue: number;
     commission: number;
     cgt: number;
     grossPnl: number;
@@ -1536,59 +1800,124 @@ interface ClosedTradeRowProps {
     holdingDays: number;
     taxRate: number;
     closedAt: string;
-  };
+  }[];
 }
 
-function ClosedTradeRow({ trade }: ClosedTradeRowProps) {
-  const isWin = trade.netPnl > 0;
-  const isLoss = trade.netPnl < 0;
+function ClosedStockRow({
+  row,
+  expanded,
+  onToggle,
+}: {
+  row: ClosedStockRowData & { avgBuy: number; totalNetPnlPct: number };
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  const isWin = row.totalNetPnl > 0;
+  const isLoss = row.totalNetPnl < 0;
+  const pnlClass = isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]";
   return (
-    <div className="p-4 hover:bg-white/[0.02]">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="h-9 w-9 rounded-lg flex items-center justify-center font-mono font-bold text-xs shrink-0 bg-white/[0.04] text-[#94A3B8]">
-            {trade.symbol.slice(0, 4)}
+    <div className="hover:bg-white/[0.02]">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        className="w-full text-left p-4 focus:outline-none focus-visible:bg-white/[0.04] cursor-pointer"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="h-9 w-9 rounded-lg flex items-center justify-center font-mono font-bold text-xs shrink-0 bg-white/[0.04] text-[#94A3B8]">
+              {row.symbol.slice(0, 4)}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-semibold text-[#F4F7FB] text-sm">{row.symbol}</span>
+                {row.name && row.name !== row.symbol && (
+                  <span className="text-[10px] text-[#64748B] truncate max-w-[140px] hidden sm:inline">
+                    {row.name}
+                  </span>
+                )}
+                <Badge variant="outline" className="text-[9px] py-0 h-4 border-white/[0.16] text-[#94A3B8] bg-white/[0.04]">
+                  CLOSED
+                </Badge>
+                {row.closes > 1 && (
+                  <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]">
+                    {row.closes} closes
+                  </Badge>
+                )}
+              </div>
+              <div className="text-[11px] text-[#94A3B8] mt-0.5 truncate">
+                {row.closes} {row.closes === 1 ? "close" : "closes"} · {row.totalSharesSold.toLocaleString()} shares
+                sold · avg buy {row.avgBuy.toFixed(2)} · last sold {row.lastSellPrice.toFixed(2)}
+              </div>
+              <div className="text-[10px] text-[#64748B] mt-0.5">
+                Last close{" "}
+                {new Date(row.lastClosedAt).toLocaleDateString("en-PK", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </div>
+            </div>
           </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-[#F4F7FB] text-sm">{trade.symbol}</span>
-              <Badge variant="outline" className="text-[9px] py-0 h-4 border-white/[0.16] text-[#94A3B8] bg-white/[0.04]">
-                CLOSED
-              </Badge>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="text-right">
+              <div className={`text-sm font-mono font-semibold ${pnlClass}`}>
+                {row.totalNetPnl >= 0 ? "+" : ""}{fmtPkr(row.totalNetPnl)}
+              </div>
+              <div className={`text-[10px] font-mono ${pnlClass}`}>
+                {row.totalNetPnlPct >= 0 ? "+" : ""}{row.totalNetPnlPct.toFixed(2)}% net
+              </div>
             </div>
-            <div className="text-[11px] text-[#94A3B8] mt-0.5 truncate">
-              Buy {trade.buyPrice.toFixed(2)} × {trade.shares.toLocaleString()} → Sell {trade.sellPrice.toFixed(2)} · held {trade.holdingDays}d
-            </div>
+            <ChevronDown
+              className={`h-4 w-4 text-[#64748B] transition-transform ${expanded ? "rotate-180" : ""}`}
+              aria-hidden
+            />
           </div>
         </div>
-        <div className="text-right shrink-0">
-          <div className={`text-sm font-mono font-semibold ${isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`}>
-            {trade.netPnl >= 0 ? "+" : ""}{fmtPkr(trade.netPnl)}
-          </div>
-          <div className={`text-[10px] font-mono ${isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`}>
-            {trade.netPnlPct >= 0 ? "+" : ""}{trade.netPnlPct.toFixed(2)}% net
-          </div>
+      </button>
+      {expanded && (
+        <div className="px-4 pb-4 space-y-1.5">
+          {row.trades.map((t, idx) => (
+            <div
+              key={t.id}
+              className="rounded-md border border-white/[0.06] bg-[#0A0E1A] px-3 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1"
+            >
+              <span className="text-[10px] text-[#94A3B8]">
+                <span className="text-[#64748B] font-mono mr-1.5">#{idx + 1}</span>
+                Buy {t.buyPrice.toFixed(2)} × {t.shares.toLocaleString()} → Sell {t.sellPrice.toFixed(2)} · held{" "}
+                {t.holdingDays}d
+              </span>
+              <span className="text-[10px] font-mono flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                <span className="text-[#64748B]">
+                  Gross{" "}
+                  <span className={t.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}>
+                    {t.grossPnl >= 0 ? "+" : ""}{fmtPkr(t.grossPnl)}
+                  </span>
+                </span>
+                <span className="text-[#64748B]">
+                  Comm <span className="text-[#FF5C5C]">-{fmtPkr(t.commission)}</span>
+                </span>
+                <span className="text-[#64748B]">
+                  CGT{" "}
+                  <span className="text-[#FF5C5C]">
+                    -{fmtPkr(t.cgt)} ({(t.taxRate * 100).toFixed(0)}%)
+                  </span>
+                </span>
+                <span className={t.netPnl >= 0 ? "text-[#00E676] font-semibold" : "text-[#FF5C5C] font-semibold"}>
+                  {t.netPnl >= 0 ? "+" : ""}{fmtPkr(t.netPnl)} net
+                </span>
+                <span className="text-[#475569]">
+                  {new Date(t.closedAt).toLocaleDateString("en-PK", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+              </span>
+            </div>
+          ))}
         </div>
-      </div>
-      {/* Inline breakdown */}
-      <div className="mt-2 text-[10px] text-[#64748B] flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span>
-          Gross:{" "}
-          <span className={`font-mono ${trade.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
-            {trade.grossPnl >= 0 ? "+" : ""}{fmtPkr(trade.grossPnl)}
-          </span>
-        </span>
-        <span>
-          Commission: <span className="text-[#FF5C5C] font-mono">-{fmtPkr(trade.commission)}</span>
-        </span>
-        <span>
-          CGT ({(trade.taxRate * 100).toFixed(0)}%):{" "}
-          <span className="text-[#FF5C5C] font-mono">-{fmtPkr(trade.cgt)}</span>
-        </span>
-        <span className="text-[#475569]">
-          · closed {new Date(trade.closedAt).toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" })}
-        </span>
-      </div>
+      )}
     </div>
   );
 }

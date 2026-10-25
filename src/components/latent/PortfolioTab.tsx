@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { AppNav } from "./AppNav";
 import { StockSearch } from "./StockSearch";
-import { useLatentStore, type PortfolioPosition } from "@/lib/latent/store";
+import { useLatentStore, getBuyLots, mergeBuyLots, type PortfolioPosition, type BuyLot } from "@/lib/latent/store";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
 import {
   Plus,
@@ -53,6 +53,8 @@ interface CloseTarget {
   buyPrice: number;
   shares: number;
   addedAt: string;
+  // Issue 28-B: snapshot of the lots behind the (averaged) buy price.
+  buys: BuyLot[];
 }
 
 interface CloseCalc {
@@ -219,30 +221,135 @@ export function PortfolioTab() {
   const [closePriceLoading, setClosePriceLoading] = useState(false);
   const [closeSubmitting, setCloseSubmitting] = useState(false);
 
+  // ─── Issue 28-B: add-flow context for the currently-picked symbol ───
+  // Drives the in-dialog hint + Add-button label ("add" vs "merge as a new
+  // buy lot" vs "move from watchlist to holdings"). Same holding rule as the
+  // isHolding() check below: shares > 0 AND buyPrice != null.
+  const selectedExisting = selectedSymbol
+    ? portfolio.find((p) => p.symbol === selectedSymbol)
+    : undefined;
+  const selectedIsHolding =
+    !!selectedExisting &&
+    selectedExisting.shares > 0 &&
+    selectedExisting.buyPrice !== null &&
+    selectedExisting.buyPrice !== undefined;
+
   const handleAdd = () => {
     if (!selectedSymbol) {
       toast.error("Pick a stock first");
       return;
     }
-    // Issue 19 behavior: until the user specifies shares (volume), the stock
-    // is added as "watch only" (no P&L tracking). This is intentional — the
-    // user can add shares later. We do not move it to "holdings" until
-    // both buyPrice AND shares are provided.
     const name = selectedName || selectedSymbol;
+    const sharesEntered = shares.trim() !== "";
+    const priceEntered = buyPrice.trim() !== "";
+    const parsedShares = sharesEntered ? parseInt(shares, 10) : 0;
+    const parsedPrice = priceEntered ? parseFloat(buyPrice) : NaN;
+
+    // Basic numeric guards — negative/NaN inputs would corrupt lot math.
+    if (sharesEntered && (!Number.isFinite(parsedShares) || parsedShares <= 0)) {
+      toast.error("Enter a valid number of shares (greater than zero)");
+      return;
+    }
+    if (priceEntered && (!Number.isFinite(parsedPrice) || parsedPrice <= 0)) {
+      toast.error("Enter a valid buy price (greater than zero)");
+      return;
+    }
+
+    const addingPosition = parsedShares > 0;
+
+    // ─── Issue 28-B: one row per symbol — duplicate guard ───
+    const existing = portfolio.find((p) => p.symbol === selectedSymbol);
+    const existingIsHolding =
+      !!existing &&
+      existing.shares > 0 &&
+      existing.buyPrice !== null &&
+      existing.buyPrice !== undefined;
+
+    if (!addingPosition) {
+      // Issue 19 behavior: until the user specifies shares (volume), the
+      // stock is added as "watch only" (no P&L tracking). A symbol may only
+      // exist ONCE anywhere in the portfolio array — as a holding OR as a
+      // watch-only item — so block duplicate watch-only adds with a clear
+      // message and keep the dialog open so the user sees it.
+      if (existing) {
+        toast.error(
+          `${selectedSymbol} is already in your ${existingIsHolding ? "portfolio" : "watchlist"}`
+        );
+        return;
+      }
+    } else if (!priceEntered) {
+      // Every buy lot needs a price for the weighted-average cost basis.
+      toast.error("Buy price is required when adding shares");
+      return;
+    }
+
+    // Pre-compute the merge result for the case-specific toast. Uses the SAME
+    // pure helper as the store action (mergeBuyLots) so the previewed avg can
+    // never drift from the persisted one — ((Σ price×shares)/(Σ shares)).
+    const mergedLots =
+      addingPosition && existing
+        ? mergeBuyLots(existing, { price: parsedPrice, shares: parsedShares })
+        : [];
+    const mergedShares = mergedLots.reduce((n, l) => n + l.shares, 0);
+    const mergedAvg =
+      mergedShares > 0
+        ? mergedLots.reduce((n, l) => n + l.price * l.shares, 0) / mergedShares
+        : 0;
+
+    // The store's addPortfolioPosition handles the cases by symbol:
+    //   new symbol → create · existing holding → merge as an additional
+    //   buy lot (weighted-average buyPrice) · existing watch-only → convert
+    //   to a holding (leaves the watchlist section, becomes a Holdings row).
     addPosition({
       symbol: selectedSymbol,
       name,
       sector: selectedSector || undefined,
-      buyPrice: buyPrice ? parseFloat(buyPrice) : null,
-      shares: shares ? parseInt(shares) : 0,
+      buyPrice: priceEntered ? parsedPrice : null,
+      shares: parsedShares,
     });
-    pushNotification({
-      type: "info",
-      title: "Stock added to portfolio",
-      body: `${selectedSymbol} added${shares ? ` (${shares} shares${buyPrice ? ` @ PKR ${buyPrice}` : ""})` : " (watch only)"}`,
-      linkView: "portfolio",
-    });
-    toast.success(`${selectedSymbol} added to portfolio${shares ? " with " + shares + " shares" : " (watch only)"}`);
+
+    if (addingPosition) {
+      if (!existing) {
+        toast.success(
+          `${selectedSymbol} added to portfolio (${parsedShares} shares @ ${parsedPrice.toFixed(2)})`
+        );
+        pushNotification({
+          type: "info",
+          title: "Stock added to portfolio",
+          body: `${selectedSymbol} added (${parsedShares} shares @ PKR ${parsedPrice.toFixed(2)})`,
+          linkView: "portfolio",
+        });
+      } else if (existingIsHolding) {
+        toast.success(
+          `Added Buy ${mergedLots.length} to ${selectedSymbol} — ${parsedShares} shares @ ${parsedPrice.toFixed(2)} · new avg ${mergedAvg.toFixed(2)} (${mergedShares} shares)`
+        );
+        pushNotification({
+          type: "info",
+          title: `Buy added to ${selectedSymbol}`,
+          body: `Buy ${mergedLots.length}: ${parsedShares} shares @ PKR ${parsedPrice.toFixed(2)} · new weighted avg PKR ${mergedAvg.toFixed(2)} (${mergedShares} shares)`,
+          linkView: "portfolio",
+        });
+      } else {
+        toast.success(
+          `${selectedSymbol} moved from watchlist to portfolio (${parsedShares} shares @ ${parsedPrice.toFixed(2)})`
+        );
+        pushNotification({
+          type: "info",
+          title: `${selectedSymbol} moved to portfolio`,
+          body: `${selectedSymbol} moved from watchlist to portfolio (${parsedShares} shares @ PKR ${parsedPrice.toFixed(2)})`,
+          linkView: "portfolio",
+        });
+      }
+    } else {
+      toast.success(`${selectedSymbol} added to watchlist`);
+      pushNotification({
+        type: "info",
+        title: "Stock added to watchlist",
+        body: `${selectedSymbol} added (watch only)`,
+        linkView: "portfolio",
+      });
+    }
+
     setAddOpen(false);
     setSelectedSymbol("");
     setSelectedName("");
@@ -306,9 +413,10 @@ export function PortfolioTab() {
       symbol: p.symbol,
       name: p.name,
       sector: p.sector,
-      buyPrice: p.buyPrice as number,
+      buyPrice: p.buyPrice as number, // weighted average of the lots below
       shares: p.shares,
       addedAt: p.addedAt,
+      buys: getBuyLots(p),
     };
     setCloseTarget(target);
     // Pre-fill with cached live price if available (from /api/psx/live/batch)
@@ -377,6 +485,8 @@ export function PortfolioTab() {
       holdingDays: c.holdingDays,
       taxRate: c.taxRate,
       closedAt: new Date().toISOString(),
+      // Issue 28-B: snapshot of the buy lots behind the averaged buy price.
+      buys: t.buys,
     };
     closePositionFromPortfolio(t.symbol, closedTrade);
     pushNotification({
@@ -469,10 +579,19 @@ export function PortfolioTab() {
                       {selectedName && <span className="text-[#64748B]"> — {selectedName}</span>}
                     </div>
                   )}
+                  {selectedSymbol && selectedExisting && (
+                    <div
+                      className={`text-[10px] mt-1 leading-relaxed ${selectedIsHolding ? "text-[#FBBF24]" : "text-[#94A3B8]"}`}
+                    >
+                      {selectedIsHolding
+                        ? `${selectedSymbol} is already in your portfolio — adding shares merges as a new buy lot at the weighted-average price.`
+                        : `${selectedSymbol} is already in your watchlist — adding shares + buy price moves it to Holdings.`}
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label className="text-[#94A3B8]">Buy price (optional)</Label>
+                    <Label className="text-[#94A3B8]">Buy price (required with shares)</Label>
                     <Input
                       value={buyPrice}
                       onChange={(e) => setBuyPrice(e.target.value)}
@@ -495,10 +614,11 @@ export function PortfolioTab() {
                   </div>
                 </div>
                 <p className="text-[11px] text-[#64748B] leading-relaxed">
-                  <span className="text-[#94A3B8] font-semibold">Issue 19 behavior:</span>{' '}
-                  The stock is <span className="text-[#00E676] font-semibold">not moved to holdings</span> until
-                  you specify the number of shares. Leaving shares empty adds the stock as a
-                  <span className="text-[#FBBF24] font-semibold"> watch-only item</span> (no P&L tracking). You can add shares later.
+                  <span className="text-[#94A3B8] font-semibold">How adds work:</span>{' '}
+                  Leave <span className="text-[#FBBF24] font-semibold">shares empty</span> for a watch-only item (no P&L
+                  tracking). Adding shares + buy price creates a holding — or, if you already hold the stock, merges
+                  as an extra <span className="text-[#00E676] font-semibold">buy lot</span> and your cost basis becomes
+                  the <span className="text-[#00E676] font-semibold">weighted-average price</span>. A stock never appears twice.
                 </p>
                 <Button
                   onClick={handleAdd}
@@ -506,7 +626,11 @@ export function PortfolioTab() {
                   className="w-full bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold"
                 >
                   {selectedSymbol
-                    ? `Add ${selectedSymbol}${shares ? ` (${shares} shares)` : " (watch only)"}`
+                    ? shares.trim() !== ""
+                      ? selectedIsHolding
+                        ? `Add buy to ${selectedSymbol} (merge)`
+                        : `Add ${selectedSymbol} (${shares} shares)`
+                      : `Add ${selectedSymbol} (watch only)`
                     : "Add to portfolio"}
                 </Button>
               </div>
@@ -671,6 +795,15 @@ export function PortfolioTab() {
                     const isLoss = pnl < 0;
                     const currentValue =
                       currentPrice !== null ? p.shares * currentPrice : null;
+                    // ─── Issue 28-B: buy lots + weighted-average cost display ───
+                    // getBuyLots() back-fills legacy positions (persisted before
+                    // the `buys` field existed) from buyPrice × shares.
+                    const lots = getBuyLots(p);
+                    const lotsTotalShares = lots.reduce((n, l) => n + l.shares, 0);
+                    const lotsAvg =
+                      lotsTotalShares > 0
+                        ? lots.reduce((n, l) => n + l.price * l.shares, 0) / lotsTotalShares
+                        : (p.buyPrice as number);
                     const suggestion =
                       currentPrice === null
                         ? "Live price unavailable — check quote source"
@@ -729,9 +862,25 @@ export function PortfolioTab() {
                                 </Badge>
                               </div>
                               <div className="text-[11px] text-[#94A3B8] truncate max-w-[300px]">{p.name}</div>
-                              <div className="text-[10px] text-[#64748B] mt-0.5 font-mono">
-                                Buy: {p.buyPrice} × {p.shares} = PKR {((p.buyPrice as number) * p.shares).toLocaleString()}
-                              </div>
+                              {lots.length > 1 ? (
+                                <div className="mt-0.5">
+                                  {lots.map((lot, li) => (
+                                    <div
+                                      key={`${p.symbol}-lot-${li}`}
+                                      className="text-[10px] text-[#64748B] font-mono leading-[1.5]"
+                                    >
+                                      Buy {li + 1}: {lot.price.toFixed(2)} × {lot.shares.toLocaleString()}
+                                    </div>
+                                  ))}
+                                  <div className="text-[10px] font-mono font-semibold leading-[1.5] text-[#00E676]/90">
+                                    Avg buy: {lotsAvg.toFixed(2)} × {lotsTotalShares.toLocaleString()} total
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="text-[10px] text-[#64748B] mt-0.5 font-mono">
+                                  Buy: {p.buyPrice} × {p.shares} = PKR {((p.buyPrice as number) * p.shares).toLocaleString()}
+                                </div>
+                              )}
                             </button>
 
                             {/* Price + P&L (Issue 15) */}
@@ -944,12 +1093,29 @@ export function PortfolioTab() {
                       <div className="text-[11px] text-[#94A3B8] truncate max-w-[260px]">{closeTarget.name}</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[11px] text-[#64748B]">Buy price × shares</div>
+                      <div className="text-[11px] text-[#64748B]">
+                        {closeTarget.buys.length > 1 ? "Avg buy price × shares" : "Buy price × shares"}
+                      </div>
                       <div className="font-mono text-sm text-[#F4F7FB]">
                         {closeTarget.buyPrice.toFixed(2)} × {closeTarget.shares.toLocaleString()}
                       </div>
                     </div>
                   </div>
+                  {closeTarget.buys.length > 1 && (
+                    <div className="mt-2 pt-2 border-t border-white/[0.06]">
+                      {closeTarget.buys.map((l, li) => (
+                        <div
+                          key={`${closeTarget.symbol}-lot-${li}`}
+                          className="text-[9px] font-mono text-[#64748B] leading-[1.6]"
+                        >
+                          Buy {li + 1}: {l.price.toFixed(2)} × {l.shares.toLocaleString()}
+                        </div>
+                      ))}
+                      <div className="text-[9px] font-mono font-semibold leading-[1.6] text-[#00E676]/80">
+                        Avg buy: {closeTarget.buyPrice.toFixed(2)} × {closeTarget.shares.toLocaleString()} — close settles on the average
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Sell price input */}

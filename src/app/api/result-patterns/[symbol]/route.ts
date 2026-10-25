@@ -8,6 +8,7 @@
 // Recompute happens ONLY via ?refresh=1 (explicit user action) or the
 // precompute script (which upserts, never deletes).
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
 import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { db } from "@/lib/db";
@@ -41,6 +42,19 @@ Your JSON output shape (exactly):
 
 const LLM_TIMEOUT_MS = 40_000;
 
+// Task 28-A: self-heal cooldown — when the LLM endpoint is rate-limited the
+// after() callback fails after 40s. Without a cooldown, every visit to the
+// same symbol would spawn another doomed attempt. One try per symbol per
+// 10 minutes is plenty (the background enrichment loop also retries).
+const SELF_HEAL_COOLDOWN_MS = 10 * 60 * 1000;
+const selfHealAttempts = new Map<string, number>();
+function shouldSelfHeal(symbol: string): boolean {
+  const last = selfHealAttempts.get(symbol) || 0;
+  if (Date.now() - last < SELF_HEAL_COOLDOWN_MS) return false;
+  selfHealAttempts.set(symbol, Date.now());
+  return true;
+}
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ symbol: string }> }
@@ -62,6 +76,24 @@ export async function GET(
         const results = JSON.parse(cached.resultsJson) as QuarterlyResult[];
         const patterns = JSON.parse(cached.patternsJson) as DetectedPattern[];
         const llmSummary = safeParseSummary(cached.summaryJson);
+        // Task 28-A self-heal: engine results are precomputed for every stock
+        // with quarterly data; the LLM layer may still be missing (background
+        // enrichment fills them in). Serve the cached result INSTANTLY and
+        // generate the missing summary after the response is sent.
+        if (!llmSummary && patterns.length > 0 && results.length >= 4 && shouldSelfHeal(symbol)) {
+          after(async () => {
+            try {
+              const llm = await explainWithLlm(symbol, results[0]?.company || symbol, results, patterns);
+              await db.resultPatternCache.update({
+                where: { symbol },
+                data: { summaryJson: JSON.stringify(llm) },
+              });
+              console.log(`[result-patterns] self-healed LLM summary for ${symbol}`);
+            } catch (err) {
+              console.warn(`[result-patterns] self-heal LLM failed for ${symbol}:`, err instanceof Error ? err.message : err);
+            }
+          });
+        }
         return NextResponse.json({
           symbol,
           company: results[0]?.company || symbol,

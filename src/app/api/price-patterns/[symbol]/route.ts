@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
 import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { db } from "@/lib/db";
@@ -49,6 +50,19 @@ Your JSON output shape (exactly):
 
 const LLM_TIMEOUT_MS = 40_000;
 
+// Task 28-A: self-heal cooldown — when the LLM endpoint is rate-limited the
+// after() callback fails after 40s. Without a cooldown, every visit to the
+// same symbol would spawn another doomed attempt. One try per symbol per
+// 10 minutes is plenty (the background enrichment loop also retries).
+const SELF_HEAL_COOLDOWN_MS = 10 * 60 * 1000;
+const selfHealAttempts = new Map<string, number>();
+function shouldSelfHeal(symbol: string): boolean {
+  const last = selfHealAttempts.get(symbol) || 0;
+  if (Date.now() - last < SELF_HEAL_COOLDOWN_MS) return false;
+  selfHealAttempts.set(symbol, Date.now());
+  return true;
+}
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ symbol: string }> }
@@ -73,6 +87,26 @@ export async function GET(
       if (cached) {
         const analysis = JSON.parse(cached.patternsJson) as PricePatternAnalysis;
         const summary = safeParseSummary(cached.summaryJson);
+        // Task 28-A self-heal: the engine row is precomputed for every stock,
+        // but the LLM explanation layer may still be missing (the background
+        // enrichment fills them in symbol by symbol). Serve the cached engine
+        // result INSTANTLY and generate the missing LLM summary after the
+        // response is sent — the next visit gets it from the DB.
+        if (!summary && Array.isArray(analysis.patterns) && analysis.patterns.length > 0 && shouldSelfHeal(symbol)) {
+          after(async () => {
+            try {
+              const llm = await explainWithLlm(symbol, companyName, analysis);
+              await db.pricePatternCache.update({
+                where: { symbol },
+                data: { summaryJson: JSON.stringify(llm) },
+              });
+              console.log(`[price-patterns] self-healed LLM summary for ${symbol}`);
+            } catch (err) {
+              // Contained failure — the background enrichment loop retries.
+              console.warn(`[price-patterns] self-heal LLM failed for ${symbol}:`, err instanceof Error ? err.message : err);
+            }
+          });
+        }
         return NextResponse.json({
           ...analysis,
           companyName,
