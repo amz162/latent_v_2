@@ -268,7 +268,7 @@ const MOCK_STOCKS = [
     {
         symbol: "ENGRO",
         name: "Engro Corporation Limited",
-        sector: "Fertilizer",
+        sector: "Conglomerate",
         price: 285.40,
         changePct: 2.34,
         peRatio: 8.2,
@@ -328,7 +328,7 @@ const MOCK_STOCKS = [
     {
         symbol: "PSO",
         name: "Pakistan State Oil Company Limited",
-        sector: "Oil Marketing",
+        sector: "Energy",
         price: 198.70,
         changePct: -1.42,
         peRatio: 5.8,
@@ -340,7 +340,7 @@ const MOCK_STOCKS = [
     {
         symbol: "OGDC",
         name: "Oil & Gas Development Company Limited",
-        sector: "Oil & Gas",
+        sector: "Energy",
         price: 142.10,
         changePct: 0.65,
         peRatio: 5.2,
@@ -352,7 +352,7 @@ const MOCK_STOCKS = [
     {
         symbol: "PPL",
         name: "Pakistan Petroleum Limited",
-        sector: "Oil & Gas",
+        sector: "Energy",
         price: 118.40,
         changePct: 0.92,
         peRatio: 5.6,

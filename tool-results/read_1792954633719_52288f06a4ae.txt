@@ -1,0 +1,1308 @@
+     1→"use client";
+     2→
+     3→import { useCallback, useEffect, useMemo, useState } from "react";
+     4→import { Card, CardContent } from "@/components/ui/card";
+     5→import { Button } from "@/components/ui/button";
+     6→import { Badge } from "@/components/ui/badge";
+     7→import { Input } from "@/components/ui/input";
+     8→import { Label } from "@/components/ui/label";
+     9→import { Skeleton } from "@/components/ui/skeleton";
+    10→import {
+    11→  Dialog,
+    12→  DialogContent,
+    13→  DialogHeader,
+    14→  DialogTitle,
+    15→  DialogTrigger,
+    16→} from "@/components/ui/dialog";
+    17→import { AppNav } from "./AppNav";
+    18→import { StockSearch } from "./StockSearch";
+    19→import { useLatentStore, type PortfolioPosition } from "@/lib/latent/store";
+    20→import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+    21→import {
+    22→  Plus,
+    23→  X,
+    24→  ArrowUp,
+    25→  ArrowDown,
+    26→  TrendingUp,
+    27→  TrendingDown,
+    28→  Loader2,
+    29→  RefreshCw,
+    30→  Briefcase,
+    31→  Minus,
+    32→  Trash2,
+    33→  Wallet,
+    34→  Calculator,
+    35→  CalendarClock,
+    36→  Check,
+    37→  Eye,
+    38→} from "lucide-react";
+    39→import { toast } from "sonner";
+    40→
+    41→interface CompanyInfo { id: number; value: string; label: string; sector?: string; image?: string; }
+    42→
+    43→// ─── Issue 13: Close-trade calculation helpers ─────────────────────────────
+    44→// Pakistan capital-gains tax on PSX equities (2024 budget):
+    45→//   - holding period ≤ 12 months → 15% CGT on profit (short-term)
+    46→//   - holding period > 12 months → 0% CGT (long-term, exempt)
+    47→// Losses are not taxed (no tax credit) — CGT applies only on positive profit.
+    48→// Broker commission: 0.15% × sell value × 2 (both sides — buy + sell).
+    49→interface CloseTarget {
+    50→  symbol: string;
+    51→  name: string;
+    52→  sector?: string | null;
+    53→  buyPrice: number;
+    54→  shares: number;
+    55→  addedAt: string;
+    56→}
+    57→
+    58→interface CloseCalc {
+    59→  sellPrice: number;
+    60→  buyCost: number;
+    61→  sellValue: number;
+    62→  commission: number;
+    63→  holdingDays: number;
+    64→  holdingMonths: number;
+    65→  taxRate: number; // 0.15 short-term, 0 long-term
+    66→  cgt: number;
+    67→  grossPnl: number;
+    68→  netPnl: number;
+    69→  netPnlPct: number;
+    70→}
+    71→
+    72→function computeCloseMetrics(
+    73→  buyPrice: number,
+    74→  shares: number,
+    75→  sellPrice: number,
+    76→  addedAt: string
+    77→): CloseCalc {
+    78→  const buyCost = buyPrice * shares;
+    79→  const sellValue = sellPrice * shares;
+    80→  // Broker commission = 0.15% × sell value, applied on both sides (buy + sell).
+    81→  // Using sellValue as the base for both sides per spec ("0.15% × sell value (both sides)").
+    82→  const commission = 0.0015 * sellValue * 2;
+    83→  const holdingDays = Math.max(
+    84→    0,
+    85→    Math.floor((Date.now() - new Date(addedAt).getTime()) / (1000 * 60 * 60 * 24))
+    86→  );
+    87→  const holdingMonths = Math.floor(holdingDays / 30);
+    88→  // CGT: 15% for ≤12 months (short-term), 0% for >12 months (long-term)
+    89→  const taxRate = holdingDays <= 365 ? 0.15 : 0;
+    90→  const grossPnl = sellValue - buyCost;
+    91→  // CGT only on positive profit (no tax credit for losses)
+    92→  const cgt = grossPnl > 0 ? grossPnl * taxRate : 0;
+    93→  const netPnl = grossPnl - commission - cgt;
+    94→  const netPnlPct = buyCost > 0 ? (netPnl / buyCost) * 100 : 0;
+    95→  return {
+    96→    sellPrice,
+    97→    buyCost,
+    98→    sellValue,
+    99→    commission,
+   100→    holdingDays,
+   101→    holdingMonths,
+   102→    taxRate,
+   103→    cgt,
+   104→    grossPnl,
+   105→    netPnl,
+   106→    netPnlPct,
+   107→  };
+   108→}
+   109→
+   110→// ─── Issue 15: batched LIVE quote fetcher for portfolio holdings ────────────
+   111→// Hits our own /api/psx/live/batch endpoint, which server-side calls
+   112→// `getLiveQuote` (60s in-memory cache per symbol) for each portfolio symbol
+   113→// in parallel via Promise.all. Returns the latest LIVE PSX price for each
+   114→// symbol, plus isLoading / refresh / lastUpdated for the UI.
+   115→//
+   116→// Used by PortfolioTab to:
+   117→//   - render per-position live P&L (green/red) on open holdings (Issue 15)
+   118→//   - compute the total portfolio P&L summary card (Issue 15)
+   119→//   - show per-row live price on watch-only items (free upgrade)
+   120→//   - skeleton-while-loading + manual Refresh button + 60s auto-refresh
+   121→//
+   122→// Implementation note: setState is only called inside async .then callbacks
+   123→// (NOT synchronously in the effect body) to avoid React 19's
+   124→// `react-hooks/set-state-in-effect` cascading-render warning. The "loading"
+   125→// state is derived from `state.key !== key` (data is stale until the new
+   126→// fetch for the current symbol-set resolves) plus an explicit `loading`
+   127→// flag set inside the `refresh` event handler.
+   128→function usePortfolioLiveQuotes(symbols: string[]): {
+   129→  prices: Record<string, number>;
+   130→  isLoading: boolean;
+   131→  refresh: () => void;
+   132→  lastUpdated: Date | null;
+   133→} {
+   134→  const key = symbols.join(",");
+   135→  const [state, setState] = useState<{
+   136→    key: string;
+   137→    prices: Record<string, number>;
+   138→    lastUpdated: Date | null;
+   139→    loading: boolean;
+   140→  }>({ key: "", prices: {}, lastUpdated: null, loading: false });
+   141→  const [refreshTick, setRefreshTick] = useState(0);
+   142→
+   143→  useEffect(() => {
+   144→    if (!key) return;
+   145→    let cancelled = false;
+   146→    const symbolsList = key.split(",");
+   147→    fetch(`/api/psx/live/batch?symbols=${encodeURIComponent(symbolsList.join(","))}`)
+   148→      .then((r) => (r.ok ? r.json() : null))
+   149→      .then((d) => {
+   150→        if (cancelled) return;
+   151→        if (d && d.prices && typeof d.prices === "object") {
+   152→          setState({
+   153→            key,
+   154→            prices: d.prices as Record<string, number>,
+   155→            lastUpdated: new Date(d.fetchedAt || Date.now()),
+   156→            loading: false,
+   157→          });
+   158→        } else {
+   159→          // Even if no prices resolved, mark this key as "fetched" so
+   160→          // isLoading flips to false and rows show "no live price" instead
+   161→          // of a skeleton.
+   162→          setState({ key, prices: {}, lastUpdated: new Date(), loading: false });
+   163→        }
+   164→      })
+   165→      .catch(() => {
+   166→        if (cancelled) return;
+   167→        // Keep stale prices if any; mark this key as attempted so the
+   168→        // skeleton goes away.
+   169→        setState((s) => ({ key, prices: s.key === key ? s.prices : {}, lastUpdated: new Date(), loading: false }));
+   170→      });
+   171→    return () => {
+   172→      cancelled = true;
+   173→    };
+   174→  }, [key, refreshTick]);
+   175→
+   176→  // Auto-refresh every 60s — matches getLiveQuote's 60s cache TTL so the
+   177→  // dashboard P&L stays current without manual button clicks.
+   178→  useEffect(() => {
+   179→    if (!key) return;
+   180→    const id = setInterval(() => setRefreshTick((t) => t + 1), 60_000);
+   181→    return () => clearInterval(id);
+   182→  }, [key]);
+   183→
+   184→  const refresh = useCallback(() => {
+   185→    setRefreshTick((t) => t + 1);
+   186→    setState((s) => ({ ...s, loading: true }));
+   187→  }, []);
+   188→
+   189→  // Derive public state:
+   190→  //   - prices: valid only when state.key === key (otherwise stale → empty)
+   191→  //   - isLoading: true if we have no data yet for the current key OR a
+   192→  //     refresh is explicitly in progress
+   193→  const hasData = state.key === key;
+   194→  const prices = hasData ? state.prices : {};
+   195→  const lastUpdated = hasData ? state.lastUpdated : null;
+   196→  const isLoading = !!key && (!hasData || state.loading);
+   197→  return { prices, isLoading, refresh, lastUpdated };
+   198→}
+   199→
+   200→export function PortfolioTab() {
+   201→  const portfolio = useLatentStore((s) => s.portfolio);
+   202→  const addPosition = useLatentStore((s) => s.addPortfolioPosition);
+   203→  const removePosition = useLatentStore((s) => s.removePortfolioPosition);
+   204→  const reorder = useLatentStore((s) => s.reorderPortfolio);
+   205→  const setView = useLatentStore((s) => s.setView);
+   206→  const pushNotification = useLatentStore((s) => s.pushNotification);
+   207→  const closePositionFromPortfolio = useLatentStore((s) => s.closePositionFromPortfolio);
+   208→
+   209→  const [addOpen, setAddOpen] = useState(false);
+   210→  const [selectedSymbol, setSelectedSymbol] = useState("");
+   211→  const [selectedName, setSelectedName] = useState("");
+   212→  const [selectedSector, setSelectedSector] = useState<string | undefined>(undefined);
+   213→  const [buyPrice, setBuyPrice] = useState<string>("");
+   214→  const [shares, setShares] = useState<string>("");
+   215→
+   216→  // ─── Issue 13: Close-trade dialog state ───
+   217→  const [closeTarget, setCloseTarget] = useState<CloseTarget | null>(null);
+   218→  const [closeSellPrice, setCloseSellPrice] = useState<string>("");
+   219→  const [closePriceLoading, setClosePriceLoading] = useState(false);
+   220→  const [closeSubmitting, setCloseSubmitting] = useState(false);
+   221→
+   222→  const handleAdd = () => {
+   223→    if (!selectedSymbol) {
+   224→      toast.error("Pick a stock first");
+   225→      return;
+   226→    }
+   227→    // Issue 19 behavior: until the user specifies shares (volume), the stock
+   228→    // is added as "watch only" (no P&L tracking). This is intentional — the
+   229→    // user can add shares later. We do not move it to "holdings" until
+   230→    // both buyPrice AND shares are provided.
+   231→    const name = selectedName || selectedSymbol;
+   232→    addPosition({
+   233→      symbol: selectedSymbol,
+   234→      name,
+   235→      sector: selectedSector || undefined,
+   236→      buyPrice: buyPrice ? parseFloat(buyPrice) : null,
+   237→      shares: shares ? parseInt(shares) : 0,
+   238→    });
+   239→    pushNotification({
+   240→      type: "info",
+   241→      title: "Stock added to portfolio",
+   242→      body: `${selectedSymbol} added${shares ? ` (${shares} shares${buyPrice ? ` @ PKR ${buyPrice}` : ""})` : " (watch only)"}`,
+   243→      linkView: "portfolio",
+   244→    });
+   245→    toast.success(`${selectedSymbol} added to portfolio${shares ? " with " + shares + " shares" : " (watch only)"}`);
+   246→    setAddOpen(false);
+   247→    setSelectedSymbol("");
+   248→    setSelectedName("");
+   249→    setSelectedSector(undefined);
+   250→    setBuyPrice("");
+   251→    setShares("");
+   252→  };
+   253→
+   254→  const sorted = [...portfolio].sort((a, b) => a.order - b.order);
+   255→
+   256→  // ─── Issue 10: separate HOLDINGS from WATCHLIST ─────────────────────────
+   257→  // A position is a "holding" ONLY if it has shares > 0 AND a non-null
+   258→  // buyPrice (a real, open position). Watch-only items (shares=0 OR
+   259→  // buyPrice=null) do NOT count toward the holdings summary / total P&L.
+   260→  // The store distinguishes via the shares/buyPrice fields — see
+   261→  // PortfolioPosition shape in src/lib/latent/store.ts.
+   262→  const isHolding = (p: PortfolioPosition) =>
+   263→    p.shares > 0 && p.buyPrice !== null && p.buyPrice !== undefined;
+   264→  // Pre-compute (position, sortedIdx) pairs so each rendered row knows its
+   265→  // original index in `sorted` for the reorder controls (moveUp/moveDown).
+   266→  const holdingsWithIdx = useMemo(
+   267→    () =>
+   268→      sorted
+   269→        .map((p, idx) => ({ p, idx }))
+   270→        .filter(({ p }) => isHolding(p)),
+   271→    [sorted]
+   272→  );
+   273→  const watchlistWithIdx = useMemo(
+   274→    () =>
+   275→      sorted
+   276→        .map((p, idx) => ({ p, idx }))
+   277→        .filter(({ p }) => !isHolding(p)),
+   278→    [sorted]
+   279→  );
+   280→  const holdings = useMemo(() => holdingsWithIdx.map(({ p }) => p), [holdingsWithIdx]);
+   281→  const watchlist = useMemo(() => watchlistWithIdx.map(({ p }) => p), [watchlistWithIdx]);
+   282→
+   283→  // Issue 15: fetch LIVE prices via getLiveQuote (batched server-side) for
+   284→  // all portfolio symbols — both holdings and watchlist. Used for per-row
+   285→  // live P&L on holdings and per-row live price on watch-only items.
+   286→  const symbols = sorted.map((p) => p.symbol);
+   287→  const {
+   288→    prices: livePrices,
+   289→    isLoading: pricesLoading,
+   290→    refresh: refreshPrices,
+   291→    lastUpdated: pricesLastUpdated,
+   292→  } = usePortfolioLiveQuotes(symbols);
+   293→
+   294→  // ─── Issue 13: open the Close dialog and fetch the latest price ───
+   295→  // Pre-fills the sell price input with the cached live quote (getLiveQuote
+   296→  // via /api/psx/live/batch) for the symbol, then re-fetches a fresh quote
+   297→  // server-side for the dialog so the user has the most recent fill.
+   298→  // Preserves the close-trade flow: CGT + broker commission calc, holding
+   299→  // period detection, closed-trade record push to the Tracker.
+   300→  const openCloseDialog = (p: PortfolioPosition) => {
+   301→    if (!p.buyPrice || !p.shares) {
+   302→      toast.error("This stock has no shares to close");
+   303→      return;
+   304→    }
+   305→    const target: CloseTarget = {
+   306→      symbol: p.symbol,
+   307→      name: p.name,
+   308→      sector: p.sector,
+   309→      buyPrice: p.buyPrice as number,
+   310→      shares: p.shares,
+   311→      addedAt: p.addedAt,
+   312→    };
+   313→    setCloseTarget(target);
+   314→    // Pre-fill with cached live price if available (from /api/psx/live/batch)
+   315→    const cached = livePrices[p.symbol];
+   316→    setCloseSellPrice(
+   317→      typeof cached === "number"
+   318→        ? cached.toFixed(2)
+   319→        : (p.buyPrice as number).toFixed(2)
+   320→    );
+   321→
+   322→    // Re-fetch a fresh live quote for the close-trade dialog so the user has
+   323→    // the most recent fill price (uses getLiveQuote's 60s cache server-side).
+   324→    setClosePriceLoading(true);
+   325→    fetch(`/api/psx/live?symbol=${encodeURIComponent(p.symbol)}`)
+   326→      .then((r) => (r.ok ? r.json() : null))
+   327→      .then((d) => {
+   328→        if (!d) return;
+   329→        if (typeof d.price === "number" && d.price > 0) {
+   330→          setCloseSellPrice(d.price.toFixed(2));
+   331→        } else if (typeof d.close === "number" && d.close > 0) {
+   332→          setCloseSellPrice(d.close.toFixed(2));
+   333→        }
+   334→      })
+   335→      .catch(() => {
+   336→        // ignore — user can manually enter the sell price
+   337→      })
+   338→      .finally(() => setClosePriceLoading(false));
+   339→  };
+   340→
+   341→  // Compute close metrics reactively from current sellPrice input
+   342→  const closeCalc = useMemo<CloseCalc | null>(() => {
+   343→    if (!closeTarget) return null;
+   344→    const sp = parseFloat(closeSellPrice.replace(/[,\s]/g, ""));
+   345→    if (!Number.isFinite(sp) || sp <= 0) return null;
+   346→    return computeCloseMetrics(
+   347→      closeTarget.buyPrice,
+   348→      closeTarget.shares,
+   349→      sp,
+   350→      closeTarget.addedAt
+   351→    );
+   352→  }, [closeTarget, closeSellPrice]);
+   353→
+   354→  const confirmCloseTrade = () => {
+   355→    if (!closeTarget || !closeCalc) {
+   356→      toast.error("Enter a valid sell price to close");
+   357→      return;
+   358→    }
+   359→    setCloseSubmitting(true);
+   360→    const t = closeTarget;
+   361→    const c = closeCalc;
+   362→    const closedTrade = {
+   363→      id: `ct_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+   364→      symbol: t.symbol,
+   365→      name: t.name,
+   366→      sector: t.sector ?? null,
+   367→      buyPrice: t.buyPrice,
+   368→      shares: t.shares,
+   369→      sellPrice: c.sellPrice,
+   370→      buyCost: c.buyCost,
+   371→      sellValue: c.sellValue,
+   372→      commission: c.commission,
+   373→      cgt: c.cgt,
+   374→      grossPnl: c.grossPnl,
+   375→      netPnl: c.netPnl,
+   376→      netPnlPct: c.netPnlPct,
+   377→      holdingDays: c.holdingDays,
+   378→      taxRate: c.taxRate,
+   379→      closedAt: new Date().toISOString(),
+   380→    };
+   381→    closePositionFromPortfolio(t.symbol, closedTrade);
+   382→    pushNotification({
+   383→      type: "info",
+   384→      title: `${t.symbol} closed — Net P&L PKR ${Math.round(c.netPnl).toLocaleString()}`,
+   385→      body: `Sold ${t.shares} sh @ ${c.sellPrice.toFixed(2)} · commission PKR ${Math.round(c.commission).toLocaleString()} · CGT PKR ${Math.round(c.cgt).toLocaleString()} (${(c.taxRate * 100).toFixed(0)}% bracket) · holding ${c.holdingDays}d. Position reset to watch-only.`,
+   386→      linkView: "tracker",
+   387→    });
+   388→    toast.success(
+   389→      `${t.symbol} closed — Net P&L PKR ${Math.round(c.netPnl).toLocaleString()} (${c.netPnlPct >= 0 ? "+" : ""}${c.netPnlPct.toFixed(2)}%). Position reset to watch-only.`
+   390→    );
+   391→    setCloseTarget(null);
+   392→    setCloseSellPrice("");
+   393→    setCloseSubmitting(false);
+   394→  };
+   395→
+   396→  // ─── Issue 15: Holdings-only totals (watchlist does NOT count) ──────────
+   397→  // Per-position: current value = shares × livePrice, P&L = (livePrice −
+   398→  // buyPrice) × shares, P&L% = ((livePrice − buyPrice)/buyPrice) × 100.
+   399→  // Totals: sum of all holdings' cost/value/P&L → portfolio summary cards.
+   400→  const totalCost = useMemo(
+   401→    () => holdings.reduce((sum, p) => sum + p.shares * (p.buyPrice as number), 0),
+   402→    [holdings]
+   403→  );
+   404→  const totalValue = useMemo(
+   405→    () =>
+   406→      holdings.reduce((sum, p) => {
+   407→        const live = livePrices[p.symbol];
+   408→        if (typeof live === "number") return sum + p.shares * live;
+   409→        // Fallback to MOCK_STOCKS price when fetch hasn't resolved or failed
+   410→        const stock = MOCK_STOCKS.find((s) => s.symbol === p.symbol);
+   411→        return stock ? sum + p.shares * stock.price : sum;
+   412→      }, 0),
+   413→    [holdings, livePrices]
+   414→  );
+   415→  const totalPnL = totalValue - totalCost;
+   416→  const totalPnLPct = totalCost > 0 ? (totalPnL / totalCost) * 100 : 0;
+   417→  const hasLivePrices = Object.keys(livePrices).length > 0;
+   418→
+   419→  const moveUp = (idx: number) => {
+   420→    if (idx === 0) return;
+   421→    reorder(idx, idx - 1);
+   422→  };
+   423→  const moveDown = (idx: number) => {
+   424→    if (idx === sorted.length - 1) return;
+   425→    reorder(idx, idx + 1);
+   426→  };
+   427→
+   428→  return (
+   429→    <div className="min-h-screen bg-[#0A0E1A]">
+   430→      <AppNav />
+   431→      <main className="px-4 md:px-6 py-6 max-w-5xl mx-auto">
+   432→        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+   433→          <div>
+   434→            <h1 className="text-2xl font-bold text-[#F4F7FB]">Portfolio & Watchlist</h1>
+   435→            <p className="text-sm text-[#94A3B8] mt-1">
+   436→              Add stocks, drag-to-reorder, optional buy price triggers P&L tracking + suggestions.
+   437→            </p>
+   438→          </div>
+   439→          <Dialog open={addOpen} onOpenChange={setAddOpen}>
+   440→            <DialogTrigger asChild>
+   441→              <Button className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold">
+   442→                <Plus className="h-4 w-4 mr-1.5" />
+   443→                Add stock
+   444→              </Button>
+   445→            </DialogTrigger>
+   446→            <DialogContent className="bg-[#131829] border-white/[0.12]">
+   447→              <DialogHeader>
+   448→                <DialogTitle className="text-[#F4F7FB]">Add to portfolio</DialogTitle>
+   449→              </DialogHeader>
+   450→              <div className="space-y-4 py-2">
+   451→                <div className="space-y-2">
+   452→                  <Label className="text-[#94A3B8]">
+   453→                    Select stock (any of 1000+ PSX-listed companies)
+   454→                  </Label>
+   455→                  <StockSearch
+   456→                    value={selectedSymbol}
+   457→                    onChange={(sym: string, company?: CompanyInfo) => {
+   458→                      setSelectedSymbol(sym);
+   459→                      setSelectedName(company?.label || "");
+   460→                      setSelectedSector(company?.sector);
+   461→                      // Don't pre-fill buy price — user must explicitly enter it.
+   462→                      setBuyPrice("");
+   463→                    }}
+   464→                    placeholder="Search any PSX stock by symbol or name..."
+   465→                  />
+   466→                  {selectedSymbol && (
+   467→                    <div className="text-[11px] text-[#94A3B8] mt-1">
+   468→                      Selected: <span className="font-mono font-semibold text-[#00E676]">{selectedSymbol}</span>
+   469→                      {selectedName && <span className="text-[#64748B]"> — {selectedName}</span>}
+   470→                    </div>
+   471→                  )}
+   472→                </div>
+   473→                <div className="grid grid-cols-2 gap-3">
+   474→                  <div className="space-y-2">
+   475→                    <Label className="text-[#94A3B8]">Buy price (optional)</Label>
+   476→                    <Input
+   477→                      value={buyPrice}
+   478→                      onChange={(e) => setBuyPrice(e.target.value)}
+   479→                      placeholder="e.g. 285"
+   480→                      type="number"
+   481→                      className="bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] font-mono"
+   482→                    />
+   483→                  </div>
+   484→                  <div className="space-y-2">
+   485→                    <Label className="text-[#94A3B8]">
+   486→                      Shares (optional — required for P&L tracking)
+   487→                    </Label>
+   488→                    <Input
+   489→                      value={shares}
+   490→                      onChange={(e) => setShares(e.target.value)}
+   491→                      placeholder="e.g. 100"
+   492→                      type="number"
+   493→                      className="bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] font-mono"
+   494→                    />
+   495→                  </div>
+   496→                </div>
+   497→                <p className="text-[11px] text-[#64748B] leading-relaxed">
+   498→                  <span className="text-[#94A3B8] font-semibold">Issue 19 behavior:</span>{' '}
+   499→                  The stock is <span className="text-[#00E676] font-semibold">not moved to holdings</span> until
+   500→                  you specify the number of shares. Leaving shares empty adds the stock as a
+   501→                  <span className="text-[#FBBF24] font-semibold"> watch-only item</span> (no P&L tracking). You can add shares later.
+   502→                </p>
+   503→                <Button
+   504→                  onClick={handleAdd}
+   505→                  disabled={!selectedSymbol}
+   506→                  className="w-full bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold"
+   507→                >
+   508→                  {selectedSymbol
+   509→                    ? `Add ${selectedSymbol}${shares ? ` (${shares} shares)` : " (watch only)"}`
+   510→                    : "Add to portfolio"}
+   511→                </Button>
+   512→              </div>
+   513→            </DialogContent>
+   514→          </Dialog>
+   515→        </div>
+   516→
+   517→        {/* ─── Portfolio summary — Holdings only (Issue 10 + 15) ─────────────── */}
+   518→        {/* Watch-only items do NOT count toward cost basis / market value / P&L. */}
+   519→        {sorted.length > 0 && (
+   520→          <div className="mb-5">
+   521→            <div className="flex items-center justify-end gap-2 mb-2">
+   522→              {pricesLastUpdated && (
+   523→                <span className="text-[10px] text-[#64748B] font-mono">
+   524→                  Live prices updated {pricesLastUpdated.toLocaleTimeString()}
+   525→                </span>
+   526→              )}
+   527→              <Button
+   528→                variant="outline"
+   529→                size="sm"
+   530→                onClick={refreshPrices}
+   531→                disabled={pricesLoading}
+   532→                className="border-white/[0.12] text-[#94A3B8] h-7"
+   533→              >
+   534→                {pricesLoading ? (
+   535→                  <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+   536→                ) : (
+   537→                  <RefreshCw className="h-3 w-3 mr-1.5" />
+   538→                )}
+   539→                Refresh prices
+   540→              </Button>
+   541→            </div>
+   542→            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+   543→              {/* Holdings count (real positions only) */}
+   544→              <Card className="bg-[#131829] border-white/[0.08]">
+   545→                <CardContent className="p-4">
+   546→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Holdings</div>
+   547→                  {pricesLoading && !hasLivePrices ? (
+   548→                    <Skeleton className="h-7 w-12 bg-white/[0.04] mt-1" />
+   549→                  ) : (
+   550→                    <div className="text-xl font-bold text-[#F4F7FB] font-mono">{holdings.length}</div>
+   551→                  )}
+   552→                  <div className="text-[10px] text-[#64748B] mt-0.5">
+   553→                    {watchlist.length} watch-only
+   554→                  </div>
+   555→                </CardContent>
+   556→              </Card>
+   557→              {/* Cost basis — sum of (shares × buyPrice) over holdings */}
+   558→              <Card className="bg-[#131829] border-white/[0.08]">
+   559→                <CardContent className="p-4">
+   560→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Cost basis</div>
+   561→                  {pricesLoading && !hasLivePrices ? (
+   562→                    <Skeleton className="h-7 w-24 bg-white/[0.04] mt-1" />
+   563→                  ) : (
+   564→                    <div className="text-xl font-bold text-[#F4F7FB] font-mono">
+   565→                      PKR {totalCost.toLocaleString()}
+   566→                    </div>
+   567→                  )}
+   568→                  <div className="text-[10px] text-[#64748B] mt-0.5">total invested</div>
+   569→                </CardContent>
+   570→              </Card>
+   571→              {/* Market value — sum of (shares × livePrice) over holdings */}
+   572→              <Card className="bg-[#131829] border-white/[0.08]">
+   573→                <CardContent className="p-4">
+   574→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Market value</div>
+   575→                  {pricesLoading && !hasLivePrices ? (
+   576→                    <Skeleton className="h-7 w-24 bg-white/[0.04] mt-1" />
+   577→                  ) : (
+   578→                    <div className="text-xl font-bold text-[#F4F7FB] font-mono">
+   579→                      PKR {totalValue.toLocaleString()}
+   580→                    </div>
+   581→                  )}
+   582→                  <div className="text-[10px] text-[#64748B] mt-0.5">live</div>
+   583→                </CardContent>
+   584→              </Card>
+   585→              {/* Total P&L = market value − cost basis */}
+   586→              <Card className={`bg-[#131829] ${totalPnL >= 0 ? "border-[#00E676]/30" : "border-[#FF5C5C]/30"}`}>
+   587→                <CardContent className="p-4">
+   588→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Total P&L</div>
+   589→                  {pricesLoading && !hasLivePrices ? (
+   590→                    <Skeleton className="h-7 w-32 bg-white/[0.04] mt-1" />
+   591→                  ) : (
+   592→                    <div className={`text-xl font-bold font-mono ${totalPnL >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   593→                      {totalPnL >= 0 ? "+" : ""}{totalPnL.toLocaleString()} ({totalPnLPct.toFixed(2)}%)
+   594→                    </div>
+   595→                  )}
+   596→                  <div className="text-[10px] text-[#64748B] mt-0.5">overall</div>
+   597→                </CardContent>
+   598→              </Card>
+   599→            </div>
+   600→          </div>
+   601→        )}
+   602→
+   603→        {/* Empty state — no stocks at all */}
+   604→        {sorted.length === 0 ? (
+   605→          <Card className="bg-[#131829] border-white/[0.08]">
+   606→            <CardContent className="p-12 text-center">
+   607→              <Briefcase className="h-12 w-12 text-[#00E676]/30 mx-auto mb-3" />
+   608→              <h3 className="font-semibold text-[#F4F7FB] mb-1">No stocks in your portfolio yet</h3>
+   609→              <p className="text-xs text-[#94A3B8] mb-4">
+   610→                Add stocks to track them. Specify buy price + shares to enable live P&L tracking and hold/sell/buy-more suggestions.
+   611→              </p>
+   612→              <Button
+   613→                onClick={() => setAddOpen(true)}
+   614→                className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881]"
+   615→              >
+   616→                <Plus className="h-4 w-4 mr-1.5" />
+   617→                Add your first stock
+   618→              </Button>
+   619→            </CardContent>
+   620→          </Card>
+   621→        ) : (
+   622→          <>
+   623→            {/* ─── Holdings section (Issue 10) — real positions with live P&L ─── */}
+   624→            <section className="mb-6">
+   625→              <div className="flex items-center gap-2 mb-3">
+   626→                <Wallet className="h-4 w-4 text-[#00E676]" />
+   627→                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F4F7FB]">Holdings</h2>
+   628→                <Badge variant="outline" className="text-[9px] py-0 h-4 border-white/[0.12] text-[#94A3B8]">
+   629→                  {holdings.length} open
+   630→                </Badge>
+   631→                <span className="text-[10px] text-[#64748B] ml-1">real positions · live P&amp;L tracked</span>
+   632→              </div>
+   633→
+   634→              {holdings.length === 0 ? (
+   635→                <div className="rounded-lg border border-white/[0.06] bg-[#131829] p-6 text-center">
+   636→                  <Wallet className="h-8 w-8 text-[#64748B]/40 mx-auto mb-2" />
+   637→                  <p className="text-xs text-[#94A3B8] mb-1">No open positions yet</p>
+   638→                  <p className="text-[10px] text-[#64748B]">
+   639→                    Add a stock with shares + buy price to start tracking live P&amp;L.
+   640→                  </p>
+   641→                </div>
+   642→              ) : pricesLoading && !hasLivePrices ? (
+   643→                <div className="space-y-2">
+   644→                  {holdings.map((p, idx) => (
+   645→                    <Skeleton
+   646→                      key={`${p.symbol}-${idx}-sk`}
+   647→                      className="h-20 w-full bg-[#131829] border border-white/[0.06]"
+   648→                    />
+   649→                  ))}
+   650→                </div>
+   651→              ) : (
+   652→                <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1 latent-scroll">
+   653→                  {holdingsWithIdx.map(({ p, idx }, i) => {
+   654→                    const livePrice = livePrices[p.symbol];
+   655→                    const mockStock = MOCK_STOCKS.find((s) => s.symbol === p.symbol);
+   656→                    const currentPrice: number | null =
+   657→                      typeof livePrice === "number"
+   658→                        ? livePrice
+   659→                        : mockStock
+   660→                          ? mockStock.price
+   661→                          : null;
+   662→                    const pnl =
+   663→                      currentPrice !== null
+   664→                        ? (currentPrice - (p.buyPrice as number)) * p.shares
+   665→                        : 0;
+   666→                    const pnlPct =
+   667→                      currentPrice !== null
+   668→                        ? ((currentPrice - (p.buyPrice as number)) / (p.buyPrice as number)) * 100
+   669→                        : 0;
+   670→                    const isProfit = pnl > 0;
+   671→                    const isLoss = pnl < 0;
+   672→                    const currentValue =
+   673→                      currentPrice !== null ? p.shares * currentPrice : null;
+   674→                    const suggestion =
+   675→                      currentPrice === null
+   676→                        ? "Live price unavailable — check quote source"
+   677→                        : isProfit && pnlPct > 15
+   678→                          ? "Take partial profit — book 30-50% of position"
+   679→                          : isProfit
+   680→                            ? "Hold — trend still intact"
+   681→                            : isLoss && pnlPct < -10
+   682→                              ? "Consider averaging down on next dip — improve cost basis"
+   683→                              : isLoss
+   684→                                ? "Hold — within normal volatility. Stop-loss not hit."
+   685→                                : "Hold — at breakeven";
+   686→
+   687→                    return (
+   688→                      <Card
+   689→                        key={`${p.symbol}-${i}`}
+   690→                        className={`bg-[#131829] border-white/[0.08] ${isProfit ? "border-l-[#00E676]/60" : isLoss ? "border-l-[#FF5C5C]/60" : ""}`}
+   691→                      >
+   692→                        <CardContent className="p-4">
+   693→                          <div className="flex items-center gap-3">
+   694→                            {/* Reorder controls */}
+   695→                            <div className="flex flex-col gap-0.5">
+   696→                              <button
+   697→                                onClick={() => moveUp(idx)}
+   698→                                disabled={idx === 0}
+   699→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === 0 ? "opacity-30 cursor-not-allowed" : ""}`}
+   700→                              >
+   701→                                <ArrowUp className="h-3.5 w-3.5" />
+   702→                              </button>
+   703→                              <button
+   704→                                onClick={() => moveDown(idx)}
+   705→                                disabled={idx === sorted.length - 1}
+   706→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === sorted.length - 1 ? "opacity-30 cursor-not-allowed" : ""}`}
+   707→                              >
+   708→                                <ArrowDown className="h-3.5 w-3.5" />
+   709→                              </button>
+   710→                            </div>
+   711→
+   712→                            {/* Symbol */}
+   713→                            <div className="h-10 w-10 rounded-lg bg-[#00E676]/10 flex items-center justify-center font-mono font-bold text-[#00E676] text-sm">
+   714→                              {p.symbol.slice(0, 4)}
+   715→                            </div>
+   716→
+   717→                            {/* Main */}
+   718→                            <button
+   719→                              onClick={() => {
+   720→                                setView("signals_v2");
+   721→                                toast.info(`Opening analysis for ${p.symbol}...`);
+   722→                              }}
+   723→                              className="flex-1 text-left hover:opacity-80"
+   724→                            >
+   725→                              <div className="flex items-center gap-2">
+   726→                                <span className="font-bold text-[#F4F7FB]">{p.symbol}</span>
+   727→                                <Badge variant="outline" className={`text-[9px] py-0 h-4 ${isProfit ? "border-[#00E676]/40 text-[#00E676]" : isLoss ? "border-[#FF5C5C]/40 text-[#FF5C5C]" : "border-white/[0.12] text-[#94A3B8]"}`}>
+   728→                                  {isProfit ? "PROFIT" : isLoss ? "LOSS" : "BREAK EVEN"}
+   729→                                </Badge>
+   730→                              </div>
+   731→                              <div className="text-[11px] text-[#94A3B8] truncate max-w-[300px]">{p.name}</div>
+   732→                              <div className="text-[10px] text-[#64748B] mt-0.5 font-mono">
+   733→                                Buy: {p.buyPrice} × {p.shares} = PKR {((p.buyPrice as number) * p.shares).toLocaleString()}
+   734→                              </div>
+   735→                            </button>
+   736→
+   737→                            {/* Price + P&L (Issue 15) */}
+   738→                            <div className="text-right shrink-0">
+   739→                              <div className="text-sm font-mono font-bold text-[#F4F7FB]">
+   740→                                {currentPrice !== null ? currentPrice.toLocaleString() : "—"}
+   741→                              </div>
+   742→                              <div className="text-[10px] text-[#64748B]">
+   743→                                {currentPrice !== null ? "live" : "no live price"}
+   744→                              </div>
+   745→                              {currentPrice !== null && (
+   746→                                <div className={`text-xs font-mono font-bold ${isProfit ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`}>
+   747→                                  {pnl >= 0 ? "+" : ""}{pnl.toLocaleString()} ({pnlPct.toFixed(1)}%)
+   748→                                </div>
+   749→                              )}
+   750→                              {currentValue !== null && (
+   751→                                <div className="text-[9px] text-[#64748B] font-mono mt-0.5">
+   752→                                  val PKR {currentValue.toLocaleString()}
+   753→                                </div>
+   754→                              )}
+   755→                            </div>
+   756→
+   757→                            {/* Close / Remove */}
+   758→                            <div className="flex items-center gap-1 shrink-0 ml-2">
+   759→                              <button
+   760→                                onClick={() => openCloseDialog(p)}
+   761→                                className="text-[#64748B] hover:text-[#00E676] px-1.5 py-1 rounded-md hover:bg-[#00E676]/10 transition-colors"
+   762→                                title="Close trade — sell all shares and lock in P&L"
+   763→                              >
+   764→                                <Wallet className="h-4 w-4" />
+   765→                              </button>
+   766→                              <button
+   767→                                onClick={() => {
+   768→                                  removePosition(p.symbol);
+   769→                                  toast.info(`${p.symbol} removed from portfolio`);
+   770→                                }}
+   771→                                className="text-[#64748B] hover:text-[#FF5C5C] px-1.5 py-1 rounded-md hover:bg-[#FF5C5C]/10 transition-colors"
+   772→                                title="Remove from portfolio"
+   773→                              >
+   774→                                <Trash2 className="h-4 w-4" />
+   775→                              </button>
+   776→                            </div>
+   777→                          </div>
+   778→
+   779→                          {/* Suggestion */}
+   780→                          {suggestion && (
+   781→                            <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-start gap-2">
+   782→                              {isProfit ? <TrendingUp className="h-3 w-3 text-[#00E676] mt-0.5" /> :
+   783→                               isLoss ? <TrendingDown className="h-3 w-3 text-[#FF5C5C] mt-0.5" /> :
+   784→                               <Minus className="h-3 w-3 text-[#94A3B8] mt-0.5" />}
+   785→                              <div>
+   786→                                <span className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold">
+   787→                                  Suggestion:
+   788→                                </span>
+   789→                                <span className="text-xs text-[#94A3B8] ml-1.5">{suggestion}</span>
+   790→                              </div>
+   791→                            </div>
+   792→                          )}
+   793→                        </CardContent>
+   794→                      </Card>
+   795→                    );
+   796→                  })}
+   797→                </div>
+   798→              )}
+   799→            </section>
+   800→
+   801→            {/* ─── Watchlist section (Issue 10) — watch-only, NOT in holdings ─── */}
+   802→            {watchlist.length > 0 && (
+   803→              <section className="mb-6">
+   804→                <div className="flex items-center gap-2 mb-3">
+   805→                  <Eye className="h-4 w-4 text-[#FBBF24]" />
+   806→                  <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F4F7FB]">Watchlist</h2>
+   807→                  <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]">
+   808→                    {watchlist.length} watching
+   809→                  </Badge>
+   810→                  <span className="text-[10px] text-[#64748B] ml-1">
+   811→                    watch-only — not counted in holdings P&amp;L
+   812→                  </span>
+   813→                </div>
+   814→                <div className="space-y-2 max-h-96 overflow-y-auto pr-1 latent-scroll">
+   815→                  {watchlistWithIdx.map(({ p, idx }, i) => {
+   816→                    const livePrice = livePrices[p.symbol];
+   817→                    const mockStock = MOCK_STOCKS.find((s) => s.symbol === p.symbol);
+   818→                    const currentPrice: number | null =
+   819→                      typeof livePrice === "number"
+   820→                        ? livePrice
+   821→                        : mockStock
+   822→                          ? mockStock.price
+   823→                          : null;
+   824→                    return (
+   825→                      <Card
+   826→                        key={`${p.symbol}-${i}-w`}
+   827→                        className="bg-[#131829] border-white/[0.08] border-l-[#FBBF24]/40"
+   828→                      >
+   829→                        <CardContent className="p-4">
+   830→                          <div className="flex items-center gap-3">
+   831→                            {/* Reorder */}
+   832→                            <div className="flex flex-col gap-0.5">
+   833→                              <button
+   834→                                onClick={() => moveUp(idx)}
+   835→                                disabled={idx === 0}
+   836→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === 0 ? "opacity-30 cursor-not-allowed" : ""}`}
+   837→                              >
+   838→                                <ArrowUp className="h-3.5 w-3.5" />
+   839→                              </button>
+   840→                              <button
+   841→                                onClick={() => moveDown(idx)}
+   842→                                disabled={idx === sorted.length - 1}
+   843→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === sorted.length - 1 ? "opacity-30 cursor-not-allowed" : ""}`}
+   844→                              >
+   845→                                <ArrowDown className="h-3.5 w-3.5" />
+   846→                              </button>
+   847→                            </div>
+   848→
+   849→                            {/* Symbol (amber accent for watch-only) */}
+   850→                            <div className="h-10 w-10 rounded-lg bg-[#FBBF24]/10 flex items-center justify-center font-mono font-bold text-[#FBBF24] text-sm">
+   851→                              {p.symbol.slice(0, 4)}
+   852→                            </div>
+   853→
+   854→                            {/* Main */}
+   855→                            <button
+   856→                              onClick={() => {
+   857→                                setView("signals_v2");
+   858→                                toast.info(`Opening analysis for ${p.symbol}...`);
+   859→                              }}
+   860→                              className="flex-1 text-left hover:opacity-80"
+   861→                            >
+   862→                              <div className="flex items-center gap-2">
+   863→                                <span className="font-bold text-[#F4F7FB]">{p.symbol}</span>
+   864→                                <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]">
+   865→                                  WATCHING
+   866→                                </Badge>
+   867→                              </div>
+   868→                              <div className="text-[11px] text-[#94A3B8] truncate max-w-[300px]">{p.name}</div>
+   869→                              <div className="text-[10px] text-[#64748B] mt-0.5">
+   870→                                Added {new Date(p.addedAt).toLocaleDateString()} · no position yet
+   871→                              </div>
+   872→                            </button>
+   873→
+   874→                            {/* Live price (no P&L — watch-only) */}
+   875→                            <div className="text-right shrink-0">
+   876→                              {pricesLoading && currentPrice === null ? (
+   877→                                <Skeleton className="h-5 w-16 bg-white/[0.04] ml-auto" />
+   878→                              ) : (
+   879→                                <div className="text-sm font-mono font-bold text-[#F4F7FB]">
+   880→                                  {currentPrice !== null ? currentPrice.toLocaleString() : "—"}
+   881→                                </div>
+   882→                              )}
+   883→                              <div className="text-[10px] text-[#64748B]">
+   884→                                {currentPrice !== null ? "live" : "no live price"}
+   885→                              </div>
+   886→                            </div>
+   887→
+   888→                            {/* Remove */}
+   889→                            <button
+   890→                              onClick={() => {
+   891→                                removePosition(p.symbol);
+   892→                                toast.info(`${p.symbol} removed from watchlist`);
+   893→                              }}
+   894→                              className="text-[#64748B] hover:text-[#FF5C5C] px-1.5 py-1 rounded-md hover:bg-[#FF5C5C]/10 transition-colors shrink-0 ml-2"
+   895→                              title="Remove from watchlist"
+   896→                            >
+   897→                              <Trash2 className="h-4 w-4" />
+   898→                            </button>
+   899→                          </div>
+   900→                        </CardContent>
+   901→                      </Card>
+   902→                    );
+   903→                  })}
+   904→                </div>
+   905→              </section>
+   906→            )}
+   907→          </>
+   908→        )}
+   909→
+   910→        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6">
+   911→          <span className="text-[#94A3B8] font-semibold">Tip:</span> Click any stock in your portfolio to open its full analysis (fundamentals + technicals + AI model call). Drag the up/down arrows to reorder your list. Buy price is optional — leave empty for watch-only stocks.
+   912→        </div>
+   913→
+   914→        {/* Auto-News Digest — fetched from AskAnalyst + interpreted by GLM-4 */}
+   915→        <PortfolioNewsDigest
+   916→          symbols={
+   917→            portfolio.length > 0
+   918→              ? portfolio.map((p) => p.symbol)
+   919→              : MOCK_STOCKS.slice(0, 4).map((s) => s.symbol)
+   920→          }
+   921→        />
+   922→
+   923→        {/* ─── Issue 13: Close-trade dialog ─── */}
+   924→        <Dialog open={!!closeTarget} onOpenChange={(open) => {
+   925→          if (!open) {
+   926→            setCloseTarget(null);
+   927→            setCloseSellPrice("");
+   928→          }
+   929→        }}>
+   930→          <DialogContent className="bg-[#131829] border-white/[0.12] max-w-lg">
+   931→            <DialogHeader>
+   932→              <DialogTitle className="text-[#F4F7FB] flex items-center gap-2">
+   933→                <Wallet className="h-4 w-4 text-[#00E676]" />
+   934→                Close trade — {closeTarget?.symbol}
+   935→              </DialogTitle>
+   936→            </DialogHeader>
+   937→            {closeTarget && (
+   938→              <div className="space-y-4 py-2">
+   939→                {/* Header info */}
+   940→                <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3">
+   941→                  <div className="flex items-center justify-between">
+   942→                    <div>
+   943→                      <div className="font-bold text-[#F4F7FB]">{closeTarget.symbol}</div>
+   944→                      <div className="text-[11px] text-[#94A3B8] truncate max-w-[260px]">{closeTarget.name}</div>
+   945→                    </div>
+   946→                    <div className="text-right">
+   947→                      <div className="text-[11px] text-[#64748B]">Buy price × shares</div>
+   948→                      <div className="font-mono text-sm text-[#F4F7FB]">
+   949→                        {closeTarget.buyPrice.toFixed(2)} × {closeTarget.shares.toLocaleString()}
+   950→                      </div>
+   951→                    </div>
+   952→                  </div>
+   953→                </div>
+   954→
+   955→                {/* Sell price input */}
+   956→                <div className="space-y-2">
+   957→                  <Label className="text-[#94A3B8] flex items-center gap-1.5">
+   958→                    <Calculator className="h-3 w-3" />
+   959→                    Sell price (PKR per share)
+   960→                    {closePriceLoading && <Loader2 className="h-3 w-3 animate-spin text-[#00E676]" />}
+   961→                  </Label>
+   962→                  <div className="flex items-center gap-1.5 bg-[#0A0E1A] border border-white/[0.08] rounded-md px-3 py-2 focus-within:border-[#00E676]/40">
+   963→                    <span className="text-xs text-[#64748B] font-mono">Rs.</span>
+   964→                    <Input
+   965→                      value={closeSellPrice}
+   966→                      onChange={(e) => setCloseSellPrice(e.target.value)}
+   967→                      onKeyDown={(e) => {
+   968→                        if (e.key === "Enter") confirmCloseTrade();
+   969→                      }}
+   970→                      placeholder="0.00"
+   971→                      inputMode="decimal"
+   972→                      autoFocus
+   973→                      className="h-7 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
+   974→                    />
+   975→                    {typeof livePrices[closeTarget.symbol] === "number" && (
+   976→                      <span className="text-[10px] text-[#64748B] ml-auto">
+   977→                        live: <span className="font-mono text-[#94A3B8]">{livePrices[closeTarget.symbol]!.toFixed(2)}</span>
+   978→                      </span>
+   979→                    )}
+   980→                  </div>
+   981→                  <p className="text-[10px] text-[#64748B] leading-relaxed">
+   982→                    Auto-filled from the latest OHLCV close via <code className="text-[#00E676]">/api/psx/ohlcv/{closeTarget.symbol}</code>.
+   983→                    You can override it if you have a different fill price.
+   984→                  </p>
+   985→                </div>
+   986→
+   987→                {/* Calculation breakdown */}
+   988→                {closeCalc ? (
+   989→                  <div className="rounded-md border border-white/[0.06] bg-[#0A0E1A] divide-y divide-white/[0.04]">
+   990→                    <CloseRow label="Buy cost" value={`PKR ${Math.round(closeCalc.buyCost).toLocaleString()}`} sub={`${closeTarget.buyPrice.toFixed(2)} × ${closeTarget.shares.toLocaleString()}`} />
+   991→                    <CloseRow label="Sell value" value={`PKR ${Math.round(closeCalc.sellValue).toLocaleString()}`} sub={`${closeCalc.sellPrice.toFixed(2)} × ${closeTarget.shares.toLocaleString()}`} />
+   992→                    <CloseRow
+   993→                      label="Gross P&L"
+   994→                      value={`PKR ${Math.round(closeCalc.grossPnl).toLocaleString()}`}
+   995→                      sub={`${closeCalc.grossPnl >= 0 ? "+" : ""}${((closeCalc.grossPnl / Math.max(1, closeCalc.buyCost)) * 100).toFixed(2)}%`}
+   996→                      valueClass={closeCalc.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}
+   997→                    />
+   998→                    <CloseRow
+   999→                      label="Broker commission"
+  1000→                      value={`PKR ${Math.round(closeCalc.commission).toLocaleString()}`}
+  1001→                      sub="0.15% × sell value × 2 (buy + sell)"
+  1002→                      valueClass="text-[#FF5C5C]"
+  1003→                    />
+  1004→                    <CloseRow
+  1005→                      label={`CGT (${(closeCalc.taxRate * 100).toFixed(0)}% bracket)`}
+  1006→                      value={`PKR ${Math.round(closeCalc.cgt).toLocaleString()}`}
+  1007→                      sub={closeCalc.taxRate > 0
+  1008→                        ? `Short-term: held ${closeCalc.holdingDays}d (≤12mo)`
+  1009→                        : `Long-term: held ${closeCalc.holdingDays}d (>12mo, exempt)`}
+  1010→                      valueClass="text-[#FF5C5C]"
+  1011→                    />
+  1012→                    <div className="p-3 flex items-center justify-between bg-white/[0.02]">
+  1013→                      <div>
+  1014→                        <div className="text-[11px] uppercase tracking-wider text-[#94A3B8] font-semibold">Net P&L</div>
+  1015→                        <div className="text-[10px] text-[#64748B] mt-0.5">gross − commission − CGT</div>
+  1016→                      </div>
+  1017→                      <div className="text-right">
+  1018→                        <div className={`text-lg font-mono font-bold ${closeCalc.netPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+  1019→                          {closeCalc.netPnl >= 0 ? "+" : ""}PKR {Math.round(Math.abs(closeCalc.netPnl)).toLocaleString()}
+  1020→                        </div>
+  1021→                        <div className={`text-[10px] font-mono ${closeCalc.netPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+  1022→                          {closeCalc.netPnlPct >= 0 ? "+" : ""}{closeCalc.netPnlPct.toFixed(2)}% net
+  1023→                        </div>
+  1024→                      </div>
+  1025→                    </div>
+  1026→                  </div>
+  1027→                ) : (
+  1028→                  <div className="rounded-md border border-white/[0.06] bg-[#0A0E1A] p-3 text-xs text-[#64748B] text-center">
+  1029→                    Enter a valid sell price to see the calculation.
+  1030→                  </div>
+  1031→                )}
+  1032→
+  1033→                {/* Holding period banner */}
+  1034→                {closeCalc && (
+  1035→                  <div className="rounded-md bg-[#0A0E1A] border border-[#FBBF24]/20 p-2.5 flex items-center gap-2">
+  1036→                    <CalendarClock className="h-3.5 w-3.5 text-[#FBBF24] shrink-0" />
+  1037→                    <span className="text-[11px] text-[#94A3B8]">
+  1038→                      Holding period: <span className="font-mono text-[#F4F7FB]">{closeCalc.holdingDays} days</span> (~{closeCalc.holdingMonths} months) →
+  1039→                      <span className={`ml-1 font-semibold ${closeCalc.taxRate > 0 ? "text-[#FF5C5C]" : "text-[#00E676]"}`}>
+  1040→                        {closeCalc.taxRate > 0 ? "Short-term (15% CGT)" : "Long-term (0% CGT)"}
+  1041→                      </span>
+  1042→                    </span>
+  1043→                  </div>
+  1044→                )}
+  1045→
+  1046→                <div className="flex items-center gap-2 pt-1">
+  1047→                  <Button
+  1048→                    onClick={confirmCloseTrade}
+  1049→                    disabled={!closeCalc || closeSubmitting}
+  1050→                    className="flex-1 bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold disabled:opacity-50"
+  1051→                  >
+  1052→                    {closeSubmitting ? (
+  1053→                      <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+  1054→                    ) : (
+  1055→                      <Check className="h-4 w-4 mr-1.5" />
+  1056→                    )}
+  1057→                    Confirm close
+  1058→                  </Button>
+  1059→                  <Button
+  1060→                    onClick={() => {
+  1061→                      setCloseTarget(null);
+  1062→                      setCloseSellPrice("");
+  1063→                    }}
+  1064→                    variant="outline"
+  1065→                    className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB]"
+  1066→                  >
+  1067→                    <X className="h-4 w-4 mr-1.5" />
+  1068→                    Cancel
+  1069→                  </Button>
+  1070→                </div>
+  1071→
+  1072→                <p className="text-[10px] text-[#64748B] leading-relaxed">
+  1073→                  Closing this trade will sell all {closeTarget.shares.toLocaleString()} shares and reset the position
+  1074→                  to <span className="text-[#FBBF24] font-semibold">watch-only</span> (shares removed, buy price cleared).
+  1075→                  The closed trade is sent to the <span className="text-[#00E676] font-semibold">Tracker</span> for
+  1076→                  your P&L history.
+  1077→                </p>
+  1078→              </div>
+  1079→            )}
+  1080→          </DialogContent>
+  1081→        </Dialog>
+  1082→      </main>
+  1083→    </div>
+  1084→  );
+  1085→}
+  1086→
+  1087→// ─── Issue 13: small sub-component for close-trade rows ────────────────────
+  1088→function CloseRow({
+  1089→  label,
+  1090→  value,
+  1091→  sub,
+  1092→  valueClass = "text-[#F4F7FB]",
+  1093→}: {
+  1094→  label: string;
+  1095→  value: string;
+  1096→  sub?: string;
+  1097→  valueClass?: string;
+  1098→}) {
+  1099→  return (
+  1100→    <div className="p-3 flex items-center justify-between">
+  1101→      <div>
+  1102→        <div className="text-[11px] uppercase tracking-wider text-[#94A3B8]">{label}</div>
+  1103→        {sub && <div className="text-[10px] text-[#64748B] mt-0.5 font-mono">{sub}</div>}
+  1104→      </div>
+  1105→      <div className={`text-sm font-mono font-semibold ${valueClass}`}>{value}</div>
+  1106→    </div>
+  1107→  );
+  1108→}
+  1109→
+  1110→// ────────────────────────────────────────────────────────────────────────────
+  1111→// Per-Stock News Digest panel (auto-fetched + LLM-interpreted news for portfolio)
+  1112→// ────────────────────────────────────────────────────────────────────────────
+  1113→
+  1114→interface InterpretedNewsItem {
+  1115→  title?: string;
+  1116→  link?: string;
+  1117→  source?: string;
+  1118→  publishedAt?: string;
+  1119→  summary?: string;
+  1120→  symbol: string;
+  1121→  impact: "positive" | "negative" | "neutral";
+  1122→  impactStrength: "weak" | "moderate" | "strong";
+  1123→  laymanExplanation: string;
+  1124→  shortTermOutlook: string;
+  1125→  affectedStocks: string[];
+  1126→}
+  1127→
+  1128→interface NewsDigestEntry {
+  1129→  symbol: string;
+  1130→  stockName: string;
+  1131→  newsCount: number;
+  1132→  interpretedItems: InterpretedNewsItem[];
+  1133→}
+  1134→
+  1135→function PortfolioNewsDigest({ symbols }: { symbols: string[] }) {
+  1136→  const [digest, setDigest] = useState<NewsDigestEntry[]>([]);
+  1137→  const [loading, setLoading] = useState(false);
+  1138→  const [error, setError] = useState<string | null>(null);
+  1139→  const setView = useLatentStore((s) => s.setView);
+  1140→  const pushNotification = useLatentStore((s) => s.pushNotification);
+  1141→
+  1142→  const loadDigest = async () => {
+  1143→    if (symbols.length === 0) return;
+  1144→    setLoading(true);
+  1145→    setError(null);
+  1146→    try {
+  1147→      const res = await fetch(`/api/portfolio/news-digest?symbols=${symbols.join(",")}&limit=2`);
+  1148→      if (!res.ok) {
+  1149→        const err = await res.json().catch(() => ({}));
+  1150→        throw new Error(err.detail || err.error || `Failed (${res.status})`);
+  1151→      }
+  1152→      const data = await res.json();
+  1153→      setDigest(data.digest || []);
+  1154→      const total = data.totalInterpreted || 0;
+  1155→      if (total > 0) {
+  1156→        pushNotification({
+  1157→          type: "news",
+  1158→          title: `${total} news items interpreted`,
+  1159→          body: `Auto-analyzed news for ${symbols.length} portfolio stock${symbols.length === 1 ? "" : "s"}`,
+  1160→          linkView: "portfolio",
+  1161→        });
+  1162→      }
+  1163→    } catch (err) {
+  1164→      setError(err instanceof Error ? err.message : "Failed to load news digest");
+  1165→    } finally {
+  1166→      setLoading(false);
+  1167→    }
+  1168→  };
+  1169→
+  1170→  useEffect(() => {
+  1171→    loadDigest();
+  1172→  }, [symbols.join(",")]);
+  1173→
+  1174→  const impactColor = (i: string) =>
+  1175→    i === "positive" ? "text-[#00E676]" : i === "negative" ? "text-[#FF5C5C]" : "text-[#94A3B8]";
+  1176→
+  1177→  return (
+  1178→    <Card className="bg-[#131829] border-white/[0.08] mt-4">
+  1179→      <CardContent className="p-5">
+  1180→        <div className="flex items-center justify-between mb-4">
+  1181→          <div>
+  1182→            <h3 className="font-semibold text-[#F4F7FB] flex items-center gap-2">
+  1183→              <TrendingUp className="h-4 w-4 text-[#00E676]" />
+  1184→              Auto-News Digest for Your Portfolio
+  1185→            </h3>
+  1186→            <p className="text-xs text-[#94A3B8] mt-0.5">
+  1187→              For each stock below: news fetched from AskAnalyst + GLM-4 interprets impact in layman terms.
+  1188→            </p>
+  1189→          </div>
+  1190→          <Button
+  1191→            variant="outline"
+  1192→            size="sm"
+  1193→            onClick={loadDigest}
+  1194→            disabled={loading}
+  1195→            className="border-white/[0.12] text-[#94A3B8] h-7"
+  1196→          >
+  1197→            {loading ? (
+  1198→              <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+  1199→            ) : (
+  1200→              <RefreshCw className="h-3 w-3 mr-1.5" />
+  1201→            )}
+  1202→            Refresh
+  1203→          </Button>
+  1204→        </div>
+  1205→
+  1206→        {loading && digest.length === 0 && (
+  1207→          <div className="space-y-3">
+  1208→            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full bg-white/[0.04]" />)}
+  1209→          </div>
+  1210→        )}
+  1211→
+  1212→        {error && (
+  1213→          <div className="rounded-md bg-[#FF5C5C]/[0.07] border border-[#FF5C5C]/20 p-3 text-xs text-[#FF5C5C]">
+  1214→            <span className="font-semibold">Error:</span> {error}
+  1215→          </div>
+  1216→        )}
+  1217→
+  1218→        {!loading && !error && digest.length > 0 && (
+  1219→          <div className="space-y-4">
+  1220→            {digest.map((entry, di) => (
+  1221→              <div key={`${entry.symbol}-${di}`} className="border-l-2 border-[#00E676]/30 pl-3">
+  1222→                <div className="flex items-center gap-2 mb-2">
+  1223→                  <div className="h-7 w-7 rounded-md bg-[#00E676]/10 flex items-center justify-center font-mono font-bold text-[#00E676] text-[10px]">
+  1224→                    {entry.symbol.slice(0, 4)}
+  1225→                  </div>
+  1226→                  <span className="font-semibold text-[#F4F7FB] text-sm">{entry.symbol}</span>
+  1227→                  <span className="text-[11px] text-[#94A3B8] truncate flex-1">{entry.stockName}</span>
+  1228→                  <Badge variant="outline" className="text-[9px] py-0 h-4 border-white/[0.12] text-[#64748B]">
+  1229→                    {entry.newsCount} news
+  1230→                  </Badge>
+  1231→                </div>
+  1232→
+  1233→                {entry.interpretedItems.length === 0 ? (
+  1234→                  <p className="text-xs text-[#64748B] italic ml-9">
+  1235→                    No recent news from AskAnalyst for {entry.symbol}.
+  1236→                  </p>
+  1237→                ) : (
+  1238→                  <div className="space-y-2">
+  1239→                    {entry.interpretedItems.map((item, i) => (
+  1240→                      <div key={i} className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3">
+  1241→                        <div className="flex items-center justify-between gap-2 mb-1.5">
+  1242→                          <span className="text-xs font-semibold text-[#F4F7FB] line-clamp-2 flex-1">
+  1243→                            {item.title || "(no headline)"}
+  1244→                          </span>
+  1245→                          <div className="flex items-center gap-1.5 shrink-0">
+  1246→                            <span className={`text-[10px] uppercase font-bold ${impactColor(item.impact)}`}>
+  1247→                              {item.impact}
+  1248→                            </span>
+  1249→                            <Badge variant="outline" className={`text-[9px] py-0 h-4 ${
+  1250→                              item.impactStrength === "strong" ? "border-[#FF5C5C]/40 text-[#FF5C5C]" :
+  1251→                              item.impactStrength === "moderate" ? "border-amber-400/40 text-amber-400" :
+  1252→                              "border-white/[0.12] text-[#94A3B8]"
+  1253→                            }`}>
+  1254→                              {item.impactStrength}
+  1255→                            </Badge>
+  1256→                          </div>
+  1257→                        </div>
+  1258→                        <p className="text-[11px] text-[#94A3B8] leading-relaxed mb-1.5">
+  1259→                          {item.laymanExplanation}
+  1260→                        </p>
+  1261→                        {item.shortTermOutlook && (
+  1262→                          <p className="text-[11px] text-[#64748B] italic">
+  1263→                            Outlook: {item.shortTermOutlook}
+  1264→                          </p>
+  1265→                        )}
+  1266→                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/[0.04]">
+  1267→                          <div className="flex items-center gap-1.5 flex-wrap">
+  1268→                            <span className="text-[10px] text-[#64748B] uppercase">Affected:</span>
+  1269→                            {item.affectedStocks.slice(0, 3).map((s, ai) => (
+  1270→                              <button
+  1271→                                key={`${s}-${ai}`}
+  1272→                                onClick={() => setView("signals_v2")}
+  1273→                                className="text-[10px] font-mono text-[#00E676] hover:underline"
+  1274→                              >
+  1275→                                {s}
+  1276→                              </button>
+  1277→                            ))}
+  1278→                          </div>
+  1279→                          {item.link && (
+  1280→                            <a
+  1281→                              href={item.link}
+  1282→                              target="_blank"
+  1283→                              rel="noopener noreferrer"
+  1284→                              className="text-[10px] text-[#64748B] hover:text-[#F4F7FB]"
+  1285→                            >
+  1286→                              Source ↗
+  1287→                            </a>
+  1288→                          )}
+  1289→                        </div>
+  1290→                      </div>
+  1291→                    ))}
+  1292→                  </div>
+  1293→                )}
+  1294→              </div>
+  1295→            ))}
+  1296→          </div>
+  1297→        )}
+  1298→
+  1299→        <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5 mt-3 text-[10px] text-[#64748B]">
+  1300→          <span className="text-[#94A3B8] font-semibold">Manual URL paste:</span> For
+  1301→          ultra-fast news from any source, paste the URL in the Fundamental News tab — that
+  1302→          feature stays as an extra layer on top of this auto-digest.
+  1303→        </div>
+  1304→      </CardContent>
+  1305→    </Card>
+  1306→  );
+  1307→}
+  1308→

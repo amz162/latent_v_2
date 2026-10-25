@@ -1898,6 +1898,10 @@
     rotate: 90deg;
   }
 
+  .rotate-180 {
+    rotate: 180deg;
+  }
+
   .transform {
     transform: var(--tw-rotate-x, ) var(--tw-rotate-y, ) var(--tw-rotate-z, ) var(--tw-skew-x, ) var(--tw-skew-y, );
   }
@@ -3690,6 +3694,16 @@
     line-height: 1.05;
   }
 
+  .leading-\[1\.5\] {
+    --tw-leading: 1.5;
+    line-height: 1.5;
+  }
+
+  .leading-\[1\.6\] {
+    --tw-leading: 1.6;
+    line-height: 1.6;
+  }
+
   .leading-none {
     --tw-leading: 1;
     line-height: 1;
@@ -4502,6 +4516,14 @@
 
   .\[--cell-size\:--spacing\(8\)\] {
     --cell-size: calc(var(--spacing) * 8);
+  }
+
+  .\[price-patterns\:list\] {
+    price-patterns: list;
+  }
+
+  .\[result-patterns\:list\] {
+    result-patterns: list;
   }
 
   .\[scrollbar-color\:\#00E67633_transparent\] {
@@ -5480,6 +5502,16 @@
 
   .focus-visible\:border-ring:focus-visible {
     border-color: var(--ring);
+  }
+
+  .focus-visible\:bg-white\/\[0\.04\]:focus-visible {
+    background-color: #ffffff0a;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .focus-visible\:bg-white\/\[0\.04\]:focus-visible {
+      background-color: color-mix(in oklab, var(--color-white) 4%, transparent);
+    }
   }
 
   .focus-visible\:ring-0:focus-visible {

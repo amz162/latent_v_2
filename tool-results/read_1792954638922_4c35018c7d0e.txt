@@ -1,0 +1,502 @@
+   541→            </div>
+   542→            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+   543→              {/* Holdings count (real positions only) */}
+   544→              <Card className="bg-[#131829] border-white/[0.08]">
+   545→                <CardContent className="p-4">
+   546→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Holdings</div>
+   547→                  {pricesLoading && !hasLivePrices ? (
+   548→                    <Skeleton className="h-7 w-12 bg-white/[0.04] mt-1" />
+   549→                  ) : (
+   550→                    <div className="text-xl font-bold text-[#F4F7FB] font-mono">{holdings.length}</div>
+   551→                  )}
+   552→                  <div className="text-[10px] text-[#64748B] mt-0.5">
+   553→                    {watchlist.length} watch-only
+   554→                  </div>
+   555→                </CardContent>
+   556→              </Card>
+   557→              {/* Cost basis — sum of (shares × buyPrice) over holdings */}
+   558→              <Card className="bg-[#131829] border-white/[0.08]">
+   559→                <CardContent className="p-4">
+   560→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Cost basis</div>
+   561→                  {pricesLoading && !hasLivePrices ? (
+   562→                    <Skeleton className="h-7 w-24 bg-white/[0.04] mt-1" />
+   563→                  ) : (
+   564→                    <div className="text-xl font-bold text-[#F4F7FB] font-mono">
+   565→                      PKR {totalCost.toLocaleString()}
+   566→                    </div>
+   567→                  )}
+   568→                  <div className="text-[10px] text-[#64748B] mt-0.5">total invested</div>
+   569→                </CardContent>
+   570→              </Card>
+   571→              {/* Market value — sum of (shares × livePrice) over holdings */}
+   572→              <Card className="bg-[#131829] border-white/[0.08]">
+   573→                <CardContent className="p-4">
+   574→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Market value</div>
+   575→                  {pricesLoading && !hasLivePrices ? (
+   576→                    <Skeleton className="h-7 w-24 bg-white/[0.04] mt-1" />
+   577→                  ) : (
+   578→                    <div className="text-xl font-bold text-[#F4F7FB] font-mono">
+   579→                      PKR {totalValue.toLocaleString()}
+   580→                    </div>
+   581→                  )}
+   582→                  <div className="text-[10px] text-[#64748B] mt-0.5">live</div>
+   583→                </CardContent>
+   584→              </Card>
+   585→              {/* Total P&L = market value − cost basis */}
+   586→              <Card className={`bg-[#131829] ${totalPnL >= 0 ? "border-[#00E676]/30" : "border-[#FF5C5C]/30"}`}>
+   587→                <CardContent className="p-4">
+   588→                  <div className="text-[10px] uppercase tracking-wider text-[#64748B]">Total P&L</div>
+   589→                  {pricesLoading && !hasLivePrices ? (
+   590→                    <Skeleton className="h-7 w-32 bg-white/[0.04] mt-1" />
+   591→                  ) : (
+   592→                    <div className={`text-xl font-bold font-mono ${totalPnL >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   593→                      {totalPnL >= 0 ? "+" : ""}{totalPnL.toLocaleString()} ({totalPnLPct.toFixed(2)}%)
+   594→                    </div>
+   595→                  )}
+   596→                  <div className="text-[10px] text-[#64748B] mt-0.5">overall</div>
+   597→                </CardContent>
+   598→              </Card>
+   599→            </div>
+   600→          </div>
+   601→        )}
+   602→
+   603→        {/* Empty state — no stocks at all */}
+   604→        {sorted.length === 0 ? (
+   605→          <Card className="bg-[#131829] border-white/[0.08]">
+   606→            <CardContent className="p-12 text-center">
+   607→              <Briefcase className="h-12 w-12 text-[#00E676]/30 mx-auto mb-3" />
+   608→              <h3 className="font-semibold text-[#F4F7FB] mb-1">No stocks in your portfolio yet</h3>
+   609→              <p className="text-xs text-[#94A3B8] mb-4">
+   610→                Add stocks to track them. Specify buy price + shares to enable live P&L tracking and hold/sell/buy-more suggestions.
+   611→              </p>
+   612→              <Button
+   613→                onClick={() => setAddOpen(true)}
+   614→                className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881]"
+   615→              >
+   616→                <Plus className="h-4 w-4 mr-1.5" />
+   617→                Add your first stock
+   618→              </Button>
+   619→            </CardContent>
+   620→          </Card>
+   621→        ) : (
+   622→          <>
+   623→            {/* ─── Holdings section (Issue 10) — real positions with live P&L ─── */}
+   624→            <section className="mb-6">
+   625→              <div className="flex items-center gap-2 mb-3">
+   626→                <Wallet className="h-4 w-4 text-[#00E676]" />
+   627→                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F4F7FB]">Holdings</h2>
+   628→                <Badge variant="outline" className="text-[9px] py-0 h-4 border-white/[0.12] text-[#94A3B8]">
+   629→                  {holdings.length} open
+   630→                </Badge>
+   631→                <span className="text-[10px] text-[#64748B] ml-1">real positions · live P&amp;L tracked</span>
+   632→              </div>
+   633→
+   634→              {holdings.length === 0 ? (
+   635→                <div className="rounded-lg border border-white/[0.06] bg-[#131829] p-6 text-center">
+   636→                  <Wallet className="h-8 w-8 text-[#64748B]/40 mx-auto mb-2" />
+   637→                  <p className="text-xs text-[#94A3B8] mb-1">No open positions yet</p>
+   638→                  <p className="text-[10px] text-[#64748B]">
+   639→                    Add a stock with shares + buy price to start tracking live P&amp;L.
+   640→                  </p>
+   641→                </div>
+   642→              ) : pricesLoading && !hasLivePrices ? (
+   643→                <div className="space-y-2">
+   644→                  {holdings.map((p, idx) => (
+   645→                    <Skeleton
+   646→                      key={`${p.symbol}-${idx}-sk`}
+   647→                      className="h-20 w-full bg-[#131829] border border-white/[0.06]"
+   648→                    />
+   649→                  ))}
+   650→                </div>
+   651→              ) : (
+   652→                <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1 latent-scroll">
+   653→                  {holdingsWithIdx.map(({ p, idx }, i) => {
+   654→                    const livePrice = livePrices[p.symbol];
+   655→                    const mockStock = MOCK_STOCKS.find((s) => s.symbol === p.symbol);
+   656→                    const currentPrice: number | null =
+   657→                      typeof livePrice === "number"
+   658→                        ? livePrice
+   659→                        : mockStock
+   660→                          ? mockStock.price
+   661→                          : null;
+   662→                    const pnl =
+   663→                      currentPrice !== null
+   664→                        ? (currentPrice - (p.buyPrice as number)) * p.shares
+   665→                        : 0;
+   666→                    const pnlPct =
+   667→                      currentPrice !== null
+   668→                        ? ((currentPrice - (p.buyPrice as number)) / (p.buyPrice as number)) * 100
+   669→                        : 0;
+   670→                    const isProfit = pnl > 0;
+   671→                    const isLoss = pnl < 0;
+   672→                    const currentValue =
+   673→                      currentPrice !== null ? p.shares * currentPrice : null;
+   674→                    const suggestion =
+   675→                      currentPrice === null
+   676→                        ? "Live price unavailable — check quote source"
+   677→                        : isProfit && pnlPct > 15
+   678→                          ? "Take partial profit — book 30-50% of position"
+   679→                          : isProfit
+   680→                            ? "Hold — trend still intact"
+   681→                            : isLoss && pnlPct < -10
+   682→                              ? "Consider averaging down on next dip — improve cost basis"
+   683→                              : isLoss
+   684→                                ? "Hold — within normal volatility. Stop-loss not hit."
+   685→                                : "Hold — at breakeven";
+   686→
+   687→                    return (
+   688→                      <Card
+   689→                        key={`${p.symbol}-${i}`}
+   690→                        className={`bg-[#131829] border-white/[0.08] ${isProfit ? "border-l-[#00E676]/60" : isLoss ? "border-l-[#FF5C5C]/60" : ""}`}
+   691→                      >
+   692→                        <CardContent className="p-4">
+   693→                          <div className="flex items-center gap-3">
+   694→                            {/* Reorder controls */}
+   695→                            <div className="flex flex-col gap-0.5">
+   696→                              <button
+   697→                                onClick={() => moveUp(idx)}
+   698→                                disabled={idx === 0}
+   699→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === 0 ? "opacity-30 cursor-not-allowed" : ""}`}
+   700→                              >
+   701→                                <ArrowUp className="h-3.5 w-3.5" />
+   702→                              </button>
+   703→                              <button
+   704→                                onClick={() => moveDown(idx)}
+   705→                                disabled={idx === sorted.length - 1}
+   706→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === sorted.length - 1 ? "opacity-30 cursor-not-allowed" : ""}`}
+   707→                              >
+   708→                                <ArrowDown className="h-3.5 w-3.5" />
+   709→                              </button>
+   710→                            </div>
+   711→
+   712→                            {/* Symbol */}
+   713→                            <div className="h-10 w-10 rounded-lg bg-[#00E676]/10 flex items-center justify-center font-mono font-bold text-[#00E676] text-sm">
+   714→                              {p.symbol.slice(0, 4)}
+   715→                            </div>
+   716→
+   717→                            {/* Main */}
+   718→                            <button
+   719→                              onClick={() => {
+   720→                                setView("signals_v2");
+   721→                                toast.info(`Opening analysis for ${p.symbol}...`);
+   722→                              }}
+   723→                              className="flex-1 text-left hover:opacity-80"
+   724→                            >
+   725→                              <div className="flex items-center gap-2">
+   726→                                <span className="font-bold text-[#F4F7FB]">{p.symbol}</span>
+   727→                                <Badge variant="outline" className={`text-[9px] py-0 h-4 ${isProfit ? "border-[#00E676]/40 text-[#00E676]" : isLoss ? "border-[#FF5C5C]/40 text-[#FF5C5C]" : "border-white/[0.12] text-[#94A3B8]"}`}>
+   728→                                  {isProfit ? "PROFIT" : isLoss ? "LOSS" : "BREAK EVEN"}
+   729→                                </Badge>
+   730→                              </div>
+   731→                              <div className="text-[11px] text-[#94A3B8] truncate max-w-[300px]">{p.name}</div>
+   732→                              <div className="text-[10px] text-[#64748B] mt-0.5 font-mono">
+   733→                                Buy: {p.buyPrice} × {p.shares} = PKR {((p.buyPrice as number) * p.shares).toLocaleString()}
+   734→                              </div>
+   735→                            </button>
+   736→
+   737→                            {/* Price + P&L (Issue 15) */}
+   738→                            <div className="text-right shrink-0">
+   739→                              <div className="text-sm font-mono font-bold text-[#F4F7FB]">
+   740→                                {currentPrice !== null ? currentPrice.toLocaleString() : "—"}
+   741→                              </div>
+   742→                              <div className="text-[10px] text-[#64748B]">
+   743→                                {currentPrice !== null ? "live" : "no live price"}
+   744→                              </div>
+   745→                              {currentPrice !== null && (
+   746→                                <div className={`text-xs font-mono font-bold ${isProfit ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`}>
+   747→                                  {pnl >= 0 ? "+" : ""}{pnl.toLocaleString()} ({pnlPct.toFixed(1)}%)
+   748→                                </div>
+   749→                              )}
+   750→                              {currentValue !== null && (
+   751→                                <div className="text-[9px] text-[#64748B] font-mono mt-0.5">
+   752→                                  val PKR {currentValue.toLocaleString()}
+   753→                                </div>
+   754→                              )}
+   755→                            </div>
+   756→
+   757→                            {/* Close / Remove */}
+   758→                            <div className="flex items-center gap-1 shrink-0 ml-2">
+   759→                              <button
+   760→                                onClick={() => openCloseDialog(p)}
+   761→                                className="text-[#64748B] hover:text-[#00E676] px-1.5 py-1 rounded-md hover:bg-[#00E676]/10 transition-colors"
+   762→                                title="Close trade — sell all shares and lock in P&L"
+   763→                              >
+   764→                                <Wallet className="h-4 w-4" />
+   765→                              </button>
+   766→                              <button
+   767→                                onClick={() => {
+   768→                                  removePosition(p.symbol);
+   769→                                  toast.info(`${p.symbol} removed from portfolio`);
+   770→                                }}
+   771→                                className="text-[#64748B] hover:text-[#FF5C5C] px-1.5 py-1 rounded-md hover:bg-[#FF5C5C]/10 transition-colors"
+   772→                                title="Remove from portfolio"
+   773→                              >
+   774→                                <Trash2 className="h-4 w-4" />
+   775→                              </button>
+   776→                            </div>
+   777→                          </div>
+   778→
+   779→                          {/* Suggestion */}
+   780→                          {suggestion && (
+   781→                            <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-start gap-2">
+   782→                              {isProfit ? <TrendingUp className="h-3 w-3 text-[#00E676] mt-0.5" /> :
+   783→                               isLoss ? <TrendingDown className="h-3 w-3 text-[#FF5C5C] mt-0.5" /> :
+   784→                               <Minus className="h-3 w-3 text-[#94A3B8] mt-0.5" />}
+   785→                              <div>
+   786→                                <span className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold">
+   787→                                  Suggestion:
+   788→                                </span>
+   789→                                <span className="text-xs text-[#94A3B8] ml-1.5">{suggestion}</span>
+   790→                              </div>
+   791→                            </div>
+   792→                          )}
+   793→                        </CardContent>
+   794→                      </Card>
+   795→                    );
+   796→                  })}
+   797→                </div>
+   798→              )}
+   799→            </section>
+   800→
+   801→            {/* ─── Watchlist section (Issue 10) — watch-only, NOT in holdings ─── */}
+   802→            {watchlist.length > 0 && (
+   803→              <section className="mb-6">
+   804→                <div className="flex items-center gap-2 mb-3">
+   805→                  <Eye className="h-4 w-4 text-[#FBBF24]" />
+   806→                  <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F4F7FB]">Watchlist</h2>
+   807→                  <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]">
+   808→                    {watchlist.length} watching
+   809→                  </Badge>
+   810→                  <span className="text-[10px] text-[#64748B] ml-1">
+   811→                    watch-only — not counted in holdings P&amp;L
+   812→                  </span>
+   813→                </div>
+   814→                <div className="space-y-2 max-h-96 overflow-y-auto pr-1 latent-scroll">
+   815→                  {watchlistWithIdx.map(({ p, idx }, i) => {
+   816→                    const livePrice = livePrices[p.symbol];
+   817→                    const mockStock = MOCK_STOCKS.find((s) => s.symbol === p.symbol);
+   818→                    const currentPrice: number | null =
+   819→                      typeof livePrice === "number"
+   820→                        ? livePrice
+   821→                        : mockStock
+   822→                          ? mockStock.price
+   823→                          : null;
+   824→                    return (
+   825→                      <Card
+   826→                        key={`${p.symbol}-${i}-w`}
+   827→                        className="bg-[#131829] border-white/[0.08] border-l-[#FBBF24]/40"
+   828→                      >
+   829→                        <CardContent className="p-4">
+   830→                          <div className="flex items-center gap-3">
+   831→                            {/* Reorder */}
+   832→                            <div className="flex flex-col gap-0.5">
+   833→                              <button
+   834→                                onClick={() => moveUp(idx)}
+   835→                                disabled={idx === 0}
+   836→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === 0 ? "opacity-30 cursor-not-allowed" : ""}`}
+   837→                              >
+   838→                                <ArrowUp className="h-3.5 w-3.5" />
+   839→                              </button>
+   840→                              <button
+   841→                                onClick={() => moveDown(idx)}
+   842→                                disabled={idx === sorted.length - 1}
+   843→                                className={`text-[#64748B] hover:text-[#F4F7FB] ${idx === sorted.length - 1 ? "opacity-30 cursor-not-allowed" : ""}`}
+   844→                              >
+   845→                                <ArrowDown className="h-3.5 w-3.5" />
+   846→                              </button>
+   847→                            </div>
+   848→
+   849→                            {/* Symbol (amber accent for watch-only) */}
+   850→                            <div className="h-10 w-10 rounded-lg bg-[#FBBF24]/10 flex items-center justify-center font-mono font-bold text-[#FBBF24] text-sm">
+   851→                              {p.symbol.slice(0, 4)}
+   852→                            </div>
+   853→
+   854→                            {/* Main */}
+   855→                            <button
+   856→                              onClick={() => {
+   857→                                setView("signals_v2");
+   858→                                toast.info(`Opening analysis for ${p.symbol}...`);
+   859→                              }}
+   860→                              className="flex-1 text-left hover:opacity-80"
+   861→                            >
+   862→                              <div className="flex items-center gap-2">
+   863→                                <span className="font-bold text-[#F4F7FB]">{p.symbol}</span>
+   864→                                <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]">
+   865→                                  WATCHING
+   866→                                </Badge>
+   867→                              </div>
+   868→                              <div className="text-[11px] text-[#94A3B8] truncate max-w-[300px]">{p.name}</div>
+   869→                              <div className="text-[10px] text-[#64748B] mt-0.5">
+   870→                                Added {new Date(p.addedAt).toLocaleDateString()} · no position yet
+   871→                              </div>
+   872→                            </button>
+   873→
+   874→                            {/* Live price (no P&L — watch-only) */}
+   875→                            <div className="text-right shrink-0">
+   876→                              {pricesLoading && currentPrice === null ? (
+   877→                                <Skeleton className="h-5 w-16 bg-white/[0.04] ml-auto" />
+   878→                              ) : (
+   879→                                <div className="text-sm font-mono font-bold text-[#F4F7FB]">
+   880→                                  {currentPrice !== null ? currentPrice.toLocaleString() : "—"}
+   881→                                </div>
+   882→                              )}
+   883→                              <div className="text-[10px] text-[#64748B]">
+   884→                                {currentPrice !== null ? "live" : "no live price"}
+   885→                              </div>
+   886→                            </div>
+   887→
+   888→                            {/* Remove */}
+   889→                            <button
+   890→                              onClick={() => {
+   891→                                removePosition(p.symbol);
+   892→                                toast.info(`${p.symbol} removed from watchlist`);
+   893→                              }}
+   894→                              className="text-[#64748B] hover:text-[#FF5C5C] px-1.5 py-1 rounded-md hover:bg-[#FF5C5C]/10 transition-colors shrink-0 ml-2"
+   895→                              title="Remove from watchlist"
+   896→                            >
+   897→                              <Trash2 className="h-4 w-4" />
+   898→                            </button>
+   899→                          </div>
+   900→                        </CardContent>
+   901→                      </Card>
+   902→                    );
+   903→                  })}
+   904→                </div>
+   905→              </section>
+   906→            )}
+   907→          </>
+   908→        )}
+   909→
+   910→        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6">
+   911→          <span className="text-[#94A3B8] font-semibold">Tip:</span> Click any stock in your portfolio to open its full analysis (fundamentals + technicals + AI model call). Drag the up/down arrows to reorder your list. Buy price is optional — leave empty for watch-only stocks.
+   912→        </div>
+   913→
+   914→        {/* Auto-News Digest — fetched from AskAnalyst + interpreted by GLM-4 */}
+   915→        <PortfolioNewsDigest
+   916→          symbols={
+   917→            portfolio.length > 0
+   918→              ? portfolio.map((p) => p.symbol)
+   919→              : MOCK_STOCKS.slice(0, 4).map((s) => s.symbol)
+   920→          }
+   921→        />
+   922→
+   923→        {/* ─── Issue 13: Close-trade dialog ─── */}
+   924→        <Dialog open={!!closeTarget} onOpenChange={(open) => {
+   925→          if (!open) {
+   926→            setCloseTarget(null);
+   927→            setCloseSellPrice("");
+   928→          }
+   929→        }}>
+   930→          <DialogContent className="bg-[#131829] border-white/[0.12] max-w-lg">
+   931→            <DialogHeader>
+   932→              <DialogTitle className="text-[#F4F7FB] flex items-center gap-2">
+   933→                <Wallet className="h-4 w-4 text-[#00E676]" />
+   934→                Close trade — {closeTarget?.symbol}
+   935→              </DialogTitle>
+   936→            </DialogHeader>
+   937→            {closeTarget && (
+   938→              <div className="space-y-4 py-2">
+   939→                {/* Header info */}
+   940→                <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3">
+   941→                  <div className="flex items-center justify-between">
+   942→                    <div>
+   943→                      <div className="font-bold text-[#F4F7FB]">{closeTarget.symbol}</div>
+   944→                      <div className="text-[11px] text-[#94A3B8] truncate max-w-[260px]">{closeTarget.name}</div>
+   945→                    </div>
+   946→                    <div className="text-right">
+   947→                      <div className="text-[11px] text-[#64748B]">Buy price × shares</div>
+   948→                      <div className="font-mono text-sm text-[#F4F7FB]">
+   949→                        {closeTarget.buyPrice.toFixed(2)} × {closeTarget.shares.toLocaleString()}
+   950→                      </div>
+   951→                    </div>
+   952→                  </div>
+   953→                </div>
+   954→
+   955→                {/* Sell price input */}
+   956→                <div className="space-y-2">
+   957→                  <Label className="text-[#94A3B8] flex items-center gap-1.5">
+   958→                    <Calculator className="h-3 w-3" />
+   959→                    Sell price (PKR per share)
+   960→                    {closePriceLoading && <Loader2 className="h-3 w-3 animate-spin text-[#00E676]" />}
+   961→                  </Label>
+   962→                  <div className="flex items-center gap-1.5 bg-[#0A0E1A] border border-white/[0.08] rounded-md px-3 py-2 focus-within:border-[#00E676]/40">
+   963→                    <span className="text-xs text-[#64748B] font-mono">Rs.</span>
+   964→                    <Input
+   965→                      value={closeSellPrice}
+   966→                      onChange={(e) => setCloseSellPrice(e.target.value)}
+   967→                      onKeyDown={(e) => {
+   968→                        if (e.key === "Enter") confirmCloseTrade();
+   969→                      }}
+   970→                      placeholder="0.00"
+   971→                      inputMode="decimal"
+   972→                      autoFocus
+   973→                      className="h-7 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
+   974→                    />
+   975→                    {typeof livePrices[closeTarget.symbol] === "number" && (
+   976→                      <span className="text-[10px] text-[#64748B] ml-auto">
+   977→                        live: <span className="font-mono text-[#94A3B8]">{livePrices[closeTarget.symbol]!.toFixed(2)}</span>
+   978→                      </span>
+   979→                    )}
+   980→                  </div>
+   981→                  <p className="text-[10px] text-[#64748B] leading-relaxed">
+   982→                    Auto-filled from the latest OHLCV close via <code className="text-[#00E676]">/api/psx/ohlcv/{closeTarget.symbol}</code>.
+   983→                    You can override it if you have a different fill price.
+   984→                  </p>
+   985→                </div>
+   986→
+   987→                {/* Calculation breakdown */}
+   988→                {closeCalc ? (
+   989→                  <div className="rounded-md border border-white/[0.06] bg-[#0A0E1A] divide-y divide-white/[0.04]">
+   990→                    <CloseRow label="Buy cost" value={`PKR ${Math.round(closeCalc.buyCost).toLocaleString()}`} sub={`${closeTarget.buyPrice.toFixed(2)} × ${closeTarget.shares.toLocaleString()}`} />
+   991→                    <CloseRow label="Sell value" value={`PKR ${Math.round(closeCalc.sellValue).toLocaleString()}`} sub={`${closeCalc.sellPrice.toFixed(2)} × ${closeTarget.shares.toLocaleString()}`} />
+   992→                    <CloseRow
+   993→                      label="Gross P&L"
+   994→                      value={`PKR ${Math.round(closeCalc.grossPnl).toLocaleString()}`}
+   995→                      sub={`${closeCalc.grossPnl >= 0 ? "+" : ""}${((closeCalc.grossPnl / Math.max(1, closeCalc.buyCost)) * 100).toFixed(2)}%`}
+   996→                      valueClass={closeCalc.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}
+   997→                    />
+   998→                    <CloseRow
+   999→                      label="Broker commission"
+  1000→                      value={`PKR ${Math.round(closeCalc.commission).toLocaleString()}`}
+  1001→                      sub="0.15% × sell value × 2 (buy + sell)"
+  1002→                      valueClass="text-[#FF5C5C]"
+  1003→                    />
+  1004→                    <CloseRow
+  1005→                      label={`CGT (${(closeCalc.taxRate * 100).toFixed(0)}% bracket)`}
+  1006→                      value={`PKR ${Math.round(closeCalc.cgt).toLocaleString()}`}
+  1007→                      sub={closeCalc.taxRate > 0
+  1008→                        ? `Short-term: held ${closeCalc.holdingDays}d (≤12mo)`
+  1009→                        : `Long-term: held ${closeCalc.holdingDays}d (>12mo, exempt)`}
+  1010→                      valueClass="text-[#FF5C5C]"
+  1011→                    />
+  1012→                    <div className="p-3 flex items-center justify-between bg-white/[0.02]">
+  1013→                      <div>
+  1014→                        <div className="text-[11px] uppercase tracking-wider text-[#94A3B8] font-semibold">Net P&L</div>
+  1015→                        <div className="text-[10px] text-[#64748B] mt-0.5">gross − commission − CGT</div>
+  1016→                      </div>
+  1017→                      <div className="text-right">
+  1018→                        <div className={`text-lg font-mono font-bold ${closeCalc.netPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+  1019→                          {closeCalc.netPnl >= 0 ? "+" : ""}PKR {Math.round(Math.abs(closeCalc.netPnl)).toLocaleString()}
+  1020→                        </div>
+  1021→                        <div className={`text-[10px] font-mono ${closeCalc.netPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+  1022→                          {closeCalc.netPnlPct >= 0 ? "+" : ""}{closeCalc.netPnlPct.toFixed(2)}% net
+  1023→                        </div>
+  1024→                      </div>
+  1025→                    </div>
+  1026→                  </div>
+  1027→                ) : (
+  1028→                  <div className="rounded-md border border-white/[0.06] bg-[#0A0E1A] p-3 text-xs text-[#64748B] text-center">
+  1029→                    Enter a valid sell price to see the calculation.
+  1030→                  </div>
+  1031→                )}
+  1032→
+  1033→                {/* Holding period banner */}
+  1034→                {closeCalc && (
+  1035→                  <div className="rounded-md bg-[#0A0E1A] border border-[#FBBF24]/20 p-2.5 flex items-center gap-2">
+  1036→                    <CalendarClock className="h-3.5 w-3.5 text-[#FBBF24] shrink-0" />
+  1037→                    <span className="text-[11px] text-[#94A3B8]">
+  1038→                      Holding period: <span className="font-mono text-[#F4F7FB]">{closeCalc.holdingDays} days</span> (~{closeCalc.holdingMonths} months) →
+  1039→                      <span className={`ml-1 font-semibold ${closeCalc.taxRate > 0 ? "text-[#FF5C5C]" : "text-[#00E676]"}`}>
+  1040→                        {closeCalc.taxRate > 0 ? "Short-term (15% CGT)" : "Long-term (0% CGT)"}
+
+[showing lines 541-1040 of 1308; use offset=1041 with limit to continue reading]

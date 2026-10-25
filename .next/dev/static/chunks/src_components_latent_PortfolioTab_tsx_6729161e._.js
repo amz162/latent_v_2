@@ -244,30 +244,105 @@ function PortfolioTab() {
     const [closeSellPrice, setCloseSellPrice] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [closePriceLoading, setClosePriceLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [closeSubmitting, setCloseSubmitting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    // ─── Issue 28-B: add-flow context for the currently-picked symbol ───
+    // Drives the in-dialog hint + Add-button label ("add" vs "merge as a new
+    // buy lot" vs "move from watchlist to holdings"). Same holding rule as the
+    // isHolding() check below: shares > 0 AND buyPrice != null.
+    const selectedExisting = selectedSymbol ? portfolio.find((p)=>p.symbol === selectedSymbol) : undefined;
+    const selectedIsHolding = !!selectedExisting && selectedExisting.shares > 0 && selectedExisting.buyPrice !== null && selectedExisting.buyPrice !== undefined;
     const handleAdd = ()=>{
         if (!selectedSymbol) {
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Pick a stock first");
             return;
         }
-        // Issue 19 behavior: until the user specifies shares (volume), the stock
-        // is added as "watch only" (no P&L tracking). This is intentional — the
-        // user can add shares later. We do not move it to "holdings" until
-        // both buyPrice AND shares are provided.
         const name = selectedName || selectedSymbol;
+        const sharesEntered = shares.trim() !== "";
+        const priceEntered = buyPrice.trim() !== "";
+        const parsedShares = sharesEntered ? parseInt(shares, 10) : 0;
+        const parsedPrice = priceEntered ? parseFloat(buyPrice) : NaN;
+        // Basic numeric guards — negative/NaN inputs would corrupt lot math.
+        if (sharesEntered && (!Number.isFinite(parsedShares) || parsedShares <= 0)) {
+            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Enter a valid number of shares (greater than zero)");
+            return;
+        }
+        if (priceEntered && (!Number.isFinite(parsedPrice) || parsedPrice <= 0)) {
+            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Enter a valid buy price (greater than zero)");
+            return;
+        }
+        const addingPosition = parsedShares > 0;
+        // ─── Issue 28-B: one row per symbol — duplicate guard ───
+        const existing = portfolio.find((p)=>p.symbol === selectedSymbol);
+        const existingIsHolding = !!existing && existing.shares > 0 && existing.buyPrice !== null && existing.buyPrice !== undefined;
+        if (!addingPosition) {
+            // Issue 19 behavior: until the user specifies shares (volume), the
+            // stock is added as "watch only" (no P&L tracking). A symbol may only
+            // exist ONCE anywhere in the portfolio array — as a holding OR as a
+            // watch-only item — so block duplicate watch-only adds with a clear
+            // message and keep the dialog open so the user sees it.
+            if (existing) {
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(`${selectedSymbol} is already in your ${existingIsHolding ? "portfolio" : "watchlist"}`);
+                return;
+            }
+        } else if (!priceEntered) {
+            // Every buy lot needs a price for the weighted-average cost basis.
+            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Buy price is required when adding shares");
+            return;
+        }
+        // Pre-compute the merge result for the case-specific toast. Uses the SAME
+        // pure helper as the store action (mergeBuyLots) so the previewed avg can
+        // never drift from the persisted one — ((Σ price×shares)/(Σ shares)).
+        const mergedLots = addingPosition && existing ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["mergeBuyLots"])(existing, {
+            price: parsedPrice,
+            shares: parsedShares
+        }) : [];
+        const mergedShares = mergedLots.reduce((n, l)=>n + l.shares, 0);
+        const mergedAvg = mergedShares > 0 ? mergedLots.reduce((n, l)=>n + l.price * l.shares, 0) / mergedShares : 0;
+        // The store's addPortfolioPosition handles the cases by symbol:
+        //   new symbol → create · existing holding → merge as an additional
+        //   buy lot (weighted-average buyPrice) · existing watch-only → convert
+        //   to a holding (leaves the watchlist section, becomes a Holdings row).
         addPosition({
             symbol: selectedSymbol,
             name,
             sector: selectedSector || undefined,
-            buyPrice: buyPrice ? parseFloat(buyPrice) : null,
-            shares: shares ? parseInt(shares) : 0
+            buyPrice: priceEntered ? parsedPrice : null,
+            shares: parsedShares
         });
-        pushNotification({
-            type: "info",
-            title: "Stock added to portfolio",
-            body: `${selectedSymbol} added${shares ? ` (${shares} shares${buyPrice ? ` @ PKR ${buyPrice}` : ""})` : " (watch only)"}`,
-            linkView: "portfolio"
-        });
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success(`${selectedSymbol} added to portfolio${shares ? " with " + shares + " shares" : " (watch only)"}`);
+        if (addingPosition) {
+            if (!existing) {
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success(`${selectedSymbol} added to portfolio (${parsedShares} shares @ ${parsedPrice.toFixed(2)})`);
+                pushNotification({
+                    type: "info",
+                    title: "Stock added to portfolio",
+                    body: `${selectedSymbol} added (${parsedShares} shares @ PKR ${parsedPrice.toFixed(2)})`,
+                    linkView: "portfolio"
+                });
+            } else if (existingIsHolding) {
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success(`Added Buy ${mergedLots.length} to ${selectedSymbol} — ${parsedShares} shares @ ${parsedPrice.toFixed(2)} · new avg ${mergedAvg.toFixed(2)} (${mergedShares} shares)`);
+                pushNotification({
+                    type: "info",
+                    title: `Buy added to ${selectedSymbol}`,
+                    body: `Buy ${mergedLots.length}: ${parsedShares} shares @ PKR ${parsedPrice.toFixed(2)} · new weighted avg PKR ${mergedAvg.toFixed(2)} (${mergedShares} shares)`,
+                    linkView: "portfolio"
+                });
+            } else {
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success(`${selectedSymbol} moved from watchlist to portfolio (${parsedShares} shares @ ${parsedPrice.toFixed(2)})`);
+                pushNotification({
+                    type: "info",
+                    title: `${selectedSymbol} moved to portfolio`,
+                    body: `${selectedSymbol} moved from watchlist to portfolio (${parsedShares} shares @ PKR ${parsedPrice.toFixed(2)})`,
+                    linkView: "portfolio"
+                });
+            }
+        } else {
+            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success(`${selectedSymbol} added to watchlist`);
+            pushNotification({
+                type: "info",
+                title: "Stock added to watchlist",
+                body: `${selectedSymbol} added (watch only)`,
+                linkView: "portfolio"
+            });
+        }
         setAddOpen(false);
         setSelectedSymbol("");
         setSelectedName("");
@@ -347,7 +422,8 @@ function PortfolioTab() {
             sector: p.sector,
             buyPrice: p.buyPrice,
             shares: p.shares,
-            addedAt: p.addedAt
+            addedAt: p.addedAt,
+            buys: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBuyLots"])(p)
         };
         setCloseTarget(target);
         // Pre-fill with cached live price if available (from /api/psx/live/batch)
@@ -404,7 +480,9 @@ function PortfolioTab() {
             netPnlPct: c.netPnlPct,
             holdingDays: c.holdingDays,
             taxRate: c.taxRate,
-            closedAt: new Date().toISOString()
+            closedAt: new Date().toISOString(),
+            // Issue 28-B: snapshot of the buy lots behind the averaged buy price.
+            buys: t.buys
         };
         closePositionFromPortfolio(t.symbol, closedTrade);
         pushNotification({
@@ -461,7 +539,7 @@ function PortfolioTab() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AppNav"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                lineNumber: 430,
+                lineNumber: 540,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -477,7 +555,7 @@ function PortfolioTab() {
                                         children: "Portfolio & Watchlist"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 434,
+                                        lineNumber: 544,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -485,13 +563,13 @@ function PortfolioTab() {
                                         children: "Add stocks, drag-to-reorder, optional buy price triggers P&L tracking + suggestions."
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 435,
+                                        lineNumber: 545,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                lineNumber: 433,
+                                lineNumber: 543,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -507,19 +585,19 @@ function PortfolioTab() {
                                                     className: "h-4 w-4 mr-1.5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 442,
+                                                    lineNumber: 552,
                                                     columnNumber: 17
                                                 }, this),
                                                 "Add stock"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 441,
+                                            lineNumber: 551,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 440,
+                                        lineNumber: 550,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogContent"], {
@@ -531,12 +609,12 @@ function PortfolioTab() {
                                                     children: "Add to portfolio"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 448,
+                                                    lineNumber: 558,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 447,
+                                                lineNumber: 557,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -550,7 +628,7 @@ function PortfolioTab() {
                                                                 children: "Select stock (any of 1000+ PSX-listed companies)"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 452,
+                                                                lineNumber: 562,
                                                                 columnNumber: 19
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$StockSearch$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StockSearch"], {
@@ -565,7 +643,7 @@ function PortfolioTab() {
                                                                 placeholder: "Search any PSX stock by symbol or name..."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 455,
+                                                                lineNumber: 565,
                                                                 columnNumber: 19
                                                             }, this),
                                                             selectedSymbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -577,7 +655,7 @@ function PortfolioTab() {
                                                                         children: selectedSymbol
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 468,
+                                                                        lineNumber: 578,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     selectedName && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -588,19 +666,27 @@ function PortfolioTab() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 469,
+                                                                        lineNumber: 579,
                                                                         columnNumber: 40
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 467,
+                                                                lineNumber: 577,
+                                                                columnNumber: 21
+                                                            }, this),
+                                                            selectedSymbol && selectedExisting && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: `text-[10px] mt-1 leading-relaxed ${selectedIsHolding ? "text-[#FBBF24]" : "text-[#94A3B8]"}`,
+                                                                children: selectedIsHolding ? `${selectedSymbol} is already in your portfolio — adding shares merges as a new buy lot at the weighted-average price.` : `${selectedSymbol} is already in your watchlist — adding shares + buy price moves it to Holdings.`
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                lineNumber: 583,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                        lineNumber: 451,
+                                                        lineNumber: 561,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -611,10 +697,10 @@ function PortfolioTab() {
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
                                                                         className: "text-[#94A3B8]",
-                                                                        children: "Buy price (optional)"
+                                                                        children: "Buy price (required with shares)"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 475,
+                                                                        lineNumber: 594,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -625,13 +711,13 @@ function PortfolioTab() {
                                                                         className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] font-mono"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 476,
+                                                                        lineNumber: 595,
                                                                         columnNumber: 21
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 474,
+                                                                lineNumber: 593,
                                                                 columnNumber: 19
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -642,7 +728,7 @@ function PortfolioTab() {
                                                                         children: "Shares (optional — required for P&L tracking)"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 485,
+                                                                        lineNumber: 604,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -653,19 +739,19 @@ function PortfolioTab() {
                                                                         className: "bg-[#0A0E1A] border-white/[0.12] text-[#F4F7FB] font-mono"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 488,
+                                                                        lineNumber: 607,
                                                                         columnNumber: 21
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 484,
+                                                                lineNumber: 603,
                                                                 columnNumber: 19
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                        lineNumber: 473,
+                                                        lineNumber: 592,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -673,70 +759,79 @@ function PortfolioTab() {
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-[#94A3B8] font-semibold",
-                                                                children: "Issue 19 behavior:"
+                                                                children: "How adds work:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 498,
+                                                                lineNumber: 617,
                                                                 columnNumber: 19
                                                             }, this),
                                                             ' ',
-                                                            "The stock is ",
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "text-[#00E676] font-semibold",
-                                                                children: "not moved to holdings"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 499,
-                                                                columnNumber: 32
-                                                            }, this),
-                                                            " until you specify the number of shares. Leaving shares empty adds the stock as a",
+                                                            "Leave ",
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-[#FBBF24] font-semibold",
-                                                                children: " watch-only item"
+                                                                children: "shares empty"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 501,
-                                                                columnNumber: 19
+                                                                lineNumber: 618,
+                                                                columnNumber: 25
                                                             }, this),
-                                                            " (no P&L tracking). You can add shares later."
+                                                            " for a watch-only item (no P&L tracking). Adding shares + buy price creates a holding — or, if you already hold the stock, merges as an extra ",
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-[#00E676] font-semibold",
+                                                                children: "buy lot"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                lineNumber: 620,
+                                                                columnNumber: 31
+                                                            }, this),
+                                                            " and your cost basis becomes the ",
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-[#00E676] font-semibold",
+                                                                children: "weighted-average price"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                lineNumber: 621,
+                                                                columnNumber: 23
+                                                            }, this),
+                                                            ". A stock never appears twice."
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                        lineNumber: 497,
+                                                        lineNumber: 616,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                                         onClick: handleAdd,
                                                         disabled: !selectedSymbol,
                                                         className: "w-full bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold",
-                                                        children: selectedSymbol ? `Add ${selectedSymbol}${shares ? ` (${shares} shares)` : " (watch only)"}` : "Add to portfolio"
+                                                        children: selectedSymbol ? shares.trim() !== "" ? selectedIsHolding ? `Add buy to ${selectedSymbol} (merge)` : `Add ${selectedSymbol} (${shares} shares)` : `Add ${selectedSymbol} (watch only)` : "Add to portfolio"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                        lineNumber: 503,
+                                                        lineNumber: 623,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 450,
+                                                lineNumber: 560,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 446,
+                                        lineNumber: 556,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                lineNumber: 439,
+                                lineNumber: 549,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 432,
+                        lineNumber: 542,
                         columnNumber: 9
                     }, this),
                     sorted.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -753,7 +848,7 @@ function PortfolioTab() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 523,
+                                        lineNumber: 647,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -767,26 +862,26 @@ function PortfolioTab() {
                                                 className: "h-3 w-3 mr-1.5 animate-spin"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 535,
+                                                lineNumber: 659,
                                                 columnNumber: 19
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
                                                 className: "h-3 w-3 mr-1.5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 537,
+                                                lineNumber: 661,
                                                 columnNumber: 19
                                             }, this),
                                             "Refresh prices"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 527,
+                                        lineNumber: 651,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                lineNumber: 521,
+                                lineNumber: 645,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -802,21 +897,21 @@ function PortfolioTab() {
                                                     children: "Holdings"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 546,
+                                                    lineNumber: 670,
                                                     columnNumber: 19
                                                 }, this),
                                                 pricesLoading && !hasLivePrices ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                                                     className: "h-7 w-12 bg-white/[0.04] mt-1"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 548,
+                                                    lineNumber: 672,
                                                     columnNumber: 21
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "text-xl font-bold text-[#F4F7FB] font-mono",
                                                     children: holdings.length
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 550,
+                                                    lineNumber: 674,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -827,18 +922,18 @@ function PortfolioTab() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 552,
+                                                    lineNumber: 676,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 545,
+                                            lineNumber: 669,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 544,
+                                        lineNumber: 668,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -851,14 +946,14 @@ function PortfolioTab() {
                                                     children: "Cost basis"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 560,
+                                                    lineNumber: 684,
                                                     columnNumber: 19
                                                 }, this),
                                                 pricesLoading && !hasLivePrices ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                                                     className: "h-7 w-24 bg-white/[0.04] mt-1"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 562,
+                                                    lineNumber: 686,
                                                     columnNumber: 21
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "text-xl font-bold text-[#F4F7FB] font-mono",
@@ -868,7 +963,7 @@ function PortfolioTab() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 564,
+                                                    lineNumber: 688,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -876,18 +971,18 @@ function PortfolioTab() {
                                                     children: "total invested"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 568,
+                                                    lineNumber: 692,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 559,
+                                            lineNumber: 683,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 558,
+                                        lineNumber: 682,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -900,14 +995,14 @@ function PortfolioTab() {
                                                     children: "Market value"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 574,
+                                                    lineNumber: 698,
                                                     columnNumber: 19
                                                 }, this),
                                                 pricesLoading && !hasLivePrices ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                                                     className: "h-7 w-24 bg-white/[0.04] mt-1"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 576,
+                                                    lineNumber: 700,
                                                     columnNumber: 21
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "text-xl font-bold text-[#F4F7FB] font-mono",
@@ -917,7 +1012,7 @@ function PortfolioTab() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 578,
+                                                    lineNumber: 702,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -925,18 +1020,18 @@ function PortfolioTab() {
                                                     children: "live"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 582,
+                                                    lineNumber: 706,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 573,
+                                            lineNumber: 697,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 572,
+                                        lineNumber: 696,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -949,14 +1044,14 @@ function PortfolioTab() {
                                                     children: "Total P&L"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 588,
+                                                    lineNumber: 712,
                                                     columnNumber: 19
                                                 }, this),
                                                 pricesLoading && !hasLivePrices ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                                                     className: "h-7 w-32 bg-white/[0.04] mt-1"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 590,
+                                                    lineNumber: 714,
                                                     columnNumber: 21
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: `text-xl font-bold font-mono ${totalPnL >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`,
@@ -969,7 +1064,7 @@ function PortfolioTab() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 592,
+                                                    lineNumber: 716,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -977,30 +1072,30 @@ function PortfolioTab() {
                                                     children: "overall"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 596,
+                                                    lineNumber: 720,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 587,
+                                            lineNumber: 711,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 586,
+                                        lineNumber: 710,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                lineNumber: 542,
+                                lineNumber: 666,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 520,
+                        lineNumber: 644,
                         columnNumber: 11
                     }, this),
                     sorted.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1012,7 +1107,7 @@ function PortfolioTab() {
                                     className: "h-12 w-12 text-[#00E676]/30 mx-auto mb-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 607,
+                                    lineNumber: 731,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1020,7 +1115,7 @@ function PortfolioTab() {
                                     children: "No stocks in your portfolio yet"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 608,
+                                    lineNumber: 732,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1028,7 +1123,7 @@ function PortfolioTab() {
                                     children: "Add stocks to track them. Specify buy price + shares to enable live P&L tracking and hold/sell/buy-more suggestions."
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 609,
+                                    lineNumber: 733,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1039,25 +1134,25 @@ function PortfolioTab() {
                                             className: "h-4 w-4 mr-1.5"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 616,
+                                            lineNumber: 740,
                                             columnNumber: 17
                                         }, this),
                                         "Add your first stock"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 612,
+                                    lineNumber: 736,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 606,
+                            lineNumber: 730,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 605,
+                        lineNumber: 729,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                         children: [
@@ -1071,7 +1166,7 @@ function PortfolioTab() {
                                                 className: "h-4 w-4 text-[#00E676]"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 626,
+                                                lineNumber: 750,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1079,7 +1174,7 @@ function PortfolioTab() {
                                                 children: "Holdings"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 627,
+                                                lineNumber: 751,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1091,7 +1186,7 @@ function PortfolioTab() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 628,
+                                                lineNumber: 752,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1099,13 +1194,13 @@ function PortfolioTab() {
                                                 children: "real positions · live P&L tracked"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 631,
+                                                lineNumber: 755,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 625,
+                                        lineNumber: 749,
                                         columnNumber: 15
                                     }, this),
                                     holdings.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1115,7 +1210,7 @@ function PortfolioTab() {
                                                 className: "h-8 w-8 text-[#64748B]/40 mx-auto mb-2"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 636,
+                                                lineNumber: 760,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1123,7 +1218,7 @@ function PortfolioTab() {
                                                 children: "No open positions yet"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 637,
+                                                lineNumber: 761,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1131,13 +1226,13 @@ function PortfolioTab() {
                                                 children: "Add a stock with shares + buy price to start tracking live P&L."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 638,
+                                                lineNumber: 762,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 635,
+                                        lineNumber: 759,
                                         columnNumber: 17
                                     }, this) : pricesLoading && !hasLivePrices ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "space-y-2",
@@ -1145,12 +1240,12 @@ function PortfolioTab() {
                                                 className: "h-20 w-full bg-[#131829] border border-white/[0.06]"
                                             }, `${p.symbol}-${idx}-sk`, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 645,
+                                                lineNumber: 769,
                                                 columnNumber: 21
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 643,
+                                        lineNumber: 767,
                                         columnNumber: 17
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "space-y-2 max-h-[480px] overflow-y-auto pr-1 latent-scroll",
@@ -1163,6 +1258,12 @@ function PortfolioTab() {
                                             const isProfit = pnl > 0;
                                             const isLoss = pnl < 0;
                                             const currentValue = currentPrice !== null ? p.shares * currentPrice : null;
+                                            // ─── Issue 28-B: buy lots + weighted-average cost display ───
+                                            // getBuyLots() back-fills legacy positions (persisted before
+                                            // the `buys` field existed) from buyPrice × shares.
+                                            const lots = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBuyLots"])(p);
+                                            const lotsTotalShares = lots.reduce((n, l)=>n + l.shares, 0);
+                                            const lotsAvg = lotsTotalShares > 0 ? lots.reduce((n, l)=>n + l.price * l.shares, 0) / lotsTotalShares : p.buyPrice;
                                             const suggestion = currentPrice === null ? "Live price unavailable — check quote source" : isProfit && pnlPct > 15 ? "Take partial profit — book 30-50% of position" : isProfit ? "Hold — trend still intact" : isLoss && pnlPct < -10 ? "Consider averaging down on next dip — improve cost basis" : isLoss ? "Hold — within normal volatility. Stop-loss not hit." : "Hold — at breakeven";
                                             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
                                                 className: `bg-[#131829] border-white/[0.08] ${isProfit ? "border-l-[#00E676]/60" : isLoss ? "border-l-[#FF5C5C]/60" : ""}`,
@@ -1183,12 +1284,12 @@ function PortfolioTab() {
                                                                                 className: "h-3.5 w-3.5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                lineNumber: 701,
+                                                                                lineNumber: 834,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 696,
+                                                                            lineNumber: 829,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1199,18 +1300,18 @@ function PortfolioTab() {
                                                                                 className: "h-3.5 w-3.5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                lineNumber: 708,
+                                                                                lineNumber: 841,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 703,
+                                                                            lineNumber: 836,
                                                                             columnNumber: 31
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 695,
+                                                                    lineNumber: 828,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1218,7 +1319,7 @@ function PortfolioTab() {
                                                                     children: p.symbol.slice(0, 4)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 713,
+                                                                    lineNumber: 846,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1236,7 +1337,7 @@ function PortfolioTab() {
                                                                                     children: p.symbol
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                    lineNumber: 726,
+                                                                                    lineNumber: 859,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1245,13 +1346,13 @@ function PortfolioTab() {
                                                                                     children: isProfit ? "PROFIT" : isLoss ? "LOSS" : "BREAK EVEN"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                    lineNumber: 727,
+                                                                                    lineNumber: 860,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 725,
+                                                                            lineNumber: 858,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1259,10 +1360,47 @@ function PortfolioTab() {
                                                                             children: p.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 731,
+                                                                            lineNumber: 864,
                                                                             columnNumber: 31
                                                                         }, this),
-                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                        lots.length > 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                            className: "mt-0.5",
+                                                                            children: [
+                                                                                lots.map((lot, li)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                        className: "text-[10px] text-[#64748B] font-mono leading-[1.5]",
+                                                                                        children: [
+                                                                                            "Buy ",
+                                                                                            li + 1,
+                                                                                            ": ",
+                                                                                            lot.price.toFixed(2),
+                                                                                            " × ",
+                                                                                            lot.shares.toLocaleString()
+                                                                                        ]
+                                                                                    }, `${p.symbol}-lot-${li}`, true, {
+                                                                                        fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                                        lineNumber: 868,
+                                                                                        columnNumber: 37
+                                                                                    }, this)),
+                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                    className: "text-[10px] font-mono font-semibold leading-[1.5] text-[#00E676]/90",
+                                                                                    children: [
+                                                                                        "Avg buy: ",
+                                                                                        lotsAvg.toFixed(2),
+                                                                                        " × ",
+                                                                                        lotsTotalShares.toLocaleString(),
+                                                                                        " total"
+                                                                                    ]
+                                                                                }, void 0, true, {
+                                                                                    fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                                    lineNumber: 875,
+                                                                                    columnNumber: 35
+                                                                                }, this)
+                                                                            ]
+                                                                        }, void 0, true, {
+                                                                            fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                            lineNumber: 866,
+                                                                            columnNumber: 33
+                                                                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                             className: "text-[10px] text-[#64748B] mt-0.5 font-mono",
                                                                             children: [
                                                                                 "Buy: ",
@@ -1274,13 +1412,13 @@ function PortfolioTab() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 732,
-                                                                            columnNumber: 31
+                                                                            lineNumber: 880,
+                                                                            columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 718,
+                                                                    lineNumber: 851,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1291,7 +1429,7 @@ function PortfolioTab() {
                                                                             children: currentPrice !== null ? currentPrice.toLocaleString() : "—"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 739,
+                                                                            lineNumber: 888,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1299,7 +1437,7 @@ function PortfolioTab() {
                                                                             children: currentPrice !== null ? "live" : "no live price"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 742,
+                                                                            lineNumber: 891,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         currentPrice !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1313,7 +1451,7 @@ function PortfolioTab() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 746,
+                                                                            lineNumber: 895,
                                                                             columnNumber: 33
                                                                         }, this),
                                                                         currentValue !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1324,13 +1462,13 @@ function PortfolioTab() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 751,
+                                                                            lineNumber: 900,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 738,
+                                                                    lineNumber: 887,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1344,12 +1482,12 @@ function PortfolioTab() {
                                                                                 className: "h-4 w-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                lineNumber: 764,
+                                                                                lineNumber: 913,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 759,
+                                                                            lineNumber: 908,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1363,24 +1501,24 @@ function PortfolioTab() {
                                                                                 className: "h-4 w-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                lineNumber: 774,
+                                                                                lineNumber: 923,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 766,
+                                                                            lineNumber: 915,
                                                                             columnNumber: 31
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 758,
+                                                                    lineNumber: 907,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 693,
+                                                            lineNumber: 826,
                                                             columnNumber: 27
                                                         }, this),
                                                         suggestion && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1390,19 +1528,19 @@ function PortfolioTab() {
                                                                     className: "h-3 w-3 text-[#00E676] mt-0.5"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 782,
+                                                                    lineNumber: 931,
                                                                     columnNumber: 43
                                                                 }, this) : isLoss ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$down$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingDown$3e$__["TrendingDown"], {
                                                                     className: "h-3 w-3 text-[#FF5C5C] mt-0.5"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 783,
+                                                                    lineNumber: 932,
                                                                     columnNumber: 41
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$minus$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Minus$3e$__["Minus"], {
                                                                     className: "h-3 w-3 text-[#94A3B8] mt-0.5"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 784,
+                                                                    lineNumber: 933,
                                                                     columnNumber: 32
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1412,7 +1550,7 @@ function PortfolioTab() {
                                                                             children: "Suggestion:"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 786,
+                                                                            lineNumber: 935,
                                                                             columnNumber: 33
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1420,42 +1558,42 @@ function PortfolioTab() {
                                                                             children: suggestion
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 789,
+                                                                            lineNumber: 938,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 785,
+                                                                    lineNumber: 934,
                                                                     columnNumber: 31
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 781,
+                                                            lineNumber: 930,
                                                             columnNumber: 29
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 692,
+                                                    lineNumber: 825,
                                                     columnNumber: 25
                                                 }, this)
                                             }, `${p.symbol}-${i}`, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 688,
+                                                lineNumber: 821,
                                                 columnNumber: 23
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 652,
+                                        lineNumber: 776,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                lineNumber: 624,
+                                lineNumber: 748,
                                 columnNumber: 13
                             }, this),
                             watchlist.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1468,7 +1606,7 @@ function PortfolioTab() {
                                                 className: "h-4 w-4 text-[#FBBF24]"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 805,
+                                                lineNumber: 954,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1476,7 +1614,7 @@ function PortfolioTab() {
                                                 children: "Watchlist"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 806,
+                                                lineNumber: 955,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1488,7 +1626,7 @@ function PortfolioTab() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 807,
+                                                lineNumber: 956,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1496,13 +1634,13 @@ function PortfolioTab() {
                                                 children: "watch-only — not counted in holdings P&L"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 810,
+                                                lineNumber: 959,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 804,
+                                        lineNumber: 953,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1529,12 +1667,12 @@ function PortfolioTab() {
                                                                             className: "h-3.5 w-3.5"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 838,
+                                                                            lineNumber: 987,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 833,
+                                                                        lineNumber: 982,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1545,18 +1683,18 @@ function PortfolioTab() {
                                                                             className: "h-3.5 w-3.5"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                            lineNumber: 845,
+                                                                            lineNumber: 994,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 840,
+                                                                        lineNumber: 989,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 832,
+                                                                lineNumber: 981,
                                                                 columnNumber: 29
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1564,7 +1702,7 @@ function PortfolioTab() {
                                                                 children: p.symbol.slice(0, 4)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 850,
+                                                                lineNumber: 999,
                                                                 columnNumber: 29
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1582,7 +1720,7 @@ function PortfolioTab() {
                                                                                 children: p.symbol
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                lineNumber: 863,
+                                                                                lineNumber: 1012,
                                                                                 columnNumber: 33
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1591,13 +1729,13 @@ function PortfolioTab() {
                                                                                 children: "WATCHING"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                                lineNumber: 864,
+                                                                                lineNumber: 1013,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 862,
+                                                                        lineNumber: 1011,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1605,7 +1743,7 @@ function PortfolioTab() {
                                                                         children: p.name
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 868,
+                                                                        lineNumber: 1017,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1617,13 +1755,13 @@ function PortfolioTab() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 869,
+                                                                        lineNumber: 1018,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 855,
+                                                                lineNumber: 1004,
                                                                 columnNumber: 29
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1633,14 +1771,14 @@ function PortfolioTab() {
                                                                         className: "h-5 w-16 bg-white/[0.04] ml-auto"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 877,
+                                                                        lineNumber: 1026,
                                                                         columnNumber: 33
                                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                         className: "text-sm font-mono font-bold text-[#F4F7FB]",
                                                                         children: currentPrice !== null ? currentPrice.toLocaleString() : "—"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 879,
+                                                                        lineNumber: 1028,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1648,13 +1786,13 @@ function PortfolioTab() {
                                                                         children: currentPrice !== null ? "live" : "no live price"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 883,
+                                                                        lineNumber: 1032,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 875,
+                                                                lineNumber: 1024,
                                                                 columnNumber: 29
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1668,40 +1806,40 @@ function PortfolioTab() {
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 897,
+                                                                    lineNumber: 1046,
                                                                     columnNumber: 31
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 889,
+                                                                lineNumber: 1038,
                                                                 columnNumber: 29
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                        lineNumber: 830,
+                                                        lineNumber: 979,
                                                         columnNumber: 27
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 829,
+                                                    lineNumber: 978,
                                                     columnNumber: 25
                                                 }, this)
                                             }, `${p.symbol}-${i}-w`, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 825,
+                                                lineNumber: 974,
                                                 columnNumber: 23
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 814,
+                                        lineNumber: 963,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                lineNumber: 803,
+                                lineNumber: 952,
                                 columnNumber: 15
                             }, this)
                         ]
@@ -1714,21 +1852,21 @@ function PortfolioTab() {
                                 children: "Tip:"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                lineNumber: 911,
+                                lineNumber: 1060,
                                 columnNumber: 11
                             }, this),
                             " Click any stock in your portfolio to open its full analysis (fundamentals + technicals + AI model call). Drag the up/down arrows to reorder your list. Buy price is optional — leave empty for watch-only stocks."
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 910,
+                        lineNumber: 1059,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PortfolioNewsDigest, {
                         symbols: portfolio.length > 0 ? portfolio.map((p)=>p.symbol) : __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$latent$2f$mock$2d$stocks$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MOCK_STOCKS"].slice(0, 4).map((s)=>s.symbol)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 915,
+                        lineNumber: 1064,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1750,7 +1888,7 @@ function PortfolioTab() {
                                                 className: "h-4 w-4 text-[#00E676]"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 933,
+                                                lineNumber: 1082,
                                                 columnNumber: 17
                                             }, this),
                                             "Close trade — ",
@@ -1758,12 +1896,12 @@ function PortfolioTab() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                        lineNumber: 932,
+                                        lineNumber: 1081,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 931,
+                                    lineNumber: 1080,
                                     columnNumber: 13
                                 }, this),
                                 closeTarget && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1771,71 +1909,111 @@ function PortfolioTab() {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "rounded-md bg-[#0A0E1A] border border-white/[0.06] p-3",
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center justify-between",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "font-bold text-[#F4F7FB]",
-                                                                children: closeTarget.symbol
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 943,
-                                                                columnNumber: 23
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "text-[11px] text-[#94A3B8] truncate max-w-[260px]",
-                                                                children: closeTarget.name
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 944,
-                                                                columnNumber: 23
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                        lineNumber: 942,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "text-right",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "text-[11px] text-[#64748B]",
-                                                                children: "Buy price × shares"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 947,
-                                                                columnNumber: 23
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "font-mono text-sm text-[#F4F7FB]",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center justify-between",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                    className: "font-bold text-[#F4F7FB]",
+                                                                    children: closeTarget.symbol
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                    lineNumber: 1092,
+                                                                    columnNumber: 23
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                    className: "text-[11px] text-[#94A3B8] truncate max-w-[260px]",
+                                                                    children: closeTarget.name
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                    lineNumber: 1093,
+                                                                    columnNumber: 23
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                            lineNumber: 1091,
+                                                            columnNumber: 21
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "text-right",
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                    className: "text-[11px] text-[#64748B]",
+                                                                    children: closeTarget.buys.length > 1 ? "Avg buy price × shares" : "Buy price × shares"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                    lineNumber: 1096,
+                                                                    columnNumber: 23
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                    className: "font-mono text-sm text-[#F4F7FB]",
+                                                                    children: [
+                                                                        closeTarget.buyPrice.toFixed(2),
+                                                                        " × ",
+                                                                        closeTarget.shares.toLocaleString()
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                                    lineNumber: 1099,
+                                                                    columnNumber: 23
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                            lineNumber: 1095,
+                                                            columnNumber: 21
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                    lineNumber: 1090,
+                                                    columnNumber: 19
+                                                }, this),
+                                                closeTarget.buys.length > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "mt-2 pt-2 border-t border-white/[0.06]",
+                                                    children: [
+                                                        closeTarget.buys.map((l, li)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "text-[9px] font-mono text-[#64748B] leading-[1.6]",
                                                                 children: [
-                                                                    closeTarget.buyPrice.toFixed(2),
+                                                                    "Buy ",
+                                                                    li + 1,
+                                                                    ": ",
+                                                                    l.price.toFixed(2),
                                                                     " × ",
-                                                                    closeTarget.shares.toLocaleString()
+                                                                    l.shares.toLocaleString()
                                                                 ]
-                                                            }, void 0, true, {
+                                                            }, `${closeTarget.symbol}-lot-${li}`, true, {
                                                                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                lineNumber: 948,
-                                                                columnNumber: 23
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                        lineNumber: 946,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                lineNumber: 941,
-                                                columnNumber: 19
-                                            }, this)
-                                        }, void 0, false, {
+                                                                lineNumber: 1107,
+                                                                columnNumber: 25
+                                                            }, this)),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "text-[9px] font-mono font-semibold leading-[1.6] text-[#00E676]/80",
+                                                            children: [
+                                                                "Avg buy: ",
+                                                                closeTarget.buyPrice.toFixed(2),
+                                                                " × ",
+                                                                closeTarget.shares.toLocaleString(),
+                                                                " — close settles on the average"
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                            lineNumber: 1114,
+                                                            columnNumber: 23
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/PortfolioTab.tsx",
+                                                    lineNumber: 1105,
+                                                    columnNumber: 21
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 940,
+                                            lineNumber: 1089,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1848,7 +2026,7 @@ function PortfolioTab() {
                                                             className: "h-3 w-3"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 958,
+                                                            lineNumber: 1124,
                                                             columnNumber: 21
                                                         }, this),
                                                         "Sell price (PKR per share)",
@@ -1856,13 +2034,13 @@ function PortfolioTab() {
                                                             className: "h-3 w-3 animate-spin text-[#00E676]"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 960,
+                                                            lineNumber: 1126,
                                                             columnNumber: 43
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 957,
+                                                    lineNumber: 1123,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1873,7 +2051,7 @@ function PortfolioTab() {
                                                             children: "Rs."
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 963,
+                                                            lineNumber: 1129,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1888,7 +2066,7 @@ function PortfolioTab() {
                                                             className: "h-7 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 964,
+                                                            lineNumber: 1130,
                                                             columnNumber: 21
                                                         }, this),
                                                         typeof livePrices[closeTarget.symbol] === "number" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1900,19 +2078,19 @@ function PortfolioTab() {
                                                                     children: livePrices[closeTarget.symbol].toFixed(2)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 977,
+                                                                    lineNumber: 1143,
                                                                     columnNumber: 31
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 976,
+                                                            lineNumber: 1142,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 962,
+                                                    lineNumber: 1128,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1927,20 +2105,20 @@ function PortfolioTab() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 982,
+                                                            lineNumber: 1148,
                                                             columnNumber: 65
                                                         }, this),
                                                         ". You can override it if you have a different fill price."
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 981,
+                                                    lineNumber: 1147,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 956,
+                                            lineNumber: 1122,
                                             columnNumber: 17
                                         }, this),
                                         closeCalc ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1952,7 +2130,7 @@ function PortfolioTab() {
                                                     sub: `${closeTarget.buyPrice.toFixed(2)} × ${closeTarget.shares.toLocaleString()}`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 990,
+                                                    lineNumber: 1156,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CloseRow, {
@@ -1961,7 +2139,7 @@ function PortfolioTab() {
                                                     sub: `${closeCalc.sellPrice.toFixed(2)} × ${closeTarget.shares.toLocaleString()}`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 991,
+                                                    lineNumber: 1157,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CloseRow, {
@@ -1971,7 +2149,7 @@ function PortfolioTab() {
                                                     valueClass: closeCalc.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 992,
+                                                    lineNumber: 1158,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CloseRow, {
@@ -1981,7 +2159,7 @@ function PortfolioTab() {
                                                     valueClass: "text-[#FF5C5C]"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 998,
+                                                    lineNumber: 1164,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CloseRow, {
@@ -1991,7 +2169,7 @@ function PortfolioTab() {
                                                     valueClass: "text-[#FF5C5C]"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1004,
+                                                    lineNumber: 1170,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2004,7 +2182,7 @@ function PortfolioTab() {
                                                                     children: "Net P&L"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 1014,
+                                                                    lineNumber: 1180,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2012,13 +2190,13 @@ function PortfolioTab() {
                                                                     children: "gross − commission − CGT"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 1015,
+                                                                    lineNumber: 1181,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1013,
+                                                            lineNumber: 1179,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2033,7 +2211,7 @@ function PortfolioTab() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 1018,
+                                                                    lineNumber: 1184,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2045,32 +2223,32 @@ function PortfolioTab() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 1021,
+                                                                    lineNumber: 1187,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1017,
+                                                            lineNumber: 1183,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1012,
+                                                    lineNumber: 1178,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 989,
+                                            lineNumber: 1155,
                                             columnNumber: 19
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "rounded-md border border-white/[0.06] bg-[#0A0E1A] p-3 text-xs text-[#64748B] text-center",
                                             children: "Enter a valid sell price to see the calculation."
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1028,
+                                            lineNumber: 1194,
                                             columnNumber: 19
                                         }, this),
                                         closeCalc && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2080,7 +2258,7 @@ function PortfolioTab() {
                                                     className: "h-3.5 w-3.5 text-[#FBBF24] shrink-0"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1036,
+                                                    lineNumber: 1202,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2095,7 +2273,7 @@ function PortfolioTab() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1038,
+                                                            lineNumber: 1204,
                                                             columnNumber: 39
                                                         }, this),
                                                         " (~",
@@ -2106,19 +2284,19 @@ function PortfolioTab() {
                                                             children: closeCalc.taxRate > 0 ? "Short-term (15% CGT)" : "Long-term (0% CGT)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1039,
+                                                            lineNumber: 1205,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1037,
+                                                    lineNumber: 1203,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1035,
+                                            lineNumber: 1201,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2133,20 +2311,20 @@ function PortfolioTab() {
                                                             className: "h-4 w-4 mr-1.5 animate-spin"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1053,
+                                                            lineNumber: 1219,
                                                             columnNumber: 23
                                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$check$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Check$3e$__["Check"], {
                                                             className: "h-4 w-4 mr-1.5"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1055,
+                                                            lineNumber: 1221,
                                                             columnNumber: 23
                                                         }, this),
                                                         "Confirm close"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1047,
+                                                    lineNumber: 1213,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -2161,20 +2339,20 @@ function PortfolioTab() {
                                                             className: "h-4 w-4 mr-1.5"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1067,
+                                                            lineNumber: 1233,
                                                             columnNumber: 21
                                                         }, this),
                                                         "Cancel"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1059,
+                                                    lineNumber: 1225,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1046,
+                                            lineNumber: 1212,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2188,7 +2366,7 @@ function PortfolioTab() {
                                                     children: "watch-only"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1074,
+                                                    lineNumber: 1240,
                                                     columnNumber: 22
                                                 }, this),
                                                 " (shares removed, buy price cleared). The closed trade is sent to the ",
@@ -2197,43 +2375,43 @@ function PortfolioTab() {
                                                     children: "Tracker"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1075,
+                                                    lineNumber: 1241,
                                                     columnNumber: 51
                                                 }, this),
                                                 " for your P&L history."
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1072,
+                                            lineNumber: 1238,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 938,
+                                    lineNumber: 1087,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 930,
+                            lineNumber: 1079,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 924,
+                        lineNumber: 1073,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                lineNumber: 431,
+                lineNumber: 541,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-        lineNumber: 429,
+        lineNumber: 539,
         columnNumber: 5
     }, this);
 }
@@ -2262,7 +2440,7 @@ function CloseRow({ label, value, sub, valueClass = "text-[#F4F7FB]" }) {
                         children: label
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 1102,
+                        lineNumber: 1268,
                         columnNumber: 9
                     }, this),
                     sub && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2270,13 +2448,13 @@ function CloseRow({ label, value, sub, valueClass = "text-[#F4F7FB]" }) {
                         children: sub
                     }, void 0, false, {
                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                        lineNumber: 1103,
+                        lineNumber: 1269,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                lineNumber: 1101,
+                lineNumber: 1267,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2284,13 +2462,13 @@ function CloseRow({ label, value, sub, valueClass = "text-[#F4F7FB]" }) {
                 children: value
             }, void 0, false, {
                 fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                lineNumber: 1105,
+                lineNumber: 1271,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-        lineNumber: 1100,
+        lineNumber: 1266,
         columnNumber: 5
     }, this);
 }
@@ -2358,14 +2536,14 @@ function PortfolioNewsDigest({ symbols }) {
                                             className: "h-4 w-4 text-[#00E676]"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1183,
+                                            lineNumber: 1349,
                                             columnNumber: 15
                                         }, this),
                                         "Auto-News Digest for Your Portfolio"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 1182,
+                                    lineNumber: 1348,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2373,13 +2551,13 @@ function PortfolioNewsDigest({ symbols }) {
                                     children: "For each stock below: news fetched from AskAnalyst + GLM-4 interprets impact in layman terms."
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 1186,
+                                    lineNumber: 1352,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 1181,
+                            lineNumber: 1347,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -2393,26 +2571,26 @@ function PortfolioNewsDigest({ symbols }) {
                                     className: "h-3 w-3 mr-1.5 animate-spin"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 1198,
+                                    lineNumber: 1364,
                                     columnNumber: 15
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
                                     className: "h-3 w-3 mr-1.5"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 1200,
+                                    lineNumber: 1366,
                                     columnNumber: 15
                                 }, this),
                                 "Refresh"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 1190,
+                            lineNumber: 1356,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                    lineNumber: 1180,
+                    lineNumber: 1346,
                     columnNumber: 9
                 }, this),
                 loading && digest.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2425,12 +2603,12 @@ function PortfolioNewsDigest({ symbols }) {
                             className: "h-24 w-full bg-white/[0.04]"
                         }, i, false, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 1208,
+                            lineNumber: 1374,
                             columnNumber: 35
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                    lineNumber: 1207,
+                    lineNumber: 1373,
                     columnNumber: 11
                 }, this),
                 error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2441,7 +2619,7 @@ function PortfolioNewsDigest({ symbols }) {
                             children: "Error:"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 1214,
+                            lineNumber: 1380,
                             columnNumber: 13
                         }, this),
                         " ",
@@ -2449,7 +2627,7 @@ function PortfolioNewsDigest({ symbols }) {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                    lineNumber: 1213,
+                    lineNumber: 1379,
                     columnNumber: 11
                 }, this),
                 !loading && !error && digest.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2465,7 +2643,7 @@ function PortfolioNewsDigest({ symbols }) {
                                             children: entry.symbol.slice(0, 4)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1223,
+                                            lineNumber: 1389,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2473,7 +2651,7 @@ function PortfolioNewsDigest({ symbols }) {
                                             children: entry.symbol
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1226,
+                                            lineNumber: 1392,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2481,7 +2659,7 @@ function PortfolioNewsDigest({ symbols }) {
                                             children: entry.stockName
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1227,
+                                            lineNumber: 1393,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -2493,13 +2671,13 @@ function PortfolioNewsDigest({ symbols }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1228,
+                                            lineNumber: 1394,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 1222,
+                                    lineNumber: 1388,
                                     columnNumber: 17
                                 }, this),
                                 entry.interpretedItems.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2511,7 +2689,7 @@ function PortfolioNewsDigest({ symbols }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 1234,
+                                    lineNumber: 1400,
                                     columnNumber: 19
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "space-y-2",
@@ -2526,7 +2704,7 @@ function PortfolioNewsDigest({ symbols }) {
                                                             children: item.title || "(no headline)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1242,
+                                                            lineNumber: 1408,
                                                             columnNumber: 27
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2537,7 +2715,7 @@ function PortfolioNewsDigest({ symbols }) {
                                                                     children: item.impact
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 1246,
+                                                                    lineNumber: 1412,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -2546,19 +2724,19 @@ function PortfolioNewsDigest({ symbols }) {
                                                                     children: item.impactStrength
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 1249,
+                                                                    lineNumber: 1415,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1245,
+                                                            lineNumber: 1411,
                                                             columnNumber: 27
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1241,
+                                                    lineNumber: 1407,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2566,7 +2744,7 @@ function PortfolioNewsDigest({ symbols }) {
                                                     children: item.laymanExplanation
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1258,
+                                                    lineNumber: 1424,
                                                     columnNumber: 25
                                                 }, this),
                                                 item.shortTermOutlook && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2577,7 +2755,7 @@ function PortfolioNewsDigest({ symbols }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1262,
+                                                    lineNumber: 1428,
                                                     columnNumber: 27
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2591,7 +2769,7 @@ function PortfolioNewsDigest({ symbols }) {
                                                                     children: "Affected:"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                    lineNumber: 1268,
+                                                                    lineNumber: 1434,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 item.affectedStocks.slice(0, 3).map((s, ai)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2600,13 +2778,13 @@ function PortfolioNewsDigest({ symbols }) {
                                                                         children: s
                                                                     }, `${s}-${ai}`, false, {
                                                                         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                                        lineNumber: 1270,
+                                                                        lineNumber: 1436,
                                                                         columnNumber: 31
                                                                     }, this))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1267,
+                                                            lineNumber: 1433,
                                                             columnNumber: 27
                                                         }, this),
                                                         item.link && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -2617,35 +2795,35 @@ function PortfolioNewsDigest({ symbols }) {
                                                             children: "Source ↗"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                            lineNumber: 1280,
+                                                            lineNumber: 1446,
                                                             columnNumber: 29
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                                    lineNumber: 1266,
+                                                    lineNumber: 1432,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, i, true, {
                                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                            lineNumber: 1240,
+                                            lineNumber: 1406,
                                             columnNumber: 23
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                                    lineNumber: 1238,
+                                    lineNumber: 1404,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, `${entry.symbol}-${di}`, true, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 1221,
+                            lineNumber: 1387,
                             columnNumber: 15
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                    lineNumber: 1219,
+                    lineNumber: 1385,
                     columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2656,25 +2834,25 @@ function PortfolioNewsDigest({ symbols }) {
                             children: "Manual URL paste:"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                            lineNumber: 1300,
+                            lineNumber: 1466,
                             columnNumber: 11
                         }, this),
                         " For ultra-fast news from any source, paste the URL in the Fundamental News tab — that feature stays as an extra layer on top of this auto-digest."
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-                    lineNumber: 1299,
+                    lineNumber: 1465,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-            lineNumber: 1179,
+            lineNumber: 1345,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/latent/PortfolioTab.tsx",
-        lineNumber: 1178,
+        lineNumber: 1344,
         columnNumber: 5
     }, this);
 }

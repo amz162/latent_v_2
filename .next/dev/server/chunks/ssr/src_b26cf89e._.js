@@ -3,6 +3,10 @@ module.exports = [
 "use strict";
 
 __turbopack_context__.s([
+    "getBuyLots",
+    ()=>getBuyLots,
+    "mergeBuyLots",
+    ()=>mergeBuyLots,
     "useLatentStore",
     ()=>useLatentStore
 ]);
@@ -11,6 +15,39 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$e
 "use client";
 ;
 ;
+function getBuyLots(p) {
+    if (p.buys && p.buys.length) return p.buys;
+    if (p.buyPrice && p.shares > 0) return [
+        {
+            price: p.buyPrice,
+            shares: p.shares,
+            at: p.addedAt
+        }
+    ];
+    return [];
+}
+function mergeBuyLots(existing, incoming) {
+    const now = new Date().toISOString();
+    let lots = existing ? getBuyLots(existing) : [];
+    if (existing && lots.length === 0 && existing.shares > 0) {
+        // Legacy heal — see comment above.
+        lots = [
+            {
+                price: incoming.price,
+                shares: existing.shares,
+                at: existing.addedAt
+            }
+        ];
+    }
+    return [
+        ...lots,
+        {
+            price: incoming.price,
+            shares: incoming.shares,
+            at: now
+        }
+    ];
+}
 const useLatentStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["persist"])((set)=>({
         view: "landing",
         selectedSignalId: null,
@@ -58,17 +95,75 @@ const useLatentStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
                         t
                     ]
                 })),
-        addPortfolioPosition: (p)=>set((s)=>({
-                    portfolio: [
-                        ...s.portfolio,
-                        {
-                            ...p,
-                            addedAt: new Date().toISOString(),
-                            order: s.portfolio.length,
-                            status: "open"
-                        }
-                    ]
-                })),
+        // ─── Issue 28-B: one row per symbol + weighted-average cost basis ───
+        // Handles three cases by looking up an existing position with the same
+        // symbol:
+        //   (a) not found → create (status "open"; records the initial buy lot
+        //       in `buys` when BOTH buyPrice AND shares are provided).
+        //   (b) found + incoming has shares > 0 → append {price, shares, at} as
+        //       an additional buy lot, set shares = total and buyPrice = the
+        //       weighted average ((Σ price×shares)/(Σ shares)). This also
+        //       converts a watch-only entry into a holding (remove-from-
+        //       watchlist + add-to-portfolio in one step). Existing
+        //       order/addedAt are kept; name/sector are filled from the
+        //       incoming payload only if currently empty.
+        //   (c) found + incoming has no shares → no-op (the UI blocks duplicate
+        //       watch-only adds; this keeps the store safe from any caller).
+        addPortfolioPosition: (p)=>set((s)=>{
+                const existing = s.portfolio.find((x)=>x.symbol === p.symbol);
+                const now = new Date().toISOString();
+                // Case (a): new symbol → create the position.
+                if (!existing) {
+                    const hasLot = p.shares > 0 && p.buyPrice !== null && p.buyPrice !== undefined;
+                    return {
+                        portfolio: [
+                            ...s.portfolio,
+                            {
+                                ...p,
+                                addedAt: now,
+                                order: s.portfolio.length,
+                                status: "open",
+                                buys: hasLot ? [
+                                    {
+                                        price: p.buyPrice,
+                                        shares: p.shares,
+                                        at: now
+                                    }
+                                ] : []
+                            }
+                        ]
+                    };
+                }
+                // Case (c): already tracked and the incoming payload carries no
+                // usable lot (no shares, or no price) → nothing to do.
+                if (p.shares <= 0 || p.buyPrice === null || p.buyPrice === undefined) {
+                    return {};
+                }
+                // Case (b): merge as an additional buy lot + weighted-average price.
+                // mergeBuyLots() back-fills legacy positions persisted before `buys`
+                // existed (buyPrice × shares synthesized; unpriced legacy shares
+                // inherit the incoming price — see the helper's comment).
+                const lots = mergeBuyLots(existing, {
+                    price: p.buyPrice,
+                    shares: p.shares
+                });
+                const totalShares = lots.reduce((n, l)=>n + l.shares, 0);
+                const totalCost = lots.reduce((n, l)=>n + l.price * l.shares, 0);
+                const avgPrice = totalShares > 0 ? totalCost / totalShares : p.buyPrice;
+                return {
+                    portfolio: s.portfolio.map((x)=>x.symbol === p.symbol ? {
+                            ...x,
+                            name: x.name || p.name,
+                            sector: x.sector ?? p.sector ?? null,
+                            shares: totalShares,
+                            buyPrice: avgPrice,
+                            buys: lots,
+                            status: "open",
+                            closePrice: null,
+                            closedAt: null
+                        } : x)
+                };
+            }),
         removePortfolioPosition: (symbol)=>set((s)=>({
                     portfolio: s.portfolio.filter((p)=>p.symbol !== symbol).map((p, i)=>({
                             ...p,
@@ -106,8 +201,9 @@ const useLatentStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
             }),
         // Issue 13: record a closed trade (kept separately so the Tracker can
         // show closed-trade history) AND reset the portfolio position to
-        // watch-only (shares=0, buyPrice=null) — the stock remains in the
-        // portfolio so the user can re-add a position later.
+        // watch-only (shares=0, buyPrice=null, buys cleared) — the stock
+        // remains in the portfolio so the user can re-add a position later.
+        // The ClosedTrade carries the averaged buyPrice + a `buys` snapshot.
         addClosedTrade: (t)=>set((s)=>({
                     closedTrades: [
                         t,
@@ -123,6 +219,7 @@ const useLatentStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
                             ...p,
                             shares: 0,
                             buyPrice: null,
+                            buys: [],
                             status: "open"
                         } : p)
                 })),
@@ -163,6 +260,53 @@ const useLatentStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
             })
     }), {
     name: "latent-store-v2",
+    // Issue 28-B: bumped 0 → 1 — migrate merges duplicate symbols that
+    // legacy localStorage data may contain (from before the one-row-per-
+    // symbol rule), combining their buy lots at the weighted-average price
+    // so no stock ever shows twice. Runs exactly once per stored state.
+    version: 1,
+    migrate: (persisted)=>{
+        const s = persisted ?? {};
+        if (!Array.isArray(s.portfolio)) return s;
+        const merged = [];
+        for (const p of s.portfolio){
+            if (!p || typeof p.symbol !== "string") continue;
+            const idx = merged.findIndex((m)=>m.symbol === p.symbol);
+            if (idx === -1) {
+                merged.push(p);
+                continue;
+            }
+            const cur = merged[idx];
+            const curLots = getBuyLots(cur);
+            const newLots = getBuyLots(p);
+            if (curLots.length === 0 && newLots.length > 0) {
+                // current entry is watch-only, incoming is a holding → keep the holding
+                merged[idx] = p;
+            } else if (curLots.length > 0 && newLots.length > 0) {
+                // two holdings → merge lots + weighted-average buyPrice
+                const lots = [
+                    ...curLots,
+                    ...newLots
+                ];
+                const totalShares = lots.reduce((n, l)=>n + l.shares, 0);
+                const totalCost = lots.reduce((n, l)=>n + l.price * l.shares, 0);
+                merged[idx] = {
+                    ...cur,
+                    shares: totalShares,
+                    buyPrice: totalShares > 0 ? totalCost / totalShares : cur.buyPrice,
+                    buys: lots
+                };
+            }
+        // else: keep `cur` (cur is the holding / first watch-only entry)
+        }
+        return {
+            ...s,
+            portfolio: merged.map((p, i)=>({
+                    ...p,
+                    order: i
+                }))
+        };
+    },
     partialize: (s)=>({
             userId: s.userId,
             userEmail: s.userEmail,

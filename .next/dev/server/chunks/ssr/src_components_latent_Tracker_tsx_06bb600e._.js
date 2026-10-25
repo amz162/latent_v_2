@@ -33,6 +33,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/refresh-cw.js [app-ssr] (ecmascript) <export default as RefreshCw>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$piggy$2d$bank$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__PiggyBank$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/piggy-bank.js [app-ssr] (ecmascript) <export default as PiggyBank>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-ssr] (ecmascript) <export default as Loader2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-down.js [app-ssr] (ecmascript) <export default as ChevronDown>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/sonner/dist/index.mjs [app-ssr] (ecmascript)");
 "use client";
 ;
@@ -81,6 +82,87 @@ function fmtPct(v, withSign = false) {
 }
 function fmtPkr(v) {
     return `Rs. ${Math.round(v).toLocaleString("en-PK")}`;
+}
+// ─── Task 28-C: live quotes for EVERY portfolio symbol ──────────────────────
+// Patterned after usePortfolioLiveQuotes (PortfolioTab.tsx): fetches
+// /api/psx/live/batch whenever the symbol SET changes, auto-refreshes every
+// 60s (matching getLiveQuote's 60s server-side cache), and exposes a manual
+// refresh(). All setState calls happen inside .then/.catch callbacks — never
+// synchronously in the effect body.
+function useTrackerPortfolioQuotes(symbols) {
+    const key = symbols.join(",");
+    const [state, setState] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
+        key: "",
+        prices: {},
+        lastUpdated: null,
+        loading: false
+    });
+    const [refreshTick, setRefreshTick] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (!key) return;
+        let cancelled = false;
+        const symbolsList = key.split(",");
+        fetch(`/api/psx/live/batch?symbols=${encodeURIComponent(symbolsList.join(","))}`).then((r)=>r.ok ? r.json() : null).then((d)=>{
+            if (cancelled) return;
+            if (d && d.prices && typeof d.prices === "object") {
+                setState({
+                    key,
+                    prices: d.prices,
+                    lastUpdated: new Date(d.fetchedAt || Date.now()),
+                    loading: false
+                });
+            } else {
+                // No prices resolved — still mark this key as fetched so rows show
+                // "no live price" instead of a spinner forever.
+                setState({
+                    key,
+                    prices: {},
+                    lastUpdated: new Date(),
+                    loading: false
+                });
+            }
+        }).catch(()=>{
+            if (cancelled) return;
+            // Keep stale prices for THIS key (if any); otherwise clear.
+            setState((s)=>({
+                    key,
+                    prices: s.key === key ? s.prices : {},
+                    lastUpdated: new Date(),
+                    loading: false
+                }));
+        });
+        return ()=>{
+            cancelled = true;
+        };
+    }, [
+        key,
+        refreshTick
+    ]);
+    // Auto-refresh every 60s — matches getLiveQuote's 60s cache TTL so the
+    // portfolio P&L stays current without manual button clicks.
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (!key) return;
+        const id = setInterval(()=>setRefreshTick((t)=>t + 1), 60_000);
+        return ()=>clearInterval(id);
+    }, [
+        key
+    ]);
+    const refresh = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(()=>{
+        setRefreshTick((t)=>t + 1);
+        setState((s)=>({
+                ...s,
+                loading: true
+            }));
+    }, []);
+    // Prices are only valid for the CURRENT symbol key — avoids stale prices
+    // from a previous portfolio flashing in after positions change.
+    const hasData = state.key === key;
+    return {
+        prices: hasData ? state.prices : {},
+        lastUpdated: hasData ? state.lastUpdated : null,
+        isLoading: !!key && (!hasData || state.loading),
+        refresh
+    };
 }
 function Tracker() {
     const [aiSignals, setAiSignals] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
@@ -323,14 +405,35 @@ function Tracker() {
     // Portfolio tracker — only positions with buyPrice != null && shares > 0
     // are tracked. Closed positions remain in the list and contribute to P&L.
     // Issue 23: keep closed trades visible + reflect them in top card stats.
+    //
+    // ─── Task 28-C: live quotes for EVERY portfolio symbol ─────────────────
+    // Previously livePriceMap was built ONLY from aiSignals (8 hardcoded
+    // COVERED_SYMBOLS) — any other held stock had NO live price, so market
+    // value / P&L showed "—" and the pie chart had no data. Now every open
+    // position + watch-only symbol (deduped) is batch-fetched from
+    // /api/psx/live/batch, with 60s auto-refresh + a manual refresh button.
+    const portfolioSymbols = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>Array.from(new Set(portfolio.map((p)=>(p.symbol || "").trim().toUpperCase()).filter(Boolean))), [
+        portfolio
+    ]);
+    const { prices: portfolioBatchPrices, isLoading: portfolioPricesLoading, refresh: refreshPortfolioPrices, lastUpdated: portfolioPricesUpdatedAt } = useTrackerPortfolioQuotes(portfolioSymbols);
+    // Merged live-price map used EVERYWHERE in the Portfolio Tracker tab
+    // (stat cards, open-position rows, sector pie). Batch prices take
+    // priority; aiSignals prices are the fallback for anything the batch
+    // endpoint couldn't resolve.
     const livePriceMap = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
         const m = {};
         for (const s of aiSignals){
-            if (s.symbol && typeof s.currentPrice === "number") m[s.symbol] = s.currentPrice;
+            if (s.symbol && typeof s.currentPrice === "number") {
+                m[s.symbol.toUpperCase()] = s.currentPrice;
+            }
+        }
+        for (const [sym, price] of Object.entries(portfolioBatchPrices)){
+            if (typeof price === "number" && price > 0) m[sym.toUpperCase()] = price;
         }
         return m;
     }, [
-        aiSignals
+        aiSignals,
+        portfolioBatchPrices
     ]);
     const portfolioPositions = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>portfolio.filter((p)=>p.buyPrice !== null && p.shares > 0), [
         portfolio
@@ -348,7 +451,7 @@ function Tracker() {
             const invested = buy * p.shares;
             totalInvested += invested;
             openCount++;
-            const live = livePriceMap[p.symbol];
+            const live = livePriceMap[p.symbol.toUpperCase()];
             if (typeof live === "number") {
                 const val = live * p.shares;
                 totalValue += val;
@@ -397,12 +500,13 @@ function Tracker() {
     const sectorData = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
         const m = new Map();
         for (const p of portfolioPositions){
-            const live = livePriceMap[p.symbol];
+            const live = livePriceMap[p.symbol.toUpperCase()];
             const buy = p.buyPrice || 0;
             const price = typeof live === "number" ? live : buy;
             if (price <= 0 || p.shares <= 0) continue;
             const value = price * p.shares;
-            const sector = p.sector && p.sector.trim() || sectorMap[p.symbol] || "Other";
+            // Task 28-C: unknown/missing sector → exactly "Others".
+            const sector = p.sector && p.sector.trim() || sectorMap[p.symbol] || "Others";
             m.set(sector, (m.get(sector) || 0) + value);
         }
         const total = Array.from(m.values()).reduce((s, v)=>s + v, 0);
@@ -416,6 +520,55 @@ function Tracker() {
         portfolioPositions,
         livePriceMap,
         sectorMap
+    ]);
+    // ─── Task 28-C: closed trades — ONE row per stock ──────────────────────
+    // Aggregate every close event of a symbol into a single row: number of
+    // closes, TOTAL net P&L (green/red), total shares sold, weighted average
+    // buy price (Σ buyPrice×shares / Σ shares), last sell price + last close
+    // date. The individual close events remain available via the expandable
+    // row detail. Per-record net P&L results are untouched — only summed.
+    const [expandedClosedSymbol, setExpandedClosedSymbol] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+    const closedStockRows = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
+        const map = new Map();
+        for (const t of closedTrades){
+            const prev = map.get(t.symbol);
+            map.set(t.symbol, prev ? {
+                symbol: t.symbol,
+                name: t.name || prev.name,
+                closes: prev.closes + 1,
+                totalNetPnl: prev.totalNetPnl + t.netPnl,
+                totalBuyCost: prev.totalBuyCost + t.buyCost,
+                totalSharesSold: prev.totalSharesSold + t.shares,
+                lastSellPrice: t.closedAt > prev.lastClosedAt ? t.sellPrice : prev.lastSellPrice,
+                lastClosedAt: t.closedAt > prev.lastClosedAt ? t.closedAt : prev.lastClosedAt,
+                trades: [
+                    ...prev.trades,
+                    t
+                ]
+            } : {
+                symbol: t.symbol,
+                name: t.name,
+                closes: 1,
+                totalNetPnl: t.netPnl,
+                totalBuyCost: t.buyCost,
+                totalSharesSold: t.shares,
+                lastSellPrice: t.sellPrice,
+                lastClosedAt: t.closedAt,
+                trades: [
+                    t
+                ]
+            });
+        }
+        return Array.from(map.values()).map((g)=>({
+                ...g,
+                trades: [
+                    ...g.trades
+                ].sort((a, b)=>a.closedAt < b.closedAt ? 1 : -1),
+                avgBuy: g.totalSharesSold > 0 ? g.totalBuyCost / g.totalSharesSold : 0,
+                totalNetPnlPct: g.totalBuyCost > 0 ? g.totalNetPnl / g.totalBuyCost * 100 : 0
+            })).sort((a, b)=>a.lastClosedAt < b.lastClosedAt ? 1 : -1);
+    }, [
+        closedTrades
     ]);
     const handleDownload = ()=>{
         if (!signalStats) return;
@@ -467,7 +620,7 @@ function Tracker() {
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppNav"], {}, void 0, false, {
                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                    lineNumber: 592,
+                    lineNumber: 755,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -477,33 +630,33 @@ function Tracker() {
                             className: "h-10 w-48 bg-white/[0.04]"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                            lineNumber: 594,
+                            lineNumber: 757,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                             className: "h-32 w-full bg-white/[0.04]"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                            lineNumber: 595,
+                            lineNumber: 758,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                             className: "h-64 w-full bg-white/[0.04]"
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                            lineNumber: 596,
+                            lineNumber: 759,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                    lineNumber: 593,
+                    lineNumber: 756,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/latent/Tracker.tsx",
-            lineNumber: 591,
+            lineNumber: 754,
             columnNumber: 7
         }, this);
     }
@@ -512,7 +665,7 @@ function Tracker() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$latent$2f$AppNav$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AppNav"], {}, void 0, false, {
                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                lineNumber: 604,
+                lineNumber: 767,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -528,7 +681,7 @@ function Tracker() {
                                         children: "Tracker"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 608,
+                                        lineNumber: 771,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -540,13 +693,13 @@ function Tracker() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 609,
+                                        lineNumber: 772,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 607,
+                                lineNumber: 770,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -557,20 +710,20 @@ function Tracker() {
                                         className: "h-4 w-4 mr-1.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 617,
+                                        lineNumber: 780,
                                         columnNumber: 13
                                     }, this),
                                     "Generate report"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 613,
+                                lineNumber: 776,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 606,
+                        lineNumber: 769,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tabs"], {
@@ -587,14 +740,14 @@ function Tracker() {
                                                 className: "h-3 w-3"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 625,
+                                                lineNumber: 788,
                                                 columnNumber: 15
                                             }, this),
                                             " Signal Tracker"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 624,
+                                        lineNumber: 787,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -605,20 +758,20 @@ function Tracker() {
                                                 className: "h-3 w-3"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 628,
+                                                lineNumber: 791,
                                                 columnNumber: 15
                                             }, this),
                                             " Portfolio Tracker"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 627,
+                                        lineNumber: 790,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 623,
+                                lineNumber: 786,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -633,7 +786,7 @@ function Tracker() {
                                                 className: "h-12 w-12 text-[#00E676]/30 mx-auto mb-3"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 637,
+                                                lineNumber: 800,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -641,7 +794,7 @@ function Tracker() {
                                                 children: "Backtest data unavailable"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 638,
+                                                lineNumber: 801,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -653,25 +806,25 @@ function Tracker() {
                                                         children: "python3 scripts/train_all_with_backtesting.py"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 640,
+                                                        lineNumber: 803,
                                                         columnNumber: 25
                                                     }, this),
                                                     " to populate model predictions."
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 639,
+                                                lineNumber: 802,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 636,
+                                        lineNumber: 799,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                    lineNumber: 635,
+                                    lineNumber: 798,
                                     columnNumber: 15
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                     children: [
@@ -687,7 +840,7 @@ function Tracker() {
                                                                 className: "h-3.5 w-3.5 text-[#00E676]"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 650,
+                                                                lineNumber: 813,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -695,7 +848,7 @@ function Tracker() {
                                                                 children: "Investment simulator"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 651,
+                                                                lineNumber: 814,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -704,13 +857,13 @@ function Tracker() {
                                                                 children: "TOP"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 652,
+                                                                lineNumber: 815,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 649,
+                                                        lineNumber: 812,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -722,7 +875,7 @@ function Tracker() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 656,
+                                                        lineNumber: 819,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -736,7 +889,7 @@ function Tracker() {
                                                                         children: "Investment (PKR)"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 664,
+                                                                        lineNumber: 827,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -747,7 +900,7 @@ function Tracker() {
                                                                                 children: "Rs."
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 668,
+                                                                                lineNumber: 831,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -761,19 +914,19 @@ function Tracker() {
                                                                                 className: "h-7 w-full min-w-0 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 669,
+                                                                                lineNumber: 832,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 667,
+                                                                        lineNumber: 830,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 663,
+                                                                lineNumber: 826,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -784,7 +937,7 @@ function Tracker() {
                                                                         children: "Time period"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 683,
+                                                                        lineNumber: 846,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -801,7 +954,7 @@ function Tracker() {
                                                                                 className: "h-9 w-12 shrink-0 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB] focus-visible:ring-0 focus-visible:border-[#00E676]/40"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 687,
+                                                                                lineNumber: 850,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -815,24 +968,24 @@ function Tracker() {
                                                                                         children: u.label
                                                                                     }, u.value, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 704,
+                                                                                        lineNumber: 867,
                                                                                         columnNumber: 31
                                                                                     }, this))
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 697,
+                                                                                lineNumber: 860,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 686,
+                                                                        lineNumber: 849,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 682,
+                                                                lineNumber: 845,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -843,7 +996,7 @@ function Tracker() {
                                                                         children: "Monthly SIP"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 713,
+                                                                        lineNumber: 876,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -853,7 +1006,7 @@ function Tracker() {
                                                                                 className: "h-3 w-3 text-[#FBBF24] shrink-0"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 717,
+                                                                                lineNumber: 880,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -867,19 +1020,19 @@ function Tracker() {
                                                                                 className: "h-7 w-full min-w-0 border-0 bg-transparent p-0 text-sm font-mono text-[#F4F7FB] focus-visible:ring-0"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 718,
+                                                                                lineNumber: 881,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 716,
+                                                                        lineNumber: 879,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 712,
+                                                                lineNumber: 875,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -890,7 +1043,7 @@ function Tracker() {
                                                                         children: "No. of trades"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 732,
+                                                                        lineNumber: 895,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -904,13 +1057,13 @@ function Tracker() {
                                                                         className: "h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB] focus-visible:ring-0 focus-visible:border-[#00E676]/40"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 735,
+                                                                        lineNumber: 898,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 731,
+                                                                lineNumber: 894,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -921,7 +1074,7 @@ function Tracker() {
                                                                         children: "Min confidence"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 748,
+                                                                        lineNumber: 911,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -935,13 +1088,13 @@ function Tracker() {
                                                                         className: "h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB] focus-visible:ring-0 focus-visible:border-[#00E676]/40"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 751,
+                                                                        lineNumber: 914,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 747,
+                                                                lineNumber: 910,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -952,7 +1105,7 @@ function Tracker() {
                                                                         children: "Direction"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 764,
+                                                                        lineNumber: 927,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -969,24 +1122,24 @@ function Tracker() {
                                                                                 children: d === "BOTH" ? "Both" : d === "LONG" ? "Long" : "Short"
                                                                             }, d, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 769,
+                                                                                lineNumber: 932,
                                                                                 columnNumber: 29
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 767,
+                                                                        lineNumber: 930,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 763,
+                                                                lineNumber: 926,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 661,
+                                                        lineNumber: 824,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1001,20 +1154,20 @@ function Tracker() {
                                                                         className: "h-3.5 w-3.5 mr-1.5 animate-spin"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 794,
+                                                                        lineNumber: 957,
                                                                         columnNumber: 27
                                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__["Play"], {
                                                                         className: "h-3.5 w-3.5 mr-1.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 796,
+                                                                        lineNumber: 959,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     simLoading ? "Simulating…" : "Simulate"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 788,
+                                                                lineNumber: 951,
                                                                 columnNumber: 23
                                                             }, this),
                                                             simResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1026,14 +1179,14 @@ function Tracker() {
                                                                         className: "h-3.5 w-3.5 mr-1.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 806,
+                                                                        lineNumber: 969,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     "Reset"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 801,
+                                                                lineNumber: 964,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1045,13 +1198,13 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 810,
+                                                                lineNumber: 973,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 787,
+                                                        lineNumber: 950,
                                                         columnNumber: 21
                                                     }, this),
                                                     simResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -1069,7 +1222,7 @@ function Tracker() {
                                                                                 children: fmtPkr(simResult.initialAmount)
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 828,
+                                                                                lineNumber: 991,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             " ",
@@ -1083,7 +1236,7 @@ function Tracker() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 830,
+                                                                                lineNumber: 993,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             ", your final amount would be",
@@ -1093,7 +1246,7 @@ function Tracker() {
                                                                                 children: fmtPkr(simResult.finalAmount)
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 832,
+                                                                                lineNumber: 995,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             " ",
@@ -1108,14 +1261,14 @@ function Tracker() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 836,
+                                                                                lineNumber: 999,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             ")"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 826,
+                                                                        lineNumber: 989,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1134,13 +1287,13 @@ function Tracker() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 845,
+                                                                                        lineNumber: 1008,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 843,
+                                                                                lineNumber: 1006,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1155,13 +1308,13 @@ function Tracker() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 850,
+                                                                                        lineNumber: 1013,
                                                                                         columnNumber: 42
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 849,
+                                                                                lineNumber: 1012,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1173,13 +1326,13 @@ function Tracker() {
                                                                                         children: fmtPkr(simResult.totalInvested)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 853,
+                                                                                        lineNumber: 1016,
                                                                                         columnNumber: 47
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 852,
+                                                                                lineNumber: 1015,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1191,13 +1344,13 @@ function Tracker() {
                                                                                         children: simResult.wins
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 856,
+                                                                                        lineNumber: 1019,
                                                                                         columnNumber: 37
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 855,
+                                                                                lineNumber: 1018,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1209,13 +1362,13 @@ function Tracker() {
                                                                                         children: simResult.losses
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 859,
+                                                                                        lineNumber: 1022,
                                                                                         columnNumber: 39
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 858,
+                                                                                lineNumber: 1021,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1231,25 +1384,25 @@ function Tracker() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 863,
+                                                                                        lineNumber: 1026,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 861,
+                                                                                lineNumber: 1024,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 842,
+                                                                        lineNumber: 1005,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 825,
+                                                                lineNumber: 988,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1267,7 +1420,7 @@ function Tracker() {
                                                                                         children: "#"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 878,
+                                                                                        lineNumber: 1041,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1275,7 +1428,7 @@ function Tracker() {
                                                                                         children: "Symbol"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 879,
+                                                                                        lineNumber: 1042,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1283,7 +1436,7 @@ function Tracker() {
                                                                                         children: "Side"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 880,
+                                                                                        lineNumber: 1043,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1291,7 +1444,7 @@ function Tracker() {
                                                                                         children: "Entry amount"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 881,
+                                                                                        lineNumber: 1044,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1299,7 +1452,7 @@ function Tracker() {
                                                                                         children: "Return %"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 882,
+                                                                                        lineNumber: 1045,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1307,7 +1460,7 @@ function Tracker() {
                                                                                         children: "P&L"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 883,
+                                                                                        lineNumber: 1046,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1315,18 +1468,18 @@ function Tracker() {
                                                                                         children: "Exit amount"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 884,
+                                                                                        lineNumber: 1047,
                                                                                         columnNumber: 33
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 877,
+                                                                                lineNumber: 1040,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                            lineNumber: 876,
+                                                                            lineNumber: 1039,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -1338,7 +1491,7 @@ function Tracker() {
                                                                                             children: r.tradeNo
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 891,
+                                                                                            lineNumber: 1054,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1350,7 +1503,7 @@ function Tracker() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 892,
+                                                                                            lineNumber: 1055,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1361,12 +1514,12 @@ function Tracker() {
                                                                                                 children: "SIP"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                                lineNumber: 896,
+                                                                                                lineNumber: 1059,
                                                                                                 columnNumber: 39
                                                                                             }, this)
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 895,
+                                                                                            lineNumber: 1058,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1377,7 +1530,7 @@ function Tracker() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 903,
+                                                                                            lineNumber: 1066,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1385,7 +1538,7 @@ function Tracker() {
                                                                                             children: "—"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 906,
+                                                                                            lineNumber: 1069,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1393,7 +1546,7 @@ function Tracker() {
                                                                                             children: "—"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 907,
+                                                                                            lineNumber: 1070,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1404,13 +1557,13 @@ function Tracker() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 908,
+                                                                                            lineNumber: 1071,
                                                                                             columnNumber: 37
                                                                                         }, this)
                                                                                     ]
                                                                                 }, `sip-${r.tradeNo}`, true, {
                                                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                    lineNumber: 890,
+                                                                                    lineNumber: 1053,
                                                                                     columnNumber: 35
                                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                                                                     className: "border-b border-white/[0.04] hover:bg-white/[0.02]",
@@ -1420,7 +1573,7 @@ function Tracker() {
                                                                                             children: r.tradeNo
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 914,
+                                                                                            lineNumber: 1077,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1428,7 +1581,7 @@ function Tracker() {
                                                                                             children: r.symbol
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 915,
+                                                                                            lineNumber: 1078,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1439,12 +1592,12 @@ function Tracker() {
                                                                                                 children: r.side
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                                lineNumber: 917,
+                                                                                                lineNumber: 1080,
                                                                                                 columnNumber: 39
                                                                                             }, this)
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 916,
+                                                                                            lineNumber: 1079,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1452,7 +1605,7 @@ function Tracker() {
                                                                                             children: fmtPkr(r.entryAmount)
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 924,
+                                                                                            lineNumber: 1087,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1460,7 +1613,7 @@ function Tracker() {
                                                                                             children: fmtPct(r.returnPct, true)
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 927,
+                                                                                            lineNumber: 1090,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1471,7 +1624,7 @@ function Tracker() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 930,
+                                                                                            lineNumber: 1093,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1479,29 +1632,29 @@ function Tracker() {
                                                                                             children: fmtPkr(r.exitAmount)
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 933,
+                                                                                            lineNumber: 1096,
                                                                                             columnNumber: 37
                                                                                         }, this)
                                                                                     ]
                                                                                 }, r.tradeNo, true, {
                                                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                    lineNumber: 913,
+                                                                                    lineNumber: 1076,
                                                                                     columnNumber: 35
                                                                                 }, this))
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                            lineNumber: 887,
+                                                                            lineNumber: 1050,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                    lineNumber: 875,
+                                                                    lineNumber: 1038,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 874,
+                                                                lineNumber: 1037,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
@@ -1509,12 +1662,12 @@ function Tracker() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 648,
+                                                lineNumber: 811,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 647,
+                                            lineNumber: 810,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1526,7 +1679,7 @@ function Tracker() {
                                                     children: "LIVE"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 952,
+                                                    lineNumber: 1115,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1541,13 +1694,13 @@ function Tracker() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 955,
+                                                    lineNumber: 1118,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 951,
+                                            lineNumber: 1114,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1566,20 +1719,20 @@ function Tracker() {
                                                                         children: "Total signals"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 964,
+                                                                        lineNumber: 1127,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$zap$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Zap$3e$__["Zap"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 965,
+                                                                        lineNumber: 1128,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 963,
+                                                                lineNumber: 1126,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1587,7 +1740,7 @@ function Tracker() {
                                                                 children: signalStats.total
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 967,
+                                                                lineNumber: 1130,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1600,18 +1753,18 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 968,
+                                                                lineNumber: 1131,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 962,
+                                                        lineNumber: 1125,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 961,
+                                                    lineNumber: 1124,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1627,20 +1780,20 @@ function Tracker() {
                                                                         children: "Win rate"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 976,
+                                                                        lineNumber: 1139,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trophy$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Trophy$3e$__["Trophy"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 977,
+                                                                        lineNumber: 1140,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 975,
+                                                                lineNumber: 1138,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1651,7 +1804,7 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 979,
+                                                                lineNumber: 1142,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1663,18 +1816,18 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 980,
+                                                                lineNumber: 1143,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 974,
+                                                        lineNumber: 1137,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 973,
+                                                    lineNumber: 1136,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1690,20 +1843,20 @@ function Tracker() {
                                                                         children: "Avg return"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 986,
+                                                                        lineNumber: 1149,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 987,
+                                                                        lineNumber: 1150,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 985,
+                                                                lineNumber: 1148,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1711,7 +1864,7 @@ function Tracker() {
                                                                 children: fmtPct(signalStats.avgReturn, true)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 989,
+                                                                lineNumber: 1152,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1722,18 +1875,18 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 992,
+                                                                lineNumber: 1155,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 984,
+                                                        lineNumber: 1147,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 983,
+                                                    lineNumber: 1146,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1749,20 +1902,20 @@ function Tracker() {
                                                                         children: "Best / worst"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 998,
+                                                                        lineNumber: 1161,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$target$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Target$3e$__["Target"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 999,
+                                                                        lineNumber: 1162,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 997,
+                                                                lineNumber: 1160,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1773,7 +1926,7 @@ function Tracker() {
                                                                         children: fmtPct(signalStats.best, true)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1002,
+                                                                        lineNumber: 1165,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1781,7 +1934,7 @@ function Tracker() {
                                                                         children: "/"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1003,
+                                                                        lineNumber: 1166,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1789,13 +1942,13 @@ function Tracker() {
                                                                         children: fmtPct(signalStats.worst)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1004,
+                                                                        lineNumber: 1167,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1001,
+                                                                lineNumber: 1164,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1803,24 +1956,24 @@ function Tracker() {
                                                                 children: "best trade / worst trade"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1006,
+                                                                lineNumber: 1169,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 996,
+                                                        lineNumber: 1159,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 995,
+                                                    lineNumber: 1158,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 960,
+                                            lineNumber: 1123,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1843,14 +1996,14 @@ function Tracker() {
                                                                                         className: "h-4 w-4 text-[#00E676]"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1022,
+                                                                                        lineNumber: 1185,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     "Signal History"
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1021,
+                                                                                lineNumber: 1184,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1862,13 +2015,13 @@ function Tracker() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1025,
+                                                                                lineNumber: 1188,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1020,
+                                                                        lineNumber: 1183,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1882,20 +2035,20 @@ function Tracker() {
                                                                                 className: `h-3 w-3 mr-1.5 ${historyLoading ? "animate-spin" : ""}`
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1036,
+                                                                                lineNumber: 1199,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             "Refresh"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1029,
+                                                                        lineNumber: 1192,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1019,
+                                                                lineNumber: 1182,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1908,7 +2061,7 @@ function Tracker() {
                                                                                 children: "Outcome"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1044,
+                                                                                lineNumber: 1207,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1921,7 +2074,7 @@ function Tracker() {
                                                                                         children: "All"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1050,
+                                                                                        lineNumber: 1213,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1929,7 +2082,7 @@ function Tracker() {
                                                                                         children: "TP hit"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1051,
+                                                                                        lineNumber: 1214,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1937,7 +2090,7 @@ function Tracker() {
                                                                                         children: "SL hit"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1052,
+                                                                                        lineNumber: 1215,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1945,19 +2098,19 @@ function Tracker() {
                                                                                         children: "Active"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1053,
+                                                                                        lineNumber: 1216,
                                                                                         columnNumber: 29
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1045,
+                                                                                lineNumber: 1208,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1043,
+                                                                        lineNumber: 1206,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1967,7 +2120,7 @@ function Tracker() {
                                                                                 children: "Sort by"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1057,
+                                                                                lineNumber: 1220,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1980,7 +2133,7 @@ function Tracker() {
                                                                                         children: "R:R (high → low)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1063,
+                                                                                        lineNumber: 1226,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1988,7 +2141,7 @@ function Tracker() {
                                                                                         children: "Confidence (high → low)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1064,
+                                                                                        lineNumber: 1227,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1996,19 +2149,19 @@ function Tracker() {
                                                                                         children: "Live P&L % (high → low)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1065,
+                                                                                        lineNumber: 1228,
                                                                                         columnNumber: 29
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1058,
+                                                                                lineNumber: 1221,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1056,
+                                                                        lineNumber: 1219,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2026,13 +2179,13 @@ function Tracker() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1070,
+                                                                                        lineNumber: 1233,
                                                                                         columnNumber: 45
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1069,
+                                                                                lineNumber: 1232,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2045,13 +2198,13 @@ function Tracker() {
                                                                                 className: "w-full accent-[#00E676] h-1"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1072,
+                                                                                lineNumber: 1235,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1068,
+                                                                        lineNumber: 1231,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2064,19 +2217,19 @@ function Tracker() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1082,
+                                                                        lineNumber: 1245,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1042,
+                                                                lineNumber: 1205,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1018,
+                                                        lineNumber: 1181,
                                                         columnNumber: 21
                                                     }, this),
                                                     historyError ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2084,7 +2237,7 @@ function Tracker() {
                                                         children: historyError
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1089,
+                                                        lineNumber: 1252,
                                                         columnNumber: 23
                                                     }, this) : historyLoading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "p-6 space-y-2",
@@ -2098,12 +2251,12 @@ function Tracker() {
                                                                 className: "h-8 w-full bg-white/[0.04]"
                                                             }, i, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1093,
+                                                                lineNumber: 1256,
                                                                 columnNumber: 27
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1091,
+                                                        lineNumber: 1254,
                                                         columnNumber: 23
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "overflow-x-auto max-h-96 overflow-y-auto",
@@ -2120,7 +2273,7 @@ function Tracker() {
                                                                                 children: "Symbol"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1101,
+                                                                                lineNumber: 1264,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2128,7 +2281,7 @@ function Tracker() {
                                                                                 children: "Side"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1102,
+                                                                                lineNumber: 1265,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2136,7 +2289,7 @@ function Tracker() {
                                                                                 children: "Entry"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1103,
+                                                                                lineNumber: 1266,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2144,7 +2297,7 @@ function Tracker() {
                                                                                 children: "Live"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1104,
+                                                                                lineNumber: 1267,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2152,7 +2305,7 @@ function Tracker() {
                                                                                 children: "SL"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1105,
+                                                                                lineNumber: 1268,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2160,7 +2313,7 @@ function Tracker() {
                                                                                 children: "TP1"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1106,
+                                                                                lineNumber: 1269,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2168,7 +2321,7 @@ function Tracker() {
                                                                                 children: "TP2"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1107,
+                                                                                lineNumber: 1270,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2176,7 +2329,7 @@ function Tracker() {
                                                                                 children: "TP3"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1108,
+                                                                                lineNumber: 1271,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2184,7 +2337,7 @@ function Tracker() {
                                                                                 children: "R:R"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1109,
+                                                                                lineNumber: 1272,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2192,7 +2345,7 @@ function Tracker() {
                                                                                 children: "Conf."
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1110,
+                                                                                lineNumber: 1273,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2200,18 +2353,18 @@ function Tracker() {
                                                                                 children: "Outcome"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1111,
+                                                                                lineNumber: 1274,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1100,
+                                                                        lineNumber: 1263,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                    lineNumber: 1099,
+                                                                    lineNumber: 1262,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -2223,12 +2376,12 @@ function Tracker() {
                                                                                 children: "No signals match the current filters."
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1117,
+                                                                                lineNumber: 1280,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                            lineNumber: 1116,
+                                                                            lineNumber: 1279,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         filteredHistory.map((s)=>{
@@ -2247,13 +2400,13 @@ function Tracker() {
                                                                                                 children: s.stockName
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                                lineNumber: 1140,
+                                                                                                lineNumber: 1303,
                                                                                                 columnNumber: 39
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1137,
+                                                                                        lineNumber: 1300,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2264,12 +2417,12 @@ function Tracker() {
                                                                                             children: s.signal
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 1144,
+                                                                                            lineNumber: 1307,
                                                                                             columnNumber: 37
                                                                                         }, this)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1143,
+                                                                                        lineNumber: 1306,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2277,7 +2430,7 @@ function Tracker() {
                                                                                         children: s.entry.toFixed(2)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1148,
+                                                                                        lineNumber: 1311,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2287,12 +2440,12 @@ function Tracker() {
                                                                                             children: "—"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 1150,
+                                                                                            lineNumber: 1313,
                                                                                             columnNumber: 85
                                                                                         }, this)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1149,
+                                                                                        lineNumber: 1312,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2300,7 +2453,7 @@ function Tracker() {
                                                                                         children: s.sl.toFixed(2)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1152,
+                                                                                        lineNumber: 1315,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2308,7 +2461,7 @@ function Tracker() {
                                                                                         children: s.tp1.toFixed(2)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1153,
+                                                                                        lineNumber: 1316,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2316,7 +2469,7 @@ function Tracker() {
                                                                                         children: s.tp2.toFixed(2)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1154,
+                                                                                        lineNumber: 1317,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2324,7 +2477,7 @@ function Tracker() {
                                                                                         children: s.tp3.toFixed(2)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1155,
+                                                                                        lineNumber: 1318,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2332,7 +2485,7 @@ function Tracker() {
                                                                                         children: s.riskReward.toFixed(2)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1156,
+                                                                                        lineNumber: 1319,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2343,7 +2496,7 @@ function Tracker() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1157,
+                                                                                        lineNumber: 1320,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2362,60 +2515,60 @@ function Tracker() {
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                                    lineNumber: 1161,
+                                                                                                    lineNumber: 1324,
                                                                                                     columnNumber: 39
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                            lineNumber: 1159,
+                                                                                            lineNumber: 1322,
                                                                                             columnNumber: 37
                                                                                         }, this)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1158,
+                                                                                        lineNumber: 1321,
                                                                                         columnNumber: 35
                                                                                     }, this)
                                                                                 ]
                                                                             }, s.symbol, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1136,
+                                                                                lineNumber: 1299,
                                                                                 columnNumber: 33
                                                                             }, this);
                                                                         })
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                    lineNumber: 1114,
+                                                                    lineNumber: 1277,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                            lineNumber: 1098,
+                                                            lineNumber: 1261,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1097,
+                                                        lineNumber: 1260,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1017,
+                                                lineNumber: 1180,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1016,
+                                            lineNumber: 1179,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 633,
+                                lineNumber: 796,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -2430,7 +2583,7 @@ function Tracker() {
                                                 className: "h-12 w-12 text-[#00E676]/30 mx-auto mb-3"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1184,
+                                                lineNumber: 1347,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -2438,7 +2591,7 @@ function Tracker() {
                                                 children: "No portfolio positions yet"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1185,
+                                                lineNumber: 1348,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2446,21 +2599,66 @@ function Tracker() {
                                                 children: "Add stocks with buy prices and share counts to see your live P&L, win rate, and ROI% here."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1186,
+                                                lineNumber: 1349,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 1183,
+                                        lineNumber: 1346,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                    lineNumber: 1182,
+                                    lineNumber: 1345,
                                     columnNumber: 15
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                     children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center justify-end gap-2 mb-3 flex-wrap",
+                                            children: [
+                                                portfolioPricesUpdatedAt && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "text-[10px] text-[#64748B] font-mono",
+                                                    children: [
+                                                        "Live prices updated",
+                                                        " ",
+                                                        portfolioPricesUpdatedAt.toLocaleTimeString([], {
+                                                            hour: "2-digit",
+                                                            minute: "2-digit"
+                                                        })
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                    lineNumber: 1361,
+                                                    columnNumber: 21
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                                    variant: "outline",
+                                                    size: "sm",
+                                                    onClick: refreshPortfolioPrices,
+                                                    disabled: portfolioPricesLoading,
+                                                    className: "border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] h-7",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$refresh$2d$cw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RefreshCw$3e$__["RefreshCw"], {
+                                                            className: `h-3 w-3 mr-1.5 ${portfolioPricesLoading ? "animate-spin" : ""}`
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                            lineNumber: 1373,
+                                                            columnNumber: 21
+                                                        }, this),
+                                                        "Refresh"
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                    lineNumber: 1366,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                                            lineNumber: 1359,
+                                            columnNumber: 17
+                                        }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "grid grid-cols-2 md:grid-cols-4 gap-3 mb-5",
                                             children: [
@@ -2477,20 +2675,20 @@ function Tracker() {
                                                                         children: "Total value"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1197,
+                                                                        lineNumber: 1383,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$briefcase$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Briefcase$3e$__["Briefcase"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1198,
+                                                                        lineNumber: 1384,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1196,
+                                                                lineNumber: 1382,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2498,7 +2696,7 @@ function Tracker() {
                                                                 children: portfolioStats.hasAnyPnl ? fmtPkr(portfolioStats.totalValue) : "—"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1200,
+                                                                lineNumber: 1386,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2509,18 +2707,18 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1203,
+                                                                lineNumber: 1389,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1195,
+                                                        lineNumber: 1381,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 1194,
+                                                    lineNumber: 1380,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2536,26 +2734,26 @@ function Tracker() {
                                                                         children: "Total P&L"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1211,
+                                                                        lineNumber: 1397,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     portfolioStats.totalPnl >= 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1213,
+                                                                        lineNumber: 1399,
                                                                         columnNumber: 27
                                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingDown$3e$__["TrendingDown"], {
                                                                         className: "h-3 w-3 text-[#FF5C5C]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1215,
+                                                                        lineNumber: 1401,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1210,
+                                                                lineNumber: 1396,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2563,7 +2761,7 @@ function Tracker() {
                                                                 children: portfolioStats.hasAnyPnl ? `${portfolioStats.totalPnl >= 0 ? "+" : ""}${fmtPkr(portfolioStats.totalPnl)}` : "—"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1218,
+                                                                lineNumber: 1404,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2576,24 +2774,24 @@ function Tracker() {
                                                                         children: portfolioStats.hasAnyPnl ? `${portfolioStats.roiPct >= 0 ? "+" : ""}${portfolioStats.roiPct.toFixed(2)}%` : "—"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1223,
+                                                                        lineNumber: 1409,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1221,
+                                                                lineNumber: 1407,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1209,
+                                                        lineNumber: 1395,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 1208,
+                                                    lineNumber: 1394,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2609,20 +2807,20 @@ function Tracker() {
                                                                         children: "Win rate"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1232,
+                                                                        lineNumber: 1418,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trophy$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Trophy$3e$__["Trophy"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1233,
+                                                                        lineNumber: 1419,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1231,
+                                                                lineNumber: 1417,
                                                                 columnNumber: 23
                                                             }, this),
                                                             portfolioStats.winRate !== null ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2633,14 +2831,14 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1236,
+                                                                lineNumber: 1422,
                                                                 columnNumber: 25
                                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 className: "text-2xl font-bold text-[#94A3B8] font-mono",
                                                                 children: "—"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1240,
+                                                                lineNumber: 1426,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2648,18 +2846,18 @@ function Tracker() {
                                                                 children: portfolioStats.closedCount > 0 ? `${portfolioStats.closedWins}/${portfolioStats.closedCount} closed` : "no closed trades yet"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1242,
+                                                                lineNumber: 1428,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1230,
+                                                        lineNumber: 1416,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 1229,
+                                                    lineNumber: 1415,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2675,20 +2873,20 @@ function Tracker() {
                                                                         children: "Positions"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1252,
+                                                                        lineNumber: 1438,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$activity$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Activity$3e$__["Activity"], {
                                                                         className: "h-3 w-3 text-[#00E676]"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1253,
+                                                                        lineNumber: 1439,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1251,
+                                                                lineNumber: 1437,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2696,7 +2894,7 @@ function Tracker() {
                                                                 children: portfolioStats.total
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1255,
+                                                                lineNumber: 1441,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2710,7 +2908,7 @@ function Tracker() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1257,
+                                                                        lineNumber: 1443,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     " · ",
@@ -2722,30 +2920,30 @@ function Tracker() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1259,
+                                                                        lineNumber: 1445,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1256,
+                                                                lineNumber: 1442,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1250,
+                                                        lineNumber: 1436,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                    lineNumber: 1249,
+                                                    lineNumber: 1435,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1193,
+                                            lineNumber: 1379,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2760,7 +2958,7 @@ function Tracker() {
                                                                 className: "h-4 w-4 text-[#00E676]"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1269,
+                                                                lineNumber: 1455,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -2768,13 +2966,13 @@ function Tracker() {
                                                                 children: "Sector-wise holding distribution"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1270,
+                                                                lineNumber: 1456,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1268,
+                                                        lineNumber: 1454,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2782,7 +2980,7 @@ function Tracker() {
                                                         children: "Breakdown of your open positions by sector, weighted by current market value (live price × shares). Useful for spotting concentration risk (e.g., 80% Cement, 20% Oil & Gas)."
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1272,
+                                                        lineNumber: 1458,
                                                         columnNumber: 21
                                                     }, this),
                                                     sectorData.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2790,7 +2988,7 @@ function Tracker() {
                                                         children: "No open positions with a market value yet — add buy prices + share counts to populate the chart."
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1277,
+                                                        lineNumber: 1463,
                                                         columnNumber: 23
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "flex flex-col md:flex-row items-center gap-6",
@@ -2799,7 +2997,7 @@ function Tracker() {
                                                                 data: sectorData
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1282,
+                                                                lineNumber: 1468,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2817,7 +3015,7 @@ function Tracker() {
                                                                                         }
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1287,
+                                                                                        lineNumber: 1473,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2825,13 +3023,13 @@ function Tracker() {
                                                                                         children: d.sector
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1291,
+                                                                                        lineNumber: 1477,
                                                                                         columnNumber: 33
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1286,
+                                                                                lineNumber: 1472,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2842,7 +3040,7 @@ function Tracker() {
                                                                                         children: fmtPkr(d.value)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1294,
+                                                                                        lineNumber: 1480,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2853,41 +3051,41 @@ function Tracker() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                        lineNumber: 1295,
+                                                                                        lineNumber: 1481,
                                                                                         columnNumber: 33
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                                lineNumber: 1293,
+                                                                                lineNumber: 1479,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, d.sector, true, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1285,
+                                                                        lineNumber: 1471,
                                                                         columnNumber: 29
                                                                     }, this))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1283,
+                                                                lineNumber: 1469,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1281,
+                                                        lineNumber: 1467,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1267,
+                                                lineNumber: 1453,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1266,
+                                            lineNumber: 1452,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2907,32 +3105,32 @@ function Tracker() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1311,
+                                                                lineNumber: 1497,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                 className: "text-xs text-[#94A3B8] mt-0.5",
                                                                 children: [
-                                                                    "Live P&L based on current PSX prices for covered stocks · to close a position, use the wallet-icon close flow in the ",
+                                                                    "Live P&L from current PSX prices for every held stock · to close a position, use the wallet-icon close flow in the ",
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         className: "text-[#00E676]",
                                                                         children: "Portfolio"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                        lineNumber: 1314,
+                                                                        lineNumber: 1500,
                                                                         columnNumber: 55
                                                                     }, this),
                                                                     " tab."
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1312,
+                                                                lineNumber: 1498,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1310,
+                                                        lineNumber: 1496,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2942,31 +3140,31 @@ function Tracker() {
                                                             children: "No open positions yet. Add stocks with shares > 0 to start tracking."
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                            lineNumber: 1319,
+                                                            lineNumber: 1505,
                                                             columnNumber: 25
                                                         }, this) : portfolioPositions.map((p)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(PortfolioRow, {
                                                                 position: p,
-                                                                livePrice: livePriceMap[p.symbol],
-                                                                sectorLabel: p.sector && p.sector.trim() || sectorMap[p.symbol] || undefined
+                                                                livePrice: livePriceMap[p.symbol.toUpperCase()],
+                                                                sectorLabel: p.sector && p.sector.trim() || sectorMap[p.symbol] || "Others"
                                                             }, p.symbol, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1324,
+                                                                lineNumber: 1510,
                                                                 columnNumber: 27
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1317,
+                                                        lineNumber: 1503,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1309,
+                                                lineNumber: 1495,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1308,
+                                            lineNumber: 1494,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2981,71 +3179,80 @@ function Tracker() {
                                                                 className: "font-semibold text-[#F4F7FB]",
                                                                 children: [
                                                                     "Closed trades (",
+                                                                    closedStockRows.length,
+                                                                    " ",
+                                                                    closedStockRows.length === 1 ? "stock" : "stocks",
+                                                                    " ·",
+                                                                    " ",
                                                                     closedTrades.length,
+                                                                    " ",
+                                                                    closedTrades.length === 1 ? "close" : "closes",
                                                                     ")"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1344,
+                                                                lineNumber: 1532,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                 className: "text-xs text-[#94A3B8] mt-0.5",
-                                                                children: "Each row is a trade closed via the Portfolio tab's close flow — recorded with buy/sell prices, broker commission (0.15% × sell × 2), CGT (15% if ≤12mo, 0% if >12mo), and net P&L."
+                                                                children: "One row per stock — totals across every close made via the Portfolio tab's close flow (broker commission 0.15% × sell × 2, CGT 15% if ≤12mo / 0% if >12mo). Click a row to expand each close event."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1345,
+                                                                lineNumber: 1536,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1343,
+                                                        lineNumber: 1531,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "divide-y divide-white/[0.04]",
-                                                        children: closedTrades.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        children: closedStockRows.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "p-6 text-center text-xs text-[#64748B]",
                                                             children: "No closed trades yet. Close a position from the Portfolio tab to see it here."
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                            lineNumber: 1353,
+                                                            lineNumber: 1544,
                                                             columnNumber: 25
-                                                        }, this) : closedTrades.map((t)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ClosedTradeRow, {
-                                                                trade: t
-                                                            }, t.id, false, {
+                                                        }, this) : closedStockRows.map((row)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ClosedStockRow, {
+                                                                row: row,
+                                                                expanded: expandedClosedSymbol === row.symbol,
+                                                                onToggle: ()=>setExpandedClosedSymbol((s)=>s === row.symbol ? null : row.symbol)
+                                                            }, row.symbol, false, {
                                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                                lineNumber: 1357,
-                                                                columnNumber: 49
+                                                                lineNumber: 1549,
+                                                                columnNumber: 27
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                        lineNumber: 1351,
+                                                        lineNumber: 1542,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1342,
+                                                lineNumber: 1530,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1341,
+                                            lineNumber: 1529,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1180,
+                                lineNumber: 1343,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 622,
+                        lineNumber: 785,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3056,7 +3263,7 @@ function Tracker() {
                                 children: "Tracker note:"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1368,
+                                lineNumber: 1568,
                                 columnNumber: 11
                             }, this),
                             " Signal tracker stats are sourced live from ",
@@ -3068,7 +3275,7 @@ function Tracker() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1369,
+                                lineNumber: 1569,
                                 columnNumber: 39
                             }, this),
                             " — the ensemble final consensus backtest across ",
@@ -3077,39 +3284,44 @@ function Tracker() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 1367,
+                        lineNumber: 1567,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                lineNumber: 605,
+                lineNumber: 768,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Tracker.tsx",
-        lineNumber: 603,
+        lineNumber: 766,
         columnNumber: 5
     }, this);
 }
 // ─── Issue 18: SVG-based donut pie chart for sector distribution ──────────
+// Task 28-C: brighter, high-distinction categorical palette — 14 vivid
+// colors with strong contrast on the #131829 card, alternating warm/cool
+// hues so no two ADJACENT slices look similar (same-family hues such as
+// yellow/amber or green/mint are spread far apart in the list). The legend
+// swatches use the exact same index mapping (SECTOR_COLORS[i % len]) as the
+// pie slices themselves, so a sector keeps its color in both places.
 const SECTOR_COLORS = [
     "#00E676",
-    "#FBBF24",
+    "#FFD60A",
+    "#2DD4FF",
     "#FF5C5C",
-    "#22E881",
-    "#4ADE80",
-    "#94A3B8",
-    "#F59E0B",
-    "#10B981",
-    "#EF4444",
-    "#8B5CF6",
-    "#3B82F6",
-    "#EC4899",
-    "#14B8A6",
-    "#A855F7",
-    "#6366F1"
+    "#06D6A0",
+    "#FF8C42",
+    "#F72585",
+    "#B4F461",
+    "#C77DFF",
+    "#FF5D8F",
+    "#FFB627",
+    "#8AFFC1",
+    "#F4F7FB",
+    "#FF7EDB"
 ];
 function SectorPieChart({ data }) {
     const size = 160;
@@ -3117,14 +3329,14 @@ function SectorPieChart({ data }) {
     const cy = size / 2;
     const r = 65;
     const innerR = 30; // donut hole
-    // SVG arc paths for each sector slice. Cumulative angle is computed
-    // functionally from the preceding slices' percentages (no mutation) to
-    // satisfy react-hooks/immutability.
-    const slices = data.map((d, i)=>{
-        const cumulativeBeforePct = data.slice(0, i).reduce((s, x)=>s + x.pct, 0);
-        const startAngle = -Math.PI / 2 + cumulativeBeforePct / 100 * 2 * Math.PI;
-        const angleSpan = d.pct / 100 * 2 * Math.PI;
-        const endAngle = startAngle + angleSpan;
+    // SVG arc path for a donut slice spanning [startPct, startPct+spanPct]
+    // of the ring. Cumulative angle is computed functionally from the
+    // preceding slices' percentages (no mutation) to satisfy
+    // react-hooks/immutability.
+    const pathFor = (startPct, spanPct)=>{
+        const startAngle = -Math.PI / 2 + startPct / 100 * 2 * Math.PI;
+        const endAngle = -Math.PI / 2 + (startPct + spanPct) / 100 * 2 * Math.PI;
+        const angleSpan = endAngle - startAngle;
         // Outer arc endpoints
         const x1 = cx + r * Math.cos(startAngle);
         const y1 = cy + r * Math.sin(startAngle);
@@ -3137,12 +3349,35 @@ function SectorPieChart({ data }) {
         const yi2 = cy + innerR * Math.sin(endAngle);
         const largeArc = angleSpan > Math.PI ? 1 : 0;
         // Donut slice path: outer arc forward + line in + inner arc backward + close
-        const path = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${xi1} ${yi1} Z`;
-        return {
-            path,
-            color: SECTOR_COLORS[i % SECTOR_COLORS.length],
-            ...d
-        };
+        return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${xi1} ${yi1} Z`;
+    };
+    const slices = data.flatMap((d, i)=>{
+        const color = SECTOR_COLORS[i % SECTOR_COLORS.length];
+        const cumulativeBeforePct = data.slice(0, i).reduce((s, x)=>s + x.pct, 0);
+        // Task 28-C: a single ~360° slice degenerates — the arc path has
+        // start point == end point and SVG renders NOTHING (the "1 stock
+        // added, graph shows nothing" bug). Render the full donut as ONE path
+        // with two subpaths (outer circle + inner circle) using fill-rule
+        // "evenodd", which punches a clean hole and always renders.
+        if (data.length === 1 || d.pct >= 99.9) {
+            const circle = (radius)=>`M ${cx - radius} ${cy} A ${radius} ${radius} 0 1 1 ${cx + radius} ${cy} A ${radius} ${radius} 0 1 1 ${cx - radius} ${cy} Z`;
+            return [
+                {
+                    path: `${circle(r)} ${circle(innerR)}`,
+                    color,
+                    evenOdd: true,
+                    ...d
+                }
+            ];
+        }
+        return [
+            {
+                path: pathFor(cumulativeBeforePct, d.pct),
+                color,
+                evenOdd: false,
+                ...d
+            }
+        ];
     });
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
         viewBox: `0 0 ${size} ${size}`,
@@ -3154,28 +3389,36 @@ function SectorPieChart({ data }) {
         children: slices.map((s, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                 d: s.path,
                 fill: s.color,
+                fillRule: s.evenOdd ? "evenodd" : undefined,
                 stroke: "#0A0E1A",
                 strokeWidth: 1.5,
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("title", {
                     children: `${s.sector}: ${s.pct.toFixed(1)}% (${fmtPkr(s.value)})`
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                    lineNumber: 1436,
+                    lineNumber: 1671,
                     columnNumber: 11
                 }, this)
             }, i, false, {
                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                lineNumber: 1429,
+                lineNumber: 1663,
                 columnNumber: 9
             }, this))
     }, void 0, false, {
         fileName: "[project]/src/components/latent/Tracker.tsx",
-        lineNumber: 1420,
+        lineNumber: 1654,
         columnNumber: 5
     }, this);
 }
 function PortfolioRow({ position, livePrice, sectorLabel }) {
-    const buy = position.buyPrice || 0;
+    // Task 28-B (parallel work): positions may carry per-lot buy history in
+    // an optional `buys` field. Read it defensively — it may be absent on
+    // positions persisted before that field existed.
+    const lots = position.buys;
+    const validLots = Array.isArray(lots) ? lots.filter((l)=>l && typeof l.price === "number" && l.price > 0 && typeof l.shares === "number" && l.shares > 0) : [];
+    const lotShares = validLots.reduce((s, l)=>s + l.shares, 0);
+    const lotAvgBuy = lotShares > 0 ? validLots.reduce((s, l)=>s + l.price * l.shares, 0) / lotShares : null;
+    const buy = position.buyPrice || lotAvgBuy || 0;
     const referencePrice = typeof livePrice === "number" ? livePrice : null;
     const positionValue = referencePrice !== null ? referencePrice * position.shares : null;
     const invested = buy * position.shares;
@@ -3183,6 +3426,9 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
     const pnlPct = pnl !== null && invested > 0 ? pnl / invested * 100 : null;
     const isWin = pnl !== null && pnl > 0;
     const isLoss = pnl !== null && pnl < 0;
+    // Task 28-C: multi-lot positions show a compact "N buys · avg X" hint;
+    // single-lot / legacy positions keep the "Buy: X · N shares" line.
+    const buyLine = validLots.length > 1 ? `${validLots.length} buys · avg ${buy > 0 ? buy.toFixed(2) : "—"}` : `Buy: ${buy > 0 ? buy.toFixed(2) : "—"} · ${position.shares.toLocaleString()} shares`;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "p-4 hover:bg-white/[0.02]",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3196,7 +3442,7 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                             children: position.symbol.slice(0, 4)
                         }, void 0, false, {
                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                            lineNumber: 1475,
+                            lineNumber: 1733,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3210,7 +3456,7 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                             children: position.symbol
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1480,
+                                            lineNumber: 1738,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3219,7 +3465,7 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                             children: "OPEN"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1481,
+                                            lineNumber: 1739,
                                             columnNumber: 15
                                         }, this),
                                         sectorLabel && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3228,23 +3474,19 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                             children: sectorLabel
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1485,
+                                            lineNumber: 1743,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                    lineNumber: 1479,
+                                    lineNumber: 1737,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "text-[11px] text-[#94A3B8] mt-0.5 truncate",
                                     children: [
-                                        "Buy: ",
-                                        buy > 0 ? buy.toFixed(2) : "—",
-                                        " · ",
-                                        position.shares.toLocaleString(),
-                                        " shares",
+                                        buyLine,
                                         typeof livePrice === "number" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: "text-[#64748B]",
                                             children: [
@@ -3253,25 +3495,25 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                                            lineNumber: 1493,
+                                            lineNumber: 1751,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                                    lineNumber: 1490,
+                                    lineNumber: 1748,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/latent/Tracker.tsx",
-                            lineNumber: 1478,
+                            lineNumber: 1736,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                    lineNumber: 1474,
+                    lineNumber: 1732,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3286,7 +3528,7 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1501,
+                                lineNumber: 1759,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3294,7 +3536,7 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                 children: pnlPct !== null ? `${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}%` : "—"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1504,
+                                lineNumber: 1762,
                                 columnNumber: 15
                             }, this)
                         ]
@@ -3305,7 +3547,7 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                 children: "—"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1510,
+                                lineNumber: 1768,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3313,237 +3555,360 @@ function PortfolioRow({ position, livePrice, sectorLabel }) {
                                 children: "no live price"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1511,
+                                lineNumber: 1769,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true)
                 }, void 0, false, {
                     fileName: "[project]/src/components/latent/Tracker.tsx",
-                    lineNumber: 1498,
+                    lineNumber: 1756,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/latent/Tracker.tsx",
-            lineNumber: 1473,
+            lineNumber: 1731,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/latent/Tracker.tsx",
-        lineNumber: 1472,
+        lineNumber: 1730,
         columnNumber: 5
     }, this);
 }
-function ClosedTradeRow({ trade }) {
-    const isWin = trade.netPnl > 0;
-    const isLoss = trade.netPnl < 0;
+function ClosedStockRow({ row, expanded, onToggle }) {
+    const isWin = row.totalNetPnl > 0;
+    const isLoss = row.totalNetPnl < 0;
+    const pnlClass = isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]";
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "p-4 hover:bg-white/[0.02]",
+        className: "hover:bg-white/[0.02]",
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center justify-between gap-3",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center gap-3 min-w-0",
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                type: "button",
+                onClick: onToggle,
+                "aria-expanded": expanded,
+                className: "w-full text-left p-4 focus:outline-none focus-visible:bg-white/[0.04] cursor-pointer",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "flex items-center justify-between gap-3",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex items-center gap-3 min-w-0",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "h-9 w-9 rounded-lg flex items-center justify-center font-mono font-bold text-xs shrink-0 bg-white/[0.04] text-[#94A3B8]",
+                                    children: row.symbol.slice(0, 4)
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                    lineNumber: 1828,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "min-w-0",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center gap-2 flex-wrap",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "font-semibold text-[#F4F7FB] text-sm",
+                                                    children: row.symbol
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                    lineNumber: 1833,
+                                                    columnNumber: 17
+                                                }, this),
+                                                row.name && row.name !== row.symbol && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "text-[10px] text-[#64748B] truncate max-w-[140px] hidden sm:inline",
+                                                    children: row.name
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                    lineNumber: 1835,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                    variant: "outline",
+                                                    className: "text-[9px] py-0 h-4 border-white/[0.16] text-[#94A3B8] bg-white/[0.04]",
+                                                    children: "CLOSED"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                    lineNumber: 1839,
+                                                    columnNumber: 17
+                                                }, this),
+                                                row.closes > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                    variant: "outline",
+                                                    className: "text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]",
+                                                    children: [
+                                                        row.closes,
+                                                        " closes"
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                    lineNumber: 1843,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                                            lineNumber: 1832,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "text-[11px] text-[#94A3B8] mt-0.5 truncate",
+                                            children: [
+                                                row.closes,
+                                                " ",
+                                                row.closes === 1 ? "close" : "closes",
+                                                " · ",
+                                                row.totalSharesSold.toLocaleString(),
+                                                " shares sold · avg buy ",
+                                                row.avgBuy.toFixed(2),
+                                                " · last sold ",
+                                                row.lastSellPrice.toFixed(2)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                                            lineNumber: 1848,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "text-[10px] text-[#64748B] mt-0.5",
+                                            children: [
+                                                "Last close",
+                                                " ",
+                                                new Date(row.lastClosedAt).toLocaleDateString("en-PK", {
+                                                    month: "short",
+                                                    day: "numeric",
+                                                    year: "numeric"
+                                                })
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                                            lineNumber: 1852,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                    lineNumber: 1831,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                            lineNumber: 1827,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex items-center gap-2 shrink-0",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "text-right",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: `text-sm font-mono font-semibold ${pnlClass}`,
+                                            children: [
+                                                row.totalNetPnl >= 0 ? "+" : "",
+                                                fmtPkr(row.totalNetPnl)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                                            lineNumber: 1864,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: `text-[10px] font-mono ${pnlClass}`,
+                                            children: [
+                                                row.totalNetPnlPct >= 0 ? "+" : "",
+                                                row.totalNetPnlPct.toFixed(2),
+                                                "% net"
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                                            lineNumber: 1867,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                    lineNumber: 1863,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
+                                    className: `h-4 w-4 text-[#64748B] transition-transform ${expanded ? "rotate-180" : ""}`,
+                                    "aria-hidden": true
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                                    lineNumber: 1871,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/components/latent/Tracker.tsx",
+                            lineNumber: 1862,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/src/components/latent/Tracker.tsx",
+                    lineNumber: 1826,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/src/components/latent/Tracker.tsx",
+                lineNumber: 1820,
+                columnNumber: 7
+            }, this),
+            expanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "px-4 pb-4 space-y-1.5",
+                children: row.trades.map((t, idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "rounded-md border border-white/[0.06] bg-[#0A0E1A] px-3 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "h-9 w-9 rounded-lg flex items-center justify-center font-mono font-bold text-xs shrink-0 bg-white/[0.04] text-[#94A3B8]",
-                                children: trade.symbol.slice(0, 4)
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1549,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "min-w-0",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-[10px] text-[#94A3B8]",
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center gap-2",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-[#64748B] font-mono mr-1.5",
                                         children: [
+                                            "#",
+                                            idx + 1
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Tracker.tsx",
+                                        lineNumber: 1886,
+                                        columnNumber: 17
+                                    }, this),
+                                    "Buy ",
+                                    t.buyPrice.toFixed(2),
+                                    " × ",
+                                    t.shares.toLocaleString(),
+                                    " → Sell ",
+                                    t.sellPrice.toFixed(2),
+                                    " · held",
+                                    " ",
+                                    t.holdingDays,
+                                    "d"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/latent/Tracker.tsx",
+                                lineNumber: 1885,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-[10px] font-mono flex flex-wrap items-center gap-x-3 gap-y-0.5",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-[#64748B]",
+                                        children: [
+                                            "Gross",
+                                            " ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "font-semibold text-[#F4F7FB] text-sm",
-                                                children: trade.symbol
-                                            }, void 0, false, {
+                                                className: t.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]",
+                                                children: [
+                                                    t.grossPnl >= 0 ? "+" : "",
+                                                    fmtPkr(t.grossPnl)
+                                                ]
+                                            }, void 0, true, {
                                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1554,
-                                                columnNumber: 15
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                                variant: "outline",
-                                                className: "text-[9px] py-0 h-4 border-white/[0.16] text-[#94A3B8] bg-white/[0.04]",
-                                                children: "CLOSED"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/latent/Tracker.tsx",
-                                                lineNumber: 1555,
-                                                columnNumber: 15
+                                                lineNumber: 1893,
+                                                columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 1553,
-                                        columnNumber: 13
+                                        lineNumber: 1891,
+                                        columnNumber: 17
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-[11px] text-[#94A3B8] mt-0.5 truncate",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-[#64748B]",
                                         children: [
-                                            "Buy ",
-                                            trade.buyPrice.toFixed(2),
-                                            " × ",
-                                            trade.shares.toLocaleString(),
-                                            " → Sell ",
-                                            trade.sellPrice.toFixed(2),
-                                            " · held ",
-                                            trade.holdingDays,
-                                            "d"
+                                            "Comm ",
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "text-[#FF5C5C]",
+                                                children: [
+                                                    "-",
+                                                    fmtPkr(t.commission)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                lineNumber: 1898,
+                                                columnNumber: 24
+                                            }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                                        lineNumber: 1559,
-                                        columnNumber: 13
+                                        lineNumber: 1897,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-[#64748B]",
+                                        children: [
+                                            "CGT",
+                                            " ",
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "text-[#FF5C5C]",
+                                                children: [
+                                                    "-",
+                                                    fmtPkr(t.cgt),
+                                                    " (",
+                                                    (t.taxRate * 100).toFixed(0),
+                                                    "%)"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/components/latent/Tracker.tsx",
+                                                lineNumber: 1902,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Tracker.tsx",
+                                        lineNumber: 1900,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: t.netPnl >= 0 ? "text-[#00E676] font-semibold" : "text-[#FF5C5C] font-semibold",
+                                        children: [
+                                            t.netPnl >= 0 ? "+" : "",
+                                            fmtPkr(t.netPnl),
+                                            " net"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/latent/Tracker.tsx",
+                                        lineNumber: 1906,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-[#475569]",
+                                        children: new Date(t.closedAt).toLocaleDateString("en-PK", {
+                                            month: "short",
+                                            day: "numeric",
+                                            year: "numeric"
+                                        })
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/latent/Tracker.tsx",
+                                        lineNumber: 1909,
+                                        columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1552,
-                                columnNumber: 11
+                                lineNumber: 1890,
+                                columnNumber: 15
                             }, this)
                         ]
-                    }, void 0, true, {
+                    }, t.id, true, {
                         fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 1548,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-right shrink-0",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: `text-sm font-mono font-semibold ${isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`,
-                                children: [
-                                    trade.netPnl >= 0 ? "+" : "",
-                                    fmtPkr(trade.netPnl)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1565,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: `text-[10px] font-mono ${isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`,
-                                children: [
-                                    trade.netPnlPct >= 0 ? "+" : "",
-                                    trade.netPnlPct.toFixed(2),
-                                    "% net"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1568,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 1564,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
+                        lineNumber: 1881,
+                        columnNumber: 13
+                    }, this))
+            }, void 0, false, {
                 fileName: "[project]/src/components/latent/Tracker.tsx",
-                lineNumber: 1547,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "mt-2 text-[10px] text-[#64748B] flex flex-wrap items-center gap-x-3 gap-y-1",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        children: [
-                            "Gross:",
-                            " ",
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: `font-mono ${trade.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`,
-                                children: [
-                                    trade.grossPnl >= 0 ? "+" : "",
-                                    fmtPkr(trade.grossPnl)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1577,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 1575,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        children: [
-                            "Commission: ",
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-[#FF5C5C] font-mono",
-                                children: [
-                                    "-",
-                                    fmtPkr(trade.commission)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1582,
-                                columnNumber: 23
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 1581,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        children: [
-                            "CGT (",
-                            (trade.taxRate * 100).toFixed(0),
-                            "%):",
-                            " ",
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-[#FF5C5C] font-mono",
-                                children: [
-                                    "-",
-                                    fmtPkr(trade.cgt)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/latent/Tracker.tsx",
-                                lineNumber: 1586,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 1584,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        className: "text-[#475569]",
-                        children: [
-                            "· closed ",
-                            new Date(trade.closedAt).toLocaleDateString("en-PK", {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric"
-                            })
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/latent/Tracker.tsx",
-                        lineNumber: 1588,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/latent/Tracker.tsx",
-                lineNumber: 1574,
-                columnNumber: 7
+                lineNumber: 1879,
+                columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/latent/Tracker.tsx",
-        lineNumber: 1546,
+        lineNumber: 1819,
         columnNumber: 5
     }, this);
 }
