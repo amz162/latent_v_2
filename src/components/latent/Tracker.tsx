@@ -434,30 +434,44 @@ export function Tracker() {
     exitDate: number;
     exitPrice: number;
     exitReason: string;
+    hit: string; // "TP3" | "TP2" | "TP1" | "SL" | "—"
+    sl: number;
+    tp1: number;
+    tp2: number;
+    tp3: number;
     entryAmount: number;
     exitAmount: number;
     returnPct: number;
     pnl: number;
+    totalGain: number; // cumulative net P&L up to and including this trade
     isWin: boolean;
+    confidence: number;
   }
   interface SimResponse {
     initialAmount: number;
     finalAmount: number;
     totalPnl: number;
     totalReturnPct: number;
+    totalGain: number;
     wins: number;
     losses: number;
     totalSip: number; // total SIP contributed over the whole period
     totalInvested: number; // initial capital + total SIP
     tradeCount: number; // real trades (SIP deposit rows excluded)
     rows: SimRow[];
+    startDate?: string; // ISO — the chronological window start (1st of N months ago)
+    endDate?: string; // ISO — now
     config?: {
-      numDays: number;
-      numMonths: number;
-      numTrades: number;
-      tradesPerMonth: number;
-      amountPerTrade: number;
-      numSignalsAvailable: number;
+      periodValue?: number;
+      periodUnit?: string;
+      numMonths?: number;
+      numTrades?: number;
+      monthlySip?: number;
+      totalSip?: number;
+      totalInvested?: number;
+      numSignalsAvailable?: number;
+      startDate?: string;
+      endDate?: string;
     };
   }
 
@@ -987,14 +1001,21 @@ export function Tracker() {
 
                     {simResult && (
                       <>
-                        {/* Summary line */}
+                        {/* Summary line — chronological window + compounding result */}
                         <div className="rounded-lg border border-white/[0.06] bg-[#0A0E1A] p-3 mb-3">
                           <p className="text-sm text-[#F4F7FB] leading-relaxed">
-                            If you invested{" "}
+                            Starting{" "}
+                            <span className="font-mono font-bold text-[#94A3B8]">
+                              {simResult.startDate ? new Date(simResult.startDate).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "2-digit" }) : "—"}
+                              {" → "}
+                              {simResult.endDate ? new Date(simResult.endDate).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "2-digit" }) : "—"}
+                            </span>{" "}
+                            with{" "}
                             <span className="font-mono font-bold text-[#00E676]">{fmtPkr(simResult.initialAmount)}</span>{" "}
-                            across{" "}
-                            <span className="font-mono font-bold text-[#F4F7FB]">{simResult.tradeCount} trades</span>, your
-                            final amount would be{" "}
+                            + {simResult.tradeCount} compounding trades
+                            {simResult.totalSip > 0 && (
+                              <> + <span className="font-mono font-semibold text-[#FBBF24]">{fmtPkr(simResult.totalSip)}</span> SIP</>
+                            )}, your final amount would be{" "}
                             <span className={`font-mono font-bold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
                               {fmtPkr(simResult.finalAmount)}
                             </span>{" "}
@@ -1007,9 +1028,9 @@ export function Tracker() {
                           </p>
                           <div className="flex flex-wrap items-center gap-4 mt-2 text-[11px]">
                             <span className="text-[#94A3B8]">
-                              Total P&amp;L:{" "}
-                              <span className={`font-mono font-semibold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
-                                {simResult.totalPnl >= 0 ? "+" : ""}{fmtPkr(simResult.totalPnl)}
+                              Total gain:{" "}
+                              <span className={`font-mono font-semibold ${simResult.totalGain >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                {simResult.totalGain >= 0 ? "+" : ""}{fmtPkr(simResult.totalGain)}
                               </span>
                             </span>
                             <span className="text-[#94A3B8]">
@@ -1036,50 +1057,57 @@ export function Tracker() {
                           </div>
                         </div>
 
-                        {/* Trade-by-trade table */}
-                        <div className="overflow-x-auto max-h-80 overflow-y-auto rounded-md border border-white/[0.06]">
-                          <table className="w-full text-sm">
-                            <thead className="sticky top-0 bg-[#131829]">
+                        {/* Trade-by-trade table — full detail per the user spec:
+                            symbol, entry date/time, closing date/time, entry
+                            price, closing price, HIT (what hit — SL or TP3/2/1
+                            per the TP rule), SL, TP1, TP2, TP3, W/L, entry
+                            amount (compounded), P&L, total gain (cumulative),
+                            exit amount. Horizontal scroll on small screens. */}
+                        <div className="overflow-x-auto max-h-96 overflow-y-auto rounded-md border border-white/[0.06]">
+                          <table className="w-full text-sm min-w-[1180px]">
+                            <thead className="sticky top-0 bg-[#131829] z-10">
                               <tr className="text-[10px] uppercase tracking-wider text-[#64748B] border-b border-white/[0.06]">
-                                <th className="text-left py-2 px-3 font-semibold">#</th>
-                                <th className="text-left py-2 px-3 font-semibold">Symbol</th>
-                                <th className="text-left py-2 px-3 font-semibold">Side</th>
-                                <th className="text-right py-2 px-3 font-semibold">Entry amount</th>
-                                <th className="text-right py-2 px-3 font-semibold">Return %</th>
-                                <th className="text-right py-2 px-3 font-semibold">P&amp;L</th>
-                                <th className="text-right py-2 px-3 font-semibold">Exit amount</th>
+                                <th className="text-left py-2 px-2 font-semibold sticky left-0 bg-[#131829] z-20">#</th>
+                                <th className="text-left py-2 px-2 font-semibold">Symbol</th>
+                                <th className="text-left py-2 px-2 font-semibold">Side</th>
+                                <th className="text-left py-2 px-2 font-semibold">Entry date</th>
+                                <th className="text-left py-2 px-2 font-semibold">Closing date</th>
+                                <th className="text-right py-2 px-2 font-semibold">Entry price</th>
+                                <th className="text-right py-2 px-2 font-semibold">Closing price</th>
+                                <th className="text-center py-2 px-2 font-semibold">HIT</th>
+                                <th className="text-right py-2 px-2 font-semibold">SL</th>
+                                <th className="text-right py-2 px-2 font-semibold">TP1</th>
+                                <th className="text-right py-2 px-2 font-semibold">TP2</th>
+                                <th className="text-right py-2 px-2 font-semibold">TP3</th>
+                                <th className="text-center py-2 px-2 font-semibold">W/L</th>
+                                <th className="text-right py-2 px-2 font-semibold">Entry amount</th>
+                                <th className="text-right py-2 px-2 font-semibold">P&amp;L</th>
+                                <th className="text-right py-2 px-2 font-semibold">Total gain</th>
+                                <th className="text-right py-2 px-2 font-semibold">Exit amount</th>
                               </tr>
                             </thead>
                             <tbody>
                               {simResult.rows.map((r) =>
                                 r.type === "SIP" ? (
-                                  <tr key={`sip-${r.tradeNo}`} className="border-b border-white/[0.04] bg-[#FBBF24]/[0.05]">
-                                    <td className="py-2 px-3 font-mono text-[#64748B]">{r.tradeNo}</td>
-                                    <td className="py-2 px-3 font-mono font-semibold text-[#FBBF24]">
-                                      Month {r.month} deposit
+                                  <tr key={`sip-${r.tradeNo}`} className="border-b border-white/[0.04] bg-[#FBBF24]/[0.06]">
+                                    <td className="py-2 px-2 font-mono text-[#64748B] sticky left-0 bg-[#131829]/95">{r.tradeNo}</td>
+                                    <td className="py-2 px-2 font-mono font-semibold text-[#FBBF24]" colSpan={12}>
+                                      Month {r.month} SIP deposit
                                     </td>
-                                    <td className="py-2 px-3">
-                                      <Badge
-                                        variant="outline"
-                                        className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]"
-                                      >
-                                        SIP
-                                      </Badge>
-                                    </td>
-                                    <td className="py-2 px-3 text-right font-mono text-[#FBBF24]">
+                                    <td className="py-2 px-2 text-right font-mono text-[#FBBF24]">
                                       +{fmtPkr(r.entryAmount)}
                                     </td>
-                                    <td className="py-2 px-3 text-right font-mono text-[#64748B]">—</td>
-                                    <td className="py-2 px-3 text-right font-mono text-[#64748B]">—</td>
-                                    <td className="py-2 px-3 text-right font-mono text-[#FBBF24]">
+                                    <td className="py-2 px-2 text-right font-mono text-[#64748B]">—</td>
+                                    <td className="py-2 px-2 text-right font-mono text-[#64748B]">—</td>
+                                    <td className="py-2 px-2 text-right font-mono text-[#FBBF24]">
                                       +{fmtPkr(r.exitAmount)}
                                     </td>
                                   </tr>
                                 ) : (
                                   <tr key={r.tradeNo} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
-                                    <td className="py-2 px-3 font-mono text-[#64748B]">{r.tradeNo}</td>
-                                    <td className="py-2 px-3 font-mono font-semibold text-[#F4F7FB]">{r.symbol}</td>
-                                    <td className="py-2 px-3">
+                                    <td className="py-2 px-2 font-mono text-[#64748B] sticky left-0 bg-[#131829]/95">{r.tradeNo}</td>
+                                    <td className="py-2 px-2 font-mono font-semibold text-[#F4F7FB]">{r.symbol}</td>
+                                    <td className="py-2 px-2">
                                       <Badge
                                         variant="outline"
                                         className={`text-[9px] py-0 h-4 ${r.side === "BUY" ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}
@@ -1087,16 +1115,45 @@ export function Tracker() {
                                         {r.side}
                                       </Badge>
                                     </td>
-                                    <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">
-                                      {fmtPkr(r.entryAmount)}
+                                    <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap">
+                                      {r.entryDate ? new Date(r.entryDate).toLocaleString("en-PK", { month: "short", day: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—"}
                                     </td>
-                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.returnPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
-                                      {fmtPct(r.returnPct, true)}
+                                    <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap">
+                                      {r.exitDate ? new Date(r.exitDate).toLocaleString("en-PK", { month: "short", day: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—"}
                                     </td>
-                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                    <td className="py-2 px-2 text-right font-mono text-[11px] text-[#F4F7FB]">{r.entryPrice.toFixed(2)}</td>
+                                    <td className="py-2 px-2 text-right font-mono text-[11px] text-[#F4F7FB]">{r.exitPrice.toFixed(2)}</td>
+                                    <td className="py-2 px-2 text-center">
+                                      <Badge
+                                        variant="outline"
+                                        className={`text-[9px] py-0 h-4 ${
+                                          r.hit === "SL" ? "border-[#FF5C5C]/40 text-[#FF5C5C]"
+                                          : r.hit === "TP3" ? "border-[#00E676]/50 text-[#00E676]"
+                                          : r.hit === "TP2" ? "border-[#2DD4FF]/40 text-[#2DD4FF]"
+                                          : r.hit === "TP1" ? "border-[#FBBF24]/40 text-[#FBBF24]"
+                                          : "border-white/[0.12] text-[#64748B]"
+                                        }`}
+                                      >
+                                        {r.hit}
+                                      </Badge>
+                                    </td>
+                                    <td className="py-2 px-2 text-right font-mono text-[11px] text-[#FF5C5C]/80">{r.sl.toFixed(2)}</td>
+                                    <td className="py-2 px-2 text-right font-mono text-[11px] text-[#FBBF24]/80">{r.tp1.toFixed(2)}</td>
+                                    <td className="py-2 px-2 text-right font-mono text-[11px] text-[#2DD4FF]/80">{r.tp2.toFixed(2)}</td>
+                                    <td className="py-2 px-2 text-right font-mono text-[11px] text-[#00E676]/80">{r.tp3.toFixed(2)}</td>
+                                    <td className="py-2 px-2 text-center">
+                                      <span className={`text-[11px] font-mono font-bold ${r.isWin ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                        {r.isWin ? "W" : "L"}
+                                      </span>
+                                    </td>
+                                    <td className="py-2 px-2 text-right font-mono text-[11px] text-[#94A3B8]">{fmtPkr(r.entryAmount)}</td>
+                                    <td className={`py-2 px-2 text-right font-mono text-[11px] font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
                                       {r.pnl >= 0 ? "+" : ""}{fmtPkr(r.pnl)}
                                     </td>
-                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                    <td className={`py-2 px-2 text-right font-mono text-[11px] font-semibold ${r.totalGain >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+                                      {r.totalGain >= 0 ? "+" : ""}{fmtPkr(r.totalGain)}
+                                    </td>
+                                    <td className={`py-2 px-2 text-right font-mono text-[11px] font-semibold ${r.pnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
                                       {fmtPkr(r.exitAmount)}
                                     </td>
                                   </tr>

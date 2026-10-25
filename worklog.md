@@ -739,3 +739,24 @@ Work Log:
 
 Stage Summary:
 - The Tracker donut now shows each stock's REAL PSX sector category when known (Commercial Banks, Cement, Fertilizer, Oil & Gas, Power, …). Only stocks that appear in NO psxdata sector — and Conglomerate-sector stocks per the earlier instruction — fall into "Others". This directly answers the user's question: yes, the category IS identified and shown in the graph; only unidentified ones go to "Others". Local git commit only (no GitHub push, per instruction).
+
+---
+Task ID: 31
+Agent: Z.ai Code (main)
+Task: Tracker → Signal Tracker → Investment Simulator — rewrite as a chronological COMPOUNDING simulator per the user spec: go back N months from now (start 1st of that month), trade the FULL running pool each time (trade 2 entry = trade 1 exit), add SIP at each month boundary, exit per the TP rule (TP3>TP2>TP1>SL>time). Result columns: symbol, entry date&time, closing date&time, entry price, closing price, HIT, sl, tp1, tp2, tp3, win/loss, entry amount, profit and loss, total gain (cumulative), exit amount.
+
+Work Log:
+- Diagnosed the old simulator: /api/backtest/investment-simulator used runBacktest per-month with a FIXED equal slice (amountPerTrade = totalInvested / numTrades) — NOT compounding. Trade 2's entry was the same fixed slice, not trade 1's exit. Also the chronological "go back N months and start trading from the 1st" was absent (random entry bars within a numDays window).
+- Created src/lib/latent/investment-simulator.ts with runInvestmentSimulation():
+  • computeStartDate() — month unit → 1st of (now − periodValue months) (the user's "if its oct, go back 3 months = july, take 1st july" example). day unit → now − periodValue days. year unit → 1st of (now − periodValue years).
+  • Chronological walk: trade i enters at the first bar of the picked symbol whose date >= the previous trade's exit date (or startDate for trade 1), within the current month's calendar window. holdBars = period trading days / numTrades (min 1).
+  • COMPOUNDING: trade 1 entry = the user's initial capital. net P&L is added to the pool. Trade 2 entry = trade 1's exit amount. And so on. Per-trade costs: broker commission 0.15% × entry × 2 (both sides), slippage 0.5% × entry, CGT 15% on gross profit.
+  • SIP: at the start of each month M >= 2, add monthlySip to the pool (amber "Month M SIP deposit" row). Month 1 = initial capital (no SIP row).
+  • TP rule: check TP3 → TP2 → TP1 → SL → time-up; exit at the first reached; "HIT" column reports which target/stop hit.
+  • Out-of-window symbols are skipped (a trade slot tries up to numSignalsAvailable signals before giving up) so every executed trade's entry date is INSIDE [startDate, endDate].
+- Rewrote /api/backtest/investment-simulator/route.ts to call runInvestmentSimulation(). Returns flat SimResponse: initialAmount, finalAmount, totalPnl, totalReturnPct, totalGain, wins, losses, totalSip, totalInvested, tradeCount, rows (each with hit/sl/tp1-3/entryAmount/pnl/totalGain/exitAmount + entryDate/exitDate as epoch ms + entryPrice/exitPrice), startDate, endDate, config.
+- Updated Tracker.tsx: SimRow/SimResponse interfaces gained hit/totalGain/confidence/startDate/endDate. Rewrote the results table to 17 columns (#, Symbol, Side, Entry date, Closing date, Entry price, Closing price, HIT, SL, TP1, TP2, TP3, W/L, Entry amount, P&L, Total gain, Exit amount) with sticky # column, horizontal scroll, color-coded HIT badges (TP3 green, TP2 cyan, TP1 amber, SL red, — gray). Summary line now shows the chronological window "01-Jul-2026 → 25-Oct-2026" + total gain. SIP rows span 12 cols + entry/P&L/total-gain/exit cells.
+- Browser-verified with agent-browser: capital 1000, 3 months, SIP 0, 10 trades → "Starting 01-Jul-2026 → 25-Oct-2026 with Rs. 1,000 + 10 compounding trades → final Rs. 1,199 (+19.93% gain)". Compounding confirmed: trade 1 entry 1000→exit 1041; trade 2 entry 1041→exit 1064; trade 3 entry 1064→exit 1144; total gain cumulative +41→+64→+144→+160→+248. HIT column shows TP3/TP2/SL per the rule. All entry dates in-window (02-Jul, 06-Jul, 09-Jul, 17-Jul, 03-Aug). With SIP=500: amber "Month 2 SIP deposit" +500 and "Month 3 SIP deposit" +500 rows appear at the month boundaries, and the pool jumps by 500 there. Lint clean, sim API 200 (10.8s cold → 2.5s warm).
+
+Stage Summary:
+- The Investment Simulator now does exactly what the user asked: (1) starts at the 1st of N months ago and progresses chronologically; (2) compounds the full pool trade-over-trade (trade N+1 entry = trade N exit); (3) adds the SIP amount at each month boundary; (4) the results table shows every requested column — symbol, entry date & time, closing date & time, entry price, closing price, HIT (which TP/SL hit per the TP3>TP2>TP1>SL rule), SL, TP1, TP2, TP3, W/L, entry amount (compounded), P&L, total gain (cumulative), exit amount. Local git commit only — NO GitHub push (per the user's standing instruction).
