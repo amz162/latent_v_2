@@ -82,3 +82,50 @@ export async function getHealth(): Promise<{ status: string } | null> {
   const data = await fetchJson(`/health`, 5000);
   return data && typeof data.status === "string" ? data : null;
 }
+
+// ─── Symbol → sector map (real PSX taxonomy) ─────────────────────────────
+// Issue: "is the category mentioned or you know show that category in
+// graph. if you don't identify the category then put that in others."
+//
+// pypsx (which carries per-symbol sector) needs API keys that aren't
+// configured in this env, so /api/psx/companies falls back to the psxdata
+// symbol list — which has NO sector field. Without this map every stock
+// landed in "Others" in the Tracker donut.
+//
+// This function fetches all 38 PSX sectors, then for each sector fetches
+// its constituent stocks (parallelised), and builds { SYMBOL: sectorName }.
+// Cached for 6 hours — the sector taxonomy rarely changes. A stock that
+// appears in NO sector (rare: newly listed, PSM/CDC oddities) is simply
+// absent from the map → callers fall back to "Others" for it.
+let symbolSectorCache: { value: Record<string, string>; expiresAt: number } | null = null;
+const SYMBOL_SECTOR_TTL = 6 * 3600_000;
+
+export async function getSymbolSectorMap(): Promise<Record<string, string>> {
+  const now = Date.now();
+  if (symbolSectorCache && symbolSectorCache.expiresAt > now) {
+    return symbolSectorCache.value;
+  }
+  const sectors = await getSectors();
+  if (!sectors.length) return symbolSectorCache?.value ?? {};
+  // Fan out the per-sector stock lists in parallel. 38 concurrent fetches
+  // is light for a one-shot 6-hour-cached build.
+  const sectorStockLists = await Promise.all(
+    sectors.map(async (s) => {
+      const name = s?.sector_name || s?.name || s?.sector;
+      if (!name) return null;
+      const stocks = await getSectorStocks(String(name));
+      return { name: String(name), stocks };
+    })
+  );
+  const map: Record<string, string> = {};
+  for (const entry of sectorStockLists) {
+    if (!entry) continue;
+    for (const sym of entry.stocks) {
+      if (typeof sym === "string" && sym) {
+        map[sym.toUpperCase()] = entry.name;
+      }
+    }
+  }
+  symbolSectorCache = { value: map, expiresAt: now + SYMBOL_SECTOR_TTL };
+  return map;
+}

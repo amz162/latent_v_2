@@ -246,22 +246,26 @@ export function Tracker() {
   const [confFilter, setConfFilter] = useState<number>(0);
   const [historySort, setHistorySort] = useState<"rr" | "conf" | "pnl">("rr");
 
-  // Issue 18: fetch /api/psx/companies once on mount so we can look up each
-  // portfolio position's sector for the pie chart. Positions added before the
-  // store had a sector field (legacy localStorage entries) won't have sector
-  // info — this map fills the gap.
+  // Issue 18: fetch the symbol → sector map once on mount so we can look up
+  // each portfolio position's REAL category for the pie chart. Positions
+  // added before the store had a sector field (legacy localStorage entries)
+  // won't have sector info — this map fills the gap.
+  //
+  // Source: /api/psx/symbol-sectors builds the map from psxdata's 38 PSX
+  // sectors (each sector's stocks fetched in parallel, cached 6h server-side).
+  // This is the real PSX taxonomy (Commercial Banks, Cement, Oil & Gas, …)
+  // — pypsx isn't configured here so /api/psx/companies has no per-symbol
+  // sector field. Without this dedicated endpoint every stock would render
+  // as "Others" in the donut. normalizeSector() (called in sectorData below)
+  // then folds Conglomerate(s) + still-unidentified stocks into "Others".
   const [sectorMap, setSectorMap] = useState<Record<string, string>>({});
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/psx/companies")
+    fetch("/api/psx/symbol-sectors")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
-        if (cancelled || !d?.companies) return;
-        const m: Record<string, string> = {};
-        for (const c of d.companies) {
-          if (c?.value && c?.sector) m[String(c.value).toUpperCase()] = c.sector;
-        }
-        setSectorMap(m);
+        if (cancelled || !d?.map) return;
+        setSectorMap(d.map as Record<string, string>);
       })
       .catch(() => {});
     return () => {

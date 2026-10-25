@@ -76,6 +76,30 @@ export async function GET() {
   if (!companies.length) {
     return NextResponse.json({ error: "Failed to fetch symbol list" }, { status: 502 });
   }
+  // Issue: "is the category mentioned or you know show that category in
+  // graph. if you don't identify the category then put that in others."
+  // pypsx isn't configured here so most companies have NO sector from the
+  // sources above. Backfill each company's sector from the psxdata 38-sector
+  // map (built once, cached 6h inside getSymbolSectorMap). This is the source
+  // of truth the Tracker donut + the Portfolio add-flow use to label a stock
+  // with its REAL category (Commercial Banks, Cement, …) — only stocks that
+  // appear in NO sector stay undefined and render as "Others" downstream.
+  try {
+    const { getSymbolSectorMap } = await import("@/lib/latent/psxdata");
+    const sectorMap = await getSymbolSectorMap();
+    if (Object.keys(sectorMap).length) {
+      for (const c of companies) {
+        if (!c.sector) {
+          const s = sectorMap[c.value.toUpperCase()];
+          if (s) c.sector = s;
+        }
+      }
+      source = source.includes("pypsx") ? "pypsx+psxdata+sectors" : "psxdata+sectors";
+    }
+  } catch {
+    // Non-fatal — sector enrichment is best-effort; the donut falls back
+    // to "Others" for unlabelled stocks.
+  }
   cache = { value: companies, expiresAt: Date.now() + TTL };
   return NextResponse.json({ companies, source, count: companies.length, cached: false });
 }
