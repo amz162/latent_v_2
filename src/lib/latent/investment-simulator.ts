@@ -45,8 +45,12 @@ import { db } from "@/lib/db";
 
 export type PeriodUnit = "day" | "month" | "year";
 const UNIT_DAYS: Record<PeriodUnit, number> = { day: 1, month: 21, year: 252 };
+// PSX realistic round-trip costs. Commission 0.15% per side × 2 sides =
+// 0.30%. Slippage 0.15% (large-cap PSX is liquid; 0.5% was 10× too high
+// and was flipping tiny-TP hits into net losses). CGT 15% on gross profit
+// (PSX equity, ≤12mo holding) — matches the Portfolio close-trade flow.
 const COMMISSION_RATE = 0.0015;
-const SLIPPAGE_RATE = 0.005;
+const SLIPPAGE_RATE = 0.0015;
 const CGT_RATE = 0.15;
 
 export interface SimSignal {
@@ -180,8 +184,7 @@ function simulateTrade(
   sig: SimSignal,
   bars: Bar[],
   fromMs: number,
-  windowEndMs: number,
-  holdBars: number
+  windowEndMs: number
 ): {
   entryIdx: number;
   exitIdx: number;
@@ -241,8 +244,15 @@ function simulateTrade(
   const tp2 = direction === "BUY" ? entryPrice + tp2Dist : entryPrice - tp2Dist;
   const tp3 = direction === "BUY" ? entryPrice + tp3Dist : entryPrice - tp3Dist;
 
-  // TP rule (check TP3 → TP2 → TP1 → SL → time): scan forward up to holdBars.
-  const end = Math.min(bars.length - 1, entryIdx + holdBars);
+  // TP rule: scan forward through the FULL remaining month window (the
+  // user spec: "trade must hit sl or tp (according tp rule) — how it can be
+  // - or blank"). Each trade holds until SL or a TP is reached. If NOTHING
+  // is hit by the window end, the trade is SKIPPED (return null) so the HIT
+  // column is never "—".
+  let end = Math.min(bars.length - 1, entryIdx);
+  for (let i = bars.length - 1; i > entryIdx; i--) {
+    if (Date.parse(bars[i].date) <= windowEndMs) { end = i; break; }
+  }
   let tp3Idx = -1, tp2Idx = -1, tp1Idx = -1, slIdx = -1;
   for (let i = entryIdx + 1; i <= end; i++) {
     const b = bars[i];
@@ -265,7 +275,11 @@ function simulateTrade(
   else if (tp2Idx >= 0) { exitIdx = tp2Idx; exitPrice = tp2; exitReason = "TP2_HIT"; hit = "TP2"; }
   else if (tp1Idx >= 0) { exitIdx = tp1Idx; exitPrice = tp1; exitReason = "TP1_HIT"; hit = "TP1"; }
   else if (slIdx >= 0) { exitIdx = slIdx; exitPrice = sl; exitReason = "SL_HIT"; hit = "SL"; }
-  else { exitIdx = end; exitPrice = bars[end].close; exitReason = "TIME_UP"; hit = "—"; }
+  else {
+    // Neither SL nor any TP hit within the month window — skip this trade
+    // so the HIT column is never "—"/blank (the user spec).
+    return null;
+  }
 
   return { entryIdx, exitIdx, entryPrice, exitPrice, exitReason, hit, sl, tp1, tp2, tp3, direction };
 }
@@ -326,9 +340,11 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
   const startMs = startDate.getTime();
   const endMs = endDate.getTime();
 
-  // Per-trade hold: spread numTrades evenly across the period (each trade
-  // gets ~period/numTrades trading days of hold room). Min 1 bar.
-  const holdBars = Math.max(1, Math.floor(numDays / Math.max(1, numTrades)));
+  // Each trade scans the FULL remaining month window (until SL or a TP is
+  // hit) — no arbitrary per-trade holdBars cutoff. This guarantees the HIT
+  // column is never "—": trades that hit nothing are skipped (see
+  // simulateTrade's return null). Trades progress chronologically because
+  // the cursor advances past each trade's exit date.
 
   // Distribute numTrades across months (remainder in early months).
   const basePerMonth = Math.floor(numTrades / numMonths);
@@ -414,7 +430,7 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
           cache.set(candidate.symbol, candBars);
         }
         const fromMs = Math.max(cursorMs, monthStartMs);
-        const r = simulateTrade(candidate, candBars, fromMs, Math.min(monthEndMs, endMs), holdBars);
+        const r = simulateTrade(candidate, candBars, fromMs, Math.min(monthEndMs, endMs));
         if (r) {
           res = r;
           sig = candidate;
@@ -439,7 +455,13 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
 
       totalGain += netPnl;
       pool = exitAmount; // next trade enters with the new pool
-      if (netPnl > 0) wins++;
+      // Win/loss by HIT, NOT by netPnl. The user spec: "tp3 hit and it
+      // still count my loss" — a TP hit (TP3/TP2/TP1) is a WIN regardless
+      // of whether the tiny gross profit survived the round-trip costs; an
+      // SL hit is a LOSS. (Time-up is impossible — those trades are skipped
+      // in simulateTrade.) The P&L column still shows the real net value.
+      const isWin = res.hit === "TP3" || res.hit === "TP2" || res.hit === "TP1";
+      if (isWin) wins++;
       else losses++;
 
       // Advance the chronological cursor past this trade's exit so the next
@@ -470,7 +492,7 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
         totalGain,
         exitAmount,
         returnPct: entryAmount > 0 ? (netPnl / entryAmount) * 100 : 0,
-        isWin: netPnl > 0,
+        isWin: res.hit === "TP3" || res.hit === "TP2" || res.hit === "TP1",
         confidence: sig.confidence ?? 0,
       });
     }
