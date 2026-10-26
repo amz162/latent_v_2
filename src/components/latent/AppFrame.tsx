@@ -41,7 +41,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
       <AppSidebar />
       <SidebarInset className="flex flex-col min-h-screen bg-[#0A0E1A]">
         <AppTopbar />
-        <div className="flex-1 flex flex-col">{children}</div>
+        <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
