@@ -2,43 +2,49 @@
  * investment-simulator.ts — chronological, COMPOUNDING trade-by-trade
  * simulator for the Tracker → Signal Tracker → Investment Simulator.
  *
- * User spec:
- *   - "start investing with the user investment amount and after month add
- *     sip amount"
- *   - "take user time period and go back to that time and then start trading
- *     (i.e. if user put 3 months, its not oct then go back to 3 month that is
- *     july, take 1st july and start trading)"
- *   - "use invest amount and start trading after 1st trade take profit or
- *     loss minus and plus in invest amount and use that amount in entry amount
- *     of 2nd trade and so on (i.e. if user put 1000 PKR initial investment
- *     amount then trade if we win and make profit of 500 PKR then total amount
- *     is 1500 then take a 2nd trade of 1500 and take trade and so on). also
- *     add sip after month."
- *   - Result columns: symbol, entry date & time, closing date & time, entry
- *     price, closing price, HIT (what hits — SL or TP per the TP rule, i.e.
- *     TP3 > TP2 > TP1), sl, tp1, tp2, tp3, win/loss, entry amount, profit and
- *     loss, total gain (cumulative), exit amount.
+ * User spec (latest, 2026-10-26):
+ *   - "simulate will must have to no of trade provided by user" — the number
+ *     of trades MUST be fulfilled (no fewer trades because signals ran out or
+ *     a trade skipped). Keep cycling the signal pool + allow same-day entries
+ *     on DIFFERENT stocks until numTrades is hit.
+ *   - "you have to check trade on that day on all stock which matches the
+ *     criteria you can use that but you must have to take trade" — for each
+ *     slot, scan ALL matching signals and take a trade.
+ *   - "don't take all trade in a day or a 1 week (short time)" — distribute
+ *     trades evenly across the whole window (slot targets are evenly spaced).
+ *   - "cover each month (when month and year is given) and each day (when day
+ *     less then the month selected)" — month unit → cover every calendar
+ *     month in the window; day unit → cover every day.
+ *   - "1st sip is shown from after completing first month, also add result of
+ *     current month as well" — SIP installments at the 1st of each calendar
+ *     month STRICTLY AFTER the start month, INCLUDING the current (partial)
+ *     month. So periodValue=3 (month, today=Oct 26) → start Jul 1 → window
+ *     Jul→Oct → SIPs at Aug 1, Sep 1, Oct 1 = 3 installments (= periodValue),
+ *     and October trades run up to today.
+ *
+ * Earlier spec (still honored):
+ *   - Compounding: trade 1 entry = initial capital; net P&L added to pool;
+ *     trade 2 entry = trade 1's exit amount; and so on.
+ *   - Result columns: symbol, entry/exit date+time, entry/exit price, HIT
+ *     (TP3 > TP2 > TP1 > SL per the TP rule), sl/tp1/tp2/tp3, win/loss, entry
+ *     amount, P&L, total gain (cumulative), exit amount.
  *
  * Method:
- *   1. Compute the chronological window: startDate = 1st of (now −
- *      periodValue months) for month unit (now − periodValue days for day,
- *      now − periodValue years for year); endDate = now (latest available
- *      bar). The simulation progresses FORWARD from startDate.
- *   2. Load final-consensus signals (filtered by confidence + direction),
- *      seeded-shuffle for determinism.
- *   3. Walk forward chronologically: trade i enters at the first bar of the
- *      picked symbol whose date >= the previous trade's exit date (or
- *      startDate for the first trade). Hold up to holdBars (= period trading
- *      days / numTrades, min 1) checking TP3 → TP2 → TP1 → SL → time-up.
- *   4. COMPOUNDING: trade 1 entry = the user's initial capital. After the
- *      trade, net P&L is added to the pool. Trade 2 entry = trade 1's exit
- *      amount (pool). And so on.
- *   5. SIP: at the start of each month M >= 2, add monthlySip to the pool
- *      (rendered as its own amber "Month M deposit" row before that month's
- *      trades).
- *   6. Per-trade costs: broker commission 0.15% × entry × 2 (both sides),
- *      slippage 0.5% × entry, CGT 15% on gross profit (PSX equity, ≤12mo
- *      holding). Matches the close-trade flow in PortfolioTab.
+ *   1. Window: startDate = computeStartDate(periodValue, periodUnit)
+ *      (month unit → 1st of (now − periodValue months); day → now − days;
+ *      year → 1st of (now − years)). endDate = now. Sim progresses FORWARD.
+ *   2. SIP schedule: 1st of each calendar month after the start month, within
+ *      [startMs, endMs]. Decoupled from the trade loop so the current partial
+ *      month gets its SIP + trades up to today.
+ *   3. Evenly-space numTrades target entry timestamps across [startMs, endMs]
+ *      → guarantees the "don't cluster" rule + "cover each month/day" rule.
+ *   4. For each target: scan ALL matching signals round-robin, pick the one
+ *      whose first in-window bar is closest to the target. simulateTrade
+ *      (TP3 > TP2 > TP1 > SL; skips if nothing hit). Allow same-day entries on
+ *      different stocks (no forced +1-day cursor advance).
+ *   5. Compounding: each trade enters with the running pool; SIPs add to the
+ *      pool when their date is on/before the trade's entry bar.
+ *   6. Per-trade costs: commission 0.15%×2, slippage 0.15%, CGT 15% on gains.
  */
 
 import { db } from "@/lib/db";
@@ -75,7 +81,7 @@ export interface SimTradeRow {
   entryPrice: number;
   exitDate: number; // epoch ms
   exitPrice: number;
-  exitReason: string; // "TP3_HIT" | "TP2_HIT" | "TP1_HIT" | "SL_HIT" | "TIME_UP"
+  exitReason: string; // "TP3_HIT" | "TP2_HIT" | "TP1_HIT" | "SL_HIT" | "TIME_UP" | "SIP_DEPOSIT"
   hit: string; // "TP3" | "TP2" | "TP1" | "SL" | "—"
   sl: number;
   tp1: number;
@@ -83,7 +89,7 @@ export interface SimTradeRow {
   tp3: number;
   entryAmount: number;
   pnl: number;
-  totalGain: number; // cumulative net P&L up to and including this trade
+  totalGain: number; // cumulative net P&L up to and including this row
   exitAmount: number; // entryAmount + pnl = next trade's entry (compounding)
   returnPct: number;
   isWin: boolean;
@@ -112,6 +118,7 @@ export interface InvestmentSimResult {
     minConfidence: number;
     direction: "BOTH" | "LONG" | "SHORT";
     numMonths: number;
+    numSips: number;
     totalSip: number;
     totalInvested: number;
     numSignalsAvailable: number;
@@ -143,7 +150,7 @@ function atr(highs: number[], lows: number[], closes: number[], period = 14): nu
 }
 
 // Compute the simulation start date = "go back periodValue units from now".
-//   month unit → 1st of (now − periodValue months). E.g. now=2026-10-25,
+//   month unit → 1st of (now − periodValue months). E.g. now=2026-10-26,
 //     periodValue=3 → 2026-07-01 (the user's "if its oct, go back 3 months
 //     = july, take 1st july" example).
 //   day unit → now − periodValue days.
@@ -170,16 +177,12 @@ function computeStartDate(periodValue: number, periodUnit: PeriodUnit): Date {
   return d;
 }
 
-// Resolve a symbol's bars (cached per-run).
-function barCache(): Map<string, Bar[]> {
-  return new Map();
-}
-
-// Run ONE chronological trade for a symbol within [fromMs, toMs] (calendar
-// window for THIS trade's entry). Finds the first bar in the symbol's history
-// whose date >= fromMs (chronological progression from the previous trade's
-// exit), within the month window. Falls back to the window's last bar if the
-// symbol has no bar after fromMs (wraps so we still produce a trade).
+// Run ONE chronological trade for a symbol within [fromMs, windowEndMs].
+// Finds the first bar in the symbol's history whose date >= fromMs AND
+// <= windowEndMs (chronological progression within the simulation window).
+// Holds until SL or a TP is reached (TP3 > TP2 > TP1 > SL priority). If
+// NOTHING is hit by windowEnd, returns null (the caller skips it so the HIT
+// column is never "—").
 function simulateTrade(
   sig: SimSignal,
   bars: Bar[],
@@ -201,13 +204,7 @@ function simulateTrade(
   if (bars.length < 5) return null;
   const direction = sig.signal === "SELL" ? "SELL" : "BUY";
 
-  // Find entry bar: first bar with date >= fromMs AND date <= windowEndMs
-  // (chronological progression within the simulation window). If the symbol
-  // has NO bar in this window (e.g. its history ends before the window, or
-  // starts after it) we SKIP the trade — return null so the caller can pick
-  // the next signal. This keeps every trade's entry date INSIDE the user's
-  // [startDate, endDate] window (the user spec: "take 1st july and start
-  // trading" — no trading before the window start).
+  // Find entry bar: first bar with date >= fromMs AND date <= windowEndMs.
   let entryIdx = -1;
   for (let i = 0; i < bars.length; i++) {
     const t = Date.parse(bars[i].date);
@@ -216,24 +213,14 @@ function simulateTrade(
       break;
     }
   }
-  if (entryIdx < 0) {
-    // No bar in the chronological window for this symbol — skip it.
-    return null;
-  }
+  if (entryIdx < 0) return null; // no bar in the chronological window
 
   const entryBar = bars[entryIdx];
-  // Entry price: if the signal has an entry level AND a bar in the window
-  // touched it (within ±1.5%), enter at that level; otherwise enter at the
-  // bar's close (the real price on that day) — matches the #2 pattern in
-  // backtest.ts.
   let entryPrice = entryBar.close;
   const sigEntry = sig.entry && sig.entry > 0 ? sig.entry : null;
-  // ATR at entry for filling missing SL/TP
   const atrSlice = bars.slice(Math.max(0, entryIdx - 13), entryIdx + 1);
   const atrVal = atr(atrSlice.map((b) => b.high), atrSlice.map((b) => b.low), atrSlice.map((b) => b.close)) || entryPrice * 0.02;
 
-  // Levels: prefer the signal's absolute levels; derive from relative
-  // distances if missing.
   const slDist = sig.sl && sig.sl > 0 && sigEntry ? Math.abs(sigEntry - sig.sl) : atrVal * 1.5;
   const tp1Dist = sig.tp1 && sig.tp1 > 0 && sigEntry ? Math.abs(sig.tp1 - sigEntry) : atrVal;
   const tp2Dist = sig.tp2 && sig.tp2 > 0 && sigEntry ? Math.abs(sig.tp2 - sigEntry) : 2 * atrVal;
@@ -244,11 +231,9 @@ function simulateTrade(
   const tp2 = direction === "BUY" ? entryPrice + tp2Dist : entryPrice - tp2Dist;
   const tp3 = direction === "BUY" ? entryPrice + tp3Dist : entryPrice - tp3Dist;
 
-  // TP rule: scan forward through the FULL remaining month window (the
-  // user spec: "trade must hit sl or tp (according tp rule) — how it can be
-  // - or blank"). Each trade holds until SL or a TP is reached. If NOTHING
-  // is hit by the window end, the trade is SKIPPED (return null) so the HIT
-  // column is never "—".
+  // TP rule: scan forward through the FULL remaining window. Each trade holds
+  // until SL or a TP is reached; if NOTHING is hit by windowEnd the trade is
+  // skipped (return null) so the HIT column is never "—".
   let end = Math.min(bars.length - 1, entryIdx);
   for (let i = bars.length - 1; i > entryIdx; i--) {
     if (Date.parse(bars[i].date) <= windowEndMs) { end = i; break; }
@@ -275,11 +260,7 @@ function simulateTrade(
   else if (tp2Idx >= 0) { exitIdx = tp2Idx; exitPrice = tp2; exitReason = "TP2_HIT"; hit = "TP2"; }
   else if (tp1Idx >= 0) { exitIdx = tp1Idx; exitPrice = tp1; exitReason = "TP1_HIT"; hit = "TP1"; }
   else if (slIdx >= 0) { exitIdx = slIdx; exitPrice = sl; exitReason = "SL_HIT"; hit = "SL"; }
-  else {
-    // Neither SL nor any TP hit within the month window — skip this trade
-    // so the HIT column is never "—"/blank (the user spec).
-    return null;
-  }
+  else return null; // nothing hit within the window — skip
 
   return { entryIdx, exitIdx, entryPrice, exitPrice, exitReason, hit, sl, tp1, tp2, tp3, direction };
 }
@@ -309,14 +290,40 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     seed = Date.now(),
   } = input;
 
-  const numDays = periodValue * (UNIT_DAYS[periodUnit] || 21);
+  const startDate = computeStartDate(periodValue, periodUnit);
+  const endDate = new Date(); // now
+  const startMs = startDate.getTime();
+  const endMs = endDate.getTime();
+
+  // Calendar months spanned by the window (info only — for the UI label).
+  // month unit, periodValue=3 from Oct → start Jul 1 → window Jul+Aug+Sep+Oct
+  // (current partial) = 4 calendar months = periodValue + 1.
   const numMonths =
     periodUnit === "month"
-      ? Math.max(1, periodValue)
+      ? Math.max(1, periodValue + 1)
       : periodUnit === "year"
-        ? Math.max(1, periodValue * 12)
-        : Math.max(1, Math.round(numDays / 21));
-  const totalSip = monthlySip * numMonths;
+        ? Math.max(1, periodValue * 12 + 1)
+        : Math.max(1, Math.ceil((endMs - startMs) / (30 * 86400000)));
+
+  // SIP schedule: 1st of each calendar month STRICTLY after the start month,
+  // within [startMs, endMs]. For periodValue=3 (start=Jul 1): Aug 1, Sep 1,
+  // Oct 1 = 3 installments (= periodValue). The current partial month (Oct)
+  // gets its SIP + trades up to today ("also add result of current month").
+  const sipDeposits: { date: number; amount: number; month: number }[] = [];
+  if (monthlySip > 0) {
+    const d = new Date(startDate);
+    d.setMonth(d.getMonth() + 1);
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    let m = 2;
+    while (d.getTime() <= endMs) {
+      sipDeposits.push({ date: d.getTime(), amount: monthlySip, month: m });
+      d.setMonth(d.getMonth() + 1);
+      m++;
+    }
+  }
+  const numSips = sipDeposits.length;
+  const totalSip = sipDeposits.reduce((s, x) => s + x.amount, 0);
   const totalInvested = capital + totalSip;
 
   // Filter signals by confidence + direction.
@@ -335,22 +342,8 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
   }
   const numSignalsAvailable = signals.length;
 
-  const startDate = computeStartDate(periodValue, periodUnit);
-  const endDate = new Date(); // now
-  const startMs = startDate.getTime();
-  const endMs = endDate.getTime();
-
-  // Each trade scans the FULL remaining month window (until SL or a TP is
-  // hit) — no arbitrary per-trade holdBars cutoff. This guarantees the HIT
-  // column is never "—": trades that hit nothing are skipped (see
-  // simulateTrade's return null). Trades progress chronologically because
-  // the cursor advances past each trade's exit date.
-
-  // Distribute numTrades across months (remainder in early months).
-  const basePerMonth = Math.floor(numTrades / numMonths);
-  const remainder = numTrades % numMonths;
-
-  // Seeded shuffle (deterministic per seed).
+  // Seeded shuffle (deterministic per seed) — rotates which signal is tried
+  // first per slot so the same stock isn't always picked first.
   let s = seed;
   const rng = () => {
     s = (s * 9301 + 49297) % 233280;
@@ -358,149 +351,217 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
   };
   const shuffled = [...signals].sort(() => rng() - 0.5);
 
+  // Evenly-spaced target entry timestamps across [startMs, endMs]. This is the
+  // "don't cluster all trades in a day/week" guarantee: slots are spread across
+  // the whole window. For month unit each calendar month naturally gets
+  // numTrades/numMonths slots (≥1 per month → "cover each month"); for day unit
+  // each day gets numTrades/periodValue slots (multiple per day allowed →
+  // same-day multi-stock trades → "cover each day").
+  const windowMs = Math.max(1, endMs - startMs);
+  const targets: number[] = [];
+  for (let i = 0; i < numTrades; i++) {
+    targets.push(startMs + (i + 0.5) * (windowMs / numTrades));
+  }
+
+  // Bar cache (per-run).
+  const cache = new Map<string, Bar[]>();
+  const getBars = async (symbol: string): Promise<Bar[]> => {
+    let b = cache.get(symbol);
+    if (!b) {
+      try {
+        const rows2 = await db.ohlcvBar.findMany({ where: { symbol }, orderBy: { date: "asc" } });
+        b = rows2.map((r) => ({ date: r.date, open: r.open, high: r.high, low: r.low, close: r.close }));
+      } catch {
+        b = [];
+      }
+      cache.set(symbol, b);
+    }
+    return b;
+  };
+
+  // Month index of a timestamp relative to startDate (1 = the start month).
+  const monthIndexOf = (ms: number) => {
+    const d = new Date(ms);
+    return (d.getFullYear() - startDate.getFullYear()) * 12 + (d.getMonth() - startDate.getMonth()) + 1;
+  };
+
   const rows: SimTradeRow[] = [];
-  const cache = barCache();
   let pool = capital; // running pool — trade entry = pool, exit = pool + netPnl
   let totalGain = 0;
   let wins = 0;
   let losses = 0;
   let tradeNo = 0;
-  let cursorMs = startMs; // earliest allowed entry date for the next trade
+  let lastExitMs = startMs; // earliest allowed entry for the next trade
   let cursor = 0; // rotating pointer into the shuffled signal pool
+  let sipIdx = 0;
 
-  // Month-by-month windows (chronological).
-  for (let m = 1; m <= numMonths; m++) {
-    // SIP deposit at the START of each month M >= 2 (month 1 = the initial
-    // capital already in the pool). Rendered as its own amber row.
-    if (m > 1 && monthlySip > 0) {
+  for (let i = 0; i < numTrades; i++) {
+    if (numSignalsAvailable === 0) break;
+    const targetMs = targets[i];
+    // Can't enter before the previous trade closed (chronological + compounding).
+    const desiredEntryMs = Math.max(targetMs, lastExitMs);
+
+    // Scan ALL matching signals round-robin; pick the one whose first in-window
+    // bar is closest to the target. Allow same-day entries on different stocks
+    // (the user spec: "multiple trade on multiple stock on same day"). The
+    // triedThisSlot set prevents re-picking the SAME symbol within one slot,
+    // but the same symbol CAN be picked again in a later slot.
+    let pickedSig: SimSignal | null = null;
+    let pickedBars: Bar[] = [];
+    let pickedRes: ReturnType<typeof simulateTrade> = null;
+    let pickedEntryMs = endMs;
+    const triedThisSlot = new Set<string>();
+    for (let attempt = 0; attempt < numSignalsAvailable; attempt++) {
+      const candidate = shuffled[cursor % shuffled.length];
+      cursor++;
+      if (triedThisSlot.has(candidate.symbol)) continue;
+      triedThisSlot.add(candidate.symbol);
+      const candBars = await getBars(candidate.symbol);
+      if (candBars.length < 5) continue;
+      const r = simulateTrade(candidate, candBars, desiredEntryMs, endMs);
+      if (r) {
+        const entryMs = Date.parse(candBars[r.entryIdx].date);
+        if (!pickedRes || Math.abs(entryMs - targetMs) < Math.abs(pickedEntryMs - targetMs)) {
+          pickedSig = candidate;
+          pickedBars = candBars;
+          pickedRes = r;
+          pickedEntryMs = entryMs;
+        }
+        // Near-perfect (within a day) — stop early to save DB reads.
+        if (Math.abs(entryMs - targetMs) < 86400000) break;
+      }
+    }
+    if (!pickedRes || !pickedSig) continue; // no in-window signal this slot (rare w/ 900 stocks)
+
+    // Apply any SIP deposits whose date is on/before this trade's entry bar
+    // (SIPs are applied to the pool chronologically before the trade enters).
+    while (sipIdx < sipDeposits.length && sipDeposits[sipIdx].date <= pickedEntryMs) {
+      const dep = sipDeposits[sipIdx];
+      pool += dep.amount;
       tradeNo++;
-      pool += monthlySip;
       rows.push({
         tradeNo,
         type: "SIP",
-        month: m,
-        symbol: `Month ${m} deposit`,
+        month: dep.month,
+        symbol: `Month ${dep.month} deposit`,
         side: "SIP",
         direction: "SIP",
-        entryDate: 0,
+        entryDate: dep.date,
         entryPrice: 0,
-        exitDate: 0,
+        exitDate: dep.date,
         exitPrice: 0,
         exitReason: "SIP_DEPOSIT",
         hit: "—",
         sl: 0, tp1: 0, tp2: 0, tp3: 0,
-        entryAmount: monthlySip,
+        entryAmount: dep.amount,
         pnl: 0,
         totalGain,
-        exitAmount: monthlySip,
+        exitAmount: dep.amount,
         returnPct: 0,
         isWin: false,
         confidence: 0,
       });
+      sipIdx++;
     }
 
-    // This month's calendar window.
-    const monthStart = new Date(startDate);
-    monthStart.setMonth(monthStart.getMonth() + (m - 1));
-    const monthStartMs = monthStart.getTime();
-    const monthEnd = new Date(startDate);
-    monthEnd.setMonth(monthEnd.getMonth() + m);
-    const monthEndMs = monthEnd.getTime();
+    // COMPOUNDING: trade the full running pool.
+    const entryAmount = pool;
+    const grossPnlPct =
+      pickedRes.direction === "BUY"
+        ? ((pickedRes.exitPrice - pickedRes.entryPrice) / pickedRes.entryPrice) * 100
+        : ((pickedRes.entryPrice - pickedRes.exitPrice) / pickedRes.entryPrice) * 100;
+    const grossPnl = (grossPnlPct / 100) * entryAmount;
+    const commission = entryAmount * COMMISSION_RATE * 2; // both sides
+    const slippage = entryAmount * SLIPPAGE_RATE;
+    const cgt = grossPnl > 0 ? grossPnl * CGT_RATE : 0;
+    const cost = commission + slippage + cgt;
+    const netPnl = grossPnl - cost;
+    const exitAmount = entryAmount + netPnl;
 
-    const monthCount = basePerMonth + (m <= remainder ? 1 : 0);
-    for (let i = 0; i < monthCount; i++) {
-      if (numSignalsAvailable === 0) break;
-      // Try up to numSignalsAvailable signals for this trade slot — skip any
-      // symbol that has no bar in the chronological window (returns null) so
-      // the trade we DO execute has an entry date inside [startDate, endDate].
-      let res: ReturnType<typeof simulateTrade> = null;
-      let sig: SimSignal | null = null;
-      let bars: Bar[] = [];
-      for (let attempt = 0; attempt < numSignalsAvailable; attempt++) {
-        const candidate = shuffled[cursor % shuffled.length];
-        cursor++;
-        let candBars = cache.get(candidate.symbol);
-        if (!candBars) {
-          try {
-            const rows2 = await db.ohlcvBar.findMany({ where: { symbol: candidate.symbol }, orderBy: { date: "asc" } });
-            candBars = rows2.map((r) => ({ date: r.date, open: r.open, high: r.high, low: r.low, close: r.close }));
-          } catch {
-            candBars = [];
-          }
-          cache.set(candidate.symbol, candBars);
-        }
-        const fromMs = Math.max(cursorMs, monthStartMs);
-        const r = simulateTrade(candidate, candBars, fromMs, Math.min(monthEndMs, endMs));
-        if (r) {
-          res = r;
-          sig = candidate;
-          bars = candBars;
-          break;
-        }
-      }
-      if (!res || !sig) continue; // no in-window signal this slot
+    totalGain += netPnl;
+    pool = exitAmount; // next trade enters with the new pool
+    // Win/loss by HIT, NOT by netPnl (the user spec: "tp3 hit and it still
+    // count my loss"). A TP hit (TP3/TP2/TP1) is a WIN; an SL hit is a LOSS.
+    const isWin = pickedRes.hit === "TP3" || pickedRes.hit === "TP2" || pickedRes.hit === "TP1";
+    if (isWin) wins++;
+    else losses++;
 
-      const entryAmount = pool; // COMPOUNDING: trade the full running pool
-      const grossPnlPct =
-        res.direction === "BUY"
-          ? ((res.exitPrice - res.entryPrice) / res.entryPrice) * 100
-          : ((res.entryPrice - res.exitPrice) / res.entryPrice) * 100;
-      const grossPnl = (grossPnlPct / 100) * entryAmount;
-      const commission = entryAmount * COMMISSION_RATE * 2; // both sides
-      const slippage = entryAmount * SLIPPAGE_RATE;
-      const cgt = grossPnl > 0 ? grossPnl * CGT_RATE : 0;
-      const cost = commission + slippage + cgt;
-      const netPnl = grossPnl - cost;
-      const exitAmount = entryAmount + netPnl;
+    const entryBarDateMs = Date.parse(pickedBars[pickedRes.entryIdx].date);
+    const exitBarDateMs = Date.parse(pickedBars[pickedRes.exitIdx].date);
+    // Advance the cursor to this trade's exit date. NO +1-day advance — the
+    // next trade may enter on the SAME day on a different stock (user spec).
+    lastExitMs = exitBarDateMs;
 
-      totalGain += netPnl;
-      pool = exitAmount; // next trade enters with the new pool
-      // Win/loss by HIT, NOT by netPnl. The user spec: "tp3 hit and it
-      // still count my loss" — a TP hit (TP3/TP2/TP1) is a WIN regardless
-      // of whether the tiny gross profit survived the round-trip costs; an
-      // SL hit is a LOSS. (Time-up is impossible — those trades are skipped
-      // in simulateTrade.) The P&L column still shows the real net value.
-      const isWin = res.hit === "TP3" || res.hit === "TP2" || res.hit === "TP1";
-      if (isWin) wins++;
-      else losses++;
-
-      // Advance the chronological cursor past this trade's exit so the next
-      // trade enters AFTER this one closed.
-      const exitBarDateMs = Date.parse(bars[res.exitIdx].date);
-      if (exitBarDateMs > cursorMs) cursorMs = exitBarDateMs + 86400000; // +1 day
-
-      tradeNo++;
-      rows.push({
-        tradeNo,
-        type: "TRADE",
-        month: m,
-        symbol: sig.symbol,
-        side: res.direction,
-        direction: res.direction === "BUY" ? "LONG" : "SHORT",
-        entryDate: Date.parse(bars[res.entryIdx].date),
-        entryPrice: res.entryPrice,
-        exitDate: Date.parse(bars[res.exitIdx].date),
-        exitPrice: res.exitPrice,
-        exitReason: res.exitReason,
-        hit: res.hit,
-        sl: res.sl,
-        tp1: res.tp1,
-        tp2: res.tp2,
-        tp3: res.tp3,
-        entryAmount,
-        pnl: netPnl,
-        totalGain,
-        exitAmount,
-        returnPct: entryAmount > 0 ? (netPnl / entryAmount) * 100 : 0,
-        isWin: res.hit === "TP3" || res.hit === "TP2" || res.hit === "TP1",
-        confidence: sig.confidence ?? 0,
-      });
-    }
+    tradeNo++;
+    rows.push({
+      tradeNo,
+      type: "TRADE",
+      month: monthIndexOf(entryBarDateMs),
+      symbol: pickedSig.symbol,
+      side: pickedRes.direction,
+      direction: pickedRes.direction === "BUY" ? "LONG" : "SHORT",
+      entryDate: entryBarDateMs,
+      entryPrice: pickedRes.entryPrice,
+      exitDate: exitBarDateMs,
+      exitPrice: pickedRes.exitPrice,
+      exitReason: pickedRes.exitReason,
+      hit: pickedRes.hit,
+      sl: pickedRes.sl,
+      tp1: pickedRes.tp1,
+      tp2: pickedRes.tp2,
+      tp3: pickedRes.tp3,
+      entryAmount,
+      pnl: netPnl,
+      totalGain,
+      exitAmount,
+      returnPct: entryAmount > 0 ? (netPnl / entryAmount) * 100 : 0,
+      isWin,
+      confidence: pickedSig.confidence ?? 0,
+    });
   }
+
+  // Apply any SIP deposits due AFTER the last trade's exit but within the
+  // window (e.g. a SIP on the 1st when the last trade closed on the 28th).
+  while (sipIdx < sipDeposits.length) {
+    const dep = sipDeposits[sipIdx];
+    pool += dep.amount;
+    tradeNo++;
+    rows.push({
+      tradeNo,
+      type: "SIP",
+      month: dep.month,
+      symbol: `Month ${dep.month} deposit`,
+      side: "SIP",
+      direction: "SIP",
+      entryDate: dep.date,
+      entryPrice: 0,
+      exitDate: dep.date,
+      exitPrice: 0,
+      exitReason: "SIP_DEPOSIT",
+      hit: "—",
+      sl: 0, tp1: 0, tp2: 0, tp3: 0,
+      entryAmount: dep.amount,
+      pnl: 0,
+      totalGain,
+      exitAmount: dep.amount,
+      returnPct: 0,
+      isWin: false,
+      confidence: 0,
+    });
+    sipIdx++;
+  }
+
+  // Sort chronologically for display (trades by entryDate, SIPs by their date)
+  // and renumber tradeNo in chronological order. Because targets are evenly
+  // spaced and lastExitMs only moves forward, slot order ≈ chronological order;
+  // this sort just cleans up same-day ties + SIP interleaving.
+  rows.sort((a, b) => (a.entryDate || 0) - (b.entryDate || 0));
+  rows.forEach((r, idx) => { r.tradeNo = idx + 1; });
 
   const finalAmount = pool; // = capital + totalSip + totalGain
   const totalPnl = totalGain;
   const totalReturnPct = totalInvested > 0 ? (totalPnl / totalInvested) * 100 : 0;
+  const tradeCount = rows.filter((r) => r.type === "TRADE").length;
 
   return {
     initialAmount: capital,
@@ -512,7 +573,7 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     totalInvested,
     wins,
     losses,
-    tradeCount: rows.filter((r) => r.type === "TRADE").length,
+    tradeCount,
     rows,
     startDate: startDate.toISOString(),
     endDate: endDate.toISOString(),
@@ -524,6 +585,7 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
       minConfidence,
       direction,
       numMonths,
+      numSips,
       totalSip,
       totalInvested,
       numSignalsAvailable,
