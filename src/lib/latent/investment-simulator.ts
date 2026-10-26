@@ -254,7 +254,16 @@ function simulateFromIdx(
   else if (tp2Idx >= 0) { exitIdx = tp2Idx; exitPrice = tp2; exitReason = "TP2_HIT"; hit = "TP2"; }
   else if (tp1Idx >= 0) { exitIdx = tp1Idx; exitPrice = tp1; exitReason = "TP1_HIT"; hit = "TP1"; }
   else if (slIdx >= 0) { exitIdx = slIdx; exitPrice = sl; exitReason = "SL_HIT"; hit = "SL"; }
-  else return null;
+  else {
+    // Time-up fallback (guarantees numTrades — the user spec "you must have to
+    // take trade"). Exit at the last bar in the window at that bar's close.
+    // HIT = "TIME" (a clear value, NOT "—"/blank). A time-up trade still counts
+    // toward numTrades; its P&L reflects the unrealized move to the last bar.
+    exitIdx = end;
+    exitPrice = bars[end].close;
+    exitReason = "TIME_UP";
+    hit = "TIME";
+  }
 
   return { exitIdx, entryPrice, exitPrice, exitReason, hit, sl, tp1, tp2, tp3, direction };
 }
