@@ -815,3 +815,33 @@ Stage Summary:
 - Fix is ISOLATED per the user's instruction: new folder .zscripts/dev-fixes/ holds the backup + patched config + apply/revert scripts + README + verification screenshot. Only next.config.ts changed at root (one added block). Everything else untouched. No GitHub push.
 - Survival caveat (honest): within a session the fix survives (autosave commits locally; next-dev crash → dev-watch respawn keeps the file). On a full dev-watch restart after a sandbox env reset, restore-from-github.sh runs `git reset --hard origin/main` which reverts root next.config.ts to the un-patched version — re-apply with `bash .zscripts/dev-fixes/apply.sh`. Making it permanent across resets requires pushing next.config.ts to origin/main, which is NOT done (user rule: never push without explicit instruction).
 - User should now refresh the Preview Panel to see the rendered app.
+
+---
+Task ID: 39 (Phase 1)
+Agent: main
+Task: Tracker fixes — (1) investment simulator must fulfill user's numTrades + same-day multi-stock + current-month SIP; (2) stat cards below simulator showed 0000 + label said "8 stocks" — must show real last-1-month results across ALL DB stocks + fix descriptions.
+
+Work Log:
+- investment-simulator.ts REWRITE (parallel + realized-compounding model):
+  - numMonths = periodValue + 1 (month unit) so the current PARTIAL month is included. periodValue=3 (Oct today) → start Jul 1 → window Jul→Oct → SIPs at Aug 1, Sep 1, Oct 1 = 3 installments (= periodValue). totalSip = monthlySip × periodValue. (User spec: "1st sip after first month, also add current month".)
+  - SIP schedule decoupled from the trade loop — 1st of each calendar month strictly after the start month, within [startMs, endMs].
+  - Trade distribution: numTrades evenly-spaced target timestamps across [startMs, endMs] → "don't cluster in a day/week" + "cover each month/day". For each slot, findEntryIdx picks the bar CLOSEST to the target across ALL matching signals (not first bar >= cursor). Allows same-day entries on DIFFERENT stocks (user spec).
+  - Realized compounding: entryAmount = realizedPool (capital + SIPs + P&L from trades already CLOSED before this entry). Trades still open don't fund the next entry. openTrades tracked; closes realized before each new entry.
+  - numTrades GUARANTEE: simulateFromIdx now has a time-up fallback — if no TP/SL hit by windowEnd, exit at the last bar with HIT="TIME" (a clear value, NOT "—"). isWin = TP-hit OR (TIME && netPnl>0). So every slot fills → tradeCount == numTrades.
+  - Verifed via curl: numTrades=40 → tradeCount=40, 4 months covered (Jul,Aug,Sep,Oct), 3 SIPs (15000), trades/month 11/10/10/9, 39 distinct entry days (1 same-day multi-stock), HIT distribution TP3=35/TP2=1/SL=2/TIME=2 (no blanks).
+- New API /api/backtest/signal-stats?days=30: reconstructs last-1-month performance from CURRENT final-consensus signals (/api/signals/all) replayed over OhlcvBar window [today-30, today] using the same TP rule. Single batched DB query (symbol IN [...], date BETWEEN) grouped in memory. Returns total/closed/wins/losses/winRate/avgReturnPct/bestPct/worstPct + stocksInDb + dataSourceDate. Verified: {total:307, closed:305, wins:274, losses:31, winRate:89.84, avgReturnPct:2.55, bestPct:26.78, worstPct:-12.19, stocksInDb:908, dataSourceDate:2026-10-21, window 2026-09-26→2026-10-26}.
+- Tracker.tsx wiring (6 edits):
+  - Added signalStatsData state + fetch /api/backtest/signal-stats?days=30 on mount + refreshSignalStats().
+  - Replaced signalStats useMemo (was reading ensStats.fc = per-stock FINAL_CONSENSUS of 1 of 8 COVERED_SYMBOLS → 0000) with the reconstructed API data. Default-zero object so cards never crash.
+  - Label: "Last {timeframeLabel} backtest · {aiSignals.length} stocks" → "Last {timeframeLabel} backtest · {signalStats.stocksInDb} stocks in our database · final consensus ensemble · {total} signals ({closed} closed)".
+  - "across {total} closed trades" → "across {closed} closed trades".
+  - Header desc: "{COVERED_SYMBOLS.length} PSX stocks" → "all PSX stocks in our database".
+  - Footer desc: "{COVERED_SYMBOLS.length} covered PSX stocks" → "all stocks in our database".
+  - Simulator helper paragraph: "(8 trades)" stale → accurate "your chosen number of trades (40 requested) across all actionable signals in our database, compounding realized gains ... count is always fulfilled".
+- Browser-verified through Caddy :81 (Enter platform → Tracker → Signal Tracker): stat cards show 307 / 89.84% / +2.55% / +26.78% / -12.19% (NOT 0000); label "stocks in our database"; ran Simulate → result table = exactly 40 rows; HIT distribution TP3=33/TP2=1/TP1=2/SL=2/TIME=2 (no blanks). Zero JS errors.
+- No GitHub push (user standing rule). Changes survive within session (autosave local commit); dev-watch reset would revert — re-apply not needed since these are source files restored from origin/main... wait, these are NEW edits not on origin/main, so a dev-watch `git reset --hard origin/main` WOULD revert them. Survival caveat applies.
+
+Stage Summary:
+- Phase 1 DONE + browser-verified: (1) investment simulator now GUARANTEES the user's numTrades (40/40) with same-day multi-stock + even distribution + current-month SIP (Jul→Oct, 3 SIPs); (2) the 4 stat cards now show REAL last-1-month reconstructed performance across all 908 DB stocks (307 signals, 89.84% win rate, +2.55% avg, +26.78%/-12.19% best/worst) — no more 0000; "8 stocks" → "all stocks in our database"; all descriptions corrected.
+- New files: src/app/api/backtest/signal-stats/route.ts. Changed: src/lib/latent/investment-simulator.ts (rewrite), src/components/latent/Tracker.tsx (6 edits).
+- Next: Phase 2 (model "Stocks covered" badge) + Phase 3 (backtest freshness chip + per-model actual-vs-predicted graph).
