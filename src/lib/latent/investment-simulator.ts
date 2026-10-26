@@ -254,16 +254,7 @@ function simulateFromIdx(
   else if (tp2Idx >= 0) { exitIdx = tp2Idx; exitPrice = tp2; exitReason = "TP2_HIT"; hit = "TP2"; }
   else if (tp1Idx >= 0) { exitIdx = tp1Idx; exitPrice = tp1; exitReason = "TP1_HIT"; hit = "TP1"; }
   else if (slIdx >= 0) { exitIdx = slIdx; exitPrice = sl; exitReason = "SL_HIT"; hit = "SL"; }
-  else {
-    // Time-up fallback (guarantees numTrades — the user spec "you must have to
-    // take trade"). Exit at the last bar in the window at that bar's close.
-    // HIT = "TIME" (a clear value, NOT "—"/blank). A time-up trade still counts
-    // toward numTrades; its P&L reflects the unrealized move to the last bar.
-    exitIdx = end;
-    exitPrice = bars[end].close;
-    exitReason = "TIME_UP";
-    hit = "TIME";
-  }
+  else return null; // nothing hit within the window — skip (HIT must be TP/SL only per user spec; no TIME entries)
 
   return { exitIdx, entryPrice, exitPrice, exitReason, hit, sl, tp1, tp2, tp3, direction };
 }
@@ -499,14 +490,12 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     const netPnl = grossPnl - cost;
     const exitAmount = entryAmount + netPnl;
     // Win/loss by HIT (a TP hit = WIN; an SL hit = LOSS — the user spec:
-    // "tp3 hit and it still count my loss"). A TIME-up (no TP/SL hit by the
-    // window end) counts as a WIN if it ended profitable, else a LOSS — so
-    // wins+losses always equals tradeCount.
+    // "tp3 hit and it still count my loss"). HIT is always TP3/TP2/TP1/SL —
+    // never TIME (time-up trades are skipped in simulateFromIdx).
     const isWin =
       pickedRes.hit === "TP3" ||
       pickedRes.hit === "TP2" ||
-      pickedRes.hit === "TP1" ||
-      (pickedRes.hit === "TIME" && netPnl > 0);
+      pickedRes.hit === "TP1";
     if (isWin) wins++;
     else losses++;
 
