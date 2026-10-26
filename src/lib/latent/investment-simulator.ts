@@ -186,6 +186,23 @@ function findEntryIdx(bars: Bar[], targetMs: number, searchStartMs: number, wind
   return bestIdx;
 }
 
+// Find the K bars in `bars` whose dates are closest to targetMs, within
+// [searchStartMs, windowEndMs], sorted nearest-first. Used to try MULTIPLE
+// candidate entry bars per signal so a TP/SL-hitting entry is found even when
+// the single nearest bar wouldn't hit (maximizes TP/SL-only fills → keeps the
+// numTrades guarantee WITHOUT any time-up exits).
+function findEntryIdxList(bars: Bar[], targetMs: number, searchStartMs: number, windowEndMs: number, k: number): number[] {
+  if (bars.length < 5) return [];
+  const cand: { idx: number; diff: number }[] = [];
+  for (let i = 0; i < bars.length; i++) {
+    const t = Date.parse(bars[i].date);
+    if (t < searchStartMs || t > windowEndMs) continue;
+    cand.push({ idx: i, diff: Math.abs(t - targetMs) });
+  }
+  cand.sort((a, b) => a.diff - b.diff);
+  return cand.slice(0, k).map((c) => c.idx);
+}
+
 // Run ONE trade for a symbol starting at a chosen entry bar (entryIdx), held
 // until SL or a TP is reached (TP3 > TP2 > TP1 > SL priority) within
 // [entryIdx, windowEndMs]. Returns null if NOTHING is hit by windowEnd (the
@@ -417,21 +434,26 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
       triedThisSlot.add(candidate.symbol);
       const candBars = await getBars(candidate.symbol);
       if (candBars.length < 5) continue;
-      const entryIdx = findEntryIdx(candBars, targetMs, startMs, endMs);
-      if (entryIdx < 0) continue;
-      const r = simulateFromIdx(candidate, candBars, entryIdx, endMs);
-      if (r) {
-        const entryMs = Date.parse(candBars[entryIdx].date);
-        if (!pickedRes || Math.abs(entryMs - targetMs) < Math.abs(pickedEntryMs - targetMs)) {
-          pickedSig = candidate;
-          pickedBars = candBars;
-          pickedRes = r;
-          pickedEntryIdx = entryIdx;
-          pickedEntryMs = entryMs;
+      // Try the K closest bars to the target — picks a TP/SL-hitting entry
+      // even when the single nearest bar wouldn't hit (maximizes TP/SL-only
+      // fills → keeps the numTrades guarantee WITHOUT time-up exits).
+      const entryIdxs = findEntryIdxList(candBars, targetMs, startMs, endMs, 5);
+      for (const entryIdx of entryIdxs) {
+        const r = simulateFromIdx(candidate, candBars, entryIdx, endMs);
+        if (r) {
+          const entryMs = Date.parse(candBars[entryIdx].date);
+          if (!pickedRes || Math.abs(entryMs - targetMs) < Math.abs(pickedEntryMs - targetMs)) {
+            pickedSig = candidate;
+            pickedBars = candBars;
+            pickedRes = r;
+            pickedEntryIdx = entryIdx;
+            pickedEntryMs = entryMs;
+          }
+          break; // this signal found a TP/SL hit — stop trying more bars for it
         }
-        // Near-perfect (within a day) — stop early to save DB reads.
-        if (Math.abs(entryMs - targetMs) < 86400000) break;
       }
+      // Near-perfect (within a day) — stop scanning more signals to save DB reads.
+      if (pickedRes && Math.abs(pickedEntryMs - targetMs) < 86400000) break;
     }
     if (!pickedRes || !pickedSig || pickedEntryIdx < 0) continue; // no in-window signal this slot (rare w/ 900 stocks)
 
