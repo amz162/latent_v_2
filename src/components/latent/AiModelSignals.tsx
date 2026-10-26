@@ -182,7 +182,16 @@ export function AiModelSignals(){
 
    {data.tiers.map(tg=>(
     <Card key={tg.tier} className="bg-[#131829] border-white/[0.08] mb-3 md:mb-4"><CardHeader className="pb-2"><CardTitle className="text-sm md:text-base text-[#F4F7FB] flex items-center gap-2"><Cpu className="h-4 w-4 text-[#00E676]"/>{tg.label}</CardTitle><p className="text-[10px] md:text-xs text-[#94A3B8] mt-0.5">{tg.models.filter(m=>m.trained).length}/{tg.models.length} trained</p></CardHeader><CardContent>
-     <div className="space-y-2">{tg.models.map(m=><MC key={m.name} m={m}/>)}</div>
+     <div className="space-y-2">{tg.models.map(m=>{
+      // coveredSymbols (stocks the model was backtested across) lives in the
+      // DB ModelBacktestCache, which the route merges into data.backtesting
+      // (NOT into m.backtest — that's the file-based subset). Merge it here so
+      // the model card's "Stocks covered" badge reflects the full extended
+      // universe (the user spec: "how much stock each model is trained on").
+      const btAny=data?.backtesting?.[m.name]as any;
+      const m2=btAny&&btAny.coveredSymbols!==undefined?{...m,backtest:{...(m.backtest as any),coveredSymbols:btAny.coveredSymbols}}:m;
+      return <MC key={m.name} m={m2}/>;
+     })}</div>
     </CardContent></Card>
    ))}
 
