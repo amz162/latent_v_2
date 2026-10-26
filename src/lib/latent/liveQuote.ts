@@ -97,24 +97,29 @@ export function evaluateOutcome(o: OutcomeInput): { outcome: SignalOutcome; pnlP
   const { signal, entry, sl, tp1, tp2, tp3, livePrice } = o;
   if (!entry || !livePrice) return { outcome: "ACTIVE", pnlPct: 0 };
 
-  // Signed P&L vs entry in the signal's direction (BUY: +when price up; SELL: +when price down)
-  const pnlPct =
-    signal === "BUY"
-      ? ((livePrice - entry) / entry) * 100
-      : ((entry - livePrice) / entry) * 100;
+  const dir = signal === "BUY" ? 1 : -1;
+  // Live P&L (unrealized move vs entry — used only for ACTIVE signals).
+  const livePnlPct = ((livePrice - entry) / entry) * 100 * dir;
 
   let outcome: SignalOutcome = "ACTIVE";
+  let exitPrice = livePrice; // the price the trade would have closed at
   if (signal === "BUY") {
-    if (livePrice >= tp3) outcome = "TP3_HIT";
-    else if (livePrice >= tp2) outcome = "TP2_HIT";
-    else if (livePrice >= tp1) outcome = "TP1_HIT";
-    if (livePrice <= sl) outcome = "SL_HIT";
+    if (livePrice >= tp3) { outcome = "TP3_HIT"; exitPrice = tp3; }
+    else if (livePrice >= tp2) { outcome = "TP2_HIT"; exitPrice = tp2; }
+    else if (livePrice >= tp1) { outcome = "TP1_HIT"; exitPrice = tp1; }
+    if (livePrice <= sl) { outcome = "SL_HIT"; exitPrice = sl; }
   } else {
     // SELL / SHORT — TPs are below entry, SL above
-    if (livePrice <= tp3) outcome = "TP3_HIT";
-    else if (livePrice <= tp2) outcome = "TP2_HIT";
-    else if (livePrice <= tp1) outcome = "TP1_HIT";
-    if (livePrice >= sl) outcome = "SL_HIT";
+    if (livePrice <= tp3) { outcome = "TP3_HIT"; exitPrice = tp3; }
+    else if (livePrice <= tp2) { outcome = "TP2_HIT"; exitPrice = tp2; }
+    else if (livePrice <= tp1) { outcome = "TP1_HIT"; exitPrice = tp1; }
+    if (livePrice >= sl) { outcome = "SL_HIT"; exitPrice = sl; }
   }
+  // Outcome-based P&L: the REALIZED move to the outcome level. TP hits → the
+  // TP gain (positive); SL hits → the SL-distance LOSS (always negative); ACTIVE
+  // → the unrealized live move. Fixes the "SL 0.00%" case where the live
+  // pnlPct happened to read ~0 even though SL was hit (the user spec: "when sl
+  // it must be negative due to sl").
+  const pnlPct = outcome === "ACTIVE" ? livePnlPct : ((exitPrice - entry) / entry) * 100 * dir;
   return { outcome, pnlPct };
 }

@@ -118,7 +118,7 @@ export function AppTopbar() {
           <SidebarTrigger className="lg:hidden text-[#94A3B8] hover:text-[#F4F7FB] hover:bg-white/[0.04]" />
           <button
             onClick={() => setView("dashboard")}
-            className="hover:opacity-80 shrink-0"
+            className="hover:opacity-80 shrink-0 lg:hidden"
             aria-label="Go to dashboard"
           >
             <BrandMark size="sm" />
