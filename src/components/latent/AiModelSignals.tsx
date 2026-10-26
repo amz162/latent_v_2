@@ -39,21 +39,33 @@ export function AiModelSignals(){
  const predictScoresRef=useRef<Record<string,number>>({}); // reliable score tracking in async loop
  const automateStopRef=useRef(false); // stop flag for the automate loop
  // Phase 3: per-model actual-vs-predicted graph view (in the Backtesting modal).
- const[graphModel,setGraphModel]=useState("XGBoost");
+ // Enhanced: multi-model checkboxes (All/None), user-tunable decision-point
+ // cadence (step), StockSearch symbol picker, KSE-100-only vs whole-market filter.
+ const[graphModels,setGraphModels]=useState<string[]>(["XGBoost"]); // multi-select
  const[graphSymbol,setGraphSymbol]=useState(""); // "" = use the current data.symbol
  const[graphHorizon,setGraphHorizon]=useState("21");
- const[graphData,setGraphData]=useState<any[]>([]);
+ const[graphStep,setGraphStep]=useState("21"); // decision-point cadence (bars between decisions)
+ const[graphUniverse,setGraphUniverse]=useState<"all"|"kse100">("all");
+ const[kse100Syms,setKse100Syms]=useState<string[]>([]);
+ const[graphChart,setGraphChart]=useState<{dates:string[];actual:(number|null)[];models:any[]}|null>(null);
  const[graphLoading,setGraphLoading]=useState(false);
- const[graphMeta,setGraphMeta]=useState<{modelLabel?:string;symbol?:string;points?:number;dataSourceDate?:string|null}|null>(null);
+ const[graphMeta,setGraphMeta]=useState<{points?:number;dataSourceDate?:string|null}|null>(null);
+ // KSE-100 constituents (fetched once) — used to restrict the StockSearch picker.
+ useEffect(()=>{fetch("/api/psx/indices/KSE100").then(r=>r.ok?r.json():null).then(j=>{if(j?.constituents)setKse100Syms(j.constituents.map((c:any)=>c.symbol));}).catch(()=>{});},[]);
+ const GRAPH_MODEL_OPTIONS=["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression","ARIMA","Holt-Winters","GARCH","Prophet","Kalman Filter","GRU","LSTM","CNN-LSTM","Transformer-LSTM","PatchTST","N-BEATS","TimesNet","Informer","XGBoost (CL)","LightGBM (CL)","Random Forest (CL)","LightGBM-A (CL-2)","Logistic (CL-2)","Linear Regression (PI)","Pattern Matcher KNN (PI)","LightGBM (CG)","XGBoost (CG)","Trend Multi-TF (X)","Gian-Ensemble (GIAN)","M-Ensemble (M)","majority_vote","probability_weighted","tier_weighted","cl_ensemble","cl2_ensemble","pi_ensemble","gm_model","cg_ensemble","x_ensemble","gian_ensemble","m_ensemble"];
+ const GRAPH_COLORS=["#FBBF24","#60A5FA","#A78BFA","#34D399","#F472B6","#22D3EE","#FB923C","#E879F9"];
+ const toggleModel=(k:string)=>setGraphModels(prev=>prev.includes(k)?prev.filter(x=>x!==k):[...prev,k]);
  const loadGraph=async()=>{
   const sym=(graphSymbol||data?.symbol||"LUCK").trim().toUpperCase();
   if(!sym){toast.error("Pick a symbol");return;}
+  if(graphModels.length===0){toast.error("Select at least one model");return;}
   setGraphLoading(true);
   try{
-   const r=await fetch(`/api/backtest/model-graph?model=${encodeURIComponent(graphModel)}&symbol=${encodeURIComponent(sym)}&horizon=${encodeURIComponent(graphHorizon)}`);
+   const r=await fetch(`/api/backtest/model-graph?models=${encodeURIComponent(graphModels.join(","))}&symbol=${encodeURIComponent(sym)}&horizon=${encodeURIComponent(graphHorizon)}&step=${encodeURIComponent(graphStep)}`);
    const j=await r.json();
-   if(j.error){toast.error(j.error);setGraphData([]);setGraphMeta(null);return;}
-   setGraphData(j.series||[]); setGraphMeta({modelLabel:j.modelLabel,symbol:j.symbol,points:j.points,dataSourceDate:j.dataSourceDate});
+   if(j.error){toast.error(j.error);setGraphChart(null);setGraphMeta(null);return;}
+   setGraphChart({dates:j.dates||[],actual:j.actual||[],models:j.models||[]});
+   setGraphMeta({points:j.points,dataSourceDate:j.dataSourceDate});
   }catch{toast.error("Graph load failed");}
   finally{setGraphLoading(false);}
  };
