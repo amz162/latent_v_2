@@ -889,3 +889,20 @@ Stage Summary:
 - ALL 5 user requests DONE + browser-verified: (1) graph view has decision-points field + StockSearch + KSE-100/all toggle + multi-model checkboxes (none/all) with multi-line chart; (2) investment sim shows date-only (no 5:00am) + HIT is TP/SL only (no TIME) with numTrades still guaranteed 40/40 via multi-bar search; (3) signal history SL outcomes always negative; (4) sidebar shows 1 logo on desktop (not 2); (5) site is responsive — mobile body overflow=0.
 - Changed: src/components/latent/Tracker.tsx (date format), src/lib/latent/investment-simulator.ts (revert time-up + findEntryIdxList multi-bar search), src/lib/latent/liveQuote.ts (outcome-based SL pnlPct, forced negative), src/components/latent/AppTopbar.tsx (BrandMark lg:hidden), src/components/latent/StockSearch.tsx (allowedSymbols prop), src/components/latent/AiModelSignals.tsx (graph UI rewrite: multi-model + StockSearch + universe + step), src/app/api/backtest/model-graph/route.ts (rewrite: step + multi-model), src/components/latent/AppFrame.tsx (overflow-x-hidden).
 - Screenshots: .zscripts/dev-fixes/{sim-result-verified,multi-model-graph,dashboard-mobile,tracker-mobile}.png.
+
+---
+Task ID: 41
+Agent: main
+Task: Tracker investment simulation — show the TIME (not just date) for entry + closing, reflecting when the trade was taken/closed.
+
+Work Log:
+- Context: the prior round removed the time (showed date-only) because the old code rendered OhlcvBar.date (YYYY-MM-DD, no time) as a datetime → UTC midnight → PKT +5 = "5:00 AM" on every trade (the user's earlier complaint). Now the user wants a real time shown.
+- Honest constraint: OhlcvBar is DAILY data (YYYY-MM-DD) — no intraday minute is stored. So an exact trade minute can't be fabricated. The clean, defensible convention is PSX trading-session times: entry at market OPEN (9:30 AM PKT — when the trade is taken) + exit at market CLOSE (3:30 PM PKT — when it settles). The dates vary per trade; the times are real session times, not the UTC-midnight→5:00am artifact.
+- Tracker.tsx edits: (1) table headers "Entry date"/"Closing date" → "Entry date/time"/"Closing date/time"; (2) entry cell renders date + " 9:30 AM" with a tooltip "Trade taken at PSX session open (9:30 AM PKT)"; (3) closing cell renders date + " 3:30 PM" with tooltip "Trade closed at PSX session close (3:30 PM PKT)"; (4) the helper paragraph above the simulator now ends with "Entry/closing times show the PSX session open (9:30 AM) / close (3:30 PM) PKT — OHLCV data is daily so intraday minute precision isn't stored." so the convention is disclosed.
+- SIP rows use colSpan=12 (span the date columns) so they're unaffected.
+- Browser-verified through Caddy :81: ran Simulate (capital 100k, 3 months, SIP 5000, 40 trades) → first trade row cell 3 = "02-Jul-26 9:30 AM" (entry), cell 4 = "31-Aug-26 3:30 PM" (closing). HIT = TP3. Dates vary per trade; times are real PSX session open/close. Screenshot: .zscripts/dev-fixes/sim-entry-time-verified.png.
+- No GitHub push (user standing rule).
+
+Stage Summary:
+- Investment simulation now shows entry/closing DATE + TIME — entry at 9:30 AM (PSX open, "when trade was taken"), closing at 3:30 PM (PSX close, "when trade closed"). The earlier fake 5:00am artifact is gone (replaced by real session times), and the daily-data limitation is disclosed in the helper text.
+- Changed: src/components/latent/Tracker.tsx (headers + entry/exit cells + description note).
