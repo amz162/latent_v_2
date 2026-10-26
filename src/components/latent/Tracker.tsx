@@ -878,9 +878,7 @@ export function Tracker() {
                       database, compounding realized gains trade-over-trade. A monthly SIP deposits
                       at the 1st of each month after the start month (including the current partial
                       month); trades are spread evenly across the whole period so they never cluster
-                      in a single day/week, and the count is always fulfilled. Entry/closing times
-                      show the PSX session open (9:30 AM) / close (3:30 PM) PKT — OHLCV data is
-                      daily so intraday minute precision isn&apos;t stored.
+                      in a single day/week, and the count is always fulfilled.
                     </p>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-2 items-end">
@@ -1115,8 +1113,8 @@ export function Tracker() {
                                 <th className="text-left py-2 px-2 font-semibold sticky left-0 bg-[#131829] z-20">#</th>
                                 <th className="text-left py-2 px-2 font-semibold">Symbol</th>
                                 <th className="text-left py-2 px-2 font-semibold">Side</th>
-                                <th className="text-left py-2 px-2 font-semibold">Entry date/time</th>
-                                <th className="text-left py-2 px-2 font-semibold">Closing date/time</th>
+                                <th className="text-left py-2 px-2 font-semibold">Entry date</th>
+                                <th className="text-left py-2 px-2 font-semibold">Closing date</th>
                                 <th className="text-right py-2 px-2 font-semibold">Entry price</th>
                                 <th className="text-right py-2 px-2 font-semibold">Closing price</th>
                                 <th className="text-center py-2 px-2 font-semibold">HIT</th>
@@ -1160,11 +1158,11 @@ export function Tracker() {
                                         {r.side}
                                       </Badge>
                                     </td>
-                                    <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap" title="Trade taken at PSX session open (9:30 AM PKT)">
-                                      {r.entryDate ? new Date(r.entryDate).toLocaleDateString("en-PK", { month: "short", day: "2-digit", year: "2-digit" }) + " 9:30 AM" : "—"}
+                                    <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap">
+                                      {r.entryDate ? new Date(r.entryDate).toLocaleDateString("en-PK", { month: "short", day: "2-digit", year: "2-digit" }) : "—"}
                                     </td>
-                                    <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap" title="Trade closed at PSX session close (3:30 PM PKT)">
-                                      {r.exitDate ? new Date(r.exitDate).toLocaleDateString("en-PK", { month: "short", day: "2-digit", year: "2-digit" }) + " 3:30 PM" : "—"}
+                                    <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap">
+                                      {r.exitDate ? new Date(r.exitDate).toLocaleDateString("en-PK", { month: "short", day: "2-digit", year: "2-digit" }) : "—"}
                                     </td>
                                     <td className="py-2 px-2 text-right font-mono text-[11px] text-[#F4F7FB]">{r.entryPrice.toFixed(2)}</td>
                                     <td className="py-2 px-2 text-right font-mono text-[11px] text-[#F4F7FB]">{r.exitPrice.toFixed(2)}</td>
