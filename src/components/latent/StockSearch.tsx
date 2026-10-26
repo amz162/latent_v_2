@@ -7,19 +7,23 @@ interface Company { id: number; value: string; label: string; sector?: string; i
 interface StockSearchProps {
   value: string; onChange: (symbol: string, company?: Company) => void;
   placeholder?: string; autoFocus?: boolean; showRecent?: boolean; showSuggestions?: boolean; className?: string;
+  /** Optional allow-list: when provided, only these symbols appear in results +
+   *  suggestions (used by the Backtesting graph view's "KSE-100 only" toggle). */
+  allowedSymbols?: string[];
 }
 const RECENT_KEY = "stock-search-recent"; const MAX_RECENT = 8;
 function loadRecent(): string[] { if (typeof window === "undefined") return []; try { const r = localStorage.getItem(RECENT_KEY); return r ? JSON.parse(r) : []; } catch { return []; } }
 function saveRecent(s: string) { if (typeof window === "undefined") return; try { const e = loadRecent().filter(x => x !== s); localStorage.setItem(RECENT_KEY, JSON.stringify([s, ...e].slice(0, MAX_RECENT))); } catch {} }
 
-export function StockSearch({ value, onChange, placeholder = "Search stock by symbol or name...", autoFocus = false, showRecent = true, showSuggestions = true, className = "" }: StockSearchProps) {
+export function StockSearch({ value, onChange, placeholder = "Search stock by symbol or name...", autoFocus = false, showRecent = true, showSuggestions = true, className = "", allowedSymbols }: StockSearchProps) {
+  const allowedSet = allowedSymbols && allowedSymbols.length > 0 ? new Set(allowedSymbols.map(s => s.toUpperCase())) : null;
   const [query, setQuery] = useState(""); const [open, setOpen] = useState(false); const [highlighted, setHighlighted] = useState(0);
   const [companies, setCompanies] = useState<Company[]>([]); const [loading, setLoading] = useState(true); const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null); const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => { fetch("/api/psx/companies").then(r => r.ok ? r.json() : null).then(d => { if (d?.companies) setCompanies(d.companies); }).catch(() => {}).finally(() => setLoading(false)); Promise.resolve().then(() => setRecent(loadRecent())); }, []);
   useEffect(() => { const h = (e: MouseEvent) => { if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false); }; document.addEventListener("mousedown", h); return () => document.removeEventListener("mousedown", h); }, []);
-  const filtered = useMemo(() => { if (!query.trim()) return []; const q = query.trim().toUpperCase(); const ql = query.trim().toLowerCase(); return companies.filter(c => c.value.includes(q) || (c.label && c.label.toLowerCase().includes(ql))).slice(0, 50); }, [query, companies]);
-  const suggestions = useMemo(() => { if (!showSuggestions || query.trim()) return null; const rc = recent.map(s => companies.find(c => c.value === s)).filter(Boolean) as Company[]; const pop = ["OGDC","ENGRO","HUBC","LUCK","SYS","MEBL","PSO","PPL","MARI","DGKC","MLCF","EFERT","ABOT","INDU"].map(s => companies.find(c => c.value === s)).filter((c,i,a) => c && a.findIndex(x => x?.value === c!.value) === i).filter(c => !rc.find(r => r.value === c!.value)).slice(0, 12) as Company[]; return { recent: rc, popular: pop }; }, [query, companies, recent, showSuggestions]);
+  const filtered = useMemo(() => { if (!query.trim()) return []; const q = query.trim().toUpperCase(); const ql = query.trim().toLowerCase(); return companies.filter(c => (!allowedSet || allowedSet.has(c.value)) && (c.value.includes(q) || (c.label && c.label.toLowerCase().includes(ql)))).slice(0, 50); }, [query, companies, allowedSet]);
+  const suggestions = useMemo(() => { if (!showSuggestions || query.trim()) return null; const rc = recent.map(s => companies.find(c => c.value === s)).filter(c => c && (!allowedSet || allowedSet.has(c!.value))) as Company[]; const pop = ["OGDC","ENGRO","HUBC","LUCK","SYS","MEBL","PSO","PPL","MARI","DGKC","MLCF","EFERT","ABOT","INDU"].map(s => companies.find(c => c.value === s)).filter((c,i,a) => c && (!allowedSet || allowedSet.has(c!.value)) && a.findIndex(x => x?.value === c!.value) === i).filter(c => !rc.find(r => r.value === c!.value)).slice(0, 12) as Company[]; return { recent: rc, popular: pop }; }, [query, companies, recent, showSuggestions, allowedSet]);
   const grouped = useMemo(() => { const g = new Map<string, Company[]>(); for (const c of filtered) { const s = c.sector || "Other"; if (!g.has(s)) g.set(s, []); g.get(s)!.push(c); } return Array.from(g.entries()).sort((a, b) => b[1].length - a[1].length); }, [filtered]);
   const select = (c: Company) => { onChange(c.value, c); setQuery(""); setOpen(false); saveRecent(c.value); setRecent(loadRecent()); };
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => { if (!open) { if (e.key === "ArrowDown" || e.key === "Enter") setOpen(true); return; } if (e.key === "ArrowDown") { e.preventDefault(); setHighlighted(h => Math.min(h + 1, filtered.length - 1)); } else if (e.key === "ArrowUp") { e.preventDefault(); setHighlighted(h => Math.max(h - 1, 0)); } else if (e.key === "Enter") { e.preventDefault(); if (filtered[highlighted]) select(filtered[highlighted]); else if (filtered.length === 1) select(filtered[0]); } else if (e.key === "Escape") { setOpen(false); inputRef.current?.blur(); } };
