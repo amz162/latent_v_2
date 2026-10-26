@@ -1159,10 +1159,10 @@ export function Tracker() {
                                       </Badge>
                                     </td>
                                     <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap">
-                                      {r.entryDate ? new Date(r.entryDate).toLocaleString("en-PK", { month: "short", day: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—"}
+                                      {r.entryDate ? new Date(r.entryDate).toLocaleDateString("en-PK", { month: "short", day: "2-digit", year: "2-digit" }) : "—"}
                                     </td>
                                     <td className="py-2 px-2 text-left font-mono text-[11px] text-[#94A3B8] whitespace-nowrap">
-                                      {r.exitDate ? new Date(r.exitDate).toLocaleString("en-PK", { month: "short", day: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—"}
+                                      {r.exitDate ? new Date(r.exitDate).toLocaleDateString("en-PK", { month: "short", day: "2-digit", year: "2-digit" }) : "—"}
                                     </td>
                                     <td className="py-2 px-2 text-right font-mono text-[11px] text-[#F4F7FB]">{r.entryPrice.toFixed(2)}</td>
                                     <td className="py-2 px-2 text-right font-mono text-[11px] text-[#F4F7FB]">{r.exitPrice.toFixed(2)}</td>
