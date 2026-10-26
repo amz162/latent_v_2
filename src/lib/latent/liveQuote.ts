@@ -116,10 +116,12 @@ export function evaluateOutcome(o: OutcomeInput): { outcome: SignalOutcome; pnlP
     if (livePrice >= sl) { outcome = "SL_HIT"; exitPrice = sl; }
   }
   // Outcome-based P&L: the REALIZED move to the outcome level. TP hits → the
-  // TP gain (positive); SL hits → the SL-distance LOSS (always negative); ACTIVE
-  // → the unrealized live move. Fixes the "SL 0.00%" case where the live
-  // pnlPct happened to read ~0 even though SL was hit (the user spec: "when sl
-  // it must be negative due to sl").
-  const pnlPct = outcome === "ACTIVE" ? livePnlPct : ((exitPrice - entry) / entry) * 100 * dir;
+  // TP gain (positive); SL hits → ALWAYS the SL-distance LOSS (forced negative
+  // — even for malformed signals where sl is on the wrong side of entry, SL
+  // is still a loss by definition); ACTIVE → the unrealized live move. Fixes
+  // the "SL 0.00%" / "SL positive" cases (the user spec: "when sl it must be
+  // negative due to sl").
+  const rawOutcomePct = ((exitPrice - entry) / entry) * 100 * dir;
+  const pnlPct = outcome === "ACTIVE" ? livePnlPct : outcome === "SL_HIT" ? -Math.abs(rawOutcomePct) : rawOutcomePct;
   return { outcome, pnlPct };
 }
