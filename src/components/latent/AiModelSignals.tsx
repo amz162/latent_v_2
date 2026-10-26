@@ -9,6 +9,7 @@ import{StockSearch}from"./StockSearch";
 import{useLatentStore}from"@/lib/latent/store";
 import{Brain,Sparkles,Layers,Cpu,BarChart3,DollarSign,Play,Loader2,Eye,ChevronLeft,TrendingUp,TrendingDown}from"lucide-react";
 import{toast}from"sonner";
+import{LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend}from"recharts";
 
 interface MP{name:string;tier:string;tierLabel:string;category:string;trained:boolean;untrainedReason?:string;direction?:"LONG"|"SHORT";signal?:"BUY"|"SELL"|"HOLD";confidence?:number;currentPrice?:number;entry?:number;sl?:number;tp1?:number;tp2?:number;tp3?:number;avgReturn?:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;metrics?:any;backtest?:{totalTrades:number;buySignals:number;sellSignals:number;correctBuys:number;correctSells:number;winRate:number;avgReturnPct:number;maxReturnPct:number;minReturnPct:number;stars:number;coveredSymbols?:number;};extended?:boolean;}
 interface ER{method:string;methodLabel:string;signal:"BUY"|"SELL"|"HOLD";direction:"LONG"|"SHORT";confidence:number;predictedPrice:number;entry:number;sl:number;tp1:number;tp2:number;tp3:number;modelCount:number;buyCount:number;sellCount:number;holdCount:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;total_score?:number;pillars?:any;expected_return?:number;r_pct?:number;strategy_signals?:any;}
@@ -37,6 +38,25 @@ export function AiModelSignals(){
  const[automateFinalCount,setAutomateFinalCount]=useState(0); // persists after automate finishes
  const predictScoresRef=useRef<Record<string,number>>({}); // reliable score tracking in async loop
  const automateStopRef=useRef(false); // stop flag for the automate loop
+ // Phase 3: per-model actual-vs-predicted graph view (in the Backtesting modal).
+ const[graphModel,setGraphModel]=useState("XGBoost");
+ const[graphSymbol,setGraphSymbol]=useState(""); // "" = use the current data.symbol
+ const[graphHorizon,setGraphHorizon]=useState("21");
+ const[graphData,setGraphData]=useState<any[]>([]);
+ const[graphLoading,setGraphLoading]=useState(false);
+ const[graphMeta,setGraphMeta]=useState<{modelLabel?:string;symbol?:string;points?:number;dataSourceDate?:string|null}|null>(null);
+ const loadGraph=async()=>{
+  const sym=(graphSymbol||data?.symbol||"LUCK").trim().toUpperCase();
+  if(!sym){toast.error("Pick a symbol");return;}
+  setGraphLoading(true);
+  try{
+   const r=await fetch(`/api/backtest/model-graph?model=${encodeURIComponent(graphModel)}&symbol=${encodeURIComponent(sym)}&horizon=${encodeURIComponent(graphHorizon)}`);
+   const j=await r.json();
+   if(j.error){toast.error(j.error);setGraphData([]);setGraphMeta(null);return;}
+   setGraphData(j.series||[]); setGraphMeta({modelLabel:j.modelLabel,symbol:j.symbol,points:j.points,dataSourceDate:j.dataSourceDate});
+  }catch{toast.error("Graph load failed");}
+  finally{setGraphLoading(false);}
+ };
  useEffect(()=>{ predictScoresRef.current={}; setPredictScores({}); }, [simSymbol]); // reset all scores when the stock changes
  const[simData,setSimData]=useState<any>(null);
  const[simLoading,setSimLoading]=useState(false);
@@ -558,6 +578,55 @@ export function AiModelSignals(){
         ))}
         {indBt.length===0&&<p className="text-xs text-[#64748B] text-center py-4">No individual backtesting data.</p>}
        </div>
+      </div>
+
+      {/* Phase 3: freshness chip — is the backtest up to date? */}
+      <div className="flex items-center gap-2 flex-wrap text-[10px] text-[#64748B]">
+       <Badge variant="outline" className={`h-4 py-0 ${data?.backtestSource==="db-extended-universe"?"border-[#00E676]/40 text-[#00E676]":"border-[#FBBF24]/40 text-[#FBBF24]"}`} title="Backtest was recomputed over the full extended universe (original ML-trained + fallback-covered stocks)">{data?.backtestSource==="db-extended-universe"?"FRESH · full-universe":"FILE · subset"}</Badge>
+       <span>{data?.backtestSource==="db-extended-universe"?"Backtest freshly recomputed across all DB stocks (ModelBacktestCache populated).":"Backtest from the file subset — run the precompute for full-universe coverage."}</span>
+      </div>
+
+      {/* Phase 3: per-model Actual vs Predicted graph view */}
+      <div>
+       <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5"><TrendingUp className="h-4 w-4"/>Model Graph View — Actual vs Predicted</h3>
+       <p className="text-[10px] text-[#94A3B8] mb-2">At each monthly decision point, the model&apos;s predicted target price (entry × (1+predictedReturn)) vs the actual realized close {graphHorizon} bars later. Only actionable (BUY/SELL) points are plotted.</p>
+       <div className="flex gap-2 flex-wrap items-end mb-3">
+        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Model</label>
+         <select value={graphModel} onChange={e=>setGraphModel(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-2 text-[#F4F7FB] font-mono text-xs w-[190px]">
+          <optgroup label="Models">
+           {["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression","ARIMA","Holt-Winters","GARCH","Prophet","Kalman Filter","GRU","LSTM","CNN-LSTM","Transformer-LSTM","PatchTST","N-BEATS","TimesNet","Informer","XGBoost (CL)","LightGBM (CL)","Random Forest (CL)","LightGBM-A (CL-2)","Logistic (CL-2)","Linear Regression (PI)","Pattern Matcher KNN (PI)","LightGBM (CG)","XGBoost (CG)","Trend Multi-TF (X)","Gian-Ensemble (GIAN)","M-Ensemble (M)"].map(k=><option key={k} value={k}>{k}</option>)}
+          </optgroup>
+          <optgroup label="Ensembles">
+           {["majority_vote","probability_weighted","tier_weighted","cl_ensemble","cl2_ensemble","pi_ensemble","gm_model","cg_ensemble","x_ensemble","gian_ensemble","m_ensemble"].map(k=><option key={k} value={k}>{k.replace(/_/g," ")}</option>)}
+          </optgroup>
+         </select>
+        </div>
+        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Symbol</label>
+         <input value={graphSymbol} onChange={e=>setGraphSymbol(e.target.value)} placeholder={data?.symbol||"LUCK"} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-xs w-[120px]" />
+        </div>
+        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Horizon (bars)</label>
+         <input type="number" value={graphHorizon} onChange={e=>setGraphHorizon(e.target.value)} min="3" max="63" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-xs w-[90px]" />
+        </div>
+        <Button size="sm" onClick={loadGraph} disabled={graphLoading} className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold">
+         {graphLoading?<Loader2 className="h-4 w-4 mr-1 animate-spin"/>:<Play className="h-4 w-4 mr-1"/>}Load graph
+        </Button>
+       </div>
+       {graphMeta&&<div className="text-[10px] text-[#64748B] mb-2">{graphMeta.modelLabel} on {graphMeta.symbol} · {graphMeta.points} decision points · data through {graphMeta.dataSourceDate||"—"}</div>}
+       {graphData.length>0&&(
+        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3" style={{height:340}}>
+         <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={graphData} margin={{top:8,right:16,left:0,bottom:8}}>
+           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)"/>
+           <XAxis dataKey="date" tick={{fill:"#64748B",fontSize:9}} tickFormatter={(d:string)=>String(d).slice(5)} angle={-20} textAnchor="end" height={50}/>
+           <YAxis tick={{fill:"#64748B",fontSize:10}} domain={["auto","auto"]} width={48}/>
+           <Tooltip contentStyle={{background:"#0A0E1A",border:"1px solid rgba(0,230,118,0.3)",borderRadius:6,fontSize:11}} labelStyle={{color:"#94A3B8"}} formatter={(v:number,n:string)=>[n==="predictedPrice"?`Pred PKR ${(v as number).toFixed(2)}`:`Act PKR ${(v as number).toFixed(2)}`,n==="predictedPrice"?"Predicted":"Actual"]}/>
+           <Legend wrapperStyle={{fontSize:10}}/>
+           <Line type="monotone" dataKey="predictedPrice" name="Predicted" stroke="#FBBF24" strokeWidth={2} dot={{r:2}}/>
+           <Line type="monotone" dataKey="actualRealized" name="Actual" stroke="#00E676" strokeWidth={2} dot={{r:2}}/>
+          </LineChart>
+         </ResponsiveContainer>
+        </div>
+       )}
       </div>
      </div>
     </DialogContent>
