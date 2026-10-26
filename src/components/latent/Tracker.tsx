@@ -331,6 +331,37 @@ export function Tracker() {
     };
   }, []);
 
+  // ─── Last-1-month signal-performance stats (the 4 cards under the
+  // Investment Simulator). Reconstructed server-side from the Signal tab's
+  // CURRENT final-consensus signals replayed over the OHLCV window
+  // [today−30, today] across ALL stocks in the DB (not the hardcoded 8).
+  // Replaces the old ensStats.fc aggregate (which showed 0000 because it was
+  // the per-stock FINAL_CONSENSUS of ONE of the 8 COVERED_SYMBOLS, unrelated
+  // to last month's actual signals).
+  const [signalStatsData, setSignalStatsData] = useState<{
+    total: number; closed: number; wins: number; losses: number;
+    winRate: number; avgReturnPct: number; bestPct: number; worstPct: number;
+    stocksInDb: number; dataSourceDate: string | null;
+  } | null>(null);
+  const [signalStatsLoading, setSignalStatsLoading] = useState(false);
+  const refreshSignalStats = (force = false) => {
+    setSignalStatsLoading(true);
+    const qs = force ? "?refresh=1" : "?days=30";
+    fetch(`/api/backtest/signal-stats${qs}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j) setSignalStatsData(j); })
+      .catch(() => {})
+      .finally(() => setSignalStatsLoading(false));
+  };
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/backtest/signal-stats?days=30")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (!cancelled && j) setSignalStatsData(j); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
   // Issue 14: filter + sort the Signal History rows by outcome, min confidence,
   // and the chosen sort key (R:R / confidence / live P&L).
   const filteredHistory = useMemo(() => {
@@ -531,19 +562,27 @@ export function Tracker() {
     setSimResult(null);
   };
 
-  // Aggregate top-card stats — uses ensembleBacktesting.FINAL_CONSENSUS.
+  // Aggregate top-card stats — reconstructed last-1-month performance of the
+  // Signal tab's final-consensus signals replayed across ALL DB stocks (via
+  // /api/backtest/signal-stats). Falls back to zeros while loading so the 4
+  // cards never crash. (Old version read ensStats.fc — the per-stock
+  // FINAL_CONSENSUS of ONE of the 8 COVERED_SYMBOLS — which showed 0000 and
+  // was unrelated to last month's actual signals.)
   const signalStats = useMemo(() => {
-    const fc = ensStats?.fc;
-    if (!fc) return null;
-    const total = fc.totalTrades ?? 0;
-    const wins = fc.wins ?? Math.round((total * (fc.winRate || 0)) / 100);
-    const losses = total - wins;
-    const winRate = fc.winRate ?? 0;
-    const avgReturn = fc.avgReturnPct ?? 0;
-    const best = fc.maxReturnPct ?? 0;
-    const worst = fc.minReturnPct ?? 0;
-    return { total, wins, losses, winRate, avgReturn, best, worst };
-  }, [ensStats]);
+    const d = signalStatsData;
+    if (!d) return { total: 0, closed: 0, wins: 0, losses: 0, winRate: 0, avgReturn: 0, best: 0, worst: 0, stocksInDb: 0 };
+    return {
+      total: d.total,
+      closed: d.closed,
+      wins: d.wins,
+      losses: d.losses,
+      winRate: d.winRate,
+      avgReturn: d.avgReturnPct,
+      best: d.bestPct,
+      worst: d.worstPct,
+      stocksInDb: d.stocksInDb,
+    };
+  }, [signalStatsData]);
 
   // Portfolio tracker — only positions with buyPrice != null && shares > 0
   // are tracked. Closed positions remain in the list and contribute to P&L.
@@ -787,7 +826,7 @@ export function Tracker() {
           <div>
             <h1 className="text-2xl font-bold text-[#F4F7FB]">Tracker</h1>
             <p className="text-sm text-[#94A3B8] mt-1">
-              Real backtest stats across {COVERED_SYMBOLS.length} PSX stocks — signal tracker (model performance) + portfolio tracker (your P&amp;L).
+              Real backtest stats across all PSX stocks in our database — signal tracker (model performance) + portfolio tracker (your P&amp;L).
             </p>
           </div>
           <Button
@@ -1176,7 +1215,7 @@ export function Tracker() {
                       LIVE
                     </Badge>
                     <span>
-                      Last {timeframeLabel} backtest · {aiSignals.length} stocks · final consensus ensemble · {stockSignals.length} actionable signals
+                      Last {timeframeLabel} backtest · {signalStats.stocksInDb || "all"} stocks in our database · final consensus ensemble · {signalStats.total} signals ({signalStats.closed} closed){signalStatsLoading ? " · loading…" : ""}
                     </span>
                   </div>
 
@@ -1200,7 +1239,7 @@ export function Tracker() {
                         <Trophy className="h-3 w-3 text-[#00E676]" />
                       </div>
                       <div className="text-3xl font-bold text-[#00E676] font-mono">{signalStats.winRate}%</div>
-                      <div className="text-[10px] text-[#94A3B8] mt-1">across {signalStats.total} closed trades</div>
+                      <div className="text-[10px] text-[#94A3B8] mt-1">across {signalStats.closed} closed trades</div>
                     </CardContent>
                   </Card>
                   <Card className="bg-[#131829] border-white/[0.08]">
@@ -1627,7 +1666,7 @@ export function Tracker() {
         <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6">
           <span className="text-[#94A3B8] font-semibold">Tracker note:</span> Signal tracker
           stats are sourced live from <code className="text-[#00E676]">/api/ai-model-signals/[symbol]?refresh=1&amp;timeframe={timeframe}</code> —
-          the ensemble final consensus backtest across {COVERED_SYMBOLS.length} covered PSX stocks. Notifications fire
+          the ensemble final consensus backtest across all stocks in our database. Notifications fire
           when a tracked signal hits TP or SL. Portfolio tracker shows open positions and closed trades from the
           Portfolio tab close flow; the pie chart visualises sector concentration.
         </div>
