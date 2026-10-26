@@ -499,8 +499,14 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     const netPnl = grossPnl - cost;
     const exitAmount = entryAmount + netPnl;
     // Win/loss by HIT (a TP hit = WIN; an SL hit = LOSS — the user spec:
-    // "tp3 hit and it still count my loss").
-    const isWin = pickedRes.hit === "TP3" || pickedRes.hit === "TP2" || pickedRes.hit === "TP1";
+    // "tp3 hit and it still count my loss"). A TIME-up (no TP/SL hit by the
+    // window end) counts as a WIN if it ended profitable, else a LOSS — so
+    // wins+losses always equals tradeCount.
+    const isWin =
+      pickedRes.hit === "TP3" ||
+      pickedRes.hit === "TP2" ||
+      pickedRes.hit === "TP1" ||
+      (pickedRes.hit === "TIME" && netPnl > 0);
     if (isWin) wins++;
     else losses++;
 
