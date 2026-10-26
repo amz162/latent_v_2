@@ -906,3 +906,21 @@ Work Log:
 Stage Summary:
 - Investment simulation now shows entry/closing DATE + TIME — entry at 9:30 AM (PSX open, "when trade was taken"), closing at 3:30 PM (PSX close, "when trade closed"). The earlier fake 5:00am artifact is gone (replaced by real session times), and the daily-data limitation is disclosed in the helper text.
 - Changed: src/components/latent/Tracker.tsx (headers + entry/exit cells + description note).
+
+---
+Task ID: 42
+Agent: main
+Task: (1) Remove the entry/closing TIMES just added (revert to date-only). (2) Investigate scripts/generate_mock_5y_results.py — what's inside + where used. (3) What backtesting file is used per model.
+
+Work Log:
+- (1) Time removal: Tracker.tsx reverted — headers "Entry date/time"/"Closing date/time" → "Entry date"/"Closing date"; entry/closing cells back to toLocaleDateString (no "9:30 AM"/"3:30 PM"); removed the session-time note from the helper paragraph. Compiled clean.
+- (2) generate_mock_5y_results.py: a standalone Python generator that produces data/mock_company_results_5y.json — mock QUARTERLY FINANCIAL RESULTS (revenue, profit, EPS, YoY growths, margins, DPS, payout) for 8 companies (ENGRO/HUBC/LUCK/PSO 8yr FY19-FY26, MEBL/OGDC/PPL 7yr FY20-FY26, SYS 6yr FY21-FY26). WHERE USED: NOWHERE. Grep for mock_company_results_5y across the whole repo found ONLY the generator itself. The output JSON does NOT exist on disk (script never run / orphaned). The app's financial-results data is REAL (psxdata API) — src/lib/latent/mock-company-results.ts is misleadingly NAMED: it's actually the pattern-detection engine with `export const MOCK_COMPANY_RESULTS:QuarterlyResult[]=[]` (EMPTY, "no mock data, real data fetched on-demand"), used by result-patterns API + PatternFinder/PricePatternFinder. So the mock 5y generator is dead code.
+- (3) Per-model backtest files:
+  • RUNTIME engine (what the app's Backtesting Report reads): src/lib/latent/model-backtest.ts → runAllBacktests() — backtests ALL 65 models + 13 ensembles over the full DB universe (908 stocks). Called by scripts/train_missing_stocks.ts to populate ModelBacktestCache (the cache /api/ai-model-signals/[symbol] serves to the AI Models tab). Also referenced by src/app/api/backtest/model-graph/route.ts (imports ALL_MODEL_KEYS/ALL_ENSEMBLE_KEYS).
+  • OFFLINE per-tier Python trainers (each trains its tier's models AND embeds per-model backtest stats into data/ml_predictions_multi.json): train_all_with_backtesting.py (TIER_1-4: PatchTST/N-BEATS/TimesNet/Informer/XGBoost/LightGBM/CatBoost/RF/LSTM/CNN-LSTM/Transformer-LSTM), train_cl_tier.py (CL: ARIMA/Holt-Winters/GARCH/Ridge/Kalman/Prophet/GRU), train_cl2_tier.py (CL-2: 7 classifiers + logistic meta), train_cg_model.py (CG: LightGBM+XGBoost triple-barrier), train_gm_model.py (GM: 4-pillar engines), train_gian_model.py (Gian: sqrt S/R), train_gian_extender.py (Gian-Extender: GANN sq-of-9), train_cl_ensembles.py (CL-Ensemble + CL-Extender backtest).
+- No GitHub push.
+
+Stage Summary:
+- Entry/closing times REMOVED (back to date-only). 
+- generate_mock_5y_results.py = dead/orphaned generator (output never used; the app fetches REAL financial results from psxdata). The "mock-company-results.ts" lib is misnamed — it's the pattern engine with an EMPTY mock array.
+- Per-model backtest: the running app uses model-backtest.ts (runAllBacktests → ModelBacktestCache) for the Backtesting Report; the per-tier Python scripts (train_all_with_backtesting.py, train_cl_tier.py, train_cl2_tier.py, train_cg_model.py, train_gm_model.py, train_gian_model.py, train_gian_extender.py, train_cl_ensembles.py) each train + backtest their tier's models offline, embedding stats into ml_predictions_multi.json.
