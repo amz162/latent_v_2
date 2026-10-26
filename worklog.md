@@ -924,3 +924,21 @@ Stage Summary:
 - Entry/closing times REMOVED (back to date-only). 
 - generate_mock_5y_results.py = dead/orphaned generator (output never used; the app fetches REAL financial results from psxdata). The "mock-company-results.ts" lib is misnamed — it's the pattern engine with an EMPTY mock array.
 - Per-model backtest: the running app uses model-backtest.ts (runAllBacktests → ModelBacktestCache) for the Backtesting Report; the per-tier Python scripts (train_all_with_backtesting.py, train_cl_tier.py, train_cl2_tier.py, train_cg_model.py, train_gm_model.py, train_gian_model.py, train_gian_extender.py, train_cl_ensembles.py) each train + backtest their tier's models offline, embedding stats into ml_predictions_multi.json.
+
+---
+Task ID: 43
+Agent: main
+Task: Clean the project — delete files not in use/not necessary. Don't touch the server; check it at the end.
+
+Work Log:
+- Read-only investigation first (touched nothing): scanned .zscripts/, scripts/, src/components/latent/, data/, root. For each candidate, verified ZERO real references via exhaustive `grep -rn "\bName\b" src/` (catches imports, JSX, dynamic imports, re-exports). Distinguished real imports from comment-mentions + same-named local functions.
+- KEPT (server + infra — not touched): dev-watch.sh, restore-from-github.sh, /home/z/my-project/dev.log (active), .zscripts/autosave.log + restore.log (active), next dev process, .next/ cache, the build/deploy script cluster (build.sh/dev.sh/start.sh/mini-services-*.sh/python-runtime-*.sh — internally cross-referenced infra), all training scripts (train_*.py — offline trainers, produce ml_predictions_multi.json), ml_predictions.json + ml_predictions_multi.json (both used by runtime), data/* caches + financials.
+- DELETED (13 confirmed-dead files — 0 imports + 0 real references):
+  1. scripts/generate_mock_5y_results.py — dead mock generator (output never used, JSON doesn't exist on disk; confirmed in Task 42).
+  2-11. 10 orphaned components in src/components/latent/: AppNav.tsx (AppFrame comment confirms "removed"), CgtCalculator.tsx + FairValueCalculator.tsx (Calculators.tsx has LOCAL same-named fns — these files superseded), FairValuePanel.tsx (0 mentions), Landing.tsx (app uses HomeV2; only an i18n comment word), PatternRecognitionPanel.tsx (0 mentions), PlanView.tsx (0 mentions), RealChart.tsx (0 mentions), SignalsList.tsx (0 mentions; app uses SignalSection), TrackRecord.tsx (the COMPONENT is dead — the /api/track-record route + lib/track-record.ts are separate + still used).
+  12-13. .zscripts/dev.log + .zscripts/precompute.log — stale gitignored logs (dated 13:30, before dev-watch took over at 14:06; dev-watch writes to /home/z/my-project/dev.log instead). precompute.log was 749KB.
+- Verified server health AFTER cleanup: dev-watch PID 3376 + next-server PID 23050 unchanged (no crash from the recompile). dev.log shows clean `GET / 200` responses (no compile errors — confirmed the deleted components had 0 imports so nothing broke). curl / → HTTP 200 in 49ms. agent-browser through Caddy :81 → title "Latent.pk — AI-Driven Investment Intelligence for PSX", 2 headings + 14 buttons rendered, ZERO JS errors.
+- The 13 deletions are staged via `git rm` (the 10 components + the mock script) — autosave will commit locally. The 2 logs were gitignored (plain rm). NOT pushed to GitHub (user only said "clean the project" this round, not "push" — per the standing rule, pushing requires explicit instruction; the deletions are local for now, recoverable from git history if needed).
+
+Stage Summary:
+- Cleanup DONE + server verified healthy: deleted 13 confirmed-dead files (1 dead mock generator + 10 orphaned 0-import components + 2 stale 749KB logs). Server untouched (dev-watch + next-server same PIDs, / returns 200, app renders with 0 JS errors). Deletions are local (not pushed — say the word to push the cleanup to GitHub).
