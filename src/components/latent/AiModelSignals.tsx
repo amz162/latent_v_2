@@ -598,47 +598,72 @@ export function AiModelSignals(){
        <span>{data?.backtestSource==="db-extended-universe"?"Backtest freshly recomputed across all DB stocks (ModelBacktestCache populated).":"Backtest from the file subset — run the precompute for full-universe coverage."}</span>
       </div>
 
-      {/* Phase 3: per-model Actual vs Predicted graph view */}
+      {/* Phase 3: per-model Actual vs Predicted graph view (enhanced) */}
       <div>
        <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5"><TrendingUp className="h-4 w-4"/>Model Graph View — Actual vs Predicted</h3>
-       <p className="text-[10px] text-[#94A3B8] mb-2">At each monthly decision point, the model&apos;s predicted target price (entry × (1+predictedReturn)) vs the actual realized close {graphHorizon} bars later. Only actionable (BUY/SELL) points are plotted.</p>
+       <p className="text-[10px] text-[#94A3B8] mb-2">At each decision point (every <span className="text-[#F4F7FB]">{graphStep}</span> bars), each selected model&apos;s predicted target price (entry × (1+predictedReturn)) vs the actual realized close {graphHorizon} bars later. Only actionable (BUY/SELL) points are plotted.</p>
        <div className="flex gap-2 flex-wrap items-end mb-3">
-        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Model</label>
-         <select value={graphModel} onChange={e=>setGraphModel(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-2 text-[#F4F7FB] font-mono text-xs w-[190px]">
-          <optgroup label="Models">
-           {["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression","ARIMA","Holt-Winters","GARCH","Prophet","Kalman Filter","GRU","LSTM","CNN-LSTM","Transformer-LSTM","PatchTST","N-BEATS","TimesNet","Informer","XGBoost (CL)","LightGBM (CL)","Random Forest (CL)","LightGBM-A (CL-2)","Logistic (CL-2)","Linear Regression (PI)","Pattern Matcher KNN (PI)","LightGBM (CG)","XGBoost (CG)","Trend Multi-TF (X)","Gian-Ensemble (GIAN)","M-Ensemble (M)"].map(k=><option key={k} value={k}>{k}</option>)}
-          </optgroup>
-          <optgroup label="Ensembles">
-           {["majority_vote","probability_weighted","tier_weighted","cl_ensemble","cl2_ensemble","pi_ensemble","gm_model","cg_ensemble","x_ensemble","gian_ensemble","m_ensemble"].map(k=><option key={k} value={k}>{k.replace(/_/g," ")}</option>)}
-          </optgroup>
-         </select>
+        <div className="min-w-[200px] flex-1">
+         <label className="text-[10px] uppercase text-[#64748B] block mb-1">Symbol {graphUniverse==="kse100"&&kse100Syms.length>0?`· KSE-100 only (${kse100Syms.length})`:"· whole market"}</label>
+         <div className="bg-[#0A0E1A] border border-white/[0.12] rounded"><StockSearch value={graphSymbol} onChange={(s)=>setGraphSymbol(s)} placeholder={data?.symbol||"LUCK"} showSuggestions={true} allowedSymbols={graphUniverse==="kse100"&&kse100Syms.length>0?kse100Syms:undefined} /></div>
         </div>
-        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Symbol</label>
-         <input value={graphSymbol} onChange={e=>setGraphSymbol(e.target.value)} placeholder={data?.symbol||"LUCK"} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-xs w-[120px]" />
+        <div>
+         <label className="text-[10px] uppercase text-[#64748B] block mb-1">Universe</label>
+         <div className="flex bg-[#0A0E1A] border border-white/[0.12] rounded p-0.5">
+          <button onClick={()=>setGraphUniverse("all")} className={`px-2 py-1.5 rounded text-[10px] font-mono font-semibold ${graphUniverse==="all"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>All stocks</button>
+          <button onClick={()=>setGraphUniverse("kse100")} className={`px-2 py-1.5 rounded text-[10px] font-mono font-semibold ${graphUniverse==="kse100"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>KSE-100 only</button>
+         </div>
+        </div>
+        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Decision pts (bars)</label>
+         <input type="number" value={graphStep} onChange={e=>setGraphStep(e.target.value)} min="2" max="252" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-2 text-[#F4F7FB] font-mono text-xs w-[110px]" />
         </div>
         <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Horizon (bars)</label>
-         <input type="number" value={graphHorizon} onChange={e=>setGraphHorizon(e.target.value)} min="3" max="63" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-xs w-[90px]" />
+         <input type="number" value={graphHorizon} onChange={e=>setGraphHorizon(e.target.value)} min="3" max="63" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-2 text-[#F4F7FB] font-mono text-xs w-[90px]" />
         </div>
         <Button size="sm" onClick={loadGraph} disabled={graphLoading} className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold">
          {graphLoading?<Loader2 className="h-4 w-4 mr-1 animate-spin"/>:<Play className="h-4 w-4 mr-1"/>}Load graph
         </Button>
        </div>
-       {graphMeta&&<div className="text-[10px] text-[#64748B] mb-2">{graphMeta.modelLabel} on {graphMeta.symbol} · {graphMeta.points} decision points · data through {graphMeta.dataSourceDate||"—"}</div>}
-       {graphData.length>0&&(
-        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3" style={{height:340}}>
+       {/* Multi-model checkboxes (All / None) */}
+       <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2 mb-3">
+        <div className="flex items-center justify-between mb-1.5">
+         <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Models ({graphModels.length} selected)</span>
+         <div className="flex gap-1">
+          <button onClick={()=>setGraphModels([...GRAPH_MODEL_OPTIONS])} className="px-2 py-0.5 rounded text-[9px] font-mono bg-[#00E676]/10 text-[#00E676] hover:bg-[#00E676]/20">All</button>
+          <button onClick={()=>setGraphModels([])} className="px-2 py-0.5 rounded text-[9px] font-mono bg-white/[0.04] text-[#64748B] hover:bg-white/[0.08]">None</button>
+         </div>
+        </div>
+        <div className="max-h-32 overflow-y-auto grid grid-cols-2 md:grid-cols-3 gap-1 pr-1">
+         {GRAPH_MODEL_OPTIONS.map((k,mi)=>{
+          const on=graphModels.includes(k);
+          const color=GRAPH_COLORS[mi%8];
+          return <label key={k} className={`flex items-center gap-1.5 text-[10px] font-mono px-1.5 py-1 rounded cursor-pointer hover:bg-white/[0.04] ${on?"text-[#F4F7FB]":"text-[#64748B]"}`}>
+           <input type="checkbox" checked={on} onChange={()=>toggleModel(k)} className="h-2.5 w-2.5 accent-[#00E676]" />
+           <span className="inline-block h-2 w-2 rounded-full shrink-0" style={{background:on?color:"rgba(255,255,255,0.15)"}} />
+           <span className="truncate">{k.replace(/_/g," ")}</span>
+          </label>;
+         })}
+        </div>
+       </div>
+       {graphMeta&&<div className="text-[10px] text-[#64748B] mb-2">{graphModels.join(", ")} on {graphSymbol||data?.symbol||"LUCK"} · {graphMeta.points} decision points · data through {graphMeta.dataSourceDate||"—"}</div>}
+       {graphChart&&graphChart.dates.length>0&&(()=>{
+        const chartData=graphChart.dates.map((d,i)=>{const row:any={date:d,Actual:graphChart.actual[i]};for(const m of graphChart.models)row[m.label]=m.predicted[i];return row;});
+        return (
+        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3" style={{height:360}}>
          <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={graphData} margin={{top:8,right:16,left:0,bottom:8}}>
+          <LineChart data={chartData} margin={{top:8,right:16,left:0,bottom:8}}>
            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)"/>
            <XAxis dataKey="date" tick={{fill:"#64748B",fontSize:9}} tickFormatter={(d:string)=>String(d).slice(5)} angle={-20} textAnchor="end" height={50}/>
            <YAxis tick={{fill:"#64748B",fontSize:10}} domain={["auto","auto"]} width={48}/>
-           <Tooltip contentStyle={{background:"#0A0E1A",border:"1px solid rgba(0,230,118,0.3)",borderRadius:6,fontSize:11}} labelStyle={{color:"#94A3B8"}} formatter={(v:number,n:string)=>[n==="predictedPrice"?`Pred PKR ${(v as number).toFixed(2)}`:`Act PKR ${(v as number).toFixed(2)}`,n==="predictedPrice"?"Predicted":"Actual"]}/>
+           <Tooltip contentStyle={{background:"#0A0E1A",border:"1px solid rgba(0,230,118,0.3)",borderRadius:6,fontSize:11}} labelStyle={{color:"#94A3B8"}} formatter={(v:number,n:string)=>[`${n}: PKR ${(v as number).toFixed(2)}`,n]}/>
            <Legend wrapperStyle={{fontSize:10}}/>
-           <Line type="monotone" dataKey="predictedPrice" name="Predicted" stroke="#FBBF24" strokeWidth={2} dot={{r:2}}/>
-           <Line type="monotone" dataKey="actualRealized" name="Actual" stroke="#00E676" strokeWidth={2} dot={{r:2}}/>
+           <Line type="monotone" dataKey="Actual" name="Actual" stroke="#00E676" strokeWidth={2.5} dot={{r:2}}/>
+           {graphChart.models.map((m:any,mi:number)=><Line key={m.key} type="monotone" dataKey={m.label} name={m.label} stroke={GRAPH_COLORS[mi%8]} strokeWidth={1.5} dot={false} connectNulls />)}
           </LineChart>
          </ResponsiveContainer>
         </div>
-       )}
+        );
+       })()}
       </div>
      </div>
     </DialogContent>
