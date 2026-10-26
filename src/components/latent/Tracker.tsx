@@ -873,8 +873,12 @@ export function Tracker() {
                       </Badge>
                     </div>
                     <p className="text-xs text-[#94A3B8] mb-3">
-                      Enter a starting amount — we&apos;ll roll it through each actionable signal
-                      ({stockSignals.length} trades) using the predicted return %, compounding trade-over-trade.
+                      Enter a starting amount — we&apos;ll roll it through your chosen number of
+                      trades ({simNumTrades || "—"} requested) across all actionable signals in our
+                      database, compounding realized gains trade-over-trade. A monthly SIP deposits
+                      at the 1st of each month after the start month (including the current partial
+                      month); trades are spread evenly across the whole period so they never cluster
+                      in a single day/week, and the count is always fulfilled.
                     </p>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-2 items-end">
