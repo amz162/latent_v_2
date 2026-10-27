@@ -141896,3 +141896,20 @@ prisma:query COMMIT
  GET /api/backtest/walk-forward 200 in 15ms (compile: 4ms, render: 12ms)
  GET / 200 in 183ms (compile: 3ms, render: 180ms)
  GET /api/track-record 200 in 8ms (compile: 3ms, render: 5ms)
+ GET /api/signals/all 200 in 6.0s (compile: 41ms, render: 5.9s)
+ GET /api/psx/companies 200 in 34ms (compile: 26ms, render: 8ms)
+ GET /api/psx/live?symbol=ENGRO 200 in 687ms (compile: 400ms, render: 287ms)
+[cache] Using in-memory cache (set REDIS_URL env var for production Redis)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/ENGRO 200 in 2.8s (compile: 2.4s, render: 402ms)
+ GET /api/psx/indices/KSE100 200 in 4.0s (compile: 1772ms, render: 2.2s)
+ GET /api/backtest/walk-forward?_=1793135432683 200 in 42ms (compile: 3ms, render: 39ms)
+ GET /api/psx/companies 200 in 6ms (compile: 1925µs, render: 4ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+ GET /api/cron/check-tp-sl 200 in 70ms (compile: 4ms, render: 66ms)
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
