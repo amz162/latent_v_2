@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "evaluation_status": "completed",
   "evaluation_method": "walk-forward-expanding-window",
-  "generated_at": "2026-10-27T12:19:41.643882",
+  "generated_at": "2026-10-27T21:04:19.271033",
   "data_cutoff": "2026-08-27T19:00:00",
   "training_window": {
     "start": "2026-01-12T19:00:00",
@@ -23,6 +23,965 @@
     "SYS"
   ],
   "universe_size": 8,
+  "universe": {
+    "mode": "canonical8",
+    "criteria": "hardcoded canonical 8 PSX stocks (CSV-backed, most-liquid historically)",
+    "candidate_count": 8,
+    "included_count": 8,
+    "excluded_count": 0,
+    "exclusions": [],
+    "eligible_count": 8,
+    "target_count": 8,
+    "min_bars_required": null,
+    "data_source": "data/ohlcv/*.csv"
+  },
+  "per_stock_results": {
+    "HUBC": {
+      "samples_count": 16,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.027035,
+            "rmse": 0.031789,
+            "r2": -0.065151,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.04684,
+            "rmse": 0.053346,
+            "r2": -0.206515,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.08313,
+            "rmse": 0.091706,
+            "r2": -0.615838,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "completed",
+            "mae": 0.027547,
+            "rmse": 0.032121,
+            "r2": -0.087515,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.046032,
+            "rmse": 0.053944,
+            "r2": -0.233714,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.086288,
+            "rmse": 0.095826,
+            "r2": -0.764278,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.027712,
+            "rmse": 0.031989,
+            "r2": -0.078569,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.046455,
+            "rmse": 0.053257,
+            "r2": -0.202514,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.084926,
+            "rmse": 0.093129,
+            "r2": -0.666375,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "completed",
+            "mae": 0.027236,
+            "rmse": 0.031509,
+            "r2": -0.046451,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.046787,
+            "rmse": 0.053695,
+            "r2": -0.22237,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.088803,
+            "rmse": 0.097656,
+            "r2": -0.832316,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "completed",
+            "mae": 0.029509,
+            "rmse": 0.034014,
+            "r2": -0.219427,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.049964,
+            "rmse": 0.056722,
+            "r2": -0.364074,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.08801,
+            "rmse": 0.097284,
+            "r2": -0.818381,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          }
+        }
+      }
+    },
+    "LUCK": {
+      "samples_count": 16,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.040437,
+            "rmse": 0.046996,
+            "r2": 0.003047,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.069567,
+            "rmse": 0.088303,
+            "r2": -0.460759,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.100913,
+            "rmse": 0.13009,
+            "r2": -0.225173,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "completed",
+            "mae": 0.044189,
+            "rmse": 0.049951,
+            "r2": -0.12626,
+            "directional_accuracy": 0.25,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.067894,
+            "rmse": 0.088228,
+            "r2": -0.458277,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.106228,
+            "rmse": 0.133647,
+            "r2": -0.293087,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.041996,
+            "rmse": 0.047422,
+            "r2": -0.015091,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.066421,
+            "rmse": 0.084907,
+            "r2": -0.350551,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.103907,
+            "rmse": 0.13116,
+            "r2": -0.245398,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "completed",
+            "mae": 0.043915,
+            "rmse": 0.048924,
+            "r2": -0.080442,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.067858,
+            "rmse": 0.087354,
+            "r2": -0.429523,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.10672,
+            "rmse": 0.134576,
+            "r2": -0.311116,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "completed",
+            "mae": 0.042956,
+            "rmse": 0.048559,
+            "r2": -0.064381,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.063335,
+            "rmse": 0.078301,
+            "r2": -0.148585,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.117317,
+            "rmse": 0.135622,
+            "r2": -0.331581,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        }
+      }
+    },
+    "MEBL": {
+      "samples_count": 16,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.02799,
+            "rmse": 0.034658,
+            "r2": -0.082411,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.038721,
+            "rmse": 0.043768,
+            "r2": -0.07758,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.058317,
+            "rmse": 0.069827,
+            "r2": -0.121786,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "completed",
+            "mae": 0.028632,
+            "rmse": 0.034306,
+            "r2": -0.06052,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.035957,
+            "rmse": 0.041725,
+            "r2": 0.02067,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.058313,
+            "rmse": 0.067556,
+            "r2": -0.049997,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.028692,
+            "rmse": 0.03365,
+            "r2": -0.020348,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.036521,
+            "rmse": 0.042942,
+            "r2": -0.037279,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.057397,
+            "rmse": 0.071039,
+            "r2": -0.161065,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "completed",
+            "mae": 0.027697,
+            "rmse": 0.032897,
+            "r2": 0.02479,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.035577,
+            "rmse": 0.042062,
+            "r2": 0.004773,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.060296,
+            "rmse": 0.069145,
+            "r2": -0.099969,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "completed",
+            "mae": 0.029908,
+            "rmse": 0.034717,
+            "r2": -0.086096,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.037114,
+            "rmse": 0.043818,
+            "r2": -0.080047,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.06546,
+            "rmse": 0.075565,
+            "r2": -0.313709,
+            "directional_accuracy": 0.6875,
+            "n_observations": 16
+          }
+        }
+      }
+    },
+    "OGDC": {
+      "samples_count": 16,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.033754,
+            "rmse": 0.042247,
+            "r2": 0.015405,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.047941,
+            "rmse": 0.059758,
+            "r2": -0.056572,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.076761,
+            "rmse": 0.093809,
+            "r2": -0.390924,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "completed",
+            "mae": 0.033802,
+            "rmse": 0.042464,
+            "r2": 0.005256,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.048692,
+            "rmse": 0.060371,
+            "r2": -0.078387,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.080122,
+            "rmse": 0.09802,
+            "r2": -0.518603,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.033444,
+            "rmse": 0.0422,
+            "r2": 0.017557,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.047989,
+            "rmse": 0.060079,
+            "r2": -0.067963,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.08162,
+            "rmse": 0.1005,
+            "r2": -0.596426,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "completed",
+            "mae": 0.034233,
+            "rmse": 0.04308,
+            "r2": -0.023839,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.047487,
+            "rmse": 0.059225,
+            "r2": -0.037834,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.077414,
+            "rmse": 0.095624,
+            "r2": -0.445281,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "completed",
+            "mae": 0.034373,
+            "rmse": 0.04187,
+            "r2": 0.032881,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.048624,
+            "rmse": 0.059649,
+            "r2": -0.052725,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.084137,
+            "rmse": 0.098392,
+            "r2": -0.530152,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        }
+      }
+    },
+    "PPL": {
+      "samples_count": 16,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.046643,
+            "rmse": 0.055713,
+            "r2": -0.088373,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.06284,
+            "rmse": 0.079017,
+            "r2": -0.092298,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.092656,
+            "rmse": 0.116758,
+            "r2": -0.647157,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "completed",
+            "mae": 0.046471,
+            "rmse": 0.055025,
+            "r2": -0.061642,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.060122,
+            "rmse": 0.074935,
+            "r2": 0.017644,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.087558,
+            "rmse": 0.110496,
+            "r2": -0.475213,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.04989,
+            "rmse": 0.058981,
+            "r2": -0.219806,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.064681,
+            "rmse": 0.081356,
+            "r2": -0.157921,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.091164,
+            "rmse": 0.114382,
+            "r2": -0.5808,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "completed",
+            "mae": 0.04723,
+            "rmse": 0.057015,
+            "r2": -0.139834,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.062461,
+            "rmse": 0.076955,
+            "r2": -0.036037,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.091667,
+            "rmse": 0.113784,
+            "r2": -0.564301,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "completed",
+            "mae": 0.04507,
+            "rmse": 0.053732,
+            "r2": -0.012345,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.058818,
+            "rmse": 0.075379,
+            "r2": 0.005976,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.080732,
+            "rmse": 0.104558,
+            "r2": -0.320909,
+            "directional_accuracy": 0.625,
+            "n_observations": 16
+          }
+        }
+      }
+    },
+    "PSO": {
+      "samples_count": 16,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.050659,
+            "rmse": 0.061486,
+            "r2": -0.318955,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.073462,
+            "rmse": 0.094058,
+            "r2": -1.243098,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.105463,
+            "rmse": 0.13744,
+            "r2": -1.256426,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "completed",
+            "mae": 0.041647,
+            "rmse": 0.05446,
+            "r2": -0.034749,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.067118,
+            "rmse": 0.083997,
+            "r2": -0.788896,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.104946,
+            "rmse": 0.135046,
+            "r2": -1.178504,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.044377,
+            "rmse": 0.055727,
+            "r2": -0.083437,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.069437,
+            "rmse": 0.089755,
+            "r2": -1.042577,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.10331,
+            "rmse": 0.134352,
+            "r2": -1.156173,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "completed",
+            "mae": 0.045407,
+            "rmse": 0.056539,
+            "r2": -0.115254,
+            "directional_accuracy": 0.5625,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.069875,
+            "rmse": 0.090086,
+            "r2": -1.057662,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.108804,
+            "rmse": 0.138768,
+            "r2": -1.30024,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "completed",
+            "mae": 0.043576,
+            "rmse": 0.055617,
+            "r2": -0.079146,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.061697,
+            "rmse": 0.078752,
+            "r2": -0.572487,
+            "directional_accuracy": 0.5,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.119346,
+            "rmse": 0.141271,
+            "r2": -1.383975,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          }
+        }
+      }
+    },
+    "SYS": {
+      "samples_count": 16,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.039837,
+            "rmse": 0.051636,
+            "r2": -0.835706,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.071942,
+            "rmse": 0.09051,
+            "r2": -1.261495,
+            "directional_accuracy": 0.25,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.126587,
+            "rmse": 0.139745,
+            "r2": -0.82898,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "completed",
+            "mae": 0.03887,
+            "rmse": 0.048492,
+            "r2": -0.619023,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.068421,
+            "rmse": 0.081298,
+            "r2": -0.824552,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.125329,
+            "rmse": 0.139713,
+            "r2": -0.828148,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "completed",
+            "mae": 0.037308,
+            "rmse": 0.047643,
+            "r2": -0.562824,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.07087,
+            "rmse": 0.085868,
+            "r2": -1.035437,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.126423,
+            "rmse": 0.141119,
+            "r2": -0.865133,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "completed",
+            "mae": 0.038354,
+            "rmse": 0.050648,
+            "r2": -0.76614,
+            "directional_accuracy": 0.4375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.07382,
+            "rmse": 0.089392,
+            "r2": -1.205963,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.126859,
+            "rmse": 0.141131,
+            "r2": -0.865451,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "completed",
+            "mae": 0.03757,
+            "rmse": 0.046537,
+            "r2": -0.491104,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          },
+          "10": {
+            "status": "completed",
+            "mae": 0.066895,
+            "rmse": 0.076946,
+            "r2": -0.634458,
+            "directional_accuracy": 0.3125,
+            "n_observations": 16
+          },
+          "21": {
+            "status": "completed",
+            "mae": 0.116882,
+            "rmse": 0.135476,
+            "r2": -0.718943,
+            "directional_accuracy": 0.375,
+            "n_observations": 16
+          }
+        }
+      }
+    }
+  },
   "forecast_horizons": [
     5,
     10,
@@ -835,7 +1794,7 @@
     "verification": "For each sample, latest_target_maturity_date <= sample_date (no target-maturity leak)"
   },
   "limitations": [
-    "Universe size = 8 stock(s) of the canonical 8 PSX stocks: ENGRO, HUBC, LUCK, MEBL, OGDC, PPL, PSO, SYS. NOT the full ~908 DB-backed universe and NOT a fully production-validated benchmark.",
+    "Universe mode = canonical8: 8 stock(s) evaluated (ENGRO, HUBC, LUCK, MEBL, OGDC, PPL, PSO, SYS). hardcoded canonical 8 PSX stocks (CSV-backed, most-liquid historically). Candidate universe = 8 stocks; excluded 0 for insufficient history (< None bars). NOT a fully production-validated benchmark.",
     "5 classical models evaluated (XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression). The other ~60 registered models (LSTM, CNN-LSTM, Transformer-LSTM, PatchTST, N-BEATS, TimesNet, Informer, foundation analogs, rule-based strategies) are NOT evaluated here \u2014 see scripts/walk_forward_backtesting.py MODEL_NAMES.",
     "Per-sample retraining on data[date < sample.date] (expanding window). No data leakage.",
     "Task 51 Phase 1: filter_by_target_maturity ensures training rows' target endpoint (T+h) <= sample's prediction date P. Per-horizon, per-stock, pooled across stocks. Preserves valid shorter-horizon training rows whose longest-horizon target is immature.",
