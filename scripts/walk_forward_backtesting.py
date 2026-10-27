@@ -43,8 +43,89 @@ REPORT_DIR=Path("data/backtest_reports")
 REPORT_FILE=REPORT_DIR/"walk_forward_latest.json"
 REPORT_CANDIDATE_FILE=REPORT_DIR/"walk_forward_candidate.json"
 REPORT_PREVIOUS_FILE=REPORT_DIR/"walk_forward_previous.json"
-REPORT_SCHEMA_VERSION="1.1"  # bumped from 1.0 → 1.1 for Task 51 corrections
+REPORT_SCHEMA_VERSION="1.2"  # bumped 1.0→1.1 (Task 51), 1.1→1.2 (Task 52 universe selector + per-stock)
 STOCKS=["ENGRO","HUBC","LUCK","SYS","MEBL","PSO","OGDC","PPL"]
+# Task 52 — deterministic universe selector. The canonical8 are CSV-backed
+# (data/ohlcv/*.csv). pilot25/pilot50/full_db modes read the OhlcvBar table
+# in db/custom.db (908 stocks, 1M+ bars) — the CSV directory only has the 8.
+import sqlite3 as _sqlite3
+DB_PATH=Path("db/custom.db")
+MIN_BARS_FOR_UNIVERSE=250  # ~1 trading year — eligibility cutoff for DB-backed modes
+
+
+def _query_universe_from_db(db_path=DB_PATH):
+ """Query every stock in OhlcvBar with bar count + total volume (liquidity proxy).
+ Deterministic sort: total_volume desc, then symbol asc as tiebreaker."""
+ if not db_path.exists():
+  return []
+ conn=_sqlite3.connect(str(db_path))
+ try:
+  rows=conn.execute(
+   "SELECT symbol, COUNT(*) AS bars, MIN(date) AS first_date, MAX(date) AS last_date, "
+   "SUM(volume) AS total_volume FROM OhlcvBar GROUP BY symbol"
+  ).fetchall()
+ finally:
+  conn.close()
+ out=[{"symbol":r[0],"bars":r[1],"first_date":r[2],"last_date":r[3],
+       "total_volume":float(r[4] or 0)} for r in rows]
+ out.sort(key=lambda s:(-s["total_volume"],s["symbol"]))
+ return out
+
+
+def select_universe(mode):
+ """Task 52 deterministic universe selector. Same DB state -> same universe.
+ Modes:
+   canonical8 — 8 hardcoded liquid PSX stocks (CSV-backed)
+   pilot25    — canonical8 (if eligible) + top 17 by volume from DB (>=250 bars)
+   pilot50    — canonical8 (if eligible) + top 42 by volume from DB (>=250 bars)
+   full_db    — all DB stocks with >=250 bars
+ Returns (stocks_list, universe_metadata_dict)."""
+ if mode=="canonical8":
+  return list(STOCKS), {
+   "mode":"canonical8",
+   "criteria":"hardcoded canonical 8 PSX stocks (CSV-backed, most-liquid historically)",
+   "candidate_count":len(STOCKS),
+   "included_count":len(STOCKS),
+   "excluded_count":0,
+   "exclusions":[],
+   "eligible_count":len(STOCKS),
+   "target_count":len(STOCKS),
+   "min_bars_required":None,
+   "data_source":"data/ohlcv/*.csv",
+  }
+ all_stocks=_query_universe_from_db()
+ eligible=[s for s in all_stocks if s["bars"]>=MIN_BARS_FOR_UNIVERSE]
+ excluded=[
+  {"symbol":s["symbol"],"reason":"insufficient_history",
+   "bars":s["bars"],"min_required":MIN_BARS_FOR_UNIVERSE}
+  for s in all_stocks if s["bars"]<MIN_BARS_FOR_UNIVERSE
+ ]
+ target={"pilot25":25,"pilot50":50,"full_db":len(eligible)}[mode]
+ eligible_syms={s["symbol"] for s in eligible}
+ selected=[]
+ # canonical8 first (preserve order, only if eligible in DB)
+ for s in STOCKS:
+  if s in eligible_syms and s not in selected:
+   selected.append(s)
+ # then fill by liquidity rank (eligible is already sorted by volume desc)
+ for s in eligible:
+  if s["symbol"] not in selected and len(selected)<target:
+   selected.append(s["symbol"])
+ selected=selected[:target]
+ criteria=(f"canonical8 (if eligible) + top {max(0,target-8)} by total volume "
+          f"(liquidity proxy), >= {MIN_BARS_FOR_UNIVERSE} bars history")
+ return selected, {
+  "mode":mode,
+  "criteria":criteria,
+  "candidate_count":len(all_stocks),
+  "included_count":len(selected),
+  "excluded_count":len(excluded),
+  "exclusions":excluded,
+  "eligible_count":len(eligible),
+  "target_count":target,
+  "min_bars_required":MIN_BARS_FOR_UNIVERSE,
+  "data_source":f"db/custom.db OhlcvBar table ({mode})",
+ }
 FC=["rsi_14","macd","macd_signal","macd_hist","bb_width","bb_pct_b","atr_14","obv_change_pct",
 "price_sma_20_ratio","price_sma_50_ratio","price_sma_200_ratio","volume_sma_20_ratio",
 "return_1d","return_7d","return_14d","return_30d","hl_range_pct","body_size_pct","volatility_14d"]
@@ -84,14 +165,38 @@ def add_features(df):
  # done in load() via add_forward_returns (per-stock groupby shift, no .fillna(0)).
  return df
 
-def load():
+def load(stocks=None, source="csv"):
+ """Load OHLCV data. CSV source reads data/ohlcv/{symbol}.csv (canonical8 only —
+ the directory holds 8 files). DB source reads the OhlcvBar table in
+ db/custom.db (pilot25/pilot50/full_db modes). Both produce the same DataFrame
+ shape (date as epoch ms int, open/high/low/close/volume + features)."""
+ if stocks is None:
+  stocks=STOCKS
  frames=[]
- for s in STOCKS:
-  p=OHLCV/f"{s}.csv"
-  if not p.exists():continue
-  df=pd.read_csv(p,usecols=range(6));df=df[df["volume"]>0].reset_index(drop=True)
-  if len(df)<50:continue
-  df=add_features(df);df["symbol"]=s;frames.append(df)
+ if source=="csv":
+  for s in stocks:
+   p=OHLCV/f"{s}.csv"
+   if not p.exists():continue
+   df=pd.read_csv(p,usecols=range(6));df=df[df["volume"]>0].reset_index(drop=True)
+   if len(df)<50:continue
+   df=add_features(df);df["symbol"]=s;frames.append(df)
+ else:  # db
+  conn=_sqlite3.connect(str(DB_PATH))
+  try:
+   for s in stocks:
+    rows=conn.execute(
+     "SELECT date, open, high, low, close, volume FROM OhlcvBar "
+     "WHERE symbol=? ORDER BY date",(s,)
+    ).fetchall()
+    if len(rows)<50:continue
+    df=pd.DataFrame(rows,columns=["date","open","high","low","close","volume"])
+    df=df[df["volume"]>0].reset_index(drop=True)
+    if len(df)<50:continue
+    # YYYY-MM-DD -> epoch ms (matches CSV format; tz-stable, monotonic per stock)
+    df["date"]=pd.to_datetime(df["date"],utc=True).astype("int64")//10**6
+    df=add_features(df);df["symbol"]=s;frames.append(df)
+  finally:
+   conn.close()
  df=pd.concat(frames,ignore_index=True) if frames else pd.DataFrame()
  if df.empty:return df
  # ML integrity (Task 1): per-stock forward returns via groupby(symbol).shift
@@ -125,7 +230,16 @@ def train_one_model(name, Xtr, ytr):
 
 def main():
  print("="*60);print("Walk-Forward Ensemble Backtesting");print("="*60)
- df=load();print(f"\nLoaded: {len(df)} rows from {df['symbol'].nunique()} stocks")
+ import os as _os
+ UNIVERSE_MODE=_os.environ.get("WALK_FORWARD_UNIVERSE","canonical8")
+ SAMPLE_STEP=int(_os.environ.get("WALK_FORWARD_SAMPLE_STEP","10"))
+ eval_stocks,universe_meta=select_universe(UNIVERSE_MODE)
+ # canonical8 is CSV-backed; pilot25/pilot50/full_db read the OhlcvBar table
+ source="csv" if UNIVERSE_MODE=="canonical8" else "db"
+ print(f"\nUniverse mode: {UNIVERSE_MODE} -> {len(eval_stocks)} stocks ({source} source)")
+ print(f"  criteria: {universe_meta['criteria']}")
+ df=load(stocks=eval_stocks, source=source)
+ print(f"Loaded: {len(df)} rows from {df['symbol'].nunique()} stocks")
 
  # ML integrity (Phase A2): replace the global row split=int(len(df)*0.8) on
  # the concatenated df with a DATE-BASED chronological test partition. The
@@ -147,15 +261,16 @@ def main():
  # The actual_return is computed from FUTURE close prices in the test_df
  # itself — this is the REALIZED outcome at the sample's decision date (no
  # look-ahead leakage: the actual uses prices strictly after the decision).
- # Env vars for demo / fast runs (production defaults preserved):
- #   WALK_FORWARD_SAMPLE_STEP (default 10) — spacing between test samples per stock
- #   WALK_FORWARD_MAX_STOCKS  (default =all) — cap the number of stocks evaluated
- import os as _os
- SAMPLE_STEP = int(_os.environ.get("WALK_FORWARD_SAMPLE_STEP", "10"))
- MAX_STOCKS_ENV = _os.environ.get("WALK_FORWARD_MAX_STOCKS")
- eval_stocks = STOCKS if not MAX_STOCKS_ENV else STOCKS[:int(MAX_STOCKS_ENV)]
- if SAMPLE_STEP != 10 or MAX_STOCKS_ENV:
-  print(f"  [fast-mode] SAMPLE_STEP={SAMPLE_STEP}, MAX_STOCKS={MAX_STOCKS_ENV or 'all'} → {len(eval_stocks)} stocks evaluated")
+ # Task 52: env vars for the universe + demo/fast runs.
+ #   WALK_FORWARD_UNIVERSE     (default canonical8) — canonical8|pilot25|pilot50|full_db
+ #   WALK_FORWARD_SAMPLE_STEP  (default 10) — spacing between test samples per stock
+ # Legacy WALK_FORWARD_MAX_STOCKS is no longer used (replaced by UNIVERSE_MODE); if
+ # set, it prints a deprecation hint and is ignored.
+ _legacy_max = _os.environ.get("WALK_FORWARD_MAX_STOCKS")
+ if _legacy_max:
+  print(f"  [deprecated] WALK_FORWARD_MAX_STOCKS={_legacy_max} is ignored — use WALK_FORWARD_UNIVERSE instead")
+ if SAMPLE_STEP != 10:
+  print(f"  [fast-mode] SAMPLE_STEP={SAMPLE_STEP}")
  samples=[]
  for s in eval_stocks:
   ste=test_df[test_df["symbol"]==s].sort_values("date").reset_index(drop=True)
@@ -452,6 +567,10 @@ def main():
  # The constant-mean baseline (predict mean(actual_arr) for all) is retained as
  # the conventional R² reference but explicitly labeled as such.
  print("\n\nComputing forecast-quality metrics (MAE / RMSE / R² / directional accuracy)...")
+# Task 52: per-stock forecast metrics placeholder. Built AFTER the wf_forecast
+# loop from per_model_per_horizon (which already carries the per-prediction
+# 'stock' field — no sample-loop change was needed).
+per_stock_results = {}  # {symbol: {samples_count, models: {name: {hz: {...}}}}}
  wf_forecast = {}  # {model_name: {horizon: {mae, rmse, r2, directional_accuracy, n_observations, baselines}}}
  unevaluated = []  # list of {model, horizon, reason}
  # Task 51 Phase 3 — per-horizon pooled actuals for baseline metrics (use the
@@ -568,6 +687,48 @@ def main():
    print(f"  {name} {hz}d: n={len(pairs)} MAE={mae:.6f} RMSE={rmse:.6f} R²={r2_str} DirAcc={dir_acc:.4f} | "
          f"zero-R²={zero_r2:+.4f} | train-mean-R²={'NaN' if (tbo_r2 is None or np.isnan(tbo_r2)) else f'{tbo_r2:+.4f}'}")
 
+# ─── Task 52: per-stock forecast metrics ─────────────────────────────────────────
+# per_model_per_horizon[name][hz] already carries the per-prediction 'stock' field
+# (set in the sample loop at line ~354). Partition by stock + compute the same
+# MAE/RMSE/R²/DirAcc as the pooled wf_forecast. R² can be NEGATIVE — not clamped.
+print("\nComputing per-stock forecast metrics...")
+stocks_in_eval = sorted(set(
+ p["stock"] for name in MODEL_NAMES for hz in [5,10,21]
+ for p in per_model_per_horizon[name][hz]
+))
+for sym in stocks_in_eval:
+ per_stock_results[sym] = {"samples_count": 0, "models": {}}
+ sym_dates_seen = set()
+ for name in MODEL_NAMES:
+  per_stock_results[sym]["models"][name] = {}
+  for hz in [5, 10, 21]:
+   pairs = [p for p in per_model_per_horizon[name][hz] if p["stock"] == sym]
+   for p in pairs:
+    sym_dates_seen.add(p["date"])
+   if len(pairs) < 2:
+    per_stock_results[sym]["models"][name][hz] = {
+     "status": "unavailable",
+     "reason": f"insufficient matured samples (have {len(pairs)}, need >=2)",
+     "n_observations": len(pairs),
+    }
+    continue
+   pa = np.array([p["predicted"] for p in pairs], dtype=np.float64)
+   aa = np.array([p["actual"] for p in pairs], dtype=np.float64)
+   ps_mae = float(mean_absolute_error(aa, pa))
+   ps_rmse = float(np.sqrt(mean_squared_error(aa, pa)))
+   ps_r2 = float(r2_score(aa, pa)) if len(aa) > 1 and aa.std() > 0 else float("nan")
+   ps_dir = float(np.mean(np.sign(pa) == np.sign(aa)))
+   per_stock_results[sym]["models"][name][hz] = {
+    "status": "completed",
+    "mae": round(ps_mae, 6),
+    "rmse": round(ps_rmse, 6),
+    "r2": None if np.isnan(ps_r2) else round(ps_r2, 6),
+    "directional_accuracy": round(ps_dir, 4),
+    "n_observations": len(pairs),
+   }
+ per_stock_results[sym]["samples_count"] = len(sym_dates_seen)
+print(f"  per-stock metrics computed for {len(per_stock_results)} stocks")
+
  # ─── NEW (Task 49): Structured versioned report at data/backtest_reports/walk_forward_latest.json ───
  # This is the artifact the /api/backtest/walk-forward route reads. SEPARATE
  # from ml_predictions_multi.json (which we must NOT modify).
@@ -601,6 +762,9 @@ def main():
   "evaluation_date_range": {"start": eval_start, "end": eval_end},
   "evaluated_symbols": sorted(eval_stocks),
   "universe_size": len(eval_stocks),
+  # Task 52: universe selector metadata + per-stock diagnostics
+  "universe": universe_meta,
+  "per_stock_results": per_stock_results,
   "forecast_horizons": [5, 10, 21],
   # Task 51 Phase 5: explicit sample-count metadata (was ambiguous before)
   "n_unique_stock_date_samples": len(samples),  # unique (stock, decision-date) pairs
@@ -701,7 +865,7 @@ def main():
    "verification": "For each sample, latest_target_maturity_date <= sample_date (no target-maturity leak)",
   },
   "limitations": [
-   f"Universe size = {len(eval_stocks)} stock(s) of the canonical 8 PSX stocks: {', '.join(sorted(eval_stocks))}. NOT the full ~908 DB-backed universe and NOT a fully production-validated benchmark.",
+   f"Universe mode = {universe_meta['mode']}: {universe_meta['included_count']} stock(s) evaluated ({', '.join(sorted(eval_stocks))}). {universe_meta['criteria']}. Candidate universe = {universe_meta['candidate_count']} stocks; excluded {universe_meta['excluded_count']} for insufficient history (< {universe_meta['min_bars_required']} bars). NOT a fully production-validated benchmark.",
    "5 classical models evaluated (XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression). The other ~60 registered models (LSTM, CNN-LSTM, Transformer-LSTM, PatchTST, N-BEATS, TimesNet, Informer, foundation analogs, rule-based strategies) are NOT evaluated here — see scripts/walk_forward_backtesting.py MODEL_NAMES.",
    "Per-sample retraining on data[date < sample.date] (expanding window). No data leakage.",
    f"Task 51 Phase 1: filter_by_target_maturity ensures training rows' target endpoint (T+h) <= sample's prediction date P. Per-horizon, per-stock, pooled across stocks. Preserves valid shorter-horizon training rows whose longest-horizon target is immature.",
