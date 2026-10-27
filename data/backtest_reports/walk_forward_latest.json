@@ -1,0 +1,393 @@
+{
+  "schema_version": "1.0",
+  "evaluation_status": "completed",
+  "evaluation_method": "walk-forward-expanding-window",
+  "generated_at": "2026-10-27T10:09:07.901755",
+  "data_cutoff": "2026-08-03T19:00:00",
+  "training_window": {
+    "start": "2026-05-03T19:00:00",
+    "end": "2026-08-03T19:00:00"
+  },
+  "evaluation_date_range": {
+    "start": "2026-05-04T19:00:00",
+    "end": "2026-08-04T19:00:00"
+  },
+  "evaluated_symbols": [
+    "ENGRO",
+    "HUBC",
+    "LUCK"
+  ],
+  "universe_size": 3,
+  "forecast_horizons": [
+    5,
+    10,
+    21
+  ],
+  "n_eligible_samples": 6,
+  "n_matured_outcomes": {
+    "5": 30,
+    "10": 30,
+    "21": 30
+  },
+  "models": [
+    {
+      "name": "XGBoost",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.022405,
+          "rmse": 0.027425,
+          "r2": -0.01585,
+          "directional_accuracy": 0.5,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022141,
+            "rmse": 0.02721,
+            "r2": 0.0
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.047183,
+          "rmse": 0.054719,
+          "r2": -2.680559,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022966,
+            "rmse": 0.028522,
+            "r2": 0.0
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.080085,
+          "rmse": 0.084843,
+          "r2": -3.298864,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.034715,
+            "rmse": 0.04092,
+            "r2": 0.0
+          }
+        }
+      }
+    },
+    {
+      "name": "LightGBM",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.023546,
+          "rmse": 0.027908,
+          "r2": -0.052,
+          "directional_accuracy": 0.5,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022141,
+            "rmse": 0.02721,
+            "r2": 0.0
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.045118,
+          "rmse": 0.054844,
+          "r2": -2.697454,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022966,
+            "rmse": 0.028522,
+            "r2": 0.0
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.075683,
+          "rmse": 0.081733,
+          "r2": -2.989552,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.034715,
+            "rmse": 0.04092,
+            "r2": 0.0
+          }
+        }
+      }
+    },
+    {
+      "name": "CatBoost",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.024015,
+          "rmse": 0.028472,
+          "r2": -0.094948,
+          "directional_accuracy": 0.5,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022141,
+            "rmse": 0.02721,
+            "r2": 0.0
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.049748,
+          "rmse": 0.057476,
+          "r2": -3.06077,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022966,
+            "rmse": 0.028522,
+            "r2": 0.0
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.081059,
+          "rmse": 0.085835,
+          "r2": -3.40002,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.034715,
+            "rmse": 0.04092,
+            "r2": 0.0
+          }
+        }
+      }
+    },
+    {
+      "name": "Random Forest",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.023181,
+          "rmse": 0.027609,
+          "r2": -0.029547,
+          "directional_accuracy": 0.5,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022141,
+            "rmse": 0.02721,
+            "r2": 0.0
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.044576,
+          "rmse": 0.055511,
+          "r2": -2.787932,
+          "directional_accuracy": 0.3333,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022966,
+            "rmse": 0.028522,
+            "r2": 0.0
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.074924,
+          "rmse": 0.081735,
+          "r2": -2.989721,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.034715,
+            "rmse": 0.04092,
+            "r2": 0.0
+          }
+        }
+      }
+    },
+    {
+      "name": "Ridge Regression",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.024157,
+          "rmse": 0.028396,
+          "r2": -0.089101,
+          "directional_accuracy": 0.5,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022141,
+            "rmse": 0.02721,
+            "r2": 0.0
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.060792,
+          "rmse": 0.06514,
+          "r2": -4.215963,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.022966,
+            "rmse": 0.028522,
+            "r2": 0.0
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.10178,
+          "rmse": 0.109054,
+          "r2": -6.102437,
+          "directional_accuracy": 0.1667,
+          "n_observations": 6,
+          "baseline": {
+            "definition": "constant-mean (predict mean(actual) for all samples)",
+            "mae": 0.034715,
+            "rmse": 0.04092,
+            "r2": 0.0
+          }
+        }
+      }
+    }
+  ],
+  "baseline": {
+    "definition": "constant-mean (predict mean(actual) for all samples at the horizon)",
+    "notes": "R\u00b2 of the baseline is 0.0 by construction (the baseline IS the mean). A negative model R\u00b2 means the model did worse than this baseline on this test set."
+  },
+  "trading_metrics": {
+    "individual": {
+      "XGBoost": {
+        "totalTrades": 5,
+        "wins": 0,
+        "winRate": 0.0,
+        "avgReturnPct": -5.27,
+        "maxReturnPct": -1.2,
+        "minReturnPct": -7.67,
+        "stars": 1
+      },
+      "LightGBM": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      },
+      "CatBoost": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      },
+      "Random Forest": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      },
+      "Ridge Regression": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      }
+    },
+    "ensemble": {
+      "MAJORITY_VOTE": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      },
+      "PROBABILITY_WEIGHTED": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      },
+      "TIER_WEIGHTED": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      },
+      "WIN_RATE_WEIGHTED": {
+        "totalTrades": 0,
+        "wins": 0,
+        "winRate": 0.0,
+        "avgReturnPct": 0.0,
+        "maxReturnPct": 0,
+        "minReturnPct": 0,
+        "stars": 1
+      },
+      "FINAL_CONSENSUS": {
+        "totalTrades": 6,
+        "wins": 1,
+        "winRate": 16.7,
+        "avgReturnPct": -3.68,
+        "maxReturnPct": 4.25,
+        "minReturnPct": -7.67,
+        "stars": 1
+      }
+    }
+  },
+  "limitations": [
+    "Universe size = 3 stock(s) of the canonical 8 PSX stocks: ENGRO, HUBC, LUCK. Not the full ~908 DB-backed universe.",
+    "5 classical models evaluated (XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression). The other ~60 registered models (LSTM, CNN-LSTM, Transformer-LSTM, PatchTST, N-BEATS, TimesNet, Informer, foundation analogs, rule-based strategies) are NOT evaluated here \u2014 see scripts/walk_forward_backtesting.py MODEL_NAMES.",
+    "Per-sample retraining on data[date < sample.date] (expanding window). No data leakage.",
+    "Per-horizon dropna preserves shorter-horizon rows whose longest-horizon target is immature.",
+    "R\u00b2 can be negative \u2014 that's honest (model did not outperform the constant-mean baseline on this test).",
+    "Directional accuracy = fraction of samples where sign(predicted) == sign(actual).",
+    "Sample dates are every 30 trading days per stock in the test partition; need \u226521 bars ahead for the 21d horizon to mature.",
+    "Total samples evaluated = 6 (5 models \u00d7 3 horizons \u00d7 6 samples = 90 model fits)."
+  ],
+  "unevaluated": [],
+  "ml_integrity": {
+    "target_construction": "per-stock groupby(symbol).shift(-h) via add_forward_returns; no .fillna(0); immature rows left NaN",
+    "test_partition": "date-based chronological_split test partition (NOT global row split=int(len*0.8)) \u2014 all rows on a given test date belong to the test partition",
+    "per_sample_training": "per-sample train_data = df[df['date']<sample['date']] (strict chronological, no look-ahead)",
+    "per_horizon_drop": "per-sample, per-horizon dropna(subset=[hz_col]) \u2014 preserves shorter-horizon rows whose longest-horizon target is immature",
+    "realized_outcomes": "actual_return uses FUTURE close prices in the test partition (strictly AFTER the decision date) \u2014 no look-ahead leakage in the realized-outcome computation",
+    "walk_forward_methodology": "TRUE walk-forward: each test sample's models are re-fit on all data strictly before the sample's decision date. This is distinct from the simplified backtest in train_all_with_backtesting.py (Pattern #10 \u2014 latest signal applied to all test rows)."
+  }
+}

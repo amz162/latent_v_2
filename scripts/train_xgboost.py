@@ -29,6 +29,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import xgboost as xgb
+# ML-integrity helper (Task 50): leak-free chronological split with date-disjoint
+# train/val/test partitions + per-stock purge of FORWARD_WINDOW rows at each
+# boundary. Replaces the old `split_idx = int(len(df) * 0.8)` row-split (which
+# let a single date straddle the boundary + used the test set as early-stopping
+# eval — both LEAKY).
+from ml_integrity import chronological_split
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -217,19 +223,26 @@ def main():
     df = load_all_stocks()
     print(f"  Final dataset: {len(df)} rows, {len(FEATURE_COLUMNS)} features")
 
-    # 2. Time-based train/test split (80/20)
-    print("\n[2/5] Time-based 80/20 train/test split...")
+    # 2. ML-integrity chronological train/val/test split (60/20/20) with per-stock
+    #    purge of FORWARD_WINDOW rows at each boundary. Replaces the old
+    #    `split_idx = int(len(df) * 0.8)` row-split (LEAKY_SPLIT minor — a single
+    #    date could straddle the boundary; + per-stock purge was missing).
+    print("\n[2/5] ML-integrity chronological train/val/test split (60/20/20)...")
     df = df.sort_values("date").reset_index(drop=True)
-    split_idx = int(len(df) * 0.8)
-    train_df = df.iloc[:split_idx]
-    test_df = df.iloc[split_idx:]
+    train_df, val_df, test_df = chronological_split(
+        df, train_frac=0.60, val_frac=0.20, purge_h=FORWARD_WINDOW,
+    )
     print(f"  Train: {len(train_df)} rows ({train_df['label_up_5pct_14d'].sum()} positive)")
+    print(f"  Val:   {len(val_df)} rows ({val_df['label_up_5pct_14d'].sum()} positive)")
     print(f"  Test:  {len(test_df)} rows ({test_df['label_up_5pct_14d'].sum()} positive)")
     print(f"  Train positive rate: {train_df['label_up_5pct_14d'].mean()*100:.1f}%")
-    print(f"  Test positive rate:  {test_df['label_up_5pct_14d'].mean()*100:.1f}%")
+    print(f"  Val   positive rate: {val_df['label_up_5pct_14d'].mean()*100:.1f}%")
+    print(f"  Test  positive rate: {test_df['label_up_5pct_14d'].mean()*100:.1f}%")
 
     X_train = train_df[FEATURE_COLUMNS].values
     y_train = train_df["label_up_5pct_14d"].values
+    X_val = val_df[FEATURE_COLUMNS].values
+    y_val = val_df["label_up_5pct_14d"].values
     X_test = test_df[FEATURE_COLUMNS].values
     y_test = test_df["label_up_5pct_14d"].values
 
@@ -255,7 +268,11 @@ def main():
         eval_metric="logloss",
         early_stopping_rounds=20,
     )
-    model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
+    # ML-integrity (Task 50): use VAL partition for early-stopping (was TEST —
+    # LEAKY_BACKTEST mild: tuning n_estimators via early-stopping on the final
+    # test set was a form of HP selection on test). The test set is now held out
+    # entirely for the final evaluation at step [4/5].
+    model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
 
     # 4. Evaluate
     print("\n[4/5] Evaluating on holdout test set...")
@@ -376,6 +393,66 @@ def main():
         "trained_at": schema["trained_at"],
         "metrics": schema["metrics"],
         "predictions": predictions,
+        # Phase 4 B-AUDIT: ml_integrity documentation. This is a TRAINING
+        # script (single XGBoost classifier) — it does NOT compute backtest
+        # trade metrics (only classifier metrics: accuracy/precision/recall/
+        # AUC). The leakage concerns below are in the TRAINING path and
+        # documented as follow-up (Phase A scope — training-pipeline
+        # leakage, NOT Phase 4's backtesting/metric scope).
+        #
+        # (1) LEAKY_SPLIT (minor — date-straddle): L223 `split_idx = int(len(df)*0.8)`
+        #     on the date-SORTED concatenated df. Mostly chronological, but a
+        #     single date's rows can straddle the boundary (rows of the same
+        #     date can end up in both train and test). Fix: use
+        #     `from ml_integrity import chronological_split; tr, va, te =
+        #     chronological_split(df)` — partitions by date boundary so all
+        #     rows on a given date go to the same partition.
+        #
+        # (2) LEAKY_BACKTEST (minor — test-set early-stopping): L258
+        #     `model.fit(X_train, y_train, eval_set=[(X_test, y_test)])` —
+        #     using the test set as early-stopping eval is a form of HP
+        #     selection on test (mild test-set leakage). Fix: carve out a
+        #     separate val slice from the train partition and use that for
+        #     early-stopping eval.
+        #
+        # Target construction at L162-170 (`df["close"].rolling(FORWARD_WINDOW).max().shift(-FORWARD_WINDOW)`
+        # + `df.dropna(subset=["future_return_max"])`) is ALREADY leak-free
+        # (no fillna(0); immature rows dropped).
+        "ml_integrity": {
+            "backtest_methodology": (
+                "Phase 4 B-AUDIT: this is a TRAINING script — does not "
+                "compute backtest trade metrics, only classifier metrics "
+                "(accuracy/precision/recall/AUC on the test partition). "
+                "Neither Pattern #10 (latest-signal replay) nor Pattern #11 "
+                "(predicted-as-realized) applies to this script's outputs."
+            ),
+            "training_pipeline_leak_followup_phase_a": {
+                "LEAKY_SPLIT_minor": (
+                    "L223: split_idx = int(len(df)*0.8) on date-sorted "
+                    "concatenated df — mostly chronological but a single "
+                    "date's rows can straddle the boundary. Fix: "
+                    "from ml_integrity import chronological_split; "
+                    "tr, va, te = chronological_split(df)."
+                ),
+                "LEAKY_BACKTEST_minor_test_eval_set": (
+                    "L258: model.fit(X_train, y_train, eval_set=[(X_test, "
+                    "y_test)]) — using test as early-stopping eval is mild "
+                    "HP-selection-on-test leakage. Fix: carve a separate val "
+                    "slice from train for early-stopping eval."
+                ),
+                "target_construction_note": (
+                    "L162-170: df['close'].rolling(FORWARD_WINDOW).max()"
+                    ".shift(-FORWARD_WINDOW) + dropna(subset=['future_return_"
+                    "max']) — ALREADY leak-free (no fillna(0); immature rows "
+                    "dropped). B-AUDIT ALREADY_FIXED."
+                ),
+            },
+            "scope_note": (
+                "Phase 4 scope is backtesting/metric correctness. The leaks "
+                "above are in the TRAINING pipeline (Phase A scope) and "
+                "documented here as follow-up."
+            ),
+        },
     }
     PREDICTIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     PREDICTIONS_PATH.write_text(json.dumps(output, indent=2))

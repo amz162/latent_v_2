@@ -273,11 +273,40 @@ def build_base_ensemble_preds(multi, mode):
 # ─── Backtest stats (comprehensive) ───
 def backtest_ensemble(preds_dict, name):
     """Compute comprehensive backtest stats for an ensemble's per-stock predictions.
-    Each prediction = 1 trade; avgReturn = predicted return; win = avgReturn > 0."""
+
+    Phase 4 B-AUDIT (Pattern #11 LEAKY_BACKTEST) — DOCUMENTED LIMITATION:
+      Each prediction = 1 trade; the "win" is computed from the PREDICTED
+      avgReturn (p.get('avgReturn', 0) > 0), NOT from a realized-outcome
+      simulation against future OHLCV. So:
+        - `wins` field is actually a PREDICTED-POSITIVE count (informational,
+          NOT a realized win).
+        - `winRate` is the predicted-positive RATE (a meta-metric, NOT a true
+          out-of-sample win rate).
+      To preserve the external interface (downstream code that reads
+      `wins` / `winRate` keeps working), these keys are kept with their
+      original semantics but accompanied by:
+        - `predicted_positive_count` (alias for `wins` — explicit informational
+          name).
+        - `realized_winRate: 'unavailable'` with reason (no realized-outcome
+          simulation here).
+      For a leak-free realized-outcome backtest, see
+      scripts/walk_forward_backtesting.py (per-sample re-training + per-bar
+      re-inference + realized P&L against future OHLCV).
+    """
     if not preds_dict:
         return {
             "totalTrades": 0, "winTrades": 0, "lossTrades": 0, "wins": 0,
-            "winRate": 0.0, "avgReturnPct": 0.0, "maxReturnPct": 0.0, "minReturnPct": 0.0,
+            "predicted_positive_count": 0,
+            "winRate": 0.0,
+            "realized_winRate": "unavailable",
+            "realized_winRate_reason": (
+                "Pattern #11 LEAKY_BACKTEST: original implementation computed "
+                "'win' from the PREDICTED avgReturn (p.get('avgReturn', 0) > 0), "
+                "not from a realized-outcome simulation. Use "
+                "scripts/walk_forward_backtesting.py for a leak-free realized-"
+                "outcome backtest."
+            ),
+            "avgReturnPct": 0.0, "maxReturnPct": 0.0, "minReturnPct": 0.0,
             "profitFactor": 0.0, "sharpe": 0.0, "sortino": 0.0, "maxDrawdownPct": 0.0,
             "stars": 0, "buySignals": 0, "sellSignals": 0,
         }
@@ -297,12 +326,27 @@ def backtest_ensemble(preds_dict, name):
     if not returns:
         return {
             "totalTrades": 0, "winTrades": 0, "lossTrades": 0, "wins": 0,
-            "winRate": 0.0, "avgReturnPct": 0.0, "maxReturnPct": 0.0, "minReturnPct": 0.0,
+            "predicted_positive_count": 0,
+            "winRate": 0.0,
+            "realized_winRate": "unavailable",
+            "realized_winRate_reason": (
+                "Pattern #11 LEAKY_BACKTEST: original implementation computed "
+                "'win' from the PREDICTED avgReturn (p.get('avgReturn', 0) > 0), "
+                "not from a realized-outcome simulation. Use "
+                "scripts/walk_forward_backtesting.py for a leak-free realized-"
+                "outcome backtest."
+            ),
+            "avgReturnPct": 0.0, "maxReturnPct": 0.0, "minReturnPct": 0.0,
             "profitFactor": 0.0, "sharpe": 0.0, "sortino": 0.0, "maxDrawdownPct": 0.0,
             "stars": 0, "buySignals": 0, "sellSignals": 0,
         }
     arr = np.array(returns, dtype=float)
     total = len(arr)
+    # Phase 4 B-AUDIT Pattern #11: this "win_mask" is based on PREDICTED
+    # avgReturn > 0, NOT on realized outcomes. The `wins` count below is
+    # therefore a PREDICTED-POSITIVE count, not a realized win count. We
+    # keep the field name for backward compat but also expose
+    # `predicted_positive_count` as the honest alias.
     win_mask = arr > 0
     wins = int(win_mask.sum())
     losses = int((arr <= 0).sum())
@@ -346,10 +390,21 @@ def backtest_ensemble(preds_dict, name):
         stars = 0
     return {
         "totalTrades": total,
-        "wins": wins,
+        "wins": wins,  # Phase 4: actually PREDICTED-positive count; see predicted_positive_count alias
+        "predicted_positive_count": wins,  # informational, NOT a realized win
         "winTrades": wins,
         "lossTrades": losses,
-        "winRate": win_rate,
+        "winRate": win_rate,  # Phase 4: predicted-positive rate, NOT a realized win rate
+        "realized_winRate": "unavailable",
+        "realized_winRate_reason": (
+            "Pattern #11 LEAKY_BACKTEST: 'win' was computed from PREDICTED "
+            "avgReturn (p.get('avgReturn', 0) > 0), not from a realized-outcome "
+            "simulation against future OHLCV. The 'winRate' above is the "
+            "predicted-positive rate (a meta-metric). Use "
+            "scripts/walk_forward_backtesting.py for a leak-free realized-outcome "
+            "backtest (per-sample re-training + per-bar re-inference + realized "
+            "P&L)."
+        ),
         "avgReturnPct": avg_ret_pct,
         "maxReturnPct": max_ret_pct,
         "minReturnPct": min_ret_pct,
@@ -449,6 +504,44 @@ def main():
     multi["ensemble_backtesting"] = ensemble_bt
     multi["ensemble_backtest_trained_at"] = pd.Timestamp.now().isoformat()
     multi["ensemble_count"] = len(ENSEMBLES)
+
+    # Phase 4 B-AUDIT: ml_integrity documentation. The ensemble backtest
+    # (backtest_ensemble above) computes "win" from the PREDICTED avgReturn
+    # (p.get('avgReturn', 0) > 0), NOT from a realized-outcome simulation
+    # against future OHLCV. This is Pattern #11 LEAKY_BACKTEST (metrics from
+    # predicted returns). Each ensemble's backtest result dict carries an
+    # explicit `predicted_positive_count` alias (informational, NOT a win)
+    # and a `realized_winRate: 'unavailable'` field with reason. Use
+    # scripts/walk_forward_backtesting.py for a leak-free realized-outcome
+    # backtest (per-sample re-training + per-bar re-inference + realized P&L
+    # against future OHLCV).
+    multi["ml_integrity"] = {
+        "backtest_methodology": (
+            "Phase 4 B-AUDIT Pattern #11 LEAKY_BACKTEST (documented + relabeled): "
+            "the 'win' is computed from the PREDICTED avgReturn "
+            "(p.get('avgReturn', 0) > 0), not from a realized-outcome simulation "
+            "against future OHLCV. The 'winRate' field is the predicted-positive "
+            "rate (a meta-metric), NOT a true out-of-sample win rate. Each "
+            "ensemble's backtest dict carries an explicit "
+            "`predicted_positive_count` alias (informational, NOT a win) and a "
+            "`realized_winRate: 'unavailable'` field with reason."
+        ),
+        "pattern": "Pattern #11 LEAKY_BACKTEST (predicted-as-realized)",
+        "status": "documented + relabeled (external interface preserved)",
+        "reason": (
+            "Metrics are computed from the PREDICTED avgReturn rather than from "
+            "realized future OHLCV outcomes; the 'winRate' field is a "
+            "predicted-positive rate, not a realized win rate."
+        ),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "scope_note": (
+            "Phase 4 scope is backtesting/metric correctness. The base ensemble "
+            "predictions (majority_vote / probability_weighted / tier_weighted) "
+            "themselves are LIVE inference-time outputs and not leaky; only the "
+            "post-hoc 'backtest' of those predictions is misleading because it "
+            "uses predicted avgReturn as a proxy for realized outcome."
+        ),
+    }
 
     # Save back to JSON
     def json_default(o):

@@ -209,79 +209,50 @@ def atr_rules(sig, cp, atr):
 
 
 def backtest_ensemble(df, ensemble_preds, atr_per, name):
-    """Backtest an ensemble's predictions on the historical OHLCV data."""
-    print(f"  Backtesting {name}...")
-    b = s = c = cs = 0
-    returns = []
-    for sym in ensemble_preds:
-        sig = ensemble_preds[sym].get("signal", "HOLD")
-        if sig == "HOLD":
-            continue
-        sd = df[df["symbol"] == sym].sort_values("date").reset_index(drop=True)
-        if len(sd) < 30:
-            continue
-        sp = int(len(sd) * 0.8)
-        st = sd.iloc[sp:]
-        if len(st) < 5:
-            continue
-        cp = atr_per.get(sym, {}).get("cp", float(sd.iloc[-1]["close"]))
-        atr = atr_per.get(sym, {"atr": cp * 0.02})["atr"]
-        e, sl, t1, t2, t3 = atr_rules(sig, cp, atr)
-        for i in range(0, max(1, len(st) - min(21, len(st) - 1)), 5):
-            w = min(21, len(st) - i)
-            ep = float(st.iloc[min(i + w, len(st) - 1)]["close"])
-            for j in range(i, min(i + w, len(st))):
-                r = st.iloc[j]
-                nh = float(r["high"])
-                nl = float(r["low"])
-                if sig == "BUY":
-                    if nl <= sl:
-                        ep = sl
-                        break
-                    if nh >= t3:
-                        ep = t3
-                        break
-                    if nh >= t2:
-                        ep = t2
-                    elif nh >= t1:
-                        ep = t1
-                else:
-                    if nh >= sl:
-                        ep = sl
-                        break
-                    if nl <= t3:
-                        ep = t3
-                        break
-                    if nl <= t2:
-                        ep = t2
-                    elif nl <= t1:
-                        ep = t1
-            if sig == "BUY":
-                b += 1
-                a = (ep - e) / e
-                returns.append(a)
-                c += a > 0
-            else:
-                s += 1
-                a = (e - ep) / e
-                returns.append(a)
-                cs += a > 0
-    tt = b + s
-    wr = (c + cs) / max(tt, 1) * 100
-    ap = float(np.mean(returns) * 100) if returns else 0
-    if np.isnan(ap):
-        ap = 0
+    """Backtest an ensemble's predictions on the historical OHLCV data —
+    DISABLED (Phase 4 B-AUDIT Pattern #10 leak).
+
+    Original implementation: per-stock 80/20 chronological test slice (the slice
+    itself was leak-free), but the SIGNAL applied to every historical test row
+    came from `ensemble_preds[sym].get("signal", "HOLD")` — the ensemble's
+    STORED LATEST per-stock signal (built by combine_predictions from the
+    underlying per-model predictions stored in ml_predictions_multi.json). This
+    is leakage Pattern #10 (latest-signal replay): today's signal applied to
+    historical test dates, which misrepresents the historical out-of-sample
+    performance of the ensemble.
+
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py. Do NOT duplicate a new walk-forward
+    engine here.
+
+    External interface preserved: same signature (df, ensemble_preds, atr_per,
+    name) and same top-level return keys (totalTrades / buySignals /
+    sellSignals / correctBuys / correctSells / winRate / avgReturnPct /
+    maxReturnPct / minReturnPct / stars). Values signal unavailability.
+    Callers that already handle 0-trade / null-winRate results continue to work.
+    """
+    print(f"  Backtest of {name}: UNAVAILABLE — Pattern #10 leak (latest-signal replay). "
+          f"Use scripts/walk_forward_backtesting.py for leak-free eval.")
     return {
-        "totalTrades": int(tt),
-        "buySignals": int(b),
-        "sellSignals": int(s),
-        "correctBuys": int(c),
-        "correctSells": int(cs),
-        "winRate": round(float(wr if not np.isnan(wr) else 0), 1),
-        "avgReturnPct": round(float(ap), 2),
-        "maxReturnPct": round(float(max(returns) * 100 if returns else 0), 2),
-        "minReturnPct": round(float(min(returns) * 100 if returns else 0), 2),
-        "stars": int(min(5, max(1, int(wr / 20) + 1))) if tt > 0 else 0,
+        "status": "unavailable",
+        "reason": ("Pattern #10 LEAKY_BACKTEST: original implementation applied "
+                   "the ensemble's stored LATEST per-stock signal "
+                   "(ensemble_preds[sym].get('signal', 'HOLD')) to every historical "
+                   "test row. This misrepresents historical OOS performance. Use "
+                   "scripts/walk_forward_backtesting.py for leak-free chronological "
+                   "walk-forward evaluation."),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "ml_integrity_note": "Phase 4 B-AUDIT: function disabled to prevent misleading metrics.",
+        "totalTrades": 0,
+        "buySignals": 0,
+        "sellSignals": 0,
+        "correctBuys": 0,
+        "correctSells": 0,
+        "winRate": None,
+        "avgReturnPct": None,
+        "maxReturnPct": None,
+        "minReturnPct": None,
+        "stars": 0,
     }
 
 
@@ -343,6 +314,45 @@ def main():
     # Update timestamp
     data["trained_at"] = pd.Timestamp.now().isoformat()
     data["ensembles_count"] = len(existing_ens_bt)
+
+    # Phase 4 B-AUDIT: ml_integrity documentation. The 8 new ensembles'
+    # backtest_ensemble was replaced with an unavailable stub because the
+    # original applied the ensemble's STORED LATEST per-stock signal to every
+    # historical test row (Pattern #10 leak). The per-stock 80/20 chronological
+    # test slice itself is fine; only the signal source was leaky. For the
+    # leak-free chronological walk-forward evaluation, see
+    # scripts/walk_forward_backtesting.py. Ensemble PREDICTIONS (the per-stock
+    # combine_predictions output) are still computed and stored — only the
+    # backtest of those predictions against historical OHLCV is disabled.
+    data["ml_integrity"] = {
+        "backtest_methodology": (
+            "Phase 4 B-AUDIT: backtest_ensemble replaced with unavailable stub. "
+            "Original implementation applied the ensemble's stored LATEST "
+            "per-stock signal (ensemble_preds[sym].get('signal', 'HOLD')) to "
+            "every historical test row — Pattern #10 LEAKY_BACKTEST (latest-"
+            "signal replay). The per-stock 80/20 chronological test slice is "
+            "fine; the signal source was the leak."
+        ),
+        "pattern": "Pattern #10 LEAKY_BACKTEST (latest-signal replay)",
+        "status": "unavailable",
+        "reason": (
+            "Stored latest per-stock ensemble signal applied to every historical "
+            "test row; misrepresents historical OOS performance."
+        ),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "scope_note": (
+            "Phase 4 scope is backtesting/metric correctness. Training-pipeline "
+            "leakage (LEAKY_SPLIT / LEAKY_SCALER / LEAKY_TARGET / LEAKY_SEQUENCE) "
+            "is Phase A scope and documented separately."
+        ),
+        "predictions_note": (
+            "Ensemble PREDICTIONS (the per-stock combine_predictions output "
+            "stored under {ensemble_name}_predictions keys) are still computed "
+            "and stored — these are LIVE inference-time outputs and are not "
+            "leaky in themselves. Only the historical backtest of those "
+            "predictions against OHLCV is disabled here."
+        ),
+    }
 
     # Save
     print("\n[4/4] Saving updated file...")

@@ -4,6 +4,10 @@ import json,sys,warnings,time,numpy as np,pandas as pd
 from pathlib import Path
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import RandomForestRegressor
+# ML-integrity helpers (leakage-free targets, chronological split). See
+# scripts/ml_integrity.py. Replaces the old random-sample + global row split
+# (Phase A1 + A2 fix to LEAKY_SPLIT + LEAKY_TARGET).
+from ml_integrity import add_forward_returns, drop_immature_targets, chronological_split, HORIZONS
 warnings.filterwarnings("ignore")
 OHLCV_DIR=Path("data/ohlcv_all");PRED_FILE=Path("data/ml_predictions_multi.json")
 SL_MULT=1.5;TP1_MULT=1.0;TP2_MULT=2.0;TP3_MULT=3.0
@@ -83,8 +87,18 @@ def train_reg(df,atr_per):
     import xgboost as xgb,lightgbm as lgb,catboost as cb
     print("\n[Tier 3] Regressors...")
     tgt=["target_5d","target_10d","target_21d"]
-    dft=df.sample(n=min(100000,len(df)),random_state=42).dropna(subset=FC+tgt)
-    sp=int(len(dft)*0.8);Xtr=dft.iloc[:sp][FC].fillna(0).values
+    # ML integrity (Phase A2): chronological_split replaces the leaky
+    # `df.sample(n=…, random_state=42)` + `int(len(dft)*0.8)` row split — the
+    # random sample destroyed chronological order and mixed train/test across
+    # stocks in random-sample order. Fit on train+val (chronological ~80% by
+    # date); the per-horizon dropna happens inside the loop so per-horizon
+    # models keep rows whose shorter-horizon target is mature.
+    tr,va,te=chronological_split(df)
+    fit_df=pd.concat([tr,va],ignore_index=True)
+    # Memory cap (matches the old 100k heuristic): keep the EARLIEST 100k
+    # chronological rows so the cap stays chronological (not random).
+    if len(fit_df)>100000:
+        fit_df=fit_df.sort_values(["symbol","date"]).head(100000).reset_index(drop=True)
     lat={}
     for s in STOCKS:
         sd=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
@@ -99,7 +113,12 @@ def train_reg(df,atr_per):
     for nm,fn in cfg.items():
         print(f"  {nm}...",end=" ",flush=True);pr={}
         for tc in tgt:
-            hz=int(tc.split("_")[1].replace("d",""));m=fn();m.fit(Xtr,dft.iloc[:sp][tc].values)
+            hz=int(tc.split("_")[1].replace("d",""))
+            # ML integrity (Phase A1): per-horizon drop — preserves shorter-horizon
+            # rows whose longest-horizon target is immature.
+            fit_h=fit_df.dropna(subset=[tc])
+            Xtr=fit_h[FC].fillna(0).values
+            m=fn();m.fit(Xtr,fit_h[tc].values)
             for s,lf in lat.items():
                 p=float(m.predict(lf["f"])[0])
                 if s not in pr:pr[s]={"currentPrice":lf["cp"],"entry":lf["cp"]}
@@ -236,72 +255,43 @@ def backtest(df,all_models,nm,atr_per):
            "stars":int(min(5,max(1,int(wr/20)+1)))if tt>0 else 0}
 
 def backtest_ens(df,all_models,atr_per):
-    print("\n[BACKTEST] Ensembles...")
-    def gs(s):
-        sg=[];rt=[]
-        for mn,md in all_models.items():
-            if not md.get("trained"):continue
-            p=md.get("predictions",{}).get(s,{});sg.append(p.get("signal","HOLD"));rt.append(p.get("avgReturn",0))
-        return sg,rt
-    def maj(sg,rt):
-        b=sum(1 for x in sg if x=="BUY");s=sum(1 for x in sg if x=="SELL");h=sum(1 for x in sg if x=="HOLD")
-        return"BUY"if b>s and b>h else"SELL"if s>b and s>h else"HOLD"
-    def pw(sg,rt):
-        if not rt:return"HOLD"
-        a=sum(rt)/len(rt);return"BUY"if a>0.005 else"SELL"if a<-0.005 else"HOLD"
-    def tw(sg,rt):return pw(sg,rt)
-    def fc(sg,rt):
-        v=[maj(sg,rt),pw(sg,rt),tw(sg,rt)];b=sum(1 for x in v if x=="BUY");s=sum(1 for x in v if x=="SELL")
-        return"BUY"if b>=2 else"SELL"if s>=2 else"HOLD"
-    def cle(s):
-        l=all_models.get("LightGBM",{}).get("predictions",{}).get(s,{}).get("signal","HOLD")
-        r=all_models.get("Ridge Regression",{}).get("predictions",{}).get(s,{}).get("signal","HOLD")
-        return l if l==r else l
-    def cex(s):
-        bw=sw=hw=0
-        for mn,w in EXT_W.items():
-            sg=all_models.get(mn,{}).get("predictions",{}).get(s,{}).get("signal","HOLD")
-            if sg=="BUY":bw+=w
-            elif sg=="SELL":sw+=w
-            else:hw+=w
-        return"BUY"if bw>sw and bw>hw else"SELL"if sw>bw and sw>hw else"HOLD"
-    eb={}
-    for nm,fn in[("MAJORITY_VOTE",lambda s:maj(*gs(s))),("PROBABILITY_WEIGHTED",lambda s:pw(*gs(s))),
-                 ("TIER_WEIGHTED",lambda s:tw(*gs(s))),("FINAL_CONSENSUS",lambda s:fc(*gs(s))),
-                 ("CL_ENSEMBLE",cle),("CL_EXTENDER",cex)]:
-        b=s=c=cs=0;rt=[]
-        for sym in STOCKS:
-            sg=fn(sym)
-            if sg=="HOLD":continue
-            sd=df[df["symbol"]==sym].sort_values("date").reset_index(drop=True)
-            if len(sd)<30:continue
-            sp=int(len(sd)*0.8);st=sd.iloc[sp:]
-            if len(st)<5:continue
-            cp=atr_per.get(sym,{}).get("cp",float(sd.iloc[-1]["close"]));atr=atr_per.get(sym,{"atr":cp*0.02})["atr"]
-            e,sl,t1,t2,t3=atr_rules(sg,cp,atr)
-            for i in range(0,max(1,len(st)-min(21,len(st)-1)),5):
-                w=min(21,len(st)-i);ep=float(st.iloc[min(i+w,len(st)-1)]["close"])
-                for j in range(i,min(i+w,len(st))):
-                    r=st.iloc[j];nh=float(r["high"]);nl=float(r["low"])
-                    if sg=="BUY":
-                        if nl<=sl:ep=sl;break
-                        if nh>=t3:ep=t3;break
-                        if nh>=t2:ep=t2
-                        elif nh>=t1:ep=t1
-                    else:
-                        if nh>=sl:ep=sl;break
-                        if nl<=t3:ep=t3;break
-                        if nl<=t2:ep=t2
-                        elif nl<=t1:ep=t1
-                if sg=="BUY":b+=1;a=(ep-e)/e;rt.append(a);c+=a>0
-                else:s+=1;a=(e-ep)/e;rt.append(a);cs+=a>0
-        tt=b+s;wr=(c+cs)/max(tt,1)*100;ap=float(np.mean(rt))*100 if rt else 0
-        if np.isnan(ap):ap=0
-        eb[nm]={"totalTrades":int(tt),"buySignals":int(b),"sellSignals":int(s),"correctBuys":int(c),"correctSells":int(cs),
-                "winRate":round(float(wr if not np.isnan(wr)else 0),1),"avgReturnPct":round(float(ap),2),
-                "maxReturnPct":round(float(max(rt)*100 if rt else 0),2),"minReturnPct":round(float(min(rt)*100 if rt else 0),2),
-                "stars":int(min(5,max(1,int(wr/20)+1)))if tt>0 else 0}
-        print(f"  {nm}: trades={tt} WR={wr:.1f}%")
+    """Ensemble backtest — DISABLED (Phase 1 Pattern #10 fix).
+
+    The original implementation applied each ensemble's STORED LATEST per-stock
+    signal (computed via gs(s)/cle(s)/cex(s) reading from md['predictions'][s])
+    to every historical test row in the per-stock 80/20 test slice. This is
+    Pattern #10 LEAKY_BACKTEST (latest-signal replay) — it misrepresents
+    historical OOS performance.
+
+    External interface preserved: signature (df, all_models, atr_per) and
+    return dict (eb: {ensemble_name: {totalTrades, buySignals, sellSignals,
+    correctBuys, correctSells, winRate, avgReturnPct, maxReturnPct,
+    minReturnPct, stars}}). Values signal unavailability.
+    """
+    print("\n[BACKTEST] Ensembles: UNAVAILABLE — Pattern #10 leak (latest-signal replay). "
+          "Use scripts/walk_forward_backtesting.py for leak-free eval.")
+    ens_names = ["MAJORITY_VOTE","PROBABILITY_WEIGHTED","TIER_WEIGHTED",
+                 "FINAL_CONSENSUS","CL_ENSEMBLE","CL_EXTENDER"]
+    reason = ("Pattern #10 LEAKY_BACKTEST: original backtest_ens applied each "
+              "ensemble's stored LATEST per-stock signal (gs(s)/cle(s)/cex(s) "
+              "from md['predictions'][s]) to every historical test row in the "
+              "per-stock 80/20 test slice. This misrepresents historical OOS "
+              "performance. Use scripts/walk_forward_backtesting.py for leak-free "
+              "chronological walk-forward evaluation (per-sample re-training + "
+              "per-bar re-inference).")
+    eb = {}
+    for nm in ens_names:
+        eb[nm] = {
+            "status": "unavailable",
+            "reason": reason,
+            "pointer": "scripts/walk_forward_backtesting.py",
+            "ml_integrity_note": "Phase 1 Pattern #10: function disabled to prevent misleading metrics.",
+            "ml_historical_evaluation": "unavailable",
+            "totalTrades": 0, "buySignals": 0, "sellSignals": 0,
+            "correctBuys": 0, "correctSells": 0,
+            "winRate": None, "avgReturnPct": None,
+            "maxReturnPct": None, "minReturnPct": None, "stars": 0,
+        }
     return eb
 
 def cl_preds(all_models,atr_per):
@@ -338,7 +328,11 @@ def main():
     print("="*60);print("Retrain ALL models on 361 stocks + backtesting");print("="*60)
     print("\n[1/8] Loading OHLCV...")
     df=load();print(f"  {len(df)} rows, {df['symbol'].nunique()} stocks")
-    for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].groupby(df["symbol"]).shift(-hz)-df["close"])/df["close"]).fillna(0)
+    # ML integrity (Task 1): per-stock groupby(symbol).shift(-h) (no .fillna(0))
+    # — the old code's groupby was correct (no cross-stock leak) but the
+    # .fillna(0) zeroed immature rows. Per-horizon dropna in train_reg drops
+    # them per-horizon so shorter-horizon models keep mature rows.
+    df=add_forward_returns(df)
     atr_per=get_atr(df);print(f"  ATR: {len(atr_per)} stocks")
     all_models={}
     all_models.update(train_reg(df,atr_per))
@@ -355,7 +349,13 @@ def main():
     out=clean({"trained_at":pd.Timestamp.now().isoformat(),"data_source":"askanalyst.com.pk","training_rows":int(len(df)),
         "stocks_count":len(STOCKS),"sl_rule":f"±{SL_MULT}×ATR","tp_rule":f"TP1/2/3=±{TP1_MULT}/±{TP2_MULT}/±{TP3_MULT}×ATR",
         "models":all_models,"untrained_models":{"TabNet":"Data type issue","FinGPT":"Requires BloombergGPT"},
-        "backtesting":bt,"ensemble_backtesting":ens_bt,"cl_ensemble_predictions":cl_ens,"cl_extender_predictions":cl_ext})
+        "backtesting":bt,"ensemble_backtesting":ens_bt,"cl_ensemble_predictions":cl_ens,"cl_extender_predictions":cl_ext,
+        "ml_integrity":{
+            "target_construction":"per-stock groupby(symbol).shift(-h) via ml_integrity.add_forward_returns; no .fillna(0); immature rows left NaN and dropped per-horizon inside train_reg",
+            "split":"date-based chronological_split (60/20/20) with per-stock purge of MAX_HORIZON=21 rows at each boundary; fit on train+val (chronological ~80%); replaces the old `df.sample(random_state=42)` random-sample + `int(len(dft)*0.8)` row split that destroyed chronological order",
+            "scaler_fitting":"no scalers in this script (regressors operate on raw FC features; ARIMA/Holt-Winters/GARCH/Prophet operate on raw per-stock price series)",
+            "backtest_methodology":"SIMPLIFIED backtest (Pattern #10): per-stock chronological 80/20 test slice (each stock's last 20% by date — per-stock split is chronological, OK); applies each model's LATEST per-stock signal to every historical test row in that slice — NOT a walk-forward re-prediction. For honest walk-forward see scripts/walk_forward_backtesting.py.",
+        }})
     PRED_FILE.write_text(json.dumps(out,indent=2,allow_nan=False,default=lambda o:int(o)if isinstance(o,(np.integer,))else float(o)if isinstance(o,(np.floating,))else str(o)))
     el=time.time()-st;tc=sum(1 for m in all_models.values()if m.get("trained"))
     print(f"\n{'='*60}\nCOMPLETE — {el:.0f}s ({el/60:.1f} min)\n{'='*60}")

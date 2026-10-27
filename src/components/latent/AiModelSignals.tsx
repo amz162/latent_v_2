@@ -22,6 +22,24 @@ export function AiModelSignals(){
  const[data,setData]=useState<API|null>(null);
  const[loading,setLoading]=useState(false);
  const[btOpen,setBtOpen]=useState(false);
+ // NEW (Task 49): Walk-Forward ML Forecast Evaluation state — fetched from
+ // /api/backtest/walk-forward which reads data/backtest_reports/walk_forward_latest.json.
+ // SEPARATE from the existing `data.backtesting`/`data.ensembleBacktesting`
+ // (which is the runtime Rule-BT technical-rule evaluation). Do NOT conflate.
+ const[wfData,setWfData]=useState<any>(null);
+ const[wfLoading,setWfLoading]=useState(false);
+ const[wfError,setWfError]=useState<string|null>(null);
+ const refreshWf=async()=>{
+  setWfLoading(true);setWfError(null);
+  try{
+   const r=await fetch("/api/backtest/walk-forward?_="+Date.now(),{cache:"no-store"});
+   const j=await r.json();
+   setWfData(j);
+  }catch(e:any){
+   setWfError(e?.message||"Failed to load walk-forward report.");
+  }finally{setWfLoading(false);}
+ };
+ useEffect(()=>{if(btOpen&&!wfData&&!wfLoading)refreshWf();},[btOpen]);
  const[simOpen,setSimOpen]=useState(false);
  const[simAmount,setSimAmount]=useState("100000");
  // Issue 5 — Portfolio Simulation redesign: removed "Position Size" input.
@@ -514,6 +532,162 @@ export function AiModelSignals(){
      <div className="space-y-4">
       <p className="text-xs text-[#94A3B8]">Backtesting on 20% holdout test set. Star ratings:★★★★★=80%+win,★★★★=60%+,★★★=40%+.</p>
       {data?.backtestSource==="db-extended-universe"&&<p className="text-[10px] text-[#FBBF24] mt-1">Full-universe backtest (includes new/low-data PSX stocks via extended training) — DB-cached.</p>}
+      {/* ML-integrity honesty banner (Priority 3): the runtime backtest below
+          evaluates every model via the shared strategySignal() indicator engine,
+          NOT trained-ML artifacts. Treated as a technical-rule-strategy evaluation. */}
+      <div className="rounded-md border border-[#22D3EE]/30 bg-[#22D3EE]/[0.06] p-2 text-[10px] text-[#94A3B8] leading-relaxed">
+       <span className="text-[#22D3EE] font-semibold">ML-integrity note:</span> The backtest stats below are a <span className="text-[#F4F7FB]">technical-rule-strategy evaluation</span>, not a trained-ML artifact evaluation. The runtime backtest engine (<code className="text-[#00E676]">model-backtest.ts → runAllBacktests</code>) computes every model&apos;s signal via the shared <code className="text-[#00E676]">strategySignal()</code> indicator engine in <code className="text-[#00E676]">fallback-predictions.ts</code> — i.e. 65 indicator-strategy variants, not 65 trained models. Live per-stock predictions (shown on the model cards above) DO use Python-trained artifacts from <code className="text-[#00E676]">data/ml_predictions_multi.json</code> where available. The <span className="text-[#22D3EE] font-semibold">ML Forecast Evaluation (Walk-Forward)</span> section below shows genuine trained-ML walk-forward results when available.
+      </div>
+
+      {/* ─── NEW (Task 49): ML Forecast Evaluation — Walk-Forward ────────────────
+          Genuine chronological walk-forward evaluation of trained-ML models.
+          SEPARATE from (and NOT comparable to) the Technical-Rule Strategy
+          Backtest below. Source: data/backtest_reports/walk_forward_latest.json
+          via /api/backtest/walk-forward. Renders negative R² honestly. */}
+      <div className="rounded-lg border border-[#22D3EE]/30 bg-[#0A0E1A]/60 p-3">
+       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+        <h3 className="text-sm font-semibold text-[#22D3EE] flex items-center gap-1.5">
+         <TrendingUp className="h-4 w-4"/> ML Forecast Evaluation — Walk-Forward
+        </h3>
+        <div className="flex items-center gap-1.5">
+         {wfLoading&&<Loader2 className="h-3 w-3 animate-spin text-[#22D3EE]"/>}
+         <Button size="sm" variant="outline" onClick={refreshWf} disabled={wfLoading}
+          className="h-6 text-[10px] border-[#22D3EE]/30 text-[#22D3EE] hover:bg-[#22D3EE]/10">
+          {wfLoading?"Refreshing…":"Refresh"}
+         </Button>
+        </div>
+       </div>
+       {wfError&&<p className="text-xs text-[#FF5C5C] mb-2">Error: {wfError}</p>}
+
+       {/* Empty / unavailable state */}
+       {!wfLoading&&wfData&&!wfData.available&&(
+        <div className="rounded-md border border-[#FBBF24]/30 bg-[#FBBF24]/[0.06] p-2 text-[11px] text-[#94A3B8] leading-relaxed">
+         <div className="text-[#FBBF24] font-semibold mb-0.5">No completed walk-forward evaluation is available yet.</div>
+         {wfData.error&&<div className="mb-1">{wfData.error}</div>}
+         {wfData.how_to_generate&&(
+          <div className="font-mono text-[10px] text-[#22D3EE] bg-[#0A0E1A] border border-white/[0.06] rounded p-1.5">
+           {wfData.how_to_generate}
+          </div>
+         )}
+        </div>
+       )}
+
+       {/* Loaded + available */}
+       {wfData&&wfData.available&&(
+        <div className="space-y-3">
+         {/* Status header */}
+         <div className="flex items-center gap-2 flex-wrap text-[10px]">
+          <Badge variant="outline" className={`h-4 py-0 ${
+            wfData.evaluation_status==="completed"?"border-[#00E676]/40 text-[#00E676]":
+            wfData.evaluation_status==="partial"?"border-[#FBBF24]/40 text-[#FBBF24]":
+            "border-[#FF5C5C]/40 text-[#FF5C5C]"}`} title="Evaluation completion status">
+           {wfData.evaluation_status?.toUpperCase()}
+          </Badge>
+          <Badge variant="outline" className="h-4 py-0 border-[#22D3EE]/40 text-[#22D3EE]" title="Genuine chronological walk-forward (per-sample retraining on data[date < sample.date] — no look-ahead)">
+           WALK-FORWARD
+          </Badge>
+          <span className="text-[#64748B]">method:</span>
+          <code className="text-[#94A3B8] text-[10px]">{wfData.evaluation_method}</code>
+          <span className="text-[#64748B]">·schema v{wfData.schema_version}</span>
+         </div>
+
+         {/* Meta */}
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px]">
+          <div><div className="text-[9px] uppercase text-[#64748B]">Generated</div><div className="font-mono text-[#94A3B8]">{wfData.generated_at?new Date(wfData.generated_at).toLocaleString():"—"}</div></div>
+          <div><div className="text-[9px] uppercase text-[#64748B]">Data cutoff</div><div className="font-mono text-[#94A3B8]">{wfData.data_cutoff?new Date(wfData.data_cutoff).toLocaleDateString():"—"}</div></div>
+          <div><div className="text-[9px] uppercase text-[#64748B]">Eval range</div><div className="font-mono text-[#94A3B8]">{wfData.evaluation_date_range?.start?new Date(wfData.evaluation_date_range.start).toLocaleDateString():"—"}→{wfData.evaluation_date_range?.end?new Date(wfData.evaluation_date_range.end).toLocaleDateString():"—"}</div></div>
+          <div><div className="text-[9px] uppercase text-[#64748B]">Universe</div><div className="font-mono text-[#94A3B8]">{wfData.universe_size} stocks · {wfData.n_eligible_samples} samples</div></div>
+         </div>
+         <div className="flex items-center gap-2 flex-wrap text-[10px]">
+          <span className="text-[#64748B]">Symbols:</span>
+          <code className="text-[#94A3B8] text-[10px]">{(wfData.evaluated_symbols||[]).join(", ")||"—"}</code>
+         </div>
+
+         {/* Per-model × per-horizon metrics table */}
+         {Array.isArray(wfData.models)&&wfData.models.length>0&&(
+          <div className="overflow-x-auto">
+           <table className="w-full text-[10px] border-collapse">
+            <thead>
+             <tr className="text-[#64748B] border-b border-white/[0.08]">
+              <th className="text-left py-1 px-1.5 font-medium">Model</th>
+              <th className="text-left py-1 px-1.5 font-medium">Type</th>
+              <th className="text-left py-1 px-1.5 font-medium">Horizon</th>
+              <th className="text-right py-1 px-1.5 font-medium">n_obs</th>
+              <th className="text-right py-1 px-1.5 font-medium">MAE</th>
+              <th className="text-right py-1 px-1.5 font-medium">RMSE</th>
+              <th className="text-right py-1 px-1.5 font-medium">R²</th>
+              <th className="text-right py-1 px-1.5 font-medium">Dir Acc</th>
+              <th className="text-right py-1 px-1.5 font-medium">Baseline MAE</th>
+              <th className="text-right py-1 px-1.5 font-medium">Baseline R²</th>
+             </tr>
+            </thead>
+            <tbody>
+             {wfData.models.flatMap((m:any)=>(wfData.forecast_horizons||[]).map((hz:number)=>{
+              const h=m.horizons?.[String(hz)]||m.horizons?.[hz]||{status:"unavailable"};
+              const completed=h.status==="completed";
+              // R² color: negative = red, 0 = amber, positive = green (honest — no clamping)
+              const r2Color=completed&&typeof h.r2==="number"?(h.r2<-0.001?"text-[#FF5C5C]":h.r2>0.001?"text-[#00E676]":"text-[#FBBF24]"):completed&&!h.r2?"text-[#FBBF24]":"text-[#64748B]";
+              const r2Display=completed?(h.r2===null||h.r2===undefined?"NaN":h.r2.toFixed(4)):"—";
+              return (
+               <tr key={m.name+"-"+hz} className="border-b border-white/[0.04] hover:bg-[#22D3EE]/[0.04]">
+                <td className="py-1 px-1.5 text-[#F4F7FB] font-medium">{m.name}</td>
+                <td className="py-1 px-1.5 text-[#22D3EE]">{m.implementation_type}</td>
+                <td className="py-1 px-1.5 text-[#94A3B8]">{hz}d</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{completed?(h.n_observations??"—"):"—"}</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{completed&&typeof h.mae==="number"?h.mae.toFixed(6):"—"}</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{completed&&typeof h.rmse==="number"?h.rmse.toFixed(6):"—"}</td>
+                <td className={`py-1 px-1.5 text-right font-mono font-bold ${r2Color}`} title={completed?(h.r2===null?"R² undefined (actual is constant)":"Negative R² = model worse than constant-mean baseline — honest"):"Not evaluated"}>{r2Display}</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{completed&&typeof h.directional_accuracy==="number"?(h.directional_accuracy*100).toFixed(2)+"%":"—"}</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#64748B]">{completed&&h.baseline&&typeof h.baseline.mae==="number"?h.baseline.mae.toFixed(6):"—"}</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#64748B]">{completed&&h.baseline&&typeof h.baseline.r2==="number"?h.baseline.r2.toFixed(4):completed?"—":"—"}</td>
+               </tr>
+              );
+             }))}
+            </tbody>
+           </table>
+          </div>
+         )}
+
+         {/* Unevaluated combos */}
+         {Array.isArray(wfData.unevaluated)&&wfData.unevaluated.length>0&&(
+          <div className="rounded-md border border-[#FBBF24]/20 bg-[#FBBF24]/[0.04] p-2 text-[10px]">
+           <div className="text-[#FBBF24] font-semibold mb-1">Not evaluated ({wfData.unevaluated.length} model×horizon combos)</div>
+           <ul className="space-y-0.5 text-[#94A3B8]">
+            {wfData.unevaluated.slice(0,8).map((u:any,i:number)=>(
+             <li key={i}><code className="text-[#94A3B8]">{u.model}</code> {u.horizon}d — {u.reason}</li>
+            ))}
+            {wfData.unevaluated.length>8&&<li className="text-[#64748B]">…and {wfData.unevaluated.length-8} more</li>}
+           </ul>
+          </div>
+         )}
+
+         {/* Limitations */}
+         {Array.isArray(wfData.limitations)&&wfData.limitations.length>0&&(
+          <details className="text-[10px] text-[#94A3B8]">
+           <summary className="cursor-pointer text-[#22D3EE] font-semibold">Limitations ({wfData.limitations.length})</summary>
+           <ul className="mt-1 ml-4 space-y-0.5 list-disc">
+            {wfData.limitations.map((l:string,i:number)=><li key={i}>{l}</li>)}
+           </ul>
+          </details>
+         )}
+
+         {/* Honest separator between ML walk-forward and the technical-rule sections below */}
+         <div className="text-[10px] text-[#64748B] italic mt-2 pt-2 border-t border-white/[0.04]">
+          The sections below (Ensemble Backtesting + Individual Model Backtesting) are a <span className="text-[#FBBF24]">technical-rule-strategy evaluation</span> — NOT a trained-ML walk-forward. Do not compare the two directly.
+         </div>
+        </div>
+       )}
+
+       {/* Loading skeleton */}
+       {wfLoading&&!wfData&&(
+        <div className="space-y-2">
+         <Skeleton className="h-4 w-2/3 bg-[#22D3EE]/20"/>
+         <Skeleton className="h-3 w-full bg-[#22D3EE]/10"/>
+         <Skeleton className="h-3 w-full bg-[#22D3EE]/10"/>
+        </div>
+       )}
+      </div>
+
 
       {/* Ensemble Backtesting Section */}
       <div>
@@ -684,6 +858,7 @@ function MC({m}:{m:MP}){
    <span className="text-xs md:text-sm font-semibold text-[#F4F7FB]">{m.name}</span>
    <Badge className={`text-[9px] py-0 h-3.5 md:h-4 border ${sb}`}>{m.signal}</Badge>
    {m.extended&&<Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#FBBF24]/40 text-[#FBBF24]" title="Extended training — indicator-based engine covering stocks outside the original ML universe">EXT</Badge>}
+   {m.trained&&<Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#22D3EE]/30 text-[#22D3EE]" title="A Python-trained artifact exists in ml_predictions_multi.json for LIVE per-stock predictions. The RUNTIME BACKTEST shown here uses the shared strategySignal() indicator engine — NOT this trained artifact — so the BT stats below are an indicator-strategy evaluation, not a trained-ML evaluation.">ML·live</Badge>}
    {m.backtest&&<span className="text-[9px] text-[#FBBF24]">{"★".repeat(m.backtest.stars)}<span className="text-[#64748B]">{"★".repeat(5-m.backtest.stars)}</span></span>}
   </div><div className="text-[10px] text-[#64748B] mt-0.5">{m.category}</div></div>
   <div className="text-right"><div className="text-[9px] text-[#64748B]">TP3</div><div className={`text-xs md:text-sm font-mono font-bold ${sc}`}>PKR {m.tp3?.toFixed(2)}</div></div></div>
@@ -696,7 +871,7 @@ function MC({m}:{m:MP}){
   </div>
   <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-white/[0.04]">
    <div className="text-[10px] text-[#64748B]">Conf:<span className="font-mono text-[#F4F7FB]">{m.confidence}%</span>{m.avgReturn!==undefined&&<>·Avg:<span className="font-mono text-[#F4F7FB]">{(m.avgReturn*100).toFixed(1)}%</span></>}</div>
-   {m.backtest&&<div className="text-[10px] text-[#64748B]">BT:<span className="font-mono text-[#94A3B8]">{(m.backtest.winRate||0).toFixed(2)}%win</span>·<span className="font-mono text-[#94A3B8]">{(m.backtest.avgReturnPct||0).toFixed(2)}%avg</span>·<span className="font-mono text-[#94A3B8]" title="Number of PSX stocks this model was backtested across (the extended universe — original ML-trained + fallback-covered)">{m.backtest.coveredSymbols??0}stk</span></div>}
+   {m.backtest&&<div className="text-[10px] text-[#64748B]" title="The runtime backtest (model-backtest.ts) evaluates this model via the shared strategySignal() indicator engine — these BT stats are a technical-rule-strategy evaluation, NOT a trained-ML artifact evaluation.">Rule-BT:<span className="font-mono text-[#94A3B8]">{(m.backtest.winRate||0).toFixed(2)}%win</span>·<span className="font-mono text-[#94A3B8]">{(m.backtest.avgReturnPct||0).toFixed(2)}%avg</span>·<span className="font-mono text-[#94A3B8]" title="Number of PSX stocks this model was backtested across (the extended universe — original ML-trained + fallback-covered)">{m.backtest.coveredSymbols??0}stk</span></div>}
   </div></div>);
 }
 

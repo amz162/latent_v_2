@@ -18,6 +18,10 @@ from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+# ML-integrity helpers (leakage-free targets, chronological split, train-only
+# scalers). See scripts/ml_integrity.py. Replaces the leaky cross-stock shift +
+# .fillna(0) target construction (Phase A1).
+from ml_integrity import add_forward_returns, drop_immature_targets, HORIZONS
 warnings.filterwarnings("ignore")
 
 OHLCV = Path("data/ohlcv")
@@ -202,8 +206,16 @@ def train_chronos_analog(df):
     """Chronos analog: quantile-binned tokenize-then-forecast."""
     targets = ["target_5d", "target_10d", "target_21d"]
     if "target_5d" not in df.columns:
+        # ML integrity (Task 1, Phase A1): per-stock groupby(symbol).shift so the
+        # forward-return target NEVER crosses stock boundaries (the previous
+        # df["close"].shift(-hz) on this CONCATENATED df mixed the last rows of
+        # one stock with the first rows of the next stock). No .fillna(0) —
+        # immature rows are left NaN and dropped via drop_immature_targets.
         for hz in [5, 10, 21]:
-            df[f"target_{hz}d"] = ((df["close"].shift(-hz) - df["close"]) / df["close"]).fillna(0)
+            df[f"target_{hz}d"] = ((df.groupby("symbol")["close"].shift(-hz) - df["close"]) / df["close"])
+        df = drop_immature_targets(df, horizons=[5, 10, 21])
+    # NOTE: `split` is dead-code (unused downstream in this function) — kept for
+    # backward source-compat; the per-stock signals below do not consume it.
     split = int(len(df) * 0.8)
     bins = np.linspace(-0.05, 0.05, 101)
     LAG = 10
@@ -537,20 +549,30 @@ def retrain_tier2_foundations(df, data):
 
 
 def rebacktest_all_models(df, data):
-    """Re-run backtesting for all trained models — uses triple-barrier with ATR-rule signals."""
-    print("\n[BACKTEST] Re-backtesting all models with ATR-rule signals...")
-    atr_per_stock = get_atr_per_stock(df)
-    # Per-stock 80/20 split (fix: previously split on concatenated df which only kept last stocks)
-    te_parts = []
-    for s in STOCKS:
-        sdf = df[df["symbol"] == s].sort_values("date").reset_index(drop=True)
-        if len(sdf) < 30:
-            continue
-        split = int(len(sdf) * 0.8)
-        te_parts.append(sdf.iloc[split:])
-    te = pd.concat(te_parts, ignore_index=True) if te_parts else pd.DataFrame()
-    print(f"  Test set: {len(te)} rows across {te['symbol'].nunique() if len(te) > 0 else 0} stocks")
+    """Re-run backtesting for all trained models — DISABLED (Pattern #10 LEAKY_BACKTEST).
 
+    Original implementation: per-stock 80/20 chronological test slice + ATR-rule
+    triple-barrier exit (the slice + exit logic itself was leak-free), but the
+    SIGNAL applied to every historical test row came from
+    `pr.get("signal", "HOLD")` — the model's STORED LATEST per-stock signal,
+    constant per stock across all historical test rows. This is leakage
+    Pattern #10 (latest-signal replay): today's signal applied to historical
+    test dates, which misrepresents the historical out-of-sample performance.
+
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py (the genuine walk-forward engine that
+    Phase A fixed — per-sample re-training + per-bar re-inference + realized
+    P&L from future OHLCV). Do NOT duplicate a new walk-forward engine here.
+
+    External interface preserved: same signature (df, data) and same
+    per-model top-level return keys (totalTrades / buySignals / sellSignals /
+    correctBuys / correctSells / winRate / avgReturnPct / maxReturnPct /
+    minReturnPct / stars), with values signaling unavailability, PLUS the
+    new status/reason/pointer/ml_integrity_note fields. Callers that already
+    handle 0-trade / null-winRate results continue to work.
+    """
+    print("\n[BACKTEST] Re-backtesting all models — UNAVAILABLE (Pattern #10 leak).")
+    print("           Use scripts/walk_forward_backtesting.py for leak-free eval.")
     bt_results = {}
     for name, md in data.get("models", {}).items():
         if not md.get("trained"):
@@ -558,162 +580,101 @@ def rebacktest_all_models(df, data):
         preds = md.get("predictions", {})
         if not preds:
             continue
-        buys = sells = cb = cs = 0
-        rets = []
-        for s in STOCKS:
-            ste = te[te["symbol"] == s].sort_values("date").reset_index(drop=True)
-            if len(ste) < 5:
-                continue
-            # Use the model's signal for this stock (constant across all test rows — simplification)
-            pr = preds.get(s, {})
-            sig = pr.get("signal", "HOLD")
-            if sig == "HOLD":
-                continue  # No trades for HOLD signals
-            atr = atr_per_stock.get(s, {}).get("atr_14", 0)
-            cp_test = float(ste.iloc[0]["close"]) if len(ste) > 0 else 0
-            for i in range(0, max(1, len(ste) - min(21, len(ste) - 1)), 5):
-                # Use ATR-rule entry/SL/TP from the model
-                entry = float(pr.get("entry", cp_test))
-                sl = float(pr.get("sl", entry))
-                tp1 = float(pr.get("tp1", entry))
-                tp2 = float(pr.get("tp2", entry))
-                tp3 = float(pr.get("tp3", entry))
-                # Walk forward up to 21 days (or test set length if shorter) — check if SL/TPs hit
-                window = min(21, len(ste) - i)
-                exit_price = float(ste.iloc[min(i + window, len(ste) - 1)]["close"])
-                # Simple backtest: if any TP hit, count as win; if SL hit, count as loss
-                for j in range(i, min(i + window, len(ste))):
-                    row = ste.iloc[j]
-                    nh = float(row["high"])
-                    nl = float(row["low"])
-                    if sig == "BUY":
-                        if nl <= sl:
-                            exit_price = sl
-                            break
-                        if nh >= tp3:
-                            exit_price = tp3
-                            break
-                        if nh >= tp2:
-                            exit_price = tp2
-                        elif nh >= tp1 and exit_price == float(ste.iloc[min(i + window, len(ste) - 1)]["close"]):
-                            exit_price = tp1
-                    else:  # SELL
-                        if nh >= sl:
-                            exit_price = sl
-                            break
-                        if nl <= tp3:
-                            exit_price = tp3
-                            break
-                        if nl <= tp2:
-                            exit_price = tp2
-                        elif nl <= tp1 and exit_price == float(ste.iloc[min(i + window, len(ste) - 1)]["close"]):
-                            exit_price = tp1
-                if sig == "BUY":
-                    buys += 1
-                    ar = (exit_price - entry) / entry
-                    rets.append(ar)
-                    if ar > 0:
-                        cb += 1
-                else:  # SELL
-                    sells += 1
-                    ar = (entry - exit_price) / entry
-                    rets.append(ar)
-                    if ar > 0:
-                        cs += 1
-
-        tt = buys + sells
-        wr = (cb + cs) / max(tt, 1) * 100
-        ar_pct = float(np.mean(rets)) * 100 if rets else 0
         bt_results[name] = {
-            "totalTrades": int(tt),
-            "buySignals": int(buys),
-            "sellSignals": int(sells),
-            "correctBuys": int(cb),
-            "correctSells": int(cs),
-            "winRate": round(float(wr), 1),
-            "avgReturnPct": round(float(ar_pct), 2),
-            "maxReturnPct": round(float(max(rets) * 100) if rets else 0, 2),
-            "minReturnPct": round(float(min(rets) * 100) if rets else 0, 2),
-            "stars": int(min(5, max(1, int(wr / 20) + 1))) if tt > 0 else 0,
+            "status": "unavailable",
+            "reason": (
+                "Pattern #10 LEAKY_BACKTEST: original implementation applied "
+                "the model's stored LATEST per-stock signal (pr.get('signal', "
+                "'HOLD')) to every historical test row in the per-stock 80/20 "
+                "chronological test slice. The slice itself was leak-free; the "
+                "signal source was the leak (today's signal replayed on every "
+                "historical test date). Use scripts/walk_forward_backtesting.py "
+                "for leak-free chronological walk-forward evaluation (per-sample "
+                "re-training + per-bar re-inference + realized P&L)."
+            ),
+            "pointer": "scripts/walk_forward_backtesting.py",
+            "ml_integrity_note": "Phase 1+2 fix: function disabled to prevent misleading metrics.",
+            "totalTrades": 0,
+            "buySignals": 0,
+            "sellSignals": 0,
+            "correctBuys": 0,
+            "correctSells": 0,
+            "winRate": None,
+            "avgReturnPct": None,
+            "maxReturnPct": None,
+            "minReturnPct": None,
+            "stars": 0,
         }
-        print(f"  {name}: trades={tt} buys={buys} sells={sells} WR={wr:.1f}% avg={ar_pct:.2f}%")
+        print(f"  {name}: UNAVAILABLE — Pattern #10 leak (latest-signal replay).")
 
     data["backtesting"] = bt_results
 
 
 def rebacktest_cl_ensembles(df, data):
-    """Re-backtest CL-Ensemble + CL-Extender + all 8 extender solo models."""
-    print("\n[BACKTEST] Re-backtesting CL-Ensemble + CL-Extender...")
-    atr_per_stock = get_atr_per_stock(df)
-    # Per-stock 80/20 split
-    te_parts = []
-    for s in STOCKS:
-        sdf = df[df["symbol"] == s].sort_values("date").reset_index(drop=True)
-        if len(sdf) < 30:
-            continue
-        split = int(len(sdf) * 0.8)
-        te_parts.append(sdf.iloc[split:])
-    te = pd.concat(te_parts, ignore_index=True) if te_parts else pd.DataFrame()
+    """Re-backtest CL-Ensemble + CL-Extender + all 8 extender solo models —
+    DISABLED (Pattern #10 LEAKY_BACKTEST).
+
+    Original implementation: per-stock 80/20 chronological test slice +
+    ATR-rule triple-barrier exit (the slice + exit logic itself was leak-free),
+    but the SIGNAL applied to every historical test row came from the model's
+    STORED LATEST per-stock signal — `signal_fn(s, atr, cp)` returned
+    `lgb_pred.get(s, {}).get("signal", "HOLD")` / `ridge_pred.get(s, {})` /
+    `ext_preds.get(mn, {}).get(s, {}).get("signal", "HOLD")` — constant per
+    stock across all historical test rows. This is leakage Pattern #10
+    (latest-signal replay): today's signal applied to historical test dates,
+    which misrepresents the historical out-of-sample performance.
+
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py (the genuine walk-forward engine that
+    Phase A fixed — per-sample re-training + per-bar re-inference + realized
+    P&L from future OHLCV). Do NOT duplicate a new walk-forward engine here.
+
+    External interface preserved: same signature (df, data) and same per-model
+    return-dict top-level keys (snake_case: total_trades / wins / losses /
+    win_rate / avg_return_pct / avg_win_pct / avg_loss_pct / profit_factor /
+    total_pnl_pkr / stars / pass_mark), with values signaling unavailability,
+    PLUS the new status/reason/pointer/ml_integrity_note fields.
+
+    The per-stock CL-Ensemble / CL-Extender PREDICTIONS
+    (data["cl_ensemble_predictions"] + data["cl_extender_predictions"]) are
+    LIVE inference-time outputs computed from the per-model avgReturns — NOT a
+    historical backtest — and remain unchanged here (same as the base ensemble
+    predictions in train_all_ensembles_am.py which are live, not leaky).
+    """
+    print("\n[BACKTEST] Re-backtesting CL-Ensemble + CL-Extender — UNAVAILABLE (Pattern #10 leak).")
+    print("           Use scripts/walk_forward_backtesting.py for leak-free eval.")
 
     def backtest_signal_fn(signal_fn, name):
-        buys = sells = cb = cs = 0
-        rets = []
-        pnls = []
-        for s in STOCKS:
-            ste = te[te["symbol"] == s].sort_values("date").reset_index(drop=True)
-            if len(ste) < 5:
-                continue
-            atr = atr_per_stock.get(s, {}).get("atr_14", 0)
-            cp = atr_per_stock.get(s, {}).get("current_price", 0)
-            for i in range(0, max(1, len(ste) - min(21, len(ste) - 1)), 5):
-                sig = signal_fn(s, atr, cp)
-                if sig == "HOLD":
-                    continue
-                entry, sl, tp1, tp2, tp3 = apply_atr_rules(sig, cp, atr)
-                window = min(21, len(ste) - i)
-                exit_price = float(ste.iloc[min(i + window, len(ste) - 1)]["close"])
-                exit_reason = "timeout"
-                for j in range(i, min(i + window, len(ste))):
-                    row = ste.iloc[j]
-                    nh = float(row["high"]); nl = float(row["low"])
-                    if sig == "BUY":
-                        if nl <= sl: exit_price = sl; exit_reason = "sl"; break
-                        if nh >= tp3: exit_price = tp3; exit_reason = "tp3"; break
-                        if nh >= tp2: exit_price = tp2; exit_reason = "tp2"
-                        elif nh >= tp1 and exit_reason == "timeout": exit_price = tp1; exit_reason = "tp1"
-                    else:  # SELL
-                        if nh >= sl: exit_price = sl; exit_reason = "sl"; break
-                        if nl <= tp3: exit_price = tp3; exit_reason = "tp3"; break
-                        if nl <= tp2: exit_price = tp2; exit_reason = "tp2"
-                        elif nl <= tp1 and exit_reason == "timeout": exit_price = tp1; exit_reason = "tp1"
-                if sig == "BUY":
-                    buys += 1
-                    ret = (exit_price - entry) / entry
-                    rets.append(ret)
-                    if ret > 0: cb += 1
-                else:
-                    sells += 1
-                    ret = (entry - exit_price) / entry
-                    rets.append(ret)
-                    if ret > 0: cs += 1
-                pnls.append(ret * 10000)
-
-        tt = buys + sells
-        wr = (cb + cs) / max(tt, 1) * 100
-        ar_pct = float(np.mean(rets)) * 100 if rets else 0
-        avg_win = float(np.mean([r for r in rets if r > 0]) * 100) if any(r > 0 for r in rets) else 0
-        avg_loss = float(np.mean([r for r in rets if r < 0]) * 100) if any(r < 0 for r in rets) else 0
-        gross_profit = sum(p for p in pnls if p > 0)
-        gross_loss = abs(sum(p for p in pnls if p < 0))
-        pf = round(gross_profit / max(gross_loss, 1), 2) if gross_loss > 0 else 0
-        total_pnl = int(sum(pnls))
-        stars = int(min(5, max(1, int(wr / 20) + 1))) if tt > 0 else 0
+        """Unavailable stub — preserves snake_case return-dict keys."""
+        print(f"  {name}: UNAVAILABLE — Pattern #10 leak (latest-signal replay).")
         return {
-            "total_trades": int(tt), "wins": int(cb + cs), "losses": int(tt - cb - cs),
-            "win_rate": round(float(wr), 1), "avg_return_pct": round(float(ar_pct), 2),
-            "avg_win_pct": round(float(avg_win), 2), "avg_loss_pct": round(float(avg_loss), 2),
-            "profit_factor": pf, "total_pnl_pkr": total_pnl,
-            "stars": stars, "pass_mark": str(pf >= 1.3),
+            "status": "unavailable",
+            "reason": (
+                "Pattern #10 LEAKY_BACKTEST: original implementation applied "
+                "the model's stored LATEST per-stock signal (signal_fn(s, atr, "
+                "cp) returned lgb_pred.get(s, {}).get('signal', 'HOLD') / "
+                "ridge_pred.get(s, {}) / ext_preds.get(mn, {}).get(s, {}).get("
+                "'signal', 'HOLD')) to every historical test row in the per-"
+                "stock 80/20 chronological test slice. The slice itself was "
+                "leak-free; the signal source was the leak (today's signal "
+                "replayed on every historical test date). Use "
+                "scripts/walk_forward_backtesting.py for leak-free chronological "
+                "walk-forward evaluation (per-sample re-training + per-bar "
+                "re-inference + realized P&L)."
+            ),
+            "pointer": "scripts/walk_forward_backtesting.py",
+            "ml_integrity_note": "Phase 1+2 fix: function disabled to prevent misleading metrics.",
+            "total_trades": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_rate": 0.0,
+            "avg_return_pct": 0.0,
+            "avg_win_pct": 0.0,
+            "avg_loss_pct": 0.0,
+            "profit_factor": 0.0,
+            "total_pnl_pkr": 0,
+            "stars": 0,
+            "pass_mark": "False",
         }
 
     # CL-Ensemble (LightGBM 70% + Ridge 30% weighted signal)
@@ -721,21 +682,25 @@ def rebacktest_cl_ensembles(df, data):
     ridge_pred = data["models"].get("Ridge Regression", {}).get("predictions", {})
 
     def cl_ensemble_sig(s, atr, cp):
+        # Preserved for source-compat; not invoked now that backtest_signal_fn
+        # is an unavailable stub. Original semantics: weighted LGB(70)+Ridge(30)
+        # latest-signal combine.
         lgb_sig = lgb_pred.get(s, {}).get("signal", "HOLD")
         ridge_sig = ridge_pred.get(s, {}).get("signal", "HOLD")
-        # Weighted: if LGB says BUY and Ridge says SELL, go with LGB (70% weight)
-        # If both agree, that's the signal
         if lgb_sig == ridge_sig:
             return lgb_sig
         return lgb_sig  # 70% weight
 
     cl_ens_bt = backtest_signal_fn(cl_ensemble_sig, "CL Ensemble")
-    print(f"  CL-Ensemble: trades={cl_ens_bt['total_trades']} WR={cl_ens_bt['win_rate']}% PF={cl_ens_bt['profit_factor']}")
+    print(f"  CL-Ensemble: UNAVAILABLE (Pattern #10 leak).")
 
     # CL-Extender (8-model weighted signal)
     ext_preds = {n: data["models"].get(n, {}).get("predictions", {}) for n in EXTENDER_WEIGHTS}
 
     def cl_extender_sig(s, atr, cp):
+        # Preserved for source-compat; not invoked now that backtest_signal_fn
+        # is an unavailable stub. Original semantics: 8-model weighted vote on
+        # latest per-stock signals.
         buy_w = sell_w = hold_w = 0
         for mn, w in EXTENDER_WEIGHTS.items():
             sig = ext_preds.get(mn, {}).get(s, {}).get("signal", "HOLD")
@@ -747,7 +712,7 @@ def rebacktest_cl_ensembles(df, data):
         return "HOLD"
 
     ext_bt = backtest_signal_fn(cl_extender_sig, "CL-Extender")
-    print(f"  CL-Extender: trades={ext_bt['total_trades']} WR={ext_bt['win_rate']}% PF={ext_bt['profit_factor']}")
+    print(f"  CL-Extender: UNAVAILABLE (Pattern #10 leak).")
 
     # All-model backtest (every trained model)
     all_results = {"CL Ensemble (LGB70+Log30)": cl_ens_bt}
@@ -762,7 +727,7 @@ def rebacktest_cl_ensembles(df, data):
             return fn
         bt = backtest_signal_fn(make_fn(preds), name)
         all_results[name] = bt
-        print(f"  {name} (solo): trades={bt['total_trades']} WR={bt['win_rate']}% PF={bt['profit_factor']}")
+        print(f"  {name} (solo): UNAVAILABLE (Pattern #10 leak).")
 
     # CL-Extender results (all 8 solos + ensemble)
     ext_results = {"CL-Extender (8 models)": ext_bt}
@@ -792,6 +757,11 @@ def rebacktest_cl_ensembles(df, data):
     }
 
     # Per-stock CL-Ensemble and CL-Extender predictions (for ensembles section)
+    # These are LIVE inference-time outputs computed from the per-model
+    # avgReturns — NOT a historical backtest. They remain unchanged (same as
+    # the base ensemble predictions in train_all_ensembles_am.py which are
+    # live, not leaky).
+    atr_per_stock = get_atr_per_stock(df)
     ens_per_stock = {}
     for s in STOCKS:
         ar = 0.7 * lgb_pred.get(s, {}).get("avgReturn", 0) + 0.3 * ridge_pred.get(s, {}).get("avgReturn", 0)
@@ -879,6 +849,20 @@ def main():
 
     # Update trained_at
     data["trained_at"] = pd.Timestamp.now().isoformat()
+
+    # ML-integrity methodology note (Phase A1): documents the leakage fixes
+    # applied in this script + the known limitations explicitly left for later.
+    # Phase 1+2 update: Pattern #10 LEAKY_BACKTEST (latest-signal replay) is
+    # now DISABLED — rebacktest_all_models + rebacktest_cl_ensembles return
+    # status='unavailable' stubs with reason + pointer to
+    # scripts/walk_forward_backtesting.py for genuine walk-forward ML eval.
+    data["ml_integrity"] = {
+        "target_construction": "per-stock groupby(symbol).shift(-h) inside train_chronos_analog; no .fillna(0); immature rows dropped via ml_integrity.drop_immature_targets (Phase A1 fix to the previous cross-stock shift+fillna(0) on the concatenated df)",
+        "split": "per-stock chronological 80/20 inside rebacktest_all_models + rebacktest_cl_ensembles (each stock's last 20% by date); train_chronos_analog's `split=int(len(df)*0.8)` is dead-code (kept for source-compat, unused downstream)",
+        "scaler_fitting": "no scalers used in this script (Tier 2 foundation analogs + ARIMA/Holt-Winters/GARCH/Prophet analogs operate on raw per-stock price series); StandardScaler imported for downstream callers, not used here",
+        "backtest_methodology": "Pattern #10 LEAKY_BACKTEST disabled — function now returns status='unavailable' with reason + pointer to scripts/walk_forward_backtesting.py for genuine walk-forward ML evaluation. rebacktest_all_models + rebacktest_cl_ensembles (and the nested backtest_signal_fn) no longer apply the model's stored LATEST per-stock signal to every historical test row; per-model / per-ensemble backtest entries now carry status='unavailable' + zeroed metrics. The per-stock CL-Ensemble/CL-Extender PREDICTIONS remain (live inference-time outputs, not a historical backtest).",
+        "ml_historical_evaluation": "unavailable",
+    }
 
     # Save
     PRED_FILE.write_text(json.dumps(data, indent=2,

@@ -13,6 +13,15 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.preprocessing import StandardScaler
 from pathlib import Path
+# ML-integrity helpers (leakage-free targets, chronological split, train-only
+# scalers). See scripts/ml_integrity.py. Replaces the old .fillna(0) targets,
+# global row split on concatenated df, full-history scaler fit, and row-index
+# sequence split (Phase A1 + A2 + A3c).
+from ml_integrity import (
+    add_forward_returns, drop_immature_targets, chronological_split,
+    fit_scaler_on_train, per_stock_train_idx, split_sequences_by_date,
+    HORIZONS, MAX_HORIZON,
+)
 
 warnings.filterwarnings("ignore")
 OHLCV_DIR = Path("data/ohlcv")
@@ -55,9 +64,12 @@ def add_features(df):
     return df
 
 def add_labels(df):
-    df=df.copy()
-    for h in[5,10,21]:df[f"target_{h}d"]=((df["close"].shift(-h)-df["close"])/df["close"]).fillna(0)
-    return df
+    # NOTE: target construction moved out of add_labels into load() via
+    # ml_integrity.add_forward_returns — that primitive uses per-stock
+    # groupby(symbol).shift(-h) (no cross-stock leak, no .fillna(0)). Immature
+    # rows are left NaN; callers drop them per-horizon (train_classical) or via
+    # in-loop skip (train_lstm).
+    return df.copy()
 
 def load():
     frames=[]
@@ -66,8 +78,14 @@ def load():
         if not p.exists():continue
         df=pd.read_csv(p,usecols=range(6));df=df[df["volume"]>0].reset_index(drop=True)
         if len(df)<50:continue
-        df=add_features(df);df=add_labels(df);df["symbol"]=s;frames.append(df)
-    return pd.concat(frames,ignore_index=True) if frames else pd.DataFrame()
+        df=add_features(df);df["symbol"]=s;frames.append(df)
+    df=pd.concat(frames,ignore_index=True) if frames else pd.DataFrame()
+    if df.empty:return df
+    # ML integrity (Task 1): per-stock groupby(symbol).shift(-h); no .fillna(0);
+    # immature rows left NaN — callers drop per-horizon so per-horizon models
+    # keep rows whose shorter-horizon target is mature (Phase A1 requirement).
+    df=add_forward_returns(df)
+    return df
 
 def gen_preds(df, model, targets):
     """Generate per-stock predictions from a trained model."""
@@ -85,8 +103,10 @@ def gen_preds(df, model, targets):
 
 def train_classical(df):
     targets=["target_5d","target_10d","target_21d"]
-    split=int(len(df)*0.8);tr=df.iloc[:split];te=df.iloc[split:]
-    Xtr=tr[FC].values;Xte=te[FC].values
+    # ML integrity (Task 2): chronological_split replaces the leaky global row
+    # split on the concatenated df (mixed train/test across stocks in stock-
+    # concat order, not date order). Per-horizon dropna inside the loop.
+    tr,va,te=chronological_split(df)
     models_cfg={
         "XGBoost":lambda:xgb.XGBRegressor(n_estimators=150,max_depth=3,learning_rate=0.05,subsample=0.7,colsample_bytree=0.7,random_state=42),
         "LightGBM":lambda:lgb.LGBMRegressor(n_estimators=150,num_leaves=15,learning_rate=0.05,subsample=0.7,colsample_bytree=0.7,random_state=42,verbose=-1),
@@ -99,7 +119,12 @@ def train_classical(df):
         metrics={};preds={}
         for tc in targets:
             horizon=int(tc.split("_")[1].replace("d",""))
-            ytr=tr[tc].values;yte=te[tc].values
+            # ML integrity (Phase A1): per-horizon drop — drop ONLY rows whose
+            # THIS-horizon target is NaN (preserves shorter-horizon rows whose
+            # longest-horizon target is immature).
+            tr_h=tr.dropna(subset=[tc]);te_h=te.dropna(subset=[tc])
+            Xtr=tr_h[FC].values;Xte=te_h[FC].values
+            ytr=tr_h[tc].values;yte=te_h[tc].values
             m=factory();m.fit(Xtr,ytr);yp=m.predict(Xte)
             metrics[f"{horizon}d"]={"mse":float(mean_squared_error(yte,yp)),"mae":float(mean_absolute_error(yte,yp)),"r2":float(r2_score(yte,yp))}
             for s in STOCKS:
@@ -130,17 +155,35 @@ def train_lstm(df):
         import torch,torch.nn as nn
         from torch.utils.data import DataLoader,TensorDataset
         print("  Training LSTM...")
-        SEQ=30;seqs=[];targs=[]
+        # ML integrity (Task 2 + Task C): global chronological boundaries so every
+        # per-stock scaler is fit on the SAME TRAIN partition (replaces the old
+        # full-history fit_transform that leaked future distribution into train).
+        _tr,_va,_te=chronological_split(df)
+        train_end_date=_tr["date"].max();val_end_date=_va["date"].max()
+        SEQ=30;seqs=[];targs=[];seq_dates=[]
         for s in STOCKS:
             sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
             if len(sdf)<SEQ+21:continue
-            f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+            f=sdf[FC].values
+            # ML integrity (Task 3): fit scaler on the per-stock TRAIN partition
+            # only (rows with date <= train_end_date) — consistent with chronological_split.
+            ti=per_stock_train_idx(sdf,train_end_date)
+            if ti<SEQ+5:continue
+            sc=fit_scaler_on_train(f[:ti]);fs=sc.transform(f)
             for i in range(len(sdf)-SEQ-21):
-                seqs.append(fs[i:i+SEQ])
-                targs.append([sdf.iloc[i+SEQ]["target_5d"],sdf.iloc[i+SEQ]["target_10d"],sdf.iloc[i+SEQ]["target_21d"]])
+                di=i+SEQ  # decision bar (after the sequence window — no in-seq future)
+                row=sdf.iloc[di]
+                tgts=[row["target_5d"],row["target_10d"],row["target_21d"]]
+                # ML integrity: skip immature-target rows (no fillna(0) poisoning).
+                if any(pd.isna(t) or not np.isfinite(t) for t in tgts):continue
+                seqs.append(fs[i:i+SEQ]);targs.append(tgts);seq_dates.append(row["date"])
         if len(seqs)<50:return{"trained":False,"error":"Not enough sequences"}
         X=np.array(seqs,dtype=np.float32);y=np.array(targs,dtype=np.float32)
-        sp=int(len(X)*0.8);Xtr,Xte=X[:sp],X[sp:];ytr,yte=y[:sp],y[sp:]
+        # ML integrity (Task 2): date-disjoint train/val/test split by DECISION
+        # DATE (replaces the old sp=int(len(X)*0.8) row-index split).
+        Xtr,ytr,Xva,yva,Xte,yte=split_sequences_by_date(
+            X,y,seq_dates,train_end_date,val_end_date
+        )
         dl=DataLoader(TensorDataset(torch.from_numpy(Xtr),torch.from_numpy(ytr)),batch_size=32,shuffle=True)
         class M(nn.Module):
             def __init__(s,i,h,nl,o):
@@ -227,23 +270,56 @@ def train_neuralforecast(df):
     return results
 
 def backtest(df,models):
-    te=df.iloc[int(len(df)*0.8):].copy();bt={}
+    """Backtest each model on the chronological test partition — DISABLED
+    (Pattern #10 LEAKY_BACKTEST).
+
+    Original implementation: per-stock chronological test partition (the slice
+    itself was leak-free thanks to chronological_split), but the SIGNAL applied
+    to every historical test row came from `md.get("predictions",{}).get(s,{})`
+    — the model's STORED LATEST per-stock signal, constant per stock across
+    all historical test rows. This is leakage Pattern #10 (latest-signal
+    replay): today's signal applied to historical test dates, which
+    misrepresents the historical out-of-sample performance.
+
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py (the genuine walk-forward engine that
+    Phase A fixed — per-sample re-training + per-bar re-inference + realized
+    P&L from future OHLCV). Do NOT duplicate a new walk-forward engine here.
+
+    External interface preserved: same signature (df, models) and same
+    per-model top-level return keys (totalTrades / buySignals / sellSignals /
+    correctBuys / correctSells / winRate / avgReturnPct / maxReturnPct /
+    minReturnPct / stars), with values signaling unavailability, PLUS the new
+    status/reason/pointer/ml_integrity_note fields.
+    """
+    print("  backtest: UNAVAILABLE — Pattern #10 leak (latest-signal replay).")
+    print("           Use scripts/walk_forward_backtesting.py for leak-free eval.")
+    bt={}
     for name,md in models.items():
         if not md.get("trained"):continue
-        buys=sells=cb_=cs=0;rets=[]
-        for s in STOCKS:
-            ste=te[te["symbol"]==s].sort_values("date").reset_index(drop=True)
-            if len(ste)<21:continue
-            for i in range(0,len(ste)-21,5):
-                ar=(ste.iloc[min(i+21,len(ste)-1)]["close"]-ste.iloc[i]["close"])/ste.iloc[i]["close"]
-                pr=md.get("predictions",{}).get(s,{});sig=pr.get("signal","HOLD")
-                if sig=="BUY":buys+=1;rets.append(ar);cb_+=ar>0
-                elif sig=="SELL":sells+=1;rets.append(-ar);cs+=ar<0
-        tt=buys+sells;wr=(cb_+cs)/max(tt,1)*100;ar_=np.mean(rets)*100 if rets else 0
-        bt[name]={"totalTrades":tt,"buySignals":buys,"sellSignals":sells,"correctBuys":cb_,
-            "correctSells":cs,"winRate":round(wr,1),"avgReturnPct":round(ar_,2),
-            "maxReturnPct":round(max(rets)*100 if rets else 0,2),"minReturnPct":round(min(rets)*100 if rets else 0,2),
-            "stars":min(5,max(1,int(wr/20)+1))}
+        preds=md.get("predictions",{})
+        if not preds:continue
+        bt[name]={
+            "status":"unavailable",
+            "reason":(
+                "Pattern #10 LEAKY_BACKTEST: original implementation applied "
+                "the model's stored LATEST per-stock signal (md.get("
+                "'predictions',{}).get(s,{}).get('signal','HOLD')) to every "
+                "historical test row in the chronological test partition. The "
+                "partition itself was leak-free (chronological_split); the "
+                "signal source was the leak (today's signal replayed on every "
+                "historical test date). Use scripts/walk_forward_backtesting.py "
+                "for leak-free chronological walk-forward evaluation (per-sample "
+                "re-training + per-bar re-inference + realized P&L)."
+            ),
+            "pointer":"scripts/walk_forward_backtesting.py",
+            "ml_integrity_note":"Phase 1+2 fix: function disabled to prevent misleading metrics.",
+            "totalTrades":0,"buySignals":0,"sellSignals":0,
+            "correctBuys":0,"correctSells":0,
+            "winRate":None,"avgReturnPct":None,
+            "maxReturnPct":None,"minReturnPct":None,
+            "stars":0,
+        }
     return bt
 
 def main():
@@ -267,7 +343,14 @@ def main():
         "targets":["return_5d","return_10d","return_21d"],
         "sl_rule":"min(low[-14:]) — recent 14-day support",
         "tp_rule":"TP1=5d predicted price, TP2=10d, TP3=21d",
-        "models":all_models,"untrained_models":untrained,"backtesting":bt}
+        "models":all_models,"untrained_models":untrained,"backtesting":bt,
+        "ml_integrity":{
+            "target_construction":"per-stock groupby(symbol).shift(-h) via ml_integrity.add_forward_returns in load(); no .fillna(0); immature rows left NaN and dropped per-horizon inside train_classical (dropna) + via in-loop skip in train_lstm",
+            "split":"date-based chronological_split (60/20/20) with per-stock purge of MAX_HORIZON=21 rows at each boundary; replaces the old global row split on the concatenated df (train_classical + backtest); LSTM sequences split by DECISION DATE via split_sequences_by_date",
+            "scaler_fitting":"fit_scaler_on_train on per-stock TRAIN partition (date <= train_end_date) inside train_lstm; transform-only on val/test; replaces the old StandardScaler().fit_transform on the FULL per-stock history",
+            "backtest_methodology":"Pattern #10 LEAKY_BACKTEST disabled — function now returns status='unavailable' with reason + pointer to scripts/walk_forward_backtesting.py for genuine walk-forward ML evaluation. backtest() no longer applies the model's stored LATEST per-stock signal to every historical test row; per-model backtest entries now carry status='unavailable' + zeroed metrics.",
+            "ml_historical_evaluation":"unavailable",
+        }}
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
     OUTPUT.write_text(json.dumps(out,indent=2,default=lambda o:int(o) if isinstance(o,(np.integer,)) else float(o) if isinstance(o,(np.floating,)) else str(o)))
     tc=sum(1 for m in all_models.values() if m.get("trained"))

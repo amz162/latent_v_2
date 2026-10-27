@@ -11,6 +11,10 @@ import json,sys,warnings,numpy as np,pandas as pd
 from pathlib import Path
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
+# ML-integrity helpers (leakage-free targets, chronological split). See
+# scripts/ml_integrity.py. Replaces the old .fillna(0) targets + global row
+# split on the concatenated df (Phase A1).
+from ml_integrity import add_forward_returns, chronological_split, HORIZONS
 warnings.filterwarnings("ignore")
 
 OHLCV=Path("data/ohlcv");PRED=Path("data/ml_predictions_multi.json")
@@ -42,7 +46,10 @@ def add_features(df):
     df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
     df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
     df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
-    for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+    # NOTE: target_{hz}d construction moved out of add_features into load() via
+    # ml_integrity.add_forward_returns — that primitive uses per-stock
+    # groupby(symbol).shift(-h) (no cross-stock leak, no .fillna(0)). Immature
+    # rows are left NaN; callers drop them per-horizon (fix_lightgbm).
     return df
 
 def load():
@@ -53,7 +60,13 @@ def load():
         df=pd.read_csv(p,usecols=range(6));df=df[df["volume"]>0].reset_index(drop=True)
         if len(df)<50:continue
         df=add_features(df);df["symbol"]=s;frames.append(df)
-    return pd.concat(frames,ignore_index=True) if frames else pd.DataFrame()
+    df=pd.concat(frames,ignore_index=True) if frames else pd.DataFrame()
+    if df.empty:return df
+    # ML integrity (Task 1): per-stock groupby(symbol).shift(-h); no .fillna(0);
+    # immature rows left NaN — callers drop per-horizon so per-horizon models
+    # keep rows whose shorter-horizon target is mature (Phase A1 requirement).
+    df=add_forward_returns(df)
+    return df
 
 def make_pred(cp,r5,r10,r21,sl):
     tp1=round(cp*(1+r5),2);tp2=round(cp*(1+r10),2);tp3=round(cp*(1+r21),2)
@@ -135,12 +148,19 @@ def fix_lightgbm(df):
     import lightgbm as lgb
     print("  Fixing LightGBM (better hyperparameters)...")
     targets=["target_5d","target_10d","target_21d"]
-    split=int(len(df)*0.8);tr=df.iloc[:split];te=df.iloc[split:]
-    Xtr=tr[FC].values;Xte=te[FC].values
+    # ML integrity (Task 2): chronological_split replaces the leaky global row
+    # split on the concatenated df (which mixed train/test across stocks in
+    # stock-concat order, not date order). VAL partition used for early-stopping
+    # — never tune on test (Phase A2 fix).
+    tr,va,te=chronological_split(df)
     metrics={};preds={}
     for tc in targets:
         hz=int(tc.split("_")[1].replace("d",""))
-        ytr=tr[tc].values;yte=te[tc].values
+        # ML integrity (Phase A1): per-horizon drop — preserves shorter-horizon
+        # rows whose longest-horizon target is immature.
+        tr_h=tr.dropna(subset=[tc]);va_h=va.dropna(subset=[tc]);te_h=te.dropna(subset=[tc])
+        Xtr=tr_h[FC].values;Xva=va_h[FC].values;Xte=te_h[FC].values
+        ytr=tr_h[tc].values;yva=va_h[tc].values;yte=te_h[tc].values
         # Better hyperparameters: more leaves, slower learning, more trees, regularization
         model=lgb.LGBMRegressor(
             n_estimators=300,num_leaves=31,learning_rate=0.01,
@@ -148,7 +168,7 @@ def fix_lightgbm(df):
             min_child_samples=20,reg_alpha=0.5,reg_lambda=2.0,
             random_state=42,verbose=-1,
         )
-        model.fit(Xtr,ytr,eval_set=[(Xte,yte)],callbacks=[lgb.early_stopping(20,verbose=False)])
+        model.fit(Xtr,ytr,eval_set=[(Xva,yva)],callbacks=[lgb.early_stopping(20,verbose=False)])
         yp=model.predict(Xte)
         metrics[f"{hz}d"]={"mse":float(mean_squared_error(yte,yp))}
         for s in STOCKS:
@@ -170,82 +190,111 @@ def fix_lightgbm(df):
 
 # ─── Win-rate-weighted ensemble backtesting ───
 def backtest_ensemble_weighted(df, models, individual_bt):
-    """Ensemble that weights each model by its backtesting win rate.
-    Models with <30% win rate get 0 weight (filtered out).
-    Models with >50% win rate get full weight.
-    Models between 30-50% get proportional weight."""
-    te=df.iloc[int(len(df)*0.8):].copy()
-    trained_models={n:m for n,m in models.items() if m.get("trained") and m.get("predictions",{})}
-    if not trained_models:return{}
+    """Ensemble that weights each model by its backtesting win rate — DISABLED
+    (Pattern #10 LEAKY_BACKTEST).
 
-    bt_data={"trades":0,"wins":0,"rets":[]}
+    Original implementation: per-stock chronological test partition (the slice
+    itself was leak-free thanks to chronological_split), but the SIGNAL applied
+    to every historical test row came from `md.get("predictions",{}).get(s,{})`
+    — the model's STORED LATEST per-stock signal, constant per stock across
+    all historical test rows. This is leakage Pattern #10 (latest-signal
+    replay): today's signal applied to historical test dates, which
+    misrepresents the historical out-of-sample performance of the ensemble.
 
-    for s in STOCKS:
-        ste=te[te["symbol"]==s].sort_values("date").reset_index(drop=True)
-        if len(ste)<21:continue
-        for i in range(0,len(ste)-21,5):
-            ar=(ste.iloc[min(i+21,len(ste)-1)]["close"]-ste.iloc[i]["close"])/ste.iloc[i]["close"]
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py (the genuine walk-forward engine that
+    Phase A fixed — per-sample re-training + per-bar re-inference + realized
+    P&L from future OHLCV). Do NOT duplicate a new walk-forward engine here.
 
-            # Collect signals weighted by win rate
-            weighted_buy=0;weighted_sell=0;total_weight=0
-            for mn,md in trained_models.items():
-                pr=md.get("predictions",{}).get(s,{})
-                sig=pr.get("signal","HOLD")
-                ar_m=pr.get("avgReturn",0)
-                wr=individual_bt.get(mn,{}).get("winRate",0)
-                # Weight: 0 if win rate < 30%, proportional 30-50%, full if > 50%
-                if wr<30:weight=0
-                elif wr>50:weight=1.0
-                else:weight=(wr-30)/20  # linear 0→1 from 30% to 50%
-                if weight>0:
-                    total_weight+=weight
-                    if sig=="BUY":weighted_buy+=ar_m*weight
-                    elif sig=="SELL":weighted_sell+=ar_m*weight
-
-            if total_weight==0:continue
-            # Weighted average return
-            wr_avg=(weighted_buy+weighted_sell)/total_weight
-            if wr_avg>0.01:ens_sig="BUY"
-            elif wr_avg<-0.01:ens_sig="SELL"
-            else:ens_sig="HOLD"
-
-            if ens_sig!="HOLD":
-                bt_data["trades"]+=1
-                if (ens_sig=="BUY"and ar>0)or(ens_sig=="SELL"and ar<0):bt_data["wins"]+=1
-                bt_data["rets"].append(ar if ens_sig=="BUY"else -ar)
-
-    t=bt_data["trades"];w=bt_data["wins"];r=bt_data["rets"]
-    return{"WIN_RATE_WEIGHTED":{
-        "totalTrades":int(t),"wins":int(w),
-        "winRate":round(float(w/max(t,1)*100),1),
-        "avgReturnPct":round(float(np.mean(r)*100)if r else 0,2),
-        "maxReturnPct":round(float(max(r)*100)if r else 0,2),
-        "minReturnPct":round(float(min(r)*100)if r else 0,2),
-        "stars":int(min(5,max(1,int(w/max(t,1)*100/20)+1)))if t>0 else 0,
+    External interface preserved: same signature (df, models, individual_bt)
+    and same top-level return keys (WIN_RATE_WEIGHTED wrapper + totalTrades /
+    wins / winRate / avgReturnPct / maxReturnPct / minReturnPct / stars),
+    with values signaling unavailability, PLUS the new status/reason/pointer/
+    ml_integrity_note fields.
+    """
+    print("  WIN_RATE_WEIGHTED: UNAVAILABLE — Pattern #10 leak (latest-signal replay).")
+    print("           Use scripts/walk_forward_backtesting.py for leak-free eval.")
+    return {"WIN_RATE_WEIGHTED": {
+        "status": "unavailable",
+        "reason": (
+            "Pattern #10 LEAKY_BACKTEST: original implementation applied the "
+            "model's stored LATEST per-stock signal (md.get('predictions',{})."
+            "get(s,{}).get('signal','HOLD')) to every historical test row in "
+            "the chronological test partition. The partition itself was leak-"
+            "free (chronological_split); the signal source was the leak "
+            "(today's signal replayed on every historical test date). Use "
+            "scripts/walk_forward_backtesting.py for leak-free chronological "
+            "walk-forward evaluation (per-sample re-training + per-bar "
+            "re-inference + realized P&L)."
+        ),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "ml_integrity_note": "Phase 1+2 fix: function disabled to prevent misleading metrics.",
+        "totalTrades": 0,
+        "wins": 0,
+        "winRate": None,
+        "avgReturnPct": None,
+        "maxReturnPct": None,
+        "minReturnPct": None,
+        "stars": 0,
     }}
 
 # ─── Recompute all backtesting ───
 def backtest_all(df, models):
-    te=df.iloc[int(len(df)*0.8):].copy()
-    bt={}
-    for name,md in models.items():
-        if not md.get("trained"):continue
-        buys=sells=cb_=cs=0;rets=[]
-        for s in STOCKS:
-            ste=te[te["symbol"]==s].sort_values("date").reset_index(drop=True)
-            if len(ste)<21:continue
-            for i in range(0,len(ste)-21,5):
-                ar=(ste.iloc[min(i+21,len(ste)-1)]["close"]-ste.iloc[i]["close"])/ste.iloc[i]["close"]
-                pr=md.get("predictions",{}).get(s,{});sig=pr.get("signal","HOLD")
-                if sig=="BUY":buys+=1;rets.append(ar);cb_+=ar>0
-                elif sig=="SELL":sells+=1;rets.append(-ar);cs+=ar<0
-        tt=buys+sells;wr=(cb_+cs)/max(tt,1)*100;ar_=float(np.mean(rets))*100 if rets else 0
-        bt[name]={"totalTrades":int(tt),"buySignals":int(buys),"sellSignals":int(sells),
-            "correctBuys":int(cb_),"correctSells":int(cs),
-            "winRate":round(float(wr),1),"avgReturnPct":round(float(ar_),2),
-            "maxReturnPct":round(float(max(rets)*100)if rets else 0,2),
-            "minReturnPct":round(float(min(rets)*100)if rets else 0,2),
-            "stars":int(min(5,max(1,int(wr/20)+1)))}
+    """Re-backtest all models on the chronological test partition — DISABLED
+    (Pattern #10 LEAKY_BACKTEST).
+
+    Original implementation: per-stock chronological test partition (the slice
+    itself was leak-free thanks to chronological_split), but the SIGNAL applied
+    to every historical test row came from `md.get("predictions",{}).get(s,{})`
+    — the model's STORED LATEST per-stock signal, constant per stock across
+    all historical test rows. This is leakage Pattern #10 (latest-signal
+    replay): today's signal applied to historical test dates, which
+    misrepresents the historical out-of-sample performance.
+
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py (the genuine walk-forward engine that
+    Phase A fixed — per-sample re-training + per-bar re-inference + realized
+    P&L from future OHLCV). Do NOT duplicate a new walk-forward engine here.
+
+    External interface preserved: same signature (df, models) and same
+    per-model top-level return keys (totalTrades / buySignals / sellSignals /
+    correctBuys / correctSells / winRate / avgReturnPct / maxReturnPct /
+    minReturnPct / stars), with values signaling unavailability, PLUS the new
+    status/reason/pointer/ml_integrity_note fields.
+    """
+    print("  backtest_all: UNAVAILABLE — Pattern #10 leak (latest-signal replay).")
+    print("           Use scripts/walk_forward_backtesting.py for leak-free eval.")
+    bt = {}
+    for name, md in models.items():
+        if not md.get("trained"): continue
+        preds = md.get("predictions", {})
+        if not preds: continue
+        bt[name] = {
+            "status": "unavailable",
+            "reason": (
+                "Pattern #10 LEAKY_BACKTEST: original implementation applied "
+                "the model's stored LATEST per-stock signal (md.get("
+                "'predictions',{}).get(s,{}).get('signal','HOLD')) to every "
+                "historical test row in the chronological test partition. The "
+                "partition itself was leak-free (chronological_split); the "
+                "signal source was the leak (today's signal replayed on every "
+                "historical test date). Use scripts/walk_forward_backtesting.py "
+                "for leak-free chronological walk-forward evaluation (per-sample "
+                "re-training + per-bar re-inference + realized P&L)."
+            ),
+            "pointer": "scripts/walk_forward_backtesting.py",
+            "ml_integrity_note": "Phase 1+2 fix: function disabled to prevent misleading metrics.",
+            "totalTrades": 0,
+            "buySignals": 0,
+            "sellSignals": 0,
+            "correctBuys": 0,
+            "correctSells": 0,
+            "winRate": None,
+            "avgReturnPct": None,
+            "maxReturnPct": None,
+            "minReturnPct": None,
+            "stars": 0,
+        }
     return bt
 
 def main():
@@ -277,6 +326,13 @@ def main():
     existing["models"]=all_models
     existing["backtesting"]=bt_ind
     existing["ensemble_backtesting"]=bt_ens
+    existing["ml_integrity"]={
+        "target_construction":"per-stock groupby(symbol).shift(-h) via ml_integrity.add_forward_returns in load(); no .fillna(0); immature rows left NaN and dropped per-horizon in fix_lightgbm",
+        "split":"date-based chronological_split (60/20/20) with per-stock purge of MAX_HORIZON=21 rows at each boundary; replaces the old global row split on the concatenated df",
+        "scaler_fitting":"no scalers in this script (ARIMA + Kalman + LightGBM operate on raw features); LightGBM early-stopping uses the VAL partition (not test) — Phase A2 fix to the old eval_set=[(Xte,yte)] test-set tuning",
+        "backtest_methodology":"Pattern #10 LEAKY_BACKTEST disabled — function now returns status='unavailable' with reason + pointer to scripts/walk_forward_backtesting.py for genuine walk-forward ML evaluation. backtest_ensemble_weighted + backtest_all no longer apply the model's stored LATEST per-stock signal to every historical test row; per-model / WIN_RATE_WEIGHTED entries now carry status='unavailable' + zeroed metrics.",
+        "ml_historical_evaluation":"unavailable",
+    }
 
     PRED.write_text(json.dumps(existing,indent=2,default=lambda o:int(o)if isinstance(o,(np.integer,))else float(o)if isinstance(o,(np.floating,))else str(o)))
 
@@ -291,7 +347,9 @@ def main():
     wr=bt_wr.get("WIN_RATE_WEIGHTED",{})
     print(f"  WIN_RATE_WEIGHTED: trades={wr.get('totalTrades',0)} winRate={wr.get('winRate',0)}% avgReturn={wr.get('avgReturnPct',0)}% stars={'★'*wr.get('stars',0)}")
     print(f"\nAll models ranked:")
-    for name,b in sorted(bt_ind.items(),key=lambda x:-x[1].get("winRate",0)):
+    # Phase 1+2: made defensive to tolerate None winRate (now that
+    # backtest_all returns status='unavailable' stubs with winRate=None).
+    for name,b in sorted(bt_ind.items(),key=lambda x:-(x[1].get("winRate") or 0)):
         print(f"  {name}: {b.get('winRate',0)}% {'★'*b.get('stars',0)}")
     print(f"\nSaved: {PRED}")
 

@@ -10,6 +10,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.preprocessing import StandardScaler
 from pathlib import Path
+# ML-integrity helpers (leakage-free targets). See scripts/ml_integrity.py.
+# Replaces the old .fillna(0) on per-horizon targets (Phase A1).
+from ml_integrity import drop_immature_targets, HORIZONS
 warnings.filterwarnings("ignore")
 
 DB = "db/custom.db"
@@ -52,7 +55,12 @@ def add_features(df):
  return df
 def add_labels(df):
  df=df.copy()
- for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+ # ML integrity (Task 1): per-stock shift inside train_stock (sdf is one
+ # stock, so df["close"].shift(-h) does NOT cross stock boundaries). No
+ # .fillna(0) — immature rows are left NaN and dropped per-horizon inside
+ # the train_stock per-horizon loop (Phase A1 fix to the old fillna(0) that
+ # zeroed unmatured/suspended future returns).
+ for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"])
  return df
 
 # ─── DB reader ───
@@ -87,7 +95,13 @@ def train_stock(df):
    m=factory()
    r5,r10,r21=None,None,None
    for hz,col in[(5,"target_5d"),(10,"target_10d"),(21,"target_21d")]:
-    y=tr[col].values
+    # ML integrity (Phase A1): per-horizon drop — drop ONLY rows whose
+    # THIS-horizon target is NaN (preserves shorter-horizon rows whose
+    # longest-horizon target is immature). Re-pull Xtr per-horizon since row
+    # counts may differ across horizons.
+    tr_h=tr.dropna(subset=[col])
+    Xtr=tr_h[FC].values
+    y=tr_h[col].values
     m.fit(Xtr,y)
     p=m.predict(sdf[FC].values[-1:])[0]
     if hz==5:r5=p
@@ -161,9 +175,40 @@ def compute_ensembles(models_out):
 
 # ─── Backtesting ───
 def backtest_predictions(preds_dict):
+ """Compute predicted-positive-rate backtest metrics — RELABELED
+ (Pattern #11 LEAKY_BACKTEST — predicted-as-realized).
+
+ Each prediction = 1 trade; the `wins` field is computed from the model's
+ PREDICTED avgReturn being positive (`p.get('avgReturn',0) > 0`), NOT from a
+ realized-outcome simulation against future OHLCV. So:
+   - `wins` is actually a PREDICTED-positive count (informational, NOT a
+     realized win). Kept for backward compat with downstream readers.
+   - `winRate` is the predicted-positive RATE (a meta-metric, NOT a true
+     out-of-sample win rate).
+   - new alias `predicted_positive_count` = `wins` (explicit informational
+     name).
+   - `realized_winRate: 'unavailable'` with reason (no realized-outcome
+     simulation here).
+   - `ml_historical_evaluation: 'unavailable'` (no chronological walk-forward
+     evaluation done in this script).
+
+ External interface preserved: existing keys (totalTrades / wins / winRate /
+ avgReturnPct / maxReturnPct / minReturnPct) all retained with their original
+ semantics, just accompanied by the new informational alias +
+ realized_winRate='unavailable' + ml_historical_evaluation='unavailable'.
+
+ For a leak-free realized-outcome backtest, see
+ scripts/walk_forward_backtesting.py (per-sample re-training + per-bar
+ re-inference + realized P&L against future OHLCV).
+ """
  results={}
  for model_name, model_preds in preds_dict.items():
-  total=len(model_preds);wins=0;returns=[]
+  total=len(model_preds)
+  # Phase 2 Pattern #11: `wins` is the predicted-positive count (avgReturn>0),
+  # NOT a realized-outcome win. Kept for backward compat with downstream
+  # readers that already use this field. See predicted_positive_count alias
+  # below for the explicit informational name.
+  wins=0;returns=[]
   for sym,p in model_preds.items():
    ret=p.get("avgReturn",0)
    returns.append(ret)
@@ -171,7 +216,20 @@ def backtest_predictions(preds_dict):
   wr=(wins/total*100) if total else 0
   avg_r=np.mean(returns) if returns else 0
   results[model_name]={
-   "totalTrades":total,"wins":wins,"winRate":round(wr,1),
+   "totalTrades":total,
+   "wins":wins,  # Phase 2 Pattern #11: actually PREDICTED-positive count; see predicted_positive_count alias
+   "predicted_positive_count":wins,  # informational, NOT a realized win
+   "winRate":round(wr,1),  # Phase 2: predicted-positive rate, NOT a realized win rate
+   "realized_winRate":"unavailable",
+   "realized_winRate_reason":(
+    "Pattern #11 LEAKY_BACKTEST: 'win' was computed from the model's "
+    "PREDICTED avgReturn (p.get('avgReturn', 0) > 0), not from a realized-"
+    "outcome simulation against future OHLCV. The 'winRate' above is the "
+    "predicted-positive rate (a meta-metric). Use "
+    "scripts/walk_forward_backtesting.py for a leak-free realized-outcome "
+    "backtest (per-sample re-training + per-bar re-inference + realized P&L)."
+   ),
+   "ml_historical_evaluation":"unavailable",
    "avgReturnPct":round(avg_r*100,2),"maxReturnPct":round(max(returns)*100,2) if returns else 0,
    "minReturnPct":round(min(returns)*100,2) if returns else 0
   }
@@ -238,6 +296,13 @@ def main():
   print(f"  {name}: {stats['winRate']}% win, {stats['totalTrades']} trades, avg {stats['avgReturnPct']}%")
  # Final save
  out["trained_at"]=pd.Timestamp.now().isoformat()
+ out["ml_integrity"]={
+  "target_construction":"per-stock shift(-h) inside add_labels (called per-stock in train_stock; sdf is one stock so shift does NOT cross stock boundaries); no .fillna(0); immature rows left NaN and dropped per-horizon inside the train_stock loop",
+  "split":"per-stock chronological 80/20 inside train_stock (sdf is sorted by date in add_features so int(len(sdf)*0.8) IS chronological; per-stock-only training, no concatenated df)",
+  "scaler_fitting":"no scalers in this script (regressors operate on raw FC features)",
+  "backtest_methodology":"Pattern #11 LEAKY_BACKTEST disabled — wins/winRate relabeled as predicted_positive_count (informational only); realized_winRate marked unavailable with reason; pointer to scripts/walk_forward_backtesting.py. backtest_predictions() still computes the predicted-positive count from p.get('avgReturn',0)>0 but each entry now carries predicted_positive_count alias + realized_winRate='unavailable' + realized_winRate_reason + ml_historical_evaluation='unavailable'.",
+  "ml_historical_evaluation":"unavailable",
+ }
  OUT.write_text(json.dumps(out,indent=2,default=lambda o:int(o) if isinstance(o,(np.integer,)) else float(o) if isinstance(o,(np.floating,)) else str(o)))
  print(f"\n✅ Done! {OUT} updated. {len(syms)} stocks, 4 models, {len(ens)} ensembles.")
 

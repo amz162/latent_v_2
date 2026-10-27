@@ -558,75 +558,51 @@ def compute_all_ensembles(all_models, atr_per, stocks):
 # ─── Backtest (same logic as existing retrain script) ──────────────────────
 
 def backtest_model(df, preds, atr_per, name):
-    """Backtest a model/ensemble's predictions on 20% holdout per stock."""
-    b = s_ = c = cs = 0
-    returns = []
-    for sym in preds:
-        sig = preds[sym].get("signal", "HOLD")
-        if sig == "HOLD":
-            continue
-        sd = df[df["symbol"] == sym].sort_values("date").reset_index(drop=True)
-        if len(sd) < 30:
-            continue
-        sp = int(len(sd) * 0.8)
-        st = sd.iloc[sp:]
-        if len(st) < 5:
-            continue
-        cp = atr_per.get(sym, {}).get("cp", float(sd.iloc[-1]["close"]))
-        atr = atr_per.get(sym, {"atr": cp * 0.02})["atr"]
-        e, sl, t1, t2, t3 = atr_rules(sig, cp, atr)
-        for i in range(0, max(1, len(st) - min(21, len(st) - 1)), 5):
-            w = min(21, len(st) - i)
-            ep = float(st.iloc[min(i + w, len(st) - 1)]["close"])
-            for j in range(i, min(i + w, len(st))):
-                r = st.iloc[j]
-                nh = float(r["high"])
-                nl = float(r["low"])
-                if sig == "BUY":
-                    if nl <= sl:
-                        ep = sl
-                        break
-                    if nh >= t3:
-                        ep = t3
-                        break
-                    if nh >= t2:
-                        ep = t2
-                    elif nh >= t1:
-                        ep = t1
-                else:
-                    if nh >= sl:
-                        ep = sl
-                        break
-                    if nl <= t3:
-                        ep = t3
-                        break
-                    if nl <= t2:
-                        ep = t2
-                    elif nl <= t1:
-                        ep = t1
-            if sig == "BUY":
-                b += 1
-                a = (ep - e) / e
-                returns.append(a)
-                c += a > 0
-            else:
-                s_ += 1
-                a = (e - ep) / e
-                returns.append(a)
-                cs += a > 0
-    tt = b + s_
-    wr = (c + cs) / max(tt, 1) * 100
-    ap = float(np.mean(returns) * 100) if returns else 0
-    if np.isnan(ap):
-        ap = 0
+    """Backtest a model/ensemble's predictions on 20% holdout per stock —
+    DISABLED (Phase 4 B-AUDIT Pattern #10 leak).
+
+    Original implementation: per-stock 80/20 chronological test slice + adaptive
+    window (the slice itself was leak-free), but the SIGNAL applied to every
+    historical test row came from `preds[sym].get("signal", "HOLD")` — the
+    model's STORED LATEST per-stock signal (constant per stock across all
+    historical test rows). This is leakage Pattern #10 (latest-signal replay):
+    today's signal applied to historical test dates, which misrepresents the
+    historical out-of-sample performance of the model/ensemble.
+
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py. Do NOT duplicate a new walk-forward
+    engine here.
+
+    External interface preserved: same signature (df, preds, atr_per, name)
+    and same top-level return keys (totalTrades / buySignals / sellSignals /
+    correctBuys / correctSells / winRate / avgReturnPct / maxReturnPct /
+    minReturnPct / stars). Values signal unavailability. Callers that already
+    handle 0-trade / null-winRate results continue to work.
+    """
+    print(f"  {name}: UNAVAILABLE — Pattern #10 leak (latest-signal replay). "
+          f"Use scripts/walk_forward_backtesting.py for leak-free eval.")
     return {
-        "totalTrades": int(tt), "buySignals": int(b), "sellSignals": int(s_),
-        "correctBuys": int(c), "correctSells": int(cs),
-        "winRate": round(float(wr if not np.isnan(wr) else 0), 1),
-        "avgReturnPct": round(float(ap), 2),
-        "maxReturnPct": round(float(max(returns) * 100 if returns else 0), 2),
-        "minReturnPct": round(float(min(returns) * 100 if returns else 0), 2),
-        "stars": int(min(5, max(1, int(wr / 20) + 1))) if tt > 0 else 0,
+        "status": "unavailable",
+        "reason": ("Pattern #10 LEAKY_BACKTEST: original implementation applied "
+                   "the model's stored LATEST per-stock signal "
+                   "(preds[sym].get('signal', 'HOLD')) to every historical test "
+                   "row in the per-stock 80/20 holdout. This misrepresents "
+                   "historical OOS performance. Use scripts/walk_forward_"
+                   "backtesting.py for leak-free chronological walk-forward "
+                   "evaluation (per-sample re-training + per-bar re-inference + "
+                   "realized P&L)."),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "ml_integrity_note": "Phase 4 B-AUDIT: function disabled to prevent misleading metrics.",
+        "totalTrades": 0,
+        "buySignals": 0,
+        "sellSignals": 0,
+        "correctBuys": 0,
+        "correctSells": 0,
+        "winRate": None,
+        "avgReturnPct": None,
+        "maxReturnPct": None,
+        "minReturnPct": None,
+        "stars": 0,
     }
 
 # ─── Main ───────────────────────────────────────────────────────────────────
@@ -754,6 +730,66 @@ def main():
         "gian_ensemble_predictions": ens_preds.get("gian_ensemble", {}),
         "gian_extender_predictions": ens_preds.get("gian_extender", {}),
         "m_ensemble_predictions": ens_preds.get("m_ensemble", {}),
+        # Phase 4 B-AUDIT: ml_integrity documentation. Two distinct leakage
+        # concerns are documented here:
+        # (1) Pattern #10 LEAKY_BACKTEST (backtesting/metric correctness —
+        #     Phase 4 scope): backtest_model above was replaced with an
+        #     unavailable stub because the original applied the model's STORED
+        #     LATEST per-stock signal (preds[sym].get('signal', 'HOLD')) to
+        #     every historical test row in the per-stock 80/20 holdout. The
+        #     per-stock 80/20 chronological test slice itself is fine; the
+        #     signal source was the leak. Use scripts/walk_forward_backtesting.py
+        #     for the leak-free chronological walk-forward evaluation (per-sample
+        #     re-training + per-bar re-inference + realized P&L).
+        # (2) LEAKY_SPLIT in the TRAINING path (Phase A scope, documented as
+        #     follow-up): train_base_regressors at L244-245 uses
+        #     `df.sample(n=min(100000, len(df)), random_state=42).dropna(subset=FC+targets)`
+        #     followed by `sp=int(len(dft)*0.8); Xtr=dft.iloc[:sp]...` — a
+        #     RANDOM SAMPLE that destroys chronological order before an 80%
+        #     row-index split. Fix: replace with chronological_split(df) train
+        #     partition (from ml_integrity.py) so the train/val boundary is a
+        #     date, not a random row index. The target construction at L143-146
+        #     (df.groupby("symbol")["close"].shift(-hz) without fillna) is
+        #     ALREADY leak-free.
+        "ml_integrity": {
+            "backtest_methodology": (
+                "Phase 4 B-AUDIT Pattern #10: backtest_model replaced with "
+                "unavailable stub. Original implementation applied the model's "
+                "stored LATEST per-stock signal (preds[sym].get('signal', "
+                "'HOLD')) to every historical test row — Pattern #10 "
+                "LEAKY_BACKTEST (latest-signal replay). The per-stock 80/20 "
+                "chronological test slice is fine; the signal source was the "
+                "leak. Use scripts/walk_forward_backtesting.py for the "
+                "leak-free chronological walk-forward evaluation."
+            ),
+            "pattern": "Pattern #10 LEAKY_BACKTEST (latest-signal replay)",
+            "status": "unavailable",
+            "reason": (
+                "Stored latest per-stock signal applied to every historical "
+                "test row; misrepresents historical OOS performance."
+            ),
+            "pointer": "scripts/walk_forward_backtesting.py",
+            "scope_note": (
+                "Phase 4 scope is backtesting/metric correctness. "
+                "Training-pipeline leakage is Phase A scope (see follow_up "
+                "below)."
+            ),
+            "follow_up_phase_a": {
+                "LEAKY_SPLIT_train_base_regressors": (
+                    "L244-245: dft=df.sample(n=min(100000, len(df)), "
+                    "random_state=42).dropna(subset=FC+targets) destroys "
+                    "chronological order; sp=int(len(dft)*0.8) row split on "
+                    "randomly-sampled dft is meaningless as a chronological "
+                    "split. Fix: from ml_integrity import chronological_split; "
+                    "tr, va, te = chronological_split(df.dropna(subset=FC+"
+                    "targets)); use tr+va as the train partition."
+                ),
+                "target_construction_note": (
+                    "L143-146: df.groupby('symbol')['close'].shift(-hz) WITHOUT "
+                    "fillna — ALREADY leak-free (B-AUDIT ALREADY_FIXED)."
+                ),
+            },
+        },
     })
     PRED_FILE.write_text(json.dumps(out, indent=2, allow_nan=False,
         default=lambda o: int(o) if isinstance(o, (np.integer,)) else
@@ -766,10 +802,14 @@ def main():
     print(f"{'='*70}")
     print(f"\nModels: {tc}/{len(all_models)} | Backtesting: {len(bt)} | Ensembles: {len(ens_bt)}")
     print(f"\nTop 5 Models:")
-    for n, b in sorted(bt.items(), key=lambda x: x[1].get("winRate", 0), reverse=True)[:5]:
+    # Phase 4 B-AUDIT: backtest_model returns winRate=None when status is
+    # "unavailable" (Pattern #10 leak). Use `(x[1].get('winRate') or 0)` so the
+    # sort tolerates None (all-stub backtests sort equally and just print
+    # stubs instead of misleading WR numbers).
+    for n, b in sorted(bt.items(), key=lambda x: (x[1].get("winRate") or 0), reverse=True)[:5]:
         print(f"  {n}: WR={b['winRate']}% trades={b['totalTrades']}")
     print(f"\nAll 14 Ensembles:")
-    for n, b in sorted(ens_bt.items(), key=lambda x: x[1].get("winRate", 0), reverse=True):
+    for n, b in sorted(ens_bt.items(), key=lambda x: (x[1].get("winRate") or 0), reverse=True):
         print(f"  {n}: WR={b['winRate']}% trades={b['totalTrades']}")
     print(f"\nFile: {PRED_FILE.stat().st_size / 1024 / 1024:.1f} MB")
     # Cleanup

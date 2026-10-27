@@ -123,93 +123,50 @@ def signal_from_preds(preds, method="majority"):
 
 
 def backtest_ensemble(df, all_models, ensemble_fn, name):
-    """Backtest an ensemble function with per-stock split + adaptive window."""
-    atr_per_stock = get_atr_per_stock(df)
-    te_parts = []
-    for s in STOCKS:
-        sdf = df[df["symbol"] == s].sort_values("date").reset_index(drop=True)
-        if len(sdf) < 30:
-            continue
-        split = int(len(sdf) * 0.8)
-        te_parts.append(sdf.iloc[split:])
-    te = pd.concat(te_parts, ignore_index=True) if te_parts else pd.DataFrame()
+    """Backtest an ensemble function — DISABLED (Phase 4 B-AUDIT Pattern #10 leak).
 
-    buys = sells = cb = cs = 0
-    rets = []
-    for s in STOCKS:
-        ste = te[te["symbol"] == s].sort_values("date").reset_index(drop=True)
-        if len(ste) < 5:
-            continue
-        atr = atr_per_stock.get(s, {}).get("atr_14", 0)
-        cp = atr_per_stock.get(s, {}).get("current_price", 0)
-        # Build ensemble signal from per-stock model signals
-        stock_signals = []
-        stock_returns = []
-        for mn, md in all_models.items():
-            if not md.get("trained"):
-                continue
-            pr = md.get("predictions", {}).get(s, {})
-            stock_signals.append(pr.get("signal", "HOLD"))
-            stock_returns.append(pr.get("avgReturn", 0))
+    Original implementation: per-stock 80/20 chronological test slice + adaptive
+    window (the slice itself was leak-free), but the SIGNAL applied to every
+    historical test row came from `md["predictions"][s].get("signal", "HOLD")` —
+    the model's STORED LATEST per-stock signal, constant per stock across all
+    historical test rows. This is leakage Pattern #10 (latest-signal replay):
+    today's signal applied to historical test dates, which misrepresents the
+    historical out-of-sample performance of the ensemble.
 
-        sig = ensemble_fn(stock_signals, stock_returns)
-        if sig == "HOLD":
-            continue
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py (the genuine walk-forward engine that
+    Phase A fixed). Do NOT duplicate a new walk-forward engine here.
 
-        entry, sl, tp1, tp2, tp3 = apply_atr_rules(sig, cp, atr)
-
-        for i in range(0, max(1, len(ste) - min(21, len(ste) - 1)), 5):
-            window = min(21, len(ste) - i)
-            exit_price = float(ste.iloc[min(i + window, len(ste) - 1)]["close"])
-            for j in range(i, min(i + window, len(ste))):
-                row = ste.iloc[j]
-                nh = float(row["high"]); nl = float(row["low"])
-                if sig == "BUY":
-                    if nl <= sl:
-                        exit_price = sl; break
-                    if nh >= tp3:
-                        exit_price = tp3; break
-                    if nh >= tp2:
-                        exit_price = tp2
-                    elif nh >= tp1:
-                        exit_price = tp1
-                else:  # SELL
-                    if nh >= sl:
-                        exit_price = sl; break
-                    if nl <= tp3:
-                        exit_price = tp3; break
-                    if nl <= tp2:
-                        exit_price = tp2
-                    elif nl <= tp1:
-                        exit_price = tp1
-            if sig == "BUY":
-                buys += 1
-                ar = (exit_price - entry) / entry
-                rets.append(ar)
-                if ar > 0: cb += 1
-            else:
-                sells += 1
-                ar = (entry - exit_price) / entry
-                rets.append(ar)
-                if ar > 0: cs += 1
-
-    tt = buys + sells
-    wr = (cb + cs) / max(tt, 1) * 100
-    ar_pct = float(np.mean(rets)) * 100 if rets else 0
-    result = {
-        "totalTrades": int(tt),
-        "buySignals": int(buys),
-        "sellSignals": int(sells),
-        "correctBuys": int(cb),
-        "correctSells": int(cs),
-        "winRate": round(float(wr), 1),
-        "avgReturnPct": round(float(ar_pct), 2),
-        "maxReturnPct": round(float(max(rets) * 100) if rets else 0, 2),
-        "minReturnPct": round(float(min(rets) * 100) if rets else 0, 2),
-        "stars": int(min(5, max(1, int(wr / 20) + 1))) if tt > 0 else 0,
+    External interface preserved: same signature (df, all_models, ensemble_fn,
+    name) and same top-level return keys (totalTrades / buySignals /
+    sellSignals / correctBuys / correctSells / winRate / avgReturnPct /
+    maxReturnPct / minReturnPct / stars). Values signal unavailability.
+    Callers that already handle 0-trade / null-winRate results continue to work.
+    """
+    print(f"  {name}: UNAVAILABLE — Pattern #10 leak (latest-signal replay). "
+          f"Use scripts/walk_forward_backtesting.py for leak-free eval.")
+    return {
+        "status": "unavailable",
+        "reason": ("Pattern #10 LEAKY_BACKTEST: original implementation applied "
+                   "the model's stored LATEST per-stock signal to every historical "
+                   "test row (sig = ensemble_fn(stock_signals, stock_returns) where "
+                   "stock_signals came from md['predictions'][s].get('signal', 'HOLD')). "
+                   "This misrepresents historical OOS performance. Use "
+                   "scripts/walk_forward_backtesting.py for leak-free chronological "
+                   "walk-forward evaluation (per-sample re-training + per-bar re-inference)."),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "ml_integrity_note": "Phase 4 B-AUDIT: function disabled to prevent misleading metrics.",
+        "totalTrades": 0,
+        "buySignals": 0,
+        "sellSignals": 0,
+        "correctBuys": 0,
+        "correctSells": 0,
+        "winRate": None,
+        "avgReturnPct": None,
+        "maxReturnPct": None,
+        "minReturnPct": None,
+        "stars": 0,
     }
-    print(f"  {name}: trades={tt} WR={wr:.1f}% avg={ar_pct:.2f}%")
-    return result
 
 
 def apply_atr_rules(signal, current_price, atr):
@@ -326,6 +283,49 @@ def main():
         print(f"  CL-Extender: trades={cl_ext_entry['totalTrades']} WR={cl_ext_entry['winRate']}%")
 
     data["ensemble_backtesting"] = ens_bt
+
+    # Phase 4 B-AUDIT: ml_integrity documentation. The four base ensemble
+    # methods (MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED /
+    # FINAL_CONSENSUS / WIN_RATE_WEIGHTED) had their backtest_ensemble
+    # implementation replaced with an unavailable stub because the original
+    # applied the model's STORED LATEST per-stock signal to every historical
+    # test row (Pattern #10 leak). The per-stock 80/20 chronological test
+    # slice itself is fine; only the signal source was leaky. For the leak-free
+    # chronological walk-forward evaluation, see walk_forward_backtesting.py.
+    # The CL_ENSEMBLE / CL_EXTENDER entries are converted from previously-stored
+    # backtest results (cl_ensemble_backtest / cl_extender_backtest) and are
+    # NOT recomputed here; their own leakage status is documented in the script
+    # that produced them (cl_extender.py Phase 4 LEAKY_ENSEMBLE fix).
+    data["ml_integrity"] = {
+        "backtest_methodology": (
+            "Phase 4 B-AUDIT: backtest_ensemble replaced with unavailable stub. "
+            "Original implementation applied the model's stored LATEST per-stock "
+            "signal (md['predictions'][s].get('signal', 'HOLD')) to every "
+            "historical test row — Pattern #10 LEAKY_BACKTEST (latest-signal "
+            "replay). The per-stock 80/20 chronological test slice is fine; the "
+            "signal source was the leak."
+        ),
+        "pattern": "Pattern #10 LEAKY_BACKTEST (latest-signal replay)",
+        "status": "unavailable",
+        "reason": (
+            "Stored latest per-stock signal applied to every historical test row; "
+            "misrepresents historical OOS performance."
+        ),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "scope_note": (
+            "Phase 4 scope is backtesting/metric correctness. Training-pipeline "
+            "leakage (LEAKY_SPLIT / LEAKY_SCALER / LEAKY_TARGET / LEAKY_SEQUENCE) "
+            "is Phase A scope and documented separately."
+        ),
+        "cl_ensemble_note": (
+            "CL_ENSEMBLE / CL_EXTENDER entries are format-converted from "
+            "previously-stored backtest results (cl_ensemble_backtest / "
+            "cl_extender_backtest), NOT recomputed here. cl_extender.py has its "
+            "own Phase 4 LEAKY_ENSEMBLE fix (win_rates update restricted to "
+            "trades whose realization date <= cd_i, i.e., entered at iter <= "
+            "i - MAX_HOLD)."
+        ),
+    }
 
     # Save
     PRED_FILE.write_text(json.dumps(data, indent=2,

@@ -21,6 +21,13 @@ from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+# ML-integrity helpers (leakage-free targets, chronological split). See
+# scripts/ml_integrity.py. Replaces the old .fillna(0) targets + global row
+# split on the concatenated df (Phase A1 + A2).
+from ml_integrity import (
+    add_forward_returns, drop_immature_targets, chronological_split,
+    HORIZONS, MAX_HORIZON,
+)
 
 warnings.filterwarnings("ignore")
 OHLCV = Path("data/ohlcv")
@@ -81,10 +88,11 @@ def add_features(df):
 
 
 def add_labels(df):
-    df = df.copy()
-    for hz in [5, 10, 21]:
-        df[f"target_{hz}d"] = ((df["close"].shift(-hz) - df["close"]) / df["close"]).fillna(0)
-    return df
+    # NOTE: target construction moved out of add_labels into load() via
+    # ml_integrity.add_forward_returns — that primitive uses per-stock
+    # groupby(symbol).shift(-h) (no cross-stock leak, no .fillna(0)). Immature
+    # rows are left NaN; callers drop per-horizon inside each model's loop.
+    return df.copy()
 
 
 def load():
@@ -98,9 +106,16 @@ def load():
         df = df[df["volume"] > 0].reset_index(drop=True)
         if len(df) < 50:
             continue
-        df = add_features(df); df = add_labels(df); df["symbol"] = s
+        df = add_features(df); df["symbol"] = s
         frames.append(df)
-    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+    df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+    if df.empty:
+        return df
+    # ML integrity (Task 1): per-stock groupby(symbol).shift(-h); no .fillna(0);
+    # immature rows left NaN — callers drop per-horizon so per-horizon models
+    # keep rows whose shorter-horizon target is mature (Phase A1 requirement).
+    df = add_forward_returns(df)
+    return df
 
 
 def _metrics(yte, yp):
@@ -140,7 +155,10 @@ def train_chronos(df):
     forecast next-bin via ridge regression on the bin indices."""
     print("  Training Chronos (Amazon) [quantile-binned analog]...")
     targets = ["target_5d", "target_10d", "target_21d"]
-    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+    # ML integrity (Task 2): chronological_split replaces the leaky global row
+    # split on the concatenated df (mixed train/test across stocks in stock-
+    # concat order, not date order). Per-horizon mask inside the loop.
+    tr, va, te = chronological_split(df)
 
     # Quantile-bin the 1d returns into 100 tokens (Chronos uses 1024, we use 100 for speed)
     bins = np.linspace(-0.05, 0.05, 101)  # 100 bins
@@ -155,25 +173,38 @@ def train_chronos(df):
     tokens_tr = tokenize(rets_tr)
     # Use last 10 tokens as features (lag window)
     LAG = 10
-    Xtr = np.array([tokens_tr[i:i+LAG] for i in range(len(tokens_tr) - LAG)])
-    ytr_5 = tr["target_5d"].values[LAG:]
-    ytr_10 = tr["target_10d"].values[LAG:]
-    ytr_21 = tr["target_21d"].values[LAG:]
+    Xtr_full = np.array([tokens_tr[i:i+LAG] for i in range(len(tokens_tr) - LAG)])
+    ytr_5_full = tr["target_5d"].values[LAG:]
+    ytr_10_full = tr["target_10d"].values[LAG:]
+    ytr_21_full = tr["target_21d"].values[LAG:]
 
-    if len(Xtr) < 50:
+    # Pre-build test arrays (Xte only depends on tokens_te, shared across horizons).
+    rets_te = te["return_1d"].values
+    toks_te = tokenize(rets_te)
+    Xte_full = np.array([toks_te[i:i+LAG] for i in range(len(toks_te) - LAG)])
+    yte_5_full = te["target_5d"].values[LAG:]
+    yte_10_full = te["target_10d"].values[LAG:]
+    yte_21_full = te["target_21d"].values[LAG:]
+
+    if len(Xtr_full) < 50:
         return {"trained": False, "error": "Not enough tokenized sequences"}
 
     # Three ridge models, one per horizon
     metrics = {}; models = {}
-    for tc, ytr in zip(targets, [ytr_5, ytr_10, ytr_21]):
+    for tc, ytr_full, yte_full in zip(targets,
+                                       [ytr_5_full, ytr_10_full, ytr_21_full],
+                                       [yte_5_full, yte_10_full, yte_21_full]):
         hz = int(tc.split("_")[1].replace("d", ""))
+        # ML integrity (Phase A1): per-horizon drop — mask rows whose THIS-horizon
+        # target is NaN/inf (preserves shorter-horizon rows). Keeps X and y aligned.
+        mask_tr = np.isfinite(ytr_full)
+        mask_te = np.isfinite(yte_full)
+        Xtr = Xtr_full[mask_tr]
+        ytr = ytr_full[mask_tr]
+        Xte = Xte_full[mask_te]
+        yte = yte_full[mask_te]
         m = Ridge(alpha=1.0, random_state=42)
         m.fit(Xtr, ytr)
-        # Test metrics
-        rets_te = te["return_1d"].values
-        toks_te = tokenize(rets_te)
-        Xte = np.array([toks_te[i:i+LAG] for i in range(len(toks_te) - LAG)])
-        yte = te[tc].values[LAG:]
         if len(Xte) >= 5 and len(yte) >= 5:
             yp = m.predict(Xte)
             metrics[f"{hz}d"] = _metrics(yte, yp)
@@ -210,7 +241,9 @@ def train_lag_llama(df):
     """Lag-Llama analog: lag-based attention → use lagged features + GBR."""
     print("  Training Lag-Llama [lag-feature GBR analog]...")
     targets = ["target_5d", "target_10d", "target_21d"]
-    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+    # ML integrity (Task 2): chronological_split replaces the leaky global row split.
+    tr0, va0, te0 = chronological_split(df)
+    train_end = tr0["date"].max(); val_end = va0["date"].max()
 
     # Build lag features: 7 lags of return_1d, plus RSI/MACD lags
     LAGS = [1, 2, 3, 5, 7, 14, 21]
@@ -222,14 +255,18 @@ def train_lag_llama(df):
             df[lag_col] = df.groupby("symbol")[col].shift(L).fillna(0)
             lag_features.append(lag_col)
 
-    tr = df.iloc[:split]; te = df.iloc[split:]
-    Xtr = tr[lag_features].values
-    Xte = te[lag_features].values
+    # Re-pull chronological partitions from the updated df (date-based masks).
+    tr = df[df["date"] <= train_end].copy()
+    te = df[df["date"] > val_end].copy()
 
     metrics = {}; models = {}
     for tc in targets:
         hz = int(tc.split("_")[1].replace("d", ""))
-        ytr = tr[tc].values; yte = te[tc].values
+        # ML integrity (Phase A1): per-horizon drop — drop ONLY rows whose
+        # THIS-horizon target is NaN (preserves shorter-horizon rows).
+        tr_h = tr.dropna(subset=[tc]); te_h = te.dropna(subset=[tc])
+        Xtr = tr_h[lag_features].values; Xte = te_h[lag_features].values
+        ytr = tr_h[tc].values; yte = te_h[tc].values
         m = GradientBoostingRegressor(n_estimators=80, max_depth=3,
                                        learning_rate=0.05, random_state=42)
         m.fit(Xtr, ytr)
@@ -265,17 +302,25 @@ def train_moirai(df):
     treats all features jointly with shared weights (any-variate analog)."""
     print("  Training Moirai (Salesforce) [any-variate analog]...")
     targets = ["target_5d", "target_10d", "target_21d"]
-    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+    # ML integrity (Task 2): chronological_split replaces the leaky global row
+    # split. The scaler fit is ALREADY correct (fit on tr, transform te) — only
+    # the underlying split was leaky; the per-horizon dropna is new (Phase A1).
+    tr, va, te = chronological_split(df)
 
-    # Any-variate: standardize all features jointly
+    # Any-variate: standardize all features jointly (fit on train only).
     sc = StandardScaler()
-    Xtr = sc.fit_transform(tr[FC].values)
-    Xte = sc.transform(te[FC].values)
+    sc.fit(tr[FC].values)
 
     metrics = {}; models = {}
     for tc in targets:
         hz = int(tc.split("_")[1].replace("d", ""))
-        ytr = tr[tc].values; yte = te[tc].values
+        # ML integrity (Phase A1): per-horizon drop — re-pull X per-horizon
+        # (row counts differ across horizons after dropna); use the train-fit
+        # scaler via transform (no refit).
+        tr_h = tr.dropna(subset=[tc]); te_h = te.dropna(subset=[tc])
+        Xtr = sc.transform(tr_h[FC].values)
+        Xte = sc.transform(te_h[FC].values)
+        ytr = tr_h[tc].values; yte = te_h[tc].values
         # Multivariate (any-variate) linear regression with strong regularization
         m = Ridge(alpha=10.0, random_state=42)
         m.fit(Xtr, ytr)
@@ -313,7 +358,14 @@ def train_time_llm(df, existing_models):
     Time-LLM's reprogramming layer."""
     print("  Training Time-LLM [SVD-reprogramming analog]...")
     targets = ["target_5d", "target_10d", "target_21d"]
-    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+    # ML integrity (Task 2): chronological_split replaces the leaky global row
+    # split. Compute train_end/val_end dates, then apply as row masks on the
+    # original (stock-concat-order) df so src and tr/te stay aligned.
+    tr0, va0, te0 = chronological_split(df)
+    train_end = tr0["date"].max(); val_end = va0["date"].max()
+    train_mask = (df["date"] <= train_end).values
+    test_mask = (df["date"] > val_end).values
+    tr = df[train_mask].copy(); te = df[test_mask].copy()
 
     # Collect base model predictions for each (symbol, date) row
     base_model_names = [n for n, m in existing_models.items()
@@ -344,7 +396,7 @@ def train_time_llm(df, existing_models):
     src = np.column_stack([base_returns[bn] for bn in base_model_names])
     # SVD-based reprogramming: project source to a lower-dim space then linearly map to target
     # For training, fit SVD on training source, then ridge regression on the projected source
-    src_tr = src[:split]; src_te = src[split:]
+    src_tr = src[train_mask]; src_te = src[test_mask]
     # Cap components to min(n_base, n_train_samples)
     n_comp = min(len(base_model_names), 5, src_tr.shape[0] - 1)
     n_comp = max(1, n_comp)
@@ -357,15 +409,24 @@ def train_time_llm(df, existing_models):
     metrics = {}; models = {}
     for tc in targets:
         hz = int(tc.split("_")[1].replace("d", ""))
-        ytr = tr[tc].values; yte = te[tc].values
-        if src_tr_proj.shape[0] < 5 or src_tr_proj.shape[1] < 1:
+        # ML integrity (Phase A1): per-horizon drop — mask rows whose THIS-horizon
+        # target is NaN/inf. Keeps src_tr_proj and ytr aligned (same row order).
+        ytr_full = tr[tc].values
+        yte_full = te[tc].values
+        mask_tr = np.isfinite(ytr_full)
+        mask_te = np.isfinite(yte_full)
+        ytr = ytr_full[mask_tr]
+        yte = yte_full[mask_te]
+        src_tr_proj_h = src_tr_proj[mask_tr]
+        src_te_proj_h = src_te_proj[mask_te]
+        if src_tr_proj_h.shape[0] < 5 or src_tr_proj_h.shape[1] < 1:
             metrics[f"{hz}d"] = {"mse": 0.0, "mae": 0.0, "r2": 0.0}
-            models[hz] = (V_k, Ridge(alpha=1.0).fit(src_tr_proj, ytr))
+            models[hz] = (V_k, Ridge(alpha=1.0).fit(src_tr_proj_h, ytr))
             continue
         m = Ridge(alpha=1.0, random_state=42)
-        m.fit(src_tr_proj, ytr)
+        m.fit(src_tr_proj_h, ytr)
         if len(yte) > 0:
-            yp = m.predict(src_te_proj)
+            yp = m.predict(src_te_proj_h)
             metrics[f"{hz}d"] = _metrics(yte, yp)
         else:
             metrics[f"{hz}d"] = {"mse": 0.0, "mae": 0.0, "r2": 0.0}
@@ -399,33 +460,55 @@ def train_time_llm(df, existing_models):
 # Backtest a single model on the 20% test set (matches train_all_with_backtesting.py)
 # ────────────────────────────────────────────────────────────────────
 def backtest_model(df, model_pred):
-    """Backtest a single model using its predictions on the 20% test set."""
-    te = df.iloc[int(len(df) * 0.8):].copy()
-    buys = sells = cb_ = cs = 0; rets = []
-    for s in STOCKS:
-        ste = te[te["symbol"] == s].sort_values("date").reset_index(drop=True)
-        if len(ste) < 21:
-            continue
-        pr = model_pred.get(s, {})
-        sig = pr.get("signal", "HOLD")
-        # Use the model's signal applied to all test rows for this stock
-        for i in range(0, len(ste) - 21, 5):
-            ar = (ste.iloc[min(i + 21, len(ste) - 1)]["close"] - ste.iloc[i]["close"]) / ste.iloc[i]["close"]
-            if sig == "BUY":
-                buys += 1; rets.append(ar); cb_ += ar > 0
-            elif sig == "SELL":
-                sells += 1; rets.append(-ar); cs += ar < 0
-    tt = buys + sells
-    wr = (cb_ + cs) / max(tt, 1) * 100
-    ar_ = float(np.mean(rets)) * 100 if rets else 0
+    """Backtest a single model on the 20% test set (matches train_all_with_backtesting.py)
+    — DISABLED (Pattern #10 LEAKY_BACKTEST).
+
+    Original implementation: per-stock chronological test partition (the slice
+    itself was leak-free thanks to chronological_split), but the SIGNAL applied
+    to every historical test row came from `model_pred.get(s, {})` — the model's
+    STORED LATEST per-stock signal, constant per stock across all historical
+    test rows. This is leakage Pattern #10 (latest-signal replay): today's
+    signal applied to historical test dates, which misrepresents the historical
+    out-of-sample performance.
+
+    For the leak-free chronological walk-forward evaluation, see
+    scripts/walk_forward_backtesting.py (the genuine walk-forward engine that
+    Phase A fixed — per-sample re-training + per-bar re-inference + realized
+    P&L from future OHLCV). Do NOT duplicate a new walk-forward engine here.
+
+    External interface preserved: same signature (df, model_pred) and same
+    top-level return keys (totalTrades / buySignals / sellSignals /
+    correctBuys / correctSells / winRate / avgReturnPct / maxReturnPct /
+    minReturnPct / stars), with values signaling unavailability, PLUS the new
+    status/reason/pointer/ml_integrity_note fields.
+    """
+    print("  backtest_model: UNAVAILABLE — Pattern #10 leak (latest-signal replay).")
+    print("           Use scripts/walk_forward_backtesting.py for leak-free eval.")
     return {
-        "totalTrades": int(tt), "buySignals": int(buys), "sellSignals": int(sells),
-        "correctBuys": int(cb_), "correctSells": int(cs),
-        "winRate": round(float(wr), 1),
-        "avgReturnPct": round(float(ar_), 2),
-        "maxReturnPct": round(float(max(rets) * 100 if rets else 0), 2),
-        "minReturnPct": round(float(min(rets) * 100 if rets else 0), 2),
-        "stars": int(min(5, max(1, int(wr / 20) + 1))),
+        "status": "unavailable",
+        "reason": (
+            "Pattern #10 LEAKY_BACKTEST: original implementation applied the "
+            "model's stored LATEST per-stock signal (model_pred.get(s, {}).get("
+            "'signal', 'HOLD')) to every historical test row in the chronological "
+            "test partition. The partition itself was leak-free "
+            "(chronological_split); the signal source was the leak (today's "
+            "signal replayed on every historical test date). Use "
+            "scripts/walk_forward_backtesting.py for leak-free chronological "
+            "walk-forward evaluation (per-sample re-training + per-bar "
+            "re-inference + realized P&L)."
+        ),
+        "pointer": "scripts/walk_forward_backtesting.py",
+        "ml_integrity_note": "Phase 1+2 fix: function disabled to prevent misleading metrics.",
+        "totalTrades": 0,
+        "buySignals": 0,
+        "sellSignals": 0,
+        "correctBuys": 0,
+        "correctSells": 0,
+        "winRate": None,
+        "avgReturnPct": None,
+        "maxReturnPct": None,
+        "minReturnPct": None,
+        "stars": 0,
     }
 
 
@@ -495,6 +578,13 @@ def main():
 
     # Update trained_at timestamp
     existing["trained_at"] = pd.Timestamp.now().isoformat()
+    existing["ml_integrity"] = {
+        "target_construction": "per-stock groupby(symbol).shift(-h) via ml_integrity.add_forward_returns in load(); no .fillna(0); immature rows left NaN and dropped per-horizon inside each foundation analog's loop",
+        "split": "date-based chronological_split (60/20/20) with per-stock purge of MAX_HORIZON=21 rows at each boundary; replaces the old global row split on the concatenated df in train_chronos / train_lag_llama / train_moirai / train_time_llm / backtest_model",
+        "scaler_fitting": "train_moirai uses StandardScaler fit on TRAIN partition only (was already correct); transform-only on test. Other foundation analogs operate on raw / tokenized features (no scaler).",
+        "backtest_methodology": "Pattern #10 LEAKY_BACKTEST disabled — function now returns status='unavailable' with reason + pointer to scripts/walk_forward_backtesting.py for genuine walk-forward ML evaluation. backtest_model() no longer applies the model's stored LATEST per-stock signal to every historical test row; per-model backtest entries now carry status='unavailable' + zeroed metrics.",
+        "ml_historical_evaluation": "unavailable",
+    }
 
     # Save
     OUT.parent.mkdir(parents=True, exist_ok=True)

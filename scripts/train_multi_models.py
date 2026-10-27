@@ -37,6 +37,11 @@ import xgboost as xgb
 import lightgbm as lgb
 import catboost as cb
 from sklearn.ensemble import RandomForestClassifier
+# ML-integrity helper (Task 50): leak-free chronological split (60/20/20) with
+# per-stock purge of FORWARD_WINDOW rows at each boundary. Replaces the old
+# `split_idx = int(len(df) * 0.8)` row-split (LEAKY_SPLIT minor — a single
+# date could straddle the boundary; + per-stock purge was missing).
+from ml_integrity import chronological_split
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -175,13 +180,19 @@ def load_all_stocks():
 
 def train_model(model_name, model_factory, df, scale_pos=None):
     """Train a model and return (metrics, per_symbol_predictions)."""
+    # ML-integrity (Task 50): chronological_split (60/20/20) with per-stock purge
+    # of FORWARD_WINDOW rows at each boundary. Replaces the old 80/20 row-split
+    # (LEAKY_SPLIT minor — a single date could straddle the boundary; + per-stock
+    # purge was missing).
     df = df.sort_values("date").reset_index(drop=True)
-    split_idx = int(len(df) * 0.8)
-    train_df = df.iloc[:split_idx]
-    test_df = df.iloc[split_idx:]
+    train_df, val_df, test_df = chronological_split(
+        df, train_frac=0.60, val_frac=0.20, purge_h=FORWARD_WINDOW,
+    )
 
     X_train = train_df[FEATURE_COLUMNS].values
     y_train = train_df["label_up_3pct_21d"].values
+    X_val = val_df[FEATURE_COLUMNS].values
+    y_val = val_df["label_up_3pct_21d"].values
     X_test = test_df[FEATURE_COLUMNS].values
     y_test = test_df["label_up_3pct_21d"].values
 
@@ -191,7 +202,13 @@ def train_model(model_name, model_factory, df, scale_pos=None):
         scale_pos = neg_count / max(pos_count, 1)
 
     model = model_factory(scale_pos)
-    model.fit(X_train, y_train, X_test, y_test) if model_name == "XGBoost" else model.fit(X_train, y_train)
+    # ML-integrity (Task 50): XGBoost early-stopping now uses VAL partition (was
+    # TEST — LEAKY_BACKTEST mild: tuning n_estimators on test set). LightGBM,
+    # CatBoost, RandomForest unchanged (no early-stopping).
+    if model_name == "XGBoost":
+        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
+    else:
+        model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else np.full(len(y_test), 0.5)
@@ -354,6 +371,71 @@ def main():
             "CNN-LSTM": "Tier 4 hybrid — requires PyTorch + GPU",
             "TabNet": "Tier 4 hybrid — requires PyTorch + GPU",
             "FinGPT": "Tier 4 LLM-finance — requires fine-tuning pipeline",
+        },
+        # Phase 4 B-AUDIT: ml_integrity documentation. This is a TRAINING
+        # script (4 classical classifiers: XGBoost, LightGBM, CatBoost,
+        # RandomForest) — it does NOT compute backtest trade metrics (only
+        # classifier metrics: accuracy/precision/recall/AUC). The leakage
+        # concerns below are in the TRAINING path and documented as follow-up
+        # (Phase A scope — training-pipeline leakage, NOT Phase 4's
+        # backtesting/metric scope).
+        #
+        # (1) LEAKY_SPLIT (minor — date-straddle): L179 `split_idx = int(len(df)*0.8)`
+        #     on the date-SORTED concatenated df. Mostly chronological, but a
+        #     single date's rows can straddle the boundary (rows of the same
+        #     date can end up in both train and test). Fix: use
+        #     `from ml_integrity import chronological_split; tr, va, te =
+        #     chronological_split(df)` — partitions by date boundary so all
+        #     rows on a given date go to the same partition.
+        #
+        # (2) LEAKY_BACKTEST (minor — XGBoost test-set early-stopping): L194
+        #     `model.fit(X_train, y_train, X_test, y_test) if model_name ==
+        #     "XGBoost"` — only XGBoost uses the test as early-stopping eval
+        #     (a mild form of HP selection on test). The other 3 models
+        #     (LightGBM/CatBoost/RandomForest) just fit on train and predict
+        #     on test (no early-stopping-on-test leak). Fix: carve a separate
+        #     val slice from train for XGBoost's early-stopping eval.
+        #
+        # Target construction at L133-139 (`df["close"].rolling(FORWARD_WINDOW).max().shift(-FORWARD_WINDOW)`
+        # + `df.dropna(subset=["future_return_max"])`) is ALREADY leak-free
+        # (no fillna(0); immature rows dropped).
+        "ml_integrity": {
+            "backtest_methodology": (
+                "Phase 4 B-AUDIT: this is a TRAINING script — does not "
+                "compute backtest trade metrics, only classifier metrics "
+                "(accuracy/precision/recall/AUC on the test partition). "
+                "Neither Pattern #10 (latest-signal replay) nor Pattern #11 "
+                "(predicted-as-realized) applies to this script's outputs."
+            ),
+            "training_pipeline_leak_followup_phase_a": {
+                "LEAKY_SPLIT_minor": (
+                    "L179: split_idx = int(len(df)*0.8) on date-sorted "
+                    "concatenated df — mostly chronological but a single "
+                    "date's rows can straddle the boundary. Fix: "
+                    "from ml_integrity import chronological_split; "
+                    "tr, va, te = chronological_split(df)."
+                ),
+                "LEAKY_BACKTEST_minor_test_eval_set": (
+                    "L194: model.fit(X_train, y_train, X_test, y_test) if "
+                    "model_name == 'XGBoost' — only XGBoost uses test as "
+                    "early-stopping eval (mild HP-selection-on-test leakage). "
+                    "LightGBM/CatBoost/RandomForest just fit on train and "
+                    "predict on test (no early-stopping-on-test leak). Fix: "
+                    "carve a separate val slice from train for XGBoost's "
+                    "early-stopping eval."
+                ),
+                "target_construction_note": (
+                    "L133-139: df['close'].rolling(FORWARD_WINDOW).max()"
+                    ".shift(-FORWARD_WINDOW) + dropna(subset=['future_return_"
+                    "max']) — ALREADY leak-free (no fillna(0); immature rows "
+                    "dropped). B-AUDIT ALREADY_FIXED."
+                ),
+            },
+            "scope_note": (
+                "Phase 4 scope is backtesting/metric correctness. The leaks "
+                "above are in the TRAINING pipeline (Phase A scope) and "
+                "documented here as follow-up."
+            ),
         },
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

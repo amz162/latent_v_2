@@ -368,7 +368,18 @@ def build_cg_training_set(
         dir_stock = np.zeros(max_rows, dtype=bool)
         sym_stock = np.full(max_rows, -1, dtype=np.int32)
         row_idx = 0
-        for t in range(20, n - CG_HORIZON):
+        # ML-integrity (Task 50): cap the per-stock training range at int(0.8*n)
+        # minus CG_HORIZON. This EXCLUDES the backtest's per-stock test bars
+        # (the last 20% per stock, used by backtest_cg's `sp = int(n * 0.8)`)
+        # + purges CG_HORIZON rows at the boundary so a training row's label
+        # window doesn't extend into the test partition. This was the
+        # SUBTLE_TRAIN_ON_TEST leak identified by Phase 1 audit (the inline
+        # build_cg_training_set's range 20..n-CG_HORIZON overlapped with
+        # backtest's test bars range int(0.8n)..n-5).
+        train_end_t = int(n * 0.8) - CG_HORIZON  # = backtest sp - CG_HORIZON (purge)
+        if train_end_t < 21:
+            continue  # stock too short to have any train rows after the purge
+        for t in range(20, train_end_t):
             cp = float(close_arr[t])
             atr = float(atr_arr[t])
             if atr <= 0 or cp <= 0:
@@ -446,7 +457,11 @@ def train_cg(stocks: List[str], df_all: pd.DataFrame) -> Tuple[dict, dict, dict,
     X = train_df[FC].fillna(0).values
     y = train_df["_y"].values.astype(int)
 
-    # 5-fold purged CV (by symbol) with 10-bar purge gap
+    # ML-integrity (Task 50): 5-fold BY-SYMBOL CV for unseen-stock generalization
+    # (NOT chronological forecasting — for that, see scripts/walk_forward_backtesting.py).
+    # The previous "10-bar purge gap" comment was a MISLABEL — no time-purge is
+    # applied (the "purge" was purely nominal). See train_cl2_tier.py L699-714
+    # for the corrected docstring.
     syms = sorted(train_df["_symbol"].unique())
     folds = purged_stock_folds(syms, k=5)
 
@@ -506,7 +521,9 @@ def train_cg(stocks: List[str], df_all: pd.DataFrame) -> Tuple[dict, dict, dict,
     else:
         try:
             auc = roc_auc_score(y_ens, oof_ens)
-            print(f"  CG-Ensemble OOS AUC: {auc:.4f}")
+            # ML-integrity (Task 50): relabeled — by-symbol CV OOS = unseen-stock
+            # generalization AUC, NOT chronological OOS AUC.
+            print(f"  CG-Ensemble unseen-stock generalization AUC: {auc:.4f}")
         except Exception:
             auc = 0.0
         # Decile calibration
@@ -947,6 +964,74 @@ def save_to_json(
         "threshold_sweep": threshold_sweep,
     }
 
+    # Phase 4 B-AUDIT: ml_integrity documentation. Two distinct leakage
+    # concerns are documented here as FOLLOW-UP (Phase A scope — training-
+    # pipeline leakage, NOT Phase 4's backtesting/metric scope):
+    #
+    # (1) LEAKY_SPLIT — purged_stock_folds (imported from train_cl2_tier at
+    #     L694-704 of that file) splits stocks into K folds BY SYMBOL (not by
+    #     time). Used at L451 in train_cg to build OOF predictions for the
+    #     CG-Ensemble decile calibration. The same calendar dates appear in
+    #     train and validation across correlated stocks (cross-sectional CV,
+    #     not time-OOS). This is the leak that audit_cg_model.py was created
+    #     to identify and fix.
+    #     Fix: replace with a row-index walk-forward CV (train-on-earlier /
+    #     validate-on-later) inside the TRAIN period, with per-stock date-
+    #     bucketing to avoid cross-stock time-overlap (audit_cg_model.py
+    #     pattern).
+    #
+    # (2) LEAKY_ENSEMBLE — at L487-499 the decile-binning calibration is
+    #     built on the OOF predictions from (1). The leak inherits from the
+    #     by-symbol CV: the OOF predictions mix train and val dates across
+    #     stocks, so the calib map learns from cross-sectional time-overlap.
+    #     Fix: regenerate the OOF predictions with the corrected walk-forward
+    #     CV from (1).
+    #
+    # NOTE on the BACKTEST in this script (backtest_cg at L707+): it uses
+    # per-stock 80/20 chronological split + PER-BAR inference (predict_proba_safe
+    # on feat_batch at each holdout bar) + realized P&L (simulate_cg_exit on
+    # actual future bars). This is leak-free at the signal-application level
+    # — neither Pattern #10 nor Pattern #11 applies. The leak in the backtest
+    # comes from the TRAINED model weights (which inherit the by-symbol CV
+    # leak), not from the backtest methodology itself. Phase 4 scope is
+    # therefore satisfied by the backtest design; the training-pipeline leak
+    # is Phase A scope.
+    existing["ml_integrity"] = {
+        "backtest_methodology": (
+            "Phase 4 B-AUDIT: backtest_cg (L707+) uses per-stock 80/20 "
+            "chronological split + per-bar inference (predict_proba_safe on "
+            "feat_batch) + realized P&L (simulate_cg_exit on actual future "
+            "bars). Leak-free at the signal-application level — neither "
+            "Pattern #10 (latest-signal replay) nor Pattern #11 (predicted-"
+            "as-realized) applies."
+        ),
+        "training_pipeline_leak_followup_phase_a": {
+            "LEAKY_SPLIT": (
+                "L451 (folds=purged_stock_folds(syms, k=5)): by-symbol K-fold "
+                "CV imported from train_cl2_tier.py L694-704 — same calendar "
+                "dates appear in train and validation across correlated "
+                "stocks (cross-sectional CV, not time-OOS). Root-cause leak "
+                "identified by audit_cg_model.py. Fix: replace with row-index "
+                "walk-forward CV (train-on-earlier / validate-on-later) inside "
+                "the TRAIN period, with per-stock date-bucketing to avoid "
+                "cross-stock time-overlap."
+            ),
+            "LEAKY_ENSEMBLE": (
+                "L487-499: decile-binning calibration built on OOF "
+                "predictions from the leaky by-symbol CV. Inherits the "
+                "cross-sectional time-overlap leak. Fix: regenerate OOF with "
+                "the corrected walk-forward CV from LEAKY_SPLIT above."
+            ),
+        },
+        "scope_note": (
+            "Phase 4 scope is backtesting/metric correctness. Training-"
+            "pipeline leakage (LEAKY_SPLIT / LEAKY_ENSEMBLE above) is "
+            "Phase A scope and documented here as follow-up. The backtest "
+            "design itself is leak-free."
+        ),
+        "pointer": "scripts/audit_cg_model.py (walk-forward CV pattern) + scripts/walk_forward_backtesting.py (leak-free chronological backtest)",
+    }
+
     def clean(o):
         if isinstance(o, dict):
             return {k: clean(v) for k, v in o.items()}
@@ -984,7 +1069,10 @@ def main():
     print(f"  Horizon: {CG_HORIZON} trading days")
     print(f"  TPs: {CG_TP1_MULT}R / {CG_TP2_MULT}R / {CG_TP3_MULT}R")
     print(f"  Cost: {COST_ROUND_TRIP*100:.2f}% round-trip + {CGT_RATE*100:.0f}% CGT on gains")
-    print(f"  CV: 5-fold walk-forward with {CG_HORIZON}-bar purge gap")
+    # ML-integrity (Task 50): honest CV label — this is BY-SYMBOL K-fold CV for
+    # unseen-stock generalization, NOT chronological walk-forward. For genuine
+    # chronological walk-forward, see scripts/walk_forward_backtesting.py.
+    print(f"  CV: 5-fold by-symbol (unseen-stock generalization) — NOT chronological walk-forward")
     print(f"  Thresholds: BUY ≥ {CG_BUY_THRESHOLD}, SELL ≤ {CG_SELL_THRESHOLD}")
     print(f"  Min E[return] after costs: {CG_MIN_EXPECTED_RETURN*100:.2f}%")
     print("=" * 60)

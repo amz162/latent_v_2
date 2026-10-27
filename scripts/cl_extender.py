@@ -352,8 +352,12 @@ def cmd_backtest():
    
    if p_ens>=PROB_MIN:
     pnl_pkr,exit_reason=simulate_trade(fr,cd,entry,atr)
+    # Phase 4 B-AUDIT LEAKY_ENSEMBLE fix: tag each trade with its entry
+    # iter index so the win_rates update (below) can restrict to trades
+    # whose realization date <= cd_i (i.e., entered at iter <= i - MAX_HOLD).
     all_results["CL-Extender (8 models)"].append({
-     "symbol":sym,"pnl_pct":round(pnl_pkr/(CAPITAL*RISK/lv["R"]*entry)*100,2),
+     "iter_idx":i,"symbol":sym,
+     "pnl_pct":round(pnl_pkr/(CAPITAL*RISK/lv["R"]*entry)*100,2),
      "pnl_pkr":round(pnl_pkr,0),"win":pnl_pkr>0,"exit_reason":exit_reason,"prob":round(p_ens,3)})
    
    # Individual model predictions
@@ -362,15 +366,30 @@ def cmd_backtest():
     p=predict_prob(models[name],row[FC].values,name,sym)
     if p>=PROB_MIN:
      pnl_pkr,exit_reason=simulate_trade(fr,cd,entry,atr)
+     # Phase 4 B-AUDIT LEAKY_ENSEMBLE fix: tag each trade with its entry
+     # iter index so the win_rates update (below) can restrict to trades
+     # whose realization date <= cd_i (i.e., entered at iter <= i - MAX_HOLD).
      all_results[f"{name} solo"].append({
-      "symbol":sym,"pnl_pct":round(pnl_pkr/(CAPITAL*RISK/lv["R"]*entry)*100,2),
+      "iter_idx":i,"symbol":sym,
+      "pnl_pct":round(pnl_pkr/(CAPITAL*RISK/lv["R"]*entry)*100,2),
       "pnl_pkr":round(pnl_pkr,0),"win":pnl_pkr>0,"exit_reason":exit_reason,"prob":round(p,3)})
    
-   # Update win rates for weighting
+   # Update win rates for weighting — Phase 4 B-AUDIT LEAKY_ENSEMBLE fix:
+   # at iter i (current decision date cd_i), the win_rates used for the NEXT
+   # iteration's ensemble weights must only include trades whose realization
+   # date <= cd_i. A trade entered at iter j has its outcome realized at
+   # cd_j + MAX_HOLD trading days (simulate_trade reads the NEXT MAX_HOLD
+   # bars after current_date). For this realization to be available at cd_i,
+   # we need cd_j + MAX_HOLD <= cd_i, i.e., j + MAX_HOLD <= i (since dates
+   # are sorted trading days). So we restrict to trades entered at iter_idx
+   # <= i - MAX_HOLD. Before this fix, win_rates used ALL prior trades
+   # (including ones entered at iter i-1, i-2, ... whose realization requires
+   # data AFTER cd_i) — that was the LEAKY_ENSEMBLE leak (weights derived
+   # from future-realized trade outcomes).
    for name in CL_EXT_MODELS:
-    trades=all_results[f"{name} solo"]
-    if len(trades)>10:
-     wr=sum(1 for t in trades if t["win"])/len(trades)*100
+    matured_trades=[t for t in all_results[f"{name} solo"] if t["iter_idx"] <= i - MAX_HOLD]
+    if len(matured_trades)>10:
+     wr=sum(1 for t in matured_trades if t["win"])/len(matured_trades)*100
      win_rates[name]=wr
 
  # Compute stats for each
@@ -403,7 +422,50 @@ def cmd_backtest():
  
  # Save
  output={"cl_extender_backtest_at":pd.Timestamp.now().isoformat(),
-  "models":CL_EXT_MODELS,"weights":INITIAL_WEIGHTS,"results":stats}
+  "models":CL_EXT_MODELS,"weights":INITIAL_WEIGHTS,"results":stats,
+  # Phase 4 B-AUDIT: ml_integrity documentation. The CL-Extender backtest is
+  # a per-bar walk-forward with retrain (the per-bar signal IS re-inferred
+  # via predict_ensemble(models, row, sym, weights) at each iter, so this is
+  # NOT Pattern #10 latest-signal replay). The leak was the win_rate-WEIGHT
+  # update rule (LEAKY_ENSEMBLE): win_rates at iter i were derived from ALL
+  # prior trades (entered at iters < i), including trades entered at i-1,
+  # i-2, ..., i-MAX_HOLD+1 whose realization requires data up to cd_j+MAX_HOLD
+  # > cd_i (future). Fix applied: win_rates update restricted to trades whose
+  # entry iter <= i - MAX_HOLD (i.e., whose realization date <= cd_i). Trade
+  # records carry an "iter_idx" field for this filter. The external interface
+  # (per-trade dict structure with "symbol" / "pnl_pct" / "pnl_pkr" / "win" /
+  # "exit_reason" / "prob" keys + per-model stats dict with "total_trades" /
+  # "wins" / "win_rate" / "profit_factor" / "stars" etc.) is unchanged.
+  "ml_integrity":{
+   "backtest_methodology":(
+    "Phase 4 B-AUDIT LEAKY_ENSEMBLE fix: walk-forward per-bar re-inference "
+    "(predict_ensemble per iter) — NOT Pattern #10 latest-signal replay. "
+    "Win-rate weights at iter i now restricted to trades entered at iter_idx "
+    "<= i - MAX_HOLD (whose realization date <= cd_i). Before this fix, "
+    "weights were derived from ALL prior trades, including ones whose "
+    "realization required data AFTER cd_i (future leakage)."
+   ),
+   "pattern":"LEAKY_ENSEMBLE (weights from future-realized trade outcomes)",
+   "status":"fixed",
+   "fix":(
+    "win_rates update at iter i filters all_results[name+' solo'] to trades "
+    "with iter_idx <= i - MAX_HOLD (trade records carry iter_idx field). "
+    "MAX_HOLD=15 (simulate_trade uses NEXT MAX_HOLD bars after current_date)."
+   ),
+   "trade_record_keys":(
+    "Preserved external interface: per-trade dict now has iter_idx added "
+    "alongside symbol / pnl_pct / pnl_pkr / win / exit_reason / prob. The "
+    "stats dict (per-model aggregate) keys are unchanged."
+   ),
+   "scope_note":(
+    "Phase 4 scope is backtesting/metric correctness. Training-pipeline "
+    "leakage (LEAKY_SPLIT / LEAKY_SCALER / LEAKY_TARGET / LEAKY_SEQUENCE) is "
+    "Phase A scope. This script's per-stock train_ridge sc=StandardScaler."
+    "fit_transform(X) at L133 fits on the walk-forward TRAIN slice only "
+    "(td = df[df['date']<cd-EMBARGO*86400000] at L330) and is applied via "
+    "sc.transform at inference — already leak-free at the train/val level."
+   ),
+  }}
  
  # Merge into predictions file
  existing=json.loads(OUT.read_text())

@@ -942,3 +942,1220 @@ Work Log:
 
 Stage Summary:
 - Cleanup DONE + server verified healthy: deleted 13 confirmed-dead files (1 dead mock generator + 10 orphaned 0-import components + 2 stale 749KB logs). Server untouched (dev-watch + next-server same PIDs, / returns 200, app renders with 0 JS errors). Deletions are local (not pushed — say the word to push the cleanup to GitHub).
+
+---
+Task ID: 44
+Agent: main
+Task: Write a full detailed README.md for GitHub + push the project + update the README document.
+
+Work Log:
+- Gathered facts for an accurate README: package.json (name nextjs_tailwind_shadcn_ts v0.2.1, scripts dev/build/lint/db:*), 61 API routes across 22 dirs, 20+ feature components, 65 models + 13 ensembles across 10 tiers (from src/lib/latent/ensemble.ts), Prisma schema (OhlcvBar/ModelPredictionCache/ModelBacktestCache/PricePatternCache/ResultPatternCache/Trade/User/Plan/RiskProfile), deps (@prisma/client, next-auth, next-themes, prisma, recharts, z-ai-web-dev-sdk), DB stats (1,041,396 OhlcvBar rows, 908 symbols, 2016-10-21 → 2026-10-21), Python3 train scripts, dev-watch self-healing.
+- Wrote /home/z/my-project/README.md (314 lines): Overview, 10-tab features table, AI/ML architecture (10 tiers + 13 ensembles + backtest engine + investment simulator), Tech Stack, Project Structure (tree), Database (table purposes + setup), API Surface (highlight routes table), Getting Started (prereqs/install/run), Training & Backtesting Scripts (per-tier table), AI Skills (z-ai-web-dev-sdk), Development Supervisor (dev-watch.sh), Production Notes, License.
+- Committed README + the Task-43 cleanup deletions (the 13 dead-file deletions were already autosaved as 2 local commits; README is the 3rd): commit 63d6e50d "docs: add comprehensive README.md ... Cleanup: remove 13 dead files".
+- Pushed: 2af9aa75..63d6e50d main -> main (3 commits). Verified HEAD == origin/main == 63d6e50d, 0 commits ahead.
+- Server health check after push: dev-watch PID 3376 + next-server PID 23050 alive (unchanged), curl / → HTTP 200 in 51ms. No server files touched this round.
+
+Stage Summary:
+- README.md (314 lines, full detail) created + pushed to GitHub: https://github.com/amz162/latent_v_2/blob/main/README.md
+- Project pushed (HEAD = origin/main = 63d6e50d, fully in sync). Includes the Task-43 cleanup (13 dead files removed) + the new README.
+- Server untouched + healthy.
+
+---
+Task ID: 45 (ML-integrity audit + tractable fixes)
+Agent: main
+Task: 9-priority ML-leakage/identity/simulation/persistence audit + implement fixes (not just a plan). No push this round.
+
+Phase 1 — AUDIT (verified problems):
+- P9 CRITICAL: .env WAS tracked by git (committed before .gitignore added .env*) → DATABASE_URL + the GitHub token (embedded in branch.main.remote) leaked to GitHub.
+- P3 CORE: ALL 65 "models" route through ONE shared strategySignal() → 8 indicator "families" (fallback-predictions.ts:399,422). "XGBoost/LSTM/PatchTST" etc. are trend-indicator variants with mulberry32(hashSeed(name))-randomized params. The "65-model backtest" (model-backtest.ts runAllBacktests) is 65 indicator-strategy relabels, NOT trained-ML evaluations.
+- P1A: signal-stats/route.ts takes TODAY's final-consensus signals + replays them over [today-30, today] → current predictions applied to historical dates.
+- P5A: investment-simulator findEntryIdxList tried 5 bars/signal to force a fill; backtest.ts:6 "sample WITH REPLACEMENT to reach numTrades".
+- P5B: simulateFromIdx picked TP3>TP2>TP1>SL by first-occurrence — awarded TP win even when SL touched first.
+- P2A: train_all_with_backtesting.py target_{hz}d=...shift(-hz)...).fillna(0) → unmatured/suspended future returns → 0% observations (leakage).
+
+Phase 2 — IMPLEMENTED (tractable, safe):
+- P9: `git rm --cached .env` → .env UNTRACKED (local file preserved at 50 bytes; .gitignore already has .env*). ⚠️ TOKEN STILL IN GIT HISTORY on GitHub — needs rotation; no history rewrite without user approval.
+- P3: added ModelImplStatus registry + modelImplStatus() helper to ensemble.ts (implementation: trained-ml|technical-rule|untrained; runtimeBacktestImpl: technical-rule; trainedArtifact). AiModelSignals.tsx MC card now shows a cyan "ML·live" badge (tooltip: artifact for live preds, but runtime backtest uses strategySignal) + changed "BT:" → "Rule-BT:" with tooltip. Added an ML-integrity honesty banner at the top of the Backtesting Report modal explaining the runtime backtest is indicator-strategy, not trained-ML.
+- P5B: rewrote simulateFromIdx exit-picking → collect crossed levels with first-touch bar idx, sort by (idx, SL-wins-ties) → chronological first-touch + conservative stop-first. Replaces the optimistic TP3>TP2>TP1>SL priority.
+- P5A: reverted the multi-bar forcing (findEntryIdxList → findEntryIdx single closest bar); if no TP/SL hit, SKIP the slot → report actual count (may be < numTrades). Supersedes the earlier "must fulfill numTrades" demand. Verified: requested 40 → tradeCount 38, HIT {TP1:6, SL:32}, no TIME. Win/loss flipped 37W/3L → 11W/27L (stop-first correctly counts SL-hit-first as losses).
+- P7: added PredictionHistory Prisma model (dedupKey unique, immutable forecast, outcome filled only after maturity, kind: prospective|simulated|out-of-sample|technical-rule, confidenceType: heuristic|calibrated). Schema pushed (db:push) + Prisma client regenerated + next dev restarted to load it. New /api/predictions/record route (POST upsert by dedupKey + GET query). Verified: same dedupKey → same id (no duplication); different dedupKey → different records. (predictionTs stored as String — epoch-ms overflows Prisma Int32.)
+
+Phase 5 — REMAINING (honest, not done this session):
+- P1A walk-forward: genuine per-date ML inference requires retraining all Python models with walk-forward + a TS↔Python inference bridge (the runtime uses strategySignal indicators, not the Python artifacts). Too large for one session. The UI now HONESTLY labels the runtime backtest as "technical-rule-strategy evaluation" (banner) so users aren't misled.
+- P2 (Python target .fillna(0) + chronological date-based splits + scaler-fit-on-train-only): requires rewriting scripts/train_all_with_backtesting.py + the per-tier train_*.py pipelines. Documented; not rewritten.
+- P4B (ensemble selection leakage — time-aligned OOS + weights frozen before final test): documented.
+- P6 (calibration via separate val period; MAE/RMSE/Brier/precision-recall): documented; current confidence is heuristic (now labeled).
+- P8 (regression tests): BLOCKED by the environment's "do not write any test code" constraint + no test runner configured (package.json has no "test" script). Recommended: configure vitest/jest + write the 14 listed regression tests as a follow-up.
+
+Verification: dev-watch PID 3376 + next-server PID 28784 alive; GET / → HTTP 200 in 57ms; no compile errors; bun run lint clean. No server files touched destructively (one controlled next dev restart via dev-watch supervision to load the regenerated Prisma client — dev-watch auto-respawned it in ~2s).
+
+NOT pushed (no push instruction this round). All changes local (autosave commits locally). ⚠️ URGENT: the GitHub token is in git history — rotate it; then push the .env untrack + these ML-integrity fixes.
+
+Stage Summary:
+- DONE + verified: P9 (.env untracked), P3 (honest model registry + UI badges + Backtesting Report banner), P5B (stop-first chronological exit), P5A (no forced trades — report actual count), P7 (PredictionHistory schema + /api/predictions/record with dedup).
+- REMAINING (documented): P1A walk-forward ML retraining + TS↔Python bridge, P2 Python target/split/scaler fixes, P4B ensemble selection leakage, P6 calibration metrics, P8 tests (env-constrained). The UI is now HONEST about what the backtest is (indicator-strategy, not trained-ML) so users aren't misled while the deeper ML work remains.
+
+---
+Task ID: 46 (Python training-pipeline leakage fix)
+Agent: main
+Task: Fix training-data leakage + incorrect target construction in every applicable Python training pipeline (Priorities: .fillna(0) on targets, nonchronological splits, cross-stock shift, full-history scaler fit). No push.
+
+Phase 1 — AUDIT (verified leakage across scripts/*.py):
+- L1 (.fillna(0) on targets): train_all_with_backtesting.py:49, train_cl_tier.py:52, train_multi_horizon.py:59, train_remaining_models.py:56, train_tier2_foundations.py:86, walk_forward_backtesting.py:65, improve_models.py:45, fix_predictions_and_backtest.py:206, train_all_db.py:55, train_all_models_db.py:49, retrain_all_361_stocks.py:341 (this one uses groupby(symbol).shift — per-stock correct, but still fillna(0)).
+- L2 (global row split): train_all_with_backtesting.py train_classical:80 `split=int(len(df)*0.8)` on concatenated histories; train_lstm:132 `sp=int(len(X)*0.8)` on concatenated sequences. Same in the other copy-pasted scripts.
+- L4 (scaler on full history): train_all_with_backtesting.py train_lstm:126 `sc=StandardScaler();fs=sc.fit_transform(f)` fit on the FULL per-stock history before split; train_cnn_lstm + train_transformer_lstm same pattern.
+- L5 (cross-stock shift): most scripts use `df["close"].shift(-hz)` WITHOUT groupby — safe ONLY if df is per-stock at that point (train_all_with_backtesting calls add_labels per-stock before concat, so OK there; but train_all_db.py/train_all_models_db.py call it on concatenated df → CROSS-STOCK LEAK).
+- No train_test_split found (good — they use iloc row splits, which are equally nonchronological).
+
+Phase 2 — IMPLEMENTED:
+- New module scripts/ml_integrity.py with leak-free primitives:
+  • add_forward_returns(df) — per-stock groupby(symbol).shift(-h) (never crosses stocks); leaves NaN for immature rows (NO fillna).
+  • drop_immature_targets(df) — drops rows whose any-horizon target is missing/invalid (Task 1).
+  • chronological_split(df, train_frac=0.60, val_frac=0.20, purge_h=MAX_HORIZON=21) — date-based partition (all rows on a date → same partition) + per-stock purge of the last 21 rows at each boundary (label-maturity gap, Task 2).
+  • fit_scaler_on_train(train_features) — StandardScaler fit on TRAIN only, applied frozen to val/test (Task 3).
+  • build_sequences_per_stock(sdf, SEQ, horizons, feature_cols, train_end_idx, scaler) — per-stock sequences, train-fit scaler, skips immature targets (no cross-stock, no in-seq future).
+- Refactored scripts/train_all_with_backtesting.py (the canonical script):
+  • imports ml_integrity helpers.
+  • add_labels: removed .fillna(0); per-stock shift (leaves NaN).
+  • load(): per-stock concat → add_forward_returns + drop_immature_targets (no immature zeroing).
+  • train_classical: chronological_split(df) replaces the global row split.
+  • train_lstm: scaler fit on TRAIN portion only (fit_scaler_on_train on first 60% per stock) + sequences split by DECISION DATE (np.argsort(seq_dates)) instead of global row index.
+
+Phase 5 — VALIDATION (Task 5):
+- python3 -m py_compile scripts/ml_integrity.py → ✓ OK
+- python3 -m py_compile scripts/train_all_with_backtesting.py → ✓ OK
+- ml_integrity self-test (deterministic synthetic 3-stock dataset + a NaN-close suspension row): ALL 6 PASSED — (1) targets don't cross stocks, (2) immature dropped not zeroed (600→534), (3) chronological train<val<test, (4) purge applied (21/stock/boundary), (5) scaler train-only, (6) per-stock sequences no crossing.
+- REAL training job on the 8-stock data (ENGRO/HUBC/LUCK/MEBL/OGDC/PPL/PSO/SYS): load() → 3371 rows after drop_immature, only 4 target==0 (genuine, not fillna — would've been ~288 with the old code). train_classical() trained XGBoost/LightGBM/CatBoost/RF. Chronological split verified: train 2024-10-01→2025-10-20 (1866 rows) < val 2025-11-19→2026-03-04 (518) < test 2026-04-07→2026-09-01 (672), NO date overlap (asserts passed). HONEST metrics: R²(5d) negative (-0.086 to -0.493), R²(21d) negative (-0.875 to -1.46) — the models do NOT predict well out-of-sample; the old leakage-inflated metrics were false. Per the user rule, I do NOT claim the model is more accurate.
+- Server untouched: dev-watch + next-server alive, GET / → 200 in 49ms. ml_predictions_multi.json NOT overwritten (still Oct 26 13:30, 14MB) — the running app's live predictions are intact.
+
+REMAINING (honest):
+- 10 other copy-pasted scripts still have the leaky `shift(-h).fillna(0)` + global row split pattern: fix_predictions_and_backtest.py, improve_models.py, retrain_all_361_stocks.py, train_all_db.py, train_all_models_db.py, train_cl_tier.py, train_multi_horizon.py, train_remaining_models.py, train_tier2_foundations.py, walk_forward_backtesting.py. The ml_integrity.py helpers are ready to adopt; each needs the same 4-spot refactor (add_labels/load/split/scaler). Not done this session (scope).
+- In train_all_with_backtesting.py: train_cnn_lstm + train_transformer_lstm still have the leaky scaler-fit-on-full-history (only train_lstm was refactored). Same pattern → same fix needed.
+- ml_predictions_multi.json is STALE (produced with the OLD leaky pipeline) → not a valid OOS artifact. Regenerating it with the corrected pipeline is required for honest live predictions, but was NOT done (would overwrite the file the running app reads — would touch the server's data). Recommended: run the corrected training in a maintenance window, then restart.
+- The live app still shows the OLD (leakage-produced) predictions until ml_predictions_multi.json is regenerated.
+
+NOT pushed (per user instruction).
+
+---
+Task ID: 47 (run the app after sandbox restart)
+Agent: main
+Task: "run the app / run the project" — get the app up and verified.
+
+Work Log:
+- Found the sandbox had RESTARTED (~35 min prior): dev-watch gone, the env's own boot script had spawned `next dev` (PID 1086/1087/1201), and that server was WEDGED — ports :3000/:81 listening but no HTTP response in 30s (dev.log showed an LLM 429 self-heal loop; 25% CPU, not OOM).
+- CRITICAL discovery: the sandbox reset had replaced .git — origin/main ref was GONE and ALL local work (Tasks 45/46 ML-integrity + Python leakage fixes) showed as 469 uncommitted modifications against an older UUID baseline. Starting dev-watch would have run `git reset --hard origin/main` and WIPED that unpushed work from the working tree.
+- Protected the work FIRST: `git add -A && git commit` → snapshot e2d39fd ("protect all local work (Tasks 38-46) after sandbox git reset"). Re-added the origin remote from the surviving branch.main.remote config.
+- Killed the wedged server (1086/1087/1201), freed :3000, started a clean `next dev` via the double-fork setsid spawn with the 2GB memory cap (direct, NOT dev-watch — deliberately avoiding its restore-on-start reset). First spawn attempt hit a transient MODULE_NOT_FOUND (race with the kill); `bun install` confirmed node_modules intact; the retry started cleanly: "✓ Ready in 736ms" (Turbopack auto-cleared its cache after a prior internal error — first hits may be slower).
+- Verified: curl :3000 → HTTP 200 (61,591B, 60ms); curl :81 (Caddy preview path) → HTTP 200 (48ms); agent-browser → title "Latent.pk — AI-Driven Investment Intelligence for PSX", 2 headings + 14 buttons rendered, ZERO JS errors. Final processes: next dev PID 1535, next-server PID 1548.
+
+Stage Summary:
+- App RUNNING + browser-verified through the preview path.
+- IMPORTANT: dev-watch is deliberately NOT running — its restore-on-start (`git reset --hard origin/main`) would revert the working tree to the Task-44 pushed state, wiping the newer local ML-integrity work from disk (it IS preserved in local commit e2d39fd and recoverable). Safe to re-enable dev-watch ONLY after this snapshot is pushed to GitHub (then origin/main == the latest work). Recommend the user authorize a push.
+
+---
+Task ID: B-AUDIT
+Agent: Phase B audit subagent
+Task: Repository-wide leakage pattern audit across scripts/*.py
+
+Work Log:
+- Read scripts/ml_integrity.py (the leak-free primitives from Task 46) + scripts/train_all_with_backtesting.py (canonical script, Task 46 partially fixed — train_lstm/load/train_classical fixed; train_cnn_lstm/train_transformer_lstm still leaky).
+- ripgrep pattern "shift\(-\d+\)\.fillna" → 0 matches (the leaky target lines do NOT match this single regex because the .fillna(0) is on a parenthesized sub-expression; broadened to "shift\(-" and ".fillna\(0\)" separately).
+- ripgrep pattern "shift\(-" → 11 matches across 11 files. Examined each with -C 5.
+- ripgrep pattern "train_test_split" → 0 matches (the scripts use iloc row splits, not sklearn's train_test_split; equally nonchronological on concatenated data).
+- ripgrep pattern "int\(len\(.*\)\*0\.\d" → 17 matches across 9 files. Examined each with -C 3.
+- ripgrep pattern "StandardScaler" → 14 matches across 9 files. Examined each in context.
+- ripgrep pattern "fit_transform" → 11 matches across 6 files. Examined each in context (most are inside walk-forward folds on the train slice; the leaky ones are in CNN/Transformer-LSTM where the scaler is fit on the full per-stock history before split).
+- ripgrep pattern "\.fillna\(0\)" → 73 matches across 20 files. Classified each: HARMLESS_FEATURE_FILLNA for indicator/return/feature columns; LEAKY_TARGET for target_{hz}d / tp1_before_sl_5d columns.
+- ripgrep pattern "groupby\(.*\)\[.close.\]\.shift|groupby\(.*\)\[.open.\]\.shift" → 5 matches across 3 files. Verified these are the correct per-stock forward-shift pattern (no cross-stock leak, no fillna).
+- ripgrep pattern "TimeSeriesSplit|KFold|StratifiedKFold|sample\(" → found retrain_all_361_stocks.py:86 and train_all_optimized.py:86 both use df.sample(n=…, random_state=42) which destroys chronological order before an 80% row split — LEAKY_SPLIT.
+- ripgrep pattern "np\.array.*\[::2\]|\[::2\]|\[1::2\]" → 0 matches (no interleaved row splits).
+- ripgrep pattern "ensemble.*weight|weight.*ensemble" → 21 matches across 9 files. Examined each: most are STATIC ensemble weights (fine); cl_extender.py updates weights from in-loop trade outcomes (LEAKY_ENSEMBLE).
+- Read scripts/backtest_all_models.py in full — confirmed clean walk-forward harness (strict purge, per-stock groupby shift, label_end_date<T filter).
+- Read scripts/audit_cg_model.py header (L1-160) + walk_forward_train (L440-500) — confirmed proper 3-way chronological split per stock with purge + walk-forward CV inside train only + separate calibration period + untouched test.
+- Read scripts/train_x_model.py split section (L1-110, 550-720, 1080-1230) — same methodology as audit_cg_model.py (3-way per-stock chronological split with purge).
+- Read scripts/train_cl2_tier.py:694 `purged_stock_folds` — confirms by-symbol CV split (the same leak audit_cg_model.py was created to fix in the original CG-Ensemble).
+- Read scripts/train_cg_model.py:451 + train_pi_tier.py:198 — both import and use `purged_stock_folds` from train_cl2_tier.py.
+- Read scripts/cl_extender.py:cmd_backtest (L312-360) — walk-forward with retrain but the win_rates are updated from `simulate_trade(fr, cd, entry, atr)` outcomes whose realization requires data up to cd+15 days; weights at iter i use outcomes from iters <i whose realization requires data AFTER cd_i → LEAKY_ENSEMBLE.
+- Read scripts/fix_predictions_and_backtest.py:206-211 (train_chronos_analog receives concatenated df → cross-stock shift + fillna(0)) and L548-570, L606+ (rebacktest applies stored latest signal to all test rows → LEAKY_BACKTEST Pattern #10).
+- Read scripts/fix_ensemble_backtesting.py:125-180 (per-stock 80/20 chronological test slice is OK; but ensemble signal comes from stored latest predictions applied to all test rows → LEAKY_BACKTEST Pattern #10).
+- Read scripts/add_missing_ensembles.py:206-230 (same pattern as fix_ensemble_backtesting — LEAKY_BACKTEST).
+- Read scripts/train_cl_ensembles.py:108-200 (triple_barrier_backtest uses signal_fn that reads stored latest prediction for every historical bar → LEAKY_BACKTEST).
+- Read scripts/train_all_ensembles_am.py:274-360 (backtest_ensemble computes "win = avgReturn > 0" from PREDICTED avgReturn, not realized outcomes → LEAKY_BACKTEST Pattern #11).
+- Read scripts/train_all_optimized.py:86-87 (df.sample + sp=int(len(dft)*0.8)) — random sample destroys chronological order → LEAKY_SPLIT. Verified L143-146 uses groupby("symbol")["close"].shift(-hz) WITHOUT fillna — target construction is OK (ALREADY_FIXED pattern).
+- Read scripts/retrain_all_361_stocks.py:86-92 (df.sample + sp=int(len(dft)*0.8)) — same LEAKY_SPLIT pattern. L341 uses groupby("symbol").shift(-hz) + fillna(0) → LEAKY_TARGET (per-stock shift OK, fillna(0) leaks).
+- Read scripts/train_xgboost.py and train_multi_models.py — both use per-stock `df["close"].rolling(FORWARD_WINDOW).max().shift(-FORWARD_WINDOW)` for future_max with `df.dropna(subset=["future_return_max"])` (drops immature rows, no fillna) — ALREADY_FIXED. L213/L179 respectively use `split_idx = int(len(df) * 0.8)` on the date-sorted concatenated df (mostly chronological, but a single date may straddle the split; minor).
+
+Stage Summary — Leakage Audit Table:
+
+| file:line | pattern | classification | reason |
+| --- | --- | --- | --- |
+| scripts/ml_integrity.py:42-46 | groupby(symbol).shift(-h) on close_col, no fillna | ALREADY_FIXED | the leak-free primitive itself; per-stock forward return; immature rows left NaN |
+| scripts/ml_integrity.py:49-60 | drop_immature_targets drops NaN rows | ALREADY_FIXED | drops immature/invalid rows instead of zeroing |
+| scripts/ml_integrity.py:64-92 | chronological_split by date_col | ALREADY_FIXED | date-based partition + per-stock purge of MAX_HORIZON rows at each boundary |
+| scripts/ml_integrity.py:111-118 | fit_scaler_on_train(train_features) | ALREADY_FIXED | StandardScaler fit on TRAIN partition only, returned frozen |
+| scripts/ml_integrity.py:121-150 | build_sequences_per_stock with train_end_idx | ALREADY_FIXED | per-stock sequences, train-fit scaler, decision bar AFTER seq window (no in-seq future) |
+| scripts/train_all_with_backtesting.py:51-60 | add_labels: per-stock shift, NO fillna | ALREADY_FIXED | Task 46 fix; per-stock shift, immature rows left NaN, dropped in load() via drop_immature_targets |
+| scripts/train_all_with_backtesting.py:61-75 | load(): add_forward_returns + drop_immature_targets | ALREADY_FIXED | Task 46 fix; uses ml_integrity helpers |
+| scripts/train_all_with_backtesting.py:94-133 | train_classical: chronological_split(df) | ALREADY_FIXED | Task 46 fix; replaces the old `split=int(len(df)*0.8)` |
+| scripts/train_all_with_backtesting.py:135-184 | train_lstm: fit_scaler_on_train + sort by seq_dates | ALREADY_FIXED | Task 46 fix; scaler fit on train portion only, sequences split by decision date |
+| scripts/train_all_with_backtesting.py:178 | predict_fn: sc=StandardScaler().fit_transform(f) on per-stock sdf | HARMLESS_PREDICT_TIME | LIVE inference-time scaler fit on the most-recent SEQ bars of one stock; not training. (Identical to the predict_fn in train_cnn_lstm/train_transformer_lstm.) |
+| scripts/train_all_with_backtesting.py:189-233 | train_cnn_lstm: f=sdf[FC].values; sc=StandardScaler().fit_transform(f) | LEAKY_SCALER | scaler fit on the FULL per-stock history before split (L198); same pattern Task 46 fixed in train_lstm but NOT yet fixed here. Fix: use fit_scaler_on_train(f[:ti]) like train_lstm L148. |
+| scripts/train_all_with_backtesting.py:199-201 | seqs.append(fs[i:i+SEQ]) + targs.append([target_5d…]) without immature-skip | LEAKY_SEQUENCE | does NOT skip rows whose target is NaN/immature (compare train_lstm L153 which skips them); immature rows get fillna(0)-poisoned target. Fix: add the `if any(pd.isna(t)…) continue` guard. |
+| scripts/train_all_with_backtesting.py:204 | sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:] | LEAKY_SPLIT | row-index split on the concatenated sequence array (per-stock-concatenated, not date-sorted). Fix: split by decision date like train_lstm L159-160. |
+| scripts/train_all_with_backtesting.py:235-278 | train_transformer_lstm: same pattern as train_cnn_lstm | LEAKY_SCALER+LEAKY_SEQUENCE+LEAKY_SPLIT | L244 fit_transform on full history; L245-247 no immature-skip; L250 row-index split. Same fixes as train_cnn_lstm. |
+| scripts/train_all_with_backtesting.py:336,360 | backtest_individual/backtest_ensemble: te=df.iloc[int(len(df)*0.8):] | LEAKY_SPLIT | row split on concatenated non-date-sorted df. ALSO the per-test-row "signal" comes from `md["predictions"][s].get("signal")` — the model's STORED latest signal — applied to every historical test row → also LEAKY_BACKTEST Pattern #10. Fix: use chronological_split + per-test-row re-inference (or only evaluate the latest-bar prediction on its own forward window). |
+| scripts/train_all_models_db.py:49 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock shift OK (called inside add_labels per-stock from L365), but fillna(0) on immature target rows. Fix: use ml_integrity.add_forward_returns + drop_immature_targets. |
+| scripts/train_all_models_db.py:51 | df["tp1_before_sl_5d"]=((df["close"].shift(-5)-df["close"])>0).astype(int).shift(-5).fillna(0).clip(0,1) | LEAKY_TARGET | DOUBLY LEAKY: (a) the second .shift(-5) on the indicator moves the label forward 5 rows so target[t]=label[t+5] (5-day forward return STARTING at t+5, not at t) — target misalignment bug; (b) fillna(0) on the last 5 rows. Fix: drop the second .shift(-5); compute TP1-before-SL with proper triple-barrier logic. |
+| scripts/train_all_models_db.py:66,123,136,185 | split=int(len(sdf)*0.8); tr=sdf.iloc[:split] | HARMLESS_OTHER | per-stock chronological 80/20 split inside train_cl_model/train_cl2/train_pi/train_cg (sdf is one stock). OK per-stock. |
+| scripts/train_all_db.py:55 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock (add_labels called per-stock from train_stock L72), but fillna(0). Fix: add_forward_returns + drop_immature_targets. |
+| scripts/train_all_db.py:73 | split=int(len(sdf)*0.8); tr=sdf.iloc[:split]; te=sdf.iloc[split:] | HARMLESS_OTHER | per-stock chronological split for the per-stock model. OK. |
+| scripts/train_cl_tier.py:52 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock (add_features called per-stock in load), but fillna(0). Fix: same. |
+| scripts/train_cl_tier.py:155 | split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:] | LEAKY_SPLIT | row split on concatenated non-date-sorted df. Fix: chronological_split. |
+| scripts/train_cl_tier.py:237 | f=sdf[FC].values; sc=StandardScaler(); fs=sc.fit_transform(f) | LEAKY_SCALER | scaler fit on FULL per-stock history before sequence split. Fix: fit_scaler_on_train(f[:ti]). |
+| scripts/train_cl_tier.py:243 | sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:] | LEAKY_SPLIT | row-index split on concatenated sequence array. Fix: split by decision date. |
+| scripts/train_cl_tier.py:264 | predict_fn: sc=StandardScaler().fit_transform(f) on per-stock sdf | HARMLESS_PREDICT_TIME | live inference-time scaler fit; not training. |
+| scripts/train_cl_tier.py:299 | te=df.iloc[int(len(df)*0.8):].copy() | LEAKY_SPLIT | backtest slice on concatenated df (also reads stored latest signal — see below). Combined with the use of `md["predictions"][s].get("signal")` on every test row → LEAKY_BACKTEST Pattern #10. |
+| scripts/train_multi_horizon.py:59 | df["target_{h}d"]=((df["close"].shift(-h)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock (add_labels called per-stock in load), but fillna(0). Fix: same. |
+| scripts/train_multi_horizon.py:88 | split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:] | LEAKY_SPLIT | row split on concatenated non-date-sorted df. Fix: chronological_split. |
+| scripts/train_multi_horizon.py:137 | f=sdf[FC].values; sc=StandardScaler(); fs=sc.fit_transform(f) | LEAKY_SCALER | scaler fit on FULL per-stock history before sequence split. Fix: fit_scaler_on_train(f[:ti]). |
+| scripts/train_multi_horizon.py:143 | sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:] | LEAKY_SPLIT | row-index split on concatenated sequence array. Fix: split by decision date. |
+| scripts/train_multi_horizon.py:165 | predict_fn: sc=StandardScaler().fit_transform(f) | HARMLESS_PREDICT_TIME | live inference-time scaler fit. |
+| scripts/train_multi_horizon.py:230 | te=df.iloc[int(len(df)*0.8):].copy() | LEAKY_SPLIT+LEAKY_BACKTEST | backtest slice + stored latest signal applied to all test rows. |
+| scripts/train_remaining_models.py:56 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock, but fillna(0). Fix: same. |
+| scripts/train_remaining_models.py:97,147 | f=sdf[FC].values; sc=StandardScaler(); fs=sc.fit_transform(f) | LEAKY_SCALER | CNN-LSTM + Transformer-LSTM: scaler fit on FULL per-stock history before sequence split. Fix: fit_scaler_on_train(f[:ti]). |
+| scripts/train_remaining_models.py:103,153 | sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:] | LEAKY_SPLIT | row-index split on concatenated sequence array. Fix: split by decision date. |
+| scripts/train_remaining_models.py:128,174 | predict_fn: sc=StandardScaler().fit_transform(f) | HARMLESS_PREDICT_TIME | live inference-time scaler fit. |
+| scripts/train_remaining_models.py:188 | split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:] (TabNet) | LEAKY_SPLIT | row split on concatenated df. Fix: chronological_split. |
+| scripts/train_remaining_models.py:250 | te=df.iloc[int(len(df)*0.8):].copy() | LEAKY_SPLIT+LEAKY_BACKTEST | backtest slice + stored latest signal applied to all test rows. |
+| scripts/train_tier2_foundations.py:86 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock (add_labels called per-stock in load), but fillna(0). Fix: same. |
+| scripts/train_tier2_foundations.py:222 | df[lag_col]=df.groupby("symbol")[col].shift(L).fillna(0) | HARMLESS_FEATURE_FILLNA | LAG feature (backward shift, past values); fillna(0) on the first L rows is a feature fill, not a target fill. OK. |
+| scripts/train_tier2_foundations.py:269 | split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:] | LEAKY_SPLIT | row split on concatenated non-date-sorted df. Fix: chronological_split. |
+| scripts/train_tier2_foundations.py:272 | sc=StandardScaler(); Xtr=sc.fit_transform(tr[FC].values); Xte=sc.transform(te[FC].values) | ALREADY_FIXED | scaler fit on TRAIN post-split (the split itself is leaky, but the scaler fit is correct given the split). |
+| scripts/train_tier2_foundations.py:338 | base_returns[bn]=df["symbol"].map(per_stock).fillna(0).values | HARMLESS_FEATURE_FILLNA | fillna on a mapped feature column, not a target. OK. |
+| scripts/walk_forward_backtesting.py:65 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock (add_features called per-stock in load), but fillna(0). Fix: same. |
+| scripts/walk_forward_backtesting.py:99 | test_start=int(len(df)*0.8); test_df=df.iloc[test_start:] | HARMLESS_OTHER | this is just the test-SAMPLE SELECTION (samples come from PPL's last 20%); the actual training data for each sample is `df[df["date"]<sample["date"]` (chronological by date). Test set is biased to one stock (coverage issue, not leakage). |
+| scripts/walk_forward_backtesting.py:113-150 | train_data=df[df["date"]<sample["date"]; model.fit(Xtr, ytr) per sample | ALREADY_FIXED | proper walk-forward retraining with date-based training data filter; purge is implicit because `df["date"]<sample["date"]` and the sample's exit bar is in test. |
+| scripts/improve_models.py:45 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock (add_features called per-stock in load), but fillna(0). Fix: same. |
+| scripts/improve_models.py:138 | split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:] (fix_lightgbm) | LEAKY_SPLIT | row split on concatenated non-date-sorted df. Fix: chronological_split. |
+| scripts/improve_models.py:151 | model.fit(Xtr,ytr,eval_set=[(Xte,yte)],…) | LEAKY_BACKTEST (minor) | using test set as early-stopping eval set is a form of HP selection on test (mild test-set leakage). Fix: carve out a separate val slice. |
+| scripts/improve_models.py:177,229 | te=df.iloc[int(len(df)*0.8):].copy() | LEAKY_SPLIT+LEAKY_BACKTEST | backtest slice + stored latest signal applied to all test rows (L185 `md["predictions"][s].get("signal")`). |
+| scripts/retrain_all_361_stocks.py:86 | dft=df.sample(n=min(100000,len(df)),random_state=42).dropna(subset=FC+tgt) | LEAKY_SPLIT | RANDOM SAMPLE from concatenated df destroys chronological order. Fix: chronological_split. |
+| scripts/retrain_all_361_stocks.py:87 | sp=int(len(dft)*0.8); Xtr=dft.iloc[:sp][FC].fillna(0).values | LEAKY_SPLIT | row split on the randomly-sampled dft — meaningless as chronological split. Combined with the random sample above. |
+| scripts/retrain_all_361_stocks.py:92,154 | sd.iloc[-1][FC].fillna(0).values / pr.pct_change(5).fillna(0).tail(10).values | HARMLESS_FEATURE_FILLNA | fillna on feature vectors / pct_change feature, not target. OK. |
+| scripts/retrain_all_361_stocks.py:210,278 | sp=int(len(sd)*0.8); st=sd.iloc[sp:] | HARMLESS_OTHER | per-stock chronological test slice for backtest evaluation. OK per-stock. |
+| scripts/retrain_all_361_stocks.py:341 | df["target_{hz}d"]=((df["close"].groupby(df["symbol"]).shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | per-stock shift OK (uses groupby(symbol)), but fillna(0). Fix: add_forward_returns + drop_immature_targets. |
+| scripts/train_all_optimized.py:86 | dft=df.sample(n=min(100000,len(df)),random_state=42).dropna(subset=FC+targets) | LEAKY_SPLIT | RANDOM SAMPLE destroys chronological order. Fix: chronological_split. |
+| scripts/train_all_optimized.py:87 | sp=int(len(dft)*0.8); Xtr=dft.iloc[:sp][FC].fillna(0).values | LEAKY_SPLIT | row split on randomly-sampled dft. Combined with the random sample above. |
+| scripts/train_all_optimized.py:143-146 | df["target_{hz}d"]=(df.groupby("symbol")["close"].shift(-hz)-df["close"])/df["close"] | ALREADY_FIXED | per-stock groupby shift, NO fillna — correct target construction. |
+| scripts/train_all_optimized.py:246,254,331 | dft.iloc[:sp][FC].fillna(0).values / sd.iloc[-1][FC].fillna(0).values / pr.pct_change(5).fillna(0).tail(10).values | HARMLESS_FEATURE_FILLNA | fillna on feature vectors / pct_change feature, not target. OK. |
+| scripts/train_all_ensembles_am.py:274-360 | backtest_ensemble: win = avgReturn > 0 (from PREDICTED avgReturn) | LEAKY_BACKTEST Pattern #11 | metrics calculated from PREDICTED returns instead of REALIZED outcomes. The "winRate" is meaningless (measures how often the model predicted a positive return, not whether the trade made money). Fix: simulate each trade against realized future OHLCV (triple-barrier like train_cl_ensembles.py) and compute win from realized P&L. |
+| scripts/fix_predictions_and_backtest.py:206 | df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0) | LEAKY_TARGET | DOUBLY LEAKY: df is CONCATENATED at this point (train_chronos_analog receives the full multi-stock df from main L853), so `shift(-hz)` WITHOUT groupby crosses stock boundaries; plus fillna(0). Fix: add_forward_returns (which uses groupby(symbol).shift). |
+| scripts/fix_predictions_and_backtest.py:207 | split=int(len(df)*0.8) | UNRELATED | dead-code variable (not used in train_chronos_analog after L207). |
+| scripts/fix_predictions_and_backtest.py:500 | seasonal=float(np.mean(prices.pct_change(5).fillna(0).tail(10).values))*21 | HARMLESS_FEATURE_FILLNA | fillna on pct_change feature inside the Prophet analog's seasonal decomposition. OK. |
+| scripts/fix_predictions_and_backtest.py:548-570 | rebacktest_all_models: applies `pr.get("signal")` (stored LATEST signal) to every test row | LEAKY_BACKTEST Pattern #10 | today's signal applied to historical test dates. The test slice (per-stock 80/20) is fine, but the signal is constant per stock from the latest prediction. Fix: re-infer the model at each test row's feature vector, or only evaluate the latest prediction on its own forward window. |
+| scripts/fix_predictions_and_backtest.py:606+ | rebacktest_cl_ensembles: signal_fn(s, atr, cp) based on stored latest predictions | LEAKY_BACKTEST Pattern #10 | same pattern — current signal applied to historical dates. Fix: same. |
+| scripts/fix_ensemble_backtesting.py:125-180 | backtest_ensemble: per-stock split OK; but signal=`ensemble_fn(stock_signals, stock_returns)` from `md["predictions"][s].get("signal")` (stored latest) | LEAKY_BACKTEST Pattern #10 | today's signal applied to every historical test row. Fix: re-infer at each test row. |
+| scripts/add_missing_ensembles.py:206-230 | backtest_ensemble: per-stock split OK; but `sig=ensemble_preds[sym].get("signal")` (stored latest) | LEAKY_BACKTEST Pattern #10 | same pattern. Fix: re-infer at each test row. |
+| scripts/train_cl_ensembles.py:108-200 | triple_barrier_backtest: signal_fn(sdf, i) reads stored latest prediction for the symbol | LEAKY_BACKTEST Pattern #10 | the SAME stored prediction is applied at every historical bar i in [60, len(sdf)-MAX_HOLD_DAYS]. Fix: use a per-bar signal_fn (e.g., re-infer from the model + bar-i features, or pre-compute per-bar predictions during training). |
+| scripts/cl_extender.py:312-360 | cmd_backtest: walk-forward with retrain, but win_rates updated from `simulate_trade(fr, cd, entry, atr)` outcomes | LEAKY_ENSEMBLE | weights at iter i are computed from trade outcomes of iters <i, but each trade's outcome requires data up to cd_{iter}+MAX_HOLD (15 days). So at iter i, the weights use information from up to cd_{i-1}+15 > cd_i (future). Fix: only update win_rates from trades whose realization date <= cd_i (i.e., trades entered at iter <= i-MAX_HOLD). |
+| scripts/cl_extender.py:133 | train_ridge: sc=StandardScaler(); Xs=sc.fit_transform(X) | HARMLESS_PREDICT_TIME | trains a per-stock model on the full per-stock data for live prediction (no test set involved). OK for inference. |
+| scripts/train_cl2_tier.py:694 | def purged_stock_folds(stocks, k=3): split stocks into K folds BY SYMBOL | LEAKY_SPLIT | root-cause leak identified by audit_cg_model.py: same calendar dates appear in train and validation across correlated stocks (cross-sectional CV, not time-OOS). Fix: walk-forward CV by row index (train-on-earlier / validate-on-later), as audit_cg_model.py does. |
+| scripts/train_cl2_tier.py:1111 | sp=int(n*0.8); te=sd.iloc[sp:] (per-stock chronological backtest slice) | HARMLESS_OTHER | per-stock chronological test slice for backtest; OK. (But the model trained on the leaky by-symbol CV still leaks through to the test.) |
+| scripts/train_cl2_tier.py:812-870 | meta=LogisticRegression.fit(X_meta, y_meta) on OOF predictions; calib_map from OOF | LEAKY_ENSEMBLE | meta-model + calibration trained on OOF predictions that came from the leaky by-symbol CV; inherits the cross-sectional time-overlap leak. Fix: use a properly time-OOS walk-forward CV (audit_cg_model.py pattern) for the OOF predictions. |
+| scripts/train_cg_model.py:451 | folds=purged_stock_folds(syms, k=5) | LEAKY_SPLIT | imported from train_cl2_tier; same by-symbol CV leak. Fix: walk-forward CV. |
+| scripts/train_cg_model.py:487-499 | meta + calibration on OOF predictions | LEAKY_ENSEMBLE | inherits the leak from by-symbol CV. |
+| scripts/train_pi_tier.py:198 | folds=purged_stock_folds(syms, k=3) | LEAKY_SPLIT | same imported leak. |
+| scripts/train_pi_tier.py:266-280 | meta=LogisticRegression.fit(X_meta, y_meta) on OOF + decile-binning calib | LEAKY_ENSEMBLE | inherits the leak. |
+| scripts/audit_cg_model.py:175-200 | assign_periods(n_bars) returns (train_end, purge1_end, calib_end, purge2_end, test_end) | ALREADY_FIXED | proper 3-way per-stock chronological split with PURGE_BARS = CG_HORIZON+5 embargo at each boundary. |
+| scripts/audit_cg_model.py:280-330 | build_audit_training_set(df_all, "train"|"calibrate"|"test") per stock | ALREADY_FIXED | per-stock bars assigned to the correct chronological period; next-bar-OPEN entries; multi-class labels with horizon-aware cutoff. |
+| scripts/audit_cg_model.py:455-490 | walk_forward_train: row-index walk-forward on per-stock-concatenated X | HARMLESS_OTHER (minor residual) | the 3-way per-stock split makes the TEST set clean; the walk-forward CV inside TRAIN produces OOF for calibration, but the row-index split on per-stock-concatenated X mixes stocks in time (a milder form of the cross-sectional CV leak). Net effect: calibration inherits a minor leak; test set is still untouched. |
+| scripts/audit_cg_model.py:478-499 | scaler.fit_transform(X_tr) inside folds; scaler.fit_transform(X) on full train | ALREADY_FIXED | scaler fit on TRAIN-only slices (in-fold and full-train); transform applied to val/calib/test. |
+| scripts/train_x_model.py:60-110,540-570 | X_TRAIN_FRAC=0.60, X_CALIB_FRAC=0.15, X_TEST_FRAC=0.25 + PURGE_BARS=15 | ALREADY_FIXED | same proper 3-way per-stock chronological split as audit_cg_model.py. |
+| scripts/train_x_model.py:615-660 | walk_forward_train: same row-index walk-forward on per-stock-concatenated X | HARMLESS_OTHER (minor residual) | same minor cross-stock leak in the walk-forward CV inside TRAIN; test set is clean. |
+| scripts/train_x_model.py:639,655 | scaler.fit_transform(X_tr) inside folds; scaler.fit_transform(X) on full train | ALREADY_FIXED | scaler fit on TRAIN-only slices; transform on calib/test. |
+| scripts/train_xgboost.py:165-168 | future_max=df["close"].rolling(FORWARD_WINDOW).max().shift(-FORWARD_WINDOW); dropna(subset=["future_return_max"]) | ALREADY_FIXED | per-stock future_max (add_labels called per-stock in load_all_stocks); immature rows dropped not zeroed. |
+| scripts/train_xgboost.py:213 | split_idx=int(len(df)*0.8); train_df=df.iloc[:split_idx]; test_df=df.iloc[split_idx:] | LEAKY_SPLIT (minor) | row split on date-sorted concatenated df — mostly chronological but a single date may straddle the split (rows of the same date can end up in both train and test). Fix: use chronological_split which partitions by date boundary. |
+| scripts/train_xgboost.py:227 | model.fit(X_train, y_train, eval_set=[(X_test, y_test)], …) | LEAKY_BACKTEST (minor) | using test set as early-stopping eval is a mild HP-selection-on-test leak. Fix: carve a separate val slice. |
+| scripts/train_multi_models.py:135-138 | future_max with dropna | ALREADY_FIXED | per-stock future_max with dropna (no fillna(0)). |
+| scripts/train_multi_models.py:179 | split_idx=int(len(df)*0.8) on date-sorted df | LEAKY_SPLIT (minor) | same as train_xgboost.py:213. |
+| scripts/train_missing_stocks.py:586-595 | future_max computed per-stock with manual loop on `closes[i+1:i+1+fw]`; dropna(subset=["_y"]) | ALREADY_FIXED | per-stock future-return computation, immature rows dropped not zeroed. |
+| scripts/train_missing_stocks.py:596,599 | X=feat[FC].fillna(0).values / latest=feat.iloc[-1][FC].fillna(0).values | HARMLESS_FEATURE_FILLNA | fillna on feature vectors, not target. OK. |
+| scripts/train_missing_stocks.py:607 | scaler=StandardScaler(); Xs=scaler.fit_transform(X); m.fit(Xs, y); prob_up=m.predict_proba(scaler.transform(latest)) | HARMLESS_PREDICT_TIME | single-stock model trained on the full labeled history (no test set involved) to produce ONE prediction at the latest bar. OK for inference. |
+| scripts/backtest_all_models.py:268-271 | entry_open=df.groupby("symbol")["open"].shift(-1); exit_open=df.groupby("symbol")["open"].shift(-1-HORIZON) | ALREADY_FIXED | per-stock groupby shift (no cross-stock leak, no fillna). |
+| scripts/backtest_all_models.py:285-288 | train_slice: data[label_end_date < t] & fwd_ret notna, dropna(FEATURE_COLS) | ALREADY_FIXED | strict purged walk-forward: training rows have their full 21-day label window ENDED before step date T. The single source-of-truth backtest harness. |
+| scripts/backtest_all_models.py:170,166 | Pipeline([("sc", StandardScaler()), ("m", Ridge())]) inside a sklearn Pipeline | ALREADY_FIXED | the Pipeline is fit INSIDE model_scores() which is called per step with Xtr (the purged train slice). The pipeline.fit(Xtr, ytr) fits the scaler on the train slice only, then transforms Xun (the universe at date T). No leak. |
+| scripts/train_gm_model.py / train_gian_model.py / train_gian_extender.py / train_m_ensemble.py | rule-based strategies with per-stock 75/25 chronological test slice; next-bar-open entries; multi-class labels | ALREADY_FIXED | all 4 rule-based scripts use the same proper per-stock chronological split (TEST_FRAC=0.75) and next-bar-open entries (no look-ahead). Verified at train_gian_model.py:297, train_gian_extender.py:243, train_m_ensembles.py:299, train_gm_model.py backtest_gm. |
+
+Confirmed problems requiring fix (sorted by file):
+
+- scripts/add_missing_ensembles.py:206-230 — backtest applies stored latest ensemble signal to every historical test row → LEAKY_BACKTEST Pattern #10. Fix: re-infer the ensemble signal at each test row from the per-stock model's per-bar features, or only evaluate the latest prediction on its own forward window.
+- scripts/audit_cg_model.py:455-490 — walk-forward CV inside TRAIN uses row-index split on per-stock-concatenated X (minor cross-stock time-overlap in OOF predictions used for calibration). Fix: sort X globally by (symbol, date) isn't enough; replace with a date-bucketed walk-forward CV across all stocks (or restrict to per-stock walk-forward and pool OOF predictions).
+- scripts/cl_extender.py:349-360 — win_rates used as ensemble weights are updated from `simulate_trade` outcomes whose realization requires data up to cd+15, so weights at iter i use data from cd_{i-1}+15 > cd_i (future). Fix: only update win_rates from trades whose realization date <= cd_i (i.e., entered at iter <= i-MAX_HOLD).
+- scripts/fix_ensemble_backtesting.py:125-180 — backtest applies stored latest ensemble signal to every historical test row → LEAKY_BACKTEST Pattern #10. Fix: re-infer at each test row.
+- scripts/fix_predictions_and_backtest.py:206 — `df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)` on the CONCATENATED df → cross-stock shift + fillna(0). Fix: replace with `from ml_integrity import add_forward_returns, drop_immature_targets; df = add_forward_returns(df); df = drop_immature_targets(df)`.
+- scripts/fix_predictions_and_backtest.py:548-570 — rebacktest_all_models applies stored latest signal to all test rows → LEAKY_BACKTEST Pattern #10.
+- scripts/fix_predictions_and_backtest.py:606+ — rebacktest_cl_ensembles same pattern → LEAKY_BACKTEST Pattern #10.
+- scripts/improve_models.py:45 — `df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)` (per-stock inside add_features, but fillna(0)) → LEAKY_TARGET. Fix: use add_forward_returns + drop_immature_targets (move target construction out of add_features).
+- scripts/improve_models.py:138 — `split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:]` on concatenated non-date-sorted df → LEAKY_SPLIT. Fix: `from ml_integrity import chronological_split; tr, va, te = chronological_split(df)`.
+- scripts/improve_models.py:151 — `model.fit(Xtr, ytr, eval_set=[(Xte, yte)], …)` uses test as early-stopping eval → LEAKY_BACKTEST (mild). Fix: carve a separate val slice.
+- scripts/improve_models.py:177, 229 — backtest slice + stored latest signal applied to all test rows → LEAKY_SPLIT + LEAKY_BACKTEST Pattern #10.
+- scripts/retrain_all_361_stocks.py:86 — `dft=df.sample(n=min(100000,len(df)),random_state=42)` destroys chronological order → LEAKY_SPLIT. Fix: `from ml_integrity import chronological_split; tr, va, te = chronological_split(df.dropna(subset=FC+targets))`.
+- scripts/retrain_all_361_stocks.py:87 — `sp=int(len(dft)*0.8); Xtr=dft.iloc[:sp]…` on the randomly-sampled dft → LEAKY_SPLIT. Fix: use the tr partition from chronological_split.
+- scripts/retrain_all_361_stocks.py:341 — `df["target_{hz}d"]=((df["close"].groupby(df["symbol"]).shift(-hz)-df["close"])/df["close"]).fillna(0)` (per-stock shift OK, fillna(0) leaks) → LEAKY_TARGET. Fix: replace with `df = add_forward_returns(df); df = drop_immature_targets(df)`.
+- scripts/train_all_ensembles_am.py:274-360 — backtest_ensemble computes `win = avgReturn > 0` from PREDICTED avgReturn → LEAKY_BACKTEST Pattern #11. Fix: simulate each trade against realized future OHLCV (triple-barrier) and compute win from realized P&L.
+- scripts/train_all_models_db.py:49 — `df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)` (per-stock, fillna(0)) → LEAKY_TARGET. Fix: add_forward_returns + drop_immature_targets.
+- scripts/train_all_models_db.py:51 — `df["tp1_before_sl_5d"]=((df["close"].shift(-5)-df["close"])>0).astype(int).shift(-5).fillna(0).clip(0,1)` (target misalignment + fillna(0)) → LEAKY_TARGET. Fix: drop the second .shift(-5) and compute TP1-before-SL with proper triple-barrier logic; then drop_immature_targets.
+- scripts/train_all_db.py:55 — `df["target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)` (per-stock, fillna(0)) → LEAKY_TARGET. Fix: add_forward_returns + drop_immature_targets.
+- scripts/train_all_optimized.py:86 — `dft=df.sample(n=min(100000,len(df)),random_state=42)` destroys chronological order → LEAKY_SPLIT. Fix: chronological_split.
+- scripts/train_all_optimized.py:87 — `sp=int(len(dft)*0.8); Xtr=dft.iloc[:sp]…` on the randomly-sampled dft → LEAKY_SPLIT. Fix: use the tr partition from chronological_split.
+- scripts/train_all_with_backtesting.py:189-233 (train_cnn_lstm) — `f=sdf[FC].values; sc=StandardScaler(); fs=sc.fit_transform(f)` fits scaler on FULL per-stock history before split (L198); no immature-target skip (L199-201); `sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:]` row-index split (L204). → LEAKY_SCALER + LEAKY_SEQUENCE + LEAKY_SPLIT. Fix: copy the train_lstm pattern (Task 46) — `ti=int(len(sdf)*0.60); sc=fit_scaler_on_train(f[:ti]); fs=sc.transform(f)`; add the `if any(pd.isna(t)…) continue` guard; split by `np.argsort(seq_dates)`.
+- scripts/train_all_with_backtesting.py:235-278 (train_transformer_lstm) — same pattern as train_cnn_lstm at L244/L245-247/L250. → LEAKY_SCALER + LEAKY_SEQUENCE + LEAKY_SPLIT. Same fix.
+- scripts/train_all_with_backtesting.py:336, 360 (backtest_individual / backtest_ensemble) — `te=df.iloc[int(len(df)*0.8):]` on concatenated non-date-sorted df + `md["predictions"][s].get("signal")` applied to every test row → LEAKY_SPLIT + LEAKY_BACKTEST Pattern #10. Fix: `tr, va, te = chronological_split(df)`; per-test-row re-inference or only-evaluate-latest-on-its-forward-window.
+- scripts/train_cl2_tier.py:694 — `def purged_stock_folds(stocks, k=3)` splits BY SYMBOL → LEAKY_SPLIT (root cause, identified by audit_cg_model.py). Fix: replace with a row-index walk-forward CV (train-on-earlier / validate-on-later) inside the TRAIN period, ideally with per-stock date-bucketing to avoid cross-stock time-overlap.
+- scripts/train_cl2_tier.py:812-870 — meta=LogisticRegression + calib_map on OOF predictions from the leaky by-symbol CV → LEAKY_ENSEMBLE. Fix: regenerate OOF with the corrected walk-forward CV.
+- scripts/train_cl_tier.py:52 — `df["target_{hz}d"]=…fillna(0)` (per-stock, fillna(0)) → LEAKY_TARGET. Fix: add_forward_returns + drop_immature_targets.
+- scripts/train_cl_tier.py:155 — `split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:]` on concatenated non-date-sorted df → LEAKY_SPLIT. Fix: chronological_split.
+- scripts/train_cl_tier.py:237 — `f=sdf[FC].values; sc=StandardScaler(); fs=sc.fit_transform(f)` (train_gru) → LEAKY_SCALER. Fix: fit_scaler_on_train(f[:ti]).
+- scripts/train_cl_tier.py:243 — `sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:]` → LEAKY_SPLIT (row-index sequence split). Fix: split by decision date.
+- scripts/train_cl_tier.py:299 — backtest slice + stored latest signal applied to all test rows → LEAKY_SPLIT + LEAKY_BACKTEST Pattern #10.
+- scripts/train_cg_model.py:451 — `folds=purged_stock_folds(syms, k=5)` → LEAKY_SPLIT (imported from train_cl2_tier). Fix: walk-forward CV.
+- scripts/train_cg_model.py:487-499 — meta + calibration on OOF predictions from leaky CV → LEAKY_ENSEMBLE. Fix: regenerate OOF with corrected CV.
+- scripts/train_multi_horizon.py:59 — `df["target_{h}d"]=…fillna(0)` (per-stock, fillna(0)) → LEAKY_TARGET. Fix: add_forward_returns + drop_immature_targets.
+- scripts/train_multi_horizon.py:88 — `split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:]` on concatenated non-date-sorted df → LEAKY_SPLIT. Fix: chronological_split.
+- scripts/train_multi_horizon.py:137 — `f=sdf[FC].values; sc=StandardScaler(); fs=sc.fit_transform(f)` (train_lstm) → LEAKY_SCALER. Fix: fit_scaler_on_train(f[:ti]).
+- scripts/train_multi_horizon.py:143 — `sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:]` → LEAKY_SPLIT (row-index sequence split). Fix: split by decision date.
+- scripts/train_multi_horizon.py:230 — backtest slice + stored latest signal → LEAKY_SPLIT + LEAKY_BACKTEST Pattern #10.
+- scripts/train_pi_tier.py:198 — `folds=purged_stock_folds(syms, k=3)` → LEAKY_SPLIT (imported from train_cl2_tier). Fix: walk-forward CV.
+- scripts/train_pi_tier.py:266-280 — meta=LogisticRegression + decile-binning calib on OOF from leaky CV → LEAKY_ENSEMBLE. Fix: regenerate OOF with corrected CV.
+- scripts/train_remaining_models.py:56 — `df["target_{hz}d"]=…fillna(0)` (per-stock, fillna(0)) → LEAKY_TARGET. Fix: add_forward_returns + drop_immature_targets.
+- scripts/train_remaining_models.py:97, 147 — `f=sdf[FC].values; sc=StandardScaler(); fs=sc.fit_transform(f)` (CNN-LSTM + Transformer-LSTM) → LEAKY_SCALER. Fix: fit_scaler_on_train(f[:ti]).
+- scripts/train_remaining_models.py:103, 153 — `sp=int(len(X)*0.8); Xtr,Xte=X[:sp],X[sp:]` → LEAKY_SPLIT (row-index sequence split). Fix: split by decision date.
+- scripts/train_remaining_models.py:188 — `split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:]` (train_tabnet) on concatenated non-date-sorted df → LEAKY_SPLIT. Fix: chronological_split.
+- scripts/train_remaining_models.py:250 — backtest slice + stored latest signal → LEAKY_SPLIT + LEAKY_BACKTEST Pattern #10.
+- scripts/train_tier2_foundations.py:86 — `df["target_{hz}d"]=…fillna(0)` (per-stock, fillna(0)) → LEAKY_TARGET. Fix: add_forward_returns + drop_immature_targets.
+- scripts/train_tier2_foundations.py:269 — `split=int(len(df)*0.8); tr=df.iloc[:split]; te=df.iloc[split:]` on concatenated non-date-sorted df → LEAKY_SPLIT. Fix: chronological_split.
+- scripts/train_xgboost.py:213 — `split_idx=int(len(df)*0.8)` on date-sorted concatenated df → LEAKY_SPLIT (minor — date straddle). Fix: chronological_split.
+- scripts/train_xgboost.py:227 — `eval_set=[(X_test, y_test)]` early-stopping on test → LEAKY_BACKTEST (mild). Fix: carve a separate val slice.
+- scripts/train_multi_models.py:179 — `split_idx=int(len(df)*0.8)` on date-sorted concatenated df → LEAKY_SPLIT (minor — date straddle). Fix: chronological_split.
+- scripts/walk_forward_backtesting.py:65 — `df["target_{hz}d"]=…fillna(0)` (per-stock, fillna(0)) → LEAKY_TARGET. Fix: add_forward_returns + drop_immature_targets. (The walk-forward training loop itself is clean via `df[df["date"]<sample["date"]]`, so only the target construction needs fixing.)
+
+Files clean (verified, no leakage requiring fix):
+
+- scripts/ml_integrity.py — the leak-free primitives (verified correct).
+- scripts/backtest_all_models.py — walk-forward harness with strict 21-day purge, per-stock groupby shift, label_end_date<T filter; the single source-of-truth backtest. Pipeline-wrapped StandardScaler fit per-step on the purged train slice.
+- scripts/audit_cg_model.py — 3-way per-stock chronological split (train 60% / calibrate 15% / test 25%) with PURGE_BARS=15 embargo at each boundary; walk-forward CV inside TRAIN; separate calibration period; untouched test set. (Minor residual: walk-forward CV uses row-index split on per-stock-concatenated X — see judgment calls.)
+- scripts/train_x_model.py — same proper 3-way per-stock chronological split as audit_cg_model.py; same minor residual in walk-forward CV.
+- scripts/train_xgboost.py — per-stock future_max with dropna (no fillna(0)) for label construction (clean). Splits are mostly chronological but with minor date-straddle (LEAKY_SPLIT minor) and test-set early-stopping (LEAKY_BACKTEST mild). See judgment calls.
+- scripts/train_multi_models.py — same as train_xgboost.py.
+- scripts/train_missing_stocks.py — per-stock future_max with dropna; single-stock model trained on full labeled history for one live prediction (no test split involved); HARMLESS_PREDICT_TIME scaler fit.
+- scripts/train_gm_model.py — rule-based 4-pillar strategy with per-stock chronological backtest (last 25%), next-bar-open entries.
+- scripts/train_gian_model.py — rule-based square-root S/R strategy with per-stock 75/25 chronological test slice; next-bar-open entries.
+- scripts/train_gian_extender.py — rule-based GANN-grid strategy with per-stock 75/25 chronological test slice; next-bar-open entries.
+- scripts/train_m_ensemble.py — rule-based price-touch S/R strategy with per-stock 75/25 chronological test slice; next-bar-open entries.
+- scripts/train_all_optimized.py L143-146 — per-stock groupby("symbol")["close"].shift(-hz) WITHOUT fillna for target construction (clean — but the same file's L86-87 random-sample+row-split is LEAKY_SPLIT).
+- scripts/cl_extender.py:133 — train_ridge single-stock model for live prediction (HARMLESS_PREDICT_TIME).
+- All non-training scripts: fair_value.py (fundamental valuation), generate_backtest_pdf.py (report generation), generate_mock_5y_results.py (mock data), update_daily_*.py / fetch_ohlcv*.py / fetch_financials.py (data fetching), daily_5pm_update.py / bulk_update_*.py / train_incremental.py / merge_xgboost_into_multi.py / force_train_all*.py (orchestration / scheduling — train_incremental.py inherits leaky add_labels from train_all_models_db.py, counted above).
+
+Notes — judgment calls where the same textual pattern is harmless in one script but leaky in another:
+
+1. `.fillna(0)` is HARMLESS when applied to FEATURE columns (RSI/volatility/sma-ratio/returns/atr/bb_width/lag-features) but LEAKY when applied to TARGET columns (target_5d/10d/21d, tp1_before_sl_5d). Example: train_all_with_backtesting.py:30-49 fillna(0) on bb_width/atr_14/return_*d/volatility_14d = HARMLESS_FEATURE_FILLNA; train_all_with_backtesting.py:52 (in add_labels) fillna(0) on target_{hz}d would have been LEAKY but Task 46 already removed it.
+
+2. `StandardScaler().fit_transform(f)` is LEAKY when fit on the FULL per-stock history BEFORE splitting (e.g., train_all_with_backtesting.py:198 train_cnn_lstm, train_cl_tier.py:237 train_gru, train_multi_horizon.py:137 train_lstm, train_remaining_models.py:97,147) but HARMLESS (HARMLESS_PREDICT_TIME) when fit on the most-recent SEQ bars at LIVE-PREDICT time inside a `predict_fn(sdf)` closure (e.g., train_all_with_backtesting.py:178, 224, 269 — the live inference path that doesn't feed back into training). The same textual line `sc=StandardScaler(); fs=sc.fit_transform(f)` means two different things depending on whether `f` is the training history or the live-inference SEQ bars.
+
+3. `df["close"].shift(-h)` WITHOUT groupby is HARMLESS (per-stock) when called on a PER-STOCK df inside a per-stock load loop (e.g., train_all_models_db.py:49 inside add_labels called per-stock from L365, train_all_db.py:55 inside add_labels called per-stock from L72, train_cl_tier.py:52, train_multi_horizon.py:59, train_remaining_models.py:56, train_tier2_foundations.py:86, walk_forward_backtesting.py:65, improve_models.py:45 — all called per-stock inside their load() functions). The SAME textual pattern is LEAKY (cross-stock) when called on a CONCATENATED multi-stock df — e.g., fix_predictions_and_backtest.py:206 inside train_chronos_analog receives the concatenated df from main L853, so `shift(-hz)` without groupby crosses stock boundaries. The fix in both cases is the same: use `ml_integrity.add_forward_returns(df, …)` which always uses `df.groupby(symbol)[close].shift(-h)` regardless of whether df is per-stock or concatenated.
+
+4. `df.groupby("symbol")["close"].shift(-h)` (with groupby) is ALWAYS safe from cross-stock leakage (whether df is per-stock or concatenated) — e.g., retrain_all_361_stocks.py:341, train_all_optimized.py:144-146, backtest_all_models.py:268-269, ml_integrity.py:44. The only remaining concern is the .fillna(0) that may follow it (retrain_all_361_stocks.py:341 still has fillna(0) → LEAKY_TARGET; train_all_optimized.py:144-146 has no fillna → ALREADY_FIXED).
+
+5. `split=int(len(sdf)*0.8)` is HARMLESS_OTHER when `sdf` is ONE STOCK (per-stock chronological split for a per-stock model — e.g., train_all_db.py:73, train_all_models_db.py:66/123/136/185, retrain_all_361_stocks.py:210/278) but LEAKY_SPLIT when `df` is the CONCATENATED multi-stock df and the rows are NOT globally date-sorted (e.g., improve_models.py:138, train_multi_horizon.py:88, train_remaining_models.py:188, train_cl_tier.py:155, train_tier2_foundations.py:269 — these scripts concatenate per-stock dfs in stock order without a global date sort, so the 80% row boundary lands inside one stock's history, mixing train/test across stocks). The same pattern is LEAKY_SPLIT (minor) even when the concatenated df IS date-sorted (train_xgboost.py:213, train_multi_models.py:179) because a single date's rows can straddle the boundary.
+
+6. `purged_stock_folds` (by-symbol K-fold) is LEAKY_SPLIT in train_cl2_tier.py:694, train_cg_model.py:451, train_pi_tier.py:198 because the same calendar dates appear in train and validation across correlated stocks (cross-sectional CV, not time-OOS) — this is the leak that audit_cg_model.py was created to identify and fix. By contrast, walk-forward CV (row-index train-on-earlier/validate-on-later) inside a TRAIN-only period (audit_cg_model.py:455, train_x_model.py:615) is HARMLESS_OTHER with a minor residual (the row-index split on per-stock-concatenated X mixes stocks in time inside the OOF predictions used for calibration, but the test set is still untouched).
+
+7. Stored-latest-prediction applied to every historical test row (Pattern #10: LEAKY_BACKTEST) appears in fix_predictions_and_backtest.py:548-570/606+, fix_ensemble_backtesting.py:125-180, add_missing_ensembles.py:206-230, train_cl_ensembles.py:108-200, train_all_with_backtesting.py:336/360, improve_models.py:177/229, train_cl_tier.py:299, train_multi_horizon.py:230, train_remaining_models.py:250. The same general "backtest" function shape is HARMLESS_OTHER when the signal is re-inferred at each bar from the model + that bar's features (e.g., backtest_all_models.py model_scores per step, cl_extender.py:312+ walk-forward with retrain — though cl_extender.py has a separate LEAKY_ENSEMBLE issue with the win_rate weights). The distinguishing feature is whether the signal source is per-bar inference (harmless) or a stored constant signal (leaky).
+
+8. `backtest_ensemble` in train_all_ensembles_am.py:274 is a different kind of LEAKY_BACKTEST (Pattern #11): the metrics come from `p.get("avgReturn", 0)` (predicted) with `win = avgReturn > 0`, NOT from realized outcomes. This is "metrics from predicted returns" rather than "current signal applied to historical dates" — both are LEAKY_BACKTEST but Pattern #10 vs Pattern #11 respectively.
+
+---
+Task ID: A-9-SCRIPTS
+Agent: Phase A 9-script fixer
+Task: Apply ml_integrity helpers to 9 leaky training scripts (Phase A1+A2+A3c).
+
+Work Log:
+- scripts/fix_predictions_and_backtest.py — added `from ml_integrity import add_forward_returns, drop_immature_targets, HORIZONS`; train_chronos_analog L206 replaced cross-stock `df["close"].shift(-hz).fillna(0)` on the CONCATENATED df with `df.groupby("symbol")["close"].shift(-hz)` (no fillna) + `drop_immature_targets(df, horizons=[5,10,21])`; kept dead-code `split=int(len(df)*0.8)` line with a NOTE comment; main() writes `data["ml_integrity"]` dict documenting target_construction/split/scaler_fitting/backtest_methodology (Pattern #10 + cross-stock fix).
+- scripts/improve_models.py — added `from ml_integrity import add_forward_returns, chronological_split, HORIZONS`; add_features L45 target construction removed (moved to load via `add_forward_returns`); fix_lightgbm L138 `split=int(len(df)*0.8)` → `chronological_split(df)` + per-horizon dropna inside the loop + early_stopping on VAL partition (was test); backtest_ensemble_weighted L177 + backtest_all L229 `te=df.iloc[int(len(df)*0.8):]` → `chronological_split(df)` test partition + Pattern #10 docstring; main writes `existing["ml_integrity"]`.
+- scripts/retrain_all_361_stocks.py — added `from ml_integrity import add_forward_returns, drop_immature_targets, chronological_split, HORIZONS`; main L341 `((df["close"].groupby(df["symbol"]).shift(-hz)-df["close"])/df["close"]).fillna(0)` → `add_forward_returns(df)` (per-stock groupby shift, no fillna); train_reg L86 `dft=df.sample(random_state=42)` + L87 `sp=int(len(dft)*0.8)` LEAKY_SPLIT → `chronological_split(df)` (train+val) with a 100k chronological memory cap + per-horizon dropna inside the loop; main writes `ml_integrity` dict documenting Pattern #10 per-stock test slice.
+- scripts/train_all_db.py — added `from ml_integrity import drop_immature_targets, HORIZONS`; add_labels L55 `.fillna(0)` removed (per-stock shift OK since called per-stock in train_stock); train_stock per-horizon loop now does per-horizon `tr_h=tr.dropna(subset=[col])` + re-pulls Xtr per-horizon; backtest_predictions gets Pattern #11 docstring (predicted-positive rate, not realized win rate); main writes `out["ml_integrity"]` with Pattern #11 limitation documented. Per-stock 80/20 split left as-is (per-stock chronological — OK per the task description).
+- scripts/train_all_models_db.py — added `from ml_integrity import drop_immature_targets, HORIZONS`; add_labels L49 `.fillna(0)` removed; L51 `tp1_before_sl_5d` TARGET MISALIGNMENT bug fixed: removed the extra `.shift(-5)` (was making row i carry the label of row i+5) + removed `.fillna(0).clip(0,1)`; train_cl_model/train_cl2/train_pi/train_cg all now do per-horizon dropna(subset=[target_col]) before fit; backtest gets Pattern #11 docstring; main writes `out["ml_integrity"]`. Per-stock 80/20 splits left as-is (per-stock chronological — OK).
+- scripts/train_cl_tier.py — added `from ml_integrity import (add_forward_returns, drop_immature_targets, chronological_split, fit_scaler_on_train, per_stock_train_idx, split_sequences_by_date, HORIZONS, MAX_HORIZON)`; add_features L52 `.fillna(0)` removed; train_ridge L155 `split=int(len(df)*0.8)` → `chronological_split(df)` + per-horizon dropna; train_gru L237 `sc=StandardScaler().fit_transform(f)` LEAKY_SCALER → full canonical pattern (`chronological_split` for train_end_date, `per_stock_train_idx` for boundary, `fit_scaler_on_train`+transform, in-loop immature-target skip, `split_sequences_by_date` for date-disjoint train/val/test sequence split); main L299 `te=df.iloc[int(len(df)*0.8):]` → `chronological_split(df)` test partition + Pattern #10 inline comment; FIXED TYPO `correctSalls` → `correctSells` at L314; main writes `existing["ml_integrity"]`.
+- scripts/train_multi_horizon.py — added `from ml_integrity import (...)` (full helper set); add_labels L59 `.fillna(0)` removed + add_labels now no-op (target construction moved to load via `add_forward_returns`); train_classical L88 `split=int(len(df)*0.8)` → `chronological_split(df)` + per-horizon dropna; train_lstm L137 `sc=StandardScaler().fit_transform(f)` + L143 `sp=int(len(X)*0.8)` → full canonical pattern (chronological_split → train_end_date/val_end_date; per_stock_train_idx for scaler boundary; fit_scaler_on_train+transform; in-loop immature-target skip; split_sequences_by_date); backtest L230 → `chronological_split(df)` test partition + Pattern #10 docstring; main writes `out["ml_integrity"]`.
+- scripts/train_remaining_models.py — added `from ml_integrity import (...)` (full helper set); add_labels L56 `.fillna(0)` removed + add_labels now no-op (moved to load via `add_forward_returns`); train_cnn_lstm L97 + L103 + train_transformer_lstm L147 + L153 LEAKY_SCALER+LEAKY_SPLIT → full canonical pattern (chronological_split; per_stock_train_idx; fit_scaler_on_train+transform; in-loop skip; split_sequences_by_date); train_tabnet L188 `split=int(len(df)*0.8)` → `chronological_split(df)` + multi-horizon dropna (dropna(subset=[5d,10d,21d])) + `eval_set=[(Xva,yva)]` (was test, now val — Phase A2 fix); backtest L250 → `chronological_split(df)` test partition + Pattern #10 docstring; main writes `existing["ml_integrity"]`.
+- scripts/train_tier2_foundations.py — added `from ml_integrity import (add_forward_returns, drop_immature_targets, chronological_split, HORIZONS, MAX_HORIZON)`; add_labels L86 `.fillna(0)` removed + add_labels now no-op (moved to load via `add_forward_returns`); train_chronos L143 + train_lag_llama L213 + train_moirai L268 + train_time_llm L316 `split=int(len(df)*0.8)` → `chronological_split(df)` + per-horizon dropna inside each foundation analog's loop (np.isfinite mask for chronos/time_llm where X/y must stay aligned through tokenize/SLAG windows; dropna(subset=[tc]) for lag_llama/moirai); train_moirai's `StandardScaler().fit_transform(tr[FC].values)` was ALREADY correct (fit on train, transform on test) — kept as-is, only the underlying split + per-horizon dropna were fixed; backtest_model L403 → `chronological_split(df)` test partition + Pattern #10 docstring; main writes `existing["ml_integrity"]`.
+
+Stage Summary:
+- 9 leaky training scripts fixed + syntax-compiled (all COMPILE_OK):
+  1. fix_predictions_and_backtest.py — LEAKY_TARGET (cross-stock shift + fillna) FIXED via add_forward_returns+drop_immature_targets; LEAKY_BACKTEST Pattern #10 left as documented limitation (per-stock 80/20 test slice is chronological; signal application to every historical test row documented in ml_integrity dict).
+  2. improve_models.py — LEAKY_TARGET (fillna) FIXED; LEAKY_SPLIT (global row split) FIXED via chronological_split; LEAKY_BACKTEST (test-set early_stopping) FIXED via VAL partition; LEAKY_BACKTEST Pattern #10 left as documented limitation.
+  3. retrain_all_361_stocks.py — LEAKY_SPLIT (random sample + 80/20 row split) FIXED via chronological_split + per-horizon dropna; LEAKY_TARGET (fillna on groupby shift) FIXED via add_forward_returns; LEAKY_BACKTEST Pattern #10 left as documented limitation (per-stock test slice is chronological).
+  4. train_all_db.py — LEAKY_TARGET (per-stock shift + fillna) FIXED via dropna in per-horizon loop; per-stock 80/20 split left as-is (per-stock chronological — OK per task); LEAKY_BACKTEST Pattern #11 (predicted-positive rate) left as documented limitation in ml_integrity dict.
+  5. train_all_models_db.py — LEAKY_TARGET (per-stock shift + fillna) FIXED; LEAKY_TARGET (tp1_before_sl_5d target misalignment + fillna) FIXED via removal of extra .shift(-5) + .fillna(0).clip(0,1); per-horizon dropna added to train_cl_model/train_cl2/train_pi/train_cg; per-stock 80/20 splits left as-is (per-stock chronological — OK per task); LEAKY_BACKTEST Pattern #11 left as documented limitation.
+  6. train_cl_tier.py — LEAKY_TARGET (per-stock shift + fillna) FIXED; LEAKY_SPLIT (train_ridge global row split + backtest row split) FIXED via chronological_split; LEAKY_SCALER (train_gru full-history fit_transform) FIXED via fit_scaler_on_train on per-stock TRAIN partition; LEAKY_SEQUENCE (train_gru sp=int(len(X)*0.8) row-index sequence split) FIXED via split_sequences_by_date; typo `correctSalls` → `correctSells` FIXED; LEAKY_BACKTEST Pattern #10 left as documented limitation.
+  7. train_multi_horizon.py — LEAKY_TARGET (fillna) FIXED via add_forward_returns; LEAKY_SPLIT (train_classical global row split + backtest row split) FIXED via chronological_split; LEAKY_SCALER (train_lstm full-history fit_transform) FIXED via fit_scaler_on_train on per-stock TRAIN partition; LEAKY_SEQUENCE (train_lstm sp=int(len(X)*0.8)) FIXED via split_sequences_by_date; LEAKY_BACKTEST Pattern #10 left as documented limitation.
+  8. train_remaining_models.py — LEAKY_TARGET (fillna) FIXED via add_forward_returns; LEAKY_SPLIT (TabNet global row split + backtest row split) FIXED via chronological_split; LEAKY_SCALER (CNN-LSTM + Transformer-LSTM full-history fit_transform) FIXED via fit_scaler_on_train on per-stock TRAIN partition; LEAKY_SEQUENCE (CNN-LSTM + Transformer-LSTM sp=int(len(X)*0.8)) FIXED via split_sequences_by_date; LEAKY_BACKTEST (TabNet eval_set on test) FIXED via VAL partition; LEAKY_BACKTEST Pattern #10 left as documented limitation.
+  9. train_tier2_foundations.py — LEAKY_TARGET (fillna) FIXED via add_forward_returns; LEAKY_SPLIT (train_chronos/lag_llama/moirai/time_llm/backtest_model global row split) FIXED via chronological_split; per-horizon dropna added inside each foundation analog's loop; train_moirai's scaler fit was ALREADY correct (fit on train) — kept as-is, only the split + per-horizon dropna were fixed; LEAKY_BACKTEST Pattern #10 left as documented limitation.
+- Honest acknowledgment of what was NOT fixed this round (documented in each script's ml_integrity dict):
+  • Pattern #10 LEAKY_BACKTEST (stored latest signal applied to every historical test row) left in fix_predictions_and_backtest.py:548-570/606+ (rebacktest_all_models / rebacktest_cl_ensembles), improve_models.py (backtest_ensemble_weighted + backtest_all), train_cl_tier.py:299 (backtest in main), train_multi_horizon.py:230, train_remaining_models.py:250, train_tier2_foundations.py:403 (backtest_model) — the TEST PARTITION is now chronological (date-based), but the signal is still the model's stored latest per-stock signal applied to every historical test row. Fixing the signal source (per-bar re-inference or only-evaluate-latest-on-its-forward-window) is out of scope for Phase A; the methodology is documented in ml_integrity.backtest_methodology.
+  • Pattern #11 LEAKY_BACKTEST (win = predicted avgReturn > 0, not realized outcome) left in train_all_db.py:163 and train_all_models_db.py:337 (backtest_predictions / backtest) — the winRate is the predicted-positive rate, not a true realized-outcome win rate. Documented in ml_integrity.backtest_methodology.
+- Server untouched: dev-watch + next-server alive, GET / → HTTP 200 in 44ms.
+- ml_predictions_multi.json NOT overwritten — still Oct 26 13:30, 14.7MB (the running app's live predictions intact; the 9 fixed scripts only WRITE to this file when RUN, and I am NOT running them).
+- NOT pushed to GitHub (per user instruction).
+
+---
+Task ID: A-FINAL (Phase A walk_forward + Phase C/D/E/F final report)
+Agent: main (orchestrator)
+Task: Phase A finish walk_forward_backtesting.py + Phase C validate ml_integrity.py + Phase D verification + Phase E preserve honest results + Phase F final evidence-based report.
+
+Work Log:
+- Phase C — scripts/ml_integrity.py:
+  • Added per_stock_train_idx(sdf, train_end_date, date_col) helper: returns the integer count of rows in a per-stock sdf whose date <= train_end_date. Consistent with chronological_split's GLOBAL train_end_date — fixes the "first-60%-per-stock scaler could straddle the global train/val boundary" concern (Task 46's train_lstm used int(len(sdf)*0.60), which is wrong for stocks listed earlier/later than the global train_end).
+  • Added split_sequences_by_date(X, y, seq_dates, train_end_date, val_end_date, purge_h) helper: date-disjoint train/val/test split of sequences indexed by their DECISION DATE (the bar after the input window). Replaces the leaky sp=int(len(X)*0.8) row-index split on the concatenated sequence array. All sequences whose decision date falls on the same calendar date go to the same partition.
+  • Improved drop_immature_targets docstring clarifying per-horizon (horizons=[5]) vs multi-horizon (horizons=[5,10,21]) use — the latter drops rows where ANY horizon is immature (for multi-head LSTM); the former preserves shorter-horizon rows whose longest-horizon target is immature (for per-horizon XGBoost-5d).
+  • Extended self-test from 6 -> 10 assertions (kept all 6 originals). New tests: (7) per-horizon drop preserves shorter-horizon rows; (8) per_stock_train_idx consistent with chronological_split; (9) split_sequences_by_date is date-disjoint; (10) no future timestamp in any input sequence. ALL 10 PASS.
+
+- Phase A canonical script — scripts/train_all_with_backtesting.py:
+  • train_lstm (refactor of Task 46's fix): now uses chronological_split(df) for global train_end_date/val_end_date, per_stock_train_idx(sdf, train_end_date) for the per-stock scaler boundary (was int(len(sdf)*0.60)), fit_scaler_on_train(f[:ti]) + sc.transform(f), in-loop immature-target skip, split_sequences_by_date(X, y, seq_dates, train_end_date, val_end_date) for the date-disjoint sequence split (was argsort+sp=int(len(X)*0.8)).
+  • train_cnn_lstm (Phase A3 explicit): same canonical pattern. Scaler was previously fit on the FULL per-stock history (StandardScaler().fit_transform(f)) — now fit on per-stock TRAIN partition only.
+  • train_transformer_lstm (Phase A3 explicit): same canonical pattern.
+  • train_classical: per-horizon dropna(subset=[tc]) inside the per-horizon loop (Phase A1 — preserves shorter-horizon rows whose longest-horizon target is immature).
+  • load(): removed the unconditional drop_immature_targets call — callers drop per-horizon (train_classical) or via in-loop skip (LSTM/CNN/Transformer).
+  • backtest_individual + backtest_ensemble: now use chronological_split(df)'s TEST partition (was df.iloc[int(len(df)*0.8):] — global row split on concatenated non-date-sorted df). Added Pattern #10 (simplified backtest) honesty docstring + ml_integrity dict in output JSON.
+
+- Phase A walk_forward_backtesting.py (the 10th outstanding script, personally inspected):
+  • Imports: added `from ml_integrity import (add_forward_returns, drop_immature_targets, chronological_split, HORIZONS, MAX_HORIZON)`.
+  • add_features L65: removed the LEAKY_TARGET line `for hz in [5,10,21]: df[f"target_{hz}d"] = ((df["close"].shift(-hz) - df["close"]) / df["close"]).fillna(0)` (the .fillna(0) was leaky — per-stock shift is fine but the zero-fill makes immature rows look like 0% observations).
+  • load(): now calls add_forward_returns(df) after concat (per-stock groupby(symbol).shift(-h) — no cross-stock leak, no fillna; immature rows left NaN).
+  • main(): replaced `test_start=int(len(df)*0.8); test_df=df.iloc[test_start:].copy()` (LEAKY_SPLIT — global row split on the concatenated df whose rows are NOT globally date-sorted; rows from different stocks are interleaved by stock-concat-order) with `_tr,_va,te=chronological_split(df); test_df=te.copy()` (date-based test partition — all rows on a given test date belong to the same partition).
+  • Per-sample walk-forward loop: replaced the all-horizon target array `ytr=train_data[hz_col].values` (would have NaN rows since load() now leaves immature NaN — model.fit() would crash) with per-horizon dropna: `td=train_data.dropna(subset=[hz_col]); Xtr=td[FC].values; ytr=td[hz_col].values` (Phase A1 — preserves shorter-horizon rows whose longest-horizon target is immature for each per-horizon model).
+  • Output JSON: added ml_integrity dict documenting target_construction/test_partition/per_sample_training/per_horizon_drop/realized_outcomes/walk_forward_methodology. The walk-forward methodology note distinguishes this script's TRUE walk-forward (re-fit per sample on all data before the sample's decision date) from train_all_with_backtesting.py's SIMPLIFIED Pattern #10 backtest (latest signal applied to all test rows).
+
+- Phase D — Verification:
+  • D1 (syntax compile): all 11 modified scripts COMPILE_OK — ml_integrity.py + train_all_with_backtesting.py + walk_forward_backtesting.py + the 9 subagent-fixed scripts.
+  • D2 (self-test): python3 scripts/ml_integrity.py → all 10 assertions PASS.
+  • D3 (server health): GET / → HTTP 200; data/ml_predictions_multi.json untouched (14,722,716 bytes, Oct 26 13:30 — the running app's live predictions intact).
+  • D4 (residual-pattern audit): re-grepped for the 5 leakage patterns:
+      - target_*d.*fillna / fillna.*target_*d / tp1_before_sl.*fillna: only 1 match — a string inside train_all_models_db.py:436 ml_integrity dict's text (not code). NO residual leaky target fillna.
+      - split=int(len(df)*0.8): only matches in comments/docstrings (walk_forward_backtesting.py L21/L113 — describing what was REPLACED) + 1 dead-code line in fix_predictions_and_backtest.py:219 (inside train_chronos_analog, explicitly noted as "split is dead-code, unused downstream"). NO residual leaky row-split.
+      - StandardScaler().fit_transform(f): 6 matches — all inside predict_fn closures (live inference, not training) and per-stock LATEST-bar prediction loops. Classified HARMLESS_PREDICT_TIME per Phase B audit (fitting on recent SEQ bars at inference time, not training data). NO leaky training-path scaler.
+  • D5 (small representative training run): in-memory (no file writes) XGBoost-5d trained on the canonical 8-stock real OHLCV via the corrected pipeline:
+      - Loaded 3539 rows from 8 stocks (epoch-ms int64 dates — ml_integrity handles correctly).
+      - add_forward_returns: 3539 rows; immature rows left NaN.
+      - drop_immature([5])=3499 vs drop_immature([5,10,21])=3371 — per-horizon drop preserves 128 extra shorter-horizon rows whose 21d target is immature but 5d is mature.
+      - chronological_split: train 2024-10-01 -> 2025-11-06 (1978 rows); val 2025-12-08 -> 2026-03-31 (546); test 2026-05-04 -> 2026-09-30 (700). NO date overlap (asserts train.max <= val.min and val.max <= test.min passed). ~1-month gap between partitions = per-stock purge of MAX_HORIZON=21 sessions at each boundary (label-maturity purge).
+      - per_stock_train_idx(ENGRO, train_end=2025-11-06) = 67 of ENGRO's 67 train rows; fit_scaler_on_train(sdf[:67]) succeeded; mean_[:3] = [59.311, 8.877, 7.422].
+      - XGBoost 5d out-of-sample TEST R2 = -0.5003, MSE = 0.001715, n_test = 665. NEGATIVE = HONEST (model did not outperform constant-mean baseline on this test). Same direction as Task 46's recorded -0.086..-1.46 range — Phase E preserved.
+
+- Phase E — Preserved honest results:
+  • The prior canonical pipeline's negative out-of-sample R² values (-0.086 to -1.46 for 5d; -0.875 to -1.46 for 21d) are treated as a historical diagnostic, not a baseline.
+  • The new corrected pipeline's representative run produced R²(5d) = -0.5003 — also negative, also honest. Did NOT modify data, evaluation periods, or metrics to make scores positive.
+  • A negative R² is acceptable when it accurately reflects that the model did not outperform the constant-mean benchmark on this test under this specific scoring setup.
+
+Stage Summary:
+- DONE (Phase A complete): all 10 outstanding scripts + the canonical train_cnn_lstm/train_transformer_lstm now use the ml_integrity helpers correctly. Per-horizon drop preserves shorter-horizon rows. Chronological date-based splits everywhere (no global row splits on concatenated df). Scalers fit on TRAIN-only per-stock partitions. Sequences split date-disjoint by decision date. No fillna(0) on targets. No cross-stock shift.
+- DONE (Phase B): the audit subagent's evidence table is in worklog.md (Task B-AUDIT).
+- DONE (Phase C): ml_integrity.py validated + 2 new helpers + 4 new self-test assertions. All 10 self-tests pass.
+- DONE (Phase D): 11 scripts COMPILE_OK; 10/10 self-tests pass; server HTTP 200; predictions file untouched; residual-pattern re-grep clean (only HARMLESS_PREDICT_TIME inference-path matches remain); small training run end-to-end with honest R² = -0.5003.
+- DONE (Phase E): honest negative R² preserved. No data/metric manipulation to make scores positive.
+- DONE (Phase F): this report.
+
+Phase F — Final Evidence-Based Implementation Report:
+
+Files modified (12 total):
+1. scripts/ml_integrity.py — added per_stock_train_idx + split_sequences_by_date helpers; improved drop_immature_targets docstring; extended self-test from 6 to 10 assertions.
+2. scripts/train_all_with_backtesting.py — refactored train_lstm + train_cnn_lstm + train_transformer_lstm to the canonical pattern; train_classical per-horizon drop; load() no longer pre-drops immature; backtest_individual + backtest_ensemble use chronological_split's test partition; output JSON includes ml_integrity dict.
+3. scripts/walk_forward_backtesting.py — full fix (imports + load() + main's test partition + per-horizon per-sample dropna + ml_integrity dict).
+4-12. The 9 subagent-fixed scripts: fix_predictions_and_backtest.py, improve_models.py, retrain_all_361_stocks.py, train_all_db.py, train_all_models_db.py, train_cl_tier.py, train_multi_horizon.py, train_remaining_models.py, train_tier2_foundations.py.
+
+Which of the 10 outstanding scripts were actually corrected: ALL 10. (1) fix_predictions_and_backtest.py (cross-stock shift + fillna + dead-code split noted); (2) improve_models.py (fillna + global split + test-set early-stopping); (3) retrain_all_361_stocks.py (random sample + groupby fillna); (4) train_all_db.py (per-stock fillna); (5) train_all_models_db.py (per-stock fillna + tp1_before_sl_5d target misalignment bug); (6) train_cl_tier.py (fillna + split + GRU scaler + sequence split + typo); (7) train_multi_horizon.py (fillna + split + LSTM scaler + sequence split); (8) train_remaining_models.py (fillna + split + CNN-LSTM/Transformer-LSTM scaler + sequence split + TabNet early-stopping on test → val); (9) train_tier2_foundations.py (fillna + 4-way split for chronos/lag_llama/moirai/time_llm + backtest_model); (10) walk_forward_backtesting.py (fillna + global row split → date-based test partition + per-horizon per-sample dropna).
+
+train_cnn_lstm and train_transformer_lstm now fit scalers exclusively on training observations: YES — both use `chronological_split(df)` to get the global `train_end_date`, then `per_stock_train_idx(sdf, train_end_date)` for the per-stock TRAIN boundary, then `fit_scaler_on_train(f[:ti])` (fit on TRAIN-only) + `sc.transform(f)` (frozen transform on val/test). Same pattern as the refactored train_lstm.
+
+Additional leakage problems found in OTHER scripts (Phase B audit, beyond the named 10 + canonical):
+- cl_extender.py:349-360 — LEAKY_ENSEMBLE (weights use future-realized trade outcomes).
+- fix_ensemble_backtesting.py:125-180 — LEAKY_BACKTEST Pattern #10.
+- add_missing_ensembles.py:206-230 — LEAKY_BACKTEST Pattern #10.
+- train_all_ensembles_am.py:274-360 — LEAKY_BACKTEST Pattern #11 (metrics from predicted returns, not realized).
+- train_cl2_tier.py:694, 812-870 — LEAKY_SPLIT (by-symbol K-fold CV with same calendar dates in train/val across correlated stocks) + LEAKY_ENSEMBLE (meta/calib on leaky OOF).
+- train_cg_model.py:451, 487-499 — LEAKY_SPLIT + LEAKY_ENSEMBLE.
+- train_pi_tier.py:198, 266-280 — LEAKY_SPLIT + LEAKY_ENSEMBLE.
+- train_all_optimized.py:86-87 — LEAKY_SPLIT (random sample).
+- train_xgboost.py:213, 227 — LEAKY_SPLIT (minor, date-straddle) + LEAKY_BACKTEST (mild, early-stopping on test).
+- train_multi_models.py:179 — LEAKY_SPLIT (minor, date-straddle).
+- improve_models.py:138, 177, 229 — additional LEAKY_SPLIT/LEAKY_BACKTEST (fixed in Phase A above).
+These are documented in the Phase B audit table (worklog Task B-AUDIT) but NOT fixed this round — Phase A's scope was the 10 named scripts + canonical.
+
+Integrity checks and their actual results:
+- ml_integrity self-test (10 assertions): ALL PASS.
+- py_compile on all 11 modified scripts: ALL COMPILE_OK.
+- Residual-pattern re-grep: clean (only HARMLESS_PREDICT_TIME inference-path matches remain).
+- Small XGBoost-5d training run on real 8-stock data: trains end-to-end; out-of-sample test R² = -0.5003 (honest negative); chronological_split produces train<val<test with NO date overlap; per-horizon drop preserves 128 extra shorter-horizon rows.
+
+Exact commands executed:
+- `python3 scripts/ml_integrity.py` → "All ml_integrity self-tests PASSED." (10 ✓)
+- `for s in scripts/ml_integrity.py scripts/train_all_with_backtesting.py scripts/walk_forward_backtesting.py scripts/fix_predictions_and_backtest.py scripts/improve_models.py scripts/retrain_all_361_stocks.py scripts/train_all_db.py scripts/train_all_models_db.py scripts/train_cl_tier.py scripts/train_multi_horizon.py scripts/train_remaining_models.py scripts/train_tier2_foundations.py; do python3 -m py_compile "$s"; done` → 12 OK.
+- `python3 -c "..."` (Phase D5 in-memory training run, no file writes).
+- `curl -s -o /dev/null -w "HTTP %{http_code}\n" --max-time 5 http://127.0.0.1:3000/` → HTTP 200.
+- `grep` re-audit for the 5 leakage patterns across scripts/*.py.
+
+Scripts that completed a REAL training or data-loading run:
+- scripts/ml_integrity.py: full self-test pass.
+- scripts/train_all_with_backtesting.py: load() + train_classical (XGBoost-5d) ran end-to-end in the Phase D5 in-memory run. train_lstm/train_cnn_lstm/train_transformer_lstm were NOT run this round (PyTorch is installed but the full canonical main() writes to ml_predictions_multi.json — NOT run to preserve the running app's live predictions file).
+- The 9 subagent-fixed scripts were syntax-compiled only; NOT run (they all write to ml_predictions_multi.json when executed; the running app's data must not be touched).
+
+Remaining limitations or unverified paths:
+- Pattern #10 LEAKY_BACKTEST (stored latest signal applied to every historical test row) remains DOCUMENTED but not refactored in: fix_predictions_and_backtest.py:548-570/606+, improve_models.py (backtest_ensemble_weighted + backtest_all), train_cl_tier.py:299, train_multi_horizon.py:230, train_remaining_models.py:250, train_tier2_foundations.py:403 (backtest_model), and the canonical train_all_with_backtesting.py backtest_individual + backtest_ensemble. The TEST PARTITION is now date-based (chronological), but the signal source is still the model's stored LATEST per-stock prediction. Fixing this requires per-bar re-inference (storing fitted model objects and re-predicting at each test row) — out of Phase A scope. Honest walk-forward evaluation lives in scripts/walk_forward_backtesting.py.
+- Pattern #11 LEAKY_BACKTEST (win = predicted avgReturn > 0, not realized outcome) remains DOCUMENTED in train_all_db.py:163 and train_all_models_db.py:337 (backtest_predictions / backtest).
+- Phase B's additional leaky scripts (cl_extender.py:349-360, fix_ensemble_backtesting.py:125-180, add_missing_ensembles.py:206-230, train_all_ensembles_am.py:274-360, train_cl2_tier.py:694/812-870, train_cg_model.py:451/487-499, train_pi_tier.py:198/266-280, train_all_optimized.py:86-87, train_xgboost.py:213/227, train_multi_models.py:179) NOT fixed this round — Phase A's scope was the 10 named scripts + canonical.
+- ml_predictions_multi.json is STALE (produced by the OLD leaky pipeline before any of these fixes) — the running app still shows the old predictions. Regenerating it requires running the corrected pipeline in a maintenance window + restarting the app. NOT done this round (would overwrite the running app's data).
+- The 9 subagent-fixed scripts + walk_forward were syntax-compiled only; their end-to-end execution was NOT verified this round. Phase D5 verified only the canonical pipeline (ml_integrity + train_all_with_backtesting's load + train_classical) on real data.
+- Python 2 environment quirks (e.g., f-string syntax in train_all_models_db.py's print statement required a stray `)` removal by the subagent) — final compile is clean.
+
+Whether existing model artifacts need retraining because their preprocessing or target definitions changed:
+- YES. The existing data/ml_predictions_multi.json was produced by the OLD leaky pipeline (fillna(0) targets, global row splits, full-history scaler fits). It does NOT reflect what the corrected pipeline would produce. To get honest live predictions, the canonical pipeline (scripts/train_all_with_backtesting.py) must be re-run in a maintenance window — it will overwrite ml_predictions_multi.json with new predictions, and the app should be restarted to load them. Expected outcome: honest (likely negative out-of-sample R²) live model metrics in the Backtesting Report modal; the UI's "Rule-BT:" badges (Task 45 honesty fix) remain unchanged because the runtime backtest is indicator-strategy, not trained-ML.
+- The 9 subagent-fixed scripts (when run) would also produce different (honest) predictions + backtesting entries; they each overwrite portions of ml_predictions_multi.json. Re-running them is optional — the canonical script alone produces the predictions the app actually reads.
+
+NOT pushed to GitHub (per user instruction). All changes are local (autosave commits locally by dev-watch if dev-watch were running; it is currently OFF per Task 47 to protect unpushed work).
+
+
+---
+Task ID: PHASE-4-AUDIT
+Agent: Phase 4 B-AUDIT script inspector
+Task: Inspect 10 B-AUDIT scripts; fix Pattern #10/#11/LEAKY_ENSEMBLE where safe; document LEAKY_SPLIT/SCALER/TARGET as follow-up.
+
+Work Log:
+- Read /home/z/my-project/scripts/ml_integrity.py (leak-free primitives — add_forward_returns / drop_immature_targets / chronological_split / fit_scaler_on_train / per_stock_train_idx / split_sequences_by_date / build_sequences_per_stock).
+- Read /home/z/my-project/scripts/walk_forward_backtesting.py (Phase A canonical chronological walk-forward evaluation — the genuine leak-free backtest engine; per-sample re-training on df[df['date']<sample['date']] + per-bar re-inference + realized P&L from future close prices). User explicitly said: "Do not duplicate a new walk-forward engine unnecessarily" — so Phase 4 Pattern #10 fixes REPLACE the leaky backtest functions with `status: "unavailable"` stubs + pointer to walk_forward_backtesting.py rather than re-implementing a walk-forward engine in each script.
+- Read the 10 B-AUDIT scripts in full: cl_extender.py / fix_ensemble_backtesting.py / add_missing_ensembles.py / train_all_ensembles_am.py / train_cl2_tier.py / train_cg_model.py / train_pi_tier.py / train_all_optimized.py / train_xgboost.py / train_multi_models.py.
+
+- /home/z/my-project/scripts/cl_extender.py — purpose: CL-Extender 8-model walk-forward backtest (per-bar re-inference via predict_ensemble(models, row, sym, weights) at L351 + walk-forward retrain on df[df['date']<cd-EMBARGO*86400000] at L330). Classification: A (LEAKY_ENSEMBLE). Fix applied: trade records in all_results now carry an "iter_idx" field; the win_rates update at iter i filters to trades with iter_idx <= i - MAX_HOLD (their realization date <= cd_i, since simulate_trade uses the NEXT MAX_HOLD bars after current_date). Before this fix, win_rates used ALL prior trades (including ones entered at i-1, i-2, ... i-MAX_HOLD+1 whose realization requires data AFTER cd_i). External interface preserved (per-trade dict keys + per-model stats dict keys unchanged; only the new iter_idx field is added to trade records). train_ridge's StandardScaler fit at L133 fits on the walk-forward TRAIN slice only (td = df[df['date']<cd-EMBARGO*86400000] at L330) and applied via sc.transform at inference — already leak-free. Added ml_integrity dict to output JSON. py_compile OK.
+
+- /home/z/my-project/scripts/fix_ensemble_backtesting.py — purpose: re-backtest majority-vote + add CL-Ensemble/CL-Extender entries to ensemble_backtesting dict (the per-stock predictions are read from ml_predictions_multi.json). Classification: A (Pattern #10 LEAKY_BACKTEST). Fix applied: replaced backtest_ensemble (L125-212) with `status: "unavailable"` stub — the original implementation applied the model's STORED LATEST per-stock signal (md["predictions"][s].get("signal", "HOLD")) to every historical test row; per-stock 80/20 chronological test slice itself is fine, but the signal source was constant per stock across all historical test rows. External interface preserved (same signature + same top-level return keys: totalTrades/buySignals/sellSignals/correctBuys/correctSells/winRate/avgReturnPct/maxReturnPct/minReturnPct/stars, with values signaling unavailability). CL_ENSEMBLE / CL_EXTENDER entries are still format-converted from previously-stored backtest results (convert_cl_to_ensemble_format) — NOT recomputed here; their own leakage status is documented in cl_extender.py's Phase 4 LEAKY_ENSEMBLE fix. Added ml_integrity dict to output JSON. py_compile OK.
+
+- /home/z/my-project/scripts/add_missing_ensembles.py — purpose: compute 8 new ensembles (CL2/PI/GM/CG/X/GIAN/GIAN_EXT/M) from existing per-model predictions stored in ml_predictions_multi.json + backtest each. Classification: A (Pattern #10 LEAKY_BACKTEST). Fix applied: replaced backtest_ensemble (L211-285) with `status: "unavailable"` stub — same Pattern #10 (ensemble_preds[sym].get("signal", "HOLD") applied to every historical test row). External interface preserved (same signature + same top-level return keys). Ensemble PREDICTIONS (the per-stock combine_predictions output stored under {ensemble_name}_predictions keys) are still computed and stored — these are LIVE inference-time outputs and not leaky in themselves; only the historical backtest is disabled. Added ml_integrity dict to output JSON. py_compile OK.
+
+- /home/z/my-project/scripts/train_all_ensembles_am.py — purpose: train + backtest 13 ensembles A→M on all DB stocks (the backtest here reads each ensemble's per-stock predictions and computes comprehensive stats). Classification: A (Pattern #11 LEAKY_BACKTEST — predicted-as-realized). Fix applied: backtest_ensemble (L274-418) now explicitly documents that `win` is computed from the PREDICTED avgReturn (p.get('avgReturn', 0) > 0), NOT from a realized-outcome simulation. Each ensemble's backtest result dict now carries: `predicted_positive_count` (alias for `wins` — explicit informational name, NOT a realized win) and `realized_winRate: "unavailable"` + `realized_winRate_reason` (pointer to scripts/walk_forward_backtesting.py). External interface preserved: existing keys (totalTrades/wins/winTrades/lossTrades/winRate/avgReturnPct/maxReturnPct/minReturnPct/profitFactor/sharpe/sortino/maxDrawdownPct/stars/buySignals/sellSignals) all retained with their original semantics. The empty/zero-trade return dicts (L296-312 and L326-342) also carry the new fields. Added ml_integrity dict to output JSON. py_compile OK.
+
+- /home/z/my-project/scripts/train_cl2_tier.py — purpose: TRAINING script (CL-2 ensemble: 7 base models + logistic meta + decile calibration; plus a realized-outcome backtest_cl2 at L1080+). Classification: B (LEAKY_SPLIT + LEAKY_ENSEMBLE in training path). The backtest_cl2 itself uses per-stock 80/20 chronological split + PER-BAR inference (predict_proba_safe on feat_batch) + realized P&L (simulate_exit_pnl on actual future bars) — leak-free at the signal-application level (NEITHER Pattern #10 NOR Pattern #11 applies). The leaks are in the TRAINING path: (1) LEAKY_SPLIT at L694-704 (purged_stock_folds splits stocks into K folds BY SYMBOL, not by time — same calendar dates appear in train and validation across correlated stocks; cross-sectional CV, not time-OOS; root-cause leak identified by audit_cg_model.py); used at L796. (2) LEAKY_ENSEMBLE at L812-870 (logistic meta + decile-binning calibration trained on OOF predictions from the leaky by-symbol CV — inherits the cross-sectional time-overlap leak). DOCUMENTED as follow-up (Phase A scope — training-pipeline leakage, NOT Phase 4's backtesting/metric scope). Fix pointer: replace purged_stock_folds with row-index walk-forward CV (audit_cg_model.py pattern) + regenerate OOF with corrected CV. Added ml_integrity dict to output JSON documenting both the leak-free backtest_cl2 design and the training-pipeline leak follow-up. py_compile OK.
+
+- /home/z/my-project/scripts/train_cg_model.py — purpose: TRAINING script (CG-Ensemble: LightGBM + XGBoost + probability-averaging + decile calibration; plus a realized-outcome backtest_cg at L707+). Classification: B (LEAKY_SPLIT + LEAKY_ENSEMBLE in training path). Same structure as train_cl2_tier: backtest_cg itself uses per-stock 80/20 chronological split + per-bar inference (predict_proba_safe on feat_batch) + realized P&L (simulate_cg_exit on actual future bars) — leak-free at signal-application level (NEITHER Pattern #10 NOR Pattern #11). Training-path leaks: (1) LEAKY_SPLIT at L451 (folds = purged_stock_folds(syms, k=5) — imported from train_cl2_tier.py L694-704); (2) LEAKY_ENSEMBLE at L487-499 (decile-binning calibration on OOF from leaky CV). DOCUMENTED as follow-up (Phase A scope). Added ml_integrity dict to output JSON. py_compile OK.
+
+- /home/z/my-project/scripts/train_pi_tier.py — purpose: TRAINING script (PI-Ensemble: 4 base models [Linear Regression, Logistic Regression, Pattern Matcher KNN, Neural Network] + logistic meta + decile calibration; plus a realized-outcome backtest_pi at L478+). Classification: B (LEAKY_SPLIT + LEAKY_ENSEMBLE in training path). Same structure: backtest_pi itself uses per-stock 80/20 chronological split + per-bar inference (predict_proba_safe on feat_batch) + realized P&L (simulate_exit_pnl) — leak-free at signal-application level (NEITHER Pattern #10 NOR Pattern #11). Training-path leaks: (1) LEAKY_SPLIT at L204 (folds = purged_stock_folds(syms, k=3) — imported from train_cl2_tier.py L694-704); (2) LEAKY_ENSEMBLE at L266-280 (logistic meta + decile-binning calibration on OOF from leaky CV). DOCUMENTED as follow-up (Phase A scope). Added ml_integrity dict to output JSON. py_compile OK.
+
+- /home/z/my-project/scripts/train_all_optimized.py — purpose: TRAINING + BACKTESTING script (all 22 models + 14 ensembles). Classification: A+B (Pattern #10 LEAKY_BACKTEST in backtest_model + LEAKY_SPLIT in train_base_regressors training path). Fixes applied: (1) Pattern #10 — replaced backtest_model (L560-630) with `status: "unavailable"` stub (the original applied preds[sym].get("signal", "HOLD") — stored LATEST per-stock signal — to every historical test row in the per-stock 80/20 holdout; the slice itself is fine, the signal source was the leak). External interface preserved (same signature + same top-level return keys). Made the downstream `sorted(bt.items(), key=lambda x: x[1].get('winRate', 0))` defensive with `(x[1].get('winRate') or 0)` to tolerate None winRate values. (2) LEAKY_SPLIT in training path — DOCUMENTED as follow-up (Phase A scope): train_base_regressors at L244-245 uses `dft=df.sample(n=min(100000,len(df)),random_state=42).dropna(subset=FC+targets)` followed by `sp=int(len(dft)*0.8); Xtr=dft.iloc[:sp]...` — RANDOM SAMPLE destroys chronological order before an 80% row-index split. Target construction at L143-146 (df.groupby("symbol")["close"].shift(-hz) WITHOUT fillna) is ALREADY leak-free (B-AUDIT ALREADY_FIXED). Added ml_integrity dict to output JSON documenting both fixes + follow-up. py_compile OK.
+
+- /home/z/my-project/scripts/train_xgboost.py — purpose: TRAINING script (single XGBoost classifier; predicts whether a stock rises >=3% within next 21 days). Classification: B (LEAKY_SPLIT minor + LEAKY_BACKTEST minor in training path). Does NOT compute backtest trade metrics (only classifier metrics: accuracy/precision/recall/AUC on the test partition — NEITHER Pattern #10 NOR Pattern #11 applies to this script's outputs). Training-path leaks: (1) LEAKY_SPLIT minor at L223 (split_idx = int(len(df)*0.8) on date-sorted concatenated df — mostly chronological but a single date's rows can straddle the boundary); (2) LEAKY_BACKTEST minor at L258 (model.fit(X_train, y_train, eval_set=[(X_test, y_test)]) — using test as early-stopping eval is mild HP-selection-on-test leakage). Target construction at L162-170 (df["close"].rolling(FORWARD_WINDOW).max().shift(-FORWARD_WINDOW) + dropna(subset=["future_return_max"])) is ALREADY leak-free (no fillna(0); immature rows dropped; B-AUDIT ALREADY_FIXED). DOCUMENTED as follow-up (Phase A scope). Added ml_integrity dict to output JSON. py_compile OK.
+
+- /home/z/my-project/scripts/train_multi_models.py — purpose: TRAINING script (4 classical classifiers: XGBoost, LightGBM, CatBoost, RandomForest; same target/feature schema as train_xgboost.py). Classification: B (LEAKY_SPLIT minor + LEAKY_BACKTEST minor in training path). Same structure as train_xgboost: does NOT compute backtest trade metrics (only classifier metrics — NEITHER Pattern #10 NOR Pattern #11). Training-path leaks: (1) LEAKY_SPLIT minor at L179 (split_idx = int(len(df)*0.8) on date-sorted df — date-straddle); (2) LEAKY_BACKTEST minor at L194 (model.fit(X_train, y_train, X_test, y_test) IF model_name == "XGBoost" — only XGBoost uses test as early-stopping eval; LightGBM/CatBoost/RandomForest just fit on train and predict on test, no early-stopping-on-test leak). Target construction at L133-139 ALREADY leak-free (no fillna(0); immature rows dropped). DOCUMENTED as follow-up (Phase A scope). Added ml_integrity dict to output JSON. py_compile OK.
+
+Stage Summary:
+- scripts/cl_extender.py — Classification A (LEAKY_ENSEMBLE). FIX APPLIED: win_rates update at iter i now filters all_results[f"{name} solo"] to trades with iter_idx <= i - MAX_HOLD (their realization date <= cd_i). Trade records carry iter_idx field. External interface preserved (per-trade dict + per-model stats dict keys unchanged). ml_integrity dict added to output JSON. py_compile OK.
+- scripts/fix_ensemble_backtesting.py — Classification A (Pattern #10 LEAKY_BACKTEST). FIX APPLIED: backtest_ensemble replaced with `status: "unavailable"` stub (external interface preserved). ml_integrity dict added to output JSON. py_compile OK.
+- scripts/add_missing_ensembles.py — Classification A (Pattern #10 LEAKY_BACKTEST). FIX APPLIED: backtest_ensemble replaced with `status: "unavailable"` stub (external interface preserved). Ensemble PREDICTIONS still computed and stored. ml_integrity dict added to output JSON. py_compile OK.
+- scripts/train_all_ensembles_am.py — Classification A (Pattern #11 LEAKY_BACKTEST — predicted-as-realized). FIX APPLIED: backtest_ensemble relabeled — `wins` field kept for backward compat (with inline comment that it's actually predicted-positive count); `predicted_positive_count` alias added; `realized_winRate: "unavailable"` + `realized_winRate_reason` added; empty/zero-trade return dicts also carry new fields. External interface preserved. ml_integrity dict added to output JSON. py_compile OK.
+- scripts/train_cl2_tier.py — Classification B (LEAKY_SPLIT + LEAKY_ENSEMBLE in training path). DOCUMENTED as follow-up (Phase A scope). The backtest_cl2 itself is leak-free at signal-application level (per-stock 80/20 + per-bar inference + realized P&L — NEITHER Pattern #10 NOR Pattern #11). ml_integrity dict added to output JSON documenting both. py_compile OK.
+- scripts/train_cg_model.py — Classification B (LEAKY_SPLIT + LEAKY_ENSEMBLE in training path). DOCUMENTED as follow-up (Phase A scope). backtest_cg itself leak-free at signal-application level. ml_integrity dict added. py_compile OK.
+- scripts/train_pi_tier.py — Classification B (LEAKY_SPLIT + LEAKY_ENSEMBLE in training path). DOCUMENTED as follow-up (Phase A scope). backtest_pi itself leak-free at signal-application level. ml_integrity dict added. py_compile OK.
+- scripts/train_all_optimized.py — Classification A+B (Pattern #10 LEAKY_BACKTEST in backtest_model + LEAKY_SPLIT in training path). FIX APPLIED: backtest_model replaced with `status: "unavailable"` stub (Pattern #10); made downstream sort defensive to tolerate None winRate. LEAKY_SPLIT in train_base_regressors (L244-245 random sample) DOCUMENTED as follow-up (Phase A scope). Target construction at L143-146 ALREADY leak-free. ml_integrity dict added. py_compile OK.
+- scripts/train_xgboost.py — Classification B (LEAKY_SPLIT minor + LEAKY_BACKTEST minor test-set early-stopping in training path). DOCUMENTED as follow-up (Phase A scope). Does NOT compute backtest trade metrics (only classifier metrics — NEITHER Pattern #10 NOR Pattern #11). Target construction at L162-170 ALREADY leak-free. ml_integrity dict added. py_compile OK.
+- scripts/train_multi_models.py — Classification B (LEAKY_SPLIT minor + LEAKY_BACKTEST minor XGBoost-test-early-stopping in training path). DOCUMENTED as follow-up (Phase A scope). Does NOT compute backtest trade metrics. Target construction at L133-139 ALREADY leak-free. ml_integrity dict added. py_compile OK.
+
+Pattern #10 fixes this round (3 scripts): scripts/fix_ensemble_backtesting.py (backtest_ensemble → unavailable stub), scripts/add_missing_ensembles.py (backtest_ensemble → unavailable stub), scripts/train_all_optimized.py (backtest_model → unavailable stub).
+Pattern #11 fixes this round (1 script): scripts/train_all_ensembles_am.py (backtest_ensemble relabeled: wins→predicted_positive_count alias + realized_winRate="unavailable" + reason).
+LEAKY_ENSEMBLE fixes this round (1 script): scripts/cl_extender.py (win_rates update restricted to trades with iter_idx <= i - MAX_HOLD; trade records carry iter_idx field).
+
+LEAKY_SPLIT / LEAKY_SCALER / LEAKY_TARGET / LEAKY_SEQUENCE documented as follow-up (Phase A scope — training-pipeline leakage, NOT Phase 4's backtesting/metric scope):
+- scripts/train_cl2_tier.py:694-704 (purged_stock_folds by-symbol CV — LEAKY_SPLIT) + L796 (use in train_cl2); L812-870 (logistic meta + decile calibration on leaky OOF — LEAKY_ENSEMBLE).
+- scripts/train_cg_model.py:451 (folds=purged_stock_folds(syms, k=5) — LEAKY_SPLIT, imported from train_cl2_tier) + L487-499 (decile calibration on leaky OOF — LEAKY_ENSEMBLE).
+- scripts/train_pi_tier.py:204 (folds=purged_stock_folds(syms, k=3) — LEAKY_SPLIT, imported from train_cl2_tier) + L266-280 (logistic meta + decile calibration on leaky OOF — LEAKY_ENSEMBLE).
+- scripts/train_all_optimized.py:244-245 (dft=df.sample(...) + sp=int(len(dft)*0.8) — LEAKY_SPLIT in train_base_regressors; target construction at L143-146 ALREADY leak-free).
+- scripts/train_xgboost.py:223 (split_idx=int(len(df)*0.8) on date-sorted df — LEAKY_SPLIT minor date-straddle) + L258 (model.fit(..., eval_set=[(X_test, y_test)]) — LEAKY_BACKTEST minor test-set early-stopping).
+- scripts/train_multi_models.py:179 (split_idx=int(len(df)*0.8) — LEAKY_SPLIT minor date-straddle) + L194 (model.fit(X_train, y_train, X_test, y_test) IF model_name=="XGBoost" — LEAKY_BACKTEST minor test-set early-stopping, XGBoost only).
+
+Preserved external interfaces: each modified function keeps its original signature (input args) and the same top-level return-dict keys (totalTrades/buySignals/sellSignals/correctBuys/correctSells/winRate/avgReturnPct/maxReturnPct/minReturnPct/stars for Pattern #10 stubs; totalTrades/wins/winTrades/lossTrades/winRate/avgReturnPct/maxReturnPct/minReturnPct/profitFactor/sharpe/sortino/maxDrawdownPct/stars/buySignals/sellSignals + new predicted_positive_count + realized_winRate + realized_winRate_reason for Pattern #11 relabel; per-trade dict + per-model stats dict keys unchanged for cl_extender LEAKY_ENSEMBLE fix, only iter_idx field added to trade records). Model names, output JSON structure, and prediction record format all preserved.
+
+Confirmed: did NOT touch the running dev server (port 3000) — it was already running and remained running throughout (HTTP 200 verified after edits). Did NOT modify data/ml_predictions_multi.json (still 14,722,716 bytes dated 2026-10-26 13:30 — untouched). Did NOT regenerate ml_predictions_multi.json. Did NOT push to GitHub (no `git commit` or `git push` was executed — all changes remain unstaged). Did NOT write test code or create new test files (only the 10 specified scripts were modified; the only new artifacts are auto-generated .pyc cache files from py_compile which are not source code).
+
+
+---
+Task ID: PHASE-1-2-FIXES
+Agent: Phase 1+2 backtest-pattern-elimination fixer
+Task: Eliminate Pattern #10 (latest-signal replay) in 10 backtest functions across 7 scripts + Pattern #11 (predicted-as-realized) in 2 backtest functions.
+
+Work Log:
+- scripts/fix_predictions_and_backtest.py — rebacktest_all_models (the per-model loop body L567-651 that computed buys/sells/cb/cs/rets using pr.get("signal") stored latest signal replayed on every historical test row) replaced with an unavailable stub returning status="unavailable" + reason + pointer to scripts/walk_forward_backtesting.py + ml_integrity_note + all original top-level return keys (totalTrades/buySignals/sellSignals/correctBuys/correctSells/winRate/avgReturnPct/maxReturnPct/minReturnPct/stars) zeroed. rebacktest_cl_ensembles' nested backtest_signal_fn (L670-729, same Pattern #10 — lgb_pred.get(s).get("signal")/ridge_pred.get(s)/ext_preds.get(mn).get(s).get("signal") applied to every historical test row) replaced with an unavailable stub returning snake_case keys (total_trades/wins/losses/win_rate/avg_return_pct/avg_win_pct/avg_loss_pct/profit_factor/total_pnl_pkr/stars/pass_mark) zeroed. The per-stock CL-Ensemble/CL-Extender PREDICTIONS (data["cl_ensemble_predictions"] + data["cl_extender_predictions"]) REMAIN — these are LIVE inference-time outputs from per-model avgReturns, NOT a historical backtest (same as base ensemble predictions in train_all_ensembles_am.py which are live, not leaky). ml_integrity dict updated: backtest_methodology reflects Pattern #10 disabled; ml_historical_evaluation="unavailable" added. py_compile OK.
+- scripts/improve_models.py — backtest_ensemble_weighted (L192-251, applied md.get("predictions",{}).get(s) stored latest signal to every historical test row in the chronological test partition) replaced with an unavailable stub returning {"WIN_RATE_WEIGHTED": {...}} with status/reason/pointer/ml_integrity_note + all original top-level return keys (totalTrades/wins/winRate/avgReturnPct/maxReturnPct/minReturnPct/stars) zeroed. backtest_all (L254-281, same Pattern #10 — md.get("predictions",{}).get(s) applied to every historical test row) replaced with an unavailable stub returning per-model entries with the same top-level return keys zeroed + new fields. Downstream sort `sorted(bt_ind.items(), key=lambda x:-x[1].get("winRate",0))` made defensive with `-(x[1].get("winRate") or 0)` to tolerate None winRate values (mirrors Phase 4's train_all_optimized.py defensive sort). ml_integrity dict updated. py_compile OK.
+- scripts/train_cl_tier.py — the inline backtest block in main() (L333-360, applied md.get("predictions",{}).get(s) stored latest signal to every historical test row in the chronological test partition) replaced with an unavailable stub per model. Same top-level return keys (totalTrades/buySignals/sellSignals/correctBuys/correctSells/winRate/avgReturnPct/maxReturnPct/minReturnPct/stars) zeroed + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_multi_horizon.py — backtest (L272-296, applied md.get("predictions",{}).get(s) stored latest signal to every historical test row) replaced with an unavailable stub per model. Same top-level return keys zeroed + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_remaining_models.py — backtest (L305-330, applied md.get("predictions",{}).get(s) stored latest signal to every historical test row) replaced with an unavailable stub per model. Same top-level return keys zeroed + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_tier2_foundations.py — backtest_model (L462-496, applied model_pred.get(s) stored latest signal to every historical test row) replaced with an unavailable stub. Same top-level return keys (totalTrades/buySignals/sellSignals/correctBuys/correctSells/winRate/avgReturnPct/maxReturnPct/minReturnPct/stars) zeroed + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_all_with_backtesting.py — backtest_individual (L388-417, applied md.get("predictions",{}).get(s) stored latest signal to every historical test row) replaced with an unavailable stub per model. backtest_ensemble (L419-514, applied md.get("predictions",{}).get(s) stored latest signal to every historical test row when computing per-test-bar ensemble signal) replaced with an unavailable stub per method (MAJORITY_VOTE/PROBABILITY_WEIGHTED/TIER_WEIGHTED/FINAL_CONSENSUS). Same top-level return keys zeroed + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_all_db.py — backtest_predictions (L177-202, computed wins=sum(1 for p in preds.values() if p.get("avgReturn",0)>0) — Pattern #11 predicted-as-realized) RELABELED: kept `wins` field with inline comment that it is actually predicted-positive count, NOT a realized winRate; added alias `predicted_positive_count` with the same value; added `realized_winRate: "unavailable"` + `realized_winRate_reason` (pointer to scripts/walk_forward_backtesting.py); added `ml_historical_evaluation: "unavailable"`. External interface preserved (totalTrades/wins/winRate/avgReturnPct/maxReturnPct/minReturnPct all retained with original semantics). ml_integrity dict updated: backtest_methodology reflects Pattern #11 relabel. py_compile OK.
+- scripts/train_all_models_db.py — backtest (L366-385, computed wins=sum(1 for p in preds.values() if p.get("avgReturn",0)>0) — Pattern #11 predicted-as-realized) RELABELED: same relabel pattern as train_all_db.py. External interface preserved. ml_integrity dict updated. py_compile OK.
+
+Stage Summary:
+- scripts/fix_predictions_and_backtest.py — rebacktest_all_models + rebacktest_cl_ensembles (nested backtest_signal_fn) replaced with unavailable stubs. Pattern #10 LEAKY_BACKTEST eliminated. Signature (df, data) preserved; per-model camelCase keys + per-ensemble snake_case keys preserved + status/reason/pointer/ml_integrity_note added. Per-stock CL-Ensemble/CL-Extender PREDICTIONS remain (live inference-time outputs, not leaky). ml_integrity dict updated with backtest_methodology + ml_historical_evaluation="unavailable". py_compile OK.
+- scripts/improve_models.py — backtest_ensemble_weighted + backtest_all replaced with unavailable stubs. Pattern #10 eliminated. Signature (df, models[, individual_bt]) preserved; per-model + WIN_RATE_WEIGHTED entries' top-level keys preserved + new fields. Downstream sort made defensive against None winRate. ml_integrity dict updated. py_compile OK.
+- scripts/train_cl_tier.py — inline backtest block in main() replaced with unavailable stub per model. Pattern #10 eliminated. Per-model top-level return keys preserved + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_multi_horizon.py — backtest replaced with unavailable stub per model. Pattern #10 eliminated. Signature (df, models) preserved; per-model top-level keys preserved + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_remaining_models.py — backtest replaced with unavailable stub per model. Pattern #10 eliminated. Signature (df, models) preserved; per-model top-level keys preserved + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_tier2_foundations.py — backtest_model replaced with unavailable stub. Pattern #10 eliminated. Signature (df, model_pred) preserved; top-level keys preserved + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_all_with_backtesting.py — backtest_individual + backtest_ensemble replaced with unavailable stubs. Pattern #10 eliminated. Signature (df, models) preserved for both; per-model + per-method top-level keys preserved + new fields. ml_integrity dict updated. py_compile OK.
+- scripts/train_all_db.py — backtest_predictions relabeled (Pattern #11). wins/winRate kept (predicted-positive semantics, inline-commented); predicted_positive_count alias added; realized_winRate="unavailable" + realized_winRate_reason added; ml_historical_evaluation="unavailable" added. External interface preserved. ml_integrity dict updated. py_compile OK.
+- scripts/train_all_models_db.py — backtest relabeled (Pattern #11). Same relabel pattern. External interface preserved. ml_integrity dict updated. py_compile OK.
+
+Pattern #10 fixes this round (10 functions across 7 scripts): scripts/fix_predictions_and_backtest.py (rebacktest_all_models + rebacktest_cl_ensembles/nested backtest_signal_fn → unavailable stubs), scripts/improve_models.py (backtest_ensemble_weighted + backtest_all → unavailable stubs), scripts/train_cl_tier.py (inline backtest block in main → unavailable stub), scripts/train_multi_horizon.py (backtest → unavailable stub), scripts/train_remaining_models.py (backtest → unavailable stub), scripts/train_tier2_foundations.py (backtest_model → unavailable stub), scripts/train_all_with_backtesting.py (backtest_individual + backtest_ensemble → unavailable stubs).
+Pattern #11 fixes this round (2 functions across 2 scripts): scripts/train_all_db.py (backtest_predictions relabeled: wins→predicted_positive_count alias + realized_winRate="unavailable" + reason), scripts/train_all_models_db.py (backtest relabeled: same pattern).
+
+Preserved external interfaces: each modified function keeps its original signature and the same top-level return-dict keys. Pattern #10 stubs add status/reason/pointer/ml_integrity_note fields and zero out totalTrades/buySignals/sellSignals/correctBuys/correctSells/winRate/avgReturnPct/maxReturnPct/minReturnPct/stars (or snake_case equivalents for rebacktest_cl_ensembles: total_trades/wins/losses/win_rate/avg_return_pct/avg_win_pct/avg_loss_pct/profit_factor/total_pnl_pkr/stars/pass_mark). Pattern #11 relabels keep totalTrades/wins/winRate/avgReturnPct/maxReturnPct/minReturnPct with original semantics, add predicted_positive_count (alias for wins), realized_winRate="unavailable", realized_winRate_reason, ml_historical_evaluation="unavailable". The per-stock CL-Ensemble/CL-Extender PREDICTIONS in fix_predictions_and_backtest.py remain unchanged (live inference-time outputs, not historical backtests). ml_integrity dict in each script's output JSON updated: backtest_methodology reflects the Pattern #10/#11 fix; ml_historical_evaluation="unavailable" added; target_construction/split/scaler_fitting entries from Phase A preserved verbatim. Model names, output JSON structure, and per-stock prediction record format all preserved.
+
+Confirmed: did NOT touch the running dev server (port 3000) — it was already running and remained running throughout (HTTP 200 verified after every script edit and at the end: HTTP 200). Did NOT modify data/ml_predictions_multi.json (still 14,722,716 bytes dated 2026-10-26 13:30 — untouched; verified after every script edit and at the end). Did NOT regenerate ml_predictions_multi.json. Did NOT push to GitHub (no `git commit` or `git push` was executed — all changes remain local). Did NOT write test code or create new test files (only the 9 specified scripts were modified; the only new artifacts are auto-generated __pycache__/*.pyc files from py_compile which are not source code). Did NOT modify scripts/walk_forward_backtesting.py (Phase A's genuine chronological walk-forward engine — untouched, only referenced as the pointer target from the unavailable stubs). All 9 scripts syntax-compiled successfully (python3 -m py_compile).
+
+---
+Task ID: 48 (Phase 1-7 backtesting/metric-leakage elimination — final evidence-based report)
+Agent: main (orchestrator)
+Task: Eliminate Pattern #10 (latest-signal replay) + Pattern #11 (predicted-as-realized) backtest leaks; verify trade-simulator invariants; audit 10 B-AUDIT scripts; preserve ml_predictions_multi.json; final evidence-based report.
+
+PHASE 1 — Pattern #10 LEAKY_BACKTEST eliminated (10 functions across 8 scripts):
+
+For each function: replaced the misleading winRate/avgReturnPct logic (which applied the model's STORED LATEST per-stock signal to every historical test row in the test partition) with an `unavailable` stub. The stub preserves the function's external interface (signature + return-dict top-level keys) and adds: `status:"unavailable"`, `reason:"Pattern #10 LEAKY_BACKTEST: ..."`, `pointer:"scripts/walk_forward_backtesting.py"`, `ml_integrity_note:"..."`, plus all original keys (totalTrades=0, winRate=None, etc.) so callers that handle 0-trade/null-winRate results continue to work.
+
+Files + functions changed (Phase 1):
+1. scripts/fix_predictions_and_backtest.py — `rebacktest_all_models` + nested `backtest_signal_fn` in `rebacktest_cl_ensembles` (camelCase + snake_case stubs). The per-stock `cl_ensemble_predictions` + `cl_extender_predictions` are LIVE inference-time outputs from per-model avgReturns — left unchanged (not a historical backtest; mirrors Phase 4's treatment of base ensemble predictions in train_all_ensembles_am.py).
+2. scripts/improve_models.py — `backtest_ensemble_weighted` + `backtest_all` (per-model stubs); downstream `sorted(bt_ind.items(), key=lambda x:-x[1].get("winRate",0))` made defensive with `-(x[1].get("winRate") or 0)` to tolerate None winRate.
+3. scripts/train_cl_tier.py — inline backtest block in `main()` (per-model stub).
+4. scripts/train_multi_horizon.py — `backtest` (per-model stub).
+5. scripts/train_remaining_models.py — `backtest` (per-model stub).
+6. scripts/train_tier2_foundations.py — `backtest_model` (per-model stub).
+7. scripts/train_all_with_backtesting.py — `backtest_individual` (per-model stub) + `backtest_ensemble` (per-method stub for MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED / FINAL_CONSENSUS).
+8. scripts/retrain_all_361_stocks.py — `backtest_ens` (per-ensemble stub for MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED / FINAL_CONSENSUS / CL_ENSEMBLE / CL_EXTENDER). [NEW — found via Phase 6 re-grep, missed by the Phase 1+2 subagent.]
+
+Phase 4 subagent also applied the same Pattern #10 fix to 3 additional scripts:
+9. scripts/fix_ensemble_backtesting.py — `backtest_ensemble` (single stub).
+10. scripts/add_missing_ensembles.py — `backtest_ensemble` (single stub); ensemble PREDICTIONS still computed (live inference, not leaky).
+11. scripts/train_all_optimized.py — `backtest_model` (per-model stub); downstream `sorted(...)` made defensive with `(x[1].get('winRate') or 0)`.
+
+PHASE 2 — Pattern #11 (predicted-as-realized) relabeled (3 scripts):
+
+For each function: kept the existing `wins` field (with inline comment that it's actually predicted-positive count, NOT a realized win) + added `predicted_positive_count` alias (informational, same value) + `realized_winRate:"unavailable"` + `realized_winRate_reason:"Pattern #11: predictions are at the dataset's latest bar; forward window has not matured; for genuine walk-forward see scripts/walk_forward_backtesting.py"` + `ml_historical_evaluation:"unavailable"`. External interface preserved.
+
+Files + functions changed (Phase 2):
+1. scripts/train_all_db.py — `backtest_predictions`.
+2. scripts/train_all_models_db.py — `backtest`.
+3. scripts/train_missing_stocks.py — `backtest_ensemble` [NEW — found via Phase 6 re-grep]. Also added `realized_profitFactor` / `realized_sharpe` / `realized_sortino` / `realized_maxDrawdownPct` = "unavailable" since this function computed those metrics from PREDICTED returns too.
+
+Phase 4 subagent also applied the same Pattern #11 relabel to:
+4. scripts/train_all_ensembles_am.py — `backtest_ensemble`.
+
+PHASE 3 — Trade simulator (Task 46 fixes) verified intact (no modifications needed):
+
+Inspected src/lib/latent/investment-simulator.ts (649 lines). All 7 invariants confirmed by code inspection:
+1. ✅ No random historical entry forced — Priority 5A at line 446-451: `findEntryIdx` (single closest bar via lines 176-187); slot skipped if no eligible signal at line 467. The `findEntryIdxList` (multi-bar search) at line 194 is DEFINED but NOT CALLED in the active path — kept for source-compat.
+2. ✅ No resampling to manufacture successes — each signal tried once on its closest bar (line 439-466); different signals tried per slot round-robin via the seeded shuffle (line 372). Picks the candidate with the closest entry bar to targetMs among those that hit TP/SL (line 456-461); if NO candidate hits, slot is skipped (line 467).
+3. ✅ Stop-loss/take-profit processed chronologically — first-touch idx scan at lines 253-266 (records first bar where each level is crossed); sort by idx at line 278.
+4. ✅ Same-bar collisions use conservative rule — SL wins ties: `crossed.sort((a, b) => (a.idx - b.idx) || (a.isSl ? -1 : 1));` at line 278. Comment at lines 267-270: "Priority 5B: chronological first-touch wins; on a same-bar collision (TP + SL both crossed in one bar, no intraday data to disambiguate) the STOP wins (conservative). This replaces the old optimistic TP3>TP2>TP1>SL priority."
+5. ✅ Long/short rules correct — direction = sig.signal === "SELL" ? "SELL" : "BUY" (line 228); sl/tp placed correctly for BUY (sl below, tp above) and SELL (sl above, tp below) at lines 240-243; hit-detection at lines 255-265 (BUY: sl when b.low <= sl, tp when b.high >= tp; SELL: sl when b.high >= sl, tp when b.low <= tp); gross P&L formula at lines 512-515 (BUY: (exit-entry)/entry; SELL: (entry-exit)/entry).
+6. ✅ Costs and slippage reflected — COMMISSION_RATE=0.0015 (0.15%) × 2 (both sides) at line 517; SLIPPAGE_RATE=0.0015 (0.15%) at line 518; CGT_RATE=0.15 (15%) on grossPnl > 0 at line 519; cost = commission + slippage + cgt at line 520; netPnl = grossPnl - cost at line 521.
+7. ✅ Incomplete trades not classified as wins — `if (crossed.length === 0) return null` at line 276 (no TP/SL hit within window); caller skips slot at line 467; isWin only true for hit ∈ {TP1, TP2, TP3} at lines 526-529 (SL is always a loss; no TIME exit reason).
+
+PHASE 4 — B-AUDIT 10 scripts audited (subagent):
+
+| Script | Classification | Action |
+|---|---|---|
+| scripts/cl_extender.py | LEAKY_ENSEMBLE (win_rates from future-realized trade outcomes) | FIXED: trade records now carry `iter_idx` field; win_rates update at iter `i` filters `all_results[f"{name} solo"]` to `iter_idx <= i - MAX_HOLD` (realization date ≤ cd_i). External interface preserved. `ml_integrity` dict added to output JSON. |
+| scripts/fix_ensemble_backtesting.py | Pattern #10 | FIXED: `backtest_ensemble` → unavailable stub. |
+| scripts/add_missing_ensembles.py | Pattern #10 | FIXED: `backtest_ensemble` → unavailable stub; ensemble PREDICTIONS still computed (live inference, not leaky). |
+| scripts/train_all_ensembles_am.py | Pattern #11 | FIXED: `backtest_ensemble` relabel — `wins` kept with comment + `predicted_positive_count` alias + `realized_winRate="unavailable"` + `realized_winRate_reason`. |
+| scripts/train_all_optimized.py | Pattern #10 + LEAKY_SPLIT | FIXED Pattern #10 (`backtest_model` → stub) + defensive sort. LEAKY_SPLIT (L244-245 random sample) documented as Phase A follow-up. Target construction at L143-146 ALREADY leak-free. |
+| scripts/train_cl2_tier.py | LEAKY_SPLIT + LEAKY_ENSEMBLE (training path) | DOCUMENTED as Phase A follow-up. The `backtest_cl2` itself is leak-free at signal-application level (per-stock 80/20 + per-bar inference + realized P&L — NEITHER Pattern #10 NOR Pattern #11). |
+| scripts/train_cg_model.py | LEAKY_SPLIT + LEAKY_ENSEMBLE (training path) | DOCUMENTED as Phase A follow-up. `backtest_cg` itself leak-free. |
+| scripts/train_pi_tier.py | LEAKY_SPLIT + LEAKY_ENSEMBLE (training path) | DOCUMENTED as Phase A follow-up. `backtest_pi` itself leak-free. |
+| scripts/train_xgboost.py | LEAKY_SPLIT minor + LEAKY_BACKTEST mild (training path) | DOCUMENTED as Phase A follow-up. Does NOT compute backtest trade metrics (only classifier metrics — NEITHER Pattern #10 NOR Pattern #11). Target construction ALREADY leak-free. |
+| scripts/train_multi_models.py | LEAKY_SPLIT minor (training path) | DOCUMENTED as Phase A follow-up. Does NOT compute backtest trade metrics. Target construction ALREADY leak-free. |
+
+LEAKY_SPLIT / LEAKY_SCALER / LEAKY_TARGET / LEAKY_SEQUENCE in TRAINING paths documented as Phase A follow-up (file:line refs):
+- scripts/train_cl2_tier.py:694-704 (purged_stock_folds by-symbol CV — LEAKY_SPLIT) + :796 (use in train_cl2); :812-870 (logistic meta + decile calibration on leaky OOF — LEAKY_ENSEMBLE).
+- scripts/train_cg_model.py:451 (folds=purged_stock_folds(syms, k=5) — LEAKY_SPLIT, imported from train_cl2_tier); :487-499 (decile calibration on leaky OOF — LEAKY_ENSEMBLE).
+- scripts/train_pi_tier.py:204 (folds=purged_stock_folds(syms, k=3) — LEAKY_SPLIT, imported from train_cl2_tier); :266-280 (logistic meta + decile calibration on leaky OOF — LEAKY_ENSEMBLE).
+- scripts/train_all_optimized.py:244-245 (dft=df.sample(...) + sp=int(len(dft)*0.8) — LEAKY_SPLIT in train_base_regressors).
+- scripts/train_xgboost.py:223 (split_idx=int(len(df)*0.8) on date-sorted df — LEAKY_SPLIT minor date-straddle) + :258 (model.fit(..., eval_set=[(X_test, y_test)]) — LEAKY_BACKTEST minor test-set early-stopping).
+- scripts/train_multi_models.py:179 (split_idx=int(len(df)*0.8) — LEAKY_SPLIT minor date-straddle) + :194 (model.fit(X_train, y_train, X_test, y_test) if model_name=="XGBoost" — LEAKY_BACKTEST minor test-set early-stopping, XGBoost only).
+
+PHASE 5 — Application data stable:
+- ✅ data/ml_predictions_multi.json UNCHANGED: 14,722,716 bytes, dated Oct 26 13:30 (verified after every edit).
+- ✅ Dev server (port 3000) UNTOUCHED: HTTP 200 throughout.
+- ✅ No `git push` issued. Only local autosave commits by dev-watch (if running) — no remote modifications.
+- ✅ No destructive database migrations or live-prediction-schema changes.
+- ✅ No new test code or test files created (per environment constraint).
+- ✅ No full-universe training job executed.
+
+PHASE 6 — Tests + verification (deterministic, in-memory, no file writes):
+
+Phase 6.1 — ml_integrity self-test:
+- Command: `python3 scripts/ml_integrity.py`
+- Result: ALL 10 assertions PASS:
+  (1) forward targets do not cross stock boundaries; immature rows are NaN
+  (2) immature/invalid rows dropped (was 600, now 534); no zero-fill
+  (3) chronological: train≤2024-04-29 < val≤2024-06-18 < test≤2024-09-05
+  (4) purge applied (purge_h=21 per stock at each boundary)
+  (5) scaler fit on train partition only; applied frozen to val/test
+  (6) per-stock sequences built (AAA: 136 seqs, shape (136, 20, 1)); no cross-stock crossing
+  (7) per-horizon drop preserves shorter-horizon rows: drop([5])=583 >= drop([5,10,21])=534
+  (8) per_stock_train_idx returns TRAIN boundary consistent with global chronological_split train_end=2024-04-29
+  (9) split_sequences_by_date is date-disjoint: train=31 val=10 test=9 sequences
+  (10) no future timestamp in any input sequence (immature rows skipped)
+
+Phase 6.2 — py_compile all 23 modified scripts:
+- Command: `for s in <23 scripts>; do python3 -m py_compile "$s"; done`
+- Result: 23/23 scripts COMPILE_OK (no syntax errors).
+
+Phase 6.3 — Residual Pattern #10 / #11 re-grep:
+- Command: `grep -rn 'predictions.*\.get(.*signal.*HOLD' scripts/*.py` + `grep -rn 'win.*=.*avgReturn.*>.*0' scripts/*.py`
+- Result: All remaining matches are inside comments / docstrings / ml_integrity dict text describing what was REPLACED, OR the RELABELED `wins` variable in train_all_db.py / train_all_models_db.py / train_missing_stocks.py (kept for backward compat + `predicted_positive_count` alias + `realized_winRate="unavailable"` — this IS the Phase 2 fix, not a leak). No active Pattern #10 / #11 leak remains.
+
+Phase 6.4 — Server health + predictions file integrity:
+- Command: `curl --max-time 5 http://127.0.0.1:3000/` + `ls -la data/ml_predictions_multi.json`
+- Result: HTTP 200; file 14,722,716 bytes, Oct 26 13:30 (untouched).
+
+Phase 6.5 — Functional test of unavailable-stub + relabel pattern (in-memory):
+- Command: `python3 -c "..."` (in-memory import + call each fixed function with a degenerate df + empty preds)
+- Result: ALL 8 fixed functions return the expected structure:
+  1. `backtest_individual` (train_all_with_backtesting): per-model stub — status=unavailable, winRate=None, pointer=walk_forward_backtesting.py ✓
+  2. `backtest_ensemble` (train_all_with_backtesting): per-method stub (4 methods) — all return status=unavailable + pointer ✓
+  3. `backtest_predictions` (train_all_db): Pattern #11 relabel — wins=1 (predicted-positive count), predicted_positive_count=1, realized_winRate=unavailable ✓
+  4. `backtest` (train_all_models_db): Pattern #11 relabel — realized_winRate=unavailable, ml_historical_evaluation=unavailable ✓
+  5. `backtest_ensemble` (train_missing_stocks empty): Pattern #11 relabel — realized_winRate=unavailable, realized_profitFactor=unavailable, realized_sharpe=unavailable, realized_sortino=unavailable, predicted_positive_count=0 ✓
+  6. `backtest_ens` (retrain_all_361_stocks): per-ensemble stub (6 ensembles) — all return status=unavailable + pointer ✓
+  7. `backtest_ensemble` (fix_ensemble_backtesting): single stub — status=unavailable, winRate=None, pointer ✓
+  8. `backtest_ensemble` (add_missing_ensembles): single stub — status=unavailable, winRate=None, pointer ✓
+- Conclusion: Invalid model evaluations CANNOT silently appear as valid ML backtests (status=unavailable + winRate=None in every Pattern #10 stub; realized_winRate=unavailable in every Pattern #11 relabel).
+
+Phase 6.6 — Trade simulator invariants (Phase 3, by code inspection):
+- All 7 invariants confirmed intact (see Phase 3 above).
+- Forced/random trade entries remain DISABLED (Priority 5A: single closest bar).
+- Exit-ordering logic remains CONSERVATIVE (SL-wins-ties in same-bar collisions).
+- Incomplete outcomes EXCLUDED from completed-trade metrics (return null → slot skipped → not counted as win or loss).
+- Costs + slippage REFLECTED in net trading performance (commission 0.15%×2 + slippage 0.15% + CGT 15% on gains).
+
+Phase 6.7 — Distinction between ML backtests and technical-rule backtests:
+- All Pattern #10 backtest functions now return `status:"unavailable"` with `pointer:"scripts/walk_forward_backtesting.py"` — making explicit that genuine ML walk-forward evaluation lives in walk_forward_backtesting.py (Phase A fixed it: per-sample re-training + per-bar re-inference + realized P&L from future OHLCV).
+- Technical-rule strategies (gm_technical, gian_ensemble, gian_extender, m_ensemble, x_strategy in train_all_models_db.py / train_gm_model.py / train_gian_model.py / train_gian_extender.py / train_m_ensemble.py / train_x_model.py) remain SEPARATELY labeled — they compute per-bar signals from rule + bar-i features (no training, no Pattern #10 leak). Verified by B-AUDIT (Task B-AUDIT judgment call #7).
+- The `ml_integrity` dict in each modified script's output JSON now explicitly separates `backtest_methodology` (Pattern #10/#11 disabled/relabel) from `target_construction` / `split` / `scaler_fitting` (Phase A's training-path fixes).
+
+PHASE 7 — This report.
+
+Which of the 7 historical signal-reuse problems were fixed: ALL 10 Pattern #10 backtest functions across 8 scripts (the 7 named in Task A-FINAL + retrain_all_361_stocks.py:backtest_ens [Phase 6 re-grep finding] + the 3 Phase 4 subagent fixes in fix_ensemble_backtesting.py / add_missing_ensembles.py / train_all_optimized.py). Plus 1 LEAKY_ENSEMBLE fix in cl_extender.py (Phase 4).
+
+Which metrics were corrected: Pattern #11 relabel applied to 4 functions (train_all_db.py:backtest_predictions, train_all_models_db.py:backtest, train_missing_stocks.py:backtest_ensemble [Phase 6 finding], train_all_ensembles_am.py:backtest_ensemble [Phase 4]). The `wins`/`winRate`/`profitFactor`/`sharpe`/`sortino`/`maxDrawdownPct` fields are now explicitly labeled as predicted-positive / forecast-quality metrics (NOT realized trading metrics); `realized_winRate` / `realized_profitFactor` / `realized_sharpe` / `realized_sortino` / `realized_maxDrawdownPct` are explicitly marked `unavailable` with reason.
+
+Which model evaluations remain unavailable: ALL Pattern #10 backtest functions return `status:"unavailable"` — the predictions are stored at the dataset's latest bar, so their forward windows [latest+1, latest+21] have not yet matured in the OHLCV data; realized outcomes cannot be computed without a walk-forward re-fit per historical decision date (which lives in scripts/walk_forward_backtesting.py and is NOT duplicated). The user's "Predicted Direction" / "Win Rate" / "Avg Return" cards in the Tracker's Investment Simulator section continue to display the model's LATEST per-stock prediction (live inference, not historical backtest) — these are correctly labeled.
+
+The distinction between actual ML backtests and technical-rule backtests:
+- ACTUAL ML BACKTESTS: scripts/walk_forward_backtesting.py (Phase A fixed — per-sample re-training on data[date<sample.date] + per-bar re-inference + realized 21-day forward P&L). The 5 classical models (XGBoost, LightGBM, CatBoost, Random Forest, Ridge) are evaluated here with TRUE walk-forward retraining.
+- TECHNICAL-RULE BACKTESTS: scripts/backtest_all_models.py (single source-of-truth harness — strict 21-day purge + per-stock groupby shift + label_end_date<T filter + per-bar rule-based signal re-inference). Plus the rule-based strategy scripts (gm_*, gian_*, m_*, x_*) which compute per-bar signals from rule + bar-i features (no training, no Pattern #10 leak).
+- DISABLED BACKTESTS (Pattern #10/#11): all 10 Pattern #10 backtest functions + 4 Pattern #11 relabel functions in the named scripts now return `status:"unavailable"` / `realized_winRate:"unavailable"` with pointer to walk_forward_backtesting.py. These were the misleading "winRate"/"avgReturnPct" stats that applied stored latest signals to historical test rows or counted predicted-positive as wins — they no longer appear as valid ML backtests.
+
+Tests executed and their actual outcomes:
+1. `python3 scripts/ml_integrity.py` → 10/10 assertions PASS.
+2. `for s in <23 scripts>; do python3 -m py_compile "$s"; done` → 23/23 COMPILE_OK.
+3. `curl --max-time 5 http://127.0.0.1:3000/` → HTTP 200.
+4. `ls -la data/ml_predictions_multi.json` → 14,722,716 bytes, Oct 26 13:30 (UNCHANGED).
+5. `python3 -c "<in-memory functional test>"` → 8 Pattern #10/#11 fixed functions all return expected unavailable/relabel structure.
+6. `grep -rn 'win.*=.*sum.*avgReturn.*>.*0' scripts/*.py` → only matches in comments/docstrings OR the RELABELED `wins` variable in train_all_db.py / train_all_models_db.py (Phase 2 fix, not a leak).
+7. Phase 3 trade-simulator invariants: 7/7 confirmed intact by code inspection.
+
+Any remaining issues discovered in the B-AUDIT scripts:
+- LEAKY_SPLIT (purged_stock_folds by-symbol CV) in train_cl2_tier.py:694 / train_cg_model.py:451 / train_pi_tier.py:204 — DOCUMENTED as Phase A follow-up (the backtest_* functions themselves are leak-free; the leak is in the TRAINING path's CV that produces the model + the meta/calibration on leaky OOF).
+- LEAKY_SPLIT (random df.sample) in train_all_optimized.py:244-245 / train_xgboost.py:223 (date-straddle) / train_multi_models.py:179 (date-straddle) — DOCUMENTED as Phase A follow-up.
+- LEAKY_BACKTEST (test-set early-stopping) in train_xgboost.py:258 / train_multi_models.py:194 — DOCUMENTED as Phase A follow-up.
+
+Confirmation that data/ml_predictions_multi.json was not modified: YES — 14,722,716 bytes, dated Oct 26 13:30, verified unchanged after every edit in this task. The file is STALE (produced by the OLD leaky pipeline before any of these fixes); regenerating it requires running the corrected pipeline in a maintenance window + restarting the app (NOT done this round).
+
+Confirmation that no GitHub push or remote modification was performed: YES — no `git push` or `git commit` issued. Only local file edits + worklog appends. The dev server (port 3000) was untouched throughout (HTTP 200 verified after every edit batch).
+
+No claim of improvement in model accuracy: This task did NOT run a new out-of-sample experiment — the existing ml_predictions_multi.json was preserved untouched, so live model metrics in the running app remain unchanged. The Phase 1/2 fixes ELIMINATE misleading backtest metrics (Pattern #10 latest-signal replay + Pattern #11 predicted-as-realized); they do NOT claim an improvement in model accuracy. Any genuine accuracy improvement requires running scripts/walk_forward_backtesting.py (Phase A fixed) which produces a NEW walk_forward_backtesting.json artifact (separate from ml_predictions_multi.json) — NOT done in this task per Phase 5's "do not regenerate ml_predictions_multi.json" constraint. For an honest accuracy assessment, run scripts/walk_forward_backtesting.py in a maintenance window and read its walk_forward_backtesting.json output.
+
+
+---
+Task ID: PHASE-1-INSPECT
+Agent: Phase 1 inspection subagent
+Task: Inspect AI Models tab + Backtesting Report modal + API routes + model registry + DB schema for walk-forward integration.
+
+Work Log:
+- Read /home/z/my-project/worklog.md (Tasks 45/46/47/A-FINAL/B-AUDIT/A-9-SCRIPTS/PHASE-1-2-FIXES/PHASE-4-AUDIT/48) to understand prior leakage-fix history. Key context: Task 45 added ModelImplStatus registry + modelImplStatus() in ensemble.ts + cyan "ML·live" badge + "Rule-BT:" badge + ML-integrity honesty banner at the top of the Backtesting Report modal; Task 46 created scripts/ml_integrity.py with leak-free primitives (add_forward_returns, drop_immature_targets, chronological_split, fit_scaler_on_train); A-FINAL fixed walk_forward_backtesting.py end-to-end (imports ml_integrity, per-horizon per-sample dropna, date-based test partition, ml_integrity dict in output); PHASE-1-2-FIXES + Task 48 eliminated Pattern #10 (latest-signal replay) + Pattern #11 (predicted-as-realized) backtest leaks by replacing 10 leaky backtest functions with unavailable stubs + relabeling 3 more. The 8 canonical stocks (ENGRO/HUBC/LUCK/SYS/MEBL/PSO/OGDC/PPL) are the COVERED_SYMBOLS in scripts/walk_forward_backtesting.py.
+- Read scripts/walk_forward_backtesting.py (333 lines). It writes to data/walk_forward_backtesting.json (Path on line 35) AND merges into data/ml_predictions_multi.json under key "walk_forward_backtesting" (lines 312-315 of main()). Output dict structure: {walk_forward_at, n_samples, models_trained (5 names: XGBoost/LightGBM/CatBoost/Random Forest/Ridge Regression), individual: {<model_name>: {totalTrades, wins, winRate, avgReturnPct, maxReturnPct, minReturnPct, stars}}, ensemble: {MAJORITY_VOTE, PROBABILITY_WEIGHTED, TIER_WEIGHTED, WIN_RATE_WEIGHTED, FINAL_CONSENSUS — each with same fields}, methodology: "Walk-forward: expanding window. For each test sample, models re-trained on ALL data before that point. No data leakage.", comparison_note: "Walk-forward results are MORE ACCURATE than simplified backtesting...", ml_integrity: {target_construction, test_partition, per_sample_training, per_horizon_drop, realized_outcomes, walk_forward_methodology}}. The script imports from scripts/ml_integrity.py (add_forward_returns, drop_immature_targets, chronological_split, HORIZONS, MAX_HORIZON). 19 features (rsi_14/macd/macd_signal/macd_hist/bb_width/bb_pct_b/atr_14/obv_change_pct/price_sma_20_ratio/price_sma_50_ratio/price_sma_200_ratio/volume_sma_20_ratio/return_1d/return_7d/return_14d/return_30d/hl_range_pct/body_size_pct/volatility_14d). 5 ensemble methods + 1 FINAL_CONSENSUS. TIER_W = {XGBoost:0.25, LightGBM:0.25, CatBoost:0.25, Random Forest:0.25, Ridge Regression:0.15}.
+- Read scripts/ml_integrity.py (372 lines). HORIZONS=[5,10,21], MAX_HORIZON=21. Helpers: add_forward_returns (per-stock groupby(symbol).shift(-h), no fillna), drop_immature_targets (per-horizon OR multi-horizon dropna), chronological_split (date-based 60/20/20 + per-stock purge of last MAX_HORIZON rows at each boundary), fit_scaler_on_train (StandardScaler fit on train partition only), per_stock_train_idx, split_sequences_by_date, build_sequences_per_stock. Self-test has 10 assertions (all pass per A-FINAL report).
+- Inspected src/components/latent/AiModelSignals.tsx (713 lines). 
+  • Backtesting Report modal opened via `btOpen` state set true by the green `<Button onClick={()=>setBtOpen(true)}>` "Check Backtesting Results" button (lines 232-234 of the file).
+  • Modal data: derived from the SAME `data: API` state that loads /api/ai-model-signals/[symbol]. Lines 113-114: `const indBt=data?Object.entries(data.backtesting||{})...` and `const ensBt=data?Object.entries(data.ensembleBacktesting||{})...`.
+  • Modal sections (in order):
+    1. Header `<p>` describing "20% holdout test set" + star ratings legend.
+    2. Conditional `<p>` if `data?.backtestSource==="db-extended-universe"` → "Full-universe backtest (includes new/low-data PSX stocks via extended training) — DB-cached."
+    3. ML-integrity honesty banner (lines 221-223): cyan box, "ML-integrity note: The backtest stats below are a technical-rule-strategy evaluation, not a trained-ML artifact evaluation. ... Genuine walk-forward trained-ML backtests are a pending task."
+    4. Ensemble Backtesting section (lines 226-274): per-ensemble cards from `ensBt`. Renders stars + Win Rate + Avg Return + Best/Worst Trade + Total Trades + (conditional) winTrades/lossTrades/profitFactor/sharpe/sortino/maxDrawdownPct/tp1HitRate/costBps + reliabilityTable (CL-2/PI predicted_prob vs actual_hit_rate; GM avg_score).
+    5. Individual Model Backtesting section (lines 277-300): per-model cards from `indBt`. Stars + Win Rate + Avg Return + Best/Worst Trade + Total Trades + Buy Signals + Correct Buys + Sell Signals.
+    6. Freshness chip (lines 2-6 of aim3.txt): "FRESH · full-universe" (green) OR "FILE · subset" (amber) badge based on data.backtestSource.
+    7. Model Graph View — Actual vs Predicted (lines 8-74 of aim3.txt): symbol picker (StockSearch), KSE-100/All toggle, decision-point step input, horizon input, multi-model checkboxes (up to 8 from 41 options), Load Graph button → fetches /api/backtest/model-graph?models=...&symbol=...&horizon=...&step=..., renders LineChart with Actual + per-model predicted lines.
+  • MC component (lines 82-109 of aim3.txt) — the model card — renders these badges per trained model: signal badge (BUY/SELL/HOLD), EXT (amber, extended training), "ML·live" (cyan, tooltip: "A Python-trained artifact exists in ml_predictions_multi.json for LIVE per-stock predictions. The RUNTIME BACKTEST shown here uses the shared strategySignal() indicator engine — NOT this trained artifact — so the BT stats below are an indicator-strategy evaluation, not a trained-ML evaluation."), star rating, "Rule-BT: X%win·Y%avg·Zstk" line (tooltip: "The runtime backtest (model-backtest.ts) evaluates this model via the shared strategySignal() indicator engine — these BT stats are a technical-rule-strategy evaluation, NOT a trained-ML artifact evaluation."). Untrained models show "Not trained" badge.
+  • Navigation: top-level StockSearch sets `symbol` state (line 21). `useEffect(()=>{load();},[symbol]);` reloads /api/ai-model-signals/[symbol] on symbol change. The Backtesting Report modal itself has NO per-horizon navigation — only the Model Graph View has a horizon input (default 21). No existing walk-forward mention in the modal beyond the integrity banner's "Genuine walk-forward trained-ML backtests are a pending task" string.
+- Inspected src/lib/latent/ensemble.ts (280 lines).
+  • ModelImplStatus type (lines 18-32): `{ implementation: "trained-ml" | "technical-rule" | "untrained"; runtimeBacktestImpl: "technical-rule"; trainedArtifact: boolean; reason?: string }`.
+  • modelImplStatus(m: ModelMeta) function (lines 33-48): classifies by m.trained — if !m.trained → {implementation:"untrained", runtimeBacktestImpl:"technical-rule", trainedArtifact:false, reason: m.untrainedReason||"No trained artifact"}; else → {implementation:"trained-ml", runtimeBacktestImpl:"technical-rule", trainedArtifact:true, reason:"Python artifact in data/ml_predictions_multi.json (live predictions); runtime backtest uses the shared strategySignal() indicator engine, not the artifact"}.
+  • ALL_MODELS registry (lines 50-130): 65 model entries across 11 tiers (TIER_1: PatchTST/N-BEATS/TimesNet/Informer; TIER_2: Chronos/Lag-Llama/Moirai/Time-LLM [untrained]; TIER_3: XGBoost/LightGBM/CatBoost/Random Forest/LSTM; TIER_4: CNN-LSTM/Transformer-LSTM/TabNet/FinGPT [last 2 untrained]; TIER_CL: ARIMA/Holt-Winters/GARCH/Ridge Regression/Kalman Filter/Prophet/GRU/XGBoost (CL)/LightGBM (CL)/Random Forest (CL)/LSTM (CL); TIER_CL_2: LightGBM-A/LightGBM-B/HistGBM/ExtraTrees/RandomForest/Logistic/MLP; TIER_PI: Linear Regression/Logistic Regression/Pattern Matcher KNN/Neural Network; TIER_GM: Technical/Announcements/Fundamental/Macro Engine; TIER_CG: LightGBM (CG)/XGBoost (CG); TIER_X: Trend Multi-TF/Breakout RelVol/Trend Pullback/RSI Divergence/BB Mean Reversion/Vol Contraction/Relative Strength/Market Regime/Meta-Label CG/Triple Barrier Dyn; TIER_GIAN: Gian-Ensemble/Gian-Extender/M-Ensemble). The 8 untrained models are: Chronos (Amazon), Lag-Llama, Moirai (Salesforce), Time-LLM, TabNet, FinGPT — verified by m.trained=false flags.
+  • COVERED_SYMBOLS is NOT in this file. It lives in src/components/latent/Tracker.tsx:40 as `const COVERED_SYMBOLS = ["ENGRO", "HUBC", "LUCK", "SYS", "MEBL", "PSO", "OGDC", "PPL"]` (8 canonical stocks — matches the Python walk-forward script's STOCKS list). Tracker.tsx uses it for portfolio live-quote fetching, not for backtest stats.
+  • NO ensemble-stats helpers (no "fc-based" or "model-backtest-based" helper) — ensemble.ts only has ensemble BUILDER functions (majorityVoteEnsemble, probabilityWeightedEnsemble, tierWeightedEnsemble, computeFinalConsensus) + clampConfidence + TIER_WEIGHTS + ModelPrediction/EnsembleResult interfaces. Backtest stats helpers live in src/lib/latent/model-backtest.ts (runAllBacktests, ALL_MODEL_KEYS [65], ALL_ENSEMBLE_KEYS [13], ENSEMBLE_LABELS, BacktestStats interface, AllBacktestOutput).
+- Inspected all existing backtest API routes (6 routes under src/app/api/backtest/):
+  • /api/backtest/report/route.ts (155 lines) — GET, no params. Reads data/backtest_report.json (produced by python3 scripts/backtest_all_models.py — purged walk-forward, point-in-time liquidity universe, top-10 equal-weight). Response shape: {available:bool, generatedAt, generatedBy, sourceOfTruth, methodology:{walk_forward_purged,entry_exit,universe,portfolio_rule,metrics}, assumptions, data, universe, rows:WFRow[], insufficient:WFRow[], unmeasured:WFRow[], ranking:string[]}. WFRow = {key,name,legacyName,role,status:"measured"|"insufficient_data"|"unmeasured",profitFactor,expectancyPct,cagrPct,sharpe,maxDrawdownPct,positionWinRatePct,nPositions,nPeriods,totalReturnPct,avgWinPct,avgLossPct,note}. Returns available:false + error if file is missing.
+  • /api/backtest/model-graph/route.ts (192 lines) — GET, query params: models (comma-sep), model (single, back-compat), symbol (default LUCK), horizon (3-63, default 21), step (2-252, default 21 — decision-point cadence). Computes per-model predictedReturn inline via strategySignal() over DB OhlcvBar. Response shape: {symbol,horizon,step,points,dates:string[],actual:(number|null)[],entry:number[],models:[{key,label,predicted:(number|null)[],signals:("BUY"|"SELL"|"HOLD")[]}],dataSourceDate,computedAt,cached:false}. data source: in-memory computation from db.ohlcvBar + src/lib/latent/fallback-predictions.strategySignal. NOT a file read.
+  • /api/backtest/run/route.ts (67 lines) — POST. Body: {startingCapital, amountPerTrade, numTrades, numDays, monthlySip?, periodUnit?}. Fetches /api/signals/all (final-consensus), filters to DB-backed symbols, calls runBacktest(). Response: {...result, cached:false} (per-trade list + BacktestMetrics + equity curve). Data source: in-memory + DB OhlcvBar.
+  • /api/backtest/signal-stats/route.ts (244 lines) — GET, query params: days (1-365, default 30). Fetches today's /api/signals/all final-consensus signals + DB OhlcvBar over [today-N, today], replays each via TP3>TP2>TP1>SL rule (the leak pattern called out in Task 45 P1A). Response: {total,closed,wins,losses,winRate,avgReturnPct,bestPct,worstPct,stocksInDb,dataSourceDate,days,windowStart,windowEnd,cached:false}. Data source: in-memory + DB.
+  • /api/backtest/ensembles/route.ts (318 lines) — GET, query params: capital (default 100000), numTrades (1-2000, default 40), numDays (0-120, default 0), rankBy ("winRate"|"netPnl", default winRate), symbol (optional filter). Reads data/ml_predictions_multi.json per-ensemble predictions (cl/cl_extender/cl2/pi/gm/cg/x/gian/gian_extender/m predictions + 3 base ensembles computed inline). Calls runBacktest() per ensemble. Response: {capital,amountPerTrade,totalEnsembles,numDays,numTrades,top5:[{ensembleName,ensembleLabel,metrics,trades}],rest:[...],cached:false}. Data source: ml_predictions_multi.json file read + DB OhlcvBar.
+  • /api/backtest/investment-simulator/route.ts (124 lines) — GET, query params: capital, periodValue, periodUnit, monthlySip, numTrades, minConfidence, direction. Fetches /api/signals/all, calls runInvestmentSimulation(). Response: SimResponse flat schema (initialAmount, finalAmount, totalPnl, totalReturnPct, totalGain, wins, losses, totalSip, totalInvested, tradeCount, rows, startDate, endDate, config).
+- Inspected /api/ai-model-signals/[symbol]/route.ts (the main AI Models tab route). It READS data/ml_predictions_multi.json (line ~62 area: const multi = JSON.parse(await fs.readFile(path.join(process.cwd(), "data", "ml_predictions_multi.json"), "utf-8"))). It BUILDS the response with (lines 600-647): {symbol, stockName, currentPrice, tiers, ensembles, finalConsensus, fallbackNote, extendedCount, extendedAt, trainedModelCount, totalModelCount, trainedAt, backtesting:{...(multi?.backtesting||{}),...dbModelBacktests}, ensembleBacktesting:{...(multi?.ensemble_backtesting||{}),...dbEnsBacktests}, backtestSource:"db-extended-universe"|"file", **walkForward: multi?.walk_forward_backtesting || {}** (line 617), clEnsemble, clEnsembleAll, clExtender, clEnsemblePredictions, clExtenderPredictions, cl2EnsemblePredictions, cl2Metadata, piEnsemblePredictions, piMetadata, gmModelPredictions, gmMetadata, cgEnsemblePredictions, cgMetadata, xEnsemblePredictions, xMetadata, gianEnsemblePredictions, gianExtenderPredictions, gianMetadata, gianExtenderMetadata, mEnsemblePredictions, mMetadata}. CRITICAL FINDING: the route ALREADY EXPOSES a `walkForward` field sourced from `multi?.walk_forward_backtesting`, BUT this field currently always returns `{}` because (verified) the ml_predictions_multi.json file does NOT contain a `walk_forward_backtesting` key — the Phase-A-fixed script has never successfully run end-to-end, OR its prior output was wiped. The route caches the response for 3600s via cacheSetJSON(CK(sym), resp, 3600).
+- Inspected prisma/schema.prisma. PredictionHistory model (lines 158-183):
+  • Fields: id (cuid @id), dedupKey (string @unique — format symbol|modelId|modelVersion|predictionTs), symbol, modelId, modelVersion, predictionTs (string — epoch-ms, overflows Int32), dataCutoff (string? ISO date), horizon (int?), entryPrice (float?), predictedReturn (float?), predictedProb (float?), confidenceType (string @default "heuristic" — heuristic|calibrated), signal (string — BUY|SELL|HOLD), kind (string @default "prospective" — prospective|simulated|out-of-sample|technical-rule), outcomeMaturedAt (string? epoch-ms), realizedReturn (float?), outcomeStatus (string @default "pending" — pending|matured|unavailable), tradingPnl (float?), createdAt (DateTime @default(now)), updatedAt (DateTime @updatedAt).
+  • Indexes: @@index([symbol, modelId, predictionTs]) + @@index([outcomeStatus]).
+  • Read by: ONLY /api/predictions/record/route.ts (line 34 db.predictionHistory.upsert for POST; line 76 db.predictionHistory.findMany for GET query). No other API route currently reads PredictionHistory. No outcome resolver route exists yet — outcomes are still pending.
+- Inspected /home/z/my-project/src/lib/latent/ folder (28 files). NO file in this folder reads ml_predictions_multi.json directly — the file reads happen in API routes (ai-model-signals/[symbol], backtest/ensembles, backtest/report, simulate, signals/all). Files that COMPUTE backtest stats in src/lib/latent/: backtest.ts (runBacktest simulator used by /api/backtest/run + /api/backtest/ensembles), model-backtest.ts (runAllBacktests over 65 models + 13 ensembles via strategySignal indicator engine — used by DB precompute scripts, not by any API route), investment-simulator.ts (runInvestmentSimulation used by /api/backtest/investment-simulator).
+- Inspected /home/z/my-project/data/ folder. Current artifacts:
+  • data/ml_predictions_multi.json — 14,722,716 bytes, dated Oct 26 13:30 (untouched per Task 48 + Phase A reports).
+  • data/backtest_report.json — 7,024 bytes, dated Oct 25 09:14 (purged walk-forward, generated by scripts/backtest_all_models.py).
+  • data/backtest_report.pdf — 25,056 bytes, dated Oct 26 13:30.
+  • data/.backtest_state.json — 146,048 bytes (hidden), dated Oct 25 09:01.
+  • data/ml_predictions.json — 3,602 bytes, dated Oct 21 19:36 (legacy single-model file).
+  • Subfolders: data/financials/ (~280 stock financial JSON files), data/ohlcv/ (8 CSVs: ENGRO/HUBC/LUCK/SYS/MEBL/PSO/OGDC/PPL — exactly the walk-forward script's STOCKS list), data/cl2_cache/ (calib.pkl), data/cg_cache/ (calib.pkl), data/pi_cache/ (calib.pkl).
+  • **NO data/walk_forward_backtesting.json exists** — the Phase-A-fixed walk_forward_backtesting.py has NEVER been successfully run end-to-end in this sandbox (or its prior output was wiped).
+  • **NO data/backtest_reports/ folder exists** — only the single flat data/backtest_report.json file.
+- Verified the current ml_predictions_multi.json top-level structure (via python json inspection): 33 top-level keys — trained_at, data_source, training_rows, stocks_count, sl_rule, tp_rule, models (dict of 65 model entries), untrained_models, backtesting (dict of 65 model entries with {totalTrades, wins, winRate, avgReturnPct, maxReturnPct, minReturnPct}), ensemble_backtesting (dict of 13 ensemble entries: majority_vote, probability_weighted, tier_weighted, cl_ensemble, cl_extender, cl2_ensemble, pi_ensemble, gm_model, cg_ensemble, x_ensemble, gian_ensemble, gian_extender, m_ensemble), cl_ensemble_predictions + cl_extender_predictions + cl2_ensemble_predictions + pi_ensemble_predictions + gm_model_predictions + cg_ensemble_predictions + x_ensemble_predictions + gian_ensemble_predictions + gian_extender_predictions + m_ensemble_predictions + majority_vote_predictions + probability_weighted_predictions + tier_weighted_predictions (each ~705 stock predictions), cl2_metadata + pi_metadata + gm_metadata + cg_metadata + x_metadata + gian_metadata + gian_extender_metadata + m_metadata, ensemble_backtest_trained_at, ensemble_count. **NO `walk_forward_backtesting` key present** — confirmed.
+- Searched for an existing /api/backtest/walk-forward route: NONE exists. The closest existing API route pattern is /api/backtest/report/route.ts (file-read JSON from data/backtest_report.json + wrap with metadata + return NextResponse.json with available:false fallback). The closest data-flow pattern is: Python script writes a flat JSON file → API route reads it on GET → UI fetches on demand.
+- Verified ml_predictions_multi.json `backtesting` and `ensemble_backtesting` shape: backtesting entries are minimal `{totalTrades, wins, winRate, avgReturnPct, maxReturnPct, minReturnPct}` (NO stars, NO buySignals/sellSignals/correctBuys fields stored in the file — those are computed by model-backtest.ts runAllBacktests when the DB ModelBacktestCache is populated; the API merges file + DB: `backtesting: { ...(multi?.backtesting || {}), ...dbModelBacktests }`). XGBoost example: {totalTrades:674, wins:380, winRate:56.4, avgReturnPct:3.8, maxReturnPct:735.51, minReturnPct:-30.78}.
+
+Stage Summary:
+- Actual current data flow (script → file → API → UI):
+  • Live predictions: scripts/train_all_with_backtesting.py (Phase-A-fixed but NOT re-run — file is STALE) → data/ml_predictions_multi.json (14.7MB, Oct 26 13:30) → /api/ai-model-signals/[symbol]/route.ts reads it on every GET + merges DB ModelBacktestCache rows + caches 3600s → AiModelSignals.tsx fetches on symbol change → renders model cards (MC component) with "ML·live" + "Rule-BT:" badges + the Backtesting Report modal.
+  • Runtime backtest stats: src/lib/latent/model-backtest.ts → runAllBacktests() (called by a bun precompute script that populates DB ModelBacktestCache; NOT called from any API route) → db.modelBacktestCache rows → /api/ai-model-signals/[symbol] merges them into `backtesting` + `ensembleBacktesting` dicts → Backtesting Report modal renders them as "technical-rule-strategy evaluation" with the ML-integrity honesty banner.
+  • Purged walk-forward report: scripts/backtest_all_models.py → data/backtest_report.json → /api/backtest/report/route.ts (NOT currently consumed by AiModelSignals.tsx — it's a separate endpoint, likely used by the Tracker component).
+  • Walk-forward: scripts/walk_forward_backtesting.py → data/walk_forward_backtesting.json (DOES NOT EXIST YET) AND merges into ml_predictions_multi.json under key walk_forward_backtesting (DOES NOT EXIST IN FILE YET). The /api/ai-model-signals/[symbol] route ALREADY exposes `walkForward: multi?.walk_forward_backtesting || {}` (always `{}` currently) but the Backtesting Report modal does NOT render this field.
+- What needs to change to connect walk-forward results to the Backtesting Report modal:
+  1. Run scripts/walk_forward_backtesting.py to produce data/walk_forward_backtesting.json. (CRITICAL: the script's main() ALSO merges into ml_predictions_multi.json — this merge step at lines 312-315 must be skipped or the script edited to NOT touch ml_predictions_multi.json, per the task's "Do NOT touch ml_predictions_multi.json" rule.)
+  2. Create a new /api/backtest/walk-forward/route.ts (GET, no params) that reads data/walk_forward_backtesting.json directly (NOT via the ml_predictions_multi.json merge). Pattern to follow: /api/backtest/report/route.ts (file-read + wrap with metadata + available:false fallback if file missing).
+  3. Add a "Walk-Forward Trained-ML Backtest" section to the AiModelSignals.tsx Backtesting Report modal, positioned between the ML-integrity banner and the Ensemble Backtesting section. The section should fetch /api/backtest/walk-forward on modal open (only when btOpen=true), show the methodology string + n_samples + per-model individual results (5 models: XGBoost/LightGBM/CatBoost/Random Forest/Ridge Regression) + per-ensemble results (5 methods: MAJORITY_VOTE/PROBABILITY_WEIGHTED/TIER_WEIGHTED/WIN_RATE_WEIGHTED/FINAL_CONSENSUS) with the same {totalTrades, wins, winRate, avgReturnPct, maxReturnPct, minReturnPct, stars} fields the existing sections already render. If `available:false`, show "Walk-forward not yet computed. Run scripts/walk_forward_backtesting.py to generate data/walk_forward_backtesting.json." placeholder.
+  4. Update the ML-integrity banner's "Genuine walk-forward trained-ML backtests are a pending task" string → "Genuine walk-forward trained-ML backtests are available below (8 canonical stocks; 5 models × 3 horizons × 21-bar test samples; expanding-window retraining)" once the new section is wired.
+  5. Honesty: explicitly call out in the new section that the walk-forward only covers 8 canonical PSX stocks (the same 8 as the script's STOCKS list) — vs the runtime Rule-BT covering ~674 ML-trained + ~200 fallback-covered = ~874 stocks via the indicator engine — so users don't conflate the two coverage scopes.
+- Blockers / surprises discovered:
+  • BLOCKER #1: walk_forward_backtesting.py's main() merges into ml_predictions_multi.json (lines 312-315). Per the task's "Do NOT touch ml_predictions_multi.json" rule, either (a) the script must be edited to remove the merge step, or (b) the new /api/backtest/walk-forward route must read ONLY data/walk_forward_backtesting.json and the script must NOT be re-run with the merge enabled. Option (b) is safer — no script edit required.
+  • SURPRISE #1: the `walkForward: multi?.walk_forward_backtesting || {}` field is ALREADY plumbed through /api/ai-model-signals/[symbol]/route.ts (line 617) but currently always returns `{}` because the merge key is absent in the file. This means the UI could read walk-forward data from the existing /api/ai-model-signals response IF the script's merge were run — but that path is BLOCKED by the "do not touch ml_predictions_multi.json" rule. So a NEW separate /api/backtest/walk-forward route that reads data/walk_forward_backtesting.json directly is the correct architectural choice.
+  • SURPRISE #2: data/walk_forward_backtesting.json does NOT exist — the Phase-A-fixed script has never been run end-to-end. The integration must gracefully degrade when the file is absent (the /api/backtest/report/route.ts pattern of `available:false + error message + empty rows[]` is the right model).
+  • SURPRISE #3: the existing Backtesting Report modal ALREADY has a placeholder string in the ML-integrity banner saying "Genuine walk-forward trained-ML backtests are a pending task" — so the UI is pre-positioned for a Walk-Forward section to slot in directly below the banner. No re-arrangement of existing sections needed.
+  • SURPRISE #4: data/ohlcv/ contains exactly 8 CSVs (ENGRO/HUBC/LUCK/SYS/MEBL/PSO/OGDC/PPL) — the same 8 canonical stocks the walk-forward script trains/evaluates on. So the walk-forward script's input data is present; only its output (data/walk_forward_backtesting.json) is missing.
+  • SURPRISE #5: ModelImplStatus has 3 values (trained-ml/technical-rule/untrained) but the walk-forward script's 5 models are a SUBSET of the 65 model registry (only XGBoost/LightGBM/CatBoost/Random Forest/Ridge Regression — all 5 are in TIER_3/TIER_CL). The walk-forward section should explicitly tag these 5 as "trained-ml, walk-forward validated" — distinct from the registry's runtime-backtest-impl:"technical-rule" tag — so the UI doesn't imply all 65 models were walk-forward-validated.
+  • BLOCKER #2: the existing Backtesting Report modal's `ensBt` and `indBt` arrays are derived from `data.backtesting` + `data.ensembleBacktesting` (NOT from `data.walkForward`). The new Walk-Forward section should use a SEPARATE state (e.g., `wfData` from a new fetch) rather than extending the existing indBt/ensBt arrays — otherwise the runtime Rule-BT and walk-forward stats would be conflated in the same UI cards.
+
+---
+Task ID: 49 (Walk-Forward end-to-end integration — script → artifact → API → UI)
+Agent: main (orchestrator)
+Task: Connect genuine walk-forward ML forecast evaluation results to the existing Backtesting Report modal in the AI Models tab. Working data flow, API integration, UI rendering. NOT a visual-only change.
+
+PHASE 1 — Inspection (subagent PHASE-1-INSPECT, worklog appended earlier):
+- AiModelSignals.tsx Backtesting Report modal opens via `btOpen` state + "Check Backtesting Results" button. Fetches `/api/ai-model-signals/[symbol]` which reads `ml_predictions_multi.json` + DB ModelBacktestCache. Has ML-integrity honesty banner (Task 45) saying "Genuine walk-forward trained-ML backtests are a pending task" — placeholder ready for the new Walk-Forward section.
+- `/api/backtest/report/route.ts` is the closest pattern: reads a flat JSON file, wraps with metadata, returns `available:false` gracefully if missing. Used as the template for the new `/api/backtest/walk-forward` route.
+- `/api/ai-model-signals/[symbol]/route.ts:617` already has `walkForward: multi?.walk_forward_backtesting || {}` plumbed through but always returns `{}` (the merge key is absent in ml_predictions_multi.json — and we must NOT touch that file).
+- walk_forward_backtesting.py (Phase A fixed) writes to `data/walk_forward_backtesting.json` + merges into ml_predictions_multi.json (must skip the merge). Computes winRate/avgReturnPct but NOT MAE/RMSE/R²/directional accuracy — needs extension.
+- `data/backtest_reports/` folder does NOT exist — needs creation.
+- `data/ohlcv/` has the 8 canonical stock CSVs (ENGRO/HUBC/LUCK/SYS/MEBL/PSO/OGDC/PPL) — input data present.
+- Model registry: `modelImplStatus(m)` returns `{implementation: "trained-ml"|"technical-rule"|"untrained", runtimeBacktestImpl:"technical-rule", trainedArtifact, reason}`. 65 models registered across 11 tiers.
+
+PHASE 2 — Extended scripts/walk_forward_backtesting.py:
+- NEW artifact: `data/backtest_reports/walk_forward_latest.json` (separate from ml_predictions_multi.json).
+- NEW imports: `mean_absolute_error, r2_score` from sklearn.metrics (already had mean_squared_error).
+- NEW constants: `REPORT_DIR=Path("data/backtest_reports")`, `REPORT_FILE=REPORT_DIR/"walk_forward_latest.json"`, `REPORT_SCHEMA_VERSION="1.0"`.
+- NEW per-sample tracking: `per_model_per_horizon[name][hz] = [{predicted, actual, stock, date}, ...]` for MAE/RMSE/R²/directional accuracy. Also `sample_dates_seen` + `train_cutoff_dates_seen` for the report's evaluation_date_range + training_window + data_cutoff.
+- NEW post-loop metrics computation: for each model × horizon (5 × 3 = 15 combos), compute MAE, RMSE, R² (can be NEGATIVE — NOT clamped), directional accuracy, n_observations, baseline (constant-mean: predict mean(actual) for all → baseline MAE/RMSE/R²=0.0 by construction). Mark `status:"unavailable"` with reason when <2 (predicted, actual) pairs at that horizon.
+- NEW structured report schema (v1.0): schema_version, evaluation_status (completed|partial|failed), evaluation_method ("walk-forward-expanding-window"), generated_at, data_cutoff, training_window, evaluation_date_range, evaluated_symbols, universe_size, forecast_horizons, n_eligible_samples, n_matured_outcomes (per horizon), models (with implementation_type="trained-ml" + horizons dict), baseline (definition + notes), limitations (8 honest limitations), unevaluated (list of model×horizon combos that couldn't be evaluated), ml_integrity (target_construction / test_partition / per_sample_training / per_horizon_drop / realized_outcomes / walk_forward_methodology), trading_metrics (individual + ensemble from the existing logic).
+- NEW env vars for demo / fast runs: `WALK_FORWARD_SAMPLE_STEP` (default 10) + `WALK_FORWARD_MAX_STOCKS` (default all 8). Production defaults preserved.
+- REMOVED the `existing["walk_forward_backtesting"]=output; PRED_FILE.write_text(...)` merge into ml_predictions_multi.json (Task 49 rule).
+- Kept the legacy `data/walk_forward_backtesting.json` output (backward compat).
+
+PHASE 3 — Created /api/backtest/walk-forward/route.ts:
+- GET handler reads `data/backtest_reports/walk_forward_latest.json`.
+- Validates: schema_version is string, evaluation_method is string, generated_at is string, models is array. Returns `available:false` + error + how_to_generate if missing/malformed/invalid.
+- Returns the structured report fields verbatim (available, schema_version, evaluation_status, evaluation_method, generated_at, data_cutoff, training_window, evaluation_date_range, evaluated_symbols, universe_size, forecast_horizons, n_eligible_samples, n_matured_outcomes, models, baseline, limitations, unevaluated, ml_integrity, trading_metrics, how_to_generate).
+- Never fabricates metrics. Never substitutes current stored prediction for historical. Never silently turns unavailable into zero. No secret exposure. No arbitrary file-path access (only the fixed `data/backtest_reports/walk_forward_latest.json`).
+- `dynamic = "force-dynamic"` + `maxDuration = 15` (consistent with /api/backtest/report).
+
+PHASE 4 — Updated src/components/latent/AiModelSignals.tsx:
+- NEW state: `wfData`, `wfLoading`, `wfError` + `refreshWf` async function (fetches `/api/backtest/walk-forward?_=Date.now()` with cache:"no-store").
+- NEW useEffect: triggers `refreshWf` when modal opens (`btOpen === true` && !wfData && !wfLoading).
+- NEW "ML Forecast Evaluation — Walk-Forward" section inserted between the ML-integrity banner and the existing Ensemble Backtesting section. Contains:
+  - Header with Refresh button (cyan #22D3EE to distinguish from green Technical-Rule sections below).
+  - Empty state: amber "No completed walk-forward evaluation is available yet." + error message + how-to-generate command in a cyan mono box.
+  - Loaded state: status badge (COMPLETED green / PARTIAL amber / FAILED red) + WALK-FORWARD badge + method + schema version. Meta grid (Generated, Data Cutoff, Eval Range, Universe). Symbols list. Per-model×per-horizon table (Model, Type, Horizon, n_obs, MAE, RMSE, R² with HONEST negative values rendered in red, Dir Acc, Baseline MAE, Baseline R²). Unevaluated combos list. Limitations disclosure. Honest separator note: "The sections below (Ensemble Backtesting + Individual Model Backtesting) are a technical-rule-strategy evaluation — NOT a trained-ML walk-forward. Do not compare the two directly."
+  - Loading skeleton.
+- Updated ML-integrity banner to say "The ML Forecast Evaluation (Walk-Forward) section below shows genuine trained-ML walk-forward results when available." (was: "Genuine walk-forward trained-ML backtests are a pending task.")
+- R² color logic: completed && r2 < -0.001 → red (#FF5C5C); r2 > 0.001 → green (#00E676); ~0 → amber (#FBBF24); null/NaN → amber "NaN"; unavailable → "—" (dim). NO clamping to zero.
+
+PHASE 5 — Generated a REAL report (fast-mode demo run):
+- Command: `WALK_FORWARD_SAMPLE_STEP=30 WALK_FORWARD_MAX_STOCKS=3 python3 scripts/walk_forward_backtesting.py`
+- Result: 6 samples (3 stocks × 2 samples per stock with step=30) × 5 models × 3 horizons = 90 model fits. Completed in ~30 seconds.
+- Output: `data/backtest_reports/walk_forward_latest.json` (12,109 bytes). Evaluation status: completed.
+- Honest results (all R² NEGATIVE — the models did NOT outperform the constant-mean baseline on this test):
+  - XGBoost 5d: n=6 MAE=0.022405 RMSE=0.027425 R²=-0.0158 DirAcc=50.00%
+  - XGBoost 10d: n=6 MAE=0.047183 RMSE=0.054719 R²=-2.6806 DirAcc=16.67%
+  - XGBoost 21d: n=6 MAE=0.080085 RMSE=0.084843 R²=-3.2989 DirAcc=16.67%
+  - LightGBM 5d: R²=-0.0520; 10d: R²=-2.6975; 21d: R²=-2.9896
+  - CatBoost 5d: R²=-0.0949; 10d: R²=-3.0608; 21d: R²=-3.4000
+  - Random Forest 5d: R²=-0.0295; 10d: R²=-2.7879; 21d: R²=-2.9897
+  - Ridge Regression 5d: R²=-0.0891; 10d: R²=-4.2160; 21d: R²=-6.1024
+  - Baseline (constant-mean) R² = 0.0000 by construction (verified in the report).
+- Evaluated symbols: ENGRO, HUBC, LUCK (3 of 8 canonical). Eval range: 2026-05-04 → 2026-08-04. Data cutoff: 2026-08-03. Training window: 2024-10-01 → 2026-08-03.
+
+PHASE 6 — Verification:
+1. ml_integrity self-test: `python3 scripts/ml_integrity.py` → ALL 10 assertions PASS.
+2. py_compile: `python3 -m py_compile scripts/walk_forward_backtesting.py` → OK.
+3. Lint: `bun run lint` → 0 errors.
+4. Server health: `curl http://127.0.0.1:3000/` → HTTP 200; `curl http://127.0.0.1:3000/api/backtest/walk-forward` → HTTP 200.
+5. API response (verified via curl + python json parsing): `available:true`, `evaluation_status:completed`, `universe_size:3`, `n_eligible_samples:6`, `forecast_horizons:[5,10,21]`, 5 models (XGBoost/LightGBM/CatBoost/Random Forest/Ridge Regression), XGBoost 5d R²=-0.01585 (NEGATIVE — honest).
+6. UI rendering (verified via agent-browser):
+   - Opened http://127.0.0.1:3000/ → "Latent.pk" landing.
+   - Clicked "AI Models" tab → model cards loaded.
+   - Clicked "Check Backtesting Results" button → modal opened.
+   - Walk-Forward section rendered: "ML Forecast Evaluation — Walk-Forward" heading, "COMPLETED" + "WALK-FORWARD" badges, "walk-forward-expanding-window" method, schema v1.0, generated 10/27/2026 10:09:07 AM, data cutoff 8/3/2026, eval range 5/4/2026→8/4/2026, universe 3 stocks · 6 samples, symbols ENGRO/HUBC/LUCK.
+   - Per-model×per-horizon table rendered with 15 rows (5 models × 3 horizons). R² column shows honest NEGATIVE values (-0.0158, -2.6806, -3.2989, etc.) — NOT clamped to zero. Baseline R² column shows 0.0000 (correct — constant-mean baseline).
+   - Limitations disclosure (8 items) present.
+   - Honest separator note: "The sections below (Ensemble Backtesting + Individual Model Backtesting) are a technical-rule-strategy evaluation — NOT a trained-ML walk-forward."
+   - Empty state tested: temporarily moved the artifact away, clicked Refresh → "No completed walk-forward evaluation is available yet." + how-to-generate command rendered. Restored the artifact, clicked Refresh → loaded state restored (COMPLETED + WALK-FORWARD + table).
+7. ml_predictions_multi.json: UNCHANGED — 14,722,716 bytes, Oct 26 13:30 (verified after every edit + after the script run).
+8. No git push: only local file edits + worklog appends.
+
+Files changed:
+1. scripts/walk_forward_backtesting.py — extended with per-model×per-horizon forecast-quality metrics (MAE/RMSE/R²/directional accuracy + baseline) + structured versioned report at data/backtest_reports/walk_forward_latest.json + WALK_FORWARD_SAMPLE_STEP / WALK_FORWARD_MAX_STOCKS env vars for fast-mode demo runs + REMOVED the merge into ml_predictions_multi.json.
+2. src/app/api/backtest/walk-forward/route.ts — NEW API route (modeled on /api/backtest/report/route.ts). Reads + validates the structured report artifact. Returns available:false + how_to_generate when missing/malformed. No secrets, no fabricated zeros.
+3. src/components/latent/AiModelSignals.tsx — NEW Walk-Forward section in the Backtesting Report modal (separate wfData state + refreshWf fetch + per-model×per-horizon table + empty state + loading skeleton + honest separator note). Updated ML-integrity banner to point to the new section. R² negative values rendered honestly (red, NOT clamped).
+4. data/backtest_reports/walk_forward_latest.json — NEW artifact (12,109 bytes, Oct 27 10:09) produced by the real walk-forward run.
+5. data/walk_forward_backtesting.json — NEW legacy artifact (kept for backward compat; not consumed by the API).
+
+The report data flow:
+- scripts/walk_forward_backtesting.py (producer) → writes data/backtest_reports/walk_forward_latest.json (NEW structured schema v1.0) + data/walk_forward_backtesting.json (legacy).
+- /api/backtest/walk-forward/route.ts (consumer) → reads + validates the artifact → returns WFReportResponse.
+- AiModelSignals.tsx (renderer) → fetches /api/backtest/walk-forward when modal opens → renders ML Forecast Evaluation (Walk-Forward) section with status/method/meta/table/unevaluated/limitations.
+- ml_predictions_multi.json: NOT touched by any of the above.
+
+Models and horizons actually evaluated:
+- 5 classical ML models: XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression.
+- 3 forecast horizons: 5d, 10d, 21d.
+- 3 stocks (fast-mode demo): ENGRO, HUBC, LUCK. (Production default = all 8 canonical stocks.)
+- 6 samples total (3 stocks × 2 samples per stock with SAMPLE_STEP=30).
+- All 15 model×horizon combos completed (no unevaluated entries).
+- Implementation type: all 5 models are "trained-ml" (genuinely trained — not technical-rule fallback).
+
+Actual metrics + evaluation date range:
+- Evaluation date range: 2026-05-04 → 2026-08-04 (3-month test partition).
+- Data cutoff: 2026-08-03 (latest train-data date used by any sample).
+- Training window: 2024-10-01 → 2026-08-03.
+- All R² values NEGATIVE (the models did not outperform the constant-mean baseline on this test — honest):
+  - XGBoost: 5d=-0.0158, 10d=-2.6806, 21d=-3.2989
+  - LightGBM: 5d=-0.0520, 10d=-2.6975, 21d=-2.9896
+  - CatBoost: 5d=-0.0949, 10d=-3.0608, 21d=-3.4000
+  - Random Forest: 5d=-0.0295, 10d=-2.7879, 21d=-2.9897
+  - Ridge Regression: 5d=-0.0891, 10d=-4.2160, 21d=-6.1024
+- Baseline (constant-mean) R² = 0.0000 by construction (the baseline IS the mean — verified in the report).
+- Directional accuracy: 5d=50% (chance-level for 6 samples), 10d/21d=16.67% (below chance — the models got the direction wrong more often than right).
+- No claim of improvement in model accuracy: the metrics are honest. The models did NOT beat the constant-mean baseline on this 6-sample test. This is a real, reproducible out-of-sample experiment (per user's Phase 5 requirement).
+
+Verification commands + real outcomes:
+1. `python3 scripts/ml_integrity.py` → "All ml_integrity self-tests PASSED." (10/10)
+2. `python3 -m py_compile scripts/walk_forward_backtesting.py` → OK
+3. `bun run lint` → 0 errors (eslint .)
+4. `curl --max-time 5 http://127.0.0.1:3000/` → HTTP 200
+5. `curl --max-time 5 http://127.0.0.1:3000/api/backtest/walk-forward` → HTTP 200, body: `{available:true, evaluation_status:completed, universe_size:3, ...models:5 models with horizons...}`
+6. `WALK_FORWARD_SAMPLE_STEP=30 WALK_FORWARD_MAX_STOCKS=3 python3 scripts/walk_forward_backtesting.py` → "WALK-FORWARD BACKTESTING COMPLETE. Samples: 6. Model trainings: 90." Writes data/backtest_reports/walk_forward_latest.json (12,109 bytes).
+7. agent-browser: open /, click "AI Models" tab, click "Check Backtesting Results" → modal renders ML Forecast Evaluation (Walk-Forward) section with COMPLETED badge + 15-row metrics table + honest negative R² values. Empty-state fallback verified by moving the artifact + clicking Refresh.
+8. `ls -la data/ml_predictions_multi.json` → 14,722,716 bytes, Oct 26 13:30 (UNCHANGED).
+
+Remaining limitations:
+- The fast-mode demo run evaluated only 3 stocks × 6 samples (vs. the production default of 8 stocks × ~88 samples). The smaller universe + sample size means the metrics have wide confidence intervals. For a production-grade report, run without the env vars (full 8 stocks × ~88 samples).
+- Only 5 classical ML models are evaluated by walk_forward_backtesting.py. The other ~60 registered models (LSTM, CNN-LSTM, Transformer-LSTM, PatchTST, N-BEATS, TimesNet, Informer, foundation analogs, rule-based strategies) are NOT evaluated here. The UI's existing Individual Model Backtesting + Ensemble Backtesting sections (technical-rule-strategy evaluation via strategySignal()) cover those — but they are NOT walk-forward ML evaluations, and the modal now explicitly labels them as such.
+- The Python walk-forward script is run manually (via `python3 scripts/walk_forward_backtesting.py`). The user can run it in a maintenance window to refresh the report. The UI's Refresh button re-fetches the API (which re-reads the artifact) — it does NOT trigger a new training job (per the user's "Do not assume a long-running Python subprocess is appropriate for a production API route without inspecting the deployment architecture" guidance).
+- The "Run Walk-Forward Evaluation" control mentioned in Phase 3 was NOT added as a one-click in-browser button because launching a 30+ second Python subprocess from a production API route is not safe in this deployment. The Refresh button + how_to_generate instructions are the safe refresh mechanism.
+- ml_predictions_multi.json remains STALE (produced by the old leaky pipeline). The walk-forward report is a SEPARATE artifact that does NOT touch it.
+
+Confirmation that data/ml_predictions_multi.json was not modified: YES — 14,722,716 bytes, dated Oct 26 13:30, verified unchanged after every edit + after the walk-forward script run + after the agent-browser session.
+
+Confirmation that no GitHub push or remote modification was performed: YES — no `git push` or `git commit` issued. Only local file edits + worklog appends. The dev server (port 3000) was untouched throughout (HTTP 200 verified after every edit).
+
+
+
+---
+Task ID: PHASE-1-AUDIT-5
+Agent: Phase 1 audit-5-scripts inspector
+Task: Audit 5 training scripts (train_cl2_tier, train_cg_model, train_pi_tier, train_xgboost, train_multi_models) for remaining leakage.
+
+Work Log:
+- Read /home/z/my-project/worklog.md context: Task A-FINAL, Task B-AUDIT, Task A-9-SCRIPTS, Task PHASE-4-AUDIT, Task PHASE-1-2-FIXES, Task 48 (final report), Task 49 (Walk-Forward end-to-end integration). Understood prior leakage-fix history — Phase 4 B-AUDIT already inspected these 5 scripts in full and DOCUMENTED the training-path leaks (LEAKY_SPLIT via purged_stock_folds + LEAKY_ENSEMBLE via decile calibration on leaky OOF) as Phase-A-scope follow-up, while fixing the backtest/metric leaks (Pattern #10/#11) in this round. This Phase 1 audit re-verifies the Phase-4 classifications against the live code + answers the specific `purged_stock_folds` intent question + verifies the per-stock 80/20 backtest slice is HARMLESS_OTHER at signal-application level + confirms walk_forward_backtesting.py (Task 49) is intact + checks backtest_all_models.py helper sharing. READ-ONLY — no edits to any source file.
+- Read /home/z/my-project/scripts/ml_integrity.py (leak-free primitives — add_forward_returns / drop_immature_targets / chronological_split / fit_scaler_on_train / per_stock_train_idx / split_sequences_by_date / build_sequences_per_stock). HORIZONS=[5,10,21], MAX_HORIZON=21.
+- Read /home/z/my-project/scripts/audit_cg_model.py L445-507 (the `walk_forward_train(X, y, syms, n_folds=5)` reference implementation that Phase 4's ml_integrity dict points to as the fix pattern for `purged_stock_folds`). Verified it implements row-index chronological walk-forward CV: fold 0 trains on first chunk and tests on second; fold 1 trains on first+second and tests on third; etc. No by-symbol split. Returns (final_models, final_scalers, oof_predictions) — drop-in-compatible signature with the existing leaky pattern.
+
+- /home/z/my-project/scripts/train_cl2_tier.py (1491 lines) — CL-2 Tier training script (7 base models + logistic meta + decile calibration + per-stock 80/20 backtest_cl2).
+  * L694-704 — `def purged_stock_folds(stocks: List[str], k: int = 3) -> List[Tuple[set, set]]` — MISLABELED. Docstring/comment says "Purged time-ordered cross-validation" + "Purge gap = LABEL_HORIZON bars at the boundary", but the actual implementation only sorts symbols alphabetically and slices them into K folds BY SYMBOL. NO time-purge is applied — the "purge" is nominal. Each fold (train_syms, val_syms) puts whole stocks into one partition; train and val partitions share the same calendar dates across different (correlated) stocks.
+  * L795-796 — `syms = sorted(train_df["_symbol"].unique()); folds = purged_stock_folds(syms, k=3)` — used to build OOF predictions for the meta + decile calibration. Cross-sectional CV, not time-OOS.
+  * L798-824 — OOF loop: for each fold, train 7 base models on the K-1 folds' stocks, predict on the held-out fold's stocks. Stores predictions in `oof[va_mask, mi]`.
+  * L826-841 — `final_models` trained on `X = train_df[FC].fillna(0).values` (ALL bars from build_training_set, which iterates t ∈ range(20, n-LABEL_HORIZON) per stock — including the bars that backtest_cl2 will later test). SUBTLE training-time leak: final base models have seen the test bars' features AND labels.
+  * L843-886 — logistic meta + decile-binning calibration on `oof[valid_mask]`. `meta = LogisticRegression(...).fit(X_meta, y_meta)` + decile bins `bins=np.linspace(0,1,11); bin_inds=np.digitize(meta_proba, bins)-1; calib_map[bc]=hr` — LEAKY_ENSEMBLE (inherits the by-symbol CV leak from L796).
+  * L1106-1177 — per-stock 80/20 backtest: `sp = int(n * 0.8); bar_indices = list(range(sp, n - 5, 5))` → per-bar inference (`predict_proba_safe(m, feat_batch, scaler)` for each of 7 models) + realized P&L (`simulate_exit_pnl(...)` on actual future bars). HARMLESS_OTHER at signal-application level (NEITHER Pattern #10 latest-signal replay NOR Pattern #11 predicted-as-realized). CONFIRMED — Phase 4's classification is correct.
+  * L1309-1376 — Phase 4 ml_integrity dict intact: `backtest_methodology` (leak-free at signal-application), `training_pipeline_leak_followup_phase_a` (LEAKY_SPLIT at L694-704+L796, LEAKY_ENSEMBLE at L812-870), `scope_note`, `pointer` to scripts/audit_cg_model.py + scripts/walk_forward_backtesting.py.
+  * CLASSIFICATION: LEAKY_SPLIT (L694-704 definition + L795-796 use) + LEAKY_ENSEMBLE (L843-886 meta+decile on leaky OOF) + SUBTLE_TRAIN_ON_TEST (L826-841 final_models trained on ALL data — additional training-time leak NOT explicitly called out by Phase 4, only implicitly via "the leak comes from the TRAINED model weights"). Per-stock 80/20 backtest slice at L1111 is HARMLESS_OTHER at signal-application level (verified).
+  * RECOMMENDED FIX (preserves external interface): (1) Replace `folds = purged_stock_folds(syms, k=3)` at L796 with `final_models, final_scalers, oof = walk_forward_train(X, y, syms, n_folds=5)` (audit_cg_model.py L445 — row-index chronological walk-forward CV; train on earlier bars, validate on later bars). (2) Regenerate `oof[va_mask, mi]` and `fold_assign` from the new walk-forward CV (eliminates the by-symbol time-overlap leak). (3) Re-train logistic meta + decile calibration at L843-886 on the corrected OOF. (4) Optionally retrain `final_models` at L826-841 on only the TRAIN period (drop test bars from training) to fix the SUBTLE_TRAIN_ON_TEST leak — but this shrinks the per-stock live-inference training data and changes the live predictions, so only do it if the user accepts the retrade. External interface preserved: same `cl2_per_model` / `cl2_ens` / `cl2_backtest` / `meta_state` / `calib_map` dict shapes; same `final_models` / `final_scalers` dict shapes; same model names ("LightGBM-A", "LightGBM-B", "HistGBM", "ExtraTrees", "RandomForest", "Logistic", "MLP"); same output JSON structure (`models[f"{mname} (CL-2)"]`, `cl2_ensemble_predictions`, `ensemble_backtesting["CL2_ENSEMBLE"]`, `cl2_metadata`, `ml_integrity`); same per-stock prediction record shape (signal/direction/confidence/currentPrice/entry/tp1/tp2/tp3/sl/avgReturn).
+  * ARTIFACT INVALIDATION: YES — fixing `purged_stock_folds` requires retraining all CL-2 artifacts (final base models + meta + calib.pkl + cl2_metadata). The ml_predictions_multi.json `cl2_*` keys would need to be regenerated. The legacy artifact data/ml_predictions_multi.json is currently 14,722,716 bytes dated 2026-10-26 13:30 — would be regenerated if the fix is applied.
+
+- /home/z/my-project/scripts/train_cg_model.py (1124 lines) — CG-Ensemble training (LightGBM + XGBoost + probability-averaging + decile calibration + per-stock 80/20 backtest_cg).
+  * L120-134 — `from train_cl2_tier import (..., build_training_set, purged_stock_folds, ...)` — imports `purged_stock_folds` from train_cl2_tier L694-704.
+  * L449-451 — comment "5-fold purged CV (by symbol) with 10-bar purge gap"; `syms = sorted(train_df["_symbol"].unique()); folds = purged_stock_folds(syms, k=5)`. Same by-symbol CV — same mislabel "purged" + "10-bar purge gap" with NO actual time-purge implemented.
+  * L453-477 — OOF loop (2 models × 5 folds), stores `oof[va_mask, mi]`.
+  * L479-494 — `final_models` trained on `X = train_df[FC].fillna(0).values` (ALL data). SUBTLE_TRAIN_ON_TEST leak (same as train_cl2_tier).
+  * L496-528 — probability-averaging CG-Ensemble: `oof_ens = oof[valid_mask].mean(axis=1)` then decile calibration at L512-522 (`bins=np.linspace(0,1,11); bin_inds=np.digitize(oof_ens,bins)-1; calib_map[bc]=hr`) — LEAKY_ENSEMBLE (inherits the by-symbol CV leak).
+  * L707-744 — backtest_cg with per-stock 80/20 chronological split at L725 (`sp = int(n * 0.8)`), per-bar inference, realized P&L via `simulate_cg_exit`. HARMLESS_OTHER at signal-application level (CONFIRMED).
+  * L950-1004+ — Phase 4 ml_integrity dict intact: `backtest_methodology`, `training_pipeline_leak_followup_phase_a` (LEAKY_SPLIT L451, LEAKY_ENSEMBLE L487-499 — actual decile-calibration code at L512-522).
+  * CLASSIFICATION: LEAKY_SPLIT (L451) + LEAKY_ENSEMBLE (L512-522 decile calibration on leaky OOF) + SUBTLE_TRAIN_ON_TEST (L479-494 final_models on ALL data). Per-stock 80/20 backtest at L725 HARMLESS_OTHER (signal-application).
+  * RECOMMENDED FIX (preserves external interface): Same as train_cl2_tier — replace `purged_stock_folds(syms, k=5)` at L451 with `walk_forward_train(X, y, syms, n_folds=5)`; regenerate OOF at L453-477; rebuild CG-Ensemble + decile calibration at L496-528 on corrected OOF. Optionally retrain final_models at L479-494 on TRAIN-only. External interface preserved: same `final_models` / `final_scalers` / `meta_state` / `calib_map` / `cg_per_model` / `cg_ens` / `cg_backtest` dict shapes; same model names ("LightGBM-CG", "XGBoost-CG"); same output JSON structure (`models[f"{mname} (CG)"]`, `cg_ensemble_predictions`, `ensemble_backtesting["CG_ENSEMBLE"]`, `cg_metadata`, `ml_integrity`).
+  * ARTIFACT INVALIDATION: YES — requires retraining CG-Ensemble artifacts. cl2_calib.pkl + cg_ensemble_predictions keys in ml_predictions_multi.json would be regenerated.
+
+- /home/z/my-project/scripts/train_pi_tier.py (832 lines) — PI-Ensemble training (4 base models [Linear Regression, Logistic Regression, Pattern Matcher KNN, Neural Network] + logistic meta + decile calibration + per-stock 80/20 backtest_pi).
+  * L76-85 — `from train_cl2_tier import (..., build_training_set, purged_stock_folds, ...)` — imports `purged_stock_folds` from train_cl2_tier.
+  * L202-204 — comment "3-fold purged CV (by symbol)"; `syms = sorted(train_df["_symbol"].unique()); folds = purged_stock_folds(syms, k=3)`. Same by-symbol CV — same mislabel.
+  * L206-234 — OOF loop (4 models × 3 folds); LinearRegression gets `y_lin` (realized return), other 3 get `y` (binary). Stores `oof[va_mask, mi]`.
+  * L236-254 — `final_models` trained on `X = train_df[FC].fillna(0).values` (ALL data). SUBTLE_TRAIN_ON_TEST leak.
+  * L256-298 — logistic meta + decile calibration on `oof[valid_mask]`. `meta = LogisticRegression(...).fit(X_meta, y_meta)` at L266-267; decile binning at L274-285 (`bins=np.linspace(0,1,11); bin_inds=np.digitize(meta_proba,bins)-1; calib_map[bc]=hr`) — LEAKY_ENSEMBLE (inherits by-symbol CV leak).
+  * L478-512 — backtest_pi with per-stock 80/20 chronological split at L496 (`sp = int(n * 0.8)`), per-bar inference, realized P&L via `simulate_exit_pnl`. HARMLESS_OTHER at signal-application level (CONFIRMED).
+  * L680-720+ — Phase 4 ml_integrity dict intact: `backtest_methodology`, `training_pipeline_leak_followup_phase_a` (LEAKY_SPLIT L204, LEAKY_ENSEMBLE L266-280).
+  * CLASSIFICATION: LEAKY_SPLIT (L204) + LEAKY_ENSEMBLE (L266-298 meta+decile on leaky OOF) + SUBTLE_TRAIN_ON_TEST (L236-254 final_models on ALL data). Per-stock 80/20 backtest at L496 HARMLESS_OTHER (signal-application).
+  * RECOMMENDED FIX (preserves external interface): Same as train_cl2_tier — replace `purged_stock_folds(syms, k=3)` at L204 with `walk_forward_train(X, y, syms, n_folds=5)`; regenerate OOF at L206-234; retrain meta + decile calibration at L256-298 on corrected OOF. Note: LinearRegression path uses `y_lin` (continuous realized return) — the walk-forward CV must split on rows (not symbols) but preserve the `y_lin` assignment per row. External interface preserved: same `final_models` / `final_scalers` / `meta_state` / `calib_map` / `pi_per_model` / `pi_ens` / `pi_backtest` dict shapes; same model names ("Linear Regression", "Logistic Regression", "Pattern Matcher KNN", "Neural Network"); same output JSON structure.
+  * ARTIFACT INVALIDATION: YES — requires retraining PI-Ensemble artifacts. pi_calib.pkl + pi_ensemble_predictions keys in ml_predictions_multi.json would be regenerated.
+
+- /home/z/my-project/scripts/train_xgboost.py (450 lines) — single XGBoost classifier (label = 1 if close rises >=5% within next 14 days).
+  * L162-170 — `def add_labels(df)` — `df["future_max"] = df["close"].rolling(FORWARD_WINDOW).max().shift(-FORWARD_WINDOW); df["future_return_max"] = (df["future_max"] - df["close"]) / df["close"]; df["label_up_5pct_14d"] = (df["future_return_max"] >= UP_THRESHOLD).astype(int); df = df.dropna(subset=["future_return_max"])`. Per-stock forward-shift (load_all_stocks at L191 calls `df = add_features(df); df = add_labels(df); df["symbol"] = symbol` per-stock — add_labels receives single-stock df). No .fillna(0) on the target. Immature rows (last FORWARD_WINDOW=14 rows) dropped. ALREADY_FIXED — leak-free target construction (matches ml_integrity.add_forward_returns semantics).
+  * L222-225 — `df = df.sort_values("date").reset_index(drop=True); split_idx = int(len(df) * 0.8); train_df = df.iloc[:split_idx]; test_df = df.iloc[split_idx:]`. Global row-index 80/20 split on the date-sorted CONCATENATED df. Mild date-straddle leak — multiple stocks share the same calendar date; when sorted by date, the rows of date X from different stocks are interleaved, and `split_idx` may land in the middle of date X (some rows of date X in train, others in test). LEAKY_SPLIT minor.
+  * L243-258 — XGBoost with `early_stopping_rounds=20` (L256); `model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)` at L258 — uses TEST set as early-stopping eval set. Mild HP-selection-on-test leakage (early-stopping chooses best iteration by test-set logloss). LEAKY_BACKTEST minor.
+  * L379-433 — Phase 4 ml_integrity dict intact: `target_construction` (leak-free per-stock forward-shift at L162-170), `training_pipeline_leak_followup_phase_a` (`LEAKY_SPLIT_minor` at L223, `LEAKY_BACKTEST_minor_test_eval_set` at L258).
+  * CLASSIFICATION: HARMLESS (target construction L162-170 — ALREADY_FIXED) + LEAKY_SPLIT minor (L222-225 — date-straddle on date-sorted concatenated df) + LEAKY_BACKTEST minor (L258 — test-set early-stopping eval). Does NOT compute backtest trade metrics (only classifier metrics: accuracy/precision/recall/F1/AUC on the test partition) — NEITHER Pattern #10 NOR Pattern #11 applies to this script's outputs.
+  * RECOMMENDED FIX (preserves external interface): (1) At L222-225 — replace global row-index split with `from ml_integrity import chronological_split; train_df, val_df, test_df = chronological_split(df, train_frac=0.6, val_frac=0.2, purge_h=21)` — gives date-disjoint train/val/test partitions with a 21-bar purge at each boundary. (2) At L258 — replace `eval_set=[(X_test, y_test)]` with `eval_set=[(X_val, y_val)]` — use the separate val partition (not test) for early-stopping. This eliminates both the date-straddle and the test-set early-stopping leaks. External interface preserved: same XGBoost model artifact format (the saved model JSON via `model.save_model(...)` at the end of main), same per-stock prediction record shape (`{symbol: {signal/direction/confidence/currentPrice/entry/tp1/tp2/tp3/sl/avgReturn}}`), same metrics dict keys (`accuracy/precision/recall/f1/roc_auc`), same model name ("XGBoost") and output JSON structure (`models["XGBoost"].predictions`).
+  * ARTIFACT INVALIDATION: YES — the `n_estimators_` (best_iteration) of the trained XGBoost model depends on which eval_set is used (test vs val — different logloss curves → different best_iter). The trained model weights would change. Requires retraining the XGBoost artifact (model JSON + per-stock predictions in ml_predictions_multi.json under `models["XGBoost"]`).
+
+- /home/z/my-project/scripts/train_multi_models.py (433 lines) — 4 classical classifiers (XGBoost, LightGBM, CatBoost, RandomForest) on label_up_3pct_21d.
+  * L133-139 — `def add_labels(df)` — `df["future_max"] = df["close"].rolling(FORWARD_WINDOW).max().shift(-FORWARD_WINDOW); df["future_return_max"] = (df["future_max"] - df["close"]) / df["close"]; df["label_up_3pct_21d"] = (df["future_return_max"] >= UP_THRESHOLD).astype(int); df = df.dropna(subset=["future_return_max"])`. Per-stock forward-shift (load_all_stocks at L164-166 calls `df = add_features(df); df = add_labels(df); df["symbol"] = symbol` per-stock). ALREADY_FIXED — leak-free target construction.
+  * L178-181 — `df = df.sort_values("date").reset_index(drop=True); split_idx = int(len(df) * 0.8); train_df = df.iloc[:split_idx]; test_df = df.iloc[split_idx:]`. Same global row-index 80/20 split on date-sorted concatenated df — LEAKY_SPLIT minor (date-straddle).
+  * L194 — `model.fit(X_train, y_train, X_test, y_test) if model_name == "XGBoost" else model.fit(X_train, y_train)` — ONLY XGBoost uses test as early-stopping eval (LEAKY_BACKTEST minor, XGBoost-only). LightGBM/CatBoost/RandomForest just fit on train and predict on test — HARMLESS for those 3.
+  * L358-412 — Phase 4 ml_integrity dict intact: `target_construction` (leak-free at L133-139), `training_pipeline_leak_followup_phase_a` (`LEAKY_SPLIT_minor` at L179, `LEAKY_BACKTEST_minor_test_eval_set` at L194 XGBoost-only).
+  * CLASSIFICATION: HARMLESS (target construction L133-139 — ALREADY_FIXED) + LEAKY_SPLIT minor (L178-181 date-straddle) + LEAKY_BACKTEST minor (L194 XGBoost-only test-set early-stopping; LightGBM/CatBoost/RandomForest HARMLESS). Does NOT compute backtest trade metrics (only classifier metrics) — NEITHER Pattern #10 NOR Pattern #11 applies.
+  * RECOMMENDED FIX (preserves external interface): (1) At L178-181 — replace with `from ml_integrity import chronological_split; train_df, val_df, test_df = chronological_split(df, train_frac=0.6, val_frac=0.2, purge_h=21)`. (2) At L194 — change `model.fit(X_train, y_train, X_test, y_test) if model_name == "XGBoost" else model.fit(X_train, y_train)` to `model.fit(X_train, y_train, X_val, y_val) if model_name == "XGBoost" else model.fit(X_train, y_train)` — use val (not test) for XGBoost early-stopping. External interface preserved: same model artifact format, same per-stock prediction record shape, same metrics dict keys, same model names ("XGBoost", "LightGBM", "CatBoost", "RandomForest") and output JSON structure.
+  * ARTIFACT INVALIDATION: YES — XGBoost model weights would change (different best_iter via val vs test). The other 3 models (LightGBM/CatBoost/RandomForest) would also change slightly (because train_df changes after switching from row-index split to date-disjoint chronological_split — different row membership). Requires retraining all 4 model artifacts + per-stock predictions in ml_predictions_multi.json under `models["XGBoost"]` / `models["LightGBM"]` / `models["CatBoost"]` / `models["RandomForest"]`.
+
+- /home/z/my-project/scripts/walk_forward_backtesting.py (511 lines, Task 49 producer) — VERIFIED INTACT, NOT MODIFIED.
+  * L39-40 — `REPORT_DIR=Path("data/backtest_reports"); REPORT_FILE=REPORT_DIR/"walk_forward_latest.json"`. Task 49 structured report path preserved.
+  * L41 — `REPORT_SCHEMA_VERSION="1.0"`. Preserved.
+  * L460-461 — `REPORT_DIR.mkdir(parents=True, exist_ok=True); REPORT_FILE.write_text(json.dumps(structured_report, indent=2, ...))`. Writes the structured artifact.
+  * L480-483 — `# NEW (Task 49): DO NOT merge into ml_predictions_multi.json. / # The structured report at data/backtest_reports/walk_forward_latest.json / # is the new source-of-truth for the API route. Touching ml_predictions_multi.json / # would mutate the running app's live predictions, which is forbidden.` Task 49 rule preserved.
+  * L507 — `print(f"Saved structured report (Task 49): {REPORT_FILE}")`. Task 49 print confirmation.
+  * L482 — `print(f"ml_predictions_multi.json: NOT modified (Task 49 rule)")`. Verified.
+  * `python3 -m py_compile scripts/walk_forward_backtesting.py` → OK.
+  * Artifact `data/backtest_reports/walk_forward_latest.json` (12,109 bytes, Oct 27 10:09) intact — verified schema_version="1.0", evaluation_method="walk-forward-expanding-window", evaluation_status="completed", 5 models (XGBoost/LightGBM/CatBoost/Random Forest/Ridge Regression), ml_integrity keys present (target_construction, test_partition, per_sample_training, per_horizon_drop, realized_outcomes, walk_forward_methodology).
+
+- /home/z/my-project/scripts/backtest_all_models.py (688 lines) — separate clean walk-forward harness, does NOT share helpers with walk_forward_backtesting.py.
+  * Self-contained: defines its own `load_prices` (L207), `add_features` (L233), `run_backtest` (L319), `leak_test` (L545), `build_report` (L480).
+  * No `import walk_forward` or `from walk_forward_backtesting` statements (verified by grep — 0 matches).
+  * Has its own walk-forward engine with `source_of_truth: True` and `walk_forward_purged` methodology (L490-499).
+  * Has a built-in `leak_test` (L545-578) that runs steps twice (full data vs truncated-after-cutoff+60d) and asserts no per-step score change — a more rigorous runtime leak-detection than static pattern matching.
+  * Writes to `data/backtest_report.json` (default `--out` path at L587) — separate from walk_forward_backtesting.py's `data/backtest_reports/walk_forward_latest.json`. Two separate artifacts, two separate harnesses, no shared helpers.
+
+Stage Summary:
+- scripts/train_cl2_tier.py — Confirmed leakage: LEAKY_SPLIT at L694-704 (`def purged_stock_folds(stocks, k=3)`) + L795-796 (use) + L798-824 (OOF loop); LEAKY_ENSEMBLE at L843-886 (logistic meta + decile-binning calibration on leaky OOF); SUBTLE_TRAIN_ON_TEST at L826-841 (final 7 base models trained on ALL data including test bars — additional training-time leak, only implicitly acknowledged in Phase 4's ml_integrity dict). Per-stock 80/20 backtest at L1106-1177 (sp = int(n*0.8) at L1111) is HARMLESS_OTHER at signal-application level (per-bar inference via predict_proba_safe + realized P&L via simulate_exit_pnl on actual future bars — NEITHER Pattern #10 NOR Pattern #11). Recommended minimal fix preserving interface: replace `purged_stock_folds(syms, k=3)` at L796 with `walk_forward_train(X, y, syms, n_folds=5)` (audit_cg_model.py L445 — drop-in-compatible signature returning `(final_models, final_scalers, oof)`); regenerate OOF at L798-824; retrain meta+decile at L843-886 on corrected OOF; optionally retrain final_models at L826-841 on TRAIN-only (shrinks live-inference training data — opt-in). INFINITESIMAL external interface impact (same dict shapes + same model names + same JSON structure + same per-stock prediction record format). ARTIFACT INVALIDATION: YES (retrain CL-2 artifacts).
+- scripts/train_cg_model.py — Confirmed leakage: LEAKY_SPLIT at L451 (uses `purged_stock_folds(syms, k=5)` imported from train_cl2_tier at L120-134); LEAKY_ENSEMBLE at L496-528 (probability-averaging + decile calibration at L512-522 on leaky OOF); SUBTLE_TRAIN_ON_TEST at L479-494 (final 2 base models on ALL data). Per-stock 80/20 backtest at L725 HARMLESS_OTHER. Recommended minimal fix preserving interface: same as train_cl2_tier (replace L451 with walk_forward_train n_folds=5; regenerate L453-477; rebuild L496-528 on corrected OOF). ARTIFACT INVALIDATION: YES (retrain CG-Ensemble artifacts).
+- scripts/train_pi_tier.py — Confirmed leakage: LEAKY_SPLIT at L204 (uses `purged_stock_folds(syms, k=3)` imported from train_cl2_tier at L76-85); LEAKY_ENSEMBLE at L256-298 (logistic meta at L266-267 + decile calibration at L274-285 on leaky OOF); SUBTLE_TRAIN_ON_TEST at L236-254 (final 4 base models on ALL data; note LinearRegression path uses y_lin continuous target). Per-stock 80/20 backtest at L496 HARMLESS_OTHER. Recommended minimal fix preserving interface: same as train_cl2_tier (replace L204 with walk_forward_train n_folds=5; regenerate L206-234; retrain L256-298 on corrected OOF; preserve y_lin handling for LinearRegression). ARTIFACT INVALIDATION: YES (retrain PI-Ensemble artifacts).
+- scripts/train_xgboost.py — Confirmed leakage: LEAKY_SPLIT minor at L222-225 (global row-index 80/20 split on date-sorted concatenated df → date-straddle); LEAKY_BACKTEST minor at L258 (test-set as early-stopping eval_set). Target construction at L162-170 ALREADY_FIXED (per-stock forward-shift + dropna, no .fillna(0)). Recommended minimal fix preserving interface: replace L222-225 with `chronological_split(df, train_frac=0.6, val_frac=0.2, purge_h=21)` (gives date-disjoint train/val/test with purge); replace L258 `eval_set=[(X_test, y_test)]` with `eval_set=[(X_val, y_val)]`. External interface preserved (same XGBoost model JSON, same per-stock prediction record, same metrics dict). ARTIFACT INVALIDATION: YES (XGBoost best_iter differs between test-eval and val-eval → different model weights).
+- scripts/train_multi_models.py — Confirmed leakage: LEAKY_SPLIT minor at L178-181 (same global row-index 80/20 on date-sorted concatenated df); LEAKY_BACKTEST minor at L194 XGBoost-only (test-set as early-stopping eval). Target construction at L133-139 ALREADY_FIXED. Recommended minimal fix preserving interface: replace L178-181 with chronological_split(0.6, 0.2, purge=21); change L194 to use X_val/y_val instead of X_test/y_test for XGBoost only (other 3 models HARMLESS — leave as-is). External interface preserved. ARTIFACT INVALIDATION: YES (all 4 model artifacts change slightly due to different train_df row membership after chronological_split + XGBoost best_iter differs).
+- scripts/walk_forward_backtesting.py — INTACT (Task 49 preserved, NOT MODIFIED). Verified REPORT_FILE = data/backtest_reports/walk_forward_latest.json, no merge into ml_predictions_multi.json, structured report schema 1.0, artifact present (12,109 bytes), py_compile OK.
+- scripts/backtest_all_models.py — Separate self-contained walk-forward harness. Does NOT share helpers with walk_forward_backtesting.py (no `import walk_forward` — verified by grep). Has its own `leak_test` (L545-578) — a runtime leak-detection (steps run twice on full vs truncated data; assert no per-step score change). Two separate harnesses, two separate artifacts, no shared helpers.
+
+purged_stock_folds intent question — ANSWER:
+The `purged_stock_folds` function (defined at train_cl2_tier.py L694-704, imported by train_cg_model.py L451 and train_pi_tier.py L204) is MISLABELED. Its docstring/comment claims "Purged time-ordered cross-validation" + "Purge gap = LABEL_HORIZON bars at the boundary", but the IMPLEMENTATION just sorts symbols alphabetically and slices them into K folds BY SYMBOL. NO time-purge is applied — the "purge" is purely nominal. The actual behavior is CROSS-SECTIONAL (by-symbol) CV — each stock goes entirely into one fold; train and val partitions share the same calendar dates across different (correlated) stocks. As an UNSEEN-STOCK generalization evaluation, this would be legitimate IF LABELED AS SUCH — but the script does NOT label it as unseen-stock CV; it presents the OOF predictions as if they were a chronological OOS evaluation (the meta is trained on these OOF, the meta AUC is reported as "Meta-model OOS AUC", the decile calibration map is presented as a calibration curve on "OOS predictions"). This is being USED as a chronological forecasting evaluation (LEAKY_SPLIT) — not as a labeled unseen-stock generalization study. The Phase 4 audit's classification (LEAKY_SPLIT) is correct. Two possible fixes: (A) Replace with `walk_forward_train` (audit_cg_model.py L445 — row-index chronological walk-forward CV; recommended — preserves the "OOS AUC" + "calibration curve" framing as legitimate time-OOS). (B) Relabel as "unseen-stock generalization CV" and stop presenting the meta AUC / decile calibration as time-OOS (would require renaming variables + updating ml_integrity dict + updating the UI labels — more invasive). Option (A) is recommended.
+
+Per-stock 80/20 chronological test slice (HARMLESS_OTHER) verification — ANSWER:
+YES, leak-free at the signal-application level (Phase 4 subagent was correct). All 3 ensemble scripts (train_cl2_tier L1106+, train_cg_model L707+, train_pi_tier L478+) use per-stock 80/20 chronological split (`sp = int(n * 0.8)`) + PER-BAR inference (`predict_proba_safe(m, feat_batch, scaler)` for each base model on each holdout bar) + realized P&L (`simulate_exit_pnl`/`simulate_cg_exit`/`simulate_exit_pnl` on actual future high/low/close bars). NEITHER Pattern #10 (latest-signal replay — they do NOT use a stored latest per-stock signal applied to every historical test row) NOR Pattern #11 (predicted-as-realized — they do NOT compute winRate from `p.get('avgReturn', 0) > 0`; they simulate actual exit outcomes on real future bars). The SUBTLE model-weights-level leak (final_models trained on ALL data including test bars) is a SEPARATE training-time concern, not a signal-application concern; Phase 4's ml_integrity dict acknowledges this implicitly via "the leak in the backtest comes from the TRAINED model weights" but does not explicitly call out that the final base models trained at L826-841 / L479-494 / L236-254 use ALL data (including the test bars) — this is an ADDITIONAL finding (call it SUBTLE_TRAIN_ON_TEST) that warrants explicit documentation in the Phase-A follow-up fix.
+
+Artifact invalidation summary (which fixes require retraining):
+- ALL 5 scripts' recommended fixes REQUIRE RETRAINING existing model artifacts (changing CV / split / eval_set changes model weights → regenerated JSON entries in ml_predictions_multi.json for the affected models + regenerated calib.pkl files for the 3 ensemble scripts).
+- train_cl2_tier.py: retrain CL-2 artifacts (7 base models + meta + calib.pkl + cl2_metadata).
+- train_cg_model.py: retrain CG-Ensemble artifacts (2 base models + cg_calib + cg_metadata).
+- train_pi_tier.py: retrain PI-Ensemble artifacts (4 base models + meta + pi_calib + pi_metadata).
+- train_xgboost.py: retrain XGBoost artifact (model JSON + per-stock predictions under `models["XGBoost"]`).
+- train_multi_models.py: retrain all 4 classical artifacts (XGBoost/LightGBM/CatBoost/RandomForest model JSONs + per-stock predictions under `models[*]`).
+- ml_predictions_multi.json (currently 14,722,716 bytes dated 2026-10-26 13:30) would be regenerated for the affected keys if/when the user chooses to apply the Phase-A follow-up fix. The legacy artifact data/walk_forward_backtesting.json (Task 49 legacy output) and data/backtest_reports/walk_forward_latest.json (Task 49 structured report) are SEPARATE — they would NOT need to be regenerated (they're produced by walk_forward_backtesting.py, which is independent of the 5 audited scripts).
+
+Safe-to-apply-without-retraining fixes: NONE. All 5 scripts' recommended fixes change either the training data partition (CV/split) or the early-stopping eval_set — both of which change model weights. No "cosmetic-only" fix exists that would address the leak without retraining.
+
+Surprises discovered:
+1. The `purged_stock_folds` function is MISLABELED — its docstring + comment claim "purged time-ordered cross-validation" + "Purge gap = LABEL_HORIZON bars at the boundary", but the actual implementation just sorts symbols alphabetically and slices them into K folds BY SYMBOL with NO time-purge applied. The "purge" is purely nominal — there is no time-gap or row-purge at any boundary. This is a documentation lie that masks the leak.
+2. The `final_models` in train_cl2_tier (L826-841), train_cg_model (L479-494), and train_pi_tier (L236-254) are trained on ALL data including the per-stock 80/20 backtest's test bars — because `build_training_set` iterates `for t in range(20, n - LABEL_HORIZON)` per stock, which overlaps with the backtest's `bar_indices = list(range(sp, n - 5, 5))` where `sp = 0.8*n`. This is a SUBTLE_TRAIN_ON_TEST leak at the model-weights level — separate from Pattern #10/#11 (signal-application) and separate from the by-symbol CV leak (LEAKY_SPLIT/LEAKY_ENSEMBLE in the meta-OOF). Phase 4's ml_integrity dict acknowledges it implicitly via "the leak comes from the TRAINED model weights" but does NOT explicitly call out the train-on-all-data issue. This warrants explicit documentation as a 3rd follow-up item in the Phase-A fix.
+3. audit_cg_model.py provides a working `walk_forward_train(X, y, syms, n_folds=5)` reference implementation (L445-507) that is drop-in-compatible with the leaky `purged_stock_folds` pattern (returns `(final_models, final_scalers, oof_predictions)` — same shapes as the existing leaky code's outputs). Phase 4's ml_integrity dict in all 3 ensemble scripts already points to it as the fix pattern — but the fix has NOT been applied yet (the leaky `purged_stock_folds` is still in use in production).
+4. backtest_all_models.py has its own `leak_test` (L545-578) that runs steps twice (full data vs truncated-after-cutoff+60d) and asserts no per-step score change — a runtime lookahead-leak detection that is more rigorous than the static pattern-matching approach used in the Phase 1-4 audits. This pattern could be adopted as a verification harness for any Phase-A fix.
+5. backtest_all_models.py and walk_forward_backtesting.py are TWO SEPARATE walk-forward harnesses that do NOT share helpers (no `import walk_forward` statement; each defines its own `add_features`/`load_prices`/`run_backtest`). backtest_all_models.py writes `data/backtest_report.json` (default --out path); walk_forward_backtesting.py writes `data/backtest_reports/walk_forward_latest.json` + the legacy `data/walk_forward_backtesting.json`. They have overlapping but distinct feature-engineering implementations — a future consolidation opportunity, but NOT a leak (both are leak-free walk-forward engines; they just serve different consumers — backtest_all_models.py for CLI/regression testing, walk_forward_backtesting.py for the API route /api/backtest/walk-forward consumed by the UI's Backtesting Report modal).
+
+Confirmation that NO source files were modified: YES — this was a READ-ONLY audit. No `Edit`/`Write` tool calls were made to any .py / .ts / .tsx / .json file. Only the worklog append above + `python3 -m py_compile scripts/walk_forward_backtesting.py` (a no-side-effect syntax check) + a python3 one-liner reading the JSON artifact (no writes).
+Confirmation that data/ml_predictions_multi.json was not modified: YES — 14,722,716 bytes dated Oct 26 13:30 (verified unchanged).
+Confirmation that data/backtest_reports/walk_forward_latest.json was not modified: YES — 12,109 bytes dated Oct 27 10:09 (verified unchanged).
+Confirmation that no GitHub push or remote modification was performed: YES — no `git push` or `git commit` issued. Only the worklog append.
+Confirmation that the dev server (port 3000) was untouched: YES — no curl/requests to port 3000 issued; no edits to source files.
+Confirmation that no test code was written: YES — only the worklog append + py_compile + json.load (read-only).
+
+---
+Task ID: 50 (Resolve remaining training leakage in 5 scripts — Task 48 follow-up)
+Agent: main (orchestrator)
+Task: Resolve the remaining confirmed training leakage in scripts/train_cl2_tier.py + train_cg_model.py + train_pi_tier.py + train_xgboost.py + train_multi_models.py (Task 48's Phase 4 follow-up list). Verify changes.
+
+PHASE 1 — Audit (subagent PHASE-1-AUDIT-5, worklog appended earlier):
+- Read worklog Task A-FINAL + B-AUDIT + A-9-SCRIPTS + PHASE-4-AUDIT + PHASE-1-2-FIXES + 48 + 49 to confirm exact leakage patterns in the 5 scripts.
+- Inspected all target/split/scaler/CV/training/prediction/evaluation paths.
+
+Per-script confirmed leakage (5 scripts):
+1. train_cl2_tier.py:
+   - L694-704 `purged_stock_folds` — MISLABELED: docstring claimed "Purged time-ordered CV" + "Purge gap = LABEL_HORIZON bars at the boundary" but the implementation just slices symbols into K folds BY SYMBOL with NO time-purge. The "purge" was purely nominal — a documentation lie masking the leak. Classification: LEAKY_SPLIT (as chronological forecasting — leaky; legitimate as unseen-stock generalization if relabeled).
+   - L798-824 OOF loop using by-symbol CV — produces OOF for ALL train_df rows (which includes the backtest's test bars per stock — see below).
+   - L826-841 `final_models` trained on ALL data (X = train_df[FC]) — SUBTLE_TRAIN_ON_TEST: overlaps with backtest_cl2's per-stock 80/20 test slice (sp = int(n * 0.8) per stock).
+   - L843-886 logistic meta + decile-binning calibration on the by-symbol OOF — LEAKY_ENSEMBLE (inherits the by-symbol CV's mislabel as chronological OOS).
+   - L1106-1177 backtest_cl2 per-stock 80/20 test slice — HARMLESS at signal-application level (per-bar inference via predict_proba_safe + realized P&L via simulate_exit_pnl — neither Pattern #10 nor #11). BUT the test bars WERE in `final_models` training data → the "OOS" test was actually in-sample. Fixed by build_training_set change below.
+
+2. train_cg_model.py:
+   - L371 inline `for t in range(20, n - CG_HORIZON)` in build_cg_training_set — same SUBTLE_TRAIN_ON_TEST leak (overlaps with backtest_cg's per-stock 80/20 test slice).
+   - L460-462 `folds = purged_stock_folds(syms, k=5)` (imported from train_cl2_tier) — same MISLABEL.
+   - L521-528 meta + decile calibration on by-symbol OOF — same LEAKY_ENSEMBLE.
+   - L707-744 backtest_cg per-stock 80/20 — HARMLESS at signal-application level.
+
+3. train_pi_tier.py:
+   - L85 IMPORTS `build_training_set` + `purged_stock_folds` from train_cl2_tier — inherits BOTH leaks. The build_training_set fix in train_cl2_tier automatically fixes train_pi_tier.
+   - L202-204 `folds = purged_stock_folds(syms, k=3)` — same MISLABEL.
+   - L266-285 logistic meta + decile-binning calibration on by-symbol OOF — same LEAKY_ENSEMBLE.
+   - L478-512 backtest_pi per-stock 80/20 — HARMLESS at signal-application level.
+
+4. train_xgboost.py:
+   - L162-170 add_labels — ALREADY_FIXED (per-stock forward-shift + dropna, no .fillna(0)).
+   - L222-225 `split_idx = int(len(df) * 0.8)` on date-sorted concatenated df — LEAKY_SPLIT minor (a single date could straddle the boundary; + per-stock purge was missing).
+   - L258 `model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)` — LEAKY_BACKTEST mild (XGBoost early-stopping rounds tuned on the final test set = HP selection on test).
+
+5. train_multi_models.py:
+   - L133-139 add_labels — ALREADY_FIXED.
+   - L178-181 `split_idx = int(len(df) * 0.8)` on date-sorted concatenated df — LEAKY_SPLIT minor (same as train_xgboost).
+   - L194 `model.fit(X_train, y_train, X_test, y_test) if model_name == "XGBoost" else model.fit(X_train, y_train)` — LEAKY_BACKTEST mild (XGBoost-only early-stopping on test; LightGBM/CatBoost/RandomForest HARMLESS).
+
+PHASE 2 — Corrections applied:
+
+Phase 2a — train_xgboost.py + train_multi_models.py (simple fixes):
+- Added `from ml_integrity import chronological_split` import in both.
+- Replaced `split_idx = int(len(df) * 0.8); train_df = df.iloc[:split_idx]; test_df = df.iloc[split_idx:]` with `train_df, val_df, test_df = chronological_split(df, train_frac=0.60, val_frac=0.20, purge_h=FORWARD_WINDOW)` — gives 60/20/20 date-disjoint split + per-stock purge of FORWARD_WINDOW rows at each boundary. The VAL partition is now used for XGBoost early-stopping; TEST is held out entirely for the final evaluation.
+- Replaced `model.fit(X_train, y_train, eval_set=[(X_test, y_test)])` with `model.fit(X_train, y_train, eval_set=[(X_val, y_val)])` (XGBoost only — LightGBM/CatBoost/RandomForest had no early-stopping so unchanged).
+
+Phase 2b — train_cl2_tier.py + train_cg_model.py + train_pi_tier.py (complex fixes):
+- train_cl2_tier.py `build_training_set` L627: changed `for t in range(20, n - LABEL_HORIZON):` to:
+  ```python
+  train_end_t = int(n * 0.8) - LABEL_HORIZON  # = backtest sp - LABEL_HORIZON (purge)
+  if train_end_t < 21: continue
+  for t in range(20, train_end_t):
+  ```
+  This EXCLUDES the backtest's per-stock test bars (the last 20% per stock, used by backtest_cl2's `sp = int(n * 0.8)`) + purges LABEL_HORIZON rows at the boundary so a training row's 5-bar triple-barrier label window doesn't extend into the test partition. Fixes the SUBTLE_TRAIN_ON_TEST leak identified by Phase 1 audit (`final_models` was trained on ALL data overlapping with backtest's test bars).
+- train_cg_model.py `build_cg_training_set` L371: same pattern (`train_end_t = int(n * 0.8) - CG_HORIZON`).
+- train_pi_tier.py: inherits the build_training_set fix automatically (imports it from train_cl2_tier at L85).
+- All 3 scripts: relabeled `purged_stock_folds` docstring honestly — was "Purged time-ordered CV" / "Purge gap = LABEL_HORIZON bars at the boundary" (MISLABEL — no time-purge applied); now "BY-SYMBOL K-fold CV for unseen-stock generalization evaluation. NOT chronological forecasting — for that, use walk_forward_train() from scripts/audit_cg_model.py or scripts/walk_forward_backtesting.py."
+- train_cl2_tier.py L888 + train_pi_tier.py L276: relabeled `print(f"  Meta-model OOS AUC: {auc:.4f}")` → `print(f"  Meta-model unseen-stock generalization AUC: {auc:.4f}")` — makes explicit that the by-symbol CV OOF AUC is unseen-stock generalization, NOT chronological OOS.
+- train_cg_model.py L526: relabeled `print(f"  CG-Ensemble OOS AUC: {auc:.4f}")` → `print(f"  CG-Ensemble unseen-stock generalization AUC: {auc:.4f}")`.
+- train_cg_model.py L1072: relabeled the runtime print `print(f"  CV: 5-fold walk-forward with {CG_HORIZON}-bar purge gap")` → `print(f"  CV: 5-fold by-symbol (unseen-stock generalization) — NOT chronological walk-forward")` — was a misleading runtime banner.
+
+Rationale: the user's Phase 2 guidance says "A by-symbol split may answer a question about unseen-stock generalization, but it must not be presented as a substitute for chronological forecasting evaluation. Use the appropriate evaluation methodology for the intended prediction task." The by-symbol CV is RELABELED (not removed) — it still produces OOF for the meta/calibration, but the resulting AUC is now correctly labeled as "unseen-stock generalization" rather than "OOS" (which implies chronological). The genuine chronological walk-forward evaluation lives in scripts/walk_forward_backtesting.py (Task 49) — the user explicitly said "Do not introduce another independent walk-forward implementation if the current evaluator can be reused safely."
+
+PHASE 3 — Existing interfaces + artifacts:
+- train_xgboost.py: model interface (XGBClassifier) + feature definitions (FEATURE_COLUMNS) + forecast horizon (FORWARD_WINDOW=21) + output JSON structure preserved. BUT the split changed from 80/20 to 60/20/20 + early-stopping moved from test to val → model weights will differ → existing artifact (model JSON + ml_predictions_multi.json's `models["XGBoost"]` predictions) is now INCOMPATIBLE — retraining required.
+- train_multi_models.py: same — all 4 classical model artifacts (XGBoost/LightGBM/CatBoost/RandomForest) require retraining.
+- train_cl2_tier.py: model interface + 7 base model constructors + meta-state structure + calib.pkl format preserved. BUT build_training_set now excludes per-stock test bars + label-maturity purge → final_models trained on less data → CL-2 artifacts (7 base models + meta + calib.pkl + cl2_metadata) require retraining.
+- train_cg_model.py: CG-Ensemble artifacts (2 base models + cg_calib + cg_metadata) require retraining.
+- train_pi_tier.py: PI-Ensemble artifacts (4 base models + meta + pi_calib + pi_metadata) require retraining.
+- Did NOT retrain any models (per Phase 3: "Do not retrain all models just to test the code changes").
+- data/backtest_reports/walk_forward_latest.json (Task 49 artifact) + data/walk_forward_backtesting.json (Task 49 legacy) are produced by the independent walk_forward_backtesting.py — they do NOT need regeneration.
+
+PHASE 4 — Audit shared evaluation path:
+- scripts/walk_forward_backtesting.py: STILL INTACT (Task 49 fix preserved). Verified: L39-40 REPORT_DIR/REPORT_FILE, L41 REPORT_SCHEMA_VERSION="1.0", L460-461 writes the structured report, L480-483 comment "DO NOT merge into ml_predictions_multi.json" — Task 49 rule preserved. py_compile OK.
+- /api/backtest/walk-forward/route.ts: unchanged. `curl /api/backtest/walk-forward` → HTTP 200, body: `available:true, evaluation_status:completed, models:5, generated_at:2026-10-27T10:09:07`.
+- AiModelSignals.tsx Backtesting Report modal (Task 49): unchanged. The walk-forward section continues to display the genuine walk-forward ML results.
+- scripts/backtest_all_models.py: separate self-contained harness (writes data/backtest_report.json — different artifact). Has its own runtime `leak_test` (L545-578) that runs steps twice (full vs truncated-after-cutoff+60d) and asserts no per-step score change — more rigorous than static pattern matching. Not modified this task.
+
+PHASE 5 — Validation:
+1. ml_integrity self-test: `python3 scripts/ml_integrity.py` → ALL 10 assertions PASS.
+2. py_compile all 5 modified scripts: ALL OK (train_cl2_tier, train_cg_model, train_pi_tier, train_xgboost, train_multi_models).
+3. Residual-pattern re-grep on the 5 scripts:
+   - `split_idx = int(len(df) * 0.8)` — only matches in comments/docstrings/ml_integrity dict's text describing what was REPLACED. NO active leaky row-split.
+   - `eval_set=[(X_test, y_test)]` — only matches in comments/docstrings. Active code uses `eval_set=[(X_val, y_val)]`.
+   - `for t in range(20, n - LABEL_HORIZON)` / `for t in range(20, n - CG_HORIZON)` — ZERO matches (replaced with `for t in range(20, train_end_t)` where `train_end_t = int(n * 0.8) - LABEL_HORIZON`).
+   - "Purged time-ordered" / "purge gap" — only matches in the corrected docstrings explaining what the MISLABEL was (e.g., train_cl2_tier.py L706 "# 'Purged time-ordered CV' + 'Purge gap = LABEL_HORIZON bars at the boundary' — that was a MISLABEL"). NO active misleading docstrings.
+4. Source verification:
+   - `train_end_t = int(n * 0.8) - LABEL_HORIZON` present at train_cl2_tier.py L635 + train_cg_model.py L379.
+   - `chronological_split` used at train_xgboost.py L232 + train_multi_models.py L188.
+   - `eval_set=[(X_val, y_val)]` active at train_xgboost.py L275 + train_multi_models.py L209.
+   - "unseen-stock generalization AUC" relabeled at train_cl2_tier.py L888 + train_cg_model.py L526 + train_pi_tier.py L276.
+5. Server health: `curl http://127.0.0.1:3000/` → HTTP 200; `curl /api/backtest/walk-forward` → HTTP 200. The Task 49 walk-forward report artifact remains intact (12,109 bytes, Oct 27 10:09).
+6. ml_predictions_multi.json: UNCHANGED — 14,722,716 bytes, Oct 26 13:30 (verified after every edit).
+7. Small data-loading run on `build_training_set` was BLOCKED by the function's own FC list (which includes `return_5d` not produced by the canonical `add_features`). The fix was verified by source inspection instead — see #4 above.
+
+Files modified (5):
+1. scripts/train_xgboost.py — added `from ml_integrity import chronological_split`; replaced L222-225 80/20 row-split with `chronological_split(df, train_frac=0.6, val_frac=0.2, purge_h=FORWARD_WINDOW)`; replaced L258 `eval_set=[(X_test, y_test)]` with `eval_set=[(X_val, y_val)]`.
+2. scripts/train_multi_models.py — same pattern (L178-181 split + L194 XGBoost early-stopping on test → val).
+3. scripts/train_cl2_tier.py — `build_training_set` L627 capped per-stock training range at `int(0.8*n) - LABEL_HORIZON` (excludes backtest test bars + purges label-maturity); `purged_stock_folds` docstring relabeled honestly (BY-SYMBOL CV for unseen-stock generalization, NOT chronological); L796 inline comment relabeled; L888 print "Meta-model OOS AUC" → "Meta-model unseen-stock generalization AUC".
+4. scripts/train_cg_model.py — `build_cg_training_set` L371 same cap; L460-466 comment relabeled; L524 print "CG-Ensemble OOS AUC" → "CG-Ensemble unseen-stock generalization AUC"; L1072 runtime banner relabeled.
+5. scripts/train_pi_tier.py — inherits `build_training_set` fix from train_cl2_tier (no source change needed for build); L202-206 comment relabeled; L273 print "Meta-model OOS AUC" → "Meta-model unseen-stock generalization AUC".
+
+Which issues were already fixed and which remain unresolved:
+- ALREADY FIXED (prior tasks): target construction (no .fillna(0)) in all 5 scripts — verified by Phase 1 audit.
+- FIXED THIS TASK (Task 50):
+  • train_xgboost.py LEAKY_SPLIT minor (date-straddle) + LEAKY_BACKTEST mild (test-set early-stopping) — FIXED via chronological_split + eval_set on val.
+  • train_multi_models.py LEAKY_SPLIT minor + LEAKY_BACKTEST mild (XGBoost only) — FIXED same way.
+  • train_cl2_tier.py + train_cg_model.py SUBTLE_TRAIN_ON_TEST (`final_models` trained on ALL data overlapping with backtest test bars) — FIXED via build_training_set cap.
+  • train_pi_tier.py SUBTLE_TRAIN_ON_TEST — FIXED via inherited build_training_set.
+  • All 3 ensemble scripts' `purged_stock_folds` MISLABEL ("Purged time-ordered CV" + "Purge gap" with no purge) — FIXED via honest relabeling as BY-SYMBOL CV for unseen-stock generalization.
+  • All 3 ensemble scripts' "Meta-model OOS AUC" / "CG-Ensemble OOS AUC" mislabel — FIXED via relabeling as "unseen-stock generalization AUC".
+- REMAINS UNRESOLVED (deliberate, per user's "smallest safe changes" guidance):
+  • The by-symbol CV itself is NOT replaced with chronological walk-forward CV. The user explicitly said "A by-symbol split may answer a question about unseen-stock generalization, but it must not be presented as a substitute for chronological forecasting evaluation." The relabeling makes the by-symbol CV honest for unseen-stock generalization; for genuine chronological forecasting evaluation, the user is directed to scripts/walk_forward_backtesting.py (Task 49). Replacing the by-symbol CV with `walk_forward_train` (from scripts/audit_cg_model.py L445-507) is a possible future follow-up — but it would require regenerating the meta/calibration OOF + retraining the meta + decile calibration, which is invasive. The current relabel + build_training_set cap is the smallest safe fix that resolves the SUBTLE_TRAIN_ON_TEST leak + the MISLABEL.
+  • The OOF loop in train_cl2_tier/train_cg_model/train_pi_tier still produces OOF for the entire train_df (which is now train-only after the build_training_set fix). The OOF is used to train the logistic meta + decile calibration. This is honest for unseen-stock generalization (the by-symbol CV splits stocks, not dates) — but the meta+calibration's "AUC" should not be interpreted as a time-OOS AUC. The relabeling makes this explicit.
+  • The 5 scripts' model artifacts require retraining (see Phase 3 above). NOT retrained this task.
+
+Integrity checks + syntax commands executed:
+1. `python3 scripts/ml_integrity.py` → "All ml_integrity self-tests PASSED." (10/10)
+2. `python3 -m py_compile scripts/train_cl2_tier.py` → OK
+3. `python3 -m py_compile scripts/train_cg_model.py` → OK
+4. `python3 -m py_compile scripts/train_pi_tier.py` → OK
+5. `python3 -m py_compile scripts/train_xgboost.py` → OK
+6. `python3 -m py_compile scripts/train_multi_models.py` → OK
+7. `python3 -m py_compile scripts/walk_forward_backtesting.py` → OK (Task 49 unchanged)
+8. Residual-pattern re-grep on the 5 scripts → clean (only comment/docstring/ml_integrity dict's text matches remain).
+9. `curl --max-time 5 http://127.0.0.1:3000/` → HTTP 200
+10. `curl --max-time 5 http://127.0.0.1:3000/api/backtest/walk-forward` → HTTP 200 (Task 49 API still serves the report)
+
+Actual data-loading or training results: NONE — per Phase 3 ("Do not retrain all models just to test the code changes"). A small data-loading run on `build_training_set` was attempted but blocked by the function's own FC list (includes `return_5d` not produced by the canonical `add_features`). Source verification used instead — confirmed `train_end_t = int(n * 0.8) - LABEL_HORIZON` present + the for-loop range is `range(20, train_end_t)`.
+
+Existing artifacts that require retraining:
+- train_xgboost.py: XGBoost model JSON + ml_predictions_multi.json's `models["XGBoost"]` predictions.
+- train_multi_models.py: all 4 classical model artifacts (XGBoost/LightGBM/CatBoost/RandomForest).
+- train_cl2_tier.py: CL-2 artifacts (7 base models + meta + calib.pkl + cl2_metadata).
+- train_cg_model.py: CG-Ensemble artifacts (2 base models + cg_calib + cg_metadata).
+- train_pi_tier.py: PI-Ensemble artifacts (4 base models + meta + pi_calib + pi_metadata).
+- data/backtest_reports/walk_forward_latest.json + data/walk_forward_backtesting.json (Task 49 artifacts) do NOT need regeneration (produced by walk_forward_backtesting.py which is unchanged).
+
+Confirmation that no GitHub push occurred: YES — no `git push` or `git commit` issued. Only local file edits + worklog appends. The dev server (port 3000) was untouched throughout (HTTP 200 verified after every edit).
+
+Confirmation that the application prediction file was not modified: YES — `data/ml_predictions_multi.json` UNCHANGED: 14,722,716 bytes, Oct 26 13:30, verified after every edit. The 5 modified scripts only WRITE to ml_predictions_multi.json when actually executed; I did NOT execute any of them (per Phase 5's "do not launch a full-universe job" guidance).
+
+Honest scope statement: this task did NOT eliminate ALL training leakage in the repository. Specifically:
+- The by-symbol CV in the 3 ensemble scripts is RELABELED (honest) but NOT replaced with chronological walk-forward CV. For genuine chronological forecasting evaluation, the user is directed to scripts/walk_forward_backtesting.py (Task 49).
+- The 5 modified scripts' model artifacts are now INCOMPATIBLE with the corrected training data partition (the split changed from 80/20 to 60/20/20 for train_xgboost/train_multi_models; the build_training_set cap excludes per-stock test bars for train_cl2_tier/train_cg_model/train_pi_tier). The artifacts must be regenerated by running the corrected scripts in a maintenance window — NOT done this task.
+- The Phase 1-4 audits identified additional scripts with LEAKY_SPLIT/SCALER/TARGET/SEQUENCE in TRAINING paths (e.g., scripts/train_all_optimized.py:244-245 random sample, scripts/train_xgboost.py:258 test early-stopping [FIXED this task], scripts/train_multi_models.py:194 XGBoost test early-stopping [FIXED this task], scripts/train_cl2_tier.py:694 by-symbol CV [RELABELED this task]). The 5 scripts in this task were Task 48's explicit Phase 4 follow-up list; other scripts' training-path leakage remains documented in worklog Task B-AUDIT's evidence table as future follow-ups.
+
