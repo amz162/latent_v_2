@@ -62,6 +62,23 @@ export interface WFReportResponse {
   evaluation_date_range?: { start: string | null; end: string | null };
   evaluated_symbols?: string[];
   universe_size?: number;
+  // Task 52: deterministic universe selector metadata + per-stock diagnostics
+  universe?: {
+    mode: "canonical8" | "pilot25" | "pilot50" | "full_db" | string;
+    criteria?: string;
+    candidate_count?: number;
+    included_count?: number;
+    excluded_count?: number;
+    exclusions?: Array<{ symbol: string; reason: string; bars: number; min_required: number }>;
+    eligible_count?: number;
+    target_count?: number;
+    min_bars_required?: number | null;
+    data_source?: string;
+  };
+  per_stock_results?: Record<string, {
+    samples_count: number;
+    models: Record<string, Record<string, any>>;
+  }>;
   forecast_horizons?: number[];
   // Task 51 Phase 5: explicit sample-count metadata
   n_eligible_samples?: number;
@@ -99,7 +116,8 @@ export interface WFReportResponse {
 const HOW_TO_GENERATE =
   "Generate the report with: python3 scripts/walk_forward_backtesting.py " +
   "(writes data/backtest_reports/walk_forward_latest.json; does NOT touch " +
-  "data/ml_predictions_multi.json).";
+  "data/ml_predictions_multi.json). Universe modes: WALK_FORWARD_UNIVERSE=" +
+  "canonical8 (default) | pilot25 | pilot50 | full_db.";
 
 function isValidReport(r: any): boolean {
   if (!r || typeof r !== "object") return false;
@@ -165,6 +183,9 @@ export async function GET() {
         ? report.evaluated_symbols
         : [],
       universe_size: report.universe_size ?? 0,
+      // Task 52: universe selector metadata + per-stock results
+      universe: report.universe ?? null,
+      per_stock_results: report.per_stock_results ?? {},
       forecast_horizons: Array.isArray(report.forecast_horizons)
         ? report.forecast_horizons
         : [],
