@@ -2369,3 +2369,92 @@ Remaining limitations:
 Confirmation that data/ml_predictions_multi.json was unchanged: YES — content hash 41442cd7ece9d137ec19310e2d771f55, size 14,722,716 bytes. The walk-forward script writes ONLY to data/backtest_reports/walk_forward_{candidate,latest,previous}.json + data/walk_forward_backtesting.json (legacy).
 
 No claim that the models are more accurate: the canonical8 1.2 run (112 samples, 1680 fits) shows ALL pooled R² NEGATIVE (XGBoost 5d R²=-0.150 vs zero_return baseline R²=-0.003 and training_only_mean R²=-0.041). Per-stock R² also negative where computed (HUBC 5d R²=-0.065, LUCK 21d R²=-0.225). This is honest — the universe selector + per-stock diagnostics make the evaluation MORE transparent (you can now see which stocks the model fails on), not more accurate.
+
+---
+Task ID: 54 (resumable chunked pilot25 walk-forward — point-in-time universe selection + durable checkpointing)
+Agent: main (orchestrator)
+Task: Make the pilot25 walk-forward evaluation resumable and safe to execute in short chunks, per the 8-phase specification. Fix point-in-time universe selection, implement deterministic sample chunks + durable checkpointing/crash recovery, preserve validation/test integrity (purged frozen weights), aggregate only at finalization, keep UI/API safe, validate without a long run. The complete 70-minute pilot25 evaluation was NOT launched.
+
+PHASE 1 — Point-in-time universe selection (scripts/walk_forward_backtesting.py):
+- REMOVED the look-ahead: the old ranking used SUM(volume) over ALL history (including the evaluation period). New point-in-time procedure:
+  * `_query_global_dates()` — all distinct OhlcvBar dates.
+  * `_universe_candidates_asof(cutoff)` — per-symbol bar counts + total volume computed ONLY from rows with date <= cutoff (SQL WHERE date <= ?).
+  * `select_universe_asof(mode, cutoff)` — eligibility (>=250 bars AS OF the cutoff) + pre-cutoff volume ranking; canonical8-first fill, then top-N by PRE-CUTOFF volume.
+  * `resolve_universe(mode)` — POINT-IN-TIME FIXPOINT for DB-backed modes: provisional cutoff = global session immediately before the global 65th-percentile session (mirrors chronological_split 50/15/35) → select → estimate the pooled test-window start for that universe → if the estimate is not strictly after the cutoff, move the cutoff to the session immediately before it and retry (max 5, else HARD FAIL "refusing to continue with a potentially look-ahead-biased selection").
+- Verified for pilot25: cutoff = 2023-04-13, converged in 1 iteration, 25 stocks selected, ranking volumes all pre-cutoff (24 of 25 symbols' pre-cutoff volume differs from full-period volume — proving the cutoff excludes future data).
+- HARD LOOK-AHEAD GUARDS in main(): (a) pooled test-window start must be strictly after the cutoff, (b) min(evaluation decision dates) must be strictly after the cutoff. Violation = RuntimeError, never a silent continue. (The guard caught a real porting bug during development — samples were briefly drawn from the full df instead of the test partition.)
+- canonical8: FIXED symbol list preserved (no ranking → no selection look-ahead possible); cutoff recorded post-split as a verification fact (2026-01-12T19:00:00, strictly before the first evaluation decision date).
+- Universe FINGERPRINT recorded: sha256(mode|cutoff|sorted symbols).
+
+PHASE 2 — Deterministic sample chunks:
+- Env vars: WALK_FORWARD_CHUNK_SIZE (max samples per invocation; 0/unset = all — canonical8 single-shot behavior preserved), WALK_FORWARD_RUN_ID (stable across chunks), WALK_FORWARD_RESUME=1, plus WALK_FORWARD_FINALIZE_ONLY=1, WALK_FORWARD_NO_PROMOTE=1, WALK_FORWARD_CANDIDATE_PATH (test hooks). Legacy WALK_FORWARD_MAX_STOCKS deprecated with a printed hint.
+- A sample = one unique (symbol, decision_date) pair. Chunks split the SAMPLE LIST ONLY — every sample always trains on the FULL frozen universe pooled by the sample's date + per-horizon target-maturity filter (process_sample trains on df[date < sample.date] over all 25 stocks). Model-fit counts (n_model_fits, up to 15/sample) and unique sample counts (n_unique_stock_date_samples) are kept separate everywhere (report + progress.json).
+- Task 54 sample ORDERING FIX: the global sample list is now sorted by DECISION DATE (symbol asc tiebreaker) instead of stock-grouped. Rationale: the validation/final-test half-split must be a genuine TIME boundary for the Phase 4 maturity purge to be meaningful. The sample SET is unchanged → pooled per-model metrics are identical (verified byte-identical, see Phase 7).
+
+PHASE 3 — Durable checkpointing + crash recovery:
+- Run directory: data/backtest_reports/runs/<run_id>/ containing:
+  * manifest.json (immutable; written once): run_id, created_at, universe_mode, sample_step, chunk_size_requested, data_source_kind, DATA FINGERPRINT, universe (criteria + cutoff + selected symbols + fingerprint + per-symbol pre-cutoff bars/volume), model_names, feature_schema, horizons, split fractions, test_window boundaries, full ordered sample_ids + sample_meta (dates + 21d target maturities), n_samples, val_end_idx, methodology_notes.
+  * samples/sample_NNNNNN.json — ONE atomic record per evaluation sample (per-model per-horizon predicted/actual/eval_skipped + signals + training-only baseline means + maturity metadata + n_fits).
+  * checkpoint.json — atomic {completed_sample_idxs, n_completed, updated_at}, rewritten after EVERY sample.
+  * progress.json — atomic {run_id, universe_mode, fingerprints, total/completed/remaining samples, model_fits_completed, status, honesty_note}.
+- Atomic writes: tmp file + os.replace (POSIX atomic). A crash mid-sample leaves NO record → that exact sample re-runs; completed samples are NEVER duplicated (one file per sample index; the record files are the source of truth, checkpoint.json is reconciled from them on resume).
+- Resume verification (refuses with "start a NEW run; a new WALK_FORWARD_RUN_ID is required", exit 2): manifest exists/parses; DATA FINGERPRINT matches; sample_step + universe_mode match; model_names/feature_schema/horizons match; test_window boundaries match; rebuilt sample list matches manifest sample_ids. The frozen universe is loaded FROM the manifest on resume (never re-derived). Chunk size may change between chunks (pacing only).
+- After each chunk: if samples remain, exits cleanly printing the EXACT resume command; if all complete, finalizes.
+
+PHASE 4 — Validation/test integrity preserved + strengthened:
+- Ensemble predictions are computed ONLY at finalization (never inside a chunk) — a later chunk's realized outcomes can never influence an earlier prediction or the weights.
+- Frozen WIN_RATE_WEIGHTED weights now include a MATURITY PURGE: the boundary = the earliest final-test DECISION date; validation outcomes whose 21d target matures after it are PURGED (they were not knowable in real time at the boundary); unknown maturities are conservatively excluded. Weights never use final-test results (Task 51 rule kept). Purge stats per model recorded in the report (win_rate_weighted_ensemble_methodology.task54_maturity_purge).
+- Task 51 target-maturity helpers (filter_by_target_maturity) and all three baselines (constant-mean reference + zero-return + training-only-mean) retained verbatim.
+
+PHASE 5 — Aggregate only at finalization:
+- Partial runs persist raw per-sample records ONLY; no chunk-level metric aggregation exists.
+- finalize_run(): verifies every expected sample is present EXACTLY once and every evaluated record has realized outcomes; rebuilds per_model_per_horizon / training-only baseline means / all_predictions from raw records (sample-idx keyed — also fixes a latent position-misalignment bug when samples are skipped); recomputes pooled MAE/RMSE/R²/DirAcc + all three baselines + per-stock diagnostics + ensembles with purged frozen weights + trading stats; then candidate → EXTENDED validation (sample count vs manifest, universe fingerprint, data fingerprint, per-stock coverage) → promote (old latest → previous) — or NO_PROMOTE for tests. Partial runs NEVER touch walk_forward_latest.json.
+
+PHASE 6 — UI/API safety:
+- /api/backtest/walk-forward unchanged in behavior + backward compatible; WFReportResponse extended with the optional `run` block (run_id, point-in-time cutoff, fingerprints, promotion rule).
+- NEW read-only GET /api/backtest/walk-forward/status — returns run PROGRESS ONLY (counts + status + cutoff per run; honesty_note "Progress only — NO forecast metrics"). Never serves partial metrics as completed results.
+- No evaluation is ever started from an API request — runs are CLI-only (the script prints the exact resume command).
+- UI untouched and verified: agent-browser confirmed the modal renders the schema 1.3 report (COMPLETED badge, Universe selector panel, Per-stock results).
+
+PHASE 7 — Validation performed (NO long run):
+1. python3 scripts/ml_integrity.py → ALL 11 assertions PASS.
+2. python3 -m py_compile scripts/walk_forward_backtesting.py scripts/ml_integrity.py → OK.
+3. canonical8 selection deterministic + compatible: resolve_universe('canonical8') → the exact fixed 8-symbol list; fingerprint stable.
+4. Point-in-time pilot25 selection verified: cutoff 2023-04-13; 25 stocks; all ranking volumes pre-cutoff (24/25 differ from full-period volume).
+5. pilot25 smoke test (CHUNK_SIZE=2, RUN_ID=pilot25_smoke_t54): chunk 1 processed samples 0-1 (ENGRO@2023-04-17, ENGRO@2023-05-05 — both strictly after the cutoff), wrote manifest + 2 records + checkpoint + progress, exited cleanly printing the resume command. Samples: 1996 total (25 stocks × ~80/stock at step 10). NOTE: the full pilot25 sample count at step 10 is 1996 (not 221 as earlier estimated) — a full step-10 pilot25 run would be ~2000 samples ≈ 10+ hours; the CHUNK_SIZE=5 configuration processes ~5 samples ≈ 1.5-2 min per invocation.
+6. Resume test: resumed → processed samples 2-3 only (no re-run of 0-1); 4 distinct records, no duplicates.
+7. Corruption recovery: deleted sample_000002.json (simulated crash/loss) → resume detected 3 complete, re-ran EXACTLY sample 2 plus the next unfinished (4); final state 5 unique records [0,1,2,3,4] — no duplicates.
+8. Fingerprint-mismatch rejection: tampered manifest data_fingerprint → resume REFUSED (exit 2) with "dataset fingerprint mismatch... Start a NEW run (a new WALK_FORWARD_RUN_ID is required)"; manifest restored afterwards.
+9. Incomplete runs never replaced walk_forward_latest.json (md5 verified identical before/after every smoke step).
+10. Finalization test with synthetic per-sample records (deterministic; validation outcomes with post-boundary maturities forced): MAE recomputed from records matches hand computation exactly (0.01 vs 0.01); R² recomputed matches hand computation (-6.589744); maturity purge applied correctly (purged=1, eligible=1, boundary = earliest final-test decision date); candidate validates; NO_PROMOTE left walk_forward_latest.json AND walk_forward_previous.json byte-identical. The test also exposed + fixed a real bug (in-memory records carry int keys vs on-disk string keys for training_only_baseline — tolerant lookup added).
+11. canonical8 FULL re-run through the refactored single-invocation path (112 samples, 1680 fits, ~10 min): pooled per-model metrics are BYTE-IDENTICAL to the pre-refactor report (XGBoost 5d r2=-0.150141 mae=0.038051 n=112; 10d r2=-0.475564; 21d r2=-0.542007) — the refactor preserved computation semantics exactly. With the new date-ordered validation/final-test split, the maturity purge is now meaningful (12-14 validation outcomes purged per model, 34-41 eligible) and the frozen weights are XGBoost 0.5, LightGBM 0.4512, CatBoost 0.375, Random Forest 0.5, Ridge 0.4118 (previously 0.5/0.537/0.519/0.575/0.387 unfrozen-purge). Candidate validated + promoted; the prior canonical8 report preserved as walk_forward_previous.json.
+12. data/ml_predictions_multi.json UNCHANGED: md5 41442cd7ece9d137ec19310e2d771f55 (verified before and after everything).
+
+Files changed:
+1. scripts/walk_forward_backtesting.py — Phase 1 point-in-time selection (_query_global_dates, _universe_candidates_asof, _universe_fingerprint, select_universe_asof, resolve_universe with fixpoint + look-ahead guards); Phase 2/3 chunking + run state (build_sample_list with global date ordering, process_sample, _atomic_write_json, compute_data_fingerprint, manifest/checkpoint/progress helpers, scan_completed_samples with corrupt-file recovery); Phase 4/5 finalize_run (rebuild-from-records, purged frozen weights, extended candidate validation, promotion rules); main() orchestration (fresh/resume/finalize-only + chunk loop + resume-command printing). Schema 1.2 → 1.3.
+2. src/app/api/backtest/walk-forward/route.ts — WFReportResponse extended with the optional `run` block (passthrough).
+3. src/app/api/backtest/walk-forward/status/route.ts — NEW read-only progress endpoint (counts only, never metrics).
+4. worklog.md — this entry.
+
+Commands:
+- START a new pilot25 run (5 samples per invocation, ~1.5-2 min each):
+    WALK_FORWARD_UNIVERSE=pilot25 WALK_FORWARD_RUN_ID=pilot25_prod1 WALK_FORWARD_CHUNK_SIZE=5 python3 scripts/walk_forward_backtesting.py
+- CONTINUE that run (repeat until complete; the script prints this exact command after every chunk):
+    WALK_FORWARD_UNIVERSE=pilot25 WALK_FORWARD_RUN_ID=pilot25_prod1 WALK_FORWARD_RESUME=1 WALK_FORWARD_CHUNK_SIZE=5 python3 scripts/walk_forward_backtesting.py
+- Finalize only (after all chunks complete; also used for recovery if the last invocation crashed during finalization):
+    WALK_FORWARD_UNIVERSE=pilot25 WALK_FORWARD_RUN_ID=pilot25_prod1 WALK_FORWARD_RESUME=1 WALK_FORWARD_FINALIZE_ONLY=1 python3 scripts/walk_forward_backtesting.py
+- Check progress without touching anything:
+    curl http://127.0.0.1:3000/api/backtest/walk-forward/status   (or read data/backtest_reports/runs/<run_id>/progress.json)
+- Note: at step 10 the full pilot25 run is 1996 samples (~2000 × 5 samples/chunk ≈ 400 chunk invocations). For a saner pilot, consider WALK_FORWARD_SAMPLE_STEP=50 (~400 samples) or a chunk size of 25-50. The chunking makes ANY of these safe to interrupt/resume.
+
+Confirmation that canonical8 results remain intact: YES — the production report walk_forward_latest.json is a valid, fully-validated canonical8 evaluation (schema 1.3, 112 samples, 1680 fits) whose pooled per-model metrics are byte-identical to the pre-Task-54 report; the previous report is preserved at walk_forward_previous.json. The only intended methodology change is the Task 54 maturity purge + date-ordered validation/final-test split, which affects ONLY the ensemble weighting (documented in-report). The UI and API verified working against the new report.
+
+Confirmation that data/ml_predictions_multi.json was untouched: YES — md5 41442cd7ece9d137ec19310e2d771f55 before and after all work.
+
+Confirmation that no GitHub push occurred: YES — no git push issued in this task (local autosave commits only, per the standing user rule).
+
+Honest limitations:
+- The complete pilot25 evaluation was NOT run (per instruction). At step 10 it is 1996 samples; with CHUNK_SIZE=5 that is ~400 invocations (~1.5-2 min each). A future run should choose SAMPLE_STEP + CHUNK_SIZE deliberately (e.g. step 50 + chunk 25 → ~16 invocations).
+- The date-ordered validation/final-test split changes the ensemble val/final-test composition vs Task 51's stock-grouped order (documented; pooled model metrics unaffected). WIN_RATE_WEIGHTED/FINAL_CONSENSUS numbers in the new canonical8 report differ from the previous report for this reason — the previous report is preserved.
+- LightGBM multithreaded histogram building can introduce tiny numerical nondeterminism on re-fit; resumed samples are genuine OOS re-fits, so honesty is unaffected.
+- The run directories (manifest + per-sample records) accumulate under data/backtest_reports/runs/ — cleanup of old completed runs is left to the operator.

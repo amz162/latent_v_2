@@ -1,0 +1,874 @@
+{
+  "run_id": "canonical8_20261027T222759Z_7a037ce7",
+  "created_at": "2026-10-27T22:27:59.502632+00:00",
+  "script_task": "task54",
+  "universe_mode": "canonical8",
+  "sample_step": 10,
+  "chunk_size_requested": 0,
+  "data_source_kind": "csv",
+  "data_fingerprint": "862d962f9173d4f9609c1a0f65fcb035f4cf802c4f5bb545feb71f15a30e6bf9",
+  "universe": {
+    "mode": "canonical8",
+    "criteria": "hardcoded canonical 8 PSX stocks (CSV-backed, most-liquid historically)",
+    "selection_method": "fixed_symbol_list (no volume ranking \u2014 no selection look-ahead possible)",
+    "selection_cutoff": "2026-01-12T19:00:00",
+    "candidate_count": 8,
+    "eligible_count": 8,
+    "included_count": 8,
+    "excluded_count": 0,
+    "exclusions": [],
+    "target_count": 8,
+    "min_bars_required": null,
+    "data_source": "data/ohlcv/*.csv",
+    "fingerprint": "7a037ce7d86fab975b53bf68063d8d07b71e762db7649180241abdcc99225084",
+    "selection_cutoff_epoch": 1768244400000,
+    "first_evaluation_decision_date": 1768330800000,
+    "symbols": [
+      "ENGRO",
+      "HUBC",
+      "LUCK",
+      "SYS",
+      "MEBL",
+      "PSO",
+      "OGDC",
+      "PPL"
+    ]
+  },
+  "model_names": [
+    "XGBoost",
+    "LightGBM",
+    "CatBoost",
+    "Random Forest",
+    "Ridge Regression"
+  ],
+  "feature_schema": [
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_width",
+    "bb_pct_b",
+    "atr_14",
+    "obv_change_pct",
+    "price_sma_20_ratio",
+    "price_sma_50_ratio",
+    "price_sma_200_ratio",
+    "volume_sma_20_ratio",
+    "return_1d",
+    "return_7d",
+    "return_14d",
+    "return_30d",
+    "hl_range_pct",
+    "body_size_pct",
+    "volatility_14d"
+  ],
+  "horizons": [
+    5,
+    10,
+    21
+  ],
+  "split": {
+    "train_frac": 0.5,
+    "val_frac": 0.15,
+    "purge_h": 21
+  },
+  "test_window": {
+    "start_epoch": 1768330800000,
+    "end_epoch": 1790794800000
+  },
+  "sample_ids": [
+    "HUBC@1768330800000",
+    "HUBC@1769540400000",
+    "HUBC@1770836400000",
+    "HUBC@1772046000000",
+    "HUBC@1773255600000",
+    "HUBC@1774810800000",
+    "HUBC@1776020400000",
+    "HUBC@1777316400000",
+    "HUBC@1778612400000",
+    "HUBC@1780254000000",
+    "HUBC@1781463600000",
+    "HUBC@1782932400000",
+    "HUBC@1784142000000",
+    "HUBC@1785351600000",
+    "HUBC@1786561200000",
+    "HUBC@1788116400000",
+    "LUCK@1768330800000",
+    "LUCK@1769540400000",
+    "LUCK@1770836400000",
+    "LUCK@1772046000000",
+    "LUCK@1773255600000",
+    "LUCK@1774810800000",
+    "LUCK@1776020400000",
+    "LUCK@1777316400000",
+    "LUCK@1778612400000",
+    "LUCK@1780254000000",
+    "LUCK@1781463600000",
+    "LUCK@1782932400000",
+    "LUCK@1784142000000",
+    "LUCK@1785351600000",
+    "LUCK@1786561200000",
+    "LUCK@1788116400000",
+    "SYS@1768330800000",
+    "SYS@1769540400000",
+    "SYS@1770836400000",
+    "SYS@1772046000000",
+    "SYS@1773255600000",
+    "SYS@1774810800000",
+    "SYS@1776020400000",
+    "SYS@1777316400000",
+    "SYS@1778612400000",
+    "SYS@1780254000000",
+    "SYS@1781463600000",
+    "SYS@1782932400000",
+    "SYS@1784142000000",
+    "SYS@1785351600000",
+    "SYS@1786561200000",
+    "SYS@1788116400000",
+    "MEBL@1768330800000",
+    "MEBL@1769540400000",
+    "MEBL@1770836400000",
+    "MEBL@1772046000000",
+    "MEBL@1773255600000",
+    "MEBL@1774810800000",
+    "MEBL@1776020400000",
+    "MEBL@1777316400000",
+    "MEBL@1778612400000",
+    "MEBL@1780254000000",
+    "MEBL@1781463600000",
+    "MEBL@1782932400000",
+    "MEBL@1784142000000",
+    "MEBL@1785351600000",
+    "MEBL@1786561200000",
+    "MEBL@1788116400000",
+    "PSO@1768330800000",
+    "PSO@1769540400000",
+    "PSO@1770836400000",
+    "PSO@1772046000000",
+    "PSO@1773255600000",
+    "PSO@1774810800000",
+    "PSO@1776020400000",
+    "PSO@1777316400000",
+    "PSO@1778612400000",
+    "PSO@1780254000000",
+    "PSO@1781463600000",
+    "PSO@1782932400000",
+    "PSO@1784142000000",
+    "PSO@1785351600000",
+    "PSO@1786561200000",
+    "PSO@1788116400000",
+    "OGDC@1768330800000",
+    "OGDC@1769540400000",
+    "OGDC@1770836400000",
+    "OGDC@1772046000000",
+    "OGDC@1773255600000",
+    "OGDC@1774810800000",
+    "OGDC@1776020400000",
+    "OGDC@1777316400000",
+    "OGDC@1778612400000",
+    "OGDC@1780254000000",
+    "OGDC@1781463600000",
+    "OGDC@1782932400000",
+    "OGDC@1784142000000",
+    "OGDC@1785351600000",
+    "OGDC@1786561200000",
+    "OGDC@1788116400000",
+    "PPL@1768330800000",
+    "PPL@1769540400000",
+    "PPL@1770836400000",
+    "PPL@1772046000000",
+    "PPL@1773255600000",
+    "PPL@1774810800000",
+    "PPL@1776020400000",
+    "PPL@1777316400000",
+    "PPL@1778612400000",
+    "PPL@1780254000000",
+    "PPL@1781463600000",
+    "PPL@1782932400000",
+    "PPL@1784142000000",
+    "PPL@1785351600000",
+    "PPL@1786561200000",
+    "PPL@1788116400000"
+  ],
+  "sample_meta": [
+    {
+      "idx": 0,
+      "stock": "HUBC",
+      "date": 1768330800000,
+      "target_maturity_21d": 1770922800000
+    },
+    {
+      "idx": 1,
+      "stock": "HUBC",
+      "date": 1769540400000,
+      "target_maturity_21d": 1772132400000
+    },
+    {
+      "idx": 2,
+      "stock": "HUBC",
+      "date": 1770836400000,
+      "target_maturity_21d": 1773342000000
+    },
+    {
+      "idx": 3,
+      "stock": "HUBC",
+      "date": 1772046000000,
+      "target_maturity_21d": 1774897200000
+    },
+    {
+      "idx": 4,
+      "stock": "HUBC",
+      "date": 1773255600000,
+      "target_maturity_21d": 1776106800000
+    },
+    {
+      "idx": 5,
+      "stock": "HUBC",
+      "date": 1774810800000,
+      "target_maturity_21d": 1777402800000
+    },
+    {
+      "idx": 6,
+      "stock": "HUBC",
+      "date": 1776020400000,
+      "target_maturity_21d": 1778698800000
+    },
+    {
+      "idx": 7,
+      "stock": "HUBC",
+      "date": 1777316400000,
+      "target_maturity_21d": 1780340400000
+    },
+    {
+      "idx": 8,
+      "stock": "HUBC",
+      "date": 1778612400000,
+      "target_maturity_21d": 1781550000000
+    },
+    {
+      "idx": 9,
+      "stock": "HUBC",
+      "date": 1780254000000,
+      "target_maturity_21d": 1783018800000
+    },
+    {
+      "idx": 10,
+      "stock": "HUBC",
+      "date": 1781463600000,
+      "target_maturity_21d": 1784228400000
+    },
+    {
+      "idx": 11,
+      "stock": "HUBC",
+      "date": 1782932400000,
+      "target_maturity_21d": 1785438000000
+    },
+    {
+      "idx": 12,
+      "stock": "HUBC",
+      "date": 1784142000000,
+      "target_maturity_21d": 1786906800000
+    },
+    {
+      "idx": 13,
+      "stock": "HUBC",
+      "date": 1785351600000,
+      "target_maturity_21d": 1788202800000
+    },
+    {
+      "idx": 14,
+      "stock": "HUBC",
+      "date": 1786561200000,
+      "target_maturity_21d": 1789412400000
+    },
+    {
+      "idx": 15,
+      "stock": "HUBC",
+      "date": 1788116400000,
+      "target_maturity_21d": 1790622000000
+    },
+    {
+      "idx": 16,
+      "stock": "LUCK",
+      "date": 1768330800000,
+      "target_maturity_21d": 1770922800000
+    },
+    {
+      "idx": 17,
+      "stock": "LUCK",
+      "date": 1769540400000,
+      "target_maturity_21d": 1772132400000
+    },
+    {
+      "idx": 18,
+      "stock": "LUCK",
+      "date": 1770836400000,
+      "target_maturity_21d": 1773342000000
+    },
+    {
+      "idx": 19,
+      "stock": "LUCK",
+      "date": 1772046000000,
+      "target_maturity_21d": 1774897200000
+    },
+    {
+      "idx": 20,
+      "stock": "LUCK",
+      "date": 1773255600000,
+      "target_maturity_21d": 1776106800000
+    },
+    {
+      "idx": 21,
+      "stock": "LUCK",
+      "date": 1774810800000,
+      "target_maturity_21d": 1777402800000
+    },
+    {
+      "idx": 22,
+      "stock": "LUCK",
+      "date": 1776020400000,
+      "target_maturity_21d": 1778698800000
+    },
+    {
+      "idx": 23,
+      "stock": "LUCK",
+      "date": 1777316400000,
+      "target_maturity_21d": 1780340400000
+    },
+    {
+      "idx": 24,
+      "stock": "LUCK",
+      "date": 1778612400000,
+      "target_maturity_21d": 1781550000000
+    },
+    {
+      "idx": 25,
+      "stock": "LUCK",
+      "date": 1780254000000,
+      "target_maturity_21d": 1783018800000
+    },
+    {
+      "idx": 26,
+      "stock": "LUCK",
+      "date": 1781463600000,
+      "target_maturity_21d": 1784228400000
+    },
+    {
+      "idx": 27,
+      "stock": "LUCK",
+      "date": 1782932400000,
+      "target_maturity_21d": 1785438000000
+    },
+    {
+      "idx": 28,
+      "stock": "LUCK",
+      "date": 1784142000000,
+      "target_maturity_21d": 1786906800000
+    },
+    {
+      "idx": 29,
+      "stock": "LUCK",
+      "date": 1785351600000,
+      "target_maturity_21d": 1788202800000
+    },
+    {
+      "idx": 30,
+      "stock": "LUCK",
+      "date": 1786561200000,
+      "target_maturity_21d": 1789412400000
+    },
+    {
+      "idx": 31,
+      "stock": "LUCK",
+      "date": 1788116400000,
+      "target_maturity_21d": 1790622000000
+    },
+    {
+      "idx": 32,
+      "stock": "SYS",
+      "date": 1768330800000,
+      "target_maturity_21d": 1770922800000
+    },
+    {
+      "idx": 33,
+      "stock": "SYS",
+      "date": 1769540400000,
+      "target_maturity_21d": 1772132400000
+    },
+    {
+      "idx": 34,
+      "stock": "SYS",
+      "date": 1770836400000,
+      "target_maturity_21d": 1773342000000
+    },
+    {
+      "idx": 35,
+      "stock": "SYS",
+      "date": 1772046000000,
+      "target_maturity_21d": 1774897200000
+    },
+    {
+      "idx": 36,
+      "stock": "SYS",
+      "date": 1773255600000,
+      "target_maturity_21d": 1776106800000
+    },
+    {
+      "idx": 37,
+      "stock": "SYS",
+      "date": 1774810800000,
+      "target_maturity_21d": 1777402800000
+    },
+    {
+      "idx": 38,
+      "stock": "SYS",
+      "date": 1776020400000,
+      "target_maturity_21d": 1778698800000
+    },
+    {
+      "idx": 39,
+      "stock": "SYS",
+      "date": 1777316400000,
+      "target_maturity_21d": 1780340400000
+    },
+    {
+      "idx": 40,
+      "stock": "SYS",
+      "date": 1778612400000,
+      "target_maturity_21d": 1781550000000
+    },
+    {
+      "idx": 41,
+      "stock": "SYS",
+      "date": 1780254000000,
+      "target_maturity_21d": 1783018800000
+    },
+    {
+      "idx": 42,
+      "stock": "SYS",
+      "date": 1781463600000,
+      "target_maturity_21d": 1784228400000
+    },
+    {
+      "idx": 43,
+      "stock": "SYS",
+      "date": 1782932400000,
+      "target_maturity_21d": 1785438000000
+    },
+    {
+      "idx": 44,
+      "stock": "SYS",
+      "date": 1784142000000,
+      "target_maturity_21d": 1786906800000
+    },
+    {
+      "idx": 45,
+      "stock": "SYS",
+      "date": 1785351600000,
+      "target_maturity_21d": 1788202800000
+    },
+    {
+      "idx": 46,
+      "stock": "SYS",
+      "date": 1786561200000,
+      "target_maturity_21d": 1789412400000
+    },
+    {
+      "idx": 47,
+      "stock": "SYS",
+      "date": 1788116400000,
+      "target_maturity_21d": 1790622000000
+    },
+    {
+      "idx": 48,
+      "stock": "MEBL",
+      "date": 1768330800000,
+      "target_maturity_21d": 1770922800000
+    },
+    {
+      "idx": 49,
+      "stock": "MEBL",
+      "date": 1769540400000,
+      "target_maturity_21d": 1772132400000
+    },
+    {
+      "idx": 50,
+      "stock": "MEBL",
+      "date": 1770836400000,
+      "target_maturity_21d": 1773342000000
+    },
+    {
+      "idx": 51,
+      "stock": "MEBL",
+      "date": 1772046000000,
+      "target_maturity_21d": 1774897200000
+    },
+    {
+      "idx": 52,
+      "stock": "MEBL",
+      "date": 1773255600000,
+      "target_maturity_21d": 1776106800000
+    },
+    {
+      "idx": 53,
+      "stock": "MEBL",
+      "date": 1774810800000,
+      "target_maturity_21d": 1777402800000
+    },
+    {
+      "idx": 54,
+      "stock": "MEBL",
+      "date": 1776020400000,
+      "target_maturity_21d": 1778698800000
+    },
+    {
+      "idx": 55,
+      "stock": "MEBL",
+      "date": 1777316400000,
+      "target_maturity_21d": 1780340400000
+    },
+    {
+      "idx": 56,
+      "stock": "MEBL",
+      "date": 1778612400000,
+      "target_maturity_21d": 1781550000000
+    },
+    {
+      "idx": 57,
+      "stock": "MEBL",
+      "date": 1780254000000,
+      "target_maturity_21d": 1783018800000
+    },
+    {
+      "idx": 58,
+      "stock": "MEBL",
+      "date": 1781463600000,
+      "target_maturity_21d": 1784228400000
+    },
+    {
+      "idx": 59,
+      "stock": "MEBL",
+      "date": 1782932400000,
+      "target_maturity_21d": 1785438000000
+    },
+    {
+      "idx": 60,
+      "stock": "MEBL",
+      "date": 1784142000000,
+      "target_maturity_21d": 1786906800000
+    },
+    {
+      "idx": 61,
+      "stock": "MEBL",
+      "date": 1785351600000,
+      "target_maturity_21d": 1788202800000
+    },
+    {
+      "idx": 62,
+      "stock": "MEBL",
+      "date": 1786561200000,
+      "target_maturity_21d": 1789412400000
+    },
+    {
+      "idx": 63,
+      "stock": "MEBL",
+      "date": 1788116400000,
+      "target_maturity_21d": 1790622000000
+    },
+    {
+      "idx": 64,
+      "stock": "PSO",
+      "date": 1768330800000,
+      "target_maturity_21d": 1770922800000
+    },
+    {
+      "idx": 65,
+      "stock": "PSO",
+      "date": 1769540400000,
+      "target_maturity_21d": 1772132400000
+    },
+    {
+      "idx": 66,
+      "stock": "PSO",
+      "date": 1770836400000,
+      "target_maturity_21d": 1773342000000
+    },
+    {
+      "idx": 67,
+      "stock": "PSO",
+      "date": 1772046000000,
+      "target_maturity_21d": 1774897200000
+    },
+    {
+      "idx": 68,
+      "stock": "PSO",
+      "date": 1773255600000,
+      "target_maturity_21d": 1776106800000
+    },
+    {
+      "idx": 69,
+      "stock": "PSO",
+      "date": 1774810800000,
+      "target_maturity_21d": 1777402800000
+    },
+    {
+      "idx": 70,
+      "stock": "PSO",
+      "date": 1776020400000,
+      "target_maturity_21d": 1778698800000
+    },
+    {
+      "idx": 71,
+      "stock": "PSO",
+      "date": 1777316400000,
+      "target_maturity_21d": 1780340400000
+    },
+    {
+      "idx": 72,
+      "stock": "PSO",
+      "date": 1778612400000,
+      "target_maturity_21d": 1781550000000
+    },
+    {
+      "idx": 73,
+      "stock": "PSO",
+      "date": 1780254000000,
+      "target_maturity_21d": 1783018800000
+    },
+    {
+      "idx": 74,
+      "stock": "PSO",
+      "date": 1781463600000,
+      "target_maturity_21d": 1784228400000
+    },
+    {
+      "idx": 75,
+      "stock": "PSO",
+      "date": 1782932400000,
+      "target_maturity_21d": 1785438000000
+    },
+    {
+      "idx": 76,
+      "stock": "PSO",
+      "date": 1784142000000,
+      "target_maturity_21d": 1786906800000
+    },
+    {
+      "idx": 77,
+      "stock": "PSO",
+      "date": 1785351600000,
+      "target_maturity_21d": 1788202800000
+    },
+    {
+      "idx": 78,
+      "stock": "PSO",
+      "date": 1786561200000,
+      "target_maturity_21d": 1789412400000
+    },
+    {
+      "idx": 79,
+      "stock": "PSO",
+      "date": 1788116400000,
+      "target_maturity_21d": 1790622000000
+    },
+    {
+      "idx": 80,
+      "stock": "OGDC",
+      "date": 1768330800000,
+      "target_maturity_21d": 1770922800000
+    },
+    {
+      "idx": 81,
+      "stock": "OGDC",
+      "date": 1769540400000,
+      "target_maturity_21d": 1772132400000
+    },
+    {
+      "idx": 82,
+      "stock": "OGDC",
+      "date": 1770836400000,
+      "target_maturity_21d": 1773342000000
+    },
+    {
+      "idx": 83,
+      "stock": "OGDC",
+      "date": 1772046000000,
+      "target_maturity_21d": 1774897200000
+    },
+    {
+      "idx": 84,
+      "stock": "OGDC",
+      "date": 1773255600000,
+      "target_maturity_21d": 1776106800000
+    },
+    {
+      "idx": 85,
+      "stock": "OGDC",
+      "date": 1774810800000,
+      "target_maturity_21d": 1777402800000
+    },
+    {
+      "idx": 86,
+      "stock": "OGDC",
+      "date": 1776020400000,
+      "target_maturity_21d": 1778698800000
+    },
+    {
+      "idx": 87,
+      "stock": "OGDC",
+      "date": 1777316400000,
+      "target_maturity_21d": 1780340400000
+    },
+    {
+      "idx": 88,
+      "stock": "OGDC",
+      "date": 1778612400000,
+      "target_maturity_21d": 1781550000000
+    },
+    {
+      "idx": 89,
+      "stock": "OGDC",
+      "date": 1780254000000,
+      "target_maturity_21d": 1783018800000
+    },
+    {
+      "idx": 90,
+      "stock": "OGDC",
+      "date": 1781463600000,
+      "target_maturity_21d": 1784228400000
+    },
+    {
+      "idx": 91,
+      "stock": "OGDC",
+      "date": 1782932400000,
+      "target_maturity_21d": 1785438000000
+    },
+    {
+      "idx": 92,
+      "stock": "OGDC",
+      "date": 1784142000000,
+      "target_maturity_21d": 1786906800000
+    },
+    {
+      "idx": 93,
+      "stock": "OGDC",
+      "date": 1785351600000,
+      "target_maturity_21d": 1788202800000
+    },
+    {
+      "idx": 94,
+      "stock": "OGDC",
+      "date": 1786561200000,
+      "target_maturity_21d": 1789412400000
+    },
+    {
+      "idx": 95,
+      "stock": "OGDC",
+      "date": 1788116400000,
+      "target_maturity_21d": 1790622000000
+    },
+    {
+      "idx": 96,
+      "stock": "PPL",
+      "date": 1768330800000,
+      "target_maturity_21d": 1770922800000
+    },
+    {
+      "idx": 97,
+      "stock": "PPL",
+      "date": 1769540400000,
+      "target_maturity_21d": 1772132400000
+    },
+    {
+      "idx": 98,
+      "stock": "PPL",
+      "date": 1770836400000,
+      "target_maturity_21d": 1773342000000
+    },
+    {
+      "idx": 99,
+      "stock": "PPL",
+      "date": 1772046000000,
+      "target_maturity_21d": 1774897200000
+    },
+    {
+      "idx": 100,
+      "stock": "PPL",
+      "date": 1773255600000,
+      "target_maturity_21d": 1776106800000
+    },
+    {
+      "idx": 101,
+      "stock": "PPL",
+      "date": 1774810800000,
+      "target_maturity_21d": 1777402800000
+    },
+    {
+      "idx": 102,
+      "stock": "PPL",
+      "date": 1776020400000,
+      "target_maturity_21d": 1778698800000
+    },
+    {
+      "idx": 103,
+      "stock": "PPL",
+      "date": 1777316400000,
+      "target_maturity_21d": 1780340400000
+    },
+    {
+      "idx": 104,
+      "stock": "PPL",
+      "date": 1778612400000,
+      "target_maturity_21d": 1781550000000
+    },
+    {
+      "idx": 105,
+      "stock": "PPL",
+      "date": 1780254000000,
+      "target_maturity_21d": 1783018800000
+    },
+    {
+      "idx": 106,
+      "stock": "PPL",
+      "date": 1781463600000,
+      "target_maturity_21d": 1784228400000
+    },
+    {
+      "idx": 107,
+      "stock": "PPL",
+      "date": 1782932400000,
+      "target_maturity_21d": 1785438000000
+    },
+    {
+      "idx": 108,
+      "stock": "PPL",
+      "date": 1784142000000,
+      "target_maturity_21d": 1786906800000
+    },
+    {
+      "idx": 109,
+      "stock": "PPL",
+      "date": 1785351600000,
+      "target_maturity_21d": 1788202800000
+    },
+    {
+      "idx": 110,
+      "stock": "PPL",
+      "date": 1786561200000,
+      "target_maturity_21d": 1789412400000
+    },
+    {
+      "idx": 111,
+      "stock": "PPL",
+      "date": 1788116400000,
+      "target_maturity_21d": 1790622000000
+    }
+  ],
+  "n_samples": 112,
+  "val_end_idx": 56,
+  "methodology_notes": [
+    "chunks split the evaluation SAMPLES only \u2014 every sample trains on the FULL frozen universe pooled by date + target-maturity filter",
+    "universe selected point-in-time (pre-cutoff eligibility + volume ranking only); evaluation decision dates strictly after the cutoff",
+    "ensemble predictions are computed ONLY at finalization with purged frozen validation weights"
+  ]
+}

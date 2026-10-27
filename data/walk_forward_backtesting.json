@@ -1,5 +1,5 @@
 {
-  "walk_forward_at": "2026-10-27T21:40:40.980506",
+  "walk_forward_at": "2026-10-27T22:43:40.966990",
   "n_samples": 112,
   "models_trained": [
     "XGBoost",
@@ -112,11 +112,11 @@
     },
     "WIN_RATE_WEIGHTED": {
       "totalTrades": 50,
-      "wins": 24,
-      "winRate": 48.0,
-      "avgReturnPct": -0.9,
-      "maxReturnPct": 17.64,
-      "minReturnPct": -23.01,
+      "wins": 20,
+      "winRate": 40.0,
+      "avgReturnPct": -0.5,
+      "maxReturnPct": 14.45,
+      "minReturnPct": -12.47,
       "stars": 3,
       "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
       "net_trading_pnl": "unavailable",
@@ -146,7 +146,9 @@
     "per_sample_training": "per-sample train_data = df[df['date']<sample['date']] (strict chronological, no look-ahead) + filter_by_target_maturity(hz) per horizon",
     "per_horizon_drop": "per-sample, per-horizon filter_by_target_maturity \u2014 preserves shorter-horizon rows whose longest-horizon target is immature or whose endpoint extends past P",
     "realized_outcomes": "actual_return uses FUTURE close prices in the test partition (strictly AFTER the decision date) \u2014 no look-ahead leakage in the realized-outcome computation",
-    "ensemble_weighting": "Task 51 Phase 2: WIN_RATE_WEIGHTED uses frozen validation-period weights (Option A). MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED are per-sample (safe). FINAL_CONSENSUS uses dual-mode (skip WIN_RATE_WEIGHTED on validation, include on final-test).",
+    "ensemble_weighting": "Task 51 Phase 2 + Task 54 Phase 4: WIN_RATE_WEIGHTED uses frozen validation-period weights with a maturity purge vs the final-test boundary. MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED are per-sample (safe). FINAL_CONSENSUS uses dual-mode. Ensembles computed ONLY at finalization.",
+    "point_in_time_universe": "Task 54 Phase 1: universe eligibility + liquidity ranking use ONLY pre-cutoff records; the cutoff precedes every evaluation decision date.",
+    "chunking": "Task 54: chunks split evaluation SAMPLES only \u2014 every sample trains on the FULL frozen universe pooled by date + target-maturity filter. Final metrics recomputed from raw per-sample records.",
     "baselines": "Task 51 Phase 3: zero-return + training-only-mean baselines added (per-horizon, pooled market-wide). Conventional constant-mean R\u00b2 reference retained per-model\u00d7horizon.",
     "walk_forward_methodology": "TRUE walk-forward: each test sample's models are re-fit on all data strictly before the sample's decision date AND with target-maturity filter applied per horizon. Distinct from the simplified backtest in train_all_with_backtesting.py (Pattern #10 \u2014 latest signal applied to all test rows)."
   }

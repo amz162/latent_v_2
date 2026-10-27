@@ -109,6 +109,19 @@ export interface WFReportResponse {
   win_rate_weighted_ensemble_methodology?: any;
   // Task 51 Phase 1: per-sample maturity metadata summary
   sample_maturity_metadata_summary?: any;
+  // Task 54: resumable-run metadata (run id, point-in-time cutoff, fingerprints)
+  run?: {
+    architecture?: string;
+    run_id?: string;
+    manifest_path?: string;
+    chunk_size_requested?: number;
+    point_in_time_selection?: string;
+    universe_selection_cutoff?: string | null;
+    universe_fingerprint?: string;
+    data_fingerprint?: string;
+    sample_records_dir?: string;
+    promotion_rule?: string;
+  } | null;
   error?: string;
   how_to_generate?: string;
 }
@@ -214,6 +227,8 @@ export async function GET() {
       // Task 51 Phase 1: per-sample maturity metadata summary
       sample_maturity_metadata_summary:
         report.sample_maturity_metadata_summary ?? null,
+      // Task 54: resumable-run metadata (progress endpoint: /api/backtest/walk-forward/status)
+      run: report.run ?? null,
       how_to_generate: HOW_TO_GENERATE,
     };
 

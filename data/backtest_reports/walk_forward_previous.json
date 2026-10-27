@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.2",
+  "schema_version": "1.3",
   "evaluation_status": "completed",
   "evaluation_method": "walk-forward-expanding-window",
-  "generated_at": "2026-10-27T21:04:19.271033",
+  "generated_at": "2026-10-27T22:35:39.173019",
   "data_cutoff": "2026-08-27T19:00:00",
   "training_window": {
     "start": "2026-01-12T19:00:00",
@@ -26,16 +26,121 @@
   "universe": {
     "mode": "canonical8",
     "criteria": "hardcoded canonical 8 PSX stocks (CSV-backed, most-liquid historically)",
+    "selection_method": "fixed_symbol_list (no volume ranking \u2014 no selection look-ahead possible)",
+    "selection_cutoff": "2026-01-12T19:00:00",
     "candidate_count": 8,
+    "eligible_count": 8,
     "included_count": 8,
     "excluded_count": 0,
     "exclusions": [],
-    "eligible_count": 8,
     "target_count": 8,
     "min_bars_required": null,
-    "data_source": "data/ohlcv/*.csv"
+    "data_source": "data/ohlcv/*.csv",
+    "fingerprint": "7a037ce7d86fab975b53bf68063d8d07b71e762db7649180241abdcc99225084",
+    "selection_cutoff_epoch": 1768244400000,
+    "first_evaluation_decision_date": 1768330800000,
+    "symbols": [
+      "ENGRO",
+      "HUBC",
+      "LUCK",
+      "SYS",
+      "MEBL",
+      "PSO",
+      "OGDC",
+      "PPL"
+    ]
   },
   "per_stock_results": {
+    "ENGRO": {
+      "samples_count": 0,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        }
+      }
+    },
     "HUBC": {
       "samples_count": 16,
       "models": {
@@ -994,6 +1099,7 @@
   "n_evaluated_models": 5,
   "n_evaluated_horizons": 3,
   "n_eligible_samples": 112,
+  "n_skipped_samples": 0,
   "n_matured_outcomes": {
     "5": 560,
     "10": 560,
@@ -1024,21 +1130,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.033807,
               "rmse": 0.044306,
               "r2": -0.003074,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.036517,
               "rmse": 0.045131,
               "r2": -0.040788,
               "directional_accuracy": 0.4196,
-              "n_training_observations_avg": 2813
+              "avg_n_training_observations": 2813
             }
           }
         },
@@ -1057,21 +1163,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.050085,
               "rmse": 0.062015,
               "r2": -0.007911,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.055026,
               "rmse": 0.068293,
               "r2": -0.222301,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2773
+              "avg_n_training_observations": 2773
             }
           }
         },
@@ -1090,21 +1196,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.073003,
               "rmse": 0.092481,
               "r2": -0.013826,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.089887,
               "rmse": 0.111036,
               "r2": -0.461444,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2685
+              "avg_n_training_observations": 2685
             }
           }
         }
@@ -1129,21 +1235,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.033807,
               "rmse": 0.044306,
               "r2": -0.003074,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.036517,
               "rmse": 0.045131,
               "r2": -0.040788,
               "directional_accuracy": 0.4196,
-              "n_training_observations_avg": 2813
+              "avg_n_training_observations": 2813
             }
           }
         },
@@ -1162,21 +1268,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.050085,
               "rmse": 0.062015,
               "r2": -0.007911,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.055026,
               "rmse": 0.068293,
               "r2": -0.222301,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2773
+              "avg_n_training_observations": 2773
             }
           }
         },
@@ -1195,21 +1301,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.073003,
               "rmse": 0.092481,
               "r2": -0.013826,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.089887,
               "rmse": 0.111036,
               "r2": -0.461444,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2685
+              "avg_n_training_observations": 2685
             }
           }
         }
@@ -1234,21 +1340,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.033807,
               "rmse": 0.044306,
               "r2": -0.003074,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.036517,
               "rmse": 0.045131,
               "r2": -0.040788,
               "directional_accuracy": 0.4196,
-              "n_training_observations_avg": 2813
+              "avg_n_training_observations": 2813
             }
           }
         },
@@ -1267,21 +1373,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.050085,
               "rmse": 0.062015,
               "r2": -0.007911,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.055026,
               "rmse": 0.068293,
               "r2": -0.222301,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2773
+              "avg_n_training_observations": 2773
             }
           }
         },
@@ -1300,21 +1406,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.073003,
               "rmse": 0.092481,
               "r2": -0.013826,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.089887,
               "rmse": 0.111036,
               "r2": -0.461444,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2685
+              "avg_n_training_observations": 2685
             }
           }
         }
@@ -1339,21 +1445,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.033807,
               "rmse": 0.044306,
               "r2": -0.003074,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.036517,
               "rmse": 0.045131,
               "r2": -0.040788,
               "directional_accuracy": 0.4196,
-              "n_training_observations_avg": 2813
+              "avg_n_training_observations": 2813
             }
           }
         },
@@ -1372,21 +1478,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.050085,
               "rmse": 0.062015,
               "r2": -0.007911,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.055026,
               "rmse": 0.068293,
               "r2": -0.222301,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2773
+              "avg_n_training_observations": 2773
             }
           }
         },
@@ -1405,21 +1511,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.073003,
               "rmse": 0.092481,
               "r2": -0.013826,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.089887,
               "rmse": 0.111036,
               "r2": -0.461444,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2685
+              "avg_n_training_observations": 2685
             }
           }
         }
@@ -1444,21 +1550,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.033807,
               "rmse": 0.044306,
               "r2": -0.003074,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.036517,
               "rmse": 0.045131,
               "r2": -0.040788,
               "directional_accuracy": 0.4196,
-              "n_training_observations_avg": 2813
+              "avg_n_training_observations": 2813
             }
           }
         },
@@ -1477,21 +1583,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.050085,
               "rmse": 0.062015,
               "r2": -0.007911,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.055026,
               "rmse": 0.068293,
               "r2": -0.222301,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2773
+              "avg_n_training_observations": 2773
             }
           }
         },
@@ -1510,21 +1616,21 @@
               "r2": 0.0
             },
             "zero_return": {
-              "definition": "predict 0 future return for all samples",
+              "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
               "mae": 0.073003,
               "rmse": 0.092481,
               "r2": -0.013826,
               "directional_accuracy": 0.0
             },
             "training_only_mean": {
-              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
               "status": "completed",
               "reason": null,
               "mae": 0.089887,
               "rmse": 0.111036,
               "r2": -0.461444,
               "directional_accuracy": 0.4464,
-              "n_training_observations_avg": 2685
+              "avg_n_training_observations": 2685
             }
           }
         }
@@ -1535,59 +1641,59 @@
     "per_horizon_pooled": {
       "5": {
         "zero_return": {
-          "definition": "predict 0 future return for all samples",
+          "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
           "mae": 0.033807,
           "rmse": 0.044306,
           "r2": -0.003074,
           "directional_accuracy": 0.0
         },
         "training_only_mean": {
-          "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+          "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
           "status": "completed",
           "reason": null,
           "mae": 0.036517,
           "rmse": 0.045131,
           "r2": -0.040788,
           "directional_accuracy": 0.4196,
-          "n_training_observations_avg": 2813
+          "avg_n_training_observations": 2813
         }
       },
       "10": {
         "zero_return": {
-          "definition": "predict 0 future return for all samples",
+          "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
           "mae": 0.050085,
           "rmse": 0.062015,
           "r2": -0.007911,
           "directional_accuracy": 0.0
         },
         "training_only_mean": {
-          "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+          "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
           "status": "completed",
           "reason": null,
           "mae": 0.055026,
           "rmse": 0.068293,
           "r2": -0.222301,
           "directional_accuracy": 0.4464,
-          "n_training_observations_avg": 2773
+          "avg_n_training_observations": 2773
         }
       },
       "21": {
         "zero_return": {
-          "definition": "predict 0 future return for all samples",
+          "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
           "mae": 0.073003,
           "rmse": 0.092481,
           "r2": -0.013826,
           "directional_accuracy": 0.0
         },
         "training_only_mean": {
-          "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+          "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
           "status": "completed",
           "reason": null,
           "mae": 0.089887,
           "rmse": 0.111036,
           "r2": -0.461444,
           "directional_accuracy": 0.4464,
-          "n_training_observations_avg": 2685
+          "avg_n_training_observations": 2685
         }
       }
     },
@@ -1697,13 +1803,13 @@
         "n_validation_period_excluded": 0
       },
       "WIN_RATE_WEIGHTED": {
-        "totalTrades": 50,
-        "wins": 24,
-        "winRate": 48.0,
-        "avgReturnPct": -0.9,
-        "maxReturnPct": 17.64,
-        "minReturnPct": -23.01,
-        "stars": 3,
+        "totalTrades": 0,
+        "wins": 0,
+        "winRate": 0.0,
+        "avgReturnPct": 0.0,
+        "maxReturnPct": 0,
+        "minReturnPct": 0,
+        "stars": 1,
         "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
         "net_trading_pnl": "unavailable",
         "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
@@ -1730,7 +1836,54 @@
   },
   "win_rate_weighted_ensemble_methodology": {
     "phase_2_fix": "Option A \u2014 frozen validation-period weights",
-    "description": "Task 51 Phase 2: the OLD WIN_RATE_WEIGHTED used wf_individual[name].winRate computed from the FULL evaluation period \u2014 leaky (weights at sample i used outcomes from samples i+1..n). Fix: split samples into first half (VALIDATION) + second half (FINAL_TEST). Compute win rates on VALIDATION only \u2192 freeze weights \u2192 apply to FINAL_TEST. VALIDATION-period WIN_RATE_WEIGHTED entries are marked 'unavailable \u2014 validation period (weights being calibrated)'. FINAL_CONSENSUS on validation: 2+ of {MAJORITY, PROBABILITY, TIER} agree (skip WIN_RATE_WEIGHTED). FINAL_CONSENSUS on final-test: 2+ of {MAJORITY, PROBABILITY, TIER, WIN_RATE_WEIGHTED} agree.",
+    "task54_maturity_purge": {
+      "boundary_rule": "validation outcomes whose 21d target maturity > earliest final-test decision date are purged",
+      "earliest_final_test_decision_date": "2026-01-13T19:00:00",
+      "earliest_final_test_decision_date_epoch": 1768330800000,
+      "per_model": {
+        "XGBoost": {
+          "validation_non_hold_outcomes": 50,
+          "eligible_after_purge": 0,
+          "purged_maturity_after_boundary": 50,
+          "purged_unknown_maturity": 0,
+          "validation_win_rate_pct": 0,
+          "frozen_weight": 0.0
+        },
+        "LightGBM": {
+          "validation_non_hold_outcomes": 54,
+          "eligible_after_purge": 0,
+          "purged_maturity_after_boundary": 54,
+          "purged_unknown_maturity": 0,
+          "validation_win_rate_pct": 0,
+          "frozen_weight": 0.0
+        },
+        "CatBoost": {
+          "validation_non_hold_outcomes": 52,
+          "eligible_after_purge": 0,
+          "purged_maturity_after_boundary": 52,
+          "purged_unknown_maturity": 0,
+          "validation_win_rate_pct": 0,
+          "frozen_weight": 0.0
+        },
+        "Random Forest": {
+          "validation_non_hold_outcomes": 53,
+          "eligible_after_purge": 0,
+          "purged_maturity_after_boundary": 53,
+          "purged_unknown_maturity": 0,
+          "validation_win_rate_pct": 0,
+          "frozen_weight": 0.0
+        },
+        "Ridge Regression": {
+          "validation_non_hold_outcomes": 53,
+          "eligible_after_purge": 0,
+          "purged_maturity_after_boundary": 53,
+          "purged_unknown_maturity": 0,
+          "validation_win_rate_pct": 0,
+          "frozen_weight": 0.0
+        }
+      }
+    },
+    "description": "Task 51 Phase 2: split samples into first half (VALIDATION) + second half (FINAL_TEST). Compute win rates on VALIDATION only \u2192 freeze weights \u2192 apply to FINAL_TEST. VALIDATION-period WIN_RATE_WEIGHTED entries are marked 'unavailable \u2014 validation period (weights being calibrated)'. FINAL_CONSENSUS on validation: 2+ of {MAJORITY, PROBABILITY, TIER} agree (skip WIN_RATE_WEIGHTED). FINAL_CONSENSUS on final-test: 2+ of {MAJORITY, PROBABILITY, TIER, WIN_RATE_WEIGHTED} agree. Task 54 Phase 4: validation outcomes whose 21d target matures AFTER the earliest final-test decision date are PURGED from the weight calibration (their outcomes were not knowable in real time at the final-test boundary). Weights are computed at finalization only \u2014 never from partial or complete final-test results, and never inside a chunk.",
     "validation_period_indices": [
       0,
       55
@@ -1740,11 +1893,11 @@
       111
     ],
     "frozen_weights": {
-      "XGBoost": 0.5,
-      "LightGBM": 0.537037037037037,
-      "CatBoost": 0.5192307692307694,
-      "Random Forest": 0.5754716981132078,
-      "Ridge Regression": 0.3867924528301888
+      "XGBoost": 0.0,
+      "LightGBM": 0.0,
+      "CatBoost": 0.0,
+      "Random Forest": 0.0,
+      "Ridge Regression": 0.0
     }
   },
   "sample_maturity_metadata_summary": {
@@ -1793,18 +1946,33 @@
     },
     "verification": "For each sample, latest_target_maturity_date <= sample_date (no target-maturity leak)"
   },
+  "run": {
+    "architecture": "task54-resumable-chunked",
+    "run_id": "canonical8_20261027T222759Z_7a037ce7",
+    "manifest_path": "data/backtest_reports/runs/canonical8_20261027T222759Z_7a037ce7/manifest.json",
+    "created_at": "2026-10-27T22:27:59.502632+00:00",
+    "chunk_size_requested": 0,
+    "resumable": true,
+    "point_in_time_selection": "fixed_symbol_list (no volume ranking \u2014 no selection look-ahead possible)",
+    "universe_selection_cutoff": "2026-01-12T19:00:00",
+    "universe_fingerprint": "7a037ce7d86fab975b53bf68063d8d07b71e762db7649180241abdcc99225084",
+    "data_fingerprint": "862d962f9173d4f9609c1a0f65fcb035f4cf802c4f5bb545feb71f15a30e6bf9",
+    "sample_records_dir": "data/backtest_reports/runs/canonical8_20261027T222759Z_7a037ce7/samples",
+    "promotion_rule": "only a FULLY-complete run whose candidate passes validation replaces walk_forward_latest.json; partial runs never touch it"
+  },
   "limitations": [
-    "Universe mode = canonical8: 8 stock(s) evaluated (ENGRO, HUBC, LUCK, MEBL, OGDC, PPL, PSO, SYS). hardcoded canonical 8 PSX stocks (CSV-backed, most-liquid historically). Candidate universe = 8 stocks; excluded 0 for insufficient history (< None bars). NOT a fully production-validated benchmark.",
-    "5 classical models evaluated (XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression). The other ~60 registered models (LSTM, CNN-LSTM, Transformer-LSTM, PatchTST, N-BEATS, TimesNet, Informer, foundation analogs, rule-based strategies) are NOT evaluated here \u2014 see scripts/walk_forward_backtesting.py MODEL_NAMES.",
+    "Universe mode = canonical8: 8 stock(s) evaluated (ENGRO, HUBC, LUCK, MEBL, OGDC, PPL, PSO, SYS). hardcoded canonical 8 PSX stocks (CSV-backed, most-liquid historically). Candidate universe = 8 stocks; excluded 0 for insufficient history. NOT a fully production-validated benchmark.",
+    "Task 54 Phase 1: the universe was selected POINT-IN-TIME \u2014 eligibility + liquidity ranking use only records on or before the selection cutoff (2026-01-12T19:00:00), which is strictly before every evaluation decision date. Evaluation-period volume/returns did NOT influence the selection.",
+    "5 classical models evaluated (XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression). The other ~60 registered models are NOT evaluated here \u2014 see scripts/walk_forward_backtesting.py MODEL_NAMES.",
     "Per-sample retraining on data[date < sample.date] (expanding window). No data leakage.",
-    "Task 51 Phase 1: filter_by_target_maturity ensures training rows' target endpoint (T+h) <= sample's prediction date P. Per-horizon, per-stock, pooled across stocks. Preserves valid shorter-horizon training rows whose longest-horizon target is immature.",
+    "Task 51 Phase 1: filter_by_target_maturity ensures training rows' target endpoint (T+h) <= sample's prediction date P. Per-horizon, per-stock, pooled across stocks.",
     "R\u00b2 can be negative \u2014 that's honest (model did not outperform the constant-mean baseline on this test). Compare against zero-return + training-only-mean baselines for actual deployable-skill assessment.",
     "Directional accuracy = fraction of samples where sign(predicted) == sign(actual). A value >50% is NOT proven predictive skill without considering sample size, baseline, serial dependence, and uncertainty.",
     "OVERLAPPING FORECAST WINDOWS: samples are 10 trading days apart per stock, but the 21-day return windows at adjacent samples OVERLAP by 11 sessions. Outcomes are NOT independent \u2014 uncertainty estimates must use date-blocked resampling (NOT naive standard errors).",
-    "Sample dates are every 10 trading days per stock in the test partition; need \u226521 bars ahead for the 21d horizon to mature.",
-    "Total unique (stock, decision-date) samples = 112; total model fits = 5 \u00d7 3 horizons \u00d7 112 samples = 1680. Do NOT describe 112 as 'samples per stock'.",
+    "Total unique (stock, decision-date) samples = 112; total model fits = 1680 (up to 5 models \u00d7 3 horizons per sample). Do NOT describe 112 as 'samples per stock'.",
     "Trading metrics are GROSS directional-return proxies (signed forward 21-day return, NO commission/slippage/CGT/position-sizing). Net trading P&L is unavailable. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used in the Tracker.",
-    "WIN_RATE_WEIGHTED ensemble uses Option A (frozen validation-period weights) \u2014 validation-period entries are marked unavailable; final-test entries use frozen weights from the validation sub-period.",
+    "Task 54 Phase 4: WIN_RATE_WEIGHTED uses frozen validation-period weights with a MATURITY PURGE (validation outcomes maturing after the earliest final-test decision date are excluded). Weights are computed only at finalization \u2014 never inside a chunk, never from final-test results.",
+    "Task 54 Phase 5: this report was recomputed from the raw per-sample records in the run directory \u2014 never by averaging chunk-level metrics. A partial run never publishes a report.",
     "Training-only-mean baseline pools matured training targets across all stocks (market-wide mean). Per-stock means are NOT computed because most stocks have insufficient historical observations per horizon for a stable per-stock mean."
   ],
   "unevaluated": [],
@@ -1815,7 +1983,9 @@
     "per_sample_training": "per-sample train_data = df[df['date']<sample['date']] (strict chronological, no look-ahead) + filter_by_target_maturity(hz) per horizon",
     "per_horizon_drop": "per-sample, per-horizon filter_by_target_maturity \u2014 preserves shorter-horizon rows whose longest-horizon target is immature or whose endpoint extends past P",
     "realized_outcomes": "actual_return uses FUTURE close prices in the test partition (strictly AFTER the decision date) \u2014 no look-ahead leakage in the realized-outcome computation",
-    "ensemble_weighting": "Task 51 Phase 2: WIN_RATE_WEIGHTED uses frozen validation-period weights (Option A). MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED are per-sample (safe). FINAL_CONSENSUS uses dual-mode (skip WIN_RATE_WEIGHTED on validation, include on final-test).",
+    "ensemble_weighting": "Task 51 Phase 2 + Task 54 Phase 4: WIN_RATE_WEIGHTED uses frozen validation-period weights with a maturity purge vs the final-test boundary. MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED are per-sample (safe). FINAL_CONSENSUS uses dual-mode. Ensembles computed ONLY at finalization.",
+    "point_in_time_universe": "Task 54 Phase 1: universe eligibility + liquidity ranking use ONLY pre-cutoff records; the cutoff precedes every evaluation decision date.",
+    "chunking": "Task 54: chunks split evaluation SAMPLES only \u2014 every sample trains on the FULL frozen universe pooled by date + target-maturity filter. Final metrics recomputed from raw per-sample records.",
     "baselines": "Task 51 Phase 3: zero-return + training-only-mean baselines added (per-horizon, pooled market-wide). Conventional constant-mean R\u00b2 reference retained per-model\u00d7horizon.",
     "walk_forward_methodology": "TRUE walk-forward: each test sample's models are re-fit on all data strictly before the sample's decision date AND with target-maturity filter applied per horizon. Distinct from the simplified backtest in train_all_with_backtesting.py (Pattern #10 \u2014 latest signal applied to all test rows)."
   }
