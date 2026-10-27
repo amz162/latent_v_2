@@ -567,10 +567,10 @@ def main():
  # The constant-mean baseline (predict mean(actual_arr) for all) is retained as
  # the conventional R² reference but explicitly labeled as such.
  print("\n\nComputing forecast-quality metrics (MAE / RMSE / R² / directional accuracy)...")
-# Task 52: per-stock forecast metrics placeholder. Built AFTER the wf_forecast
-# loop from per_model_per_horizon (which already carries the per-prediction
-# 'stock' field — no sample-loop change was needed).
-per_stock_results = {}  # {symbol: {samples_count, models: {name: {hz: {...}}}}}
+ # Task 52: per-stock forecast metrics placeholder. Built AFTER the wf_forecast
+ # loop from per_model_per_horizon (which already carries the per-prediction
+ # 'stock' field — no sample-loop change was needed).
+ per_stock_results = {}  # {symbol: {samples_count, models: {name: {hz: {...}}}}}
  wf_forecast = {}  # {model_name: {horizon: {mae, rmse, r2, directional_accuracy, n_observations, baselines}}}
  unevaluated = []  # list of {model, horizon, reason}
  # Task 51 Phase 3 — per-horizon pooled actuals for baseline metrics (use the
@@ -689,45 +689,45 @@ per_stock_results = {}  # {symbol: {samples_count, models: {name: {hz: {...}}}}}
 
 # ─── Task 52: per-stock forecast metrics ─────────────────────────────────────────
 # per_model_per_horizon[name][hz] already carries the per-prediction 'stock' field
-# (set in the sample loop at line ~354). Partition by stock + compute the same
+# (set in the sample loop). Partition by stock + compute the same
 # MAE/RMSE/R²/DirAcc as the pooled wf_forecast. R² can be NEGATIVE — not clamped.
-print("\nComputing per-stock forecast metrics...")
-stocks_in_eval = sorted(set(
- p["stock"] for name in MODEL_NAMES for hz in [5,10,21]
- for p in per_model_per_horizon[name][hz]
-))
-for sym in stocks_in_eval:
- per_stock_results[sym] = {"samples_count": 0, "models": {}}
- sym_dates_seen = set()
- for name in MODEL_NAMES:
-  per_stock_results[sym]["models"][name] = {}
-  for hz in [5, 10, 21]:
-   pairs = [p for p in per_model_per_horizon[name][hz] if p["stock"] == sym]
-   for p in pairs:
-    sym_dates_seen.add(p["date"])
-   if len(pairs) < 2:
+ print("\nComputing per-stock forecast metrics...")
+ per_stock_results_clear = sorted(set(
+  p["stock"] for name in MODEL_NAMES for hz in [5,10,21]
+  for p in per_model_per_horizon[name][hz]
+ ))
+ for sym in per_stock_results_clear:
+  per_stock_results[sym] = {"samples_count": 0, "models": {}}
+  sym_dates_seen = set()
+  for name in MODEL_NAMES:
+   per_stock_results[sym]["models"][name] = {}
+   for hz in [5, 10, 21]:
+    pairs = [p for p in per_model_per_horizon[name][hz] if p["stock"] == sym]
+    for p in pairs:
+     sym_dates_seen.add(p["date"])
+    if len(pairs) < 2:
+     per_stock_results[sym]["models"][name][hz] = {
+      "status": "unavailable",
+      "reason": f"insufficient matured samples (have {len(pairs)}, need >=2)",
+      "n_observations": len(pairs),
+     }
+     continue
+    pa = np.array([p["predicted"] for p in pairs], dtype=np.float64)
+    aa = np.array([p["actual"] for p in pairs], dtype=np.float64)
+    ps_mae = float(mean_absolute_error(aa, pa))
+    ps_rmse = float(np.sqrt(mean_squared_error(aa, pa)))
+    ps_r2 = float(r2_score(aa, pa)) if len(aa) > 1 and aa.std() > 0 else float("nan")
+    ps_dir = float(np.mean(np.sign(pa) == np.sign(aa)))
     per_stock_results[sym]["models"][name][hz] = {
-     "status": "unavailable",
-     "reason": f"insufficient matured samples (have {len(pairs)}, need >=2)",
+     "status": "completed",
+     "mae": round(ps_mae, 6),
+     "rmse": round(ps_rmse, 6),
+     "r2": None if np.isnan(ps_r2) else round(ps_r2, 6),
+     "directional_accuracy": round(ps_dir, 4),
      "n_observations": len(pairs),
     }
-    continue
-   pa = np.array([p["predicted"] for p in pairs], dtype=np.float64)
-   aa = np.array([p["actual"] for p in pairs], dtype=np.float64)
-   ps_mae = float(mean_absolute_error(aa, pa))
-   ps_rmse = float(np.sqrt(mean_squared_error(aa, pa)))
-   ps_r2 = float(r2_score(aa, pa)) if len(aa) > 1 and aa.std() > 0 else float("nan")
-   ps_dir = float(np.mean(np.sign(pa) == np.sign(aa)))
-   per_stock_results[sym]["models"][name][hz] = {
-    "status": "completed",
-    "mae": round(ps_mae, 6),
-    "rmse": round(ps_rmse, 6),
-    "r2": None if np.isnan(ps_r2) else round(ps_r2, 6),
-    "directional_accuracy": round(ps_dir, 4),
-    "n_observations": len(pairs),
-   }
- per_stock_results[sym]["samples_count"] = len(sym_dates_seen)
-print(f"  per-stock metrics computed for {len(per_stock_results)} stocks")
+  per_stock_results[sym]["samples_count"] = len(sym_dates_seen)
+ print(f"  per-stock metrics computed for {len(per_stock_results)} stocks")
 
  # ─── NEW (Task 49): Structured versioned report at data/backtest_reports/walk_forward_latest.json ───
  # This is the artifact the /api/backtest/walk-forward route reads. SEPARATE
