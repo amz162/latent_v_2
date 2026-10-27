@@ -1,0 +1,688 @@
+     1→#!/usr/bin/env python3
+     2→"""
+     3→backtest_all_models.py — THE single source of performance truth for Latent.pk
+     4→=============================================================================
+     5→
+     6→Every performance number shown anywhere in the product (UI, reports, docs)
+     7→must come from the JSON this script writes: data/backtest_report.json.
+     8→If a model does not appear in that report's "results" dict, its performance
+     9→is UNMEASURED and the UI must not show numbers for it.
+    10→
+    11→WHAT THIS HARNESS DOES (methodology — do not weaken):
+    12→  * Walk-forward evaluation with a strict purge: at each step date T every
+    13→    model is retrained ONLY on rows whose full 21-day label window ENDS
+    14→    BEFORE T (label_end < T), so no information from T or later can touch
+    15→    the training set. Acceptance test (a) below verifies this.
+    16→  * Signals at close t, entry at OPEN t+1, exit at OPEN t+1+21.
+    17→    Position return = open[t+1+21] / open[t+1] - 1 - round_trip_cost.
+    18→  * Point-in-time liquidity universe: at each step date, a stock is eligible
+    19→    iff it has >= 400 bars of history so far AND its trailing-60-day median
+    20→    traded value (close*volume) >= PKR 20m, using only data up to t.
+    21→  * ONE identical portfolio rule for every model: top-10 scores, equal
+    22→    weight, non-overlapping 21-day periods, 0.8% round-trip cost per
+    23→    position. If fewer than 10 eligible stocks, hold what exists; if none,
+    24→    the period is cash (0%).
+    25→  * Metrics from a REAL compounded equity curve: CAGR, Sharpe (from
+    26→    non-overlapping period returns, sqrt(252/21) annualisation), max
+    27→    drawdown, plus position-level win rate, profit factor, expectancy,
+    28→    avg win / avg loss.
+    29→  * Model registry (below): histgbm, lightgbm, xgboost, random_forest,
+    30→    extra_trees, ridge, logistic, momentum_rule. momentum_rule is the
+    31→    baseline every AI model must beat — it appears in every report.
+    32→
+    33→ADAPTER INTERFACE — how to register a future model
+    34→--------------------------------------------------
+    35→Any sklearn-style model can join the registry in ~3 lines:
+    36→
+    37→    REGISTRY["my_model"] = ModelSpec(
+    38→        kind="regressor",                  # or "classifier"
+    39→        make=lambda: MyModel(**params),    # must expose fit(X, y) / predict(X)
+    40→                                           # (or predict_proba for classifiers)
+    41→        role="challenger",
+    42→    )
+    43→
+    44→Requirements for a model to be measurable (all enforced by this harness):
+    45→  1. fit(X, y) / predict(X) interface (predict_proba -> column 1 for
+    46→     classifiers). X is a float32 DataFrame of FEATURE_COLS, y is the
+    47→     21-day open-to-open forward return (float) or (fwd_ret > 0) flag.
+    48→  2. The model is RETRAINED INSIDE the walk-forward loop at every step
+    49→     date on the purged training set only. A model that cannot be
+    50→     retrained point-in-time (frozen weights, precomputed forecasts,
+    51→     foundation-model inference on future data) CANNOT be measured here.
+    52→  3. Deterministic given a fixed random_state.
+    53→
+    54→DEEP-LEARNING / FOUNDATION MODELS (GRU, LSTM, Chronos, Lag-Llama, Moirai,
+    55→Time-LLM, PatchTST, N-BEATS, TimesNet, Informer, Prophet, ARIMA, ...):
+    56→they stay OUT of the registry until someone writes a point-in-time
+    57→adapter that retrains them inside the walk-forward loop under the same
+    58→purge rule. Until then their performance is "unmeasured" — the UI must
+    59→not show their old (leaky 20%-holdout) numbers.
+    60→
+    61→Acceptance criteria wired into this file
+    62→----------------------------------------
+    63→(a) No lookahead: run with --leak-test — it re-runs a window of steps on
+    64→    the full dataset and on a dataset truncated AFTER the window; every
+    65→    step's picks and period returns must be identical (they only depend
+    66→    on rows dated before the step). Exits non-zero on mismatch.
+    67→(b) momentum_rule (baseline) is always evaluated and always present in
+    68→    the report and the printed ranking table.
+    69→(c) The legacy report generators (train_meta_ensemble.py et al.) are no
+    70→    longer invoked anywhere; data/backtest_report.json and the UI's
+    71→    Backtesting Report are produced/served from THIS harness only.
+    72→
+    73→Usage
+    74→-----
+    75→    python3 scripts/backtest_all_models.py                  # full run: all stocks, from 2019
+    76→    python3 scripts/backtest_all_models.py --ci             # fast smoke: --max-stocks 200 --start 2022-01-01
+    77→    python3 scripts/backtest_all_models.py --leak-test      # acceptance criterion (a)
+    78→
+    79→Env vars: LATENT_DB (default db/custom.db), LATENT_OUT (default data/backtest_report.json)
+    80→"""
+    81→
+    82→from __future__ import annotations
+    83→
+    84→import argparse
+    85→import json
+    86→import os
+    87→import sqlite3
+    88→import sys
+    89→import time
+    90→from pathlib import Path
+    91→
+    92→import numpy as np
+    93→import pandas as pd
+    94→
+    95→ROOT = Path(__file__).resolve().parents[1]
+    96→
+    97→# ----------------------------------------------------------------------------
+    98→# Config
+    99→# ----------------------------------------------------------------------------
+   100→HORIZON = 21                     # trading days: entry at open t+1, exit at open t+1+21
+   101→STEP_DAYS = 21                   # non-overlapping evaluation periods
+   102→TOP_N = 10                       # equal-weight positions per period
+   103→ROUND_TRIP_COST = 0.008          # 0.8% round-trip cost per position
+   104→MIN_MED_VALUE = 20_000_000.0     # PKR, trailing-60d median traded value
+   105→MIN_HISTORY = 400                # bars of history required (point-in-time)
+   106→DEFAULT_START = "2019-01-01"
+   107→DEFAULT_TRAIN_CAP = 250_000      # most-recent-row cap per step (perf knob, disclosed)
+   108→CI_TRAIN_CAP = 50_000
+   109→N_JOBS = min(2, (os.cpu_count() or 2))
+   110→SEED = 42
+   111→
+   112→FEATURE_COLS = [
+   113→    "ret_1d", "ret_5d", "ret_10d", "ret_21d", "ret_63d",
+   114→    "sma20_ratio", "sma50_ratio", "sma200_ratio",
+   115→    "vol_21d", "vol_63d", "volume_ratio_20d",
+   116→    "rsi_14", "hi_252_prox",
+   117→]
+   118→
+   119→# Legacy (leaky 20%-holdout) display names -> registry entries they map to.
+   120→# Everything else stays "unmeasured" and the UI must show no numbers for it.
+   121→LEGACY_NAME_MAP = {
+   122→    "histgbm": "HistGBM (CL-2)",
+   123→    "lightgbm": "LightGBM",
+   124→    "xgboost": "XGBoost",
+   125→    "random_forest": "Random Forest",
+   126→    "extra_trees": "ExtraTrees (CL-2)",
+   127→    "ridge": "Ridge Regression",
+   128→    "logistic": "Logistic (CL-2)",
+   129→}
+   130→KNOWN_UNMEASURED_EXTRA = ["momentum_rule"]  # registry names without legacy entries
+   131→
+   132→
+   133→class ModelSpec:
+   134→    __slots__ = ("kind", "make", "role", "note")
+   135→
+   136→    def __init__(self, kind, make, role="challenger", note=""):
+   137→        self.kind = kind      # "regressor" | "classifier" | "rule"
+   138→        self.make = make      # zero-arg factory -> object with fit/predict
+   139→        self.role = role
+   140→        self.note = note
+   141→
+   142→
+   143→def _lean() -> bool:
+   144→    """Lean hyper-parameters are used when --ci / --lean is passed."""
+   145→    return os.environ.get("LATENT_LEAN") == "1"
+   146→
+   147→
+   148→def build_registry(lean: bool) -> dict:
+   149→    from sklearn.ensemble import ExtraTreesRegressor, RandomForestRegressor
+   150→    from sklearn.linear_model import LogisticRegression, Ridge
+   151→    from sklearn.pipeline import Pipeline
+   152→    from sklearn.preprocessing import StandardScaler
+   153→
+   154→    rf_kw = dict(n_estimators=60 if lean else 120, max_depth=8 if lean else 9,
+   155→                 min_samples_leaf=300 if lean else 250, max_features=0.5,
+   156→                 n_jobs=N_JOBS, random_state=SEED)
+   157→    reg_note = "lean (CI) hyper-params" if lean else "standard hyper-params"
+   158→
+   159→    return {
+   160→        "momentum_rule": ModelSpec(
+   161→            "rule", None, role="baseline",
+   162→            note="21-day return cross-sectional momentum — no training; "
+   163→                 "the baseline every AI model must beat"),
+   164→        "ridge": ModelSpec(
+   165→            "regressor",
+   166→            lambda: Pipeline([("sc", StandardScaler()), ("m", Ridge(alpha=10.0))]),
+   167→            note=reg_note),
+   168→        "logistic": ModelSpec(
+   169→            "classifier",
+   170→            lambda: Pipeline([("sc", StandardScaler()),
+   171→                              ("m", LogisticRegression(C=0.1, max_iter=500, random_state=SEED))]),
+   172→            note="P(close>0 over the 21d window); score = P(up)"),
+   173→        "histgbm": ModelSpec(
+   174→            "regressor",
+   175→            lambda: __import__("sklearn.ensemble", fromlist=["HistGradientBoostingRegressor"])
+   176→            .HistGradientBoostingRegressor(
+   177→                max_iter=100 if lean else 250, learning_rate=0.08 if lean else 0.06,
+   178→                max_leaf_nodes=31, l2_regularization=1.0,
+   179→                early_stopping=False, random_state=SEED),
+   180→            note=reg_note),
+   181→        "lightgbm": ModelSpec(
+   182→            "regressor",
+   183→            lambda: __import__("lightgbm", fromlist=["LGBMRegressor"]).LGBMRegressor(
+   184→                n_estimators=120 if lean else 250, learning_rate=0.06 if lean else 0.05,
+   185→                num_leaves=31, min_child_samples=100, subsample=0.9, subsample_freq=1,
+   186→                colsample_bytree=0.9, n_jobs=N_JOBS, random_state=SEED, verbosity=-1),
+   187→            note=reg_note),
+   188→        "xgboost": ModelSpec(
+   189→            "regressor",
+   190→            lambda: __import__("xgboost", fromlist=["XGBRegressor"]).XGBRegressor(
+   191→                n_estimators=120 if lean else 250, learning_rate=0.06 if lean else 0.05,
+   192→                max_depth=5, subsample=0.9, colsample_bytree=0.9, reg_lambda=1.0,
+   193→                tree_method="hist", n_jobs=N_JOBS, random_state=SEED, verbosity=0),
+   194→            note=reg_note),
+   195→        "random_forest": ModelSpec(
+   196→            "regressor",
+   197→            lambda: RandomForestRegressor(**rf_kw), note=reg_note),
+   198→        "extra_trees": ModelSpec(
+   199→            "regressor",
+   200→            lambda: ExtraTreesRegressor(**rf_kw), note=reg_note),
+   201→    }
+   202→
+   203→
+   204→# ----------------------------------------------------------------------------
+   205→# Data loading + features
+   206→# ----------------------------------------------------------------------------
+   207→def load_prices(db_path: Path, max_stocks: int, truncate_after: str | None) -> pd.DataFrame:
+   208→    """Load OhlcvBar (symbol,date,open,close,volume). open/close>0 enforced.
+   209→
+   210→    truncate_after: if set, drop rows with date > this (leak-test only).
+   211→    max_stocks: keep the K most-liquid symbols by full-sample median traded
+   212→    value (speed knob for CI only; full run uses every symbol).
+   213→    """
+   214→    con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+   215→    try:
+   216→        df = pd.read_sql_query(
+   217→            "SELECT symbol, date, open, close, volume FROM OhlcvBar "
+   218→            "WHERE open > 0 AND close > 0 ORDER BY symbol, date", con)
+   219→    finally:
+   220→        con.close()
+   221→    df["tv"] = df["close"] * df["volume"]
+   222→    if max_stocks and max_stocks > 0:
+   223→        # Symbol selection uses the FULL sample (before any truncation) so that
+   224→        # the leak-test's truncated dataset keeps an identical symbol list.
+   225→        med = df.groupby("symbol")["tv"].median().sort_values(ascending=False)
+   226→        keep = set(med.head(max_stocks).index)
+   227→        df = df[df["symbol"].isin(keep)].copy()
+   228→    if truncate_after:
+   229→        df = df[df["date"] <= truncate_after].copy()
+   230→    return df.reset_index(drop=True)
+   231→
+   232→
+   233→def add_features(df: pd.DataFrame) -> pd.DataFrame:
+   234→    """Per-symbol point-in-time features + the 21d open-to-open forward return.
+   235→
+   236→    A row's label is usable only when its full window has ended, expressed by
+   237→    label_end_date (calendar date of the exit open) < step date T.
+   238→    """
+   239→    g = df.groupby("symbol", sort=False)
+   240→    c, o, v = df["close"], df["open"], df["volume"]
+   241→    r1 = c.groupby(df["symbol"]).pct_change().clip(-0.5, 0.5)
+   242→
+   243→    df["ret_1d"] = r1
+   244→    for w in (5, 10, 21, 63):
+   245→        df[f"ret_{w}d"] = c.groupby(df["symbol"]).pct_change(w).clip(-0.95, 5.0)
+   246→    for w in (20, 50, 200):
+   247→        df[f"sma{w}_ratio"] = c / c.groupby(df["symbol"]).transform(
+   248→            lambda s: s.rolling(w, min_periods=w).mean()) - 1
+   249→    df["vol_21d"] = r1.groupby(df["symbol"]).transform(lambda s: s.rolling(21, min_periods=21).std())
+   250→    df["vol_63d"] = r1.groupby(df["symbol"]).transform(lambda s: s.rolling(63, min_periods=63).std())
+   251→    vsma = v.groupby(df["symbol"]).transform(lambda s: s.rolling(20, min_periods=20).mean())
+   252→    df["volume_ratio_20d"] = (v / vsma.replace(0, np.nan)).clip(0, 50)
+   253→    # RSI(14), Wilder
+   254→    up = r1.clip(lower=0)
+   255→    dn = (-r1).clip(lower=0)
+   256→    au = up.groupby(df["symbol"]).transform(lambda s: s.ewm(alpha=1 / 14, min_periods=14, adjust=False).mean())
+   257→    ad = dn.groupby(df["symbol"]).transform(lambda s: s.ewm(alpha=1 / 14, min_periods=14, adjust=False).mean())
+   258→    df["rsi_14"] = (100 - 100 / (1 + au / ad.replace(0, np.nan))).fillna(50.0)
+   259→    hi252 = c.groupby(df["symbol"]).transform(lambda s: s.rolling(252, min_periods=60).max())
+   260→    df["hi_252_prox"] = (c / hi252 - 1).clip(-0.95, 0)
+   261→
+   262→    # Point-in-time liquidity: trailing-60d median traded value + history length
+   263→    df["med_tv_60"] = df["tv"].groupby(df["symbol"]).transform(
+   264→        lambda s: s.rolling(60, min_periods=40).median())
+   265→    df["hist_n"] = g.cumcount() + 1
+   266→
+   267→    # Forward return: entry at open t+1, exit at open t+1+21 (per-symbol calendar)
+   268→    entry_open = df.groupby("symbol")["open"].shift(-1)
+   269→    exit_open = df.groupby("symbol")["open"].shift(-1 - HORIZON)
+   270→    df["fwd_ret"] = (exit_open / entry_open - 1).clip(-0.95, 3.0)
+   271→    df["label_end_date"] = df.groupby("symbol")["date"].shift(-1 - HORIZON)
+   272→    return df
+   273→
+   274→
+   275→# ----------------------------------------------------------------------------
+   276→# Backtest core
+   277→# ----------------------------------------------------------------------------
+   278→def step_snapshot(data: pd.DataFrame, t: str, min_med: float, min_hist: int) -> pd.DataFrame:
+   279→    rows = data[(data["date"] == t)
+   280→                & (data["med_tv_60"] >= min_med)
+   281→                & (data["hist_n"] >= min_hist)]
+   282→    return rows.dropna(subset=FEATURE_COLS)
+   283→
+   284→
+   285→def train_slice(data: pd.DataFrame, t: str, train_cap: int) -> pd.DataFrame:
+   286→    """Rows whose full 21-day label window ENDED strictly before T (purged)."""
+   287→    tr = data[(data["label_end_date"].notna()) & (data["label_end_date"] < t)
+   288→              & data["fwd_ret"].notna()].dropna(subset=FEATURE_COLS)
+   289→    if train_cap and len(tr) > train_cap:
+   290→        tr = tr.tail(train_cap)  # most recent rows only (data is sorted by date,symbol)
+   291→    return tr
+   292→
+   293→
+   294→def model_scores(spec: ModelSpec, Xtr: pd.DataFrame, ytr: pd.Series, Xun: pd.DataFrame) -> np.ndarray:
+   295→    if spec.kind == "rule":
+   296→        return Xun["ret_21d"].to_numpy(dtype=np.float64)
+   297→    m = spec.make()
+   298→    if spec.kind == "classifier":
+   299→        m.fit(Xtr, (ytr > 0).astype(int))
+   300→        proba = m.predict_proba(Xun)
+   301→        return np.asarray(proba)[:, 1]
+   302→    m.fit(Xtr, ytr)
+   303→    return np.asarray(m.predict(Xun), dtype=np.float64)
+   304→
+   305→
+   306→def rank_table(results: dict) -> str:
+   307→    rows = sorted(results.items(), key=lambda kv: kv[1]["profit_factor"], reverse=True)
+   308→    hdr = f"{'model':<16}{'PF':>6}{'expect%':>9}{'CAGR%':>8}{'Sharpe':>8}{'MaxDD%':>8}{'win%':>7}{'n_pos':>8}{'n_per':>7}  role"
+   309→    lines = [hdr, "-" * len(hdr)]
+   310→    for name, r in rows:
+   311→        lines.append(
+   312→            f"{name:<16}{r['profit_factor']:>6.2f}{r['expectancy_pct']:>9.2f}"
+   313→            f"{r['cagr_pct']:>8.2f}{r['sharpe']:>8.2f}{r['max_drawdown_pct']:>8.1f}"
+   314→            f"{r['position_win_rate_pct']:>7.1f}{r['n_positions']:>8}{r['n_periods']:>7}  "
+   315→            f"{'BASELINE' if r.get('role') == 'baseline' else r.get('role', '')}")
+   316→    return "\n".join(lines)
+   317→
+   318→
+   319→def run_backtest(data: pd.DataFrame, args, state: dict | None = None, persist=None) -> tuple[dict, dict]:
+   320→    """Core walk-forward loop. Returns (results, step_trace).
+   321→
+   322→    state/persist: optional checkpoint-resume. `state` is a previously saved
+   323→    checkpoint dict (see main); `persist` is called with the updated state
+   324→    after every step so long runs can be resumed across invocations.
+   325→    """
+   326→    registry = build_registry(args.lean)
+   327→    all_dates = np.array(sorted(data["date"].unique()))
+   328→    # Steps: every STEP_DAYS-th trading day whose exit bar exists in the master calendar
+   329→    step_idx = list(range(0, len(all_dates) - 1 - HORIZON, STEP_DAYS))
+   330→    if args.start:
+   331→        step_idx = [k for k in step_idx if all_dates[k] >= args.start]
+   332→    if args.end:
+   333→        step_idx = [k for k in step_idx if all_dates[k] <= args.end]
+   334→    n_steps = len(step_idx)
+   335→    print(f"Universe: {data['symbol'].nunique()} symbols, {len(data):,} rows, "
+   336→          f"{all_dates[0]}..{all_dates[-1]}; {n_steps} steps from "
+   337→          f"{all_dates[step_idx[0]] if step_idx else '—'}")
+   338→
+   339→    # state per model (optionally resumed from a checkpoint)
+   340→    if state:
+   341→        period_returns = {k: list(v) for k, v in state["period_returns"].items()}
+   342→        pos_returns = {k: list(v) for k, v in state["pos_returns"].items()}
+   343→        cash_periods = {k: int(v) for k, v in state["cash_periods"].items()}
+   344→        eligible_sizes = list(state["eligible_sizes"])
+   345→        start_i = int(state["next_i"])
+   346→        print(f"Resuming from checkpoint: {start_i}/{n_steps} steps already done")
+   347→    else:
+   348→        period_returns = {name: [] for name in registry}
+   349→        pos_returns = {name: [] for name in registry}
+   350→        cash_periods = {name: 0 for name in registry}
+   351→        eligible_sizes = []
+   352→        start_i = 0
+   353→
+   354→    t_run = time.time()
+   355→    completed = True
+   356→    for si in range(start_i, n_steps):
+   357→        k = step_idx[si]
+   358→        t0 = time.time()
+   359→        T = str(all_dates[k])
+   360→        univ = step_snapshot(data, T, args.min_med_value, args.min_history)
+   361→        # selection requires a known outcome (exit bar) — applies identically
+   362→        # to every model incl. the baseline, and is disclosed in the report.
+   363→        univ = univ[univ["fwd_ret"].notna()]
+   364→        eligible_sizes.append(len(univ))
+   365→        if len(univ) == 0:
+   366→            for name in registry:
+   367→                period_returns[name].append(0.0)
+   368→                cash_periods[name] += 1
+   369→            print(f"  [{si+1}/{n_steps}] {T}  eligible=0 -> cash period")
+   370→            continue
+   371→        Xtr_df = train_slice(data, T, args.train_cap)
+   372→        Xun = univ[FEATURE_COLS].astype(np.float32)
+   373→        fwd = univ["fwd_ret"].to_numpy(dtype=np.float64)
+   374→        if len(Xtr_df) < 5_000:
+   375→            # not enough purged history yet — stay in cash (honest)
+   376→            for name in registry:
+   377→                period_returns[name].append(0.0)
+   378→                cash_periods[name] += 1
+   379→            print(f"  [{si+1}/{n_steps}] {T}  train={len(Xtr_df):,} (<5k) -> cash period")
+   380→            continue
+   381→        Xtr = Xtr_df[FEATURE_COLS].astype(np.float32)
+   382→        ytr = Xtr_df["fwd_ret"].astype(np.float64)
+   383→
+   384→        picks_by_model = {}
+   385→        for name, spec in registry.items():
+   386→            scores = model_scores(spec, Xtr, ytr, Xun)
+   387→            ok = np.isfinite(scores)
+   388→            if ok.sum() == 0:
+   389→                picks_by_model[name] = np.array([], dtype=int)
+   390→                continue
+   391→            idx = np.flatnonzero(ok)
+   392→            order = idx[np.argsort(-scores[idx], kind="stable")][:args.top_n]
+   393→            picks_by_model[name] = order
+   394→
+   395→        for name in registry:
+   396→            order = picks_by_model[name]
+   397→            if len(order) == 0:
+   398→                period_returns[name].append(0.0)
+   399→                cash_periods[name] += 1
+   400→                continue
+   401→            r = fwd[order] - args.cost  # per-position net return
+   402→            period_returns[name].append(float(np.mean(r)))
+   403→            pos_returns[name].extend(r.tolist())
+   404→        if args.trace:
+   405→            print(f"  [{si+1}/{n_steps}] {T}  eligible={len(univ)} train={len(Xtr_df):,} "
+   406→                  f"picks={ {n: len(p) for n, p in picks_by_model.items()} }  ({time.time()-t0:.1f}s)")
+   407→        elif (si - start_i + 1) % 10 == 0 or si == start_i:
+   408→            print(f"  [{si+1}/{n_steps}] {T}  eligible={len(univ)} train={len(Xtr_df):,} "
+   409→                  f"({time.time()-t0:.1f}s/step)")
+   410→
+   411→        if persist is not None:
+   412→            persist({
+   413→                "next_i": si + 1,
+   414→                "period_returns": period_returns,
+   415→                "pos_returns": pos_returns,
+   416→                "cash_periods": cash_periods,
+   417→                "eligible_sizes": eligible_sizes,
+   418→                "elapsed_s": time.time() - t_run,
+   419→            })
+   420→        if getattr(args, "max_seconds", 0) and (time.time() - t_run) > args.max_seconds \
+   421→                and si + 1 < n_steps:
+   422→            print(f"Time budget ({args.max_seconds}s) reached at step {si+1}/{n_steps} — "
+   423→                  f"checkpoint saved; re-run the same command (or --resume) to continue.")
+   424→            completed = False
+   425→            break
+   426→
+   427→    # ---- metrics from a real compounded equity curve -------------------------
+   428→    results = {}
+   429→    years_per_period = STEP_DAYS / 252.0
+   430→    for name in registry:
+   431→        pr = np.array(period_returns[name], dtype=float)
+   432→        pr_pos = pr[pr != 0.0]  # informational: periods actually invested
+   433→        posr = np.array(pos_returns[name], dtype=float)
+   434→        if len(pr) == 0 or len(posr) < 5:
+   435→            results[name] = {"status": "insufficient_data", "n_periods": int(len(pr)),
+   436→                             "n_positions": int(len(posr))}
+   437→            continue
+   438→        eq = np.cumprod(1.0 + pr)
+   439→        years = len(pr) * years_per_period
+   440→        cagr = (eq[-1] ** (1.0 / years) - 1.0) * 100 if years > 0 and eq[-1] > 0 else -100.0
+   441→        dd = float((eq / np.maximum.accumulate(eq) - 1.0).min()) * 100
+   442→        sharpe = float(pr.mean() / pr.std() * np.sqrt(252.0 / STEP_DAYS)) if pr.std() > 0 else 0.0
+   443→        wins, losses = posr[posr > 0], posr[posr <= 0]
+   444→        gp, gl = float(wins.sum()), float(-losses.sum())
+   445→        results[name] = {
+   446→            "status": "measured",
+   447→            "role": registry[name].role,
+   448→            "note": registry[name].note,
+   449→            "profit_factor": round(gp / gl, 3) if gl > 0 else (999.0 if gp > 0 else 0.0),
+   450→            "expectancy_pct": round(float(posr.mean()) * 100, 3),
+   451→            "cagr_pct": round(float(cagr), 2),
+   452→            "sharpe": round(sharpe, 2),
+   453→            "max_drawdown_pct": round(dd, 1),
+   454→            "position_win_rate_pct": round(float((posr > 0).mean()) * 100, 2),
+   455→            "avg_win_pct": round(float(wins.mean()) * 100, 3) if len(wins) else 0.0,
+   456→            "avg_loss_pct": round(float(losses.mean()) * 100, 3) if len(losses) else 0.0,
+   457→            "total_return_pct": round(float(eq[-1] - 1) * 100, 1),
+   458→            "n_positions": int(len(posr)),
+   459→            "n_periods": int(len(pr)),
+   460→            "periods_in_cash": int(cash_periods[name]),
+   461→        }
+   462→    trace = {
+   463→        "eligible_sizes": eligible_sizes,
+   464→        "step_dates": [str(all_dates[k]) for k in step_idx],
+   465→        "period_returns": {k: v for k, v in period_returns.items()},
+   466→        "picks": {},  # filled only by leak-test caller
+   467→    }
+   468→    return results, trace, bool(completed)
+   469→
+   470→
+   471→def args_signature(args) -> str:
+   472→    import hashlib
+   473→    fields = [str(args.db), str(args.start), str(args.end), str(args.max_stocks),
+   474→              str(args.top_n), str(args.cost), str(args.min_med_value),
+   475→              str(args.min_history), str(args.step_days), str(args.train_cap),
+   476→              str(bool(args.lean))]
+   477→    return hashlib.sha256("|".join(fields).encode()).hexdigest()[:16]
+   478→
+   479→
+   480→def build_report(results: dict, data: pd.DataFrame, args, trace: dict) -> dict:
+   481→    registry = build_registry(args.lean)
+   482→    measured = {k: v for k, v in results.items() if v.get("status") == "measured"}
+   483→    ranking = sorted(measured, key=lambda k: measured[k]["profit_factor"], reverse=True)
+   484→    elig = np.array(trace["eligible_sizes"])
+   485→    med = data.groupby("symbol")["tv"].median()
+   486→    report = {
+   487→        "generated_at": pd.Timestamp.now().isoformat(),
+   488→        "generated_by": "scripts/backtest_all_models.py",
+   489→        "source_of_truth": True,
+   490→        "methodology": {
+   491→            "walk_forward_purged": "every model retrained at each step date only on rows "
+   492→                                   "whose full 21-day label window ended before that date",
+   493→            "entry_exit": "signal at close t, entry at open t+1, exit at open t+1+21",
+   494→            "universe": "point-in-time: trailing-60d median traded value >= PKR 20m, "
+   495→                        ">= 400 bars history, evaluated at each step date",
+   496→            "portfolio_rule": f"top-{args.top_n} scores, equal weight, non-overlapping "
+   497→                              f"{STEP_DAYS}-day periods, {args.cost*100:.1f}% round-trip cost per position",
+   498→            "metrics": "CAGR/Sharpe/MaxDD from a compounded equity curve of non-overlapping "
+   499→                       "period returns; Sharpe annualised with sqrt(252/21)",
+   500→        },
+   501→        "assumptions": {
+   502→            "horizon_days": HORIZON, "step_days": STEP_DAYS, "top_n": args.top_n,
+   503→            "round_trip_cost_pct": args.cost * 100,
+   504→            "min_median_traded_value_pkr": args.min_med_value,
+   505→            "min_history_bars": args.min_history,
+   506→            "start": args.start or DEFAULT_START, "end": args.end,
+   507→            "symbol_cap": args.max_stocks if args.max_stocks > 0 else "all (point-in-time eligibility applies)",
+   508→            "train_row_cap": args.train_cap or None,
+   509→            "lean_hyperparams": bool(args.lean),
+   510→            "seed": SEED,
+   511→        },
+   512→        "data": {
+   513→            "source": "db/custom.db (OhlcvBar)",
+   514→            "rows": int(len(data)), "symbols": int(data["symbol"].nunique()),
+   515→            "date_min": str(data["date"].min()), "date_max": str(data["date"].max()),
+   516→        },
+   517→        "universe": {
+   518→            "n_steps": len(trace["step_dates"]),
+   519→            "first_step": trace["step_dates"][0] if trace["step_dates"] else None,
+   520→            "last_step": trace["step_dates"][-1] if trace["step_dates"] else None,
+   521→            "eligible_min": int(elig.min()) if len(elig) else 0,
+   522→            "eligible_median": int(np.median(elig)) if len(elig) else 0,
+   523→            "eligible_max": int(elig.max()) if len(elig) else 0,
+   524→            "symbols_ever_eligible": int((med >= args.min_med_value).sum()),
+   525→        },
+   526→        "results": results,
+   527→        "ranking": ranking,
+   528→        "registry": {k: {"kind": s.kind, "role": s.role, "note": s.note}
+   529→                     for k, s in registry.items()},
+   530→        "notes": [
+   531→            "Positions whose 21-day outcome is unknown (row too close to dataset end) "
+   532→            "are excluded from selection for ALL models equally, including the baseline.",
+   533→            "train_row_cap keeps only the most recent rows per step when training history "
+   534→            "exceeds the cap — a disclosed speed knob, identical across models.",
+   535→            "Selection uses each symbol's own trading calendar: entry is the next "
+   536→            "available open after the step date.",
+   537→        ],
+   538→    }
+   539→    return report
+   540→
+   541→
+   542→# ----------------------------------------------------------------------------
+   543→# Leak test — acceptance criterion (a)
+   544→# ----------------------------------------------------------------------------
+   545→def leak_test(args) -> int:
+   546→    """Steps inside a window must be identical whether or not later data exists.
+   547→
+   548→    Runs steps in [start, cutoff] on (A) the full dataset and (B) the dataset
+   549→    truncated after cutoff+60d. If any training row dated after a step could
+   550→    influence that step, (B) would differ from (A).
+   551→    """
+   552→    cutoff = args.leak_cutoff or "2022-12-31"
+   553→    trunc = (pd.Timestamp(cutoff) + pd.Timedelta(days=60)).strftime("%Y-%m-%d")
+   554→    common = dict(max_stocks=args.max_stocks or 60, start=args.start or "2022-01-01",
+   555→                  end=cutoff, train_cap=args.train_cap or CI_TRAIN_CAP, lean=True)
+   556→    print(f"LEAK TEST: window {common['start']}..{cutoff}, truncation at {trunc}, "
+   557→          f"max_stocks={common['max_stocks']}")
+   558→    a_args = argparse.Namespace(**{**vars(args), **common, "trace": False, "lean": True})
+   559→    data_a = add_features(load_prices(Path(args.db), common["max_stocks"], None))
+   560→    res_a, trace_a, _ = run_backtest(data_a, a_args)
+   561→    data_b = add_features(load_prices(Path(args.db), common["max_stocks"], trunc))
+   562→    res_b, trace_b, _ = run_backtest(data_b, a_args)
+   563→
+   564→    ok = True
+   565→    for name in trace_a["period_returns"]:
+   566→        ra, rb = trace_a["period_returns"][name], trace_b["period_returns"][name]
+   567→        if len(ra) != len(rb):
+   568→            print(f"  FAIL {name}: {len(ra)} vs {len(rb)} periods"); ok = False; continue
+   569→        for i, (x, y) in enumerate(zip(ra, rb)):
+   570→            if abs(x - y) > 1e-9:
+   571→                print(f"  FAIL {name} step {i}: {x:.6f} vs {y:.6f}"); ok = False
+   572→    for name in res_a:
+   573→        pa, pb = res_a[name].get("profit_factor"), res_b[name].get("profit_factor")
+   574→        if pa != pb:
+   575→            print(f"  FAIL {name}: PF {pa} vs {pb}"); ok = False
+   576→    print("LEAK TEST:", "PASS — changing/dropping training rows dated after a step "
+   577→          "does not change any step's scores" if ok else "FAIL — LOOKAHEAD LEAK DETECTED")
+   578→    return 0 if ok else 1
+   579→
+   580→
+   581→# ----------------------------------------------------------------------------
+   582→# CLI
+   583→# ----------------------------------------------------------------------------
+   584→def parse_args(argv=None):
+   585→    ap = argparse.ArgumentParser(description="Walk-forward backtest of the full model registry")
+   586→    ap.add_argument("--db", default=os.environ.get("LATENT_DB", str(ROOT / "db" / "custom.db")))
+   587→    ap.add_argument("--out", default=os.environ.get("LATENT_OUT", str(ROOT / "data" / "backtest_report.json")))
+   588→    ap.add_argument("--start", default=DEFAULT_START, help="first step date (YYYY-MM-DD)")
+   589→    ap.add_argument("--end", default=None, help="last step date (YYYY-MM-DD)")
+   590→    ap.add_argument("--max-stocks", type=int, default=0, help="keep only K most-liquid symbols (0 = all)")
+   591→    ap.add_argument("--top-n", type=int, default=TOP_N)
+   592→    ap.add_argument("--cost", type=float, default=ROUND_TRIP_COST)
+   593→    ap.add_argument("--min-med-value", type=float, default=MIN_MED_VALUE)
+   594→    ap.add_argument("--min-history", type=int, default=MIN_HISTORY)
+   595→    ap.add_argument("--step-days", type=int, default=STEP_DAYS)
+   596→    ap.add_argument("--train-cap", type=int, default=DEFAULT_TRAIN_CAP,
+   597→                    help="most-recent-row training cap per step (0 = no cap)")
+   598→    ap.add_argument("--ci", action="store_true",
+   599→                    help="CI smoke mode: --max-stocks 200 --start 2022-01-01, lean params, small train cap")
+   600→    ap.add_argument("--lean", action="store_true", help="force lean hyper-parameters")
+   601→    ap.add_argument("--leak-test", action="store_true", help="run the purge/lookahead acceptance test")
+   602→    ap.add_argument("--leak-cutoff", default="2022-12-31")
+   603→    ap.add_argument("--trace", action="store_true", help="print every step")
+   604→    ap.add_argument("--max-seconds", type=int, default=0,
+   605→                    help="stop after N seconds, saving a checkpoint (0 = no budget)")
+   606→    ap.add_argument("--resume", action="store_true",
+   607→                    help="resume from the checkpoint saved by a --max-seconds run")
+   608→    ap.add_argument("--fresh", action="store_true", help="ignore and overwrite any existing checkpoint")
+   609→    ap.add_argument("--state", default=str(ROOT / "data" / ".backtest_state.json"))
+   610→    args = ap.parse_args(argv)
+   611→    if args.ci:
+   612→        args.max_stocks = args.max_stocks or 200
+   613→        args.start = "2022-01-01"
+   614→        args.train_cap = CI_TRAIN_CAP
+   615→        args.lean = True
+   616→        os.environ["LATENT_LEAN"] = "1"
+   617→    elif args.lean:
+   618→        os.environ["LATENT_LEAN"] = "1"
+   619→    return args
+   620→
+   621→
+   622→def main(argv=None) -> int:
+   623→    args = parse_args(argv)
+   624→    if args.step_days != STEP_DAYS:
+   625→        print(f"NOTE: --step-days {args.step_days} changes period spacing; "
+   626→              f"canonical methodology uses {STEP_DAYS}.")
+   627→    t0 = time.time()
+   628→    if args.leak_test:
+   629→        return leak_test(args)
+   630→
+   631→    # ── checkpoint / resume -------------------------------------------------
+   632→    state_path = Path(args.state)
+   633→    sig = args_signature(args)
+   634→    state = None
+   635→    if state_path.exists() and not args.fresh:
+   636→        try:
+   637→            saved = json.loads(state_path.read_text())
+   638→            if saved.get("signature") == sig:
+   639→                state = saved
+   640→                print(f"Found matching checkpoint ({saved.get('next_i')} steps done) — "
+   641→                      f"resuming. Use --fresh to restart.")
+   642→            else:
+   643→                print("Checkpoint exists but was produced with different arguments — "
+   644→                      "ignoring it (use --fresh to discard).")
+   645→        except Exception:
+   646→            state = None
+   647→
+   648→    data = load_prices(Path(args.db), args.max_stocks, None)
+   649→    print(f"Loaded {len(data):,} rows for {data['symbol'].nunique()} symbols "
+   650→          f"({data['date'].min()}..{data['date'].max()}) in {time.time()-t0:.0f}s")
+   651→    t0 = time.time()
+   652→    data = add_features(data)
+   653→    print(f"Features computed in {time.time()-t0:.0f}s")
+   654→
+   655→    last_next_i = int(state["next_i"]) if state else 0
+   656→
+   657→    def persist(s: dict) -> None:
+   658→        nonlocal last_next_i
+   659→        last_next_i = int(s["next_i"])
+   660→        state_path.parent.mkdir(parents=True, exist_ok=True)
+   661→        state_path.write_text(json.dumps({**s, "signature": sig}))
+   662→
+   663→    results, trace, completed = run_backtest(data, args, state=state, persist=persist)
+   664→
+   665→    if not completed:
+   666→        print(f"\nPARTIAL RUN — {last_next_i} of {len(trace['step_dates'])} steps done. "
+   667→              f"Checkpoint saved to {state_path}. "
+   668→              f"Re-run the same command to continue; the report is only written "
+   669→              f"when ALL steps are complete.")
+   670→        return 0
+   671→
+   672→    # complete run → remove the checkpoint
+   673→    if state_path.exists():
+   674→        state_path.unlink()
+   675→    report = build_report(results, data, args, trace)
+   676→
+   677→    out = Path(args.out)
+   678→    out.parent.mkdir(parents=True, exist_ok=True)
+   679→    out.write_text(json.dumps(report, indent=2))
+   680→    print(f"\n{'='*80}\nRANKING (sorted by profit factor) — written to {out}\n{'='*80}")
+   681→    print(rank_table(results))
+   682→    print(f"\nTotal wall time: {(time.time()-t0)/60:.1f} min")
+   683→    return 0
+   684→
+   685→
+   686→if __name__ == "__main__":
+   687→    sys.exit(main())
+   688→

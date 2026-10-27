@@ -148,3 +148,51 @@ model ModelBacktestCache {
   coveredSymbols Int      @default(0) // how many symbols the backtest covered
   computedAt     DateTime @default(now())
 }
+
+// Prospective, IMMUTABLE prediction record (Priority 7) — stores a prediction
+// BEFORE its outcome is known; outcomes are filled later only after maturity.
+// dedupKey = "SYMBOL|modelId|modelVersion|predictionTs" guarantees repeated
+// API requests never create duplicate prediction events. Records are never
+// overwritten with new forecasts (dedup hit only refreshes non-essential
+// fields) so future honesty audits can replay exactly what was claimed.
+model PredictionHistory {
+  id             String   @id @default(cuid())
+  dedupKey       String   @unique
+  symbol         String
+  modelId        String
+  modelVersion   String
+  predictionTs   String // epoch ms as string (SQLite-friendly, stable sort)
+  signal         String // BUY | SELL | HOLD
+  predictedReturn Float?
+  predictedProb  Float?
+  confidenceType String   @default("heuristic") // heuristic | calibrated
+  entryPrice     Float?
+  horizon        Int?
+  dataCutoff     String? // ISO date of the data the forecast was made on
+  kind           String   @default("prospective") // prospective | simulated | out-of-sample | technical-rule
+  outcomeStatus  String   @default("pending") // pending | matured | unavailable
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([symbol])
+  @@index([modelId])
+  @@index([outcomeStatus])
+}
+
+// DB-first store for the LEGACY Price Pattern pipeline (price-patterns-service
+// + price-pattern-llm behind /api/price-patterns/precompute): reports are
+// computed once (statistical engine + one LLM explanation pass), stored here,
+// and served from SQLite afterwards so the LLM never runs twice for the same
+// data. One row per symbol; UPSERT-only — never deleted or expired by the
+// server. NOTE: this is separate from PricePatternCache (the current engine's
+// cache used by /api/price-patterns/[symbol]).
+model PricePatternReport {
+  symbol        String   @id
+  computedAt    DateTime @default(now())
+  detectionJson String // JSON: { coverage, patterns, zones, seasonality, unusual }
+  llmJson       String? // JSON: LlmExplanations { patterns, unusual_notes } or null
+  barsCount     Int
+  firstDate     String
+  lastDate      String
+  patternCount  Int
+}

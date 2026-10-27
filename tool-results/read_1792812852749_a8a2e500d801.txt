@@ -1,0 +1,1742 @@
+     1→"use client";
+     2→
+     3→import { useEffect, useMemo, useState } from "react";
+     4→import { Card, CardContent } from "@/components/ui/card";
+     5→import { Button } from "@/components/ui/button";
+     6→import { Badge } from "@/components/ui/badge";
+     7→import { Skeleton } from "@/components/ui/skeleton";
+     8→import { Input } from "@/components/ui/input";
+     9→import { useLatentStore } from "@/lib/latent/store";
+    10→import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+    11→import {
+    12→  Trophy,
+    13→  TrendingUp,
+    14→  TrendingDown,
+    15→  Activity,
+    16→  Zap,
+    17→  Briefcase,
+    18→  Download,
+    19→  Brain,
+    20→  Target,
+    21→  Wallet,
+    22→  Play,
+    23→  RotateCcw,
+    24→  Clock,
+    25→  PieChart as PieChartIcon,
+    26→  History,
+    27→  RefreshCw,
+    28→  Calendar,
+    29→  PiggyBank,
+    30→  Loader2,
+    31→} from "lucide-react";
+    32→import { toast } from "sonner";
+    33→import { classifySector } from "@/lib/latent/mock-company-results";
+    34→
+    35→// The 8 PSX stocks covered by our AI model signal engine — still used by the
+    36→// Signal Tracker stats cards (4 top cards). The Investment Simulator (Issue 13)
+    37→// no longer uses these — it pulls ALL ~284 final-consensus signals from
+    38→// /api/signals/all and runs the backtest on the OhlcvBar DB (100 KSE-100 stocks).
+    39→const COVERED_SYMBOLS = ["ENGRO", "HUBC", "LUCK", "SYS", "MEBL", "PSO", "OGDC", "PPL"];
+    40→
+    41→// Issue 13 — Investment Simulator: time-period input is a number + a unit
+    42→// (day / month / year). The unit is converted to trading days by the
+    43→// /api/backtest/investment-simulator endpoint (day=1, month=21, year=252).
+    44→type PeriodUnit = "day" | "month" | "year";
+    45→const PERIOD_UNITS: { value: PeriodUnit; label: string }[] = [
+    46→  { value: "day", label: "days" },
+    47→  { value: "month", label: "months" },
+    48→  { value: "year", label: "years" },
+    49→];
+    50→
+    51→// Subset of /api/ai-model-signals/[symbol] response shape that we consume.
+    52→interface BacktestStats {
+    53→  totalTrades?: number;
+    54→  wins?: number;
+    55→  winRate?: number;
+    56→  avgReturnPct?: number;
+    57→  maxReturnPct?: number;
+    58→  minReturnPct?: number;
+    59→  stars?: number;
+    60→  buySignals?: number;
+    61→  sellSignals?: number;
+    62→  correctBuys?: number;
+    63→  correctSells?: number;
+    64→}
+    65→
+    66→interface FinalConsensus {
+    67→  signal: "BUY" | "SELL" | "HOLD";
+    68→  direction: "LONG" | "SHORT";
+    69→  confidence: number;
+    70→  agreement: number;
+    71→  predictedPriceRange: { min: number; max: number };
+    72→  entry: number;
+    73→  sl: number;
+    74→  tp1: number;
+    75→  tp2: number;
+    76→  tp3: number;
+    77→}
+    78→
+    79→interface AiSignalResponse {
+    80→  symbol: string;
+    81→  stockName: string;
+    82→  currentPrice: number;
+    83→  finalConsensus: FinalConsensus;
+    84→  backtesting: Record<string, BacktestStats>;
+    85→  ensembleBacktesting: Record<string, BacktestStats>;
+    86→  trainedModelCount: number;
+    87→  totalModelCount: number;
+    88→  trainedAt: string;
+    89→  cached: boolean;
+    90→}
+    91→
+    92→interface StockSignal {
+    93→  symbol: string;
+    94→  stockName: string;
+    95→  direction: "LONG" | "SHORT";
+    96→  signal: "BUY" | "SELL" | "HOLD";
+    97→  entry: number;
+    98→  target: number;
+    99→  sl: number;
+   100→  retPct: number;
+   101→  confidence: number;
+   102→  agreement: number;
+   103→  currentPrice: number;
+   104→}
+   105→
+   106→// Issue 14: Signal History row — matches /api/signals/all StockSignalSummary.
+   107→// The endpoint already overlays LIVE prices and evaluates the TP1/TP2/TP3/SL
+   108→// outcome server-side (lib/latent/liveQuote.ts#evaluateOutcome) — the client
+   109→// just displays it.
+   110→type SignalOutcome = "TP3_HIT" | "TP2_HIT" | "TP1_HIT" | "SL_HIT" | "ACTIVE";
+   111→interface SignalHistoryRow {
+   112→  symbol: string;
+   113→  stockName: string;
+   114→  signal: "BUY" | "SELL";
+   115→  direction: "LONG" | "SHORT";
+   116→  confidence: number;
+   117→  currentPrice: number; // LIVE (psxdata-api) — already swapped in by the API
+   118→  entry: number;
+   119→  sl: number;
+   120→  tp1: number;
+   121→  tp2: number;
+   122→  tp3: number;
+   123→  riskReward: number; // |tp3 - entry| / |entry - sl|
+   124→  avgReturn: number;
+   125→  livePrice: number | null;
+   126→  outcome: SignalOutcome;
+   127→  pnlPct: number; // signed P&L vs entry in the signal's direction (live)
+   128→  ensembleBuyCount: number;
+   129→  ensembleSellCount: number;
+   130→  ensembleHoldCount: number;
+   131→  modelBuyCount: number;
+   132→  modelSellCount: number;
+   133→  modelHoldCount: number;
+   134→}
+   135→
+   136→function fmtPct(v: number, withSign = false): string {
+   137→  const sign = withSign && v > 0 ? "+" : "";
+   138→  return `${sign}${Number(v).toFixed(2)}%`;
+   139→}
+   140→
+   141→function fmtPkr(v: number): string {
+   142→  return `Rs. ${Math.round(v).toLocaleString("en-PK")}`;
+   143→}
+   144→
+   145→export function Tracker() {
+   146→  const [aiSignals, setAiSignals] = useState<AiSignalResponse[]>([]);
+   147→  const [loading, setLoading] = useState(true);
+   148→  // Issue 13: removed `timeframe` state — the per-symbol signals fetch now
+   149→  // always uses ?timeframe=1m (the API ignores it anyway per the original
+   150→  // comment). The Investment Simulator uses /api/backtest/investment-simulator
+   151→  // directly (which derives numDays from the user's time-period input).
+   152→  const timeframe = "1m" as const;
+   153→  const portfolio = useLatentStore((s) => s.portfolio);
+   154→  const closedTrades = useLatentStore((s) => s.closedTrades);
+   155→
+   156→  // ─── Issue 14: Signal History — final ensemble consensus for ALL ~361 stocks
+   157→  // (not just the 8 hardcoded COVERED_SYMBOLS). The /api/signals/all endpoint
+   158→  // returns the same finalConsensus value used by the Signals tab, with a LIVE
+   159→  // price overlay and the TP1/TP2/TP3/SL outcome already evaluated server-side.
+   160→  const [signalHistory, setSignalHistory] = useState<SignalHistoryRow[]>([]);
+   161→  const [historyLoading, setHistoryLoading] = useState(true);
+   162→  const [historyError, setHistoryError] = useState<string | null>(null);
+   163→  const [outcomeFilter, setOutcomeFilter] = useState<"ALL" | "TP" | "SL" | "ACTIVE">("ALL");
+   164→  const [confFilter, setConfFilter] = useState<number>(0);
+   165→  const [historySort, setHistorySort] = useState<"rr" | "conf" | "pnl">("rr");
+   166→
+   167→  // Issue 18: fetch /api/psx/companies once on mount so we can look up each
+   168→  // portfolio position's sector for the pie chart. Positions added before the
+   169→  // store had a sector field (legacy localStorage entries) won't have sector
+   170→  // info — this map fills the gap.
+   171→  const [sectorMap, setSectorMap] = useState<Record<string, string>>({});
+   172→  useEffect(() => {
+   173→    let cancelled = false;
+   174→    fetch("/api/psx/companies")
+   175→      .then((r) => (r.ok ? r.json() : null))
+   176→      .then((d) => {
+   177→        if (cancelled || !d?.companies) return;
+   178→        const m: Record<string, string> = {};
+   179→        for (const c of d.companies) {
+   180→          if (c?.value && c?.sector) m[String(c.value).toUpperCase()] = c.sector;
+   181→        }
+   182→        setSectorMap(m);
+   183→      })
+   184→      .catch(() => {});
+   185→    return () => {
+   186→      cancelled = true;
+   187→    };
+   188→  }, []);
+   189→
+   190→  useEffect(() => {
+   191→    let cancelled = false;
+   192→    Promise.all(
+   193→      COVERED_SYMBOLS.map((sym) =>
+   194→        fetch(`/api/ai-model-signals/${sym}?refresh=1&timeframe=${timeframe}`)
+   195→          .then((r) => r.json())
+   196→          .catch(() => null)
+   197→      )
+   198→    )
+   199→      .then((results) => {
+   200→        if (cancelled) return;
+   201→        const valid = (results.filter(Boolean) as AiSignalResponse[]);
+   202→        setAiSignals(valid);
+   203→      })
+   204→      .finally(() => {
+   205→        if (!cancelled) setLoading(false);
+   206→      });
+   207→    return () => {
+   208→      cancelled = true;
+   209→    };
+   210→  }, [timeframe]);
+   211→
+   212→  // Issue 14: fetch the Signal History dataset (all ~361 ensemble signals, with
+   213→  // LIVE price + outcome). Cached 120s server-side; the `?refresh=1` query is
+   214→  // used by the manual "Refresh" button so the user can force a fresh fetch.
+   215→  const refreshHistory = (force = false) => {
+   216→    setHistoryLoading(true);
+   217→    setHistoryError(null);
+   218→    const qs = force ? "?refresh=1" : "";
+   219→    fetch(`/api/signals/all${qs}`)
+   220→      .then((r) => (r.ok ? r.json() : null))
+   221→      .then((j) => {
+   222→        if (j?.signals) setSignalHistory(j.signals as SignalHistoryRow[]);
+   223→        else setHistoryError("Signal history unavailable");
+   224→      })
+   225→      .catch(() => setHistoryError("Failed to load signal history"))
+   226→      .finally(() => setHistoryLoading(false));
+   227→  };
+   228→  useEffect(() => {
+   229→    let cancelled = false;
+   230→    fetch("/api/signals/all")
+   231→      .then((r) => (r.ok ? r.json() : null))
+   232→      .then((j) => {
+   233→        if (cancelled) return;
+   234→        if (j?.signals) setSignalHistory(j.signals as SignalHistoryRow[]);
+   235→        else setHistoryError("Signal history unavailable");
+   236→      })
+   237→      .catch(() => {
+   238→        if (!cancelled) setHistoryError("Failed to load signal history");
+   239→      })
+   240→      .finally(() => {
+   241→        if (!cancelled) setHistoryLoading(false);
+   242→      });
+   243→    return () => {
+   244→      cancelled = true;
+   245→    };
+   246→  }, []);
+   247→
+   248→  // Issue 14: filter + sort the Signal History rows by outcome, min confidence,
+   249→  // and the chosen sort key (R:R / confidence / live P&L).
+   250→  const filteredHistory = useMemo(() => {
+   251→    let rows = signalHistory.filter((s) => s.confidence >= confFilter);
+   252→    if (outcomeFilter === "TP") {
+   253→      rows = rows.filter(
+   254→        (s) => s.outcome === "TP1_HIT" || s.outcome === "TP2_HIT" || s.outcome === "TP3_HIT"
+   255→      );
+   256→    } else if (outcomeFilter === "SL") {
+   257→      rows = rows.filter((s) => s.outcome === "SL_HIT");
+   258→    } else if (outcomeFilter === "ACTIVE") {
+   259→      rows = rows.filter((s) => s.outcome === "ACTIVE");
+   260→    } else {
+   261→      // Default: show only HIT signals (TP/SL hit) — ACTIVE signals stay in the Signals tab
+   262→      rows = rows.filter((s) => s.outcome && s.outcome !== "ACTIVE");
+   263→    }
+   264→    rows = [...rows].sort((a, b) => {
+   265→      if (historySort === "conf") return b.confidence - a.confidence;
+   266→      if (historySort === "pnl") return b.pnlPct - a.pnlPct;
+   267→      return b.riskReward - a.riskReward;
+   268→    });
+   269→    return rows;
+   270→  }, [signalHistory, confFilter, outcomeFilter, historySort]);
+   271→
+   272→  // Lookup helper for human-readable timeframe label (kept for the report download)
+   273→  const timeframeLabel = "1 month";
+   274→  const timeframeShort = "1M";
+   275→
+   276→  // Ensemble-level backtesting stats — these are global (same across symbols)
+   277→  // so we just use the first available response as the source of truth.
+   278→  const ensStats = useMemo(() => {
+   279→    if (aiSignals.length === 0) return null;
+   280→    const eb = aiSignals[0]?.ensembleBacktesting || {};
+   281→    return {
+   282→      fc: (eb["FINAL_CONSENSUS"] || {}) as BacktestStats,
+   283→      mv: (eb["MAJORITY_VOTE"] || {}) as BacktestStats,
+   284→      pw: (eb["PROBABILITY_WEIGHTED"] || {}) as BacktestStats,
+   285→      tw: (eb["TIER_WEIGHTED"] || {}) as BacktestStats,
+   286→    };
+   287→  }, [aiSignals]);
+   288→
+   289→  // Per-model backtesting rows — top 6 by win rate.
+   290→  const modelBacktest = useMemo(() => {
+   291→    if (aiSignals.length === 0) return [];
+   292→    const bt = aiSignals[0]?.backtesting || {};
+   293→    return Object.entries(bt)
+   294→      .map(([name, s]) => ({ name, ...s }))
+   295→      .filter((m) => typeof m.winRate === "number")
+   296→      .sort((a, b) => (b.winRate || 0) - (a.winRate || 0))
+   297→      .slice(0, 6);
+   298→  }, [aiSignals]);
+   299→
+   300→  // Per-stock signals from finalConsensus — KEPT (used by the Signal Tracker
+   301→  // stats cards and the report download). The Investment Simulator (Issue 13)
+   302→  // no longer uses these — it pulls from /api/signals/all (all ~284 stocks)
+   303→  // via the /api/backtest/investment-simulator endpoint.
+   304→  const stockSignals: StockSignal[] = useMemo(() => {
+   305→    return aiSignals
+   306→      .map((s) => {
+   307→        const fc = s.finalConsensus;
+   308→        if (!fc || !fc.entry || fc.signal === "HOLD") return null;
+   309→        const target = fc.predictedPriceRange?.max || fc.tp3 || fc.entry;
+   310→        const retPct = ((target - fc.entry) / fc.entry) * 100;
+   311→        return {
+   312→          symbol: s.symbol,
+   313→          stockName: s.stockName,
+   314→          direction: fc.direction,
+   315→          signal: fc.signal as "BUY" | "SELL" | "HOLD",
+   316→          entry: fc.entry,
+   317→          target,
+   318→          sl: fc.sl,
+   319→          retPct,
+   320→          confidence: fc.confidence,
+   321→          agreement: fc.agreement,
+   322→          currentPrice: s.currentPrice,
+   323→        } as StockSignal;
+   324→      })
+   325→      .filter(Boolean) as StockSignal[];
+   326→  }, [aiSignals]);
+   327→
+   328→  // ─── Issue 13 — Investment Simulator (redesigned) ──────────────────────
+   329→  // Uses /api/backtest/investment-simulator which:
+   330→  //  - Trades on ALL final-consensus signals (~284) from /api/signals/all
+   331→  //    (not just the 8 hardcoded COVERED_SYMBOLS).
+   332→  //  - Chooses stocks RANDOMLY (seeded shuffle for determinism).
+   333→  //  - Trades on ALL stock data in the OhlcvBar DB (100 KSE-100 stocks).
+   334→  //  - Each trade uses the final-ensemble-consensus signal (entry/SL/TP1/2/3).
+   335→  //  - Holds for the user's time-period input (day/month/year → trading days).
+   336→  //  - Optional monthly SIP adds to the total capital pool.
+   337→  interface SimTrade {
+   338→    tradeNo: number;
+   339→    symbol: string;
+   340→    side: "BUY" | "SELL";
+   341→    direction: "LONG" | "SHORT";
+   342→    entryDate: number;
+   343→    entryPrice: number;
+   344→    exitDate: number;
+   345→    exitPrice: number;
+   346→    exitReason: "TP1_HIT" | "TP2_HIT" | "TP3_HIT" | "SL_HIT" | "TIME_UP";
+   347→    sl: number;
+   348→    tp1: number;
+   349→    tp2: number;
+   350→    tp3: number;
+   351→    shares: number;
+   352→    notional: number;
+   353→    netPnl: number;
+   354→    netPnlPct: number;
+   355→    isWin: boolean;
+   356→  }
+   357→  interface SimMetrics {
+   358→    startingCapital: number;
+   359→    amountPerTrade: number;
+   360→    totalTrades: number;
+   361→    numDays: number;
+   362→    winTrades: number;
+   363→    lossTrades: number;
+   364→    winRate: number;
+   365→    avgWinPct: number;
+   366→    avgLossPct: number;
+   367→    grossProfit: number;
+   368→    grossLoss: number;
+   369→    totalCosts: number;
+   370→    grossBeforeCosts: number;
+   371→    netPnL: number;
+   372→    finalValue: number;
+   373→    roiPct: number;
+   374→    maxDrawdownPct: number;
+   375→    profitFactor: number;
+   376→    sharpe: number;
+   377→    sortino: number;
+   378→    equityCurve: { tradeNo: number; value: number }[];
+   379→  }
+   380→  interface SimConfig {
+   381→    initialCapital: number;
+   382→    periodValue: number;
+   383→    periodUnit: PeriodUnit;
+   384→    monthlySip: number;
+   385→    numDays: number;
+   386→    numMonths: number;
+   387→    totalSipContribution: number;
+   388→    totalCapital: number;
+   389→    amountPerTrade: number;
+   390→    numSignalsAvailable: number;
+   391→    numTrades: number;
+   392→    minConfidence: number; // Issue 40: user-configurable confidence floor
+   393→    tradeDirection: "all" | "buy" | "sell"; // Issue 41: trade direction filter
+   394→    seed: number;
+   395→  }
+   396→  interface SimResponse {
+   397→    config: SimConfig;
+   398→    metrics: SimMetrics;
+   399→    trades: SimTrade[];
+   400→    rows: SimTrade[]; // alias — the API returns both `trades` and `rows`
+   401→    // Flat aliases the API also returns at the top level:
+   402→    initialAmount: number;
+   403→    finalAmount: number;
+   404→    totalPnl: number;
+   405→    totalReturnPct: number;
+   406→    wins: number;
+   407→    losses: number;
+   408→    cached?: boolean;
+   409→  }
+   410→
+   411→  const [simCapital, setSimCapital] = useState<string>("100000");
+   412→  const [simPeriodValue, setSimPeriodValue] = useState<string>("3");
+   413→  const [simPeriodUnit, setSimPeriodUnit] = useState<PeriodUnit>("month");
+   414→  const [simMonthlySip, setSimMonthlySip] = useState<string>("0");
+   415→  // Issue 40: new user-configurable inputs — no of trades + min confidence.
+   416→  const [simNumTrades, setSimNumTrades] = useState<string>("40");
+   417→  const [simMinConfidence, setSimMinConfidence] = useState<string>("0");
+   418→  // Issue 41: trade direction filter — All / Buy only / Sell only.
+   419→  const [simTradeDirection, setSimTradeDirection] = useState<"all" | "buy" | "sell">("all");
+   420→  const [simResult, setSimResult] = useState<SimResponse | null>(null);
+   421→  const [simLoading, setSimLoading] = useState(false);
+   422→
+   423→  const runSimulation = async () => {
+   424→    const capital = parseFloat(simCapital.replace(/[,\s]/g, ""));
+   425→    const periodValue = parseInt(simPeriodValue, 10);
+   426→    const monthlySip = parseFloat(simMonthlySip.replace(/[,\s]/g, "")) || 0;
+   427→    const numTrades = parseInt(simNumTrades, 10);
+   428→    const minConfidence = parseInt(simMinConfidence, 10);
+   429→    if (!Number.isFinite(capital) || capital <= 0) {
+   430→      toast.error("Enter a valid capital amount");
+   431→      return;
+   432→    }
+   433→    if (!Number.isFinite(periodValue) || periodValue <= 0) {
+   434→      toast.error("Enter a valid time period");
+   435→      return;
+   436→    }
+   437→    if (!Number.isFinite(numTrades) || numTrades <= 0) {
+   438→      toast.error("Enter a valid number of trades");
+   439→      return;
+   440→    }
+   441→    if (!Number.isFinite(minConfidence) || minConfidence < 0 || minConfidence > 100) {
+   442→      toast.error("Min confidence must be 0–100");
+   443→      return;
+   444→    }
+   445→    setSimLoading(true);
+   446→    try {
+   447→      const qs =
+   448→        `capital=${encodeURIComponent(simCapital)}` +
+   449→        `&periodValue=${encodeURIComponent(simPeriodValue)}` +
+   450→        `&periodUnit=${encodeURIComponent(simPeriodUnit)}` +
+   451→        `&monthlySip=${encodeURIComponent(simMonthlySip)}` +
+   452→        `&numTrades=${encodeURIComponent(simNumTrades)}` +
+   453→        `&minConfidence=${encodeURIComponent(simMinConfidence)}` +
+   454→        `&tradeDirection=${encodeURIComponent(simTradeDirection)}`;
+   455→      const r = await fetch(`/api/backtest/investment-simulator?${qs}`);
+   456→      const j = await r.json();
+   457→      if (j.error) {
+   458→        toast.error(j.error);
+   459→        return;
+   460→      }
+   461→      setSimResult(j as SimResponse);
+   462→      toast.success(
+   463→        `Simulated ${j.config.numTrades} trades over ${j.config.numDays} days — ROI ${j.metrics.roiPct}%`
+   464→      );
+   465→    } catch (e) {
+   466→      toast.error("Simulation failed");
+   467→    } finally {
+   468→      setSimLoading(false);
+   469→    }
+   470→  };
+   471→
+   472→  const resetSimulation = () => {
+   473→    setSimResult(null);
+   474→  };
+   475→
+   476→  // Aggregate top-card stats — uses ensembleBacktesting.FINAL_CONSENSUS.
+   477→  const signalStats = useMemo(() => {
+   478→    const fc = ensStats?.fc;
+   479→    if (!fc) return null;
+   480→    const total = fc.totalTrades ?? 0;
+   481→    const wins = fc.wins ?? Math.round((total * (fc.winRate || 0)) / 100);
+   482→    const losses = total - wins;
+   483→    const winRate = fc.winRate ?? 0;
+   484→    const avgReturn = fc.avgReturnPct ?? 0;
+   485→    const best = fc.maxReturnPct ?? 0;
+   486→    const worst = fc.minReturnPct ?? 0;
+   487→    return { total, wins, losses, winRate, avgReturn, best, worst };
+   488→  }, [ensStats]);
+   489→
+   490→  // Portfolio tracker — only positions with buyPrice != null && shares > 0
+   491→  // are tracked. Closed positions remain in the list and contribute to P&L.
+   492→  // Issue 23: keep closed trades visible + reflect them in top card stats.
+   493→  //
+   494→  // Issue 26: fetch LIVE prices for ALL portfolio holdings (not just the 8
+   495→  // COVERED_SYMBOLS). Hits /api/psx/live/batch (server wraps getLiveQuote
+   496→  // with a 60s in-memory cache). Auto-refreshes every 60s to match the cache
+   497→  // TTL. Symbols with no fetchable quote are simply omitted from the response
+   498→  // (the row falls back to "no live price").
+   499→  const portfolioSymbols = useMemo(
+   500→    () => portfolio.filter((p) => p.buyPrice !== null && p.shares > 0).map((p) => p.symbol),
+   501→    [portfolio]
+   502→  );
+   503→  const portfolioSymbolsKey = portfolioSymbols.join(",");
+   504→  const [livePriceBatch, setLivePriceBatch] = useState<Record<string, number>>({});
+   505→  useEffect(() => {
+   506→    if (!portfolioSymbolsKey) {
+   507→      setLivePriceBatch({});
+   508→      return;
+   509→    }
+   510→    let cancelled = false;
+   511→    const symbolsList = Array.from(new Set(portfolioSymbols));
+   512→    const doFetch = () =>
+   513→      fetch(`/api/psx/live/batch?symbols=${encodeURIComponent(symbolsList.join(","))}`)
+   514→        .then((r) => (r.ok ? r.json() : null))
+   515→        .then((d) => {
+   516→          if (cancelled || !d?.prices) return;
+   517→          setLivePriceBatch(d.prices as Record<string, number>);
+   518→        })
+   519→        .catch(() => {});
+   520→    doFetch();
+   521→    const id = setInterval(doFetch, 60_000);
+   522→    return () => {
+   523→      cancelled = true;
+   524→      clearInterval(id);
+   525→    };
+   526→  }, [portfolioSymbolsKey]);
+   527→
+   528→  const livePriceMap = useMemo(() => {
+   529→    const m: Record<string, number> = {};
+   530→    // 1) Seed with the 8 COVERED_SYMBOLS' currentPrice (used by the Signal Tracker tab cards)
+   531→    for (const s of aiSignals) {
+   532→      if (s.symbol && typeof s.currentPrice === "number") m[s.symbol] = s.currentPrice;
+   533→    }
+   534→    // 2) Overlay true LIVE prices for ALL portfolio holdings (covers non-KSE-100 too)
+   535→    for (const [sym, price] of Object.entries(livePriceBatch)) {
+   536→      if (typeof price === "number" && price > 0) m[sym] = price;
+   537→    }
+   538→    return m;
+   539→  }, [aiSignals, livePriceBatch]);
+   540→
+   541→  const portfolioPositions = useMemo(
+   542→    () => portfolio.filter((p) => p.buyPrice !== null && p.shares > 0),
+   543→    [portfolio]
+   544→  );
+   545→
+   546→  const portfolioStats = useMemo(() => {
+   547→    let totalValue = 0;
+   548→    let totalInvested = 0;
+   549→    let totalPnl = 0;
+   550→    let openCount = 0;
+   551→    let hasLiveForOpen = false;
+   552→    let hasAnyPnl = false;
+   553→
+   554→    // Open positions (from portfolio store, shares > 0)
+   555→    for (const p of portfolioPositions) {
+   556→      const buy = (p.buyPrice as number) || 0;
+   557→      const invested = buy * p.shares;
+   558→      totalInvested += invested;
+   559→      openCount++;
+   560→      const live = livePriceMap[p.symbol];
+   561→      if (typeof live === "number") {
+   562→        const val = live * p.shares;
+   563→        totalValue += val;
+   564→        totalPnl += val - invested;
+   565→        hasLiveForOpen = true;
+   566→        hasAnyPnl = true;
+   567→      }
+   568→    }
+   569→
+   570→    // Issue 18: closed trades from the close flow (closedTrades in store)
+   571→    // add their net P&L to the totals. They have no remaining market value
+   572→    // (shares were sold), but their net P&L contributes to total P&L.
+   573→    let closedCount = 0;
+   574→    let closedWins = 0;
+   575→    let closedNetPnl = 0;
+   576→    for (const t of closedTrades) {
+   577→      closedCount++;
+   578→      closedNetPnl += t.netPnl;
+   579→      if (t.netPnl > 0) closedWins++;
+   580→    }
+   581→    totalPnl += closedNetPnl;
+   582→    if (closedCount > 0) hasAnyPnl = true;
+   583→
+   584→    const roiPct = totalInvested > 0 ? (totalPnl / totalInvested) * 100 : 0;
+   585→    const winRate = closedCount > 0 ? (closedWins / closedCount) * 100 : null;
+   586→
+   587→    return {
+   588→      total: openCount + closedCount,
+   589→      totalValue,
+   590→      totalInvested,
+   591→      totalPnl,
+   592→      roiPct,
+   593→      openCount,
+   594→      closedCount,
+   595→      closedWins,
+   596→      winRate,
+   597→      hasLiveForOpen,
+   598→      hasAnyPnl,
+   599→    };
+   600→  }, [portfolioPositions, livePriceMap, closedTrades]);
+   601→
+   602→  // Issue 18: sector-wise holding distribution for the pie chart.
+   603→  // For each open position: value = (livePrice || buyPrice) × shares.
+   604→  // Sector is taken from position.sector (stored at add-time) or from the
+   605→  // sectorMap fetched on mount, else falls back to "Other".
+   606→  const sectorData = useMemo(() => {
+   607→    const m = new Map<string, number>();
+   608→    for (const p of portfolioPositions) {
+   609→      const live = livePriceMap[p.symbol];
+   610→      const buy = (p.buyPrice as number) || 0;
+   611→      const price = typeof live === "number" ? live : buy;
+   612→      if (price <= 0 || p.shares <= 0) continue;
+   613→      const value = price * p.shares;
+   614→      // Issue 27: 3-tier sector lookup so a holding's sector is always set:
+   615→      //  1) the position's stored sector (set at Add time from StockSearch),
+   616→      //  2) the sectorMap (from /api/psx/companies, now overlays classifySector),
+   617→      //  3) classifySector(symbol) — covers ~80 common PSX stocks (Cement /
+   618→      //     Oil & Gas / Refinery / Banking / etc.); unmapped → "Other".
+   619→      // Issue 28+29: treat the legacy "Conglomerate" string (from old
+   620→      // localStorage entries or mock-stocks.ts) as INVALID — fall through to
+   621→      // the next tier so we never display "Conglomerate" as a chart slice.
+   622→      // "Other" is the only fallback for unmapped symbols.
+   623→      const stored = p.sector && p.sector.trim();
+   624→      const sector =
+   625→        (stored && stored !== "Conglomerate" ? stored : "") ||
+   626→        sectorMap[p.symbol] ||
+   627→        classifySector(p.symbol);
+   628→      m.set(sector, (m.get(sector) || 0) + value);
+   629→    }
+   630→    const total = Array.from(m.values()).reduce((s, v) => s + v, 0);
+   631→    if (total <= 0) return [] as { sector: string; value: number; pct: number }[];
+   632→    return Array.from(m.entries())
+   633→      .map(([sector, value]) => ({ sector, value, pct: (value / total) * 100 }))
+   634→      .sort((a, b) => b.value - a.value);
+   635→  }, [portfolioPositions, livePriceMap, sectorMap]);
+   636→
+   637→  const handleDownload = () => {
+   638→    if (!signalStats) return;
+   639→    const lines = [
+   640→      "Latent.pk — Tracker Report (Real Backtest Data)",
+   641→      "Generated: " + new Date().toISOString(),
+   642→      "Source: /api/ai-model-signals/[symbol]?refresh=1",
+   643→      "Covered: " + COVERED_SYMBOLS.join(", "),
+   644→      `Timeframe: ${timeframeLabel}`,
+   645→      "",
+   646→      `=== SIGNAL TRACKER (Last ${timeframeLabel} Backtest) ===`,
+   647→      `Total signals: ${signalStats.total}`,
+   648→      `Win rate: ${signalStats.winRate}%`,
+   649→      `Avg return: ${fmtPct(signalStats.avgReturn, true)}`,
+   650→      `Best trade: ${fmtPct(signalStats.best, true)}`,
+   651→      `Worst trade: ${fmtPct(signalStats.worst)}`,
+   652→      "",
+   653→      "=== PER-STOCK SIGNALS (FINAL CONSENSUS) ===",
+   654→      ...stockSignals.map((s) => `${s.symbol} ${s.signal} entry=${s.entry} target=${s.target} ret=${fmtPct(s.retPct, true)} conf=${s.confidence}%`),
+   655→      "",
+   656→      "=== PORTFOLIO TRACKER (OPEN POSITIONS) ===",
+   657→      ...portfolioPositions.map((p) => {
+   658→        const side = (p.status || "open") === "open" ? "open" : "closed";
+   659→        const close = typeof p.closePrice === "number" ? p.closePrice : null;
+   660→        return `${p.symbol} | ${side} | buy: ${p.buyPrice || "—"} | shares: ${p.shares}${close !== null ? ` | close: ${close}` : ""}`;
+   661→      }),
+   662→      "",
+   663→      "=== CLOSED TRADES (FROM PORTFOLIO CLOSE FLOW) ===",
+   664→      ...closedTrades.map(
+   665→        (t) =>
+   666→          `${t.symbol} | buy: ${t.buyPrice} × ${t.shares} = ${Math.round(t.buyCost)} | sell: ${t.sellPrice.toFixed(2)} × ${t.shares} = ${Math.round(t.sellValue)} | commission: ${Math.round(t.commission)} | CGT: ${Math.round(t.cgt)} (${(t.taxRate * 100).toFixed(0)}%) | net P&L: ${Math.round(t.netPnl)} (${t.netPnlPct >= 0 ? "+" : ""}${t.netPnlPct.toFixed(2)}%) | holding: ${t.holdingDays}d | closed: ${t.closedAt}`
+   667→      ),
+   668→    ];
+   669→    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+   670→    const url = URL.createObjectURL(blob);
+   671→    const a = document.createElement("a");
+   672→    a.href = url;
+   673→    a.download = `latent-tracker-${new Date().toISOString().slice(0, 10)}.txt`;
+   674→    document.body.appendChild(a);
+   675→    a.click();
+   676→    document.body.removeChild(a);
+   677→    URL.revokeObjectURL(url);
+   678→    toast.success("Tracker report downloaded");
+   679→  };
+   680→
+   681→  if (loading) {
+   682→    return (
+   683→      <div className="max-w-6xl mx-auto p-6 space-y-4">
+   684→        <Skeleton className="h-10 w-48 bg-white/[0.04]" />
+   685→        <Skeleton className="h-32 w-full bg-white/[0.04]" />
+   686→        <Skeleton className="h-64 w-full bg-white/[0.04]" />
+   687→      </div>
+   688→    );
+   689→  }
+   690→
+   691→  return (
+   692→    <main className="px-4 md:px-6 py-6 max-w-6xl mx-auto">
+   693→        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+   694→          <div>
+   695→            <h1 className="text-2xl font-bold text-[#F4F7FB]">Tracker</h1>
+   696→            <p className="text-sm text-[#94A3B8] mt-1">
+   697→              Real backtest stats across {COVERED_SYMBOLS.length} PSX stocks — signal tracker (model performance) + portfolio tracker (your P&amp;L).
+   698→            </p>
+   699→          </div>
+   700→          <Button
+   701→            onClick={handleDownload}
+   702→            className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold"
+   703→          >
+   704→            <Download className="h-4 w-4 mr-1.5" />
+   705→            Generate report
+   706→          </Button>
+   707→        </div>
+   708→
+   709→        <Tabs defaultValue="signal">
+   710→          <TabsList className="bg-[#131829] border border-white/[0.08] p-1 h-auto">
+   711→            <TabsTrigger value="signal" className="data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5">
+   712→              <Zap className="h-3 w-3" /> Signal Tracker
+   713→            </TabsTrigger>
+   714→            <TabsTrigger value="portfolio" className="data-[state=active]:bg-[#00E676]/10 data-[state=active]:text-[#00E676] text-[#94A3B8] text-xs gap-1.5">
+   715→              <Briefcase className="h-3 w-3" /> Portfolio Tracker
+   716→            </TabsTrigger>
+   717→          </TabsList>
+   718→
+   719→          {/* Signal Tracker */}
+   720→          <TabsContent value="signal" className="mt-4">
+   721→            {!signalStats ? (
+   722→              <Card className="bg-[#131829] border-white/[0.08]">
+   723→                <CardContent className="p-12 text-center">
+   724→                  <Brain className="h-12 w-12 text-[#00E676]/30 mx-auto mb-3" />
+   725→                  <h3 className="font-semibold text-[#F4F7FB] mb-1">Backtest data unavailable</h3>
+   726→                  <p className="text-xs text-[#94A3B8]">
+   727→                    Run <code className="text-[#00E676]">python3 scripts/train_all_with_backtesting.py</code> to populate model predictions.
+   728→                  </p>
+   729→                </CardContent>
+   730→              </Card>
+   731→            ) : (
+   732→              <>
+   733→                {/* ─── Issue 17: Investment simulator moved to the TOP ─── */}
+   734→                <Card className="bg-[#131829] border-[#00E676]/20 mb-5">
+   735→                  <CardContent className="p-4">
+   736→                    <div className="flex items-center gap-1.5 mb-1">
+   737→                      <Wallet className="h-3.5 w-3.5 text-[#00E676]" />
+   738→                      <h3 className="font-semibold text-[#F4F7FB] text-sm">Investment simulator</h3>
+   739→                      <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#00E676]/30 text-[#00E676]/80 ml-1">
+   740→                        TOP
+   741→                      </Badge>
+   742→                    </div>
+   743→                    <p className="text-xs text-[#94A3B8] mb-3">
+   744→                      Enter capital, no of trades, time period (day/month/year), monthly SIP, min confidence, and trade direction. The simulator takes exactly the no of trades you specify from the Final Ensemble Consensus signals (filtered by confidence + direction), goes back to the time period you give, enters each trade at a real historical bar (with date), and adds monthly SIP after each month. Results show per-trade entry/exit dates.
+   745→                    </p>
+   746→
+   747→                    {/* Issue 41: restructured — "Time period" as a section heading
+   748→                        with the number + unit dropdown under it. Trade direction
+   749→                        filter (All / Buy only / Sell only) added. */}
+   750→                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+   751→                      {/* Investment amount */}
+   752→                      <div className="flex flex-col gap-1">
+   753→                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">Investment (PKR)</label>
+   754→                        <Input value={simCapital} onChange={e => setSimCapital(e.target.value)} onKeyDown={e => e.key === "Enter" && runSimulation()} placeholder="100000" inputMode="decimal" className="h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB]" />
+   755→                      </div>
+   756→                      {/* No of trades */}
+   757→                      <div className="flex flex-col gap-1">
+   758→                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">No of trades</label>
+   759→                        <Input value={simNumTrades} onChange={e => setSimNumTrades(e.target.value)} onKeyDown={e => e.key === "Enter" && runSimulation()} placeholder="40" inputMode="numeric" className="h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB]" />
+   760→                      </div>
+   761→                      {/* Monthly SIP */}
+   762→                      <div className="flex flex-col gap-1">
+   763→                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">Monthly SIP (PKR)</label>
+   764→                        <Input value={simMonthlySip} onChange={e => setSimMonthlySip(e.target.value)} onKeyDown={e => e.key === "Enter" && runSimulation()} placeholder="0" inputMode="decimal" className="h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB]" />
+   765→                      </div>
+   766→                      {/* Min confidence */}
+   767→                      <div className="flex flex-col gap-1">
+   768→                        <label className="text-[10px] uppercase tracking-wider text-[#64748B]">Min confidence (0-100)</label>
+   769→                        <Input value={simMinConfidence} onChange={e => setSimMinConfidence(e.target.value)} onKeyDown={e => e.key === "Enter" && runSimulation()} placeholder="0" inputMode="numeric" className="h-9 bg-[#0A0E1A] border-white/[0.08] text-sm font-mono text-[#F4F7FB]" />
+   770→                      </div>
+   771→                    </div>
+   772→
+   773→                    {/* Time period — section heading + number + dropdown */}
+   774→                    <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.08] p-3 mb-3">
+   775→                      <div className="flex items-center gap-1.5 mb-2">
+   776→                        <Clock className="h-3 w-3 text-[#00E676]" />
+   777→                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#F4F7FB]">Time period</span>
+   778→                        <span className="text-[10px] text-[#64748B]">· go back this many periods from today</span>
+   779→                      </div>
+   780→                      <div className="flex items-center gap-2">
+   781→                        <Input value={simPeriodValue} onChange={e => setSimPeriodValue(e.target.value)} onKeyDown={e => e.key === "Enter" && runSimulation()} placeholder="3" inputMode="numeric" className="h-9 w-24 bg-[#131829] border-white/[0.08] text-sm font-mono text-[#F4F7FB]" />
+   782→                        <select value={simPeriodUnit} onChange={e => setSimPeriodUnit(e.target.value as PeriodUnit)} className="h-9 flex-1 bg-[#131829] border border-white/[0.08] rounded-md text-sm font-mono text-[#F4F7FB] px-3">
+   783→                          <option value="day">day(s)</option>
+   784→                          <option value="month">month(s)</option>
+   785→                          <option value="year">year(s)</option>
+   786→                        </select>
+   787→                      </div>
+   788→                    </div>
+   789→
+   790→                    {/* Trade direction — All / Buy only / Sell only */}
+   791→                    <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.08] p-3 mb-3">
+   792→                      <div className="flex items-center gap-1.5 mb-2">
+   793→                        <Activity className="h-3 w-3 text-[#00E676]" />
+   794→                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#F4F7FB]">Trade direction</span>
+   795→                        <span className="text-[10px] text-[#64748B]">· simulate only these signals</span>
+   796→                      </div>
+   797→                      <div className="flex items-center gap-1.5">
+   798→                        <button onClick={() => setSimTradeDirection("all")} className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors ${simTradeDirection === "all" ? "bg-[#00E676]/15 text-[#00E676] border border-[#00E676]/40" : "bg-[#131829] text-[#94A3B8] border border-white/[0.08] hover:text-[#F4F7FB]"}`}>
+   799→                          All trades
+   800→                        </button>
+   801→                        <button onClick={() => setSimTradeDirection("buy")} className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors ${simTradeDirection === "buy" ? "bg-[#00E676]/15 text-[#00E676] border border-[#00E676]/40" : "bg-[#131829] text-[#94A3B8] border border-white/[0.08] hover:text-[#F4F7FB]"}`}>
+   802→                          Buy only
+   803→                        </button>
+   804→                        <button onClick={() => setSimTradeDirection("sell")} className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors ${simTradeDirection === "sell" ? "bg-[#FF5C5C]/15 text-[#FF5C5C] border border-[#FF5C5C]/40" : "bg-[#131829] text-[#94A3B8] border border-white/[0.08] hover:text-[#F4F7FB]"}`}>
+   805→                          Sell only
+   806→                        </button>
+   807→                      </div>
+   808→                    </div>
+   809→                    {/* Simulate + Reset buttons */}
+   810→                    <div className="flex items-center gap-2 mb-4">
+   811→                      {/* Issue 43: button is disabled while simulating + shows
+   812→                          a spinner + "Simulating..." text so the user knows
+   813→                          the simulation is running (it takes ~30-60s with the
+   814→                          date-based window filtering). */}
+   815→                      <Button
+   816→                        onClick={runSimulation}
+   817→                        disabled={simLoading}
+   818→                        className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold h-9 disabled:opacity-60 disabled:cursor-not-allowed"
+   819→                      >
+   820→                        {simLoading ? (
+   821→                          <>
+   822→                            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+   823→                            Simulating...
+   824→                          </>
+   825→                        ) : (
+   826→                          <>
+   827→                            <Play className="h-3.5 w-3.5 mr-1.5" />
+   828→                            Simulate
+   829→                          </>
+   830→                        )}
+   831→                      </Button>
+   832→                      {simResult && (
+   833→                        <Button onClick={resetSimulation} variant="outline" disabled={simLoading} className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] h-9 disabled:opacity-60">
+   834→                          <RotateCcw className="h-3.5 w-3.5 mr-1.5" />Reset
+   835→                        </Button>
+   836→                      )}
+   837→                      <div className="text-[10px] text-[#64748B] ml-auto self-center">
+   838→                        {simLoading ? (
+   839→                          <span className="text-[#00E676] animate-pulse">Running simulation... please wait</span>
+   840→                        ) : simResult ? (
+   841→                          <span>Final Ensemble Consensus · {simResult.config.numTrades} trades</span>
+   842→                        ) : (
+   843→                          <span>Final Ensemble Consensus signals</span>
+   844→                        )}
+   845→                      </div>
+   846→                    </div>
+   847→
+   848→                    {/* Issue 43: loading overlay — shows a progress message while
+   849→                        the simulation runs so the user sees feedback. */}
+   850→                    {simLoading && (
+   851→                      <div className="rounded-lg border border-[#00E676]/20 bg-[#00E676]/[0.04] p-4 mb-4 flex items-center gap-3">
+   852→                        <Loader2 className="h-5 w-5 text-[#00E676] animate-spin shrink-0" />
+   853→                        <div>
+   854→                          <div className="text-sm font-semibold text-[#00E676]">Simulation in progress...</div>
+   855→                          <div className="text-[11px] text-[#94A3B8]">
+   856→                            Fetching Final Ensemble Consensus signals, filtering by confidence ≥ {simMinConfidence} + direction: {simTradeDirection}, picking {simNumTrades} trades within the last {simPeriodValue} {simPeriodUnit}(s), walking through real OHLCV bars.
+   857→                          </div>
+   858→                        </div>
+   859→                      </div>
+   860→                    )}
+   861→
+   862→                    {simResult && (
+   863→                      <>
+   864→                        {/* Summary line */}
+   865→                        <div className="rounded-lg border border-white/[0.06] bg-[#0A0E1A] p-3 mb-3">
+   866→                          <p className="text-sm text-[#F4F7FB] leading-relaxed">
+   867→                            If you invested{" "}
+   868→                            <span className="font-mono font-bold text-[#00E676]">{fmtPkr(simResult.initialAmount)}</span>{" "}
+   869→                            across{" "}
+   870→                            <span className="font-mono font-bold text-[#F4F7FB]">{simResult.rows.length} trades</span>, your
+   871→                            final amount would be{" "}
+   872→                            <span className={`font-mono font-bold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   873→                              {fmtPkr(simResult.finalAmount)}
+   874→                            </span>{" "}
+   875→                            (
+   876→                            <span className={`font-mono font-bold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   877→                              {simResult.totalPnl >= 0 ? "+" : ""}
+   878→                              {simResult.totalReturnPct.toFixed(2)}% {simResult.totalPnl >= 0 ? "gain" : "loss"}
+   879→                            </span>
+   880→                            )
+   881→                          </p>
+   882→                          <div className="flex flex-wrap items-center gap-4 mt-2 text-[11px]">
+   883→                            <span className="text-[#94A3B8]">
+   884→                              Total P&amp;L:{" "}
+   885→                              <span className={`font-mono font-semibold ${simResult.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   886→                                {simResult.totalPnl >= 0 ? "+" : ""}{fmtPkr(simResult.totalPnl)}
+   887→                              </span>
+   888→                            </span>
+   889→                            <span className="text-[#94A3B8]">
+   890→                              Wins: <span className="font-mono text-[#00E676]">{simResult.wins}</span>
+   891→                            </span>
+   892→                            <span className="text-[#94A3B8]">
+   893→                              Losses: <span className="font-mono text-[#FF5C5C]">{simResult.losses}</span>
+   894→                            </span>
+   895→                            <span className="text-[#94A3B8]">
+   896→                              Win rate:{" "}
+   897→                              <span className="font-mono text-[#F4F7FB]">
+   898→                                {simResult.rows.length > 0
+   899→                                  ? ((simResult.wins / simResult.rows.length) * 100).toFixed(1)
+   900→                                  : 0}
+   901→                                %
+   902→                              </span>
+   903→                            </span>
+   904→                          </div>
+   905→                        </div>
+   906→
+   907→                        {/* Trade-by-trade table */}
+   908→                        <div className="overflow-x-auto max-h-80 overflow-y-auto rounded-md border border-white/[0.06]">
+   909→                          <table className="w-full text-sm whitespace-nowrap">
+   910→                            <thead className="sticky top-0 bg-[#131829]">
+   911→                              <tr className="text-[10px] uppercase tracking-wider text-[#64748B] border-b border-white/[0.06]">
+   912→                                <th className="text-left py-2 px-3 font-semibold">#</th>
+   913→                                <th className="text-left py-2 px-3 font-semibold">Symbol</th>
+   914→                                <th className="text-left py-2 px-3 font-semibold">Side</th>
+   915→                                <th className="text-left py-2 px-3 font-semibold">Entry date</th>
+   916→                                <th className="text-right py-2 px-3 font-semibold">Entry price</th>
+   917→                                <th className="text-left py-2 px-3 font-semibold">Exit date</th>
+   918→                                <th className="text-right py-2 px-3 font-semibold">Exit price</th>
+   919→                                <th className="text-left py-2 px-3 font-semibold">Exit reason</th>
+   920→                                <th className="text-right py-2 px-3 font-semibold">P&amp;L (PKR)</th>
+   921→                                <th className="text-right py-2 px-3 font-semibold">P&amp;L %</th>
+   922→                                <th className="text-left py-2 px-3 font-semibold">Result</th>
+   923→                              </tr>
+   924→                            </thead>
+   925→                            <tbody>
+   926→                              {simResult.rows.map((r) => {
+   927→                                const fmtDate = (ms: number) =>
+   928→                                  ms > 0
+   929→                                    ? new Date(ms).toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" })
+   930→                                    : "—";
+   931→                                // Issue 45: SIP rows render distinctly (amber highlight + PiggyBank icon)
+   932→                                const isSip = (r as any).rowType === "SIP";
+   933→                                if (isSip) {
+   934→                                  return (
+   935→                                    <tr key={`sip-${r.tradeNo}`} className="border-b border-[#FBBF24]/20 bg-[#FBBF24]/[0.05]">
+   936→                                      <td className="py-2 px-3 font-mono text-[#FBBF24]">{r.tradeNo}</td>
+   937→                                      <td className="py-2 px-3 font-mono font-semibold text-[#FBBF24] flex items-center gap-1.5">
+   938→                                        <PiggyBank className="h-3 w-3" /> SIP DEPOSIT
+   939→                                      </td>
+   940→                                      <td className="py-2 px-3">
+   941→                                        <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24] bg-[#FBBF24]/10">
+   942→                                          SIP
+   943→                                        </Badge>
+   944→                                      </td>
+   945→                                      <td className="py-2 px-3 text-left font-mono text-[#94A3B8]">{fmtDate(r.entryDate)}</td>
+   946→                                      <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">—</td>
+   947→                                      <td className="py-2 px-3 text-left font-mono text-[#94A3B8]">—</td>
+   948→                                      <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">—</td>
+   949→                                      <td className="py-2 px-3 text-left text-[11px] text-[#FBBF24] font-semibold">
+   950→                                        Month end — {(r as any).monthLabel || "SIP added"}
+   951→                                      </td>
+   952→                                      <td className="py-2 px-3 text-right font-mono font-semibold text-[#FBBF24]">
+   953→                                        +{fmtPkr((r as any).sipAmount || r.notional || 0)}
+   954→                                      </td>
+   955→                                      <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">—</td>
+   956→                                      <td className="py-2 px-3 text-left">
+   957→                                        <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24]">
+   958→                                          DEPOSIT
+   959→                                        </Badge>
+   960→                                      </td>
+   961→                                    </tr>
+   962→                                  );
+   963→                                }
+   964→                                return (
+   965→                                  <tr key={r.tradeNo} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+   966→                                    <td className="py-2 px-3 font-mono text-[#64748B]">{r.tradeNo}</td>
+   967→                                    <td className="py-2 px-3 font-mono font-semibold text-[#F4F7FB]">{r.symbol}</td>
+   968→                                    <td className="py-2 px-3">
+   969→                                      <Badge
+   970→                                        variant="outline"
+   971→                                        className={`text-[9px] py-0 h-4 ${r.side === "BUY" ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}
+   972→                                      >
+   973→                                        {r.side}
+   974→                                      </Badge>
+   975→                                    </td>
+   976→                                    <td className="py-2 px-3 text-left font-mono text-[#94A3B8]">{fmtDate(r.entryDate)}</td>
+   977→                                    <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">{r.entryPrice.toFixed(2)}</td>
+   978→                                    <td className="py-2 px-3 text-left font-mono text-[#94A3B8]">{fmtDate(r.exitDate)}</td>
+   979→                                    <td className="py-2 px-3 text-right font-mono text-[#94A3B8]">{r.exitPrice.toFixed(2)}</td>
+   980→                                    <td className="py-2 px-3 text-left text-[11px] text-[#94A3B8]">{r.exitReason}</td>
+   981→                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.netPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   982→                                      {r.netPnl >= 0 ? "+" : ""}{fmtPkr(r.netPnl)}
+   983→                                    </td>
+   984→                                    <td className={`py-2 px-3 text-right font-mono font-semibold ${r.netPnlPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+   985→                                      {fmtPct(r.netPnlPct, true)}
+   986→                                    </td>
+   987→                                    <td className="py-2 px-3 text-left">
+   988→                                      <Badge
+   989→                                        variant="outline"
+   990→                                        className={`text-[9px] py-0 h-4 ${r.isWin ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}
+   991→                                      >
+   992→                                        {r.isWin ? "WIN" : "LOSS"}
+   993→                                      </Badge>
+   994→                                    </td>
+   995→                                  </tr>
+   996→                                );
+   997→                              })}
+   998→                            </tbody>
+   999→                          </table>
+  1000→                        </div>
+  1001→                      </>
+  1002→                    )}
+  1003→                  </CardContent>
+  1004→                </Card>
+  1005→
+  1006→                {/* Issue 13: removed the "Backtest" timeframe selector (TIMEFRAMES)
+  1007→                    from the portfolio tracker — per user spec "portfolio tracker
+  1008→                    remove backtest". The Investment Simulator above is the
+  1009→                    replacement simulation UI. */}
+  1010→                <div className="flex items-center gap-2 text-[11px] text-[#64748B] ml-auto flex-wrap">
+  1011→                    <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#00E676]/40 text-[#00E676]">
+  1012→                      LIVE
+  1013→                    </Badge>
+  1014→                    <span>
+  1015→                      Last {timeframeLabel} backtest · {aiSignals.length} stocks · final consensus ensemble · {stockSignals.length} actionable signals
+  1016→                    </span>
+  1017→                  </div>
+  1018→
+  1019→                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  1020→                  <Card className="bg-gradient-to-br from-[#00E676]/[0.07] to-[#131829] border-[#00E676]/20">
+  1021→                    <CardContent className="p-4">
+  1022→                      <div className="flex items-center justify-between mb-1">
+  1023→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Total signals</span>
+  1024→                        <Zap className="h-3 w-3 text-[#00E676]" />
+  1025→                      </div>
+  1026→                      <div className="text-3xl font-bold text-[#F4F7FB] font-mono">{signalStats.total}</div>
+  1027→                      <div className="text-[10px] text-[#94A3B8] mt-1">
+  1028→                        {signalStats.wins}W / {signalStats.losses}L · ensemble final consensus
+  1029→                      </div>
+  1030→                    </CardContent>
+  1031→                  </Card>
+  1032→                  <Card className="bg-[#131829] border-white/[0.08]">
+  1033→                    <CardContent className="p-4">
+  1034→                      <div className="flex items-center justify-between mb-1">
+  1035→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Win rate</span>
+  1036→                        <Trophy className="h-3 w-3 text-[#00E676]" />
+  1037→                      </div>
+  1038→                      <div className="text-3xl font-bold text-[#00E676] font-mono">{signalStats.winRate}%</div>
+  1039→                      <div className="text-[10px] text-[#94A3B8] mt-1">across {signalStats.total} closed trades</div>
+  1040→                    </CardContent>
+  1041→                  </Card>
+  1042→                  <Card className="bg-[#131829] border-white/[0.08]">
+  1043→                    <CardContent className="p-4">
+  1044→                      <div className="flex items-center justify-between mb-1">
+  1045→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Avg return</span>
+  1046→                        <TrendingUp className="h-3 w-3 text-[#00E676]" />
+  1047→                      </div>
+  1048→                      <div className={`text-3xl font-bold font-mono ${signalStats.avgReturn >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+  1049→                        {fmtPct(signalStats.avgReturn, true)}
+  1050→                      </div>
+  1051→                      <div className="text-[10px] text-[#94A3B8] mt-1">per trade, last {timeframeLabel}</div>
+  1052→                    </CardContent>
+  1053→                  </Card>
+  1054→                  <Card className="bg-[#131829] border-white/[0.08]">
+  1055→                    <CardContent className="p-4">
+  1056→                      <div className="flex items-center justify-between mb-1">
+  1057→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Best / worst</span>
+  1058→                        <Target className="h-3 w-3 text-[#00E676]" />
+  1059→                      </div>
+  1060→                      <div className="flex items-baseline gap-2 font-mono">
+  1061→                        <span className="text-lg font-bold text-[#00E676]">{fmtPct(signalStats.best, true)}</span>
+  1062→                        <span className="text-[#64748B] text-xs">/</span>
+  1063→                        <span className="text-lg font-bold text-[#FF5C5C]">{fmtPct(signalStats.worst)}</span>
+  1064→                      </div>
+  1065→                      <div className="text-[10px] text-[#94A3B8] mt-1">best trade / worst trade</div>
+  1066→                    </CardContent>
+  1067→                  </Card>
+  1068→                </div>
+  1069→
+  1070→                {/* Issue 14: Signal History — final ensemble consensus for ALL
+  1071→                    ~361 stocks (not the hardcoded 8). Fetches /api/signals/all,
+  1072→                    which already overlays LIVE prices + evaluates the TP1/TP2/TP3
+  1073→                    /SL outcome server-side. Filters: outcome, min confidence,
+  1074→                    plus sort by R:R / confidence / live P&L. */}
+  1075→                <Card className="bg-[#131829] border-white/[0.08] mb-5">
+  1076→                  <CardContent className="p-0">
+  1077→                    <div className="p-4 border-b border-white/[0.06]">
+  1078→                      <div className="flex items-center justify-between gap-3 flex-wrap">
+  1079→                        <div>
+  1080→                          <h3 className="font-semibold text-[#F4F7FB] flex items-center gap-1.5">
+  1081→                            <History className="h-4 w-4 text-[#00E676]" />
+  1082→                            Signal History
+  1083→                          </h3>
+  1084→                          <p className="text-xs text-[#94A3B8] mt-0.5">
+  1085→                            Final ensemble consensus across {signalHistory.length} PSX stocks · live price overlay · TP/SL outcome evaluated
+  1086→                          </p>
+  1087→                        </div>
+  1088→                        <Button
+  1089→                          size="sm"
+  1090→                          variant="outline"
+  1091→                          onClick={() => refreshHistory(true)}
+  1092→                          disabled={historyLoading}
+  1093→                          className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] h-8"
+  1094→                        >
+  1095→                          <RefreshCw className={`h-3 w-3 mr-1.5 ${historyLoading ? "animate-spin" : ""}`} />
+  1096→                          Refresh
+  1097→                        </Button>
+  1098→                      </div>
+  1099→
+  1100→                      {/* Filters */}
+  1101→                      <div className="flex flex-wrap items-end gap-3 mt-3">
+  1102→                        <div>
+  1103→                          <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Outcome</label>
+  1104→                          <select
+  1105→                            value={outcomeFilter}
+  1106→                            onChange={(e) => setOutcomeFilter(e.target.value as "ALL" | "TP" | "SL" | "ACTIVE")}
+  1107→                            className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs w-[110px]"
+  1108→                          >
+  1109→                            <option value="ALL">All</option>
+  1110→                            <option value="TP">TP hit</option>
+  1111→                            <option value="SL">SL hit</option>
+  1112→                            <option value="ACTIVE">Active</option>
+  1113→                          </select>
+  1114→                        </div>
+  1115→                        <div>
+  1116→                          <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Sort by</label>
+  1117→                          <select
+  1118→                            value={historySort}
+  1119→                            onChange={(e) => setHistorySort(e.target.value as "rr" | "conf" | "pnl")}
+  1120→                            className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs w-[150px]"
+  1121→                          >
+  1122→                            <option value="rr">R:R (high → low)</option>
+  1123→                            <option value="conf">Confidence (high → low)</option>
+  1124→                            <option value="pnl">Live P&amp;L % (high → low)</option>
+  1125→                          </select>
+  1126→                        </div>
+  1127→                        <div className="flex-1 min-w-[180px]">
+  1128→                          <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">
+  1129→                            Min confidence: <span className="text-[#00E676] font-mono">{confFilter}%</span>
+  1130→                          </label>
+  1131→                          <input
+  1132→                            type="range"
+  1133→                            min={0}
+  1134→                            max={100}
+  1135→                            step={5}
+  1136→                            value={confFilter}
+  1137→                            onChange={(e) => setConfFilter(parseInt(e.target.value))}
+  1138→                            className="w-full accent-[#00E676] h-1"
+  1139→                          />
+  1140→                        </div>
+  1141→                        <div className="text-[10px] text-[#64748B] ml-auto self-center">
+  1142→                          {filteredHistory.length} of {signalHistory.length} signals
+  1143→                        </div>
+  1144→                      </div>
+  1145→                    </div>
+  1146→
+  1147→                    {historyError ? (
+  1148→                      <div className="p-6 text-center text-xs text-[#FF5C5C]">{historyError}</div>
+  1149→                    ) : historyLoading ? (
+  1150→                      <div className="p-6 space-y-2">
+  1151→                        {[1, 2, 3, 4, 5].map((i) => (
+  1152→                          <Skeleton key={i} className="h-8 w-full bg-white/[0.04]" />
+  1153→                        ))}
+  1154→                      </div>
+  1155→                    ) : (
+  1156→                      <div className="overflow-x-auto max-h-96 overflow-y-auto">
+  1157→                        <table className="w-full text-sm">
+  1158→                          <thead className="sticky top-0 bg-[#131829]">
+  1159→                            <tr className="text-[10px] uppercase tracking-wider text-[#64748B] border-b border-white/[0.06]">
+  1160→                              <th className="text-left py-2 px-3 font-semibold">Symbol</th>
+  1161→                              <th className="text-left py-2 px-3 font-semibold">Side</th>
+  1162→                              <th className="text-right py-2 px-3 font-semibold">Entry</th>
+  1163→                              <th className="text-right py-2 px-3 font-semibold">Live</th>
+  1164→                              <th className="text-right py-2 px-3 font-semibold">SL</th>
+  1165→                              <th className="text-right py-2 px-3 font-semibold">TP1</th>
+  1166→                              <th className="text-right py-2 px-3 font-semibold">TP2</th>
+  1167→                              <th className="text-right py-2 px-3 font-semibold">TP3</th>
+  1168→                              <th className="text-right py-2 px-3 font-semibold">R:R</th>
+  1169→                              <th className="text-right py-2 px-3 font-semibold">Conf.</th>
+  1170→                              <th className="text-left py-2 px-3 font-semibold">Outcome</th>
+  1171→                            </tr>
+  1172→                          </thead>
+  1173→                          <tbody>
+  1174→                            {filteredHistory.length === 0 && (
+  1175→                              <tr>
+  1176→                                <td colSpan={11} className="py-6 text-center text-[#64748B] text-xs">
+  1177→                                  No signals match the current filters.
+  1178→                                </td>
+  1179→                              </tr>
+  1180→                            )}
+  1181→                            {filteredHistory.map((s) => {
+  1182→                              const isBuy = s.signal === "BUY";
+  1183→                              const outcomeClass =
+  1184→                                s.outcome === "TP3_HIT"
+  1185→                                  ? "bg-[#00E676]/15 border-[#00E676]/40 text-[#00E676]"
+  1186→                                  : s.outcome === "TP2_HIT"
+  1187→                                  ? "bg-[#00E676]/10 border-[#00E676]/30 text-[#00E676]"
+  1188→                                  : s.outcome === "TP1_HIT"
+  1189→                                  ? "bg-[#00E676]/8 border-[#00E676]/25 text-[#00E676]/90"
+  1190→                                  : s.outcome === "SL_HIT"
+  1191→                                  ? "bg-[#FF5C5C]/15 border-[#FF5C5C]/40 text-[#FF5C5C]"
+  1192→                                  : "bg-white/[0.04] border-white/[0.12] text-[#94A3B8]";
+  1193→                              const pnlColor = s.pnlPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]";
+  1194→                              return (
+  1195→                                <tr key={s.symbol} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+  1196→                                  <td className="py-2.5 px-3 font-mono font-semibold text-[#F4F7FB]">
+  1197→                                    {s.symbol}
+  1198→                                    {s.stockName && s.stockName !== s.symbol && (
+  1199→                                      <div className="text-[9px] text-[#64748B] font-normal truncate max-w-[120px]">{s.stockName}</div>
+  1200→                                    )}
+  1201→                                  </td>
+  1202→                                  <td className="py-2.5 px-3">
+  1203→                                    <Badge variant="outline" className={`text-[9px] py-0 h-4 ${isBuy ? "border-[#00E676]/40 text-[#00E676]" : "border-[#FF5C5C]/40 text-[#FF5C5C]"}`}>
+  1204→                                      {s.signal}
+  1205→                                    </Badge>
+  1206→                                  </td>
+  1207→                                  <td className="py-2.5 px-3 text-right font-mono text-[#94A3B8]">{s.entry.toFixed(2)}</td>
+  1208→                                  <td className="py-2.5 px-3 text-right font-mono text-[#F4F7FB]">
+  1209→                                    {s.livePrice != null ? s.livePrice.toFixed(2) : <span className="text-[#64748B]">—</span>}
+  1210→                                  </td>
+  1211→                                  <td className="py-2.5 px-3 text-right font-mono text-[#FF5C5C]/80">{s.sl.toFixed(2)}</td>
+  1212→                                  <td className="py-2.5 px-3 text-right font-mono text-[#00E676]/80">{s.tp1.toFixed(2)}</td>
+  1213→                                  <td className="py-2.5 px-3 text-right font-mono text-[#00E676]/90">{s.tp2.toFixed(2)}</td>
+  1214→                                  <td className="py-2.5 px-3 text-right font-mono text-[#00E676]">{s.tp3.toFixed(2)}</td>
+  1215→                                  <td className="py-2.5 px-3 text-right font-mono text-[#94A3B8]">{s.riskReward.toFixed(2)}</td>
+  1216→                                  <td className="py-2.5 px-3 text-right font-mono text-[#94A3B8]">{s.confidence}%</td>
+  1217→                                  <td className="py-2.5 px-3">
+  1218→                                    <Badge variant="outline" className={`text-[9px] py-0 h-4 border ${outcomeClass}`}>
+  1219→                                      {s.outcome.replace("_", " ")}
+  1220→                                      <span className={`ml-1 font-mono ${pnlColor}`}>
+  1221→                                        {s.pnlPct >= 0 ? "+" : ""}{s.pnlPct.toFixed(2)}%
+  1222→                                      </span>
+  1223→                                    </Badge>
+  1224→                                  </td>
+  1225→                                </tr>
+  1226→                              );
+  1227→                            })}
+  1228→                          </tbody>
+  1229→                        </table>
+  1230→                      </div>
+  1231→                    )}
+  1232→                  </CardContent>
+  1233→                </Card>
+  1234→              </>
+  1235→            )}
+  1236→          </TabsContent>
+  1237→
+  1238→          {/* Portfolio Tracker */}
+  1239→          <TabsContent value="portfolio" className="mt-4">
+  1240→            {portfolioPositions.length === 0 && closedTrades.length === 0 ? (
+  1241→              <Card className="bg-[#131829] border-white/[0.08]">
+  1242→                <CardContent className="p-12 text-center">
+  1243→                  <Briefcase className="h-12 w-12 text-[#00E676]/30 mx-auto mb-3" />
+  1244→                  <h3 className="font-semibold text-[#F4F7FB] mb-1">No portfolio positions yet</h3>
+  1245→                  <p className="text-xs text-[#94A3B8]">
+  1246→                    Add stocks with buy prices and share counts to see your live P&amp;L, win rate, and ROI% here.
+  1247→                  </p>
+  1248→                </CardContent>
+  1249→              </Card>
+  1250→            ) : (
+  1251→              <>
+  1252→                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  1253→                  <Card className="bg-[#131829] border-white/[0.08]">
+  1254→                    <CardContent className="p-4">
+  1255→                      <div className="flex items-center justify-between mb-1">
+  1256→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Total value</span>
+  1257→                        <Briefcase className="h-3 w-3 text-[#00E676]" />
+  1258→                      </div>
+  1259→                      <div className="text-2xl font-bold text-[#F4F7FB] font-mono">
+  1260→                        {portfolioStats.hasAnyPnl ? fmtPkr(portfolioStats.totalValue) : "—"}
+  1261→                      </div>
+  1262→                      <div className="text-[10px] text-[#94A3B8] mt-1">
+  1263→                        invested {fmtPkr(portfolioStats.totalInvested)}
+  1264→                      </div>
+  1265→                    </CardContent>
+  1266→                  </Card>
+  1267→                  <Card className="bg-[#131829] border-white/[0.08]">
+  1268→                    <CardContent className="p-4">
+  1269→                      <div className="flex items-center justify-between mb-1">
+  1270→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Total P&amp;L</span>
+  1271→                        {portfolioStats.totalPnl >= 0 ? (
+  1272→                          <TrendingUp className="h-3 w-3 text-[#00E676]" />
+  1273→                        ) : (
+  1274→                          <TrendingDown className="h-3 w-3 text-[#FF5C5C]" />
+  1275→                        )}
+  1276→                      </div>
+  1277→                      <div className={`text-2xl font-bold font-mono ${portfolioStats.totalPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+  1278→                        {portfolioStats.hasAnyPnl ? `${portfolioStats.totalPnl >= 0 ? "+" : ""}${fmtPkr(portfolioStats.totalPnl)}` : "—"}
+  1279→                      </div>
+  1280→                      <div className="text-[10px] text-[#94A3B8] mt-1">
+  1281→                        ROI{" "}
+  1282→                        <span className={portfolioStats.roiPct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}>
+  1283→                          {portfolioStats.hasAnyPnl ? `${portfolioStats.roiPct >= 0 ? "+" : ""}${portfolioStats.roiPct.toFixed(2)}%` : "—"}
+  1284→                        </span>
+  1285→                      </div>
+  1286→                    </CardContent>
+  1287→                  </Card>
+  1288→                  <Card className="bg-[#131829] border-white/[0.08]">
+  1289→                    <CardContent className="p-4">
+  1290→                      <div className="flex items-center justify-between mb-1">
+  1291→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Win rate</span>
+  1292→                        <Trophy className="h-3 w-3 text-[#00E676]" />
+  1293→                      </div>
+  1294→                      {portfolioStats.winRate !== null ? (
+  1295→                        <div className="text-2xl font-bold text-[#00E676] font-mono">
+  1296→                          {portfolioStats.winRate.toFixed(1)}%
+  1297→                        </div>
+  1298→                      ) : (
+  1299→                        <div className="text-2xl font-bold text-[#94A3B8] font-mono">—</div>
+  1300→                      )}
+  1301→                      <div className="text-[10px] text-[#94A3B8] mt-1">
+  1302→                        {portfolioStats.closedCount > 0
+  1303→                          ? `${portfolioStats.closedWins}/${portfolioStats.closedCount} closed`
+  1304→                          : "no closed trades yet"}
+  1305→                      </div>
+  1306→                    </CardContent>
+  1307→                  </Card>
+  1308→                  <Card className="bg-[#131829] border-white/[0.08]">
+  1309→                    <CardContent className="p-4">
+  1310→                      <div className="flex items-center justify-between mb-1">
+  1311→                        <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Positions</span>
+  1312→                        <Activity className="h-3 w-3 text-[#00E676]" />
+  1313→                      </div>
+  1314→                      <div className="text-2xl font-bold text-[#F4F7FB] font-mono">{portfolioStats.total}</div>
+  1315→                      <div className="text-[10px] text-[#94A3B8] mt-1">
+  1316→                        <span className="text-amber-400">{portfolioStats.openCount} open</span>
+  1317→                        {" · "}
+  1318→                        <span className="text-[#94A3B8]">{portfolioStats.closedCount} closed</span>
+  1319→                      </div>
+  1320→                    </CardContent>
+  1321→                  </Card>
+  1322→                </div>
+  1323→
+  1324→                {/* Issue 18: SVG pie chart — sector-wise holding distribution */}
+  1325→                <Card className="bg-[#131829] border-white/[0.08] mb-5">
+  1326→                  <CardContent className="p-5">
+  1327→                    <div className="flex items-center gap-1.5 mb-3">
+  1328→                      <PieChartIcon className="h-4 w-4 text-[#00E676]" />
+  1329→                      <h3 className="font-semibold text-[#F4F7FB] text-sm">Sector-wise holding distribution</h3>
+  1330→                    </div>
+  1331→                    <p className="text-xs text-[#94A3B8] mb-4">
+  1332→                      Breakdown of your open positions by sector, weighted by current market value
+  1333→                      (live price × shares). Useful for spotting concentration risk (e.g., 80% Cement, 20% Oil &amp; Gas).
+  1334→                    </p>
+  1335→                    {sectorData.length === 0 ? (
+  1336→                      <div className="text-center py-8 text-xs text-[#64748B]">
+  1337→                        No open positions with a market value yet — add buy prices + share counts to populate the chart.
+  1338→                      </div>
+  1339→                    ) : (
+  1340→                      <div className="flex flex-col md:flex-row items-center gap-6">
+  1341→                        <SectorPieChart data={sectorData} />
+  1342→                        <div className="flex-1 w-full space-y-2">
+  1343→                          {sectorData.map((d, i) => (
+  1344→                            <div key={d.sector} className="flex items-center justify-between text-xs gap-3">
+  1345→                              <div className="flex items-center gap-2 min-w-0">
+  1346→                                <span
+  1347→                                  className="h-3 w-3 rounded-sm shrink-0"
+  1348→                                  style={{ background: SECTOR_COLORS[i % SECTOR_COLORS.length] }}
+  1349→                                />
+  1350→                                <span className="text-[#F4F7FB] font-semibold truncate">{d.sector}</span>
+  1351→                              </div>
+  1352→                              <div className="flex items-center gap-3 font-mono shrink-0">
+  1353→                                <span className="text-[#94A3B8]">{fmtPkr(d.value)}</span>
+  1354→                                <span className="text-[#00E676] font-semibold w-14 text-right">
+  1355→                                  {d.pct.toFixed(1)}%
+  1356→                                </span>
+  1357→                              </div>
+  1358→                            </div>
+  1359→                          ))}
+  1360→                        </div>
+  1361→                      </div>
+  1362→                    )}
+  1363→                  </CardContent>
+  1364→                </Card>
+  1365→
+  1366→                {/* Issue 18: Open positions card (Close/Reopen removed — closing is now done from PortfolioTab) */}
+  1367→                <Card className="bg-[#131829] border-white/[0.08] mb-5">
+  1368→                  <CardContent className="p-0">
+  1369→                    <div className="p-4 border-b border-white/[0.06]">
+  1370→                      <h3 className="font-semibold text-[#F4F7FB]">Open positions ({portfolioPositions.length})</h3>
+  1371→                      <p className="text-xs text-[#94A3B8] mt-0.5">
+  1372→                        Live P&amp;L based on current PSX prices for covered stocks · to close a position, use the
+  1373→                        wallet-icon close flow in the <span className="text-[#00E676]">Portfolio</span> tab.
+  1374→                      </p>
+  1375→                    </div>
+  1376→                    <div className="divide-y divide-white/[0.04]">
+  1377→                      {portfolioPositions.length === 0 ? (
+  1378→                        <div className="p-6 text-center text-xs text-[#64748B]">
+  1379→                          No open positions yet. Add stocks with shares &gt; 0 to start tracking.
+  1380→                        </div>
+  1381→                      ) : (
+  1382→                        portfolioPositions.map((p) => (
+  1383→                          <PortfolioRow
+  1384→                            key={p.symbol}
+  1385→                            position={p}
+  1386→                            livePrice={livePriceMap[p.symbol]}
+  1387→                            sectorLabel={(() => {
+  1388→                              const s = p.sector && p.sector.trim();
+  1389→                              return (s && s !== "Conglomerate" ? s : "") ||
+  1390→                                sectorMap[p.symbol] ||
+  1391→                                classifySector(p.symbol);
+  1392→                            })()}
+  1393→                          />
+  1394→                        ))
+  1395→                      )}
+  1396→                    </div>
+  1397→                  </CardContent>
+  1398→                </Card>
+  1399→
+  1400→                {/* Issue 18: Closed trades card (from close flow in PortfolioTab) */}
+  1401→                <Card className="bg-[#131829] border-white/[0.08]">
+  1402→                  <CardContent className="p-0">
+  1403→                    <div className="p-4 border-b border-white/[0.06]">
+  1404→                      <h3 className="font-semibold text-[#F4F7FB]">Closed trades ({closedTrades.length})</h3>
+  1405→                      <p className="text-xs text-[#94A3B8] mt-0.5">
+  1406→                        Each row is a trade closed via the Portfolio tab&apos;s close flow — recorded with buy/sell
+  1407→                        prices, broker commission (0.15% × sell × 2), CGT (15% if ≤12mo, 0% if &gt;12mo),
+  1408→                        and net P&amp;L.
+  1409→                      </p>
+  1410→                    </div>
+  1411→                    <div className="divide-y divide-white/[0.04]">
+  1412→                      {closedTrades.length === 0 ? (
+  1413→                        <div className="p-6 text-center text-xs text-[#64748B]">
+  1414→                          No closed trades yet. Close a position from the Portfolio tab to see it here.
+  1415→                        </div>
+  1416→                      ) : (
+  1417→                        closedTrades.map((t) => <ClosedTradeRow key={t.id} trade={t} />)
+  1418→                      )}
+  1419→                    </div>
+  1420→                  </CardContent>
+  1421→                </Card>
+  1422→              </>
+  1423→            )}
+  1424→          </TabsContent>
+  1425→        </Tabs>
+  1426→
+  1427→        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed mt-6">
+  1428→          <span className="text-[#94A3B8] font-semibold">Tracker note:</span> Signal tracker
+  1429→          stats are sourced live from <code className="text-[#00E676]">/api/ai-model-signals/[symbol]?refresh=1&amp;timeframe={timeframe}</code> —
+  1430→          the ensemble final consensus backtest across {COVERED_SYMBOLS.length} covered PSX stocks. Notifications fire
+  1431→          when a tracked signal hits TP or SL. Portfolio tracker shows open positions and closed trades from the
+  1432→          Portfolio tab close flow; the pie chart visualises sector concentration.
+  1433→        </div>
+  1434→      </main>
+  1435→  );
+  1436→}
+  1437→
+  1438→// ─── Issue 18: SVG-based donut pie chart for sector distribution ──────────
+  1439→// Issue 28+29: distinct-hue colors for the sector pie chart.
+  1440→// Each entry is a DIFFERENT hue family — no two are shades of the same color,
+  1441→// and none are pastel/light shades (all 600-level Tailwind-equivalent, fully
+  1442→// saturated so the slices are clearly visible against the dark background).
+  1443→// Cycled via `i % SECTOR_COLORS.length` so adjacent slices never share a hue.
+  1444→const SECTOR_COLORS = [
+  1445→  "#DC2626", // bright red (red family — slice 0)
+  1446→  "#059669", // bright emerald (green family — slice 1)
+  1447→  "#7C3AED", // bright violet (purple family — slice 2)
+  1448→  "#D97706", // bright amber (orange family — slice 3)
+  1449→  "#0D9488", // bright teal (teal family — slice 4)
+  1450→  "#DB2777", // bright pink (pink family — slice 5)
+  1451→  "#CA8A04", // bright yellow (yellow family — slice 6)
+  1452→  "#EA580C", // bright orange (orange family — slice 7)
+  1453→  "#16A34A", // bright green (green family — slice 8)
+  1454→  "#BE185D", // bright rose (magenta family — slice 9)
+  1455→  "#65A30D", // bright lime (yellow-green family — slice 10)
+  1456→  "#92400E", // bright amber-brown (brown family — slice 11)
+  1457→];
+  1458→
+  1459→function SectorPieChart({ data }: { data: { sector: string; value: number; pct: number }[] }) {
+  1460→  const size = 160;
+  1461→  const cx = size / 2;
+  1462→  const cy = size / 2;
+  1463→  const r = 65;
+  1464→  const innerR = 30; // donut hole
+  1465→
+  1466→  // Issue 26: Single-slice (100%) degenerate case — SVG arc spec omits the
+  1467→  // slice when start === end (because the path's start and end points are
+  1468→  // identical, the arc is "zero-length" and skipped). Render the donut as
+  1469→  // two concentric <circle> elements instead so a 1-stock portfolio still
+  1470→  // shows a full ring instead of an empty box.
+  1471→  if (data.length === 1 && data[0].pct >= 99.999) {
+  1472→    const d = data[0];
+  1473→    const color = SECTOR_COLORS[0];
+  1474→    return (
+  1475→      <svg
+  1476→        viewBox={`0 0 ${size} ${size}`}
+  1477→        width={size}
+  1478→        height={size}
+  1479→        className="shrink-0"
+  1480→        role="img"
+  1481→        aria-label={`Sector distribution: ${d.sector} ${d.pct.toFixed(0)}%`}
+  1482→      >
+  1483→        <circle cx={cx} cy={cy} r={r} fill={color} stroke="#0A0E1A" strokeWidth={1.5} />
+  1484→        <circle cx={cx} cy={cy} r={innerR} fill="#0A0E1A" />
+  1485→        <title>{`${d.sector}: ${d.pct.toFixed(1)}% (${fmtPkr(d.value)})`}</title>
+  1486→      </svg>
+  1487→    );
+  1488→  }
+  1489→
+  1490→  // SVG arc paths for each sector slice. Cumulative angle is computed
+  1491→  // functionally from the preceding slices' percentages (no mutation) to
+  1492→  // satisfy react-hooks/immutability.
+  1493→  const slices = data.map((d, i) => {
+  1494→    const cumulativeBeforePct = data.slice(0, i).reduce((s, x) => s + x.pct, 0);
+  1495→    const startAngle = -Math.PI / 2 + (cumulativeBeforePct / 100) * 2 * Math.PI;
+  1496→    const angleSpan = (d.pct / 100) * 2 * Math.PI;
+  1497→    const endAngle = startAngle + angleSpan;
+  1498→
+  1499→    // Outer arc endpoints
+  1500→    const x1 = cx + r * Math.cos(startAngle);
+  1501→    const y1 = cy + r * Math.sin(startAngle);
+  1502→    const x2 = cx + r * Math.cos(endAngle);
+  1503→    const y2 = cy + r * Math.sin(endAngle);
+  1504→    // Inner arc endpoints (donut)
+  1505→    const xi1 = cx + innerR * Math.cos(startAngle);
+  1506→    const yi1 = cy + innerR * Math.sin(startAngle);
+  1507→    const xi2 = cx + innerR * Math.cos(endAngle);
+  1508→    const yi2 = cy + innerR * Math.sin(endAngle);
+  1509→
+  1510→    const largeArc = angleSpan > Math.PI ? 1 : 0;
+  1511→    // Donut slice path: outer arc forward + line in + inner arc backward + close
+  1512→    const path = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${innerR} ${innerR} 0 ${largeArc} 0 ${xi1} ${yi1} Z`;
+  1513→    return { path, color: SECTOR_COLORS[i % SECTOR_COLORS.length], ...d };
+  1514→  });
+  1515→
+  1516→  return (
+  1517→    <svg
+  1518→      viewBox={`0 0 ${size} ${size}`}
+  1519→      width={size}
+  1520→      height={size}
+  1521→      className="shrink-0"
+  1522→      role="img"
+  1523→      aria-label={`Sector distribution: ${data.map((d) => `${d.sector} ${d.pct.toFixed(0)}%`).join(", ")}`}
+  1524→    >
+  1525→      {slices.map((s, i) => (
+  1526→        <path
+  1527→          key={i}
+  1528→          d={s.path}
+  1529→          fill={s.color}
+  1530→          stroke="#0A0E1A"
+  1531→          strokeWidth={1.5}
+  1532→        >
+  1533→          <title>{`${s.sector}: ${s.pct.toFixed(1)}% (${fmtPkr(s.value)})`}</title>
+  1534→        </path>
+  1535→      ))}
+  1536→    </svg>
+  1537→  );
+  1538→}
+  1539→
+  1540→// ─── Issue 18: Open position row (no Close/Reopen buttons) ──────────────────
+  1541→// Closing is now done from PortfolioTab.tsx (Issue 13's close flow). This row
+  1542→// just shows the position info + live P&L (when available).
+  1543→interface PortfolioRowProps {
+  1544→  position: {
+  1545→    symbol: string;
+  1546→    name: string;
+  1547→    sector?: string | null;
+  1548→    buyPrice: number | null;
+  1549→    shares: number;
+  1550→    status: "open" | "closed";
+  1551→    closePrice?: number | null;
+  1552→    closedAt?: string | null;
+  1553→  };
+  1554→  livePrice?: number;
+  1555→  sectorLabel?: string;
+  1556→}
+  1557→
+  1558→function PortfolioRow({ position, livePrice, sectorLabel }: PortfolioRowProps) {
+  1559→  const buy = (position.buyPrice as number) || 0;
+  1560→  const referencePrice: number | null = typeof livePrice === "number" ? livePrice : null;
+  1561→  const positionValue = referencePrice !== null ? referencePrice * position.shares : null;
+  1562→  const invested = buy * position.shares;
+  1563→  const pnl = positionValue !== null ? positionValue - invested : null;
+  1564→  const pnlPct = pnl !== null && invested > 0 ? (pnl / invested) * 100 : null;
+  1565→  const isWin = pnl !== null && pnl > 0;
+  1566→  const isLoss = pnl !== null && pnl < 0;
+  1567→
+  1568→  return (
+  1569→    <div className="p-4 hover:bg-white/[0.02]">
+  1570→      <div className="flex items-center justify-between gap-3">
+  1571→        <div className="flex items-center gap-3 min-w-0">
+  1572→          <div className="h-9 w-9 rounded-lg flex items-center justify-center font-mono font-bold text-xs shrink-0 bg-[#00E676]/10 text-[#00E676]">
+  1573→            {position.symbol.slice(0, 4)}
+  1574→          </div>
+  1575→          <div className="min-w-0">
+  1576→            <div className="flex items-center gap-2">
+  1577→              <span className="font-semibold text-[#F4F7FB] text-sm">{position.symbol}</span>
+  1578→              <Badge variant="outline" className="text-[9px] py-0 h-4 border-amber-500/40 text-amber-400">
+  1579→                OPEN
+  1580→              </Badge>
+  1581→              {sectorLabel && (
+  1582→                <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-white/[0.12] text-[#94A3B8] uppercase">
+  1583→                  {sectorLabel}
+  1584→                </Badge>
+  1585→              )}
+  1586→            </div>
+  1587→            <div className="text-[11px] text-[#94A3B8] mt-0.5 truncate">
+  1588→              Buy: {buy > 0 ? buy.toFixed(2) : "—"} · {position.shares.toLocaleString()} shares
+  1589→              {typeof livePrice === "number" && (
+  1590→                <span className="text-[#64748B]"> · Live: {livePrice.toFixed(2)}</span>
+  1591→              )}
+  1592→            </div>
+  1593→          </div>
+  1594→        </div>
+  1595→        <div className="text-right shrink-0">
+  1596→          {pnl !== null ? (
+  1597→            <>
+  1598→              <div className={`text-sm font-mono font-semibold ${isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`}>
+  1599→                {pnl >= 0 ? "+" : ""}{fmtPkr(pnl)}
+  1600→              </div>
+  1601→              <div className="text-[10px] text-[#94A3B8] font-mono">
+  1602→                {pnlPct !== null ? `${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}%` : "—"}
+  1603→              </div>
+  1604→            </>
+  1605→          ) : (
+  1606→            <>
+  1607→              <div className="text-sm font-mono text-[#64748B]">—</div>
+  1608→              <div className="text-[10px] text-[#64748B]">no live price</div>
+  1609→            </>
+  1610→          )}
+  1611→        </div>
+  1612→      </div>
+  1613→    </div>
+  1614→  );
+  1615→}
+  1616→
+  1617→// ─── Issue 18: Closed trade row (from the Portfolio close flow) ────────────
+  1618→interface ClosedTradeRowProps {
+  1619→  trade: {
+  1620→    id: string;
+  1621→    symbol: string;
+  1622→    name: string;
+  1623→    buyPrice: number;        // weighted-avg buy price (used for ALL P&L calc)
+  1624→    shares: number;          // total shares across all lots
+  1625→    sellPrice: number;
+  1626→    buyCost: number;
+  1627→    sellValue: number;
+  1628→    commission: number;
+  1629→    cgt: number;
+  1630→    grossPnl: number;
+  1631→    netPnl: number;
+  1632→    netPnlPct: number;
+  1633→    holdingDays: number;
+  1634→    taxRate: number;
+  1635→    closedAt: string;
+  1636→    // Issue 33: per-lot history — when length > 1 the row shows "AVG · N lots".
+  1637→    buyLots?: { price: number; shares: number; addedAt: string }[];
+  1638→  };
+  1639→}
+  1640→
+  1641→function ClosedTradeRow({ trade }: ClosedTradeRowProps) {
+  1642→  const isWin = trade.netPnl > 0;
+  1643→  const isLoss = trade.netPnl < 0;
+  1644→  // Issue 33: an "averaged close" is one where the position had multiple buy
+  1645→  // lots before close. The P&L numbers use the weighted-avg buyPrice × total
+  1646→  // shares — ONE closed-trade entry per close (not one per lot).
+  1647→  const lotCount = trade.buyLots?.length ?? 0;
+  1648→  const isAveraged = lotCount > 1;
+  1649→  return (
+  1650→    <div className="p-4 hover:bg-white/[0.02]">
+  1651→      <div className="flex items-center justify-between gap-3">
+  1652→        <div className="flex items-center gap-3 min-w-0">
+  1653→          <div className="h-9 w-9 rounded-lg flex items-center justify-center font-mono font-bold text-xs shrink-0 bg-white/[0.04] text-[#94A3B8]">
+  1654→            {trade.symbol.slice(0, 4)}
+  1655→          </div>
+  1656→          <div className="min-w-0">
+  1657→            <div className="flex items-center gap-2">
+  1658→              <span className="font-semibold text-[#F4F7FB] text-sm">{trade.symbol}</span>
+  1659→              <Badge variant="outline" className="text-[9px] py-0 h-4 border-white/[0.16] text-[#94A3B8] bg-white/[0.04]">
+  1660→                CLOSED
+  1661→              </Badge>
+  1662→              {isAveraged && (
+  1663→                <Badge variant="outline" className="text-[9px] py-0 h-4 border-[#FBBF24]/40 text-[#FBBF24] bg-[#FBBF24]/[0.06]" title={`Averaged from ${lotCount} buy lots — P&L computed on weighted-avg buy price`}>
+  1664→                  AVG · {lotCount} LOTS
+  1665→                </Badge>
+  1666→              )}
+  1667→            </div>
+  1668→            <div className="text-[11px] text-[#94A3B8] mt-0.5 truncate">
+  1669→              {/* When averaged, label clearly that this is the avg buy price (the
+  1670→                  breakeven) — not one of the lot prices. P&L is computed on this. */}
+  1671→              {isAveraged ? (
+  1672→                <>
+  1673→                  <span className="text-[#FBBF24] font-semibold">Avg {trade.buyPrice.toFixed(2)}</span>
+  1674→                  {" × "}
+  1675→                  <span>{trade.shares.toLocaleString()}</span>
+  1676→                  {" → Sell "}
+  1677→                  <span>{trade.sellPrice.toFixed(2)}</span>
+  1678→                  {" · held "}
+  1679→                  <span>{trade.holdingDays}d</span>
+  1680→                </>
+  1681→              ) : (
+  1682→                <>
+  1683→                  Buy {trade.buyPrice.toFixed(2)} × {trade.shares.toLocaleString()} → Sell {trade.sellPrice.toFixed(2)} · held {trade.holdingDays}d
+  1684→                </>
+  1685→              )}
+  1686→            </div>
+  1687→          </div>
+  1688→        </div>
+  1689→        <div className="text-right shrink-0">
+  1690→          <div className={`text-sm font-mono font-semibold ${isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`}>
+  1691→            {trade.netPnl >= 0 ? "+" : ""}{fmtPkr(trade.netPnl)}
+  1692→          </div>
+  1693→          <div className={`text-[10px] font-mono ${isWin ? "text-[#00E676]" : isLoss ? "text-[#FF5C5C]" : "text-[#94A3B8]"}`}>
+  1694→            {trade.netPnlPct >= 0 ? "+" : ""}{trade.netPnlPct.toFixed(2)}% net
+  1695→          </div>
+  1696→        </div>
+  1697→      </div>
+  1698→      {/* Inline breakdown */}
+  1699→      <div className="mt-2 text-[10px] text-[#64748B] flex flex-wrap items-center gap-x-3 gap-y-1">
+  1700→        <span>
+  1701→          Gross:{" "}
+  1702→          <span className={`font-mono ${trade.grossPnl >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
+  1703→            {trade.grossPnl >= 0 ? "+" : ""}{fmtPkr(trade.grossPnl)}
+  1704→          </span>
+  1705→        </span>
+  1706→        <span>
+  1707→          Commission: <span className="text-[#FF5C5C] font-mono">-{fmtPkr(trade.commission)}</span>
+  1708→        </span>
+  1709→        <span>
+  1710→          CGT ({(trade.taxRate * 100).toFixed(0)}%):{" "}
+  1711→          <span className="text-[#FF5C5C] font-mono">-{fmtPkr(trade.cgt)}</span>
+  1712→        </span>
+  1713→        <span className="text-[#475569]">
+  1714→          · closed {new Date(trade.closedAt).toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" })}
+  1715→        </span>
+  1716→      </div>
+  1717→      {/* Issue 33: per-lot breakdown when the close was averaged — for transparency
+  1718→          so the user can see how the avg was derived. The P&L numbers above are
+  1719→          still computed on the avg, not per-lot. */}
+  1720→      {isAveraged && (
+  1721→        <div className="mt-2 pt-2 border-t border-white/[0.04] space-y-0.5">
+  1722→          <div className="text-[9px] uppercase tracking-wider text-[#64748B] font-semibold mb-1">
+  1723→            Buy lots (avg → {trade.buyPrice.toFixed(2)})
+  1724→          </div>
+  1725→          {trade.buyLots!.map((lot, li) => (
+  1726→            <div key={li} className="text-[9px] font-mono text-[#64748B] flex items-center gap-1.5">
+  1727→              <span className="inline-flex items-center justify-center min-w-[36px] h-3 px-1 rounded bg-white/[0.04] text-[#64748B]">
+  1728→                Lot {li + 1}
+  1729→              </span>
+  1730→              <span>{lot.price.toFixed(2)}</span>
+  1731→              <span className="text-[#64748B]/60">×</span>
+  1732→              <span>{lot.shares.toLocaleString()}</span>
+  1733→              <span className="text-[#64748B]/60">=</span>
+  1734→              <span>PKR {Math.round(lot.price * lot.shares).toLocaleString()}</span>
+  1735→            </div>
+  1736→          ))}
+  1737→        </div>
+  1738→      )}
+  1739→    </div>
+  1740→  );
+  1741→}
+  1742→

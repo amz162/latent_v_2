@@ -1,0 +1,9 @@
+{
+  "name": "pattern-precompute",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nightly precompute worker for Latent.pk Price Pattern Finder — batches all PSX symbols through /api/price-patterns/precompute so reports are stored in the DB and the LLM never re-runs for the same data.",
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  }
+}

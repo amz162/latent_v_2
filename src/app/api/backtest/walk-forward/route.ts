@@ -63,17 +63,35 @@ export interface WFReportResponse {
   evaluated_symbols?: string[];
   universe_size?: number;
   forecast_horizons?: number[];
+  // Task 51 Phase 5: explicit sample-count metadata
   n_eligible_samples?: number;
+  n_unique_stock_date_samples?: number | null;
+  n_model_fits?: number | null;
+  n_unique_prediction_dates?: number | null;
+  sampling_interval_sessions?: number | null;
+  n_evaluated_models?: number | null;
+  n_evaluated_horizons?: number | null;
   n_matured_outcomes?: Record<string, number>;
+  n_incomplete_or_excluded_outcomes?: Record<string, number>;
   models?: WFModel[];
-  baseline?: { definition?: string; notes?: string };
+  // Task 51 Phase 3: baselines (zero-return + training-only-mean + constant-mean)
+  baselines?: any;
+  baseline?: { definition?: string; notes?: string };  // legacy alias
   limitations?: string[];
   unevaluated?: Array<{ model: string; horizon: number; reason: string }>;
   ml_integrity?: Record<string, string>;
   trading_metrics?: {
     individual?: Record<string, any>;
     ensemble?: Record<string, any>;
+    label?: string;
+    definition?: string;
+    net_trading_pnl?: string;
+    net_trading_pnl_reason?: string;
   };
+  // Task 51 Phase 2: WIN_RATE_WEIGHTED ensemble methodology
+  win_rate_weighted_ensemble_methodology?: any;
+  // Task 51 Phase 1: per-sample maturity metadata summary
+  sample_maturity_metadata_summary?: any;
   error?: string;
   how_to_generate?: string;
 }
@@ -129,6 +147,8 @@ export async function GET() {
     // Pass through the structured report. The UI is responsible for rendering
     // each model × horizon's metrics honestly — including negative R² values
     // and explicit "unavailable" statuses.
+    // Task 51: pass through the new schema v1.1 fields (sample metadata,
+    // baselines, win_rate_weighted methodology, sample-maturity metadata).
     const response: WFReportResponse = {
       available: true,
       schema_version: report.schema_version,
@@ -148,14 +168,31 @@ export async function GET() {
       forecast_horizons: Array.isArray(report.forecast_horizons)
         ? report.forecast_horizons
         : [],
+      // Task 51 Phase 5: explicit sample-count metadata
       n_eligible_samples: report.n_eligible_samples ?? 0,
+      n_unique_stock_date_samples: report.n_unique_stock_date_samples ?? null,
+      n_model_fits: report.n_model_fits ?? null,
+      n_unique_prediction_dates: report.n_unique_prediction_dates ?? null,
+      sampling_interval_sessions: report.sampling_interval_sessions ?? null,
+      n_evaluated_models: report.n_evaluated_models ?? null,
+      n_evaluated_horizons: report.n_evaluated_horizons ?? null,
       n_matured_outcomes: report.n_matured_outcomes ?? {},
+      n_incomplete_or_excluded_outcomes:
+        report.n_incomplete_or_excluded_outcomes ?? {},
       models: Array.isArray(report.models) ? report.models : [],
-      baseline: report.baseline ?? {},
+      // Task 51 Phase 3: baselines (zero-return + training-only-mean + constant-mean)
+      baselines: report.baselines ?? report.baseline ?? {},
+      baseline: report.baseline ?? {},  // legacy alias for backward compat
       limitations: Array.isArray(report.limitations) ? report.limitations : [],
       unevaluated: Array.isArray(report.unevaluated) ? report.unevaluated : [],
       ml_integrity: report.ml_integrity ?? {},
       trading_metrics: report.trading_metrics ?? {},
+      // Task 51 Phase 2: WIN_RATE_WEIGHTED ensemble methodology (frozen validation weights)
+      win_rate_weighted_ensemble_methodology:
+        report.win_rate_weighted_ensemble_methodology ?? null,
+      // Task 51 Phase 1: per-sample maturity metadata summary
+      sample_maturity_metadata_summary:
+        report.sample_maturity_metadata_summary ?? null,
       how_to_generate: HOW_TO_GENERATE,
     };
 

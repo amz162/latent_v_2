@@ -1,0 +1,1862 @@
+     1→"use client";
+     2→
+     3→import { useState } from "react";
+     4→import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     5→import { Button } from "@/components/ui/button";
+     6→import { Badge } from "@/components/ui/badge";
+     7→import { Skeleton } from "@/components/ui/skeleton";
+     8→import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+     9→import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+    10→import { StockSearch } from "./StockSearch";
+    11→import {
+    12→  MOCK_COMPANY_RESULTS,
+    13→  detectPatterns,
+    14→  groupByCompany,
+    15→  computeCAGR,
+    16→  computeStdDev,
+    17→  computeSlope,
+    18→  generateQuarterlySummary,
+    19→  type QuarterlyResult,
+    20→  type DetectedPattern,
+    21→  type QuarterSummary,
+    22→  type PatternStrength,
+    23→  type SupportingDataPoint,
+    24→} from "@/lib/latent/mock-company-results";
+    25→import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+    26→import {
+    27→  Search,
+    28→  TrendingUp,
+    29→  TrendingDown,
+    30→  Activity,
+    31→  RefreshCw,
+    32→  CheckCircle2,
+    33→  AlertTriangle,
+    34→  Info,
+    35→  Coins,
+    36→  BarChart3,
+    37→  ArrowLeft,
+    38→  Calendar,
+    39→  CandlestickChart,
+    40→  Gauge,
+    41→  Layers,
+    42→  ArrowUpDown,
+    43→} from "lucide-react";
+    44→import { toast } from "sonner";
+    45→
+    46→// ────────────────────────────────────────────────────────────────────────
+    47→// Tab 2 — Company Stock Pattern: technical PRICE patterns from OHLCV data.
+    48→// Client-side shape of the /api/stock-patterns/[symbol] response.
+    49→// ────────────────────────────────────────────────────────────────────────
+    50→interface StockChartPoint {
+    51→  date: string;
+    52→  close: number;
+    53→  sma20: number | null;
+    54→  sma50: number | null;
+    55→  sma200: number | null;
+    56→  volume: number;
+    57→}
+    58→interface StockStats {
+    59→  currentPrice: number;
+    60→  changePct1D: number;
+    61→  changePct1M: number;
+    62→  changePct3M: number;
+    63→  changePct12M: number;
+    64→  trendLabel: "Uptrend" | "Downtrend" | "Sideways";
+    65→  trendSlopeAnnualPct: number;
+    66→  high52w: number;
+    67→  pctFrom52wHigh: number;
+    68→  low52w: number;
+    69→  pctFrom52wLow: number;
+    70→  rsi14: number;
+    71→  macdHistogram: number;
+    72→  macdStatus: "Bullish" | "Bearish" | "Neutral";
+    73→  sma20: number | null;
+    74→  sma50: number | null;
+    75→  sma200: number | null;
+    76→  volatilityAnnualPct: number;
+    77→  avgVolume20: number;
+    78→  barCount: number;
+    79→  firstDate: string;
+    80→  lastDate: string;
+    81→  support: { price: number; touches: number; lastTouch: string } | null;
+    82→  resistance: { price: number; touches: number; lastTouch: string } | null;
+    83→  bullCount: number;
+    84→  bearCount: number;
+    85→  neutralCount: number;
+    86→}
+    87→interface StockPatternItem {
+    88→  type: string;
+    89→  label: string;
+    90→  severity: "positive" | "negative" | "neutral";
+    91→  strength: "Strong" | "Moderate" | "Weak";
+    92→  confidence: number;
+    93→  category: "trend" | "momentum" | "breakout" | "structure" | "volatility" | "volume" | "candlestick";
+    94→  detail: string;
+    95→  supportingData: { label: string; value: string }[];
+    96→  affectedQuarters: string[];
+    97→  laymanSummary: string;
+    98→}
+    99→interface StockRecentBar {
+   100→  date: string;
+   101→  open: number;
+   102→  high: number;
+   103→  low: number;
+   104→  close: number;
+   105→  volume: number;
+   106→  changePct: number;
+   107→}
+   108→interface StockPatternResponse {
+   109→  symbol: string;
+   110→  company: string;
+   111→  sector: string | null;
+   112→  source: string;
+   113→  barsCount: number;
+   114→  firstDate: string;
+   115→  lastDate: string;
+   116→  stats: StockStats;
+   117→  patterns: StockPatternItem[];
+   118→  chart: StockChartPoint[];
+   119→  recentBars: StockRecentBar[];
+   120→  latencyMs?: number;
+   121→}
+   122→
+   123→function fmtPrice(v: number | null | undefined): string {
+   124→  if (v === null || v === undefined || !isFinite(v)) return "—";
+   125→  return `Rs. ${v.toFixed(2)}`;
+   126→}
+   127→function fmtVolume(v: number): string {
+   128→  if (v >= 1e9) return `${(v / 1e9).toFixed(2)}B`;
+   129→  if (v >= 1e6) return `${(v / 1e6).toFixed(2)}M`;
+   130→  if (v >= 1e3) return `${(v / 1e3).toFixed(1)}K`;
+   131→  return v.toFixed(0);
+   132→}
+   133→
+   134→const POPULAR_SUGGESTIONS = ["ENGRO", "HUBC", "LUCK", "SYS", "MEBL", "OGDC", "PPL", "PSO"];
+   135→
+   136→const FY_PALETTE = ["#00E676", "#22E881", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0", "#FBBF24", "#FB923C"];
+   137→
+   138→function fmtNum(n: number): string {
+   139→  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}B`;
+   140→  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}M`;
+   141→  return n.toFixed(0);
+   142→}
+   143→
+   144→function fyOf(period: string): string {
+   145→  const m = period.match(/FY\s?(\d+)/i);
+   146→  return m ? m[1] : period.slice(-2);
+   147→}
+   148→
+   149→export function PatternFinder() {
+   150→  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+   151→  // Tab 1 = Company Result Pattern (quarterly financials), Tab 2 = Company
+   152→  // Stock Pattern (technical patterns on the stock's daily price data).
+   153→  const [tab, setTab] = useState<"results" | "stock">("results");
+   154→
+   155→  // ── Tab 1 state: quarterly RESULT patterns ──
+   156→  const [results, setResults] = useState<QuarterlyResult[]>([]);
+   157→  const [company, setCompany] = useState<string>("");
+   158→  const [loading, setLoading] = useState(false);
+   159→  const [error, setError] = useState<string | null>(null);
+   160→
+   161→  // ── Tab 2 state: stock PRICE patterns ──
+   162→  const [stockData, setStockData] = useState<StockPatternResponse | null>(null);
+   163→  const [stockLoading, setStockLoading] = useState(false);
+   164→  const [stockError, setStockError] = useState<string | null>(null);
+   165→
+   166→  const loadResults = (symbol: string) => {
+   167→    setLoading(true);
+   168→    setError(null);
+   169→    setResults([]);
+   170→    fetch(`/api/psx/financial-results/${encodeURIComponent(symbol)}`)
+   171→      .then((r) => r.json())
+   172→      .then((d) => {
+   173→        if (d.error) throw new Error(d.error);
+   174→        if (!d.results || d.results.length === 0) {
+   175→          throw new Error("No quarterly data available for this stock yet.");
+   176→        }
+   177→        setResults(d.results as QuarterlyResult[]);
+   178→        setCompany(d.company || symbol);
+   179→        toast.success(`Loaded ${d.results.length} quarters for ${symbol}`);
+   180→      })
+   181→      .catch((err) => {
+   182→        const msg = err instanceof Error ? err.message : "Unknown error";
+   183→        setError(msg);
+   184→        toast.error(`Could not load ${symbol}: ${msg}`);
+   185→      })
+   186→      .finally(() => setLoading(false));
+   187→  };
+   188→
+   189→  const loadStockPatterns = (symbol: string) => {
+   190→    setStockLoading(true);
+   191→    setStockError(null);
+   192→    setStockData(null);
+   193→    fetch(`/api/stock-patterns/${encodeURIComponent(symbol)}`)
+   194→      .then((r) => r.json())
+   195→      .then((d) => {
+   196→        if (d.error) throw new Error(d.error);
+   197→        setStockData(d as StockPatternResponse);
+   198→        toast.success(
+   199→          `Analyzed ${d.barsCount} daily bars for ${symbol} — ${d.patterns.length} price patterns found`
+   200→        );
+   201→      })
+   202→      .catch((err) => {
+   203→        const msg = err instanceof Error ? err.message : "Unknown error";
+   204→        setStockError(msg);
+   205→        toast.error(`Could not analyze ${symbol}: ${msg}`);
+   206→      })
+   207→      .finally(() => setStockLoading(false));
+   208→  };
+   209→
+   210→  const handleSelect = (symbol: string) => {
+   211→    if (!symbol) {
+   212→      setSelectedSymbol(null);
+   213→      setResults([]);
+   214→      setCompany("");
+   215→      setError(null);
+   216→      setStockData(null);
+   217→      setStockError(null);
+   218→      return;
+   219→    }
+   220→    setSelectedSymbol(symbol);
+   221→    // reset both tabs' data; load only the active tab's data
+   222→    setResults([]);
+   223→    setCompany("");
+   224→    setError(null);
+   225→    setStockData(null);
+   226→    setStockError(null);
+   227→    if (tab === "results") loadResults(symbol);
+   228→    else loadStockPatterns(symbol);
+   229→  };
+   230→
+   231→  const handleTabChange = (t: string) => {
+   232→    setTab(t as "results" | "stock");
+   233→    if (!selectedSymbol) return;
+   234→    // lazily load the newly-active tab's data if not loaded yet
+   235→    if (t === "results" && results.length === 0 && !loading) loadResults(selectedSymbol);
+   236→    else if (t === "stock" && !stockData && !stockLoading) loadStockPatterns(selectedSymbol);
+   237→  };
+   238→
+   239→  const refresh = () => {
+   240→    if (!selectedSymbol) return;
+   241→    if (tab === "results") loadResults(selectedSymbol);
+   242→    else loadStockPatterns(selectedSymbol);
+   243→  };
+   244→
+   245→  const busy = loading || stockLoading;
+   246→
+   247→  return (
+   248→    <main className="px-4 md:px-6 py-6 max-w-6xl mx-auto">
+   249→        {/* Header */}
+   250→        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+   251→          <div>
+   252→            <h1 className="text-2xl font-bold text-[#F4F7FB]">Pattern Finder</h1>
+   253→            <p className="text-sm text-[#94A3B8] mt-1">
+   254→              Discover patterns in company results AND in the stock's market price data — explained in plain English.
+   255→            </p>
+   256→          </div>
+   257→          {selectedSymbol && (
+   258→            <Button
+   259→              variant="outline"
+   260→              size="sm"
+   261→              onClick={refresh}
+   262→              disabled={busy}
+   263→              className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB]"
+   264→            >
+   265→              <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${busy ? "animate-spin" : ""}`} />
+   266→              Refresh
+   267→            </Button>
+   268→          )}
+   269→        </div>
+   270→
+   271→        {/* Search bar (shared by both tabs) */}
+   272→        <Card className="bg-[#131829] border-white/[0.08] mb-4">
+   273→          <CardContent className="p-4">
+   274→            <div className="flex items-center gap-2 mb-2">
+   275→              <Search className="h-4 w-4 text-[#00E676]" />
+   276→              <span className="text-sm font-semibold text-[#F4F7FB]">Search any PSX-listed company</span>
+   277→              <Badge variant="outline" className="text-[9px] border-[#00E676]/40 text-[#00E676] ml-auto">
+   278→                1000+ stocks
+   279→              </Badge>
+   280→            </div>
+   281→            <StockSearch
+   282→              value={selectedSymbol || ""}
+   283→              onChange={handleSelect}
+   284→              placeholder="Search by symbol or name — e.g. ENGRO, Hub Power, Systems..."
+   285→              className="w-full"
+   286→            />
+   287→            <div className="text-[10px] text-[#64748B] mt-2 flex items-center gap-1.5 flex-wrap">
+   288→              <span>Quick try:</span>
+   289→              {POPULAR_SUGGESTIONS.map((s) => (
+   290→                <button
+   291→                  key={s}
+   292→                  onClick={() => handleSelect(s)}
+   293→                  disabled={busy}
+   294→                  className="font-mono text-[10px] text-[#94A3B8] hover:text-[#00E676] underline-offset-2 hover:underline disabled:opacity-50"
+   295→                >
+   296→                  {s}
+   297→                </button>
+   298→              ))}
+   299→            </div>
+   300→          </CardContent>
+   301→        </Card>
+   302→
+   303→        {/* Two tabs: Company Result Pattern / Company Stock Pattern */}
+   304→        <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
+   305→          <TabsList className="h-auto w-full justify-start gap-1 bg-[#131829] border border-white/[0.08] p-1 rounded-lg flex-wrap">
+   306→            <TabsTrigger
+   307→              value="results"
+   308→              className="data-[state=active]:bg-[#00E676]/[0.12] data-[state=active]:text-[#00E676] data-[state=active]:border-[#00E676]/40 text-[#94A3B8] border border-transparent rounded-md px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5"
+   309→            >
+   310→              <BarChart3 className="h-3.5 w-3.5" />
+   311→              1 · Company Result Pattern
+   312→            </TabsTrigger>
+   313→            <TabsTrigger
+   314→              value="stock"
+   315→              className="data-[state=active]:bg-[#FBBF24]/[0.12] data-[state=active]:text-[#FBBF24] data-[state=active]:border-[#FBBF24]/40 text-[#94A3B8] border border-transparent rounded-md px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5"
+   316→            >
+   317→              <CandlestickChart className="h-3.5 w-3.5" />
+   318→              2 · Company Stock Pattern
+   319→            </TabsTrigger>
+   320→          </TabsList>
+   321→
+   322→          {/* ── TAB 1: Company Result Pattern (quarterly financials) ── */}
+   323→          <TabsContent value="results" className="mt-4">
+   324→            {loading && (
+   325→              <Card className="bg-[#131829] border-white/[0.08]">
+   326→                <CardContent className="p-6 space-y-4">
+   327→                  <div className="flex items-center gap-2 text-sm text-[#94A3B8]">
+   328→                    <RefreshCw className="h-4 w-4 animate-spin text-[#00E676]" />
+   329→                    Fetching quarterly results for {selectedSymbol}...
+   330→                  </div>
+   331→                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+   332→                    {Array.from({ length: 8 }).map((_, i) => (
+   333→                      <Skeleton key={i} className="h-16 bg-white/[0.04]" />
+   334→                    ))}
+   335→                  </div>
+   336→                  <Skeleton className="h-64 w-full bg-white/[0.04]" />
+   337→                </CardContent>
+   338→              </Card>
+   339→            )}
+   340→
+   341→            {!loading && error && results.length === 0 && selectedSymbol && (
+   342→              <Card className="bg-[#131829] border-white/[0.08]">
+   343→                <CardContent className="p-6 text-center">
+   344→                  <AlertTriangle className="h-8 w-8 text-[#FF5C5C] mx-auto mb-2" />
+   345→                  <p className="text-sm font-semibold text-[#F4F7FB] mb-1">Could not load results</p>
+   346→                  <p className="text-xs text-[#64748B] max-w-md mx-auto">{error}</p>
+   347→                  <p className="text-[10px] text-[#64748B] mt-2">
+   348→                    The askanalyst.com.pk upstream may be rate-limited. Try again or pick another stock.
+   349→                  </p>
+   350→                </CardContent>
+   351→              </Card>
+   352→            )}
+   353→
+   354→            {!loading && !error && results.length > 0 && selectedSymbol && (
+   355→              <StockDeepDive
+   356→                results={results}
+   357→                symbol={selectedSymbol}
+   358→                company={company}
+   359→                onBack={() => handleSelect("")}
+   360→              />
+   361→            )}
+   362→          </TabsContent>
+   363→
+   364→          {/* ── TAB 2: Company Stock Pattern (technical price patterns) ── */}
+   365→          <TabsContent value="stock" className="mt-4">
+   366→            {stockLoading && (
+   367→              <Card className="bg-[#131829] border-white/[0.08]">
+   368→                <CardContent className="p-6 space-y-4">
+   369→                  <div className="flex items-center gap-2 text-sm text-[#94A3B8]">
+   370→                    <RefreshCw className="h-4 w-4 animate-spin text-[#FBBF24]" />
+   371→                    Analyzing daily price history for {selectedSymbol} — trend, momentum, structure, volume, candlesticks...
+   372→                  </div>
+   373→                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+   374→                    {Array.from({ length: 8 }).map((_, i) => (
+   375→                      <Skeleton key={i} className="h-16 bg-white/[0.04]" />
+   376→                    ))}
+   377→                  </div>
+   378→                  <Skeleton className="h-64 w-full bg-white/[0.04]" />
+   379→                </CardContent>
+   380→              </Card>
+   381→            )}
+   382→
+   383→            {!stockLoading && stockError && !stockData && selectedSymbol && (
+   384→              <Card className="bg-[#131829] border-white/[0.08]">
+   385→                <CardContent className="p-6 text-center">
+   386→                  <AlertTriangle className="h-8 w-8 text-[#FF5C5C] mx-auto mb-2" />
+   387→                  <p className="text-sm font-semibold text-[#F4F7FB] mb-1">Could not analyze price data</p>
+   388→                  <p className="text-xs text-[#64748B] max-w-md mx-auto">{stockError}</p>
+   389→                  <p className="text-[10px] text-[#64748B] mt-2">
+   390→                    Price patterns need at least 30 daily bars. Try another stock or refresh.
+   391→                  </p>
+   392→                </CardContent>
+   393→              </Card>
+   394→            )}
+   395→
+   396→            {!stockLoading && !stockError && stockData && (
+   397→              <StockPatternDive
+   398→                data={stockData}
+   399→                onBack={() => handleSelect("")}
+   400→              />
+   401→            )}
+   402→          </TabsContent>
+   403→        </Tabs>
+   404→
+   405→        {/* Empty state — no symbol selected (shared by both tabs) */}
+   406→        {!busy && !selectedSymbol && <EmptyState onPickSymbol={handleSelect} />}
+   407→      </main>
+   408→  );
+   409→}
+   410→
+   411→function EmptyState({ onPickSymbol }: { onPickSymbol: (s: string) => void }) {
+   412→  const groups = groupByCompany(MOCK_COMPANY_RESULTS);
+   413→
+   414→  return (
+   415→    <Card className="bg-[#131829] border-white/[0.08]">
+   416→      <CardContent className="p-6">
+   417→        {groups.length === 0 ? (
+   418→          <div className="text-center py-10">
+   419→            <div className="h-12 w-12 rounded-full bg-[#00E676]/10 flex items-center justify-center mx-auto mb-3">
+   420→              <Search className="h-5 w-5 text-[#00E676]" />
+   421→            </div>
+   422→            <p className="text-base font-semibold text-[#F4F7FB] mb-1">Search any stock above</p>
+   423→            <p className="text-xs text-[#64748B] max-w-md mx-auto leading-relaxed">
+   424→              Pick any of 361 PSX-listed companies to see quarterly patterns, seasonality, growth rates,
+   425→              dividend trends, and margin trajectory — all explained in plain English.
+   426→            </p>
+   427→            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 max-w-2xl mx-auto">
+   428→              {MOCK_STOCKS.slice(0, 8).map((s) => (
+   429→                <button
+   430→                  key={s.symbol}
+   431→                  onClick={() => onPickSymbol(s.symbol)}
+   432→                  className="rounded-md border border-white/[0.06] bg-[#0A0E1A] p-2 hover:border-[#00E676]/30 hover:bg-[#00E676]/[0.04] transition-colors text-left"
+   433→                >
+   434→                  <div className="text-xs font-mono font-semibold text-[#F4F7FB]">{s.symbol}</div>
+   435→                  <div className="text-[10px] text-[#64748B] truncate">{s.name}</div>
+   436→                  <div className="text-[9px] text-[#00E676] mt-0.5">{s.sector}</div>
+   437→                </button>
+   438→              ))}
+   439→            </div>
+   440→            <p className="text-[10px] text-[#64748B] mt-4">
+   441→              Data fetched on-demand from askanalyst.com.pk income-statement endpoint.
+   442→            </p>
+   443→          </div>
+   444→        ) : (
+   445→          <div className="space-y-3">
+   446→            <div className="text-[10px] uppercase tracking-wider text-[#64748B]">
+   447→              {groups.length} companies with cached patterns
+   448→            </div>
+   449→            {groups.map((g) => (
+   450→              <button
+   451→                key={g.symbol}
+   452→                onClick={() => onPickSymbol(g.symbol)}
+   453→                className="w-full text-left rounded-lg border border-white/[0.06] bg-[#0A0E1A] p-3 hover:border-[#00E676]/30 transition-colors"
+   454→              >
+   455→                <div className="flex items-center gap-3 mb-1">
+   456→                  <span className="font-mono font-semibold text-sm text-[#F4F7FB]">{g.symbol}</span>
+   457→                  <span className="text-xs text-[#94A3B8] truncate">{g.company}</span>
+   458→                  <Badge variant="outline" className="text-[9px] border-white/[0.08] text-[#64748B] ml-auto">
+   459→                    {g.results.length} q
+   460→                  </Badge>
+   461→                </div>
+   462→                <div className="text-[10px] text-[#64748B]">
+   463→                  {detectPatterns(g.results).length} patterns detected
+   464→                </div>
+   465→              </button>
+   466→            ))}
+   467→          </div>
+   468→        )}
+   469→      </CardContent>
+   470→    </Card>
+   471→  );
+   472→}
+   473→
+   474→function StockDeepDive({
+   475→  results,
+   476→  symbol,
+   477→  company,
+   478→  onBack,
+   479→}: {
+   480→  results: QuarterlyResult[];
+   481→  symbol: string;
+   482→  company: string;
+   483→  onBack: () => void;
+   484→}) {
+   485→  const patterns = detectPatterns(results);
+   486→  const quarters = generateQuarterlySummary(results, symbol);
+   487→  const yearsBetween =
+   488→    results.length >= 2
+   489→      ? (new Date(results[results.length - 1].periodEnd).getTime() -
+   490→          new Date(results[0].periodEnd).getTime()) /
+   491→        (365 * 24 * 60 * 60 * 1000)
+   492→      : 0;
+   493→  const revCAGR = computeCAGR(results[0].metrics.revenue, results[results.length - 1].metrics.revenue, yearsBetween);
+   494→  const profCAGR = computeCAGR(
+   495→    results[0].metrics.profitAfterTax,
+   496→    results[results.length - 1].metrics.profitAfterTax,
+   497→    yearsBetween
+   498→  );
+   499→  const epsCAGR = computeCAGR(results[0].metrics.eps, results[results.length - 1].metrics.eps, yearsBetween);
+   500→  const totalDPS = results.reduce((s, r) => s + r.metrics.dividendPerShare, 0);
+   501→  const volatility = computeStdDev(results.map((r) => r.metrics.epsYoYGrowth));
+   502→  const revVolatility = computeStdDev(results.map((r) => r.metrics.revenueYoYGrowth));
+   503→  const marginSlope = computeSlope(results.map((r) => r.metrics.netMargin));
+   504→
+   505→  const stats: { label: string; value: string; sub: string; tone?: "pos" | "neg" | "neutral"; explanation: string }[] = [
+   506→    { label: "Revenue CAGR", value: `${revCAGR.toFixed(1)}%`, sub: `${yearsBetween.toFixed(1)}y compound`, tone: revCAGR >= 0 ? "pos" : "neg", explanation: "How fast sales grew per year, on average, over the entire period" },
+   507→    { label: "Profit CAGR", value: `${profCAGR.toFixed(1)}%`, sub: "PAT growth", tone: profCAGR >= 0 ? "pos" : "neg", explanation: "How fast profit grew per year, on average" },
+   508→    { label: "EPS CAGR", value: `${epsCAGR.toFixed(1)}%`, sub: "per-share profit", tone: epsCAGR >= 0 ? "pos" : "neg", explanation: "How fast per-share profit grew per year" },
+   509→    { label: "Total DPS", value: `Rs. ${totalDPS.toFixed(2)}`, sub: `${results.length} quarters`, tone: "neutral", explanation: "Total cash dividends paid per share over the entire period" },
+   510→    { label: "EPS volatility", value: `${volatility.toFixed(1)}pp`, sub: "EPS YoY std dev", tone: volatility > 15 ? "neg" : "neutral", explanation: "How unpredictable the profit growth is. Higher = more risky/uncertain" },
+   511→    { label: "Revenue volatility", value: `${revVolatility.toFixed(1)}pp`, sub: "Rev YoY std dev", tone: revVolatility > 15 ? "neg" : "neutral", explanation: "How unpredictable the sales growth is" },
+   512→    { label: "Margin trend slope", value: `${marginSlope >= 0 ? "+" : ""}${marginSlope.toFixed(2)}pp/q`, sub: "net margin trend", tone: marginSlope >= 0 ? "pos" : "neg", explanation: "Whether profit margin is improving (positive) or declining (negative) over time" },
+   513→    { label: "Patterns detected", value: `${patterns.length}`, sub: "fundamental signals", tone: "neutral", explanation: "Number of fundamental patterns found in the data" },
+   514→  ];
+   515→
+   516→  return (
+   517→    <div className="space-y-4">
+   518→      {/* Header with back button */}
+   519→      <Card className="bg-[#131829] border-white/[0.08]">
+   520→        <CardContent className="p-4">
+   521→          <div className="flex items-start gap-3">
+   522→            <Button
+   523→              variant="outline"
+   524→              size="sm"
+   525→              onClick={onBack}
+   526→              className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] shrink-0"
+   527→            >
+   528→              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back
+   529→            </Button>
+   530→            <div className="flex-1 min-w-0">
+   531→              <div className="flex items-baseline gap-2 flex-wrap">
+   532→                <h2 className="text-xl font-bold text-[#F4F7FB]">{symbol}</h2>
+   533→                <span className="text-sm text-[#94A3B8] truncate">{company}</span>
+   534→              </div>
+   535→              <p className="text-xs text-[#64748B] mt-1">
+   536→                Deep dive on {results.length} quarters ·{" "}
+   537→                {new Date(results[0].periodEnd).toLocaleDateString("en-PK", { year: "numeric", month: "short" })} →{" "}
+   538→                {new Date(results[results.length - 1].periodEnd).toLocaleDateString("en-PK", { year: "numeric", month: "short" })}
+   539→              </p>
+   540→            </div>
+   541→          </div>
+   542→        </CardContent>
+   543→      </Card>
+   544→
+   545→      {/* 8 summary stats */}
+   546→      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+   547→        {stats.map((s, i) => (
+   548→          <SummaryStat key={i} label={s.label} value={s.value} sub={s.sub} tone={s.tone} explanation={s.explanation} />
+   549→        ))}
+   550→      </div>
+   551→
+   552→      {/* Multi-line chart */}
+   553→      <Card className="bg-[#131829] border-white/[0.08]">
+   554→        <CardHeader>
+   555→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   556→            <BarChart3 className="h-4 w-4 text-[#00E676]" />
+   557→            Revenue · Profit · EPS trend (normalized 0–100)
+   558→          </CardTitle>
+   559→        </CardHeader>
+   560→        <CardContent>
+   561→          <MultiLineChart results={results} />
+   562→        </CardContent>
+   563→      </Card>
+   564→
+   565→      {/* Quarterly seasonal pattern */}
+   566→      <Card className="bg-[#131829] border-white/[0.08]">
+   567→        <CardHeader>
+   568→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   569→            <Calendar className="h-4 w-4 text-[#00E676]" />
+   570→            Quarterly seasonal pattern
+   571→          </CardTitle>
+   572→        </CardHeader>
+   573→        <CardContent>
+   574→          {quarters.length === 0 ? (
+   575→            <p className="text-xs text-[#64748B]">
+   576→              Need at least 4 quarters (ideally spanning multiple FYs) to compute seasonality.
+   577→            </p>
+   578→          ) : (
+   579→            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+   580→              {quarters.map((q) => (
+   581→                <QuarterSummaryCard key={q.quarter} q={q} />
+   582→              ))}
+   583→            </div>
+   584→          )}
+   585→        </CardContent>
+   586→      </Card>
+   587→
+   588→      {/* Revenue bar chart (CSS) */}
+   589→      <Card className="bg-[#131829] border-white/[0.08]">
+   590→        <CardHeader>
+   591→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   592→            <TrendingUp className="h-4 w-4 text-[#00E676]" />
+   593→            Revenue by quarter (PKR, color-coded by FY)
+   594→          </CardTitle>
+   595→        </CardHeader>
+   596→        <CardContent>
+   597→          <RevenueBars results={results} />
+   598→        </CardContent>
+   599→      </Card>
+   600→
+   601→      {/* EPS bars + net margin overlay */}
+   602→      <Card className="bg-[#131829] border-white/[0.08]">
+   603→        <CardHeader>
+   604→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   605→            <Coins className="h-4 w-4 text-[#00E676]" />
+   606→            EPS bars + net margin overlay
+   607→          </CardTitle>
+   608→        </CardHeader>
+   609→        <CardContent>
+   610→          <EpsMarginChart results={results} />
+   611→        </CardContent>
+   612→      </Card>
+   613→
+   614→      {/* YoY growth chart */}
+   615→      <Card className="bg-[#131829] border-white/[0.08]">
+   616→        <CardHeader>
+   617→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   618→            <Activity className="h-4 w-4 text-[#00E676]" />
+   619→            YoY growth — Revenue vs EPS
+   620→          </CardTitle>
+   621→        </CardHeader>
+   622→        <CardContent>
+   623→          <YoYGrowthChart results={results} />
+   624→        </CardContent>
+   625→      </Card>
+   626→
+   627→      {/* Detected patterns */}
+   628→      <Card className="bg-[#131829] border-white/[0.08]">
+   629→        <CardHeader>
+   630→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2 flex-wrap">
+   631→            <Info className="h-4 w-4 text-[#00E676]" />
+   632→            Detected patterns ({patterns.length})
+   633→            {patterns.length > 0 && (
+   634→              <span className="flex items-center gap-1.5 ml-auto text-[10px] font-normal">
+   635→                {(() => {
+   636→                  const bull = patterns.filter((p) => p.severity === "positive").length;
+   637→                  const bear = patterns.filter((p) => p.severity === "negative").length;
+   638→                  const neutr = patterns.filter((p) => p.severity === "neutral").length;
+   639→                  return (
+   640→                    <>
+   641→                      {bull > 0 && (
+   642→                        <span className="text-[#00E676] font-mono">{bull} bullish</span>
+   643→                      )}
+   644→                      {bear > 0 && (
+   645→                        <span className="text-[#FF5C5C] font-mono">{bear} bearish</span>
+   646→                      )}
+   647→                      {neutr > 0 && (
+   648→                        <span className="text-[#94A3B8] font-mono">{neutr} neutral</span>
+   649→                      )}
+   650→                      <span className="text-[#64748B]">·</span>
+   651→                      <span className="text-[#64748B]">
+   652→                        {patterns.filter((p) => p.strength === "Strong").length} strong ·{" "}
+   653→                        {patterns.filter((p) => p.strength === "Moderate").length} moderate ·{" "}
+   654→                        {patterns.filter((p) => p.strength === "Weak").length} weak
+   655→                      </span>
+   656→                    </>
+   657→                  );
+   658→                })()}
+   659→              </span>
+   660→            )}
+   661→          </CardTitle>
+   662→        </CardHeader>
+   663→        <CardContent>
+   664→          {patterns.length === 0 ? (
+   665→            <p className="text-xs text-[#64748B]">
+   666→              No strong patterns detected yet — need more quarters or larger moves to trigger detection rules.
+   667→            </p>
+   668→          ) : (
+   669→            <div className="space-y-2">
+   670→              {patterns.map((p, i) => (
+   671→                <PatternRow key={i} pattern={p} />
+   672→              ))}
+   673→            </div>
+   674→          )}
+   675→        </CardContent>
+   676→      </Card>
+   677→
+   678→      {/* Full quarterly history table */}
+   679→      <Card className="bg-[#131829] border-white/[0.08]">
+   680→        <CardHeader>
+   681→          <CardTitle className="text-base text-[#F4F7FB]">Full quarterly history</CardTitle>
+   682→        </CardHeader>
+   683→        <CardContent>
+   684→          <div className="max-h-96 overflow-y-auto custom-scroll rounded-md border border-white/[0.04]">
+   685→            <table className="w-full text-xs">
+   686→              <thead className="sticky top-0 bg-[#131829] z-10">
+   687→                <tr className="text-[#64748B] text-[10px] uppercase tracking-wider">
+   688→                  <th className="text-left p-2 font-medium">Period</th>
+   689→                  <th className="text-right p-2 font-medium">Revenue</th>
+   690→                  <th className="text-right p-2 font-medium">PAT</th>
+   691→                  <th className="text-right p-2 font-medium">EPS</th>
+   692→                  <th className="text-right p-2 font-medium">Rev YoY</th>
+   693→                  <th className="text-right p-2 font-medium">EPS YoY</th>
+   694→                  <th className="text-right p-2 font-medium">N. margin</th>
+   695→                  <th className="text-right p-2 font-medium">DPS</th>
+   696→                </tr>
+   697→              </thead>
+   698→              <tbody>
+   699→                {results.map((r, i) => (
+   700→                  <tr key={i} className="border-t border-white/[0.04] hover:bg-white/[0.02]">
+   701→                    <td className="p-2 text-[#F4F7FB] font-mono">{r.period}</td>
+   702→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{fmtNum(r.metrics.revenue)}</td>
+   703→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{fmtNum(r.metrics.profitAfterTax)}</td>
+   704→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{r.metrics.eps.toFixed(2)}</td>
+   705→                    <td
+   706→                      className={`p-2 text-right font-mono ${
+   707→                        r.metrics.revenueYoYGrowth >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"
+   708→                      }`}
+   709→                    >
+   710→                      {r.metrics.revenueYoYGrowth >= 0 ? "+" : ""}
+   711→                      {r.metrics.revenueYoYGrowth.toFixed(1)}%
+   712→                    </td>
+   713→                    <td
+   714→                      className={`p-2 text-right font-mono ${
+   715→                        r.metrics.epsYoYGrowth >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"
+   716→                      }`}
+   717→                    >
+   718→                      {r.metrics.epsYoYGrowth >= 0 ? "+" : ""}
+   719→                      {r.metrics.epsYoYGrowth.toFixed(1)}%
+   720→                    </td>
+   721→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{r.metrics.netMargin.toFixed(1)}%</td>
+   722→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{r.metrics.dividendPerShare.toFixed(2)}</td>
+   723→                  </tr>
+   724→                ))}
+   725→              </tbody>
+   726→            </table>
+   727→          </div>
+   728→        </CardContent>
+   729→      </Card>
+   730→    </div>
+   731→  );
+   732→}
+   733→
+   734→function SummaryStat({
+   735→  label,
+   736→  value,
+   737→  sub,
+   738→  tone = "neutral",
+   739→  explanation,
+   740→}: {
+   741→  label: string;
+   742→  value: string;
+   743→  sub?: string;
+   744→  tone?: "pos" | "neg" | "neutral";
+   745→  explanation?: string;
+   746→}) {
+   747→  const toneColor =
+   748→    tone === "pos" ? "text-[#00E676]" : tone === "neg" ? "text-[#FF5C5C]" : "text-[#F4F7FB]";
+   749→  return (
+   750→    <Card className="bg-[#131829] border-white/[0.08]">
+   751→      <CardContent className="p-3">
+   752→        <div className="flex items-center justify-between gap-1">
+   753→          <div className="text-[10px] uppercase tracking-wider text-[#64748B] truncate">{label}</div>
+   754→          {explanation && (
+   755→            <Tooltip>
+   756→              <TooltipTrigger asChild>
+   757→                <button
+   758→                  type="button"
+   759→                  aria-label={`Explanation: ${label}`}
+   760→                  className="text-[#64748B] hover:text-[#00E676] transition-colors shrink-0"
+   761→                >
+   762→                  <Info className="h-3 w-3" />
+   763→                </button>
+   764→              </TooltipTrigger>
+   765→              <TooltipContent
+   766→                side="top"
+   767→                className="bg-[#0A0E1A] border border-white/[0.12] text-[#F4F7FB] max-w-[220px] text-[10px] leading-relaxed font-normal px-2.5 py-1.5"
+   768→              >
+   769→                {explanation}
+   770→              </TooltipContent>
+   771→            </Tooltip>
+   772→          )}
+   773→        </div>
+   774→        <div className={`text-lg font-bold font-mono mt-0.5 ${toneColor}`}>{value}</div>
+   775→        {sub && <div className="text-[10px] text-[#64748B] truncate">{sub}</div>}
+   776→      </CardContent>
+   777→    </Card>
+   778→  );
+   779→}
+   780→
+   781→function QuarterSummaryCard({ q }: { q: QuarterSummary }) {
+   782→  const tone = q.typicalPattern === "peak" ? "pos" : q.typicalPattern === "low" ? "neg" : "neutral";
+   783→  const toneColor =
+   784→    tone === "pos" ? "text-[#00E676]" : tone === "neg" ? "text-[#FF5C5C]" : "text-[#94A3B8]";
+   785→  return (
+   786→    <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 flex flex-col">
+   787→      <div className="flex items-center justify-between mb-2">
+   788→        <span className="text-sm font-bold text-[#F4F7FB]">{q.quarterLabel}</span>
+   789→        <Badge variant="outline" className="text-[9px] border-white/[0.08] text-[#64748B]">
+   790→          {q.monthsLabel}
+   791→        </Badge>
+   792→      </div>
+   793→      <p className="text-xs text-[#94A3B8] leading-relaxed mb-2">{q.summary}</p>
+   794→      {q.causeSummary && (
+   795→        <p className="text-[11px] text-[#00E676] font-medium mb-2 flex items-start gap-1.5 leading-relaxed bg-[#00E676]/[0.04] border border-[#00E676]/15 rounded-md p-2">
+   796→          <Info className="h-3 w-3 mt-0.5 shrink-0" />
+   797→          <span>
+   798→            <span className="font-semibold">Why this happens: </span>
+   799→            {q.causeSummary}
+   800→          </span>
+   801→        </p>
+   802→      )}
+   803→      <div className="flex items-center justify-between text-[10px] mt-auto pt-2 border-t border-white/[0.04]">
+   804→        <div className="text-[#64748B]">
+   805→          Rev <span className={`font-mono ${toneColor}`}>{q.avgRevenuePctOfTotal.toFixed(1)}%</span>
+   806→        </div>
+   807→        <div className="text-[#64748B]">
+   808→          Margin <span className="font-mono text-[#F4F7FB]">{q.avgNetMargin.toFixed(1)}%</span>
+   809→        </div>
+   810→      </div>
+   811→    </div>
+   812→  );
+   813→}
+   814→
+   815→function PatternRow({ pattern }: { pattern: DetectedPattern & { category?: string } }) {
+   816→  const isPositive = pattern.severity === "positive";
+   817→  const isNegative = pattern.severity === "negative";
+   818→  // Tab 2 (stock patterns) passes an extra `category` field — render it as a
+   819→  // small gray badge so the user can see which pattern family it belongs to.
+   820→  const CATEGORY_LABELS: Record<string, string> = {
+   821→    trend: "Trend",
+   822→    momentum: "Momentum",
+   823→    breakout: "Breakout",
+   824→    structure: "Structure",
+   825→    volatility: "Volatility",
+   826→    volume: "Volume",
+   827→    candlestick: "Candlestick",
+   828→  };
+   829→  const icon = isPositive ? (
+   830→    <CheckCircle2 className="h-3.5 w-3.5 text-[#00E676]" />
+   831→  ) : isNegative ? (
+   832→    <AlertTriangle className="h-3.5 w-3.5 text-[#FF5C5C]" />
+   833→  ) : (
+   834→    <Info className="h-3.5 w-3.5 text-[#94A3B8]" />
+   835→  );
+   836→  const sevClass = isPositive
+   837→    ? "border-[#00E676]/30 text-[#00E676] bg-[#00E676]/[0.06]"
+   838→    : isNegative
+   839→    ? "border-[#FF5C5C]/30 text-[#FF5C5C] bg-[#FF5C5C]/[0.06]"
+   840→    : "border-white/[0.08] text-[#94A3B8] bg-white/[0.02]";
+   841→  const borderClass = isPositive
+   842→    ? "border-[#00E676]/20"
+   843→    : isNegative
+   844→    ? "border-[#FF5C5C]/20"
+   845→    : "border-white/[0.06]";
+   846→
+   847→  // Issue 9: strength tier — Strong / Moderate / Weak — colour-coded so the
+   848→  // user can scan a list of patterns at a glance and pick out only the ones
+   849→  // that genuinely matter. Strong = solid green/red; Moderate = softer tint;
+   850→  // Weak = muted gray so it visually de-emphasises less informative signals.
+   851→  const strength: PatternStrength | undefined = pattern.strength;
+   852→  const strengthClass =
+   853→    strength === "Strong"
+   854→      ? isPositive
+   855→        ? "border-[#00E676] bg-[#00E676] text-[#0A0E1A] font-bold"
+   856→        : "border-[#FF5C5C] bg-[#FF5C5C] text-[#0A0E1A] font-bold"
+   857→      : strength === "Moderate"
+   858→      ? isPositive
+   859→        ? "border-[#00E676]/50 text-[#00E676] bg-[#00E676]/[0.12]"
+   860→        : "border-[#FF5C5C]/50 text-[#FF5C5C] bg-[#FF5C5C]/[0.12]"
+   861→      : "border-white/[0.12] text-[#94A3B8] bg-white/[0.04]";
+   862→
+   863→  // Issue 9: confidence bar — visualises the 0-100 score alongside the
+   864→  // discrete strength tier, so the user sees both signals.
+   865→  const confPct = Math.max(0, Math.min(100, Math.round(pattern.confidence)));
+   866→  const confColor = isPositive ? "#00E676" : isNegative ? "#FF5C5C" : "#94A3B8";
+   867→
+   868→  return (
+   869→    <div className={`rounded-lg border ${borderClass} bg-[#0A0E1A] p-3`}>
+   870→      <div className="flex items-start justify-between gap-2 mb-1.5">
+   871→        <div className="flex items-center gap-2 min-w-0">
+   872→          {icon}
+   873→          <span className="text-sm font-semibold text-[#F4F7FB] truncate">{pattern.label}</span>
+   874→        </div>
+   875→        <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+   876→          {pattern.category && (
+   877→            <Badge variant="outline" className="text-[9px] uppercase border-white/[0.08] text-[#64748B]">
+   878→              {CATEGORY_LABELS[pattern.category] || pattern.category}
+   879→            </Badge>
+   880→          )}
+   881→          {strength && (
+   882→            <Badge variant="outline" className={`text-[9px] uppercase ${strengthClass}`}>
+   883→              {strength}
+   884→            </Badge>
+   885→          )}
+   886→          <Badge variant="outline" className={`text-[9px] uppercase ${sevClass}`}>
+   887→            {isPositive ? "bullish" : isNegative ? "bearish" : "neutral"}
+   888→          </Badge>
+   889→        </div>
+   890→      </div>
+   891→
+   892→      {/* Detail + confidence bar */}
+   893→      <p className="text-xs text-[#94A3B8] mb-2 leading-relaxed">{pattern.detail}</p>
+   894→      <div className="flex items-center gap-2 mb-2">
+   895→        <div className="flex-1 h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
+   896→          <div
+   897→            className="h-full rounded-full transition-all"
+   898→            style={{ width: `${confPct}%`, backgroundColor: confColor }}
+   899→          />
+   900→        </div>
+   901→        <span className="text-[9px] font-mono text-[#64748B] shrink-0">{confPct}% conf</span>
+   902→      </div>
+   903→
+   904→      {/* Issue 9: supporting data points — small grid the user can verify at a glance */}
+   905→      {pattern.supportingData && pattern.supportingData.length > 0 && (
+   906→        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-2 rounded-md bg-white/[0.02] border border-white/[0.04] p-2">
+   907→          {pattern.supportingData.map((d: SupportingDataPoint, i: number) => (
+   908→            <div key={i} className="flex flex-col min-w-0">
+   909→              <span className="text-[9px] uppercase tracking-wider text-[#64748B] truncate">{d.label}</span>
+   910→              <span className="text-[11px] font-mono text-[#F4F7FB] truncate" title={d.value}>{d.value}</span>
+   911→            </div>
+   912→          ))}
+   913→        </div>
+   914→      )}
+   915→
+   916→      {pattern.laymanSummary && (
+   917→        <div className="mb-1.5 rounded-md bg-[#00E676]/[0.05] border border-[#00E676]/20 p-2 flex items-start gap-2 leading-relaxed">
+   918→          <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-[#00E676]" />
+   919→          <div>
+   920→            <span className="text-[9px] uppercase tracking-wider text-[#00E676] font-semibold block mb-0.5">
+   921→              In plain English
+   922→            </span>
+   923→            <p className="text-xs text-[#00E676] font-medium">{pattern.laymanSummary}</p>
+   924→          </div>
+   925→        </div>
+   926→      )}
+   927→      {pattern.affectedQuarters.length > 0 && (
+   928→        <div className="flex items-center gap-1 flex-wrap mt-2 pt-2 border-t border-white/[0.04]">
+   929→          <span className="text-[10px] text-[#64748B]">Triggered:</span>
+   930→          {pattern.affectedQuarters.map((q, i) => (
+   931→            <Badge key={i} variant="outline" className="text-[9px] font-mono border-white/[0.08] text-[#64748B]">
+   932→              {q}
+   933→            </Badge>
+   934→          ))}
+   935→        </div>
+   936→      )}
+   937→    </div>
+   938→  );
+   939→}
+   940→
+   941→// ---- Pure-SVG multi-line chart: revenue (green), profit (blue dashed), EPS (yellow dotted)
+   942→function MultiLineChart({ results }: { results: QuarterlyResult[] }) {
+   943→  const W = 800;
+   944→  const H = 280;
+   945→  const P = { top: 20, right: 30, bottom: 36, left: 40 };
+   946→  const innerW = W - P.left - P.right;
+   947→  const innerH = H - P.top - P.bottom;
+   948→
+   949→  const revs = results.map((r) => r.metrics.revenue);
+   950→  const profits = results.map((r) => r.metrics.profitAfterTax);
+   951→  const epss = results.map((r) => r.metrics.eps);
+   952→
+   953→  const rangeOf = (arr: number[]) => {
+   954→    const mn = Math.min(...arr);
+   955→    const mx = Math.max(...arr);
+   956→    return { mn, mx: mx === mn ? mn + 1 : mx };
+   957→  };
+   958→  const revR = rangeOf(revs);
+   959→  const profR = rangeOf(profits);
+   960→  const epsR = rangeOf(epss);
+   961→
+   962→  const norm = (v: number, r: { mn: number; mx: number }) =>
+   963→    r.mx === r.mn ? 0.5 : (v - r.mn) / (r.mx - r.mn);
+   964→
+   965→  const xAt = (i: number) =>
+   966→    P.left + (results.length === 1 ? innerW / 2 : (i / (results.length - 1)) * innerW);
+   967→  const yAt = (n: number) => P.top + (1 - n) * innerH;
+   968→
+   969→  const linePath = (vals: number[], r: { mn: number; mx: number }) =>
+   970→    vals
+   971→      .map((v, i) => `${i === 0 ? "M" : "L"} ${xAt(i).toFixed(1)} ${yAt(norm(v, r)).toFixed(1)}`)
+   972→      .join(" ");
+   973→
+   974→  const areaPath = (vals: number[], r: { mn: number; mx: number }) => {
+   975→    if (vals.length === 0) return "";
+   976→    const top = vals
+   977→      .map((v, i) => `${i === 0 ? "M" : "L"} ${xAt(i).toFixed(1)} ${yAt(norm(v, r)).toFixed(1)}`)
+   978→      .join(" ");
+   979→    return `${top} L ${xAt(vals.length - 1).toFixed(1)} ${(P.top + innerH).toFixed(1)} L ${xAt(0).toFixed(
+   980→      1
+   981→    )} ${(P.top + innerH).toFixed(1)} Z`;
+   982→  };
+   983→
+   984→  const gridLines = Array.from({ length: 5 }, (_, i) => P.top + (i / 4) * innerH);
+   985→  const labelStep = Math.max(1, Math.ceil(results.length / 8));
+   986→
+   987→  const lastRev = revs[revs.length - 1];
+   988→  const lastProf = profits[profits.length - 1];
+   989→  const lastEps = epss[epss.length - 1];
+   990→
+   991→  return (
+   992→    <div className="w-full">
+   993→      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+   994→        <defs>
+   995→          <linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1">
+   996→            <stop offset="0%" stopColor="#00E676" stopOpacity="0.25" />
+   997→            <stop offset="100%" stopColor="#00E676" stopOpacity="0" />
+   998→          </linearGradient>
+   999→        </defs>
+  1000→        {/* Grid */}
+  1001→        {gridLines.map((y, i) => (
+  1002→          <line
+  1003→            key={i}
+  1004→            x1={P.left}
+  1005→            y1={y}
+  1006→            x2={P.left + innerW}
+  1007→            y2={y}
+  1008→            stroke="#1E2536"
+  1009→            strokeWidth="1"
+  1010→            strokeDasharray="2 4"
+  1011→          />
+  1012→        ))}
+  1013→        {/* X-axis labels */}
+  1014→        {results.map((r, i) =>
+  1015→          i % labelStep === 0 ? (
+  1016→            <text
+  1017→              key={i}
+  1018→              x={xAt(i)}
+  1019→              y={H - 8}
+  1020→              fill="#64748B"
+  1021→              fontSize="9"
+  1022→              textAnchor="middle"
+  1023→              fontFamily="monospace"
+  1024→            >
+  1025→              {r.period}
+  1026→            </text>
+  1027→          ) : null
+  1028→        )}
+  1029→        {/* Filled area under revenue */}
+  1030→        <path d={areaPath(revs, revR)} fill="url(#revFill)" />
+  1031→        {/* Revenue line (green solid) */}
+  1032→        <path d={linePath(revs, revR)} fill="none" stroke="#00E676" strokeWidth="2" />
+  1033→        {/* Profit line (blue dashed) */}
+  1034→        <path d={linePath(profits, profR)} fill="none" stroke="#3B82F6" strokeWidth="2" strokeDasharray="6 4" />
+  1035→        {/* EPS line (yellow dotted) */}
+  1036→        <path d={linePath(epss, epsR)} fill="none" stroke="#FBBF24" strokeWidth="2" strokeDasharray="2 3" />
+  1037→        {/* Endpoint markers */}
+  1038→        {revs.length > 0 && (
+  1039→          <circle cx={xAt(revs.length - 1)} cy={yAt(norm(lastRev, revR))} r="3.5" fill="#00E676" />
+  1040→        )}
+  1041→        {profits.length > 0 && (
+  1042→          <circle cx={xAt(profits.length - 1)} cy={yAt(norm(lastProf, profR))} r="3.5" fill="#3B82F6" />
+  1043→        )}
+  1044→        {epss.length > 0 && (
+  1045→          <circle cx={xAt(epss.length - 1)} cy={yAt(norm(lastEps, epsR))} r="3.5" fill="#FBBF24" />
+  1046→        )}
+  1047→      </svg>
+  1048→      {/* Legend */}
+  1049→      <div className="flex items-center gap-4 mt-3 text-[10px] text-[#94A3B8] flex-wrap justify-center">
+  1050→        <span className="flex items-center gap-1.5">
+  1051→          <span className="h-0.5 w-4 bg-[#00E676] inline-block" />
+  1052→          Revenue (PKR)
+  1053→        </span>
+  1054→        <span className="flex items-center gap-1.5">
+  1055→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px dashed #3B82F6" }} />
+  1056→          Profit after tax (PKR)
+  1057→        </span>
+  1058→        <span className="flex items-center gap-1.5">
+  1059→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px dotted #FBBF24" }} />
+  1060→          EPS (PKR)
+  1061→        </span>
+  1062→        <span className="text-[#64748B]">Each line scaled to its own min–max for trend comparison.</span>
+  1063→      </div>
+  1064→    </div>
+  1065→  );
+  1066→}
+  1067→
+  1068→// ---- CSS-based revenue bars color-coded by FY year
+  1069→function RevenueBars({ results }: { results: QuarterlyResult[] }) {
+  1070→  const max = Math.max(...results.map((r) => r.metrics.revenue), 1);
+  1071→  const fyList = Array.from(new Set(results.map((r) => fyOf(r.period))));
+  1072→  const fyColor = (fy: string) => {
+  1073→    const idx = fyList.indexOf(fy);
+  1074→    return FY_PALETTE[idx % FY_PALETTE.length];
+  1075→  };
+  1076→
+  1077→  return (
+  1078→    <div>
+  1079→      <div className="flex items-end gap-1 h-48 overflow-x-auto custom-scroll pb-2">
+  1080→        {results.map((r, i) => {
+  1081→          const h = (r.metrics.revenue / max) * 100;
+  1082→          const fy = fyOf(r.period);
+  1083→          return (
+  1084→            <div key={i} className="flex flex-col items-center gap-1 min-w-[28px] flex-1 h-full">
+  1085→              <div className="text-[9px] font-mono text-[#64748B]">{fmtNum(r.metrics.revenue)}</div>
+  1086→              <div className="w-full flex-1 flex items-end">
+  1087→                <div
+  1088→                  className="w-full rounded-t transition-all hover:opacity-80"
+  1089→                  style={{
+  1090→                    height: `${h}%`,
+  1091→                    backgroundColor: fyColor(fy),
+  1092→                    minHeight: "2px",
+  1093→                  }}
+  1094→                  title={`${r.period}: ${fmtNum(r.metrics.revenue)}`}
+  1095→                />
+  1096→              </div>
+  1097→              <div className="text-[8px] font-mono text-[#64748B] whitespace-nowrap truncate w-full text-center">
+  1098→                {r.period}
+  1099→              </div>
+  1100→            </div>
+  1101→          );
+  1102→        })}
+  1103→      </div>
+  1104→      {/* FY legend */}
+  1105→      <div className="flex items-center gap-3 mt-3 text-[10px] text-[#94A3B8] flex-wrap">
+  1106→        {fyList.map((fy) => (
+  1107→          <span key={fy} className="flex items-center gap-1.5">
+  1108→            <span className="h-2.5 w-2.5 rounded-sm inline-block" style={{ backgroundColor: fyColor(fy) }} />
+  1109→            FY{fy}
+  1110→          </span>
+  1111→        ))}
+  1112→      </div>
+  1113→    </div>
+  1114→  );
+  1115→}
+  1116→
+  1117→// ---- EPS bars (SVG) + net margin line overlay (SVG)
+  1118→function EpsMarginChart({ results }: { results: QuarterlyResult[] }) {
+  1119→  const W = 800;
+  1120→  const H = 240;
+  1121→  const P = { top: 20, right: 40, bottom: 30, left: 40 };
+  1122→  const innerW = W - P.left - P.right;
+  1123→  const innerH = H - P.top - P.bottom;
+  1124→
+  1125→  const maxAbsEps = Math.max(...results.map((r) => Math.abs(r.metrics.eps)), 0.01);
+  1126→  const step = innerW / Math.max(1, results.length);
+  1127→  const barW = step * 0.6;
+  1128→
+  1129→  const margins = results.map((r) => r.metrics.netMargin);
+  1130→  const mMin = Math.min(...margins);
+  1131→  const mMax = Math.max(...margins);
+  1132→  const mRange = mMax === mMin ? 1 : mMax - mMin;
+  1133→
+  1134→  const yMargin = (m: number) => P.top + (1 - (m - mMin) / mRange) * innerH;
+  1135→  const marginPath = margins
+  1136→    .map((m, i) => `${i === 0 ? "M" : "L"} ${(P.left + step * i + step / 2).toFixed(1)} ${yMargin(m).toFixed(1)}`)
+  1137→    .join(" ");
+  1138→
+  1139→  const gridLines = Array.from({ length: 5 }, (_, i) => P.top + (i / 4) * innerH);
+  1140→  const labelStep = Math.max(1, Math.ceil(results.length / 8));
+  1141→
+  1142→  return (
+  1143→    <div className="w-full">
+  1144→      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+  1145→        {/* Grid */}
+  1146→        {gridLines.map((y, i) => (
+  1147→          <line
+  1148→            key={i}
+  1149→            x1={P.left}
+  1150→            y1={y}
+  1151→            x2={P.left + innerW}
+  1152→            y2={y}
+  1153→            stroke="#1E2536"
+  1154→            strokeWidth="1"
+  1155→            strokeDasharray="2 4"
+  1156→          />
+  1157→        ))}
+  1158→        {/* EPS bars */}
+  1159→        {results.map((r, i) => {
+  1160→          const h = (Math.abs(r.metrics.eps) / maxAbsEps) * innerH;
+  1161→          const x = P.left + step * i + (step - barW) / 2;
+  1162→          const y = P.top + innerH - h;
+  1163→          return (
+  1164→            <g key={i}>
+  1165→              <rect
+  1166→                x={x}
+  1167→                y={y}
+  1168→                width={barW}
+  1169→                height={h}
+  1170→                fill={r.metrics.eps >= 0 ? "#00E676" : "#FF5C5C"}
+  1171→                opacity="0.85"
+  1172→              />
+  1173→              {i % labelStep === 0 && (
+  1174→                <text
+  1175→                  x={x + barW / 2}
+  1176→                  y={H - 8}
+  1177→                  fill="#64748B"
+  1178→                  fontSize="9"
+  1179→                  textAnchor="middle"
+  1180→                  fontFamily="monospace"
+  1181→                >
+  1182→                  {r.period}
+  1183→                </text>
+  1184→              )}
+  1185→            </g>
+  1186→          );
+  1187→        })}
+  1188→        {/* Net margin overlay line */}
+  1189→        <path d={marginPath} fill="none" stroke="#FBBF24" strokeWidth="2" />
+  1190→        {margins.map((m, i) => (
+  1191→          <circle
+  1192→            key={i}
+  1193→            cx={P.left + step * i + step / 2}
+  1194→            cy={yMargin(m)}
+  1195→            r="2.5"
+  1196→            fill="#FBBF24"
+  1197→          />
+  1198→        ))}
+  1199→      </svg>
+  1200→      <div className="flex items-center gap-4 mt-3 text-[10px] text-[#94A3B8] flex-wrap justify-center">
+  1201→        <span className="flex items-center gap-1.5">
+  1202→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#00E676]" />
+  1203→          EPS (PKR, positive)
+  1204→        </span>
+  1205→        <span className="flex items-center gap-1.5">
+  1206→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#FF5C5C]" />
+  1207→          EPS (loss)
+  1208→        </span>
+  1209→        <span className="flex items-center gap-1.5">
+  1210→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px solid #FBBF24" }} />
+  1211→          Net margin (%)
+  1212→        </span>
+  1213→      </div>
+  1214→    </div>
+  1215→  );
+  1216→}
+  1217→
+  1218→// ---- YoY growth chart: revenue vs EPS bars (SVG, supports negative values)
+  1219→function YoYGrowthChart({ results }: { results: QuarterlyResult[] }) {
+  1220→  const items = results.filter(
+  1221→    (r) => r.metrics.revenueYoYGrowth !== 0 || r.metrics.epsYoYGrowth !== 0
+  1222→  );
+  1223→  if (items.length === 0) {
+  1224→    return <p className="text-xs text-[#64748B]">No YoY growth data available (need 4+ quarters).</p>;
+  1225→  }
+  1226→
+  1227→  const W = 800;
+  1228→  const H = 240;
+  1229→  const P = { top: 20, right: 30, bottom: 30, left: 40 };
+  1230→  const innerW = W - P.left - P.right;
+  1231→  const innerH = H - P.top - P.bottom;
+  1232→  const zeroY = P.top + innerH / 2;
+  1233→
+  1234→  const maxAbs = Math.max(
+  1235→    ...items.flatMap((r) => [
+  1236→      Math.abs(r.metrics.revenueYoYGrowth),
+  1237→      Math.abs(r.metrics.epsYoYGrowth),
+  1238→    ]),
+  1239→    1
+  1240→  );
+  1241→
+  1242→  const step = innerW / Math.max(1, items.length);
+  1243→  const barW = step * 0.3;
+  1244→  const gap = step * 0.1;
+  1245→  const labelStep = Math.max(1, Math.ceil(items.length / 8));
+  1246→
+  1247→  return (
+  1248→    <div className="w-full overflow-x-auto">
+  1249→      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+  1250→        {/* Zero line */}
+  1251→        <line
+  1252→          x1={P.left}
+  1253→          y1={zeroY}
+  1254→          x2={P.left + innerW}
+  1255→          y2={zeroY}
+  1256→          stroke="#3A4256"
+  1257→          strokeWidth="1"
+  1258→        />
+  1259→        {/* Grid */}
+  1260→        {Array.from({ length: 5 }, (_, i) => P.top + (i / 4) * innerH).map((y, i) => (
+  1261→          <line
+  1262→            key={i}
+  1263→            x1={P.left}
+  1264→            y1={y}
+  1265→            x2={P.left + innerW}
+  1266→            y2={y}
+  1267→            stroke="#1E2536"
+  1268→            strokeWidth="1"
+  1269→            strokeDasharray="2 4"
+  1270→          />
+  1271→        ))}
+  1272→        {/* Bars */}
+  1273→        {items.map((r, i) => {
+  1274→          const cx = P.left + step * i + step / 2;
+  1275→          const revH = (Math.abs(r.metrics.revenueYoYGrowth) / maxAbs) * (innerH / 2);
+  1276→          const epsH = (Math.abs(r.metrics.epsYoYGrowth) / maxAbs) * (innerH / 2);
+  1277→          const revY = r.metrics.revenueYoYGrowth >= 0 ? zeroY - revH : zeroY;
+  1278→          const epsY = r.metrics.epsYoYGrowth >= 0 ? zeroY - epsH : zeroY;
+  1279→          return (
+  1280→            <g key={i}>
+  1281→              <rect
+  1282→                x={cx - barW - gap / 2}
+  1283→                y={revY}
+  1284→                width={barW}
+  1285→                height={revH}
+  1286→                fill={r.metrics.revenueYoYGrowth >= 0 ? "#00E676" : "#FF5C5C"}
+  1287→                opacity="0.85"
+  1288→              />
+  1289→              <rect
+  1290→                x={cx + gap / 2}
+  1291→                y={epsY}
+  1292→                width={barW}
+  1293→                height={epsH}
+  1294→                fill={r.metrics.epsYoYGrowth >= 0 ? "#FBBF24" : "#FF5C5C"}
+  1295→                opacity="0.85"
+  1296→              />
+  1297→              {i % labelStep === 0 && (
+  1298→                <text
+  1299→                  x={cx}
+  1300→                  y={H - 8}
+  1301→                  fill="#64748B"
+  1302→                  fontSize="9"
+  1303→                  textAnchor="middle"
+  1304→                  fontFamily="monospace"
+  1305→                >
+  1306→                  {r.period}
+  1307→                </text>
+  1308→              )}
+  1309→            </g>
+  1310→          );
+  1311→        })}
+  1312→      </svg>
+  1313→      <div className="flex items-center gap-4 mt-3 text-[10px] text-[#94A3B8] flex-wrap justify-center">
+  1314→        <span className="flex items-center gap-1.5">
+  1315→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#00E676]" />
+  1316→          Revenue YoY
+  1317→        </span>
+  1318→        <span className="flex items-center gap-1.5">
+  1319→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#FBBF24]" />
+  1320→          EPS YoY
+  1321→        </span>
+  1322→        <span className="text-[#64748B]">Negative growth shown in red (below zero line).</span>
+  1323→      </div>
+  1324→    </div>
+  1325→  );
+  1326→}
+  1327→
+  1328→// ══════════════════════════════════════════════════════════════════════════
+  1329→// TAB 2 — Company Stock Pattern: technical price-pattern deep dive
+  1330→// ══════════════════════════════════════════════════════════════════════════
+  1331→
+  1332→const STOCK_CAT_FILTERS: { value: string; label: string }[] = [
+  1333→  { value: "all", label: "All" },
+  1334→  { value: "trend", label: "Trend" },
+  1335→  { value: "momentum", label: "Momentum" },
+  1336→  { value: "breakout", label: "Breakout" },
+  1337→  { value: "structure", label: "Structure" },
+  1338→  { value: "volatility", label: "Volatility" },
+  1339→  { value: "volume", label: "Volume" },
+  1340→  { value: "candlestick", label: "Candlestick" },
+  1341→];
+  1342→
+  1343→function StockPatternDive({
+  1344→  data,
+  1345→  onBack,
+  1346→}: {
+  1347→  data: StockPatternResponse;
+  1348→  onBack: () => void;
+  1349→}) {
+  1350→  const s = data.stats;
+  1351→  const [catFilter, setCatFilter] = useState<string>("all");
+  1352→  const filteredPatterns =
+  1353→    catFilter === "all" ? data.patterns : data.patterns.filter((p) => p.category === catFilter);
+  1354→
+  1355→  const fmtDate = (d: string) =>
+  1356→    new Date(d).toLocaleDateString("en-PK", { year: "numeric", month: "short" });
+  1357→
+  1358→  const rsiSub =
+  1359→    s.rsi14 >= 70 ? "Overbought" : s.rsi14 <= 30 ? "Oversold" : "Neutral zone";
+  1360→
+  1361→  const stats: {
+  1362→    label: string;
+  1363→    value: string;
+  1364→    sub: string;
+  1365→    tone?: "pos" | "neg" | "neutral";
+  1366→    explanation: string;
+  1367→  }[] = [
+  1368→    {
+  1369→      label: "Current price",
+  1370→      value: fmtPrice(s.currentPrice),
+  1371→      sub: `${s.changePct1D >= 0 ? "+" : ""}${s.changePct1D.toFixed(2)}% 1-day · ${s.changePct1M >= 0 ? "+" : ""}${s.changePct1M.toFixed(1)}% 1-month`,
+  1372→      tone: s.changePct1D >= 0 ? "pos" : "neg",
+  1373→      explanation: "The latest closing price with the day-over-day and month-over-month change",
+  1374→    },
+  1375→    {
+  1376→      label: "Overall trend",
+  1377→      value: s.trendLabel,
+  1378→      sub: `${s.trendSlopeAnnualPct >= 0 ? "+" : ""}${s.trendSlopeAnnualPct.toFixed(0)}%/yr slope`,
+  1379→      tone: s.trendLabel === "Uptrend" ? "pos" : s.trendLabel === "Downtrend" ? "neg" : "neutral",
+  1380→      explanation: "Direction of the price over the last 180 trading sessions, measured with a least-squares trend line. Sideways means no reliable direction.",
+  1381→    },
+  1382→    {
+  1383→      label: "52-week high",
+  1384→      value: fmtPrice(s.high52w),
+  1385→      sub: `${s.pctFrom52wHigh.toFixed(1)}% below the high`,
+  1386→      tone: s.pctFrom52wHigh > -2 ? "pos" : "neutral",
+  1387→      explanation: "The highest price in the past year. Trading close to it means no trapped sellers overhead.",
+  1388→    },
+  1389→    {
+  1390→      label: "52-week low",
+  1391→      value: fmtPrice(s.low52w),
+  1392→      sub: `+${s.pctFrom52wLow.toFixed(1)}% above the low`,
+  1393→      tone: s.pctFrom52wLow < 2 ? "neg" : "neutral",
+  1394→      explanation: "The lowest price in the past year. Trading close to it means every recent buyer is underwater.",
+  1395→    },
+  1396→    {
+  1397→      label: "RSI (14)",
+  1398→      value: s.rsi14.toFixed(0),
+  1399→      sub: rsiSub,
+  1400→      tone: s.rsi14 >= 70 ? "neg" : s.rsi14 <= 30 ? "pos" : "neutral",
+  1401→      explanation: "Relative Strength Index — how one-sided recent daily moves have been. Above 70 = overbought, below 30 = oversold.",
+  1402→    },
+  1403→    {
+  1404→      label: "MACD momentum",
+  1405→      value: s.macdStatus,
+  1406→      sub: `hist ${s.macdHistogram.toFixed(2)}`,
+  1407→      tone: s.macdStatus === "Bullish" ? "pos" : s.macdStatus === "Bearish" ? "neg" : "neutral",
+  1408→      explanation: "MACD compares short-term vs long-term momentum. Bullish = short-term momentum stronger than the long-term drift.",
+  1409→    },
+  1410→    {
+  1411→      label: "Volatility",
+  1412→      value: `${s.volatilityAnnualPct.toFixed(0)}%`,
+  1413→      sub: "annualised (90-day)",
+  1414→      tone: s.volatilityAnnualPct > 45 ? "neg" : "neutral",
+  1415→      explanation: "How much the price swings day-to-day, expressed per year. Above ~45% is a rough ride; below ~25% is calm.",
+  1416→    },
+  1417→    {
+  1418→      label: "Patterns found",
+  1419→      value: `${data.patterns.length}`,
+  1420→      sub: `${s.bullCount} bullish · ${s.bearCount} bearish · ${s.neutralCount} neutral`,
+  1421→      tone: "neutral",
+  1422→      explanation: "Number of technical price patterns detected across trend, momentum, structure, volume, volatility and candlestick families.",
+  1423→    },
+  1424→  ];
+  1425→
+  1426→  return (
+  1427→    <div className="space-y-4">
+  1428→      {/* Header with back button */}
+  1429→      <Card className="bg-[#131829] border-white/[0.08]">
+  1430→        <CardContent className="p-4">
+  1431→          <div className="flex items-start gap-3">
+  1432→            <Button
+  1433→              variant="outline"
+  1434→              size="sm"
+  1435→              onClick={onBack}
+  1436→              className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] shrink-0"
+  1437→            >
+  1438→              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back
+  1439→            </Button>
+  1440→            <div className="flex-1 min-w-0">
+  1441→              <div className="flex items-baseline gap-2 flex-wrap">
+  1442→                <h2 className="text-xl font-bold text-[#F4F7FB]">{data.symbol}</h2>
+  1443→                <span className="text-sm text-[#94A3B8] truncate">{data.company}</span>
+  1444→                <Badge variant="outline" className="text-[9px] border-[#FBBF24]/40 text-[#FBBF24]">
+  1445→                  PRICE PATTERNS
+  1446→                </Badge>
+  1447→              </div>
+  1448→              <p className="text-xs text-[#64748B] mt-1">
+  1449→                {data.barsCount.toLocaleString()} daily bars · {fmtDate(data.firstDate)} →{" "}
+  1450→                {fmtDate(data.lastDate)} · source: {data.source} · 12-month return{" "}
+  1451→                <span className={s.changePct12M >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}>
+  1452→                  {s.changePct12M >= 0 ? "+" : ""}
+  1453→                  {s.changePct12M.toFixed(1)}%
+  1454→                </span>
+  1455→              </p>
+  1456→            </div>
+  1457→          </div>
+  1458→        </CardContent>
+  1459→      </Card>
+  1460→
+  1461→      {/* 8 summary stats */}
+  1462→      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+  1463→        {stats.map((st, i) => (
+  1464→          <SummaryStat key={i} label={st.label} value={st.value} sub={st.sub} tone={st.tone} explanation={st.explanation} />
+  1465→        ))}
+  1466→      </div>
+  1467→
+  1468→      {/* Price chart with MA overlays */}
+  1469→      <Card className="bg-[#131829] border-white/[0.08]">
+  1470→        <CardHeader>
+  1471→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+  1472→            <CandlestickChart className="h-4 w-4 text-[#FBBF24]" />
+  1473→            Price with 20 / 50 / 200-day averages (last 180 sessions)
+  1474→          </CardTitle>
+  1475→        </CardHeader>
+  1476→        <CardContent>
+  1477→          <PriceChart chart={data.chart} support={s.support} resistance={s.resistance} />
+  1478→        </CardContent>
+  1479→      </Card>
+  1480→
+  1481→      {/* Support / resistance levels */}
+  1482→      <Card className="bg-[#131829] border-white/[0.08]">
+  1483→        <CardHeader>
+  1484→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+  1485→            <ArrowUpDown className="h-4 w-4 text-[#FBBF24]" />
+  1486→            Key price levels (12-month pivots)
+  1487→          </CardTitle>
+  1488→        </CardHeader>
+  1489→        <CardContent>
+  1490→          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+  1491→            {/* Support */}
+  1492→            <div className="rounded-lg bg-[#0A0E1A] border border-[#00E676]/15 p-3">
+  1493→              <div className="flex items-center justify-between mb-1">
+  1494→                <span className="text-xs font-semibold text-[#00E676] uppercase tracking-wider">Support (floor)</span>
+  1495→                <Badge variant="outline" className="text-[9px] border-[#00E676]/40 text-[#00E676]">
+  1496→                  {s.support?.touches ?? 0} bounce{((s.support?.touches ?? 0) === 1 ? "" : "s")}
+  1497→                </Badge>
+  1498→              </div>
+  1499→              {s.support ? (
+  1500→                <>
+  1501→                  <div className="text-lg font-bold font-mono text-[#F4F7FB]">{fmtPrice(s.support.price)}</div>
+  1502→                  <p className="text-[11px] text-[#94A3B8] mt-1 leading-relaxed">
+  1503→                    Last tested {s.support.lastTouch} · price is now{" "}
+  1504→                    <span className="font-mono">
+  1505→                      {(((s.currentPrice - s.support.price) / s.support.price) * 100).toFixed(1)}%
+  1506→                    </span>{" "}
+  1507→                    above this floor. Watch for a decisive close below — that would flip it into a ceiling.
+  1508→                  </p>
+  1509→                </>
+  1510→              ) : (
+  1511→                <p className="text-[11px] text-[#64748B] mt-1">No clear pivot-low support below the current price.</p>
+  1512→              )}
+  1513→            </div>
+  1514→            {/* Resistance */}
+  1515→            <div className="rounded-lg bg-[#0A0E1A] border border-[#FF5C5C]/15 p-3">
+  1516→              <div className="flex items-center justify-between mb-1">
+  1517→                <span className="text-xs font-semibold text-[#FF5C5C] uppercase tracking-wider">Resistance (ceiling)</span>
+  1518→                <Badge variant="outline" className="text-[9px] border-[#FF5C5C]/40 text-[#FF5C5C]">
+  1519→                  {s.resistance?.touches ?? 0} rejection{((s.resistance?.touches ?? 0) === 1 ? "" : "s")}
+  1520→                </Badge>
+  1521→              </div>
+  1522→              {s.resistance ? (
+  1523→                <>
+  1524→                  <div className="text-lg font-bold font-mono text-[#F4F7FB]">{fmtPrice(s.resistance.price)}</div>
+  1525→                  <p className="text-[11px] text-[#94A3B8] mt-1 leading-relaxed">
+  1526→                    Last tested {s.resistance.lastTouch} · price is now{" "}
+  1527→                    <span className="font-mono">
+  1528→                      {(((s.currentPrice - s.resistance.price) / s.resistance.price) * 100).toFixed(1)}%
+  1529→                    </span>{" "}
+  1530→                    {s.currentPrice >= s.resistance.price ? "above (breakout!)" : "below this ceiling"}. A decisive
+  1531→                    close above would turn it into a new floor.
+  1532→                  </p>
+  1533→                </>
+  1534→              ) : (
+  1535→                <p className="text-[11px] text-[#64748B] mt-1">
+  1536→                  No pivot-high resistance above the current price — the stock is in fresh high ground.
+  1537→                </p>
+  1538→              )}
+  1539→            </div>
+  1540→          </div>
+  1541→        </CardContent>
+  1542→      </Card>
+  1543→
+  1544→      {/* Detected patterns + category filter */}
+  1545→      <Card className="bg-[#131829] border-white/[0.08]">
+  1546→        <CardHeader>
+  1547→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2 flex-wrap">
+  1548→            <Layers className="h-4 w-4 text-[#FBBF24]" />
+  1549→            Detected price patterns ({data.patterns.length})
+  1550→            <span className="flex items-center gap-1.5 ml-auto text-[10px] font-normal flex-wrap">
+  1551→              {data.patterns.length > 0 && (
+  1552→                <>
+  1553→                  {s.bullCount > 0 && <span className="text-[#00E676] font-mono">{s.bullCount} bullish</span>}
+  1554→                  {s.bearCount > 0 && <span className="text-[#FF5C5C] font-mono">{s.bearCount} bearish</span>}
+  1555→                  {s.neutralCount > 0 && <span className="text-[#94A3B8] font-mono">{s.neutralCount} neutral</span>}
+  1556→                  <span className="text-[#64748B]">·</span>
+  1557→                  <span className="text-[#64748B]">
+  1558→                    {data.patterns.filter((p) => p.strength === "Strong").length} strong ·{" "}
+  1559→                    {data.patterns.filter((p) => p.strength === "Moderate").length} moderate ·{" "}
+  1560→                    {data.patterns.filter((p) => p.strength === "Weak").length} weak
+  1561→                  </span>
+  1562→                </>
+  1563→              )}
+  1564→            </span>
+  1565→          </CardTitle>
+  1566→          {/* Category filter chips */}
+  1567→          <div className="flex items-center gap-1.5 flex-wrap mt-2">
+  1568→            {STOCK_CAT_FILTERS.map((c) => {
+  1569→              const count =
+  1570→                c.value === "all"
+  1571→                  ? data.patterns.length
+  1572→                  : data.patterns.filter((p) => p.category === c.value).length;
+  1573→              const active = catFilter === c.value;
+  1574→              return (
+  1575→                <button
+  1576→                  key={c.value}
+  1577→                  onClick={() => setCatFilter(c.value)}
+  1578→                  disabled={count === 0 && c.value !== "all"}
+  1579→                  className={`text-[10px] px-2 py-0.5 rounded-full border transition-colors ${
+  1580→                    active
+  1581→                      ? "border-[#FBBF24]/50 text-[#FBBF24] bg-[#FBBF24]/[0.1]"
+  1582→                      : "border-white/[0.08] text-[#94A3B8] hover:text-[#F4F7FB] disabled:opacity-30"
+  1583→                  }`}
+  1584→                >
+  1585→                  {c.label} · {count}
+  1586→                </button>
+  1587→              );
+  1588→            })}
+  1589→          </div>
+  1590→        </CardHeader>
+  1591→        <CardContent>
+  1592→          {filteredPatterns.length === 0 ? (
+  1593→            <p className="text-xs text-[#64748B]">
+  1594→              No price patterns in this category right now — the stock's recent action didn't trigger these rules.
+  1595→            </p>
+  1596→          ) : (
+  1597→            <div className="space-y-2">
+  1598→              {filteredPatterns.map((p, i) => (
+  1599→                <PatternRow key={i} pattern={p} />
+  1600→              ))}
+  1601→            </div>
+  1602→          )}
+  1603→        </CardContent>
+  1604→      </Card>
+  1605→
+  1606→      {/* Recent price history table */}
+  1607→      <Card className="bg-[#131829] border-white/[0.08]">
+  1608→        <CardHeader>
+  1609→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+  1610→            <Calendar className="h-4 w-4 text-[#FBBF24]" />
+  1611→            Daily price history (last {data.recentBars.length} sessions)
+  1612→          </CardTitle>
+  1613→        </CardHeader>
+  1614→        <CardContent>
+  1615→          <div className="max-h-96 overflow-y-auto custom-scroll rounded-md border border-white/[0.04]">
+  1616→            <table className="w-full text-xs">
+  1617→              <thead className="sticky top-0 bg-[#131829] z-10">
+  1618→                <tr className="text-[#64748B] text-[10px] uppercase tracking-wider">
+  1619→                  <th className="text-left p-2 font-medium">Date</th>
+  1620→                  <th className="text-right p-2 font-medium">Open</th>
+  1621→                  <th className="text-right p-2 font-medium">High</th>
+  1622→                  <th className="text-right p-2 font-medium">Low</th>
+  1623→                  <th className="text-right p-2 font-medium">Close</th>
+  1624→                  <th className="text-right p-2 font-medium">Change</th>
+  1625→                  <th className="text-right p-2 font-medium">Volume</th>
+  1626→                </tr>
+  1627→              </thead>
+  1628→              <tbody>
+  1629→                {data.recentBars.map((b, i) => (
+  1630→                  <tr key={i} className="border-t border-white/[0.04] hover:bg-white/[0.02]">
+  1631→                    <td className="p-2 text-[#F4F7FB] font-mono">{b.date}</td>
+  1632→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{b.open.toFixed(2)}</td>
+  1633→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{b.high.toFixed(2)}</td>
+  1634→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{b.low.toFixed(2)}</td>
+  1635→                    <td className="p-2 text-right text-[#F4F7FB] font-mono">{b.close.toFixed(2)}</td>
+  1636→                    <td
+  1637→                      className={`p-2 text-right font-mono ${
+  1638→                        b.changePct >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"
+  1639→                      }`}
+  1640→                    >
+  1641→                      {b.changePct >= 0 ? "+" : ""}
+  1642→                      {b.changePct.toFixed(2)}%
+  1643→                    </td>
+  1644→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{fmtVolume(b.volume)}</td>
+  1645→                  </tr>
+  1646→                ))}
+  1647→              </tbody>
+  1648→            </table>
+  1649→          </div>
+  1650→        </CardContent>
+  1651→      </Card>
+  1652→    </div>
+  1653→  );
+  1654→}
+  1655→
+  1656→// ── Price chart: SVG line chart with SMA20/50/200 overlays + volume bars.
+  1657→// Also draws dashed support/resistance lines when they lie within the range.
+  1658→function PriceChart({
+  1659→  chart,
+  1660→  support,
+  1661→  resistance,
+  1662→}: {
+  1663→  chart: StockChartPoint[];
+  1664→  support: { price: number; touches: number; lastTouch: string } | null;
+  1665→  resistance: { price: number; touches: number; lastTouch: string } | null;
+  1666→}) {
+  1667→  const pts = chart.slice(-180);
+  1668→  if (pts.length === 0) return <p className="text-xs text-[#64748B]">No chart data.</p>;
+  1669→
+  1670→  const W = 800;
+  1671→  const H = 360;
+  1672→  const P = { top: 16, right: 62, bottom: 30, left: 52 };
+  1673→  const innerW = W - P.left - P.right;
+  1674→  const priceH = 240;
+  1675→  const volH = 54;
+  1676→  const volTop = P.top + priceH + 14;
+  1677→
+  1678→  const closes = pts.map((p) => p.close);
+  1679→  const allVals = closes.concat(
+  1680→    pts.map((p) => p.sma20).filter((v): v is number => v !== null),
+  1681→    pts.map((p) => p.sma50).filter((v): v is number => v !== null),
+  1682→    pts.map((p) => p.sma200).filter((v): v is number => v !== null),
+  1683→    support ? [support.price] : [],
+  1684→    resistance ? [resistance.price] : []
+  1685→  );
+  1686→  let mn = Math.min(...allVals);
+  1687→  let mx = Math.max(...allVals);
+  1688→  const pad = (mx - mn) * 0.06 || mx * 0.02 || 1;
+  1689→  mn -= pad;
+  1690→  mx += pad;
+  1691→
+  1692→  const xAt = (i: number) => P.left + (pts.length === 1 ? innerW / 2 : (i / (pts.length - 1)) * innerW);
+  1693→  const yAt = (v: number) => P.top + (1 - (v - mn) / (mx - mn)) * priceH;
+  1694→
+  1695→  const maxVol = Math.max(...pts.map((p) => p.volume), 1);
+  1696→  const volY = (v: number) => volTop + volH - (v / maxVol) * volH;
+  1697→
+  1698→  // Build a continuous path from (possibly null-padded) values — SMA200 has
+  1699→  // nulls at the start of the series until enough bars accumulate.
+  1700→  const segPath = (get: (p: StockChartPoint) => number | null): string[] => {
+  1701→    const segs: string[] = [];
+  1702→    let cur: string[] = [];
+  1703→    pts.forEach((p, i) => {
+  1704→      const v = get(p);
+  1705→      if (v === null || v === undefined) {
+  1706→        if (cur.length > 0) segs.push(cur.join(" "));
+  1707→        cur = [];
+  1708→        return;
+  1709→      }
+  1710→      cur.push(`${cur.length === 0 ? "M" : "L"} ${xAt(i).toFixed(1)} ${yAt(v).toFixed(1)}`);
+  1711→    });
+  1712→    if (cur.length > 0) segs.push(cur.join(" "));
+  1713→    return segs.filter((s) => s.length > 0);
+  1714→  };
+  1715→
+  1716→  const closePath = segPath((p) => p.close).join(" ");
+  1717→  const sma20Segs = segPath((p) => p.sma20);
+  1718→  const sma50Segs = segPath((p) => p.sma50);
+  1719→  const sma200Segs = segPath((p) => p.sma200);
+  1720→
+  1721→  // Price area fill under close
+  1722→  const areaPath = `${closePath} L ${xAt(pts.length - 1).toFixed(1)} ${(P.top + priceH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(P.top + priceH).toFixed(1)} Z`;
+  1723→
+  1724→  const gridLines = Array.from({ length: 5 }, (_, i) => P.top + (i / 4) * priceH);
+  1725→  const gridVals = Array.from({ length: 5 }, (_, i) => mx - ((mx - mn) * i) / 4);
+  1726→  const labelStep = Math.max(1, Math.ceil(pts.length / 7));
+  1727→
+  1728→  const lastClose = pts[pts.length - 1].close;
+  1729→
+  1730→  return (
+  1731→    <div className="w-full">
+  1732→      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+  1733→        <defs>
+  1734→          <linearGradient id="priceFill" x1="0" y1="0" x2="0" y2="1">
+  1735→            <stop offset="0%" stopColor="#00E676" stopOpacity="0.18" />
+  1736→            <stop offset="100%" stopColor="#00E676" stopOpacity="0" />
+  1737→          </linearGradient>
+  1738→        </defs>
+  1739→        {/* Grid + y labels */}
+  1740→        {gridLines.map((y, i) => (
+  1741→          <g key={i}>
+  1742→            <line x1={P.left} y1={y} x2={P.left + innerW} y2={y} stroke="#1E2536" strokeWidth="1" strokeDasharray="2 4" />
+  1743→            <text x={P.left - 6} y={y + 3} fill="#64748B" fontSize="9" textAnchor="end" fontFamily="monospace">
+  1744→              {gridVals[i].toFixed(0)}
+  1745→            </text>
+  1746→          </g>
+  1747→        ))}
+  1748→        {/* X labels */}
+  1749→        {pts.map((p, i) =>
+  1750→          i % labelStep === 0 ? (
+  1751→            <text
+  1752→              key={i}
+  1753→              x={xAt(i)}
+  1754→              y={H - 8}
+  1755→              fill="#64748B"
+  1756→              fontSize="9"
+  1757→              textAnchor="middle"
+  1758→              fontFamily="monospace"
+  1759→            >
+  1760→              {p.date.slice(2)}
+  1761→            </text>
+  1762→          ) : null
+  1763→        )}
+  1764→        {/* Support / resistance lines */}
+  1765→        {support && support.price >= mn && support.price <= mx && (
+  1766→          <g>
+  1767→            <line
+  1768→              x1={P.left}
+  1769→              y1={yAt(support.price)}
+  1770→              x2={P.left + innerW}
+  1771→              y2={yAt(support.price)}
+  1772→              stroke="#00E676"
+  1773→              strokeWidth="1"
+  1774→              strokeDasharray="5 4"
+  1775→              opacity="0.55"
+  1776→            />
+  1777→            <text x={P.left + innerW + 4} y={yAt(support.price) + 3} fill="#00E676" fontSize="8.5" fontFamily="monospace">
+  1778→              S {support.price.toFixed(0)}
+  1779→            </text>
+  1780→          </g>
+  1781→        )}
+  1782→        {resistance && resistance.price >= mn && resistance.price <= mx && (
+  1783→          <g>
+  1784→            <line
+  1785→              x1={P.left}
+  1786→              y1={yAt(resistance.price)}
+  1787→              x2={P.left + innerW}
+  1788→              y2={yAt(resistance.price)}
+  1789→              stroke="#FF5C5C"
+  1790→              strokeWidth="1"
+  1791→              strokeDasharray="5 4"
+  1792→              opacity="0.55"
+  1793→            />
+  1794→            <text x={P.left + innerW + 4} y={yAt(resistance.price) + 3} fill="#FF5C5C" fontSize="8.5" fontFamily="monospace">
+  1795→              R {resistance.price.toFixed(0)}
+  1796→            </text>
+  1797→          </g>
+  1798→        )}
+  1799→        {/* Volume bars */}
+  1800→        {pts.map((p, i) => {
+  1801→          const up = i === 0 ? p.close >= (pts[0]?.close ?? p.close) : p.close >= pts[i - 1].close;
+  1802→          const y = volY(p.volume);
+  1803→          return (
+  1804→            <rect
+  1805→              key={`v${i}`}
+  1806→              x={xAt(i) - innerW / pts.length / 2}
+  1807→              y={y}
+  1808→              width={Math.max(0.8, innerW / pts.length)}
+  1809→              height={volTop + volH - y}
+  1810→              fill={up ? "#00E676" : "#FF5C5C"}
+  1811→              opacity="0.25"
+  1812→            />
+  1813→          );
+  1814→        })}
+  1815→        {/* Price area + close line */}
+  1816→        <path d={areaPath} fill="url(#priceFill)" />
+  1817→        <path d={closePath} fill="none" stroke="#00E676" strokeWidth="2" />
+  1818→        {/* SMA overlays */}
+  1819→        {sma20Segs.map((d, i) => (
+  1820→          <path key={`s20-${i}`} d={d} fill="none" stroke="#FBBF24" strokeWidth="1.5" opacity="0.9" />
+  1821→        ))}
+  1822→        {sma50Segs.map((d, i) => (
+  1823→          <path key={`s50-${i}`} d={d} fill="none" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="5 3" opacity="0.85" />
+  1824→        ))}
+  1825→        {sma200Segs.map((d, i) => (
+  1826→          <path key={`s200-${i}`} d={d} fill="none" stroke="#94A3B8" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.8" />
+  1827→        ))}
+  1828→        {/* Endpoint marker */}
+  1829→        <circle cx={xAt(pts.length - 1)} cy={yAt(lastClose)} r="3.5" fill="#00E676" />
+  1830→        {/* Volume label */}
+  1831→        <text x={P.left - 6} y={volTop + 8} fill="#64748B" fontSize="8.5" textAnchor="end" fontFamily="monospace">
+  1832→          Vol
+  1833→        </text>
+  1834→      </svg>
+  1835→      {/* Legend */}
+  1836→      <div className="flex items-center gap-4 mt-3 text-[10px] text-[#94A3B8] flex-wrap justify-center">
+  1837→        <span className="flex items-center gap-1.5">
+  1838→          <span className="h-0.5 w-4 bg-[#00E676] inline-block" />
+  1839→          Close price
+  1840→        </span>
+  1841→        <span className="flex items-center gap-1.5">
+  1842→          <span className="h-0.5 w-4 bg-[#FBBF24] inline-block" />
+  1843→          SMA 20
+  1844→        </span>
+  1845→        <span className="flex items-center gap-1.5">
+  1846→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px dashed #38BDF8" }} />
+  1847→          SMA 50
+  1848→        </span>
+  1849→        <span className="flex items-center gap-1.5">
+  1850→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px dotted #94A3B8" }} />
+  1851→          SMA 200
+  1852→        </span>
+  1853→        <span className="flex items-center gap-1.5">
+  1854→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#00E676]/30" />
+  1855→          Volume (green = up day, red = down day)
+  1856→        </span>
+  1857→        <span className="text-[#64748B]">S/R lines: dashed green = support, dashed red = resistance.</span>
+  1858→      </div>
+  1859→    </div>
+  1860→  );
+  1861→}
+  1862→

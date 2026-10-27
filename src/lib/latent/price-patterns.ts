@@ -869,3 +869,187 @@ export function analyzePricePatterns(symbol: string, bars: EngineBar[]): PricePa
     insufficient: false,
   };
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+// LEGACY COMPATIBILITY LAYER
+//
+// The nightly precompute pipeline (price-patterns-service.ts +
+// price-pattern-llm.ts — DB-first PricePatternReport flow behind
+// /api/price-patterns/precompute) and the dormant PricePatternsDive view were
+// written against the PREVIOUS engine contract (detectPricePatterns /
+// DetectionResult / PriceZone / SeasonalityInfo). The exports below adapt the
+// current engine (analyzePricePatterns) onto that contract so both generations
+// compile against this single module. The mapping is purely mechanical and
+// introduces no new numbers — every field is derived from the engine output.
+// ═════════════════════════════════════════════════════════════════════════════
+
+/** Legacy daily-bar shape (date/open/close/volume — same as EngineBar). */
+export type PriceBar = EngineBar;
+
+/** A pattern under the legacy contract: the engine's pattern plus the old
+ *  `id` identity field (the engine now uses `key`) and optional extras. */
+export type StatPattern = PricePattern & {
+  id: string;
+  details?: string;
+  explanation?: string;
+};
+
+/** Legacy key-price-zone row (close-price based zones). */
+export interface PriceZone {
+  lo: number;
+  hi: number;
+  episodes: number; // distinct visit events
+  daysInZone: number; // closes inside the zone
+  volRatio: number; // avg volume at zone vs overall average
+  reversalRate: number; // % of visits followed by a ≥1% move away downward
+  breakoutRate: number; // % of visits followed by a ≥1% move away upward
+  evidence_dates?: string[];
+}
+
+/** Legacy seasonality payload: per-year × per-month grid + month summaries. */
+export interface SeasonalityInfo {
+  years: number[];
+  grid: (number | null)[][]; // [yearIndex][monthIndex] → avg return %
+  months: {
+    month: number; // 0 = Jan
+    avg: number; // avg return % across years
+    yearsSampled: number;
+    flaggedUp?: boolean; // same-direction (up) in ≥4 of last 5 years
+    flaggedDown?: boolean; // same-direction (down) in ≥4 of last 5 years
+  }[];
+}
+
+/** A notable historical event row (legacy shape). */
+export interface UnusualEvent {
+  date: string;
+  detail: string;
+}
+
+/** Full output of the legacy detection entry point. */
+export interface DetectionResult {
+  coverage: {
+    bars: number;
+    firstDate: string;
+    lastDate: string;
+    years?: number;
+    skipped?: { reason: string }[];
+  };
+  patterns: StatPattern[];
+  zones: PriceZone[];
+  seasonality: SeasonalityInfo | null;
+  unusual: UnusualEvent[];
+}
+
+/** Honest, advice-free disclaimer served with every legacy report. */
+export const PATTERN_DISCLAIMER =
+  "Historical pattern statistics only — informational, not investment advice. " +
+  "Past recurrence does not guarantee future behaviour. Derived from daily " +
+  "open/close/volume data; high/low are not recorded in the upstream feed.";
+
+/** Map the engine's SeasonalityMonth[] onto the legacy grid payload. */
+export function toLegacySeasonality(months: SeasonalityMonth[] | null): SeasonalityInfo | null {
+  if (!months || months.length === 0) return null;
+  const yearSet = new Set<number>();
+  for (const m of months) for (const ry of m.recentYears) yearSet.add(ry.year);
+  const years = [...yearSet].sort((a, b) => a - b);
+  const grid: (number | null)[][] = years.map(() => months.map(() => null));
+  for (let mi = 0; mi < months.length; mi++) {
+    for (const ry of months[mi].recentYears) {
+      const yi = years.indexOf(ry.year);
+      if (yi >= 0) grid[yi][mi] = ry.returnPct;
+    }
+  }
+  return {
+    years,
+    grid,
+    months: months.map((m) => ({
+      month: m.month,
+      avg: m.avgReturnPct,
+      yearsSampled: m.samples,
+      flaggedUp: m.flagged && m.avgReturnPct > 0 ? true : undefined,
+      flaggedDown: m.flagged && m.avgReturnPct < 0 ? true : undefined,
+    })),
+  };
+}
+
+/** Map the engine's KeyZone[] onto the legacy PriceZone rows. */
+export function toLegacyZones(keyZones: KeyZone[]): PriceZone[] {
+  return keyZones.map((z) => ({
+    lo: z.low,
+    hi: z.high,
+    episodes: z.visits,
+    daysInZone: z.touches,
+    volRatio: z.volumeVsAvg,
+    reversalRate: z.visits > 0 ? Math.round((z.rejections / z.visits) * 100) : 0,
+    breakoutRate: z.visits > 0 ? Math.round((z.bounces / z.visits) * 100) : 0,
+    evidence_dates: z.evidence_dates,
+  }));
+}
+
+/**
+ * Legacy entry point used by price-patterns-service.ts: run the current
+ * engine over the bars and map the result onto DetectionResult. Deterministic
+ * — same bars in, same result out. No symbol is needed because the legacy
+ * contract keeps identity at the service layer.
+ */
+export function detectPricePatterns(bars: PriceBar[]): DetectionResult {
+  const analysis = analyzePricePatterns("", bars);
+
+  const first = analysis.dataStart || null;
+  const last = analysis.dataEnd || null;
+  const years =
+    first && last
+      ? Math.max(
+          0,
+          Math.round(
+            ((new Date(last).getTime() - new Date(first).getTime()) / (365.25 * 86_400_000)) * 10
+          ) / 10
+        )
+      : 0;
+
+  // Notable events: honest restatements of the engine's most extreme recent
+  // volume spikes (deterministic — top 5 by |z-score|). Nothing is invented.
+  const spikes = [...analysis.volumeSpikes]
+    .sort((a, b) => Math.abs(b.zScore) - Math.abs(a.zScore))
+    .slice(0, 5)
+    .map((s) => ({
+      date: s.date,
+      detail:
+        `Volume spike ≈ ${s.zScore.toFixed(1)}σ above norm ` +
+        `(day move ${s.dayMovePct >= 0 ? "+" : ""}${s.dayMovePct.toFixed(2)}%` +
+        (s.next5MovePct !== null
+          ? `, next 5 sessions ${s.next5MovePct >= 0 ? "+" : ""}${s.next5MovePct.toFixed(2)}%`
+          : "") +
+        `).`,
+    }));
+
+  return {
+    coverage: {
+      bars: analysis.totalBars,
+      firstDate: analysis.dataStart,
+      lastDate: analysis.dataEnd,
+      years,
+      skipped: analysis.insufficient && analysis.message ? [{ reason: analysis.message }] : [],
+    },
+    patterns: analysis.patterns.map((p) => ({ ...p, id: p.key })),
+    zones: toLegacyZones(analysis.keyZones),
+    seasonality: toLegacySeasonality(analysis.seasonality),
+    unusual: spikes,
+  };
+}
+
+/** Legacy client-facing report response (what buildReportResponse returns). */
+export interface PricePatternReportResponse {
+  symbol: string;
+  company: string;
+  cached: boolean;
+  computedAt: string;
+  coverage: DetectionResult["coverage"];
+  patterns: (StatPattern & { explanation?: string })[];
+  zones: PriceZone[];
+  seasonality: SeasonalityInfo | null;
+  unusual: UnusualEvent[];
+  llmNotes: string[];
+  chart: { dates: string[]; closes: number[] };
+  disclaimer: string;
+}

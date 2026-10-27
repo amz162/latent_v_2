@@ -1,0 +1,651 @@
+     1→import { NextResponse } from "next/server";
+     2→import { promises as fs } from "fs";
+     3→import path from "path";
+     4→import { cacheGetJSON, cacheSetJSON, cacheDelete } from "@/lib/latent/cache";
+     5→import { db } from "@/lib/db";
+     6→import { getHistorical, getQuote } from "@/lib/latent/psxClient";
+     7→import {
+     8→  ALL_MODELS,
+     9→  type ModelPrediction,
+    10→  majorityVoteEnsemble,
+    11→  probabilityWeightedEnsemble,
+    12→  tierWeightedEnsemble,
+    13→  computeFinalConsensus,
+    14→} from "@/lib/latent/ensemble";
+    15→import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+    16→import { buildSymbolFallbackPredictions } from "@/lib/latent/fallback-predictions";
+    17→
+    18→export const dynamic = "force-dynamic";
+    19→export const maxDuration = 30;
+    20→const CK = (s: string) => `ai-model-signals:${s}`;
+    21→
+    22→export async function GET(req: Request, { params }: { params: Promise<{ symbol: string }> }) {
+    23→  const start = Date.now();
+    24→  const { symbol } = await params;
+    25→  const sym = symbol.toUpperCase();
+    26→  const stock = MOCK_STOCKS.find((s) => s.symbol === sym);
+    27→
+    28→  let stockName = stock?.name || sym;
+    29→  let currentPrice = stock?.price || 0;
+    30→
+    31→  if (!stock) {
+    32→    try {
+    33→      const ohlcvText = await fs.readFile(
+    34→        path.join(process.cwd(), "data", "ohlcv_all", `${sym}.csv`),
+    35→        "utf-8"
+    36→      );
+    37→      const lines = ohlcvText.trim().split("\n");
+    38→      if (lines.length > 1) {
+    39→        const lastLine = lines[lines.length - 1].split(",");
+    40→        currentPrice = parseFloat(lastLine[4]) || 0;
+    41→      }
+    42→    } catch {
+    43→      try {
+    44→        const finText = await fs.readFile(
+    45→          path.join(process.cwd(), "data", "financials", `${sym}.json`),
+    46→          "utf-8"
+    47→        );
+    48→        const finData = JSON.parse(finText);
+    49→        stockName = finData.company_name || finData.symbol || sym;
+    50→      } catch {}
+    51→    }
+    52→  }
+    53→
+    54→  const url = new URL(req.url);
+    55→  const refresh = url.searchParams.get("refresh") === "1";
+    56→  if (refresh) await cacheDelete(CK(sym));
+    57→  const cached = refresh ? null : await cacheGetJSON<any>(CK(sym));
+    58→  if (cached) return NextResponse.json({ ...cached, cached: true, latencyMs: Date.now() - start });
+    59→
+    60→  let multi: any = null;
+    61→  try {
+    62→    multi = JSON.parse(
+    63→      await fs.readFile(path.join(process.cwd(), "data", "ml_predictions_multi.json"), "utf-8")
+    64→    );
+    65→  } catch {
+    66→    return NextResponse.json(
+    67→      { error: "Run: python3 scripts/train_all_with_backtesting.py" },
+    68→      { status: 503 }
+    69→    );
+    70→  }
+    71→
+    72→  // Fallback: if we still don't have a currentPrice, pull from the predictions file
+    73→  if (!currentPrice) {
+    74→    const clPred = multi?.cl_ensemble_predictions?.[sym];
+    75→    if (clPred && typeof clPred.currentPrice === "number" && clPred.currentPrice > 0) {
+    76→      currentPrice = clPred.currentPrice;
+    77→    } else {
+    78→      for (const m of Object.values(multi?.models || {}) as any[]) {
+    79→        if (!m?.trained) continue;
+    80→        const p = m?.predictions?.[sym];
+    81→        if (p && typeof p.currentPrice === "number" && p.currentPrice > 0) {
+    82→          currentPrice = p.currentPrice;
+    83→          break;
+    84→        }
+    85→      }
+    86→    }
+    87→  }
+    88→
+    89→  // Build per-model predictions array.
+    90→  // The lookup must handle three naming conventions for the model key in
+    91→  // ml_predictions_multi.json's `models` dict:
+    92→  //   1. "Random Forest"      → meta.name = "Random Forest" (direct match)
+    93→  //   2. "RandomForest"        → meta.name with spaces stripped (nk)
+    94→  //   3. "XGBoost (CL)"       → lookupName strips " (CL)" → "XGBoost"
+    95→  //   4. "LightGBM-A (CL-2)"  → new CL-2 suffix — the .replace(" (CL)", "")
+    96→  //                              doesn't strip " (CL-2)" so lookupName stays
+    97→  //                              as "LightGBM-A (CL-2)" which matches the
+    98→  //                              JSON key directly.
+    99→  const predictions: ModelPrediction[] = ALL_MODELS.map((meta) => {
+   100→    const lookupName = meta.name.replace(" (CL)", "");
+   101→    const nk = lookupName.replace(/\s+/g, "");
+   102→    const md = multi?.models?.[lookupName] || multi?.models?.[nk] || multi?.models?.[meta.name];
+   103→    if (!md?.trained)
+   104→      return { ...meta, trained: false, untrainedReason: meta.untrainedReason || multi?.untrained_models?.[meta.name] };
+   105→    const p = md.predictions?.[sym];
+   106→    if (!p)
+   107→      return { ...meta, trained: true, untrainedReason: `No prediction for ${sym}` };
+   108→    const bt = multi?.backtesting?.[lookupName] || multi?.backtesting?.[nk] || multi?.backtesting?.[meta.name];
+   109→    return {
+   110→      ...meta,
+   111→      trained: true,
+   112→      direction: p.direction,
+   113→      signal: p.signal,
+   114→      confidence: p.confidence,
+   115→      currentPrice: p.currentPrice,
+   116→      entry: p.entry,
+   117→      sl: p.sl,
+   118→      tp1: p.tp1,
+   119→      tp2: p.tp2,
+   120→      tp3: p.tp3,
+   121→      avgReturn: p.avgReturn,
+   122→      // Pass-through extras for CL-2 models (raw_prob, exp_win_rate, agreement)
+   123→      // — the UI can optionally display these.
+   124→      ...(p.raw_prob !== undefined ? { raw_prob: p.raw_prob } : {}),
+   125→      ...(p.exp_win_rate !== undefined ? { exp_win_rate: p.exp_win_rate } : {}),
+   126→      ...(p.agreement !== undefined ? { agreement: p.agreement } : {}),
+   127→      metrics: md.metrics,
+   128→      backtest: bt,
+   129→    } as ModelPrediction;
+   130→  });
+   131→
+   132→  // ---- Issue 2: EXTENDED TRAINING MERGE (DB-cached) ------------------------
+   133→  // Stocks outside the original ML-trained universe (new / low-data PSX
+   134→  // listings) previously showed "No prediction for X" for every model. They
+   135→  // now get deterministic indicator-based predictions for ALL 65 models + 10
+   136→  // stored ensembles from the ModelPredictionCache table (precomputed by
+   137→  // scripts/train_missing_stocks.ts; self-healed on-demand here if missing).
+   138→  // Rows are NEVER deleted — repeat visits are pure DB reads.
+   139→  let extendedCount = 0;
+   140→  let extendedAt: string | null = null;
+   141→  let fbModels: Record<string, any> = {};
+   142→  let fbEnsembles: Record<string, any> = {};
+   143→  try {
+   144→    let cacheRow = await db.modelPredictionCache.findUnique({ where: { symbol: sym } });
+   145→    if (!cacheRow) {
+   146→      // On-demand self-heal: build + persist so the next visit is a pure DB read.
+   147→      const bars = await db.ohlcvBar.findMany({
+   148→        where: { symbol: sym },
+   149→        orderBy: { date: "asc" },
+   150→        select: { date: true, close: true, volume: true },
+   151→      });
+   152→      const built = buildSymbolFallbackPredictions(
+   153→        bars.map((b) => ({ date: b.date, close: b.close, volume: b.volume }))
+   154→      );
+   155→      if (built) {
+   156→        const json = JSON.stringify({ models: built.models, ensembles: built.ensembles });
+   157→        await db.modelPredictionCache.upsert({
+   158→          where: { symbol: sym },
+   159→          create: { symbol: sym, predictionsJson: json, dataSourceDate: built.dataSourceDate },
+   160→          update: { predictionsJson: json, dataSourceDate: built.dataSourceDate, computedAt: new Date() },
+   161→        });
+   162→        cacheRow = { symbol: sym, predictionsJson: json, computedAt: new Date(), dataSourceDate: built.dataSourceDate } as any;
+   163→      }
+   164→    }
+   165→    if (cacheRow) {
+   166→      const fb = JSON.parse(cacheRow.predictionsJson || "{}") as {
+   167→        models?: Record<string, any>;
+   168→        ensembles?: Record<string, any>;
+   169→      };
+   170→      fbModels = fb.models || {};
+   171→      fbEnsembles = fb.ensembles || {};
+   172→      extendedAt = cacheRow.computedAt ? new Date(cacheRow.computedAt).toISOString() : null;
+   173→      for (let i = 0; i < predictions.length; i++) {
+   174→        const meta = predictions[i];
+   175→        // already has a real prediction from the Python pipeline → keep it
+   176→        if (meta.trained && (meta as any).signal) continue;
+   177→        const fp =
+   178→          fbModels[meta.name] ||
+   179→          fbModels[meta.name.replace(" (CL)", "")] ||
+   180→          fbModels[meta.name.replace(" (X)", "")] ||
+   181→          fbModels[meta.name.replace(/\s+/g, "")];
+   182→        if (fp) {
+   183→          predictions[i] = {
+   184→            ...meta,
+   185→            trained: true,
+   186→            extended: true,
+   187→            untrainedReason: undefined,
+   188→            signal: fp.signal,
+   189→            direction: fp.direction,
+   190→            confidence: fp.confidence,
+   191→            currentPrice: fp.currentPrice,
+   192→            entry: fp.entry,
+   193→            sl: fp.sl,
+   194→            tp1: fp.tp1,
+   195→            tp2: fp.tp2,
+   196→            tp3: fp.tp3,
+   197→            avgReturn: fp.avgReturn,
+   198→            ...(fp.raw_prob !== undefined ? { raw_prob: fp.raw_prob } : {}),
+   199→            ...(fp.exp_win_rate !== undefined ? { exp_win_rate: fp.exp_win_rate } : {}),
+   200→            ...(fp.agreement !== undefined ? { agreement: fp.agreement } : {}),
+   201→          } as ModelPrediction;
+   202→          extendedCount++;
+   203→        }
+   204→      }
+   205→    }
+   206→  } catch (e) {
+   207→    console.warn(`[ai-model-signals] extended-training merge failed for ${sym}:`, e);
+   208→  }
+   209→
+   210→  // ---- Build ensembles array (6 ensembles now: 3 base + CL + CL-Extender + CL-2)
+   211→  const baseEnsembles = [
+   212→    majorityVoteEnsemble(predictions),
+   213→    probabilityWeightedEnsemble(predictions),
+   214→    tierWeightedEnsemble(predictions),
+   215→  ];
+   216→
+   217→  const clEnsPred = multi?.cl_ensemble_predictions?.[sym] ?? fbEnsembles["cl_ensemble"];
+   218→  const clExtPred = multi?.cl_extender_predictions?.[sym] ?? fbEnsembles["cl_extender"];
+   219→  const cl2EnsPred = multi?.cl2_ensemble_predictions?.[sym] ?? fbEnsembles["cl2_ensemble"];
+   220→  const piEnsPred = multi?.pi_ensemble_predictions?.[sym] ?? fbEnsembles["pi_ensemble"];
+   221→  const gmEnsPred = multi?.gm_model_predictions?.[sym] ?? fbEnsembles["gm_model"];
+   222→  const cgEnsPred = multi?.cg_ensemble_predictions?.[sym] ?? fbEnsembles["cg_ensemble"];
+   223→  const xEnsPred = multi?.x_ensemble_predictions?.[sym] ?? fbEnsembles["x_ensemble"];
+   224→  const gianEnsPred = multi?.gian_ensemble_predictions?.[sym] ?? fbEnsembles["gian_ensemble"];
+   225→  const gianExtPred = multi?.gian_extender_predictions?.[sym] ?? fbEnsembles["gian_extender"];
+   226→  const mEnsPred = multi?.m_ensemble_predictions?.[sym] ?? fbEnsembles["m_ensemble"];
+   227→
+   228→  const clEnsEntry = clEnsPred
+   229→    ? {
+   230→        method: "CL_ENSEMBLE",
+   231→        methodLabel: "D. CL-Ensemble (LGB70+Log30)",
+   232→        signal: clEnsPred.signal as any,
+   233→        direction: clEnsPred.direction as any,
+   234→        confidence: clEnsPred.confidence,
+   235→        predictedPrice: clEnsPred.tp3,
+   236→        entry: clEnsPred.entry,
+   237→        sl: clEnsPred.sl,
+   238→        tp1: clEnsPred.tp1,
+   239→        tp2: clEnsPred.tp2,
+   240→        tp3: clEnsPred.tp3,
+   241→        modelCount: 2,
+   242→        buyCount: 0,
+   243→        sellCount: 0,
+   244→        holdCount: 0,
+   245→      }
+   246→    : null;
+   247→
+   248→  const clExtEntry = clExtPred
+   249→    ? {
+   250→        method: "CL_EXTENDER",
+   251→        methodLabel: "E. CL-Extender (8-model weighted)",
+   252→        signal: clExtPred.signal as any,
+   253→        direction: clExtPred.direction as any,
+   254→        confidence: clExtPred.confidence,
+   255→        predictedPrice: clExtPred.tp3,
+   256→        entry: clExtPred.entry,
+   257→        sl: clExtPred.sl,
+   258→        tp1: clExtPred.tp1,
+   259→        tp2: clExtPred.tp2,
+   260→        tp3: clExtPred.tp3,
+   261→        modelCount: 8,
+   262→        buyCount: 0,
+   263→        sellCount: 0,
+   264→        holdCount: 0,
+   265→      }
+   266→    : null;
+   267→
+   268→  // CL-2 Ensemble: 7 CPU classifiers + logistic meta on OOF predictions,
+   269→  // calibrated via decile binning on OOS backtest. SL rule: support/ATR
+   270→  // (whichever closer to entry, min 0.5×ATR); target = TP1 hit before SL
+   271→  // in 5 days; exits = 50%@TP1, 30%@TP2, 20%@TP3, SL→BE after TP1.
+   272→  const cl2EnsEntry = cl2EnsPred
+   273→    ? {
+   274→        method: "CL2_ENSEMBLE",
+   275→        methodLabel: "F. CL-2 Ensemble (7 classifiers + logistic meta, calibrated)",
+   276→        signal: cl2EnsPred.signal as any,
+   277→        direction: cl2EnsPred.direction as any,
+   278→        confidence: cl2EnsPred.confidence,
+   279→        predictedPrice: cl2EnsPred.tp3,
+   280→        entry: cl2EnsPred.entry,
+   281→        sl: cl2EnsPred.sl,
+   282→        tp1: cl2EnsPred.tp1,
+   283→        tp2: cl2EnsPred.tp2,
+   284→        tp3: cl2EnsPred.tp3,
+   285→        modelCount: 7,
+   286→        buyCount: 0,
+   287→        sellCount: 0,
+   288→        holdCount: 0,
+   289→        // CL-2 specific transparency fields (rendered in the UI's CL-2 row)
+   290→        raw_prob: cl2EnsPred.raw_prob,
+   291→        exp_win_rate: cl2EnsPred.exp_win_rate,
+   292→        agreement: cl2EnsPred.agreement,
+   293→      }
+   294→    : null;
+   295→
+   296→  // PI-Ensemble: 4 models (Linear/Logistic Regression, Pattern Matcher KNN,
+   297→  // Neural Network) + logistic meta on OOF predictions, calibrated via decile
+   298→  // binning. Same SL rule and target as CL-2.
+   299→  const piEnsEntry = piEnsPred
+   300→    ? {
+   301→        method: "PI_ENSEMBLE",
+   302→        methodLabel: "G. PI-Ensemble (4 models: Linear/Logistic, KNN, NN)",
+   303→        signal: piEnsPred.signal as any,
+   304→        direction: piEnsPred.direction as any,
+   305→        confidence: piEnsPred.confidence,
+   306→        predictedPrice: piEnsPred.tp3,
+   307→        entry: piEnsPred.entry,
+   308→        sl: piEnsPred.sl,
+   309→        tp1: piEnsPred.tp1,
+   310→        tp2: piEnsPred.tp2,
+   311→        tp3: piEnsPred.tp3,
+   312→        modelCount: 4,
+   313→        buyCount: 0,
+   314→        sellCount: 0,
+   315→        holdCount: 0,
+   316→        // PI-specific transparency fields
+   317→        raw_prob: piEnsPred.raw_prob,
+   318→        exp_win_rate: piEnsPred.exp_win_rate,
+   319→        agreement: piEnsPred.agreement,
+   320→      }
+   321→    : null;
+   322→
+   323→  // GM-Model Ensembler: 4-Pillar Weighted Framework
+   324→  // (Technical 35% + Announcements 30% + Fundamental 20% + Macro 15%).
+   325→  // Rule-based, not ML. SL = 1.5×ATR; TP1/2/3 = 1.5/3/4.5×ATR.
+   326→  // Exits: 50%@TP1 (SL→BE), 30%@TP2, 20% trailing 20-EMA.
+   327→  const gmEnsEntry = gmEnsPred
+   328→    ? {
+   329→        method: "GM_MODEL",
+   330→        methodLabel: "H. GM-Model Ensembler (4-Pillar: 35/30/20/15)",
+   331→        signal: gmEnsPred.signal as any,
+   332→        direction: gmEnsPred.direction as any,
+   333→        confidence: gmEnsPred.confidence,
+   334→        predictedPrice: gmEnsPred.tp3,
+   335→        entry: gmEnsPred.entry,
+   336→        sl: gmEnsPred.sl,
+   337→        tp1: gmEnsPred.tp1,
+   338→        tp2: gmEnsPred.tp2,
+   339→        tp3: gmEnsPred.tp3,
+   340→        modelCount: 4, // 4 pillars
+   341→        buyCount: 0,
+   342→        sellCount: 0,
+   343→        holdCount: 0,
+   344→        // GM-specific transparency fields
+   345→        total_score: gmEnsPred.total_score,
+   346→        pillars: gmEnsPred.pillars,
+   347→      }
+   348→    : null;
+   349→
+   350→  // CG-Ensemble: 2 swing-trading classifiers (LightGBM + XGBoost) with
+   351→  // triple-barrier labels (10-day horizon), 1R/2R/3R TPs, walk-forward CV,
+   352→  // cost model (50 bps round-trip + 15% CGT on gains). Probability averaging
+   353→  // of the 2 models + decile calibration.
+   354→  const cgEnsEntry = cgEnsPred
+   355→    ? {
+   356→        method: "CG_ENSEMBLE",
+   357→        methodLabel: "I. CG-Ensemble (LightGBM + XGBoost, triple-barrier, cost-aware)",
+   358→        signal: cgEnsPred.signal as any,
+   359→        direction: cgEnsPred.direction as any,
+   360→        confidence: cgEnsPred.confidence,
+   361→        predictedPrice: cgEnsPred.tp3,
+   362→        entry: cgEnsPred.entry,
+   363→        sl: cgEnsPred.sl,
+   364→        tp1: cgEnsPred.tp1,
+   365→        tp2: cgEnsPred.tp2,
+   366→        tp3: cgEnsPred.tp3,
+   367→        modelCount: 2,
+   368→        buyCount: 0,
+   369→        sellCount: 0,
+   370→        holdCount: 0,
+   371→        // CG-specific transparency fields
+   372→        raw_prob: cgEnsPred.raw_prob,
+   373→        exp_win_rate: cgEnsPred.exp_win_rate,
+   374→        agreement: cgEnsPred.agreement,
+   375→        expected_return: cgEnsPred.expected_return,
+   376→        r_pct: cgEnsPred.r_pct,
+   377→      }
+   378→    : null;
+   379→
+   380→  // X-Ensemble: 10 complementary strategies + LightGBM meta-labeling.
+   381→  // Proper methodology: 3-way chronological split (train 60% / calibrate 15%
+   382→  // / test 25%) with 15-bar purge+embargo, next-bar-open entries, conservative
+   383→  // ambiguous-barrier handling, Platt + isotonic calibration. 90% precision
+   384→  // achieved on untouched OOS test, but negative net expectancy (honest report).
+   385→  const xEnsEntry = xEnsPred
+   386→    ? {
+   387→        method: "X_ENSEMBLE",
+   388→        methodLabel: "J. X-Ensemble (10 strategies + LightGBM meta-labeling, cost-aware)",
+   389→        signal: xEnsPred.signal as any,
+   390→        direction: xEnsPred.direction as any,
+   391→        confidence: xEnsPred.confidence,
+   392→        predictedPrice: xEnsPred.tp3,
+   393→        entry: xEnsPred.entry,
+   394→        sl: xEnsPred.sl,
+   395→        tp1: xEnsPred.tp1,
+   396→        tp2: xEnsPred.tp2,
+   397→        tp3: xEnsPred.tp3,
+   398→        modelCount: 10, // 10 strategies
+   399→        buyCount: 0,
+   400→        sellCount: 0,
+   401→        holdCount: 0,
+   402→        // X-specific transparency fields
+   403→        raw_prob: xEnsPred.raw_prob,
+   404→        exp_win_rate: xEnsPred.exp_win_rate,
+   405→        agreement: xEnsPred.agreement,
+   406→        strategy_signals: xEnsPred.strategy_signals,
+   407→      }
+   408→    : null;
+   409→
+   410→  // Gian-Ensemble: Square-root support/resistance with odd-number rule.
+   411→  const gianEnsEntry = gianEnsPred
+   412→    ? {
+   413→        method: "GIAN_ENSEMBLE",
+   414→        methodLabel: "K. Gian-Ensemble (Square-root S/R with odd-number rule)",
+   415→        signal: gianEnsPred.signal as any,
+   416→        direction: gianEnsPred.direction as any,
+   417→        confidence: gianEnsPred.confidence,
+   418→        predictedPrice: gianEnsPred.tp3,
+   419→        entry: gianEnsPred.entry,
+   420→        sl: gianEnsPred.sl,
+   421→        tp1: gianEnsPred.tp1,
+   422→        tp2: gianEnsPred.tp2,
+   423→        tp3: gianEnsPred.tp3,
+   424→        modelCount: 6, // 6 S/R levels
+   425→        buyCount: 0,
+   426→        sellCount: 0,
+   427→        holdCount: 0,
+   428→        gian_levels: gianEnsPred.gian_levels,
+   429→      }
+   430→    : null;
+   431→
+   432→  // Gian-Extender: Fixed GANN grid (Linear GANN 2.0 Pine Script).
+   433→  const gianExtEntry = gianExtPred
+   434→    ? {
+   435→        method: "GIAN_EXTENDER",
+   436→        methodLabel: "L. Gian-Extender (Fixed GANN square-of-9 levels, Linear GANN 2.0)",
+   437→        signal: gianExtPred.signal as any,
+   438→        direction: gianExtPred.direction as any,
+   439→        confidence: gianExtPred.confidence,
+   440→        predictedPrice: gianExtPred.tp3,
+   441→        entry: gianExtPred.entry,
+   442→        sl: gianExtPred.sl,
+   443→        tp1: gianExtPred.tp1,
+   444→        tp2: gianExtPred.tp2,
+   445→        tp3: gianExtPred.tp3,
+   446→        modelCount: 6, // 6 S/R levels
+   447→        buyCount: 0,
+   448→        sellCount: 0,
+   449→        holdCount: 0,
+   450→        gann_levels: gianExtPred.gann_levels,
+   451→      }
+   452→    : null;
+   453→
+   454→  // M-Ensemble: Historical price-touch S/R with ATR clustering.
+   455→  const mEnsEntry = mEnsPred
+   456→    ? {
+   457→        method: "M_ENSEMBLE",
+   458→        methodLabel: "M. M-Ensemble (Historical price-touch S/R with ATR clustering)",
+   459→        signal: mEnsPred.signal as any,
+   460→        direction: mEnsPred.direction as any,
+   461→        confidence: mEnsPred.confidence,
+   462→        predictedPrice: mEnsPred.tp3,
+   463→        entry: mEnsPred.entry,
+   464→        sl: mEnsPred.sl,
+   465→        tp1: mEnsPred.tp1,
+   466→        tp2: mEnsPred.tp2,
+   467→        tp3: mEnsPred.tp3,
+   468→        modelCount: 6, // 6 S/R levels
+   469→        buyCount: 0,
+   470→        sellCount: 0,
+   471→        holdCount: 0,
+   472→        m_levels: mEnsPred.m_levels,
+   473→      }
+   474→    : null;
+   475→
+   476→  const ensembles = [...baseEnsembles];
+   477→  if (clEnsEntry) ensembles.push(clEnsEntry);
+   478→  if (clExtEntry) ensembles.push(clExtEntry);
+   479→  if (cl2EnsEntry) ensembles.push(cl2EnsEntry);
+   480→  if (piEnsEntry) ensembles.push(piEnsEntry);
+   481→  if (gmEnsEntry) ensembles.push(gmEnsEntry);
+   482→  if (cgEnsEntry) ensembles.push(cgEnsEntry);
+   483→  if (xEnsEntry) ensembles.push(xEnsEntry);
+   484→  if (gianEnsEntry) ensembles.push(gianEnsEntry);
+   485→  if (gianExtEntry) ensembles.push(gianExtEntry);
+   486→  if (mEnsEntry) ensembles.push(mEnsEntry);
+   487→
+   488→  const finalConsensus = computeFinalConsensus(ensembles);
+   489→
+   490→  // Issue 3: TECHNICAL FALLBACK for stocks NOT in the 361-stock ML universe
+   491→  // (e.g. TISL — Tasdeeq Limited — has no ML predictions, so every model shows
+   492→  // 0). For those, generate a real signal from the live OHLCV using EMA/RSI/ATR
+   493→  // so the user gets a BUY/SELL + SL/TP1/2/3 + confidence instead of zeros.
+   494→  let fallbackNote: string | null = null;
+   495→  if (ensembles.length === 0 || (!finalConsensus.entry || finalConsensus.entry <= 0)) {
+   496→    try {
+   497→      // 1. Load OHLCV — DB backup first, then live psxdata.
+   498→      let bars: { date: string; open: number; high: number; low: number; close: number; volume: number }[] = [];
+   499→      try {
+   500→        const rows = await db.ohlcvBar.findMany({ where: { symbol: sym }, orderBy: { date: "asc" }, take: 400 });
+   501→        bars = rows.map((r) => ({ date: r.date, open: r.open, high: r.high, low: r.low, close: r.close, volume: r.volume }));
+   502→      } catch {}
+   503→      if (bars.length < 30) {
+   504→        const hist = await getHistorical(sym);
+   505→        bars = (hist || []).map((b: any) => ({ date: b.date, open: Number(b.open), high: Number(b.high), low: Number(b.low), close: Number(b.close), volume: Number(b.volume || 0) }));
+   506→      }
+   507→      if (bars.length >= 30) {
+   508→        const closes = bars.map((b) => b.close);
+   509→        const entry = closes[closes.length - 1];
+   510→        if (!currentPrice || currentPrice <= 0) currentPrice = entry;
+   511→        // ATR(14)
+   512→        const trs: number[] = [];
+   513→        for (let i = 1; i < bars.length; i++) {
+   514→          trs.push(Math.max(bars[i].high - bars[i].low, Math.abs(bars[i].high - bars[i - 1].close), Math.abs(bars[i].low - bars[i - 1].close)));
+   515→        }
+   516→        const atrVal = trs.slice(-14).reduce((s, v) => s + v, 0) / Math.min(14, trs.length || 1) || entry * 0.02;
+   517→        // EMA20, EMA50, RSI(14)
+   518→        const ema = (period: number) => {
+   519→          const k = 2 / (period + 1);
+   520→          let e = closes[0];
+   521→          for (let i = 1; i < closes.length; i++) e = closes[i] * k + e * (1 - k);
+   522→          return e;
+   523→        };
+   524→        const ema20 = ema(20), ema50 = ema(50);
+   525→        const rsiCalc = () => {
+   526→          let g = 0, l = 0;
+   527→          for (let i = closes.length - 14; i < closes.length; i++) {
+   528→            if (i < 1) continue;
+   529→            const ch = closes[i] - closes[i - 1];
+   530→            if (ch > 0) g += ch; else l -= ch;
+   531→          }
+   532→          const ag = g / 14, al = l / 14;
+   533→          if (al === 0) return 100;
+   534→          return 100 - 100 / (1 + ag / al);
+   535→        };
+   536→        const rsi = rsiCalc();
+   537→        // Direction: BUY on uptrend (EMA20>EMA50) OR oversold bounce (RSI<30);
+   538→        // SELL on downtrend (EMA20<EMA50) OR overbought (RSI>70); else HOLD.
+   539→        let signal: "BUY" | "SELL" | "HOLD" = "HOLD";
+   540→        let direction: "LONG" | "SHORT" = "LONG";
+   541→        let confidence = 40;
+   542→        if (ema20 > ema50 && rsi < 70) { signal = "BUY"; direction = "LONG"; confidence = 55 + Math.min(30, Math.abs((rsi - 50))); }
+   543→        else if (ema20 < ema50 && rsi > 30) { signal = "SELL"; direction = "SHORT"; confidence = 55 + Math.min(30, Math.abs((rsi - 50))); }
+   544→        else if (rsi < 30) { signal = "BUY"; direction = "LONG"; confidence = 50; }
+   545→        else if (rsi > 70) { signal = "SELL"; direction = "SHORT"; confidence = 50; }
+   546→        const sl = signal === "BUY" ? entry - 1.5 * atrVal : entry + 1.5 * atrVal;
+   547→        const tp1 = signal === "BUY" ? entry + 1 * atrVal : entry - 1 * atrVal;
+   548→        const tp2 = signal === "BUY" ? entry + 2 * atrVal : entry - 2 * atrVal;
+   549→        const tp3 = signal === "BUY" ? entry + 3 * atrVal : entry - 3 * atrVal;
+   550→        // Overwrite finalConsensus with the technical signal
+   551→        const fcAny = finalConsensus as any;
+   552→        fcAny.signal = signal;
+   553→        fcAny.direction = direction;
+   554→        fcAny.confidence = Math.round(confidence);
+   555→        fcAny.entry = entry;
+   556→        fcAny.sl = sl;
+   557→        fcAny.tp1 = tp1;
+   558→        fcAny.tp2 = tp2;
+   559→        fcAny.tp3 = tp3;
+   560→        fcAny.predictedPriceRange = { min: Math.min(tp1, tp2, tp3), max: Math.max(tp1, tp2, tp3) };
+   561→        fcAny.agreement = signal === "HOLD" ? 0 : 100;
+   562→        // Add a Technical Fallback ensemble so the UI shows the signal
+   563→        ensembles.push({
+   564→          method: "TECHNICAL_FALLBACK", methodLabel: "Technical Fallback (EMA/RSI/ATR — no ML prediction)",
+   565→          signal, direction, confidence: Math.round(confidence),
+   566→          predictedPrice: tp3, entry, sl, tp1, tp2, tp3,
+   567→          modelCount: 1, buyCount: signal === "BUY" ? 1 : 0, sellCount: signal === "SELL" ? 1 : 0, holdCount: signal === "HOLD" ? 1 : 0,
+   568→        } as any);
+   569→        fallbackNote = `Technical fallback — ${sym} is outside the 361-stock ML-trained universe, so no model produced a prediction. This signal is generated from live OHLCV using EMA(20/50) trend + RSI(14) + ATR(14) SL/TP. EMA20=${ema20.toFixed(2)}, EMA50=${ema50.toFixed(2)}, RSI=${rsi.toFixed(1)}, ATR=${atrVal.toFixed(2)}.`;
+   570→      } else {
+   571→        fallbackNote = `${sym} has no ML prediction and not enough OHLCV history (< 30 bars) to generate a technical fallback signal.`;
+   572→      }
+   573→    } catch (e: any) {
+   574→      fallbackNote = `Technical fallback failed: ${e?.message || e}`;
+   575→    }
+   576→  }
+   577→
+   578→  // Build tiers — include TIER_GIAN
+   579→  const tiers = (
+   580→    ["TIER_1", "TIER_2", "TIER_3", "TIER_4", "TIER_CL", "TIER_CL_2", "TIER_PI", "TIER_GM", "TIER_CG", "TIER_X", "TIER_GIAN"] as const
+   581→  ).map((t) => ({
+   582→    tier: t,
+   583→    label: ALL_MODELS.find((m) => m.tier === t)?.tierLabel || t,
+   584→    models: predictions.filter((p) => p.tier === t),
+   585→  }));
+   586→
+   587→  // Issue 2: merge DB-cached extended-universe backtests (cover ALL stocks,
+   588→  // incl. new / low-data listings) — DB values take precedence over the file.
+   589→  let dbModelBacktests: Record<string, any> = {};
+   590→  let dbEnsBacktests: Record<string, any> = {};
+   591→  try {
+   592→    const btRows = await db.modelBacktestCache.findMany();
+   593→    for (const r of btRows) {
+   594→      const stats = JSON.parse(r.payloadJson);
+   595→      if (r.kind === "ensemble") dbEnsBacktests[r.key] = stats;
+   596→      else dbModelBacktests[r.key] = stats;
+   597→    }
+   598→  } catch {}
+   599→
+   600→  const resp = {
+   601→    symbol: sym,
+   602→    stockName,
+   603→    currentPrice,
+   604→    tiers,
+   605→    ensembles,
+   606→    finalConsensus,
+   607→    fallbackNote,
+   608→    // Issue 2: extended-training transparency
+   609→    extendedCount,
+   610→    extendedAt,
+   611→    trainedModelCount: predictions.filter((p) => p.trained).length,
+   612→    totalModelCount: predictions.length,
+   613→    trainedAt: multi?.trained_at,
+   614→    backtesting: { ...(multi?.backtesting || {}), ...dbModelBacktests },
+   615→    ensembleBacktesting: { ...(multi?.ensemble_backtesting || {}), ...dbEnsBacktests },
+   616→    backtestSource: Object.keys(dbModelBacktests).length > 0 ? "db-extended-universe" : "file",
+   617→    walkForward: multi?.walk_forward_backtesting || {},
+   618→    clEnsemble: multi?.cl_ensemble_backtest || {},
+   619→    clEnsembleAll: multi?.cl_ensemble_backtest_all || {},
+   620→    clExtender: multi?.cl_extender_backtest || {},
+   621→    clEnsemblePredictions: multi?.cl_ensemble_predictions || {},
+   622→    clExtenderPredictions: multi?.cl_extender_predictions || {},
+   623→    // CL-2 ensemble predictions + metadata
+   624→    cl2EnsemblePredictions: multi?.cl2_ensemble_predictions || {},
+   625→    cl2Metadata: multi?.cl2_metadata || {},
+   626→    // PI-Ensemble predictions + metadata
+   627→    piEnsemblePredictions: multi?.pi_ensemble_predictions || {},
+   628→    piMetadata: multi?.pi_metadata || {},
+   629→    // GM-Model predictions + metadata
+   630→    gmModelPredictions: multi?.gm_model_predictions || {},
+   631→    gmMetadata: multi?.gm_metadata || {},
+   632→    // CG-Ensemble predictions + metadata
+   633→    cgEnsemblePredictions: multi?.cg_ensemble_predictions || {},
+   634→    cgMetadata: multi?.cg_metadata || {},
+   635→    // X-Ensemble predictions + metadata (NEW)
+   636→    xEnsemblePredictions: multi?.x_ensemble_predictions || {},
+   637→    xMetadata: multi?.x_metadata || {},
+   638→    // Gian-Ensemble + Gian-Extender predictions + metadata
+   639→    gianEnsemblePredictions: multi?.gian_ensemble_predictions || {},
+   640→    gianExtenderPredictions: multi?.gian_extender_predictions || {},
+   641→    gianMetadata: multi?.gian_metadata || {},
+   642→    gianExtenderMetadata: multi?.gian_extender_metadata || {},
+   643→    // M-Ensemble predictions + metadata
+   644→    mEnsemblePredictions: multi?.m_ensemble_predictions || {},
+   645→    mMetadata: multi?.m_metadata || {},
+   646→  };
+   647→
+   648→  await cacheSetJSON(CK(sym), resp, 3600);
+   649→  return NextResponse.json({ ...resp, cached: false, latencyMs: Date.now() - start });
+   650→}
+   651→

@@ -1,0 +1,1073 @@
+     1→// ============================================================================
+     2→// Stock PRICE pattern detection engine — technical/chart patterns from OHLCV.
+     3→//
+     4→// Mirrors the fundamental pattern engine (mock-company-results.ts#DetectedPattern)
+     5→// shape so the UI can reuse the same PatternRow rendering: label, severity,
+     6→// strength tier, 0-100 confidence, detailed explanation, supporting data
+     7→// points, affected dates, and a plain-English layman summary.
+     8→//
+     9→// Detector families:
+    10→//   * Trend        — regression slope, price vs SMA200, golden/death cross
+    11→//   * Momentum     — RSI overbought/oversold, MACD crossovers
+    12→//   * Breakout     — 52-week high/low proximity, gap up/down
+    13→//   * Structure    — higher highs / lower lows, double top / double bottom
+    14→//   * Volatility   — Bollinger Band squeeze
+    15→//   * Volume       — volume spikes / dry-up
+    16→//   * Candlestick  — engulfing, hammer, shooting star, doji, morning/evening star
+    17→//   * Levels       — nearest support / resistance (informational)
+    18→// ============================================================================
+    19→
+    20→export interface PriceBar {
+    21→  date: string; // YYYY-MM-DD
+    22→  open: number;
+    23→  high: number;
+    24→  low: number;
+    25→  close: number;
+    26→  volume: number;
+    27→}
+    28→
+    29→export type PatternStrength = "Strong" | "Moderate" | "Weak";
+    30→export interface SupportingDataPoint { label: string; value: string; }
+    31→
+    32→export interface StockDetectedPattern {
+    33→  type: string;
+    34→  label: string;
+    35→  severity: "positive" | "negative" | "neutral";
+    36→  strength: PatternStrength;
+    37→  confidence: number; // 0-100
+    38→  category: "trend" | "momentum" | "breakout" | "structure" | "volatility" | "volume" | "candlestick";
+    39→  detail: string;
+    40→  supportingData: SupportingDataPoint[];
+    41→  affectedQuarters: string[]; // dates that triggered the pattern
+    42→  laymanSummary: string;
+    43→}
+    44→
+    45→export interface StockPatternStats {
+    46→  currentPrice: number;
+    47→  changePct1D: number;
+    48→  changePct1M: number;
+    49→  changePct3M: number;
+    50→  changePct12M: number;
+    51→  trendLabel: "Uptrend" | "Downtrend" | "Sideways";
+    52→  trendSlopeAnnualPct: number;
+    53→  high52w: number;
+    54→  pctFrom52wHigh: number;
+    55→  low52w: number;
+    56→  pctFrom52wLow: number;
+    57→  rsi14: number;
+    58→  macdHistogram: number;
+    59→  macdStatus: "Bullish" | "Bearish" | "Neutral";
+    60→  sma20: number | null;
+    61→  sma50: number | null;
+    62→  sma200: number | null;
+    63→  volatilityAnnualPct: number;
+    64→  avgVolume20: number;
+    65→  barCount: number;
+    66→  firstDate: string;
+    67→  lastDate: string;
+    68→  support: { price: number; touches: number; lastTouch: string } | null;
+    69→  resistance: { price: number; touches: number; lastTouch: string } | null;
+    70→  bullCount: number;
+    71→  bearCount: number;
+    72→  neutralCount: number;
+    73→}
+    74→
+    75→export interface ChartPoint {
+    76→  date: string;
+    77→  close: number;
+    78→  sma20: number | null;
+    79→  sma50: number | null;
+    80→  sma200: number | null;
+    81→  volume: number;
+    82→}
+    83→
+    84→// ────────────────────────── indicator helpers ───────────────────────────────
+    85→
+    86→function smaSeries(values: number[], n: number): (number | null)[] {
+    87→  const out: (number | null)[] = [];
+    88→  let sum = 0;
+    89→  for (let i = 0; i < values.length; i++) {
+    90→    sum += values[i];
+    91→    if (i >= n) sum -= values[i - n];
+    92→    out.push(i >= n - 1 ? sum / n : null);
+    93→  }
+    94→  return out;
+    95→}
+    96→
+    97→function emaSeries(values: number[], n: number): number[] {
+    98→  const k = 2 / (n + 1);
+    99→  const out: number[] = [];
+   100→  let prev = values[0] ?? 0;
+   101→  for (let i = 0; i < values.length; i++) {
+   102→    prev = i === 0 ? values[0] : values[i] * k + prev * (1 - k);
+   103→    out.push(prev);
+   104→  }
+   105→  return out;
+   106→}
+   107→
+   108→function rsiSeries(closes: number[], n = 14): number[] {
+   109→  const out: number[] = [];
+   110→  let avgGain = 0, avgLoss = 0;
+   111→  for (let i = 0; i < closes.length; i++) {
+   112→    if (i === 0) { out.push(50); continue; }
+   113→    const diff = closes[i] - closes[i - 1];
+   114→    const gain = Math.max(0, diff);
+   115→    const loss = Math.max(0, -diff);
+   116→    if (i <= n) {
+   117→      avgGain = (avgGain * (i - 1) + gain) / i;
+   118→      avgLoss = (avgLoss * (i - 1) + loss) / i;
+   119→    } else {
+   120→      avgGain = (avgGain * (n - 1) + gain) / n;
+   121→      avgLoss = (avgLoss * (n - 1) + loss) / n;
+   122→    }
+   123→    const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+   124→    out.push(avgLoss === 0 ? 100 : 100 - 100 / (1 + rs));
+   125→  }
+   126→  return out;
+   127→}
+   128→
+   129→function macdHistogramSeries(closes: number[]): number[] {
+   130→  const ema12 = emaSeries(closes, 12);
+   131→  const ema26 = emaSeries(closes, 26);
+   132→  const macdLine = closes.map((_, i) => ema12[i] - ema26[i]);
+   133→  const signal = emaSeries(macdLine, 9);
+   134→  return macdLine.map((m, i) => m - signal[i]);
+   135→}
+   136→
+   137→interface Pivot { idx: number; price: number; date: string; kind: "high" | "low"; }
+   138→
+   139→function findPivots(bars: PriceBar[], w = 3): Pivot[] {
+   140→  const pivots: Pivot[] = [];
+   141→  for (let i = w; i < bars.length - w; i++) {
+   142→    let isHigh = true, isLow = true;
+   143→    for (let j = i - w; j <= i + w; j++) {
+   144→      if (j === i) continue;
+   145→      if (bars[j].high >= bars[i].high) isHigh = false;
+   146→      if (bars[j].low <= bars[i].low) isLow = false;
+   147→    }
+   148→    if (isHigh) pivots.push({ idx: i, price: bars[i].high, date: bars[i].date, kind: "high" });
+   149→    if (isLow) pivots.push({ idx: i, price: bars[i].low, date: bars[i].date, kind: "low" });
+   150→  }
+   151→  return pivots;
+   152→}
+   153→
+   154→// Least-squares regression on (index, value)
+   155→function linreg(values: number[]): { slope: number; r2: number } {
+   156→  const n = values.length;
+   157→  if (n < 2) return { slope: 0, r2: 0 };
+   158→  const meanX = (n - 1) / 2;
+   159→  const meanY = values.reduce((s, v) => s + v, 0) / n;
+   160→  let num = 0, den = 0, ssTot = 0;
+   161→  for (let i = 0; i < n; i++) {
+   162→    num += (i - meanX) * (values[i] - meanY);
+   163→    den += (i - meanX) ** 2;
+   164→    ssTot += (values[i] - meanY) ** 2;
+   165→  }
+   166→  const slope = den === 0 ? 0 : num / den;
+   167→  const r2 = ssTot === 0 ? 0 : num * num / (den * ssTot);
+   168→  return { slope, r2 };
+   169→}
+   170→
+   171→function pct(a: number, b: number): number { return b === 0 ? 0 : ((a - b) / b) * 100; }
+   172→function fmtP(v: number, d = 1): string { return `${v >= 0 ? "+" : ""}${v.toFixed(d)}%`; }
+   173→function fmtPrice(v: number): string { return `Rs. ${v.toFixed(2)}`; }
+   174→function fmtVol(v: number): string {
+   175→  if (v >= 1e9) return `${(v / 1e9).toFixed(2)}B`;
+   176→  if (v >= 1e6) return `${(v / 1e6).toFixed(2)}M`;
+   177→  if (v >= 1e3) return `${(v / 1e3).toFixed(1)}K`;
+   178→  return v.toFixed(0);
+   179→}
+   180→
+   181→// Confidence scaled to strength tier — same floors/caps as tab 1.
+   182→function conf(strength: PatternStrength, base = 0): number {
+   183→  const floor = strength === "Strong" ? 78 : strength === "Moderate" ? 58 : 40;
+   184→  const cap = strength === "Strong" ? 95 : strength === "Moderate" ? 78 : 58;
+   185→  return Math.max(floor, Math.min(cap, floor + base));
+   186→}
+   187→
+   188→function pickStrength(magnitude: number, modTh: number, strongTh: number): PatternStrength {
+   189→  if (Math.abs(magnitude) >= strongTh) return "Strong";
+   190→  if (Math.abs(magnitude) >= modTh) return "Moderate";
+   191→  return "Weak";
+   192→}
+   193→
+   194→// ───────────────────────────── main entry ───────────────────────────────────
+   195→
+   196→export function detectStockPatterns(bars: PriceBar[]): { patterns: StockDetectedPattern[]; stats: StockPatternStats; chart: ChartPoint[] } {
+   197→  const closes = bars.map((b) => b.close);
+   198→  const vols = bars.map((b) => b.volume);
+   199→  const n = bars.length;
+   200→  const last = bars[n - 1];
+   201→  const price = last.close;
+   202→
+   203→  // ── indicators ──
+   204→  const sma20S = smaSeries(closes, 20);
+   205→  const sma50S = smaSeries(closes, 50);
+   206→  const sma200S = smaSeries(closes, 200);
+   207→  const sma20 = sma20S[n - 1];
+   208→  const sma50 = sma50S[n - 1];
+   209→  const sma200 = sma200S[n - 1];
+   210→  const rsiS = rsiSeries(closes, 14);
+   211→  const rsi14 = rsiS[n - 1];
+   212→  const macdHistS = macdHistogramSeries(closes);
+   213→  const macdHist = macdHistS[n - 1];
+   214→  const vol20S = smaSeries(vols, 20);
+   215→  const avgVol20 = vol20S[n - 1] ?? 0;
+   216→
+   217→  // 52-week range
+   218→  const lookback52w = Math.max(0, n - 252);
+   219→  const last52w = bars.slice(lookback52w);
+   220→  const high52w = Math.max(...last52w.map((b) => b.high));
+   221→  const low52w = Math.min(...last52w.map((b) => b.low));
+   222→  const pctFrom52wHigh = pct(price, high52w);
+   223→  const pctFrom52wLow = pct(price, low52w);
+   224→
+   225→  // Returns over horizons
+   226→  const changePct1D = n >= 2 ? pct(price, bars[n - 2].close) : 0;
+   227→  const changePct1M = n >= 21 ? pct(price, bars[n - 21].close) : changePct1D;
+   228→  const changePct3M = n >= 63 ? pct(price, bars[n - 63].close) : changePct1M;
+   229→  const changePct12M = n >= 252 ? pct(price, bars[n - 252].close) : pct(price, closes[0]);
+   230→
+   231→  // Trend — regression over last 180 sessions, annualised
+   232→  const trendBars = Math.min(180, n);
+   233→  const trendCloses = closes.slice(n - trendBars);
+   234→  const { slope, r2 } = linreg(trendCloses);
+   235→  // slope = PKR change per session → annualise to a % of the current price
+   236→  const trendSlopeAnnualPct = price > 0 ? ((slope * 252) / price) * 100 : 0;
+   237→  const trendLabel: StockPatternStats["trendLabel"] =
+   238→    Math.abs(trendSlopeAnnualPct) < 5 || r2 < 0.15 ? "Sideways" : trendSlopeAnnualPct > 0 ? "Uptrend" : "Downtrend";
+   239→
+   240→  // Volatility — annualised std-dev of daily returns (last 90 sessions)
+   241→  const rets: number[] = [];
+   242→  for (let i = Math.max(1, n - 90); i < n; i++) rets.push((closes[i] - closes[i - 1]) / closes[i - 1]);
+   243→  const meanRet = rets.reduce((s, v) => s + v, 0) / (rets.length || 1);
+   244→  const vol = Math.sqrt(rets.reduce((s, v) => s + (v - meanRet) ** 2, 0) / (rets.length || 1)) * Math.sqrt(252) * 100;
+   245→
+   246→  // Pivots + support/resistance from last 250 bars
+   247→  const lb = Math.max(0, n - 250);
+   248→  const pivotsAll = findPivots(bars.slice(lb), 3).map((p) => ({ ...p, idx: p.idx + lb }));
+   249→  const lows = pivotsAll.filter((p) => p.kind === "low" && p.price <= price);
+   250→  const highs = pivotsAll.filter((p) => p.kind === "high" && p.price >= price);
+   251→  // nearest support = max pivot low below price; nearest resistance = min pivot high above price
+   252→  let support: StockPatternStats["support"] = null;
+   253→  for (const p of lows) {
+   254→    if (!support || p.price > support.price) support = { price: p.price, touches: 1, lastTouch: p.date };
+   255→  }
+   256→  if (support) {
+   257→    const cluster = lows.filter((p) => Math.abs(pct(p.price, support!.price)) < 2);
+   258→    support.touches = cluster.length;
+   259→    support.lastTouch = cluster[cluster.length - 1]?.date ?? support.lastTouch;
+   260→  }
+   261→  let resistance: StockPatternStats["resistance"] = null;
+   262→  for (const p of highs) {
+   263→    if (!resistance || p.price < resistance.price) resistance = { price: p.price, touches: 1, lastTouch: p.date };
+   264→  }
+   265→  if (resistance) {
+   266→    const cluster = highs.filter((p) => Math.abs(pct(p.price, resistance!.price)) < 2);
+   267→    resistance.touches = cluster.length;
+   268→    resistance.lastTouch = cluster[cluster.length - 1]?.date ?? resistance.lastTouch;
+   269→  }
+   270→
+   271→  // ── pattern detectors ──
+   272→  const patterns: StockDetectedPattern[] = [];
+   273→  const push = (p: StockDetectedPattern) => patterns.push(p);
+   274→
+   275→  // 1. Overall trend (regression slope)
+   276→  {
+   277→    const strength = pickStrength(trendSlopeAnnualPct, 10, 30);
+   278→    if (trendLabel === "Uptrend") {
+   279→      push({
+   280→        type: "TREND_UP",
+   281→        label: `Sustained ${strength.toLowerCase()} uptrend`,
+   282→        severity: "positive",
+   283→        strength,
+   284→        confidence: conf(strength, Math.round(r2 * 15)),
+   285→        category: "trend",
+   286→        detail: `Over the last ${trendBars} trading sessions (${bars[n - trendBars].date} → ${last.date}), the closing price has been climbing at an annualised rate of ${trendSlopeAnnualPct.toFixed(1)}% with a fit quality (R²) of ${r2.toFixed(2)} — ${r2 > 0.6 ? "a very consistent, orderly climb" : r2 > 0.35 ? "a reasonably steady climb" : "a noisy climb with plenty of wiggles"}. The price went from Rs. ${closes[n - trendBars].toFixed(2)} to Rs. ${price.toFixed(2)} over that span (${fmtP(pct(price, closes[n - trendBars]))}).`,
+   287→        supportingData: [
+   288→          { label: "Annualised slope", value: `${trendSlopeAnnualPct.toFixed(1)}%` },
+   289→          { label: "R² fit", value: r2.toFixed(2) },
+   290→          { label: "Period", value: `${trendBars} sessions` },
+   291→          { label: "Total move", value: fmtP(pct(price, closes[n - trendBars])) },
+   292→        ],
+   293→        affectedQuarters: [bars[n - trendBars].date, last.date],
+   294→        laymanSummary: `The stock has been steadily getting more expensive over the past ${trendBars} trading days — like climbing stairs rather than a bumpy rollercoaster. On average it has gained about ${trendSlopeAnnualPct.toFixed(0)}% per year at this pace.`,
+   295→      });
+   296→    } else if (trendLabel === "Downtrend") {
+   297→      push({
+   298→        type: "TREND_DOWN",
+   299→        label: `Sustained ${strength.toLowerCase()} downtrend`,
+   300→        severity: "negative",
+   301→        strength,
+   302→        confidence: conf(strength, Math.round(r2 * 15)),
+   303→        category: "trend",
+   304→        detail: `Over the last ${trendBars} trading sessions (${bars[n - trendBars].date} → ${last.date}), the closing price has been falling at an annualised rate of ${Math.abs(trendSlopeAnnualPct).toFixed(1)}% with a fit quality (R²) of ${r2.toFixed(2)} — ${r2 > 0.6 ? "a consistent, orderly decline" : "a noisy decline with sharp drops"}. The price went from Rs. ${closes[n - trendBars].toFixed(2)} to Rs. ${price.toFixed(2)} (${fmtP(pct(price, closes[n - trendBars]))}).`,
+   305→        supportingData: [
+   306→          { label: "Annualised slope", value: `${trendSlopeAnnualPct.toFixed(1)}%` },
+   307→          { label: "R² fit", value: r2.toFixed(2) },
+   308→          { label: "Period", value: `${trendBars} sessions` },
+   309→          { label: "Total move", value: fmtP(pct(price, closes[n - trendBars])) },
+   310→        ],
+   311→        affectedQuarters: [bars[n - trendBars].date, last.date],
+   312→        laymanSummary: `The stock has been steadily losing value over the past ${trendBars} trading days. On average it has lost about ${Math.abs(trendSlopeAnnualPct).toFixed(0)}% per year at this pace — buyers who jumped in earlier in this window are likely sitting on losses.`,
+   313→      });
+   314→    } else {
+   315→      push({
+   316→        type: "TREND_SIDEWAYS",
+   317→        label: "Sideways / range-bound price action",
+   318→        severity: "neutral",
+   319→        strength: "Moderate",
+   320→        confidence: conf("Moderate", 5),
+   321→        category: "trend",
+   322→        detail: `Over the last ${trendBars} trading sessions the price has moved sideways (annualised slope ${trendSlopeAnnualPct.toFixed(1)}%, R² ${r2.toFixed(2)} — too noisy to call a trend). The price oscillated between roughly Rs. ${Math.min(...trendCloses).toFixed(2)} and Rs. ${Math.max(...trendCloses).toFixed(2)} without committing to a direction.`,
+   323→        supportingData: [
+   324→          { label: "Annualised slope", value: `${trendSlopeAnnualPct.toFixed(1)}%` },
+   325→          { label: "R² fit", value: r2.toFixed(2) },
+   326→          { label: "Range low", value: fmtPrice(Math.min(...trendCloses)) },
+   327→          { label: "Range high", value: fmtPrice(Math.max(...trendCloses)) },
+   328→        ],
+   329→        affectedQuarters: [bars[n - trendBars].date, last.date],
+   330→        laymanSummary: `The price is stuck in a range — it goes up a bit, comes back down, and repeats. Neither buyers nor sellers are winning. Range-bound stocks often pick a direction after a breakout, so watch the range edges.`,
+   331→      });
+   332→    }
+   333→  }
+   334→
+   335→  // 2. Price vs SMA200 (the "long-term line in the sand")
+   336→  if (sma200 !== null) {
+   337→    const dist = pct(price, sma200);
+   338→    const strength = pickStrength(dist, 5, 15);
+   339→    if (dist > 1) {
+   340→      push({
+   341→        type: "ABOVE_SMA200",
+   342→        label: "Price trading above 200-day average",
+   343→        severity: "positive",
+   344→        strength,
+   345→        confidence: conf(strength, Math.min(12, Math.abs(dist) / 2)),
+   346→        category: "trend",
+   347→        detail: `The current price (Rs. ${price.toFixed(2)}) is ${dist.toFixed(1)}% above the 200-day simple moving average (Rs. ${sma200.toFixed(2)}). The 200-day average is the most widely watched long-term trend line — trading above it is a classic sign the long-term trend favours buyers. ${dist > 20 ? "The wide gap suggests the stock is quite extended and may be due for a pullback toward the average." : "The gap is moderate, so the stock is extended but not extreme."}`,
+   348→        supportingData: [
+   349→          { label: "Current price", value: fmtPrice(price) },
+   350→          { label: "SMA200", value: fmtPrice(sma200) },
+   351→          { label: "Distance", value: `${dist.toFixed(1)}%` },
+   352→        ],
+   353→        affectedQuarters: [last.date],
+   354→        laymanSummary: `The stock costs more today than its average price over the last year — a sign the long-term direction is upward. The 200-day average is like the "fair value line" long-term investors watch.`,
+   355→      });
+   356→    } else if (dist < -1) {
+   357→      push({
+   358→        type: "BELOW_SMA200",
+   359→        label: "Price trading below 200-day average",
+   360→        severity: "negative",
+   361→        strength,
+   362→        confidence: conf(strength, Math.min(12, Math.abs(dist) / 2)),
+   363→        category: "trend",
+   364→        detail: `The current price (Rs. ${price.toFixed(2)}) is ${Math.abs(dist).toFixed(1)}% below the 200-day simple moving average (Rs. ${sma200.toFixed(2)}). Trading below the 200-day average is the classic definition of a long-term downtrend and warns that sellers control the bigger picture. ${Math.abs(dist) > 20 ? "The wide gap below suggests heavy selling pressure." : ""}`,
+   365→        supportingData: [
+   366→          { label: "Current price", value: fmtPrice(price) },
+   367→          { label: "SMA200", value: fmtPrice(sma200) },
+   368→          { label: "Distance", value: `${dist.toFixed(1)}%` },
+   369→        ],
+   370→        affectedQuarters: [last.date],
+   371→        laymanSummary: `The stock costs less today than its average price over the last year — a warning that the long-term direction is downward and sellers are in control.`,
+   372→      });
+   373→    }
+   374→  }
+   375→
+   376→  // 3. Golden / death cross (SMA50 vs SMA200) — detect a cross in the last 30 sessions
+   377→  if (sma200 !== null && sma50 !== null && n >= 220) {
+   378→    let crossIdx = -1, crossDir: "golden" | "death" | null = null;
+   379→    for (let i = n - 30; i < n; i++) {
+   380→      if (i < 1 || sma50S[i] === null || sma200S[i] === null || sma50S[i - 1] === null || sma200S[i - 1] === null) continue;
+   381→      const wasAbove = (sma50S[i - 1] as number) > (sma200S[i - 1] as number);
+   382→      const isAbove = (sma50S[i] as number) > (sma200S[i] as number);
+   383→      if (isAbove && !wasAbove) { crossIdx = i; crossDir = "golden"; break; }
+   384→      if (!isAbove && wasAbove) { crossIdx = i; crossDir = "death"; break; }
+   385→    }
+   386→    const crossAge = crossIdx >= 0 ? n - 1 - crossIdx : -1;
+   387→    if (crossDir === "golden" && crossIdx >= 0) {
+   388→      const strength: PatternStrength = crossAge <= 10 ? "Strong" : "Moderate";
+   389→      push({
+   390→        type: "GOLDEN_CROSS",
+   391→        label: "Golden cross — 50-day average crossed above 200-day",
+   392→        severity: "positive",
+   393→        strength,
+   394→        confidence: conf(strength, 8),
+   395→        category: "trend",
+   396→        detail: `On ${bars[crossIdx].date} the 50-day moving average (Rs. ${(sma50S[crossIdx] as number).toFixed(2)}) crossed above the 200-day moving average (Rs. ${(sma200S[crossIdx] as number).toFixed(2)}) — a "golden cross". This is one of the most widely watched long-term BUY signals in technical analysis: it says the medium-term momentum has flipped upward relative to the long-term trend. Today the 50-day sits at Rs. ${sma50.toFixed(2)} vs the 200-day at Rs. ${sma200.toFixed(2)} (${fmtP(pct(sma50, sma200))}).`,
+   397→        supportingData: [
+   398→          { label: "Cross date", value: bars[crossIdx].date },
+   399→          { label: "SMA50 now", value: fmtPrice(sma50) },
+   400→          { label: "SMA200 now", value: fmtPrice(sma200) },
+   401→          { label: "Sessions since", value: `${crossAge}` },
+   402→        ],
+   403→        affectedQuarters: [bars[crossIdx].date],
+   404→        laymanSummary: `The recent average price just overtook the longer-term average price — nicknamed the "golden cross". Traders read it as the start of a longer climb, like a car finally shifting into a higher gear.`,
+   405→      });
+   406→    } else if (crossDir === "death" && crossIdx >= 0) {
+   407→      const strength: PatternStrength = crossAge <= 10 ? "Strong" : "Moderate";
+   408→      push({
+   409→        type: "DEATH_CROSS",
+   410→        label: "Death cross — 50-day average fell below 200-day",
+   411→        severity: "negative",
+   412→        strength,
+   413→        confidence: conf(strength, 8),
+   414→        category: "trend",
+   415→        detail: `On ${bars[crossIdx].date} the 50-day moving average (Rs. ${(sma50S[crossIdx] as number).toFixed(2)}) fell below the 200-day moving average (Rs. ${(sma200S[crossIdx] as number).toFixed(2)}) — a "death cross". This is the classic long-term SELL warning: medium-term momentum has rolled over relative to the long-term trend. Today the 50-day sits at Rs. ${sma50.toFixed(2)} vs the 200-day at Rs. ${sma200.toFixed(2)} (${fmtP(pct(sma50, sma200))}).`,
+   416→        supportingData: [
+   417→          { label: "Cross date", value: bars[crossIdx].date },
+   418→          { label: "SMA50 now", value: fmtPrice(sma50) },
+   419→          { label: "SMA200 now", value: fmtPrice(sma200) },
+   420→          { label: "Sessions since", value: `${crossAge}` },
+   421→        ],
+   422→        affectedQuarters: [bars[crossIdx].date],
+   423→        laymanSummary: `The recent average price just slipped below the longer-term average price — nicknamed the "death cross". Traders read it as a warning the climb has stalled and a slide may be starting.`,
+   424→      });
+   425→    }
+   426→  }
+   427→
+   428→  // 4. Short-term momentum shift — SMA20 crossing SMA50 in last 10 sessions
+   429→  if (sma20 !== null && sma50 !== null && n >= 70) {
+   430→    for (let i = n - 10; i < n; i++) {
+   431→      if (i < 1 || sma20S[i] === null || sma50S[i] === null || sma20S[i - 1] === null || sma50S[i - 1] === null) continue;
+   432→      const wasAbove = (sma20S[i - 1] as number) > (sma50S[i - 1] as number);
+   433→      const isAbove = (sma20S[i] as number) > (sma50S[i] as number);
+   434→      if (isAbove && !wasAbove) {
+   435→        push({
+   436→          type: "SMA20_50_BULL",
+   437→          label: "Short-term momentum turned up (20-day crossed above 50-day)",
+   438→          severity: "positive",
+   439→          strength: "Moderate",
+   440→          confidence: conf("Moderate", 6),
+   441→          category: "trend",
+   442→          detail: `On ${bars[i].date} the 20-day moving average crossed above the 50-day moving average. This shorter-term "mini golden cross" often marks the start of a fresh multi-week rally — it fires much earlier than the classic 50/200 golden cross but is also less reliable. Today SMA20 = Rs. ${sma20.toFixed(2)} vs SMA50 = Rs. ${sma50.toFixed(2)}.`,
+   443→          supportingData: [
+   444→            { label: "Cross date", value: bars[i].date },
+   445→            { label: "SMA20", value: fmtPrice(sma20) },
+   446→            { label: "SMA50", value: fmtPrice(sma50) },
+   447→          ],
+   448→          affectedQuarters: [bars[i].date],
+   449→          laymanSummary: `The very-recent average price just overtook the medium average — a short-term sign the buyers are back. It's an early hint, not a guarantee.`,
+   450→        });
+   451→        break;
+   452→      }
+   453→      if (!isAbove && wasAbove) {
+   454→        push({
+   455→          type: "SMA20_50_BEAR",
+   456→          label: "Short-term momentum turned down (20-day fell below 50-day)",
+   457→          severity: "negative",
+   458→          strength: "Moderate",
+   459→          confidence: conf("Moderate", 6),
+   460→          category: "trend",
+   461→          detail: `On ${bars[i].date} the 20-day moving average fell below the 50-day moving average. This short-term "mini death cross" often marks the start of a multi-week pullback. Today SMA20 = Rs. ${sma20.toFixed(2)} vs SMA50 = Rs. ${sma50.toFixed(2)}.`,
+   462→          supportingData: [
+   463→            { label: "Cross date", value: bars[i].date },
+   464→            { label: "SMA20", value: fmtPrice(sma20) },
+   465→            { label: "SMA50", value: fmtPrice(sma50) },
+   466→          ],
+   467→          affectedQuarters: [bars[i].date],
+   468→          laymanSummary: `The very-recent average price just dropped below the medium average — an early warning the recent rally is losing steam.`,
+   469→        });
+   470→        break;
+   471→      }
+   472→    }
+   473→  }
+   474→
+   475→  // 5. 52-week high breakout
+   476→  {
+   477→    const nearHigh = pctFrom52wHigh > -2; // within 2% of the high
+   478→    const recentIdx = bars.slice(-10).findIndex((b) => b.high >= high52w * 0.999);
+   479→    if (nearHigh || recentIdx >= 0) {
+   480→      const strength: PatternStrength = pctFrom52wHigh >= 0 ? "Strong" : pctFrom52wHigh > -1 ? "Moderate" : "Weak";
+   481→      push({
+   482→        type: "BREAKOUT_52W_HIGH",
+   483→        label: nearHigh ? "At / near 52-week high" : "New 52-week high",
+   484→        severity: "positive",
+   485→        strength,
+   486→        confidence: conf(strength, 10),
+   487→        category: "breakout",
+   488→        detail: `The current price (Rs. ${price.toFixed(2)}) is just ${Math.abs(pctFrom52wHigh).toFixed(1)}% ${pctFrom52wHigh >= 0 ? "above" : "below"} its 52-week high of Rs. ${high52w.toFixed(2)} (set ${last52w.reduce((best, b) => b.high >= best.high ? b : best, last52w[0]).date}). Stocks near their 52-week high have no trapped sellers overhead — everyone who bought in the past year is in profit, which removes selling pressure. Research shows breakouts to new highs often continue ("momentum") — but they can also fail and become a "double top" trap.`,
+   489→        supportingData: [
+   490→          { label: "52w high", value: fmtPrice(high52w) },
+   491→          { label: "Current price", value: fmtPrice(price) },
+   492→          { label: "Distance from high", value: `${pctFrom52wHigh.toFixed(1)}%` },
+   493→          { label: "12-month return", value: fmtP(changePct12M) },
+   494→        ],
+   495→        affectedQuarters: [last.date],
+   496→        laymanSummary: `The stock is trading at the highest price it has touched in a whole year. Everyone who bought during the past 12 months is now in profit — that removes the sellers who bought higher and are desperate to "get out even".`,
+   497→      });
+   498→    } else if (pctFrom52wLow > -2) {
+   499→      const strength: PatternStrength = pctFrom52wLow <= 0 ? "Strong" : "Moderate";
+   500→      push({
+   501→        type: "BREAKDOWN_52W_LOW",
+   502→        label: "At / near 52-week low",
+   503→        severity: "negative",
+   504→        strength,
+   505→        confidence: conf(strength, 10),
+   506→        category: "breakout",
+   507→        detail: `The current price (Rs. ${price.toFixed(2)}) is just ${Math.abs(pctFrom52wLow).toFixed(1)}% ${pctFrom52wLow <= 0 ? "below" : "above"} its 52-week low of Rs. ${low52w.toFixed(2)}. Trading at yearly lows means every buyer from the past 12 months is underwater and many are sitting on losses — trapped buyers often sell into any bounce, which acts as overhead pressure. Yearly lows can either be bargains (if fundamentals are intact) or the start of a deeper slide.`,
+   508→        supportingData: [
+   509→          { label: "52w low", value: fmtPrice(low52w) },
+   510→          { label: "Current price", value: fmtPrice(price) },
+   511→          { label: "Distance from low", value: `${pctFrom52wLow.toFixed(1)}%` },
+   512→          { label: "12-month return", value: fmtP(changePct12M) },
+   513→        ],
+   514→        affectedQuarters: [last.date],
+   515→        laymanSummary: `The stock is at its cheapest in a whole year. That can mean a bargain — or it can mean something is genuinely wrong with the business. The pattern alone can't tell you which; check the company result patterns too.`,
+   516→      });
+   517→    }
+   518→  }
+   519→
+   520→  // 6. RSI overbought / oversold
+   521→  {
+   522→    if (rsi14 >= 70) {
+   523→      const strength: PatternStrength = rsi14 >= 80 ? "Strong" : "Moderate";
+   524→      push({
+   525→        type: "RSI_OVERBOUGHT",
+   526→        label: `Overbought — RSI(14) at ${rsi14.toFixed(0)}`,
+   527→        severity: "negative",
+   528→        strength,
+   529→        confidence: conf(strength, 8),
+   530→        category: "momentum",
+   531→        detail: `The 14-day Relative Strength Index is ${rsi14.toFixed(1)} — above the classic 70 "overbought" threshold${rsi14 >= 80 ? " and in extreme territory" : ""}. RSI measures how one-sided recent daily moves have been: readings above 70 mean buyers have dominated for weeks and the stock is technically "stretched". This does NOT mean it must fall — strong stocks can stay overbought for a long time — but the odds of a pause or pullback rise. ${changePct3M >= 0 ? `The stock gained ${fmtP(changePct3M)} over the last 3 months to reach this reading.` : ""}`,
+   532→        supportingData: [
+   533→          { label: "RSI(14)", value: rsi14.toFixed(1) },
+   534→          { label: "Threshold", value: "70 (overbought)" },
+   535→          { label: "3-month move", value: fmtP(changePct3M) },
+   536→        ],
+   537→        affectedQuarters: [last.date],
+   538→        laymanSummary: `The buying has been so strong and so one-sided that the stock is technically "overheated". Like a car engine revved to the red line — it may keep going, but a cooling-off pause becomes more likely.`,
+   539→      });
+   540→    } else if (rsi14 <= 30) {
+   541→      const strength: PatternStrength = rsi14 <= 20 ? "Strong" : "Moderate";
+   542→      push({
+   543→        type: "RSI_OVERSOLD",
+   544→        label: `Oversold — RSI(14) at ${rsi14.toFixed(0)}`,
+   545→        severity: "positive",
+   546→        strength,
+   547→        confidence: conf(strength, 8),
+   548→        category: "momentum",
+   549→        detail: `The 14-day Relative Strength Index is ${rsi14.toFixed(1)} — below the classic 30 "oversold" threshold${rsi14 <= 20 ? " and in extreme territory" : ""}. Readings below 30 mean sellers have dominated for weeks and the stock is technically "washed out". Oversold stocks often see a short bounce (mean reversion) — but in a genuine downtrend bounces can fail, so this is a counter-trend signal that needs confirmation.`,
+   550→        supportingData: [
+   551→          { label: "RSI(14)", value: rsi14.toFixed(1) },
+   552→          { label: "Threshold", value: "30 (oversold)" },
+   553→          { label: "3-month move", value: fmtP(changePct3M) },
+   554→        ],
+   555→        affectedQuarters: [last.date],
+   556→        laymanSummary: `The selling has been so heavy that the stock is technically "washed out". Like a squeezed sponge, conditions are set for a bounce — but if the business is genuinely deteriorating, bounces tend to be short-lived.`,
+   557→      });
+   558→    }
+   559→  }
+   560→
+   561→  // 7. MACD crossover in the last 5 sessions
+   562→  {
+   563→    for (let i = n - 5; i < n; i++) {
+   564→      if (i < 1) continue;
+   565→      const prev = macdHistS[i - 1], cur = macdHistS[i];
+   566→      if (prev <= 0 && cur > 0) {
+   567→        push({
+   568→          type: "MACD_BULL_CROSS",
+   569→          label: "MACD bullish crossover",
+   570→          severity: "positive",
+   571→          strength: cur > 0 && bars[i].close > (sma50 ?? price) ? "Moderate" : "Weak",
+   572→          confidence: conf(cur > 0 ? "Moderate" : "Weak", 6),
+   573→          category: "momentum",
+   574→          detail: `On ${bars[i].date} the MACD line crossed above its signal line (the histogram flipped from ${prev.toFixed(3)} to ${cur.toFixed(3)}). MACD (Moving Average Convergence Divergence) compares short-term vs long-term momentum — a bullish cross says the short-term momentum just turned stronger than the long-term, often the first sign of a fresh up-leg. The histogram now reads ${macdHist.toFixed(3)}.`,
+   575→          supportingData: [
+   576→            { label: "Cross date", value: bars[i].date },
+   577→            { label: "Histogram now", value: macdHist.toFixed(3) },
+   578→            { label: "Histogram at cross", value: cur.toFixed(3) },
+   579→          ],
+   580→          affectedQuarters: [bars[i].date],
+   581→          laymanSummary: `A momentum gauge called MACD just flipped positive — the short-term buying pressure overtook the longer-term drift. It's an early hint the up-move is freshening up.`,
+   582→        });
+   583→        break;
+   584→      }
+   585→      if (prev >= 0 && cur < 0) {
+   586→        push({
+   587→          type: "MACD_BEAR_CROSS",
+   588→          label: "MACD bearish crossover",
+   589→          severity: "negative",
+   590→          strength: cur < 0 && bars[i].close < (sma50 ?? price) ? "Moderate" : "Weak",
+   591→          confidence: conf(cur < 0 ? "Moderate" : "Weak", 6),
+   592→          category: "momentum",
+   593→          detail: `On ${bars[i].date} the MACD line crossed below its signal line (the histogram flipped from ${prev.toFixed(3)} to ${cur.toFixed(3)}). A bearish MACD cross says short-term momentum just turned weaker than the long-term drift — often the first hint a rally is tiring or a slide is starting. The histogram now reads ${macdHist.toFixed(3)}.`,
+   594→          supportingData: [
+   595→            { label: "Cross date", value: bars[i].date },
+   596→            { label: "Histogram now", value: macdHist.toFixed(3) },
+   597→            { label: "Histogram at cross", value: cur.toFixed(3) },
+   598→          ],
+   599→          affectedQuarters: [bars[i].date],
+   600→          laymanSummary: `The MACD momentum gauge just flipped negative — short-term selling pressure overtook the longer-term drift. An early warning the recent strength is fading.`,
+   601→        });
+   602→        break;
+   603→      }
+   604→    }
+   605→  }
+   606→
+   607→  // 8. Volume spike on the latest bar
+   608→  if (avgVol20 > 0 && last.volume >= avgVol20 * 2) {
+   609→    const ratio = last.volume / avgVol20;
+   610→    const up = last.close >= last.open;
+   611→    const strength: PatternStrength = ratio >= 4 ? "Strong" : ratio >= 2.5 ? "Moderate" : "Weak";
+   612→    push({
+   613→      type: "VOLUME_SPIKE",
+   614→      label: `Volume spike — ${ratio.toFixed(1)}× the 20-day average`,
+   615→      severity: up ? "positive" : "negative",
+   616→      strength,
+   617→      confidence: conf(strength, Math.min(10, ratio * 2)),
+   618→      category: "volume",
+   619→      detail: `On ${last.date} the stock traded ${fmtVol(last.volume)} shares — ${ratio.toFixed(1)}× its 20-day average of ${fmtVol(avgVol20)}. Volume spikes mean conviction: an unusual number of investors acted at once. ${up ? "A volume spike on an UP day suggests strong buying interest — " : "A volume spike on a DOWN day suggests heavy distribution (sellers rushing for the exit) — "} big-money participants are active.`,
+   620→      supportingData: [
+   621→        { label: "Volume", value: fmtVol(last.volume) },
+   622→        { label: "20-day avg", value: fmtVol(avgVol20) },
+   623→        { label: "Spike ratio", value: `${ratio.toFixed(1)}×` },
+   624→        { label: "Day direction", value: up ? "Up day (accumulation)" : "Down day (distribution)" },
+   625→      ],
+   626→      affectedQuarters: [last.date],
+   627→      laymanSummary: `An unusually large amount of the stock changed hands on the latest trading day${up ? " — and the price rose, hinting big buyers stepped in" : " — and the price fell, hinting big sellers were rushing out"}. Volume tells you whether a price move has real participation behind it.`,
+   628→    });
+   629→  } else if (avgVol20 > 0 && last.volume <= avgVol20 * 0.5) {
+   630→    push({
+   631→      type: "VOLUME_DRYUP",
+   632→      label: "Volume dry-up",
+   633→      severity: "neutral",
+   634→      strength: "Weak",
+   635→      confidence: conf("Weak", 5),
+   636→      category: "volume",
+   637→      detail: `The latest volume (${fmtVol(last.volume)}) is just ${(last.volume / avgVol20 * 100).toFixed(0)}% of the 20-day average (${fmtVol(avgVol20)}). Extremely quiet volume often precedes a big move — the market is "coiling", and whichever way price breaks out of this quiet zone tends to have follow-through.`,
+   638→      supportingData: [
+   639→        { label: "Volume", value: fmtVol(last.volume) },
+   640→        { label: "20-day avg", value: fmtVol(avgVol20) },
+   641→        { label: "Ratio", value: `${(last.volume / avgVol20).toFixed(2)}×` },
+   642→      ],
+   643→      affectedQuarters: [last.date],
+   644→      laymanSummary: `Trading has gone unusually quiet — few shares changing hands. Calm often comes before a storm: watch which way the price breaks out of this quiet patch.`,
+   645→    });
+   646→  }
+   647→
+   648→  // 9. Bollinger Band squeeze (volatility at 6-month low)
+   649→  if (n >= 160) {
+   650→    const bw = (i: number) => {
+   651→      const win = closes.slice(i - 19, i + 1);
+   652→      const m = win.reduce((s, v) => s + v, 0) / win.length;
+   653→      const sd = Math.sqrt(win.reduce((s, v) => s + (v - m) ** 2, 0) / win.length);
+   654→      return m > 0 ? ((2 * sd * 2) / m) * 100 : 0;
+   655→    };
+   656→    const curBw = bw(n - 1);
+   657→    const pastBws: number[] = [];
+   658→    for (let i = n - 120; i < n - 1; i++) pastBws.push(bw(i));
+   659→    const minPast = Math.min(...pastBws);
+   660→    if (curBw <= minPast * 1.15 && curBw < 12) {
+   661→      push({
+   662→        type: "BB_SQUEEZE",
+   663→        label: "Bollinger Band squeeze — volatility at 6-month low",
+   664→        severity: "neutral",
+   665→        strength: "Moderate",
+   666→        confidence: conf("Moderate", 8),
+   667→        category: "volatility",
+   668→        detail: `The Bollinger Band width (20-day ±2σ envelope) is currently ${curBw.toFixed(1)}% of price — at or below its lowest level of the past 6 months (min was ${minPast.toFixed(1)}%). A "squeeze" means daily price swings have compressed to almost nothing. Historically, squeezes resolve into sharp breakouts — the longer the squeeze, the more explosive the release. The direction of the resolution is not predicted; watch the range edges (${low52w ? `Rs. ${(price * 0.95).toFixed(2)}` : ""}–${`Rs. ${(price * 1.05).toFixed(2)}`}) for the first clue.`,
+   669→        supportingData: [
+   670→          { label: "Band width now", value: `${curBw.toFixed(1)}%` },
+   671→          { label: "6-month min width", value: `${minPast.toFixed(1)}%` },
+   672→          { label: "90-day volatility", value: `${vol.toFixed(1)}% annualised` },
+   673→        ],
+   674→        affectedQuarters: [last.date],
+   675→        laymanSummary: `The daily price swings have become tiny — the smallest they have been in about six months. Like compressing a spring, quiet periods like this often end with a sudden, sharp move in one direction.`,
+   676→      });
+   677→    }
+   678→  }
+   679→
+   680→  // 10. Market structure — higher highs & higher lows (or lower)
+   681→  {
+   682→    const pivHighs = pivotsAll.filter((p) => p.kind === "high").slice(-3);
+   683→    const pivLows = pivotsAll.filter((p) => p.kind === "low").slice(-3);
+   684→    if (pivHighs.length >= 2 && pivLows.length >= 2) {
+   685→      const hh = pivHighs.every((p, i, a) => i === 0 || p.price > a[i - 1].price);
+   686→      const hl = pivLows.every((p, i, a) => i === 0 || p.price > a[i - 1].price);
+   687→      const lh = pivHighs.every((p, i, a) => i === 0 || p.price < a[i - 1].price);
+   688→      const ll = pivLows.every((p, i, a) => i === 0 || p.price < a[i - 1].price);
+   689→      if (hh && hl) {
+   690→        push({
+   691→          type: "HIGHER_HIGHS",
+   692→          label: "Higher highs & higher lows — bullish market structure",
+   693→          severity: "positive",
+   694→          strength: pivHighs.length >= 3 ? "Strong" : "Moderate",
+   695→          confidence: conf(pivHighs.length >= 3 ? "Strong" : "Moderate", 6),
+   696→          category: "structure",
+   697→          detail: `The last ${pivHighs.length} swing highs (${pivHighs.map((p) => `Rs. ${p.price.toFixed(2)} on ${p.date}`).join(" → ")}) each sit ABOVE the previous one, and each swing low is also higher than the last (${pivLows.map((p) => `Rs. ${p.price.toFixed(2)}`).join(" → ")}). This "staircase" structure is the textbook definition of a healthy uptrend — each dip attracts buyers before the previous low breaks, so the floor keeps rising.`,
+   698→          supportingData: pivHighs.map((p, i) => ({ label: `Swing high ${i + 1}`, value: `${fmtPrice(p.price)} · ${p.date}` })),
+   699→          affectedQuarters: pivHighs.map((p) => p.date),
+   700→          laymanSummary: `Each recent peak is higher than the last, and each dip stops higher than the one before — like a staircase going up. That's the classic footprint of buyers steadily winning.`,
+   701→        });
+   702→      } else if (lh && ll) {
+   703→        push({
+   704→          type: "LOWER_LOWS",
+   705→          label: "Lower highs & lower lows — bearish market structure",
+   706→          severity: "negative",
+   707→          strength: pivHighs.length >= 3 ? "Strong" : "Moderate",
+   708→          confidence: conf(pivHighs.length >= 3 ? "Strong" : "Moderate", 6),
+   709→          category: "structure",
+   710→          detail: `The last ${pivHighs.length} swing highs (${pivHighs.map((p) => `Rs. ${p.price.toFixed(2)} on ${p.date}`).join(" → ")}) each sit BELOW the previous one, and each swing low is lower too (${pivLows.map((p) => `Rs. ${p.price.toFixed(2)}`).join(" → ")}). This "descending staircase" is the textbook definition of a downtrend — every bounce runs out of steam before the previous high, so the ceiling keeps falling.`,
+   711→          supportingData: pivHighs.map((p, i) => ({ label: `Swing high ${i + 1}`, value: `${fmtPrice(p.price)} · ${p.date}` })),
+   712→          affectedQuarters: pivHighs.map((p) => p.date),
+   713→          laymanSummary: `Each recent peak is lower than the last, and each dip sinks deeper — like a staircase going down. That's the classic footprint of sellers steadily winning.`,
+   714→        });
+   715→      }
+   716→    }
+   717→  }
+   718→
+   719→  // 11. Double top / double bottom (two pivots within 2.5% tolerance)
+   720→  {
+   721→    const pivH = pivotsAll.filter((p) => p.kind === "high");
+   722→    const pivL = pivotsAll.filter((p) => p.kind === "low");
+   723→    // double top: last two highs within tolerance, 20-120 bars apart
+   724→    for (let i = pivH.length - 2; i >= Math.max(0, pivH.length - 4); i--) {
+   725→      const a = pivH[i], b = pivH[i + 1];
+   726→      if (!a || !b) continue;
+   727→      const gap = b.idx - a.idx;
+   728→      if (gap >= 20 && gap <= 150 && Math.abs(pct(b.price, a.price)) <= 2.5) {
+   729→        const interimLow = Math.min(...bars.slice(a.idx, b.idx + 1).map((x) => x.low));
+   730→        const depth = pct(price, a.price);
+   731→        if (price < interimLow) {
+   732→          push({
+   733→            type: "DOUBLE_TOP",
+   734→            label: "Double top — resistance rejected twice",
+   735→            severity: "negative",
+   736→            strength: depth < -5 ? "Strong" : "Moderate",
+   737→            confidence: conf(depth < -5 ? "Strong" : "Moderate", 7),
+   738→            category: "structure",
+   739→            detail: `The price twice failed at the same ceiling: Rs. ${a.price.toFixed(2)} on ${a.date} and Rs. ${b.price.toFixed(2)} on ${b.date} (within ${Math.abs(pct(b.price, a.price)).toFixed(1)}%). The neckline (the dip between the two tops) sits at Rs. ${interimLow.toFixed(2)}, and the price has now broken below it (currently Rs. ${price.toFixed(2)}, ${Math.abs(depth).toFixed(1)}% under the tops). A confirmed double top is a classic reversal pattern — the market tried twice to push higher, ran out of buyers, and sellers took over.`,
+   740→            supportingData: [
+   741→              { label: "1st top", value: `${fmtPrice(a.price)} · ${a.date}` },
+   742→              { label: "2nd top", value: `${fmtPrice(b.price)} · ${b.date}` },
+   743→              { label: "Neckline", value: fmtPrice(interimLow) },
+   744→              { label: "Now vs tops", value: `${depth.toFixed(1)}%` },
+   745→            ],
+   746→            affectedQuarters: [a.date, b.date],
+   747→            laymanSummary: `The stock bumped into the same ceiling twice and fell away both times — like a ball bouncing off a lid. Once it also broke below the "floor" between the two bounces, sellers gained control.`,
+   748→          });
+   749→          break;
+   750→        }
+   751→      }
+   752→    }
+   753→    for (let i = pivL.length - 2; i >= Math.max(0, pivL.length - 4); i--) {
+   754→      const a = pivL[i], b = pivL[i + 1];
+   755→      if (!a || !b) continue;
+   756→      const gap = b.idx - a.idx;
+   757→      if (gap >= 20 && gap <= 150 && Math.abs(pct(b.price, a.price)) <= 2.5) {
+   758→        const interimHigh = Math.max(...bars.slice(a.idx, b.idx + 1).map((x) => x.high));
+   759→        const rise = pct(price, a.price);
+   760→        if (price > interimHigh) {
+   761→          push({
+   762→            type: "DOUBLE_BOTTOM",
+   763→            label: "Double bottom — support held twice",
+   764→            severity: "positive",
+   765→            strength: rise > 5 ? "Strong" : "Moderate",
+   766→            confidence: conf(rise > 5 ? "Strong" : "Moderate", 7),
+   767→            category: "structure",
+   768→            detail: `The price twice bounced off the same floor: Rs. ${a.price.toFixed(2)} on ${a.date} and Rs. ${b.price.toFixed(2)} on ${b.date} (within ${Math.abs(pct(b.price, a.price)).toFixed(1)}%). The peak between the two lows sits at Rs. ${interimHigh.toFixed(2)}, and the price has now cleared it (currently Rs. ${price.toFixed(2)}, ${rise.toFixed(1)}% above the lows). A confirmed double bottom is a classic bullish reversal — the market tested the floor twice, found strong buyers both times, and turned up.`,
+   769→            supportingData: [
+   770→              { label: "1st bottom", value: `${fmtPrice(a.price)} · ${a.date}` },
+   771→              { label: "2nd bottom", value: `${fmtPrice(b.price)} · ${b.date}` },
+   772→              { label: "Neckline peak", value: fmtPrice(interimHigh) },
+   773→              { label: "Now vs bottoms", value: `${rise.toFixed(1)}%` },
+   774→            ],
+   775→            affectedQuarters: [a.date, b.date],
+   776→            laymanSummary: `The stock fell to the same floor twice and bounced both times — like a floor that refuses to break. Once it also rose above the bump between the two dips, buyers gained control.`,
+   777→          });
+   778→          break;
+   779→        }
+   780→      }
+   781→    }
+   782→  }
+   783→
+   784→  // 12. Candlestick patterns on the last 3 bars
+   785→  if (n >= 4) {
+   786→    const c1 = bars[n - 1]; // latest
+   787→    const c2 = bars[n - 2];
+   788→    const c3 = bars[n - 3];
+   789→    const body1 = Math.abs(c1.close - c1.open);
+   790→    const range1 = c1.high - c1.low || 1e-9;
+   791→    const body2 = Math.abs(c2.close - c2.open);
+   792→
+   793→    // Engulfing
+   794→    if (c1.close > c1.open && c2.close < c2.open && c1.close > c2.open && c1.open < c2.close && body1 > body2 * 1.2) {
+   795→      push({
+   796→        type: "BULLISH_ENGULFING",
+   797→        label: "Bullish engulfing candle",
+   798→        severity: "positive",
+   799→        strength: body1 > range1 * 0.6 ? "Strong" : "Moderate",
+   800→        confidence: conf(body1 > range1 * 0.6 ? "Strong" : "Moderate", 6),
+   801→        category: "candlestick",
+   802→        detail: `The latest candle (${c1.date}) is a big green (up) candle that completely "engulfs" the previous red (down) candle — it opened below yesterday's close (Rs. ${c1.open.toFixed(2)} vs Rs. ${c2.close.toFixed(2)}) but buyers pushed it to close above yesterday's open (Rs. ${c1.close.toFixed(2)} vs Rs. ${c2.open.toFixed(2)}). Engulfing candles show a decisive sentiment flip within just one session: sellers tried, and buyers overwhelmed them.`,
+   803→        supportingData: [
+   804→          { label: "Candle date", value: c1.date },
+   805→          { label: "Open → close", value: `${fmtPrice(c1.open)} → ${fmtPrice(c1.close)}` },
+   806→          { label: "Body vs range", value: `${((body1 / range1) * 100).toFixed(0)}%` },
+   807→        ],
+   808→        affectedQuarters: [c1.date],
+   809→        laymanSummary: `Yesterday's small price drop was completely swallowed by a bigger rise today — the candlestick version of buyers overpowering sellers in a single day.`,
+   810→      });
+   811→    } else if (c1.close < c1.open && c2.close > c2.open && c1.close < c2.open && c1.open > c2.close && body1 > body2 * 1.2) {
+   812→      push({
+   813→        type: "BEARISH_ENGULFING",
+   814→        label: "Bearish engulfing candle",
+   815→        severity: "negative",
+   816→        strength: body1 > range1 * 0.6 ? "Strong" : "Moderate",
+   817→        confidence: conf(body1 > range1 * 0.6 ? "Strong" : "Moderate", 6),
+   818→        category: "candlestick",
+   819→        detail: `The latest candle (${c1.date}) is a big red (down) candle that completely "engulfs" the previous green (up) candle — it opened above yesterday's close (Rs. ${c1.open.toFixed(2)} vs Rs. ${c2.close.toFixed(2)}) but sellers slammed it to close below yesterday's open (Rs. ${c1.close.toFixed(2)} vs Rs. ${c2.open.toFixed(2)}). Bearish engulfing shows sellers seized control within a single session.`,
+   820→        supportingData: [
+   821→          { label: "Candle date", value: c1.date },
+   822→          { label: "Open → close", value: `${fmtPrice(c1.open)} → ${fmtPrice(c1.close)}` },
+   823→          { label: "Body vs range", value: `${((body1 / range1) * 100).toFixed(0)}%` },
+   824→        ],
+   825→        affectedQuarters: [c1.date],
+   826→        laymanSummary: `Yesterday's small price rise was completely swallowed by a bigger fall today — the candlestick version of sellers overpowering buyers in a single day.`,
+   827→      });
+   828→    }
+   829→
+   830→    // Hammer / shooting star (latest bar)
+   831→    const lowerWick = Math.min(c1.open, c1.close) - c1.low;
+   832→    const upperWick = c1.high - Math.max(c1.open, c1.close);
+   833→    if (lowerWick >= body1 * 2 && upperWick <= body1 && body1 > 0) {
+   834→      push({
+   835→        type: "HAMMER",
+   836→        label: "Hammer candle at the lows",
+   837→        severity: "positive",
+   838→        strength: lowerWick >= body1 * 3 ? "Moderate" : "Weak",
+   839→        confidence: conf(lowerWick >= body1 * 3 ? "Moderate" : "Weak", 5),
+   840→        category: "candlestick",
+   841→        detail: `On ${c1.date} the price fell hard intraday to Rs. ${c1.low.toFixed(2)} — ${(lowerWick / range1 * 100).toFixed(0)}% of the candle's total range sits below the body — but buyers dragged it back to close at Rs. ${c1.close.toFixed(2)}, near the top. This "hammer" shape means sellers tested the lows and were rejected: a sign the down-move is finding a floor.`,
+   842→        supportingData: [
+   843→          { label: "Candle date", value: c1.date },
+   844→          { label: "Intraday low", value: fmtPrice(c1.low) },
+   845→          { label: "Close", value: fmtPrice(c1.close) },
+   846→          { label: "Lower wick share", value: `${((lowerWick / range1) * 100).toFixed(0)}%` },
+   847→        ],
+   848→        affectedQuarters: [c1.date],
+   849→        laymanSummary: `During the day the price fell sharply but recovered by the close, leaving a "hammer" shape — as if buyers hammered out a floor. Often seen near the end of a decline.`,
+   850→      });
+   851→    } else if (upperWick >= body1 * 2 && lowerWick <= body1 && body1 > 0) {
+   852→      push({
+   853→        type: "SHOOTING_STAR",
+   854→        label: "Shooting star candle at the highs",
+   855→        severity: "negative",
+   856→        strength: upperWick >= body1 * 3 ? "Moderate" : "Weak",
+   857→        confidence: conf(upperWick >= body1 * 3 ? "Moderate" : "Weak", 5),
+   858→        category: "candlestick",
+   859→        detail: `On ${c1.date} the price spiked intraday to Rs. ${c1.high.toFixed(2)} — ${(upperWick / range1 * 100).toFixed(0)}% of the candle's total range sits above the body — but sellers dragged it back to close at Rs. ${c1.close.toFixed(2)}, near the bottom. This "shooting star" means buyers pushed the price up and were rejected: often a warning near the top of a rally.`,
+   860→        supportingData: [
+   861→          { label: "Candle date", value: c1.date },
+   862→          { label: "Intraday high", value: fmtPrice(c1.high) },
+   863→          { label: "Close", value: fmtPrice(c1.close) },
+   864→          { label: "Upper wick share", value: `${((upperWick / range1) * 100).toFixed(0)}%` },
+   865→        ],
+   866→        affectedQuarters: [c1.date],
+   867→        laymanSummary: `During the day the price shot up but gave it all back by the close, leaving a "shooting star" shape — buyers pushed higher and got pushed back. Often seen near the top.`,
+   868→      });
+   869→    }
+   870→
+   871→    // Morning star / evening star (3-bar)
+   872→    const isMorning =
+   873→      c3.close < c3.open && // red
+   874→      body2 < Math.abs(c3.close - c3.open) * 0.4 && // small middle
+   875→      c1.close > c1.open && // green
+   876→      c1.close > (c3.open + c3.close) / 2;
+   877→    const isEvening =
+   878→      c3.close > c3.open && // green
+   879→      body2 < Math.abs(c3.close - c3.open) * 0.4 && // small middle
+   880→      c1.close < c1.open && // red
+   881→      c1.close < (c3.open + c3.close) / 2;
+   882→    if (isMorning) {
+   883→      push({
+   884→        type: "MORNING_STAR",
+   885→        label: "Morning star — 3-bar bullish reversal",
+   886→        severity: "positive",
+   887→        strength: "Moderate",
+   888→        confidence: conf("Moderate", 6),
+   889→        category: "candlestick",
+   890→        detail: `The last three candles form a "morning star": a strong red candle on ${c3.date} (close Rs. ${c3.close.toFixed(2)}), a small indecision candle on ${c2.date}, then a strong green candle on ${c1.date} closing at Rs. ${c1.close.toFixed(2)} — above the midpoint of the first candle's body. It's a 3-day story of "panic → hesitation → buyers take charge" and is considered one of the more reliable bullish reversal candlestick patterns.`,
+   891→        supportingData: [
+   892→          { label: "Day 1 close", value: `${fmtPrice(c3.close)} · ${c3.date}` },
+   893→          { label: "Day 2 (pause)", value: fmtPrice(c2.close) },
+   894→          { label: "Day 3 close", value: `${fmtPrice(c1.close)} · ${c1.date}` },
+   895→        ],
+   896→        affectedQuarters: [c3.date, c2.date, c1.date],
+   897→        laymanSummary: `Three days telling one story: sharp fall, then hesitation, then a strong recovery. The morning star is named for dawn breaking after darkness.`,
+   898→      });
+   899→    } else if (isEvening) {
+   900→      push({
+   901→        type: "EVENING_STAR",
+   902→        label: "Evening star — 3-bar bearish reversal",
+   903→        severity: "negative",
+   904→        strength: "Moderate",
+   905→        confidence: conf("Moderate", 6),
+   906→        category: "candlestick",
+   907→        detail: `The last three candles form an "evening star": a strong green candle on ${c3.date} (close Rs. ${c3.close.toFixed(2)}), a small indecision candle on ${c2.date}, then a strong red candle on ${c1.date} closing at Rs. ${c1.close.toFixed(2)} — below the midpoint of the first candle's body. It's a 3-day story of "euphoria → hesitation → sellers take charge" and is considered one of the more reliable bearish reversal candlestick patterns.`,
+   908→        supportingData: [
+   909→          { label: "Day 1 close", value: `${fmtPrice(c3.close)} · ${c3.date}` },
+   910→          { label: "Day 2 (pause)", value: fmtPrice(c2.close) },
+   911→          { label: "Day 3 close", value: `${fmtPrice(c1.close)} · ${c1.date}` },
+   912→        ],
+   913→        affectedQuarters: [c3.date, c2.date, c1.date],
+   914→        laymanSummary: `Three days telling one story: strong rally, then hesitation, then a sharp fall. The evening star is named for dusk falling after the day's peak.`,
+   915→      });
+   916→    }
+   917→
+   918→    // Doji (indecision)
+   919→    if (body1 <= range1 * 0.1) {
+   920→      push({
+   921→        type: "DOJI",
+   922→        label: "Doji — indecision candle",
+   923→        severity: "neutral",
+   924→        strength: "Weak",
+   925→        confidence: conf("Weak", 3),
+   926→        category: "candlestick",
+   927→        detail: `On ${c1.date} the stock opened at Rs. ${c1.open.toFixed(2)} and closed almost exactly there (Rs. ${c1.close.toFixed(2)}) despite swinging between Rs. ${c1.low.toFixed(2)} and Rs. ${c1.high.toFixed(2)}. This "doji" (cross-shaped) candle means buyers and sellers fought to a draw. After a strong run, a doji can hint at exhaustion; after a slide, it can hint at a bottom — context matters.`,
+   928→        supportingData: [
+   929→          { label: "Candle date", value: c1.date },
+   930→          { label: "Open vs close", value: `${fmtPrice(c1.open)} / ${fmtPrice(c1.close)}` },
+   931→          { label: "Intraday range", value: `${fmtPrice(c1.low)} – ${fmtPrice(c1.high)}` },
+   932→        ],
+   933→        affectedQuarters: [c1.date],
+   934→        laymanSummary: `The price went up and down during the day but ended almost exactly where it started — a draw between buyers and sellers. It signals indecision: the market is thinking about its next move.`,
+   935→      });
+   936→    }
+   937→  }
+   938→
+   939→  // 13. Gap up / gap down on the latest bar
+   940→  if (n >= 2) {
+   941→    const prev = bars[n - 2];
+   942→    const gap = pct(last.open, prev.close);
+   943→    if (gap >= 1) {
+   944→      push({
+   945→        type: "GAP_UP",
+   946→        label: `Gap up — opened ${gap.toFixed(1)}% above yesterday's close`,
+   947→        severity: "positive",
+   948→        strength: gap >= 3 ? "Strong" : gap >= 2 ? "Moderate" : "Weak",
+   949→        confidence: conf(gap >= 3 ? "Strong" : gap >= 2 ? "Moderate" : "Weak", 5),
+   950→        category: "breakout",
+   951→        detail: `On ${last.date} the stock opened at Rs. ${last.open.toFixed(2)} — ${gap.toFixed(1)}% above yesterday's close of Rs. ${prev.close.toFixed(2)} — leaving an unfilled "gap" in the price chart. Gaps mean news or orders hit overnight/at the open with such force that the market repriced instantly before the first session trade. Gap-ups often act as future support ("gap-and-go"), but if the price falls back to fill the gap the move is considered failed.`,
+   952→        supportingData: [
+   953→          { label: "Gap date", value: last.date },
+   954→          { label: "Yesterday close", value: fmtPrice(prev.close) },
+   955→          { label: "Today open", value: fmtPrice(last.open) },
+   956→          { label: "Gap size", value: `${gap.toFixed(1)}%` },
+   957→        ],
+   958→        affectedQuarters: [last.date],
+   959→        laymanSummary: `The stock opened noticeably higher than it closed yesterday — skipping an entire price band overnight. Such gaps usually mean fresh, urgent buying (often on news) arrived before the market opened.`,
+   960→      });
+   961→    } else if (gap <= -1) {
+   962→      push({
+   963→        type: "GAP_DOWN",
+   964→        label: `Gap down — opened ${Math.abs(gap).toFixed(1)}% below yesterday's close`,
+   965→        severity: "negative",
+   966→        strength: gap <= -3 ? "Strong" : gap <= -2 ? "Moderate" : "Weak",
+   967→        confidence: conf(gap <= -3 ? "Strong" : gap <= -2 ? "Moderate" : "Weak", 5),
+   968→        category: "breakout",
+   969→        detail: `On ${last.date} the stock opened at Rs. ${last.open.toFixed(2)} — ${Math.abs(gap).toFixed(1)}% below yesterday's close of Rs. ${prev.close.toFixed(2)} — leaving an unfilled "gap" down in the price chart. Gap-downs mean urgent selling repriced the stock instantly at the open. They often act as future resistance; if the price recovers to fill the gap the panic may have passed.`,
+   970→        supportingData: [
+   971→          { label: "Gap date", value: last.date },
+   972→          { label: "Yesterday close", value: fmtPrice(prev.close) },
+   973→          { label: "Today open", value: fmtPrice(last.open) },
+   974→          { label: "Gap size", value: `${gap.toFixed(1)}%` },
+   975→        ],
+   976→        affectedQuarters: [last.date],
+   977→        laymanSummary: `The stock opened noticeably lower than it closed yesterday — dropping an entire price band overnight. Such gaps usually mean urgent selling (often on bad news) arrived before the market opened.`,
+   978→      });
+   979→    }
+   980→  }
+   981→
+   982→  // 14. Support / resistance levels (informational)
+   983→  if (support) {
+   984→    const dist = pct(price, support.price);
+   985→    push({
+   986→      type: "SUPPORT_LEVEL",
+   987→      label: `Key support at Rs. ${support.price.toFixed(2)}`,
+   988→      severity: "neutral",
+   989→      strength: support.touches >= 3 ? "Strong" : support.touches === 2 ? "Moderate" : "Weak",
+   990→      confidence: conf(support.touches >= 3 ? "Strong" : support.touches === 2 ? "Moderate" : "Weak", 4),
+   991→      category: "structure",
+   992→      detail: `Over the past 12 months the price has bounced off Rs. ${support.price.toFixed(2)} on ${support.touches} separate occasion${support.touches > 1 ? "s" : ""} (last touched ${support.lastTouch}). This is the nearest support — a price zone where buyers have repeatedly stepped in. If the price falls to it again, expect a fight; a decisive close below would flip it into resistance and signal deeper weakness. The price is currently ${Math.abs(dist).toFixed(1)}% ${dist >= 0 ? "above" : "below"} this level.`,
+   993→      supportingData: [
+   994→        { label: "Support level", value: fmtPrice(support.price) },
+   995→        { label: "Bounces (touches)", value: `${support.touches}` },
+   996→        { label: "Last touched", value: support.lastTouch },
+   997→        { label: "Current distance", value: `${dist.toFixed(1)}%` },
+   998→      ],
+   999→      affectedQuarters: [support.lastTouch],
+  1000→      laymanSummary: `Think of Rs. ${support.price.toFixed(2)} as the stock's "floor" — the price has repeatedly stopped falling there. Floors can crack: if it breaks decisively, the drop often accelerates.`,
+  1001→    });
+  1002→  }
+  1003→  if (resistance) {
+  1004→    const dist = pct(price, resistance.price);
+  1005→    push({
+  1006→      type: "RESISTANCE_LEVEL",
+  1007→      label: `Key resistance at Rs. ${resistance.price.toFixed(2)}`,
+  1008→      severity: "neutral",
+  1009→      strength: resistance.touches >= 3 ? "Strong" : resistance.touches === 2 ? "Moderate" : "Weak",
+  1010→      confidence: conf(resistance.touches >= 3 ? "Strong" : resistance.touches === 2 ? "Moderate" : "Weak", 4),
+  1011→      category: "structure",
+  1012→      detail: `Over the past 12 months the price has been rejected at Rs. ${resistance.price.toFixed(2)} on ${resistance.touches} separate occasion${resistance.touches > 1 ? "s" : ""} (last tested ${resistance.lastTouch}). This is the nearest resistance — a price zone where sellers have repeatedly appeared. A decisive close above it would be a bullish breakout (the ceiling becomes a new floor). The price is currently ${Math.abs(dist).toFixed(1)}% ${dist >= 0 ? "above" : "below"} this level.`,
+  1013→      supportingData: [
+  1014→        { label: "Resistance level", value: fmtPrice(resistance.price) },
+  1015→        { label: "Rejections (touches)", value: `${resistance.touches}` },
+  1016→        { label: "Last tested", value: resistance.lastTouch },
+  1017→        { label: "Current distance", value: `${dist.toFixed(1)}%` },
+  1018→      ],
+  1019→      affectedQuarters: [resistance.lastTouch],
+  1020→      laymanSummary: `Think of Rs. ${resistance.price.toFixed(2)} as the stock's "ceiling" — the price has repeatedly stalled there. Ceilings can break: a decisive close above it often triggers a fresh rally.`,
+  1021→    });
+  1022→  }
+  1023→
+  1024→  // ── sort: by confidence desc ──
+  1025→  patterns.sort((a, b) => b.confidence - a.confidence);
+  1026→
+  1027→  const stats: StockPatternStats = {
+  1028→    currentPrice: price,
+  1029→    changePct1D,
+  1030→    changePct1M,
+  1031→    changePct3M,
+  1032→    changePct12M,
+  1033→    trendLabel,
+  1034→    trendSlopeAnnualPct,
+  1035→    high52w,
+  1036→    pctFrom52wHigh,
+  1037→    low52w,
+  1038→    pctFrom52wLow,
+  1039→    rsi14,
+  1040→    macdHistogram: macdHist,
+  1041→    macdStatus: macdHist > 0.01 ? "Bullish" : macdHist < -0.01 ? "Bearish" : "Neutral",
+  1042→    sma20,
+  1043→    sma50,
+  1044→    sma200,
+  1045→    volatilityAnnualPct: vol,
+  1046→    avgVolume20: avgVol20,
+  1047→    barCount: n,
+  1048→    firstDate: bars[0].date,
+  1049→    lastDate: last.date,
+  1050→    support,
+  1051→    resistance,
+  1052→    bullCount: patterns.filter((p) => p.severity === "positive").length,
+  1053→    bearCount: patterns.filter((p) => p.severity === "negative").length,
+  1054→    neutralCount: patterns.filter((p) => p.severity === "neutral").length,
+  1055→  };
+  1056→
+  1057→  // Chart series — last 260 bars
+  1058→  const start = Math.max(0, n - 260);
+  1059→  const chart: ChartPoint[] = [];
+  1060→  for (let i = start; i < n; i++) {
+  1061→    chart.push({
+  1062→      date: bars[i].date,
+  1063→      close: bars[i].close,
+  1064→      sma20: sma20S[i],
+  1065→      sma50: sma50S[i],
+  1066→      sma200: sma200S[i],
+  1067→      volume: bars[i].volume,
+  1068→    });
+  1069→  }
+  1070→
+  1071→  return { patterns, stats, chart };
+  1072→}
+  1073→

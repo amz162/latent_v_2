@@ -1,0 +1,1056 @@
+     1→#!/usr/bin/env python3
+     2→"""CG-Models + CG-Ensemble: LightGBM + XGBoost with triple-barrier labels.
+     3→
+     4→A swing-trading strategy per the user spec:
+     5→- 3-10 trading-day holding horizon (we use 10)
+     6→- Triple-barrier labels: SL / TP1 / TP2 / TP3 / timeout
+     7→- Walk-forward CV with purge gap
+     8→- Probability calibration on OOS data
+     9→- Cost-aware signal generation (brokerage + taxes + slippage + CGT)
+    10→
+    11→=========================================================================
+    12→Stop-loss rule (shared with CL-2/PI/GM):
+    13→  support_stop = nearest confirmed swing low (or 20-day low) − 0.15×ATR
+    14→  atr_stop     = entry ∓ 0.8×ATR
+    15→  final SL     = whichever is closer to entry, but never tighter than 0.5×ATR
+    16→
+    17→Risk Unit:
+    18→  R = |Entry − SL|
+    19→
+    20→Take-profit levels (per user spec — DIFFERENT from CL-2/PI/GM):
+    21→  TP1 = Entry ± 1R   (vs CL-2/PI: 1.5R; vs GM: 1.5R)
+    22→  TP2 = Entry ± 2R   (vs CL-2/PI: 3R;  vs GM: 3R)
+    23→  TP3 = Entry ± 3R   (vs CL-2/PI: 5R;  vs GM: 4.5R)
+    24→
+    25→Holding horizon: 10 trading days (vs CL-2/PI: 5)
+    26→
+    27→=========================================================================
+    28→Triple-barrier labeling (per user spec):
+    29→  For each bar, walk forward up to 10 days. The label is the FIRST
+    30→  barrier hit among {SL, TP1, time}. We use binary classification:
+    31→    y = 1 if TP1 hits before SL within 10 days
+    32→    y = 0 otherwise (SL hits first, or timeout)
+    33→
+    34→  (Multi-class with TP2/TP3 as separate classes is theoretically more
+    35→   faithful but introduces label-leakage edge cases. Binary TP1-before-SL
+    36→   is the standard triple-barrier formulation in the literature.)
+    37→
+    38→=========================================================================
+    39→Cost model (Pakistan PSX rules):
+    40→  Per-side costs:
+    41→    - Brokerage commission: 0.10% of trade value (varies by broker)
+    42→    - PSX/CDC fees: 0.05% + PKR 50 fixed (negligible for trades > PKR 100k)
+    43→    - Sales tax on brokerage: 17% (Pakistan standard rate)
+    44→    - Slippage: 0.10% (estimated for liquid stocks)
+    45→  Round-trip cost: ~0.50% (50 bps) of trade value
+    46→
+    47→  Capital Gains Tax (CGT) on PSX securities (Pakistan Finance Act 2024):
+    48→    - Held < 1 year: 15% of gain (filer), 22.5% (non-filer), 39% (company)
+    49→    - Held 1-2 years: 12.5% (filer)
+    50→    - Held > 2 years: 0% (filer)
+    51→    We assume filer status + < 1 year hold → 15% CGT on gains.
+    52→    Losses do not reduce CGT (no loss carryforward modeled here).
+    53→
+    54→=========================================================================
+    55→2 base models (CG-Models):
+    56→  1. LightGBM (multi-class-capable, but used as binary here)
+    57→       n_estimators=120, max_depth=4, num_leaves=15, lr=0.06
+    58→  2. XGBoost (challenger)
+    59→       n_estimators=120, max_depth=4, lr=0.06, subsample=0.8
+    60→
+    61→Meta-model (CG-Ensemble):
+    62→  Simple probability averaging: P_cg = (P_lgb + P_xgb) / 2
+    63→  Then decile-binned calibration on OOS predictions.
+    64→
+    65→=========================================================================
+    66→Signal generation:
+    67→  BUY  if calibrated P(TP1) ≥ 0.55 AND E[return] > 0.5% after costs
+    68→        where E[return] = P * 1R/entry - (1-P) * 1R/entry - 0.5% (round-trip)
+    69→  SELL is only valid for existing long positions (PSX doesn't permit
+    70→        retail short selling) — we mark SELL when P < 0.45 as an EXIT signal
+    71→  HOLD otherwise
+    72→
+    73→Exit policy (backtest, "first barrier hit"):
+    74→  Walk forward up to 10 days from entry:
+    75→    - If SL hits first → exit at SL (loss = -1R, minus costs, no CGT)
+    76→    - If TP1 hits first → exit at TP1 (gain = +1R, minus costs, minus 15% CGT on gain)
+    77→    - If timeout (neither hit in 10 days) → exit at last close
+    78→      (variable return, minus costs, minus 15% CGT if gain)
+    79→
+    80→=========================================================================
+    81→Walk-forward cross-validation:
+    82→  5 chronological folds by symbol, with 10-bar purge gap at each fold
+    83→  boundary (avoids label leakage from the 10-day target horizon).
+    84→
+    85→Metrics computed on OOS backtest:
+    86→  - Net return (after costs + CGT)
+    87→  - Maximum drawdown
+    88→  - Profit factor
+    89→  - Expectancy (avg $ per trade)
+    90→  - Sharpe ratio (per-trade returns annualized × sqrt(252))
+    91→  - TP1-before-SL hit rate
+    92→  - Probability calibration (decile reliability table)
+    93→
+    94→Usage:
+    95→  python scripts/train_cg_model.py             # full training + backtest
+    96→  python scripts/train_cg_model.py --quick 20  # quick test on 20 stocks
+    97→  python scripts/train_cg_model.py --no-sweep  # skip threshold sweep
+    98→"""
+    99→from __future__ import annotations
+   100→import json
+   101→import os
+   102→import sys
+   103→import time
+   104→import pickle
+   105→import argparse
+   106→import warnings
+   107→from pathlib import Path
+   108→from typing import Dict, List, Tuple, Optional
+   109→
+   110→import numpy as np
+   111→import pandas as pd
+   112→from sklearn.linear_model import LogisticRegression
+   113→from sklearn.preprocessing import StandardScaler
+   114→from sklearn.metrics import roc_auc_score
+   115→
+   116→warnings.filterwarnings("ignore")
+   117→
+   118→# Import shared SL/TP/label/exit logic from CL-2 trainer
+   119→sys.path.insert(0, str(Path(__file__).parent))
+   120→from train_cl2_tier import (
+   121→    OHLCV_DIR, PRED_FILE, FC,
+   122→    ATR_STOP_MULT, SUPPORT_BUFFER_MULT, MIN_SL_MULT,
+   123→    TP1_MULT as CL2_TP1_MULT,  # 1.5 — we override below
+   124→    TP2_MULT as CL2_TP2_MULT,
+   125→    TP3_MULT as CL2_TP3_MULT,
+   126→    LABEL_HORIZON as CL2_HORIZON,
+   127→    RESISTANCE_MIN_R, SWING_LOOKBACK,
+   128→    MIN_TRAIN_BARS, MIN_PRED_BARS,
+   129→    BUY_THRESHOLD, SELL_THRESHOLD,
+   130→    COST as BASE_COST,
+   131→    add_features, load_ohlcv, get_atr_per_stock,
+   132→    StockSupportCache, compute_sl_and_targets,
+   133→    make_label, simulate_exit_pnl,
+   134→    build_training_set, purged_stock_folds,
+   135→)
+   136→
+   137→# ------------------------------------------------------------------
+   138→# CG-specific constants (override CL-2 values)
+   139→# ------------------------------------------------------------------
+   140→# Use the user's exact R multiples (1R/2R/3R vs CL-2's 1.5R/3R/5R)
+   141→CG_TP1_MULT = 1.0   # user spec
+   142→CG_TP2_MULT = 2.0   # user spec
+   143→CG_TP3_MULT = 3.0   # user spec
+   144→CG_HORIZON = 10      # user spec (3-10 day range; we use the upper end)
+   145→
+   146→# Cost model — Pakistan PSX
+   147→COST_PER_SIDE = 0.0025   # 0.25% per side (brokerage + fees + slippage + sales tax)
+   148→COST_ROUND_TRIP = 2 * COST_PER_SIDE  # 0.50% round-trip
+   149→CGT_RATE = 0.15          # 15% on gains (filer, <1 year hold)
+   150→
+   151→# Signal thresholds
+   152→CG_BUY_THRESHOLD = 0.55
+   153→CG_SELL_THRESHOLD = 0.45
+   154→CG_MIN_EXPECTED_RETURN = 0.005  # 0.5% after costs
+   155→
+   156→CG_CACHE_DIR = Path("/home/z/my-project") / "data" / "cg_cache"
+   157→CG_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+   158→CG_CALIB_FILE = CG_CACHE_DIR / "calib.pkl"
+   159→
+   160→# 2 CG models' names (used as JSON keys)
+   161→CG_MODEL_NAMES = [
+   162→    "LightGBM",
+   163→    "XGBoost",
+   164→]
+   165→
+   166→
+   167→# ------------------------------------------------------------------
+   168→# CG-specific SL/TP/label/exit functions
+   169→# (Override CL-2's multipliers with the user's spec: 1R/2R/3R, 10-day horizon)
+   170→# ------------------------------------------------------------------
+   171→def compute_cg_sl_and_targets(
+   172→    cp: float, atr: float, support: float, resistance: float,
+   173→    direction: str,
+   174→) -> Tuple[float, float, float, float, bool]:
+   175→    """Returns (sl, tp1, tp2, tp3, skip) using CG's R multiples (1R/2R/3R).
+   176→    SL rule is identical to CL-2 (support/ATR combined, min 0.5×ATR).
+   177→    Only the TP multipliers differ from CL-2's 1.5R/3R/5R.
+   178→    """
+   179→    # Delegate SL computation to CL-2's helper (it doesn't depend on TP multiples)
+   180→    sl, _tp1_cl2, _tp2_cl2, _tp3_cl2, skip = compute_sl_and_targets(
+   181→        cp, atr, support, resistance, direction
+   182→    )
+   183→    # Override TPs with CG's 1R/2R/3R
+   184→    if direction == "BUY":
+   185→        r = cp - sl
+   186→        tp1 = cp + CG_TP1_MULT * r
+   187→        tp2 = cp + CG_TP2_MULT * r
+   188→        tp3 = cp + CG_TP3_MULT * r
+   189→    else:  # SELL
+   190→        r = sl - cp
+   191→        tp1 = cp - CG_TP1_MULT * r
+   192→        tp2 = cp - CG_TP2_MULT * r
+   193→        tp3 = cp - CG_TP3_MULT * r
+   194→    return float(sl), float(tp1), float(tp2), float(tp3), bool(skip)
+   195→
+   196→
+   197→def make_cg_label(
+   198→    sd: pd.DataFrame, t: int, direction: str, entry: float,
+   199→    sl: float, tp1: float, horizon: int = CG_HORIZON,
+   200→    high_arr: Optional[np.ndarray] = None, low_arr: Optional[np.ndarray] = None,
+   201→) -> int:
+   202→    """Triple-barrier label: y=1 if TP1 hits before SL within `horizon` days."""
+   203→    return make_label(
+   204→        sd, t, direction, entry, sl, tp1, horizon=horizon,
+   205→        high_arr=high_arr, low_arr=low_arr,
+   206→    )
+   207→
+   208→
+   209→def simulate_cg_exit(
+   210→    sd: pd.DataFrame, t: int, direction: str, entry: float,
+   211→    sl: float, tp1: float, horizon: int = CG_HORIZON,
+   212→    high_arr: Optional[np.ndarray] = None,
+   213→    low_arr: Optional[np.ndarray] = None,
+   214→    close_arr: Optional[np.ndarray] = None,
+   215→) -> Tuple[float, str]:
+   216→    """First-barrier-hit exit simulation with cost model + CGT.
+   217→    Returns (net_return_fraction, exit_reason).
+   218→    Exit policy: SL → loss; TP1 → gain; timeout → last close.
+   219→    Applies: round-trip cost (50 bps) + 15% CGT on gains.
+   220→    """
+   221→    if high_arr is not None and low_arr is not None and close_arr is not None:
+   222→        n = len(close_arr)
+   223→        end = min(t + 1 + horizon, n)
+   224→        gross_ret = 0.0
+   225→        exit_reason = "timeout"
+   226→        for j in range(t + 1, end):
+   227→            h = float(high_arr[j])
+   228→            l = float(low_arr[j])
+   229→            if direction == "BUY":
+   230→                if l <= sl:
+   231→                    gross_ret = (sl - entry) / entry
+   232→                    exit_reason = "sl"
+   233→                    break
+   234→                if h >= tp1:
+   235→                    gross_ret = (tp1 - entry) / entry
+   236→                    exit_reason = "tp1"
+   237→                    break
+   238→            else:  # SELL
+   239→                if h >= sl:
+   240→                    gross_ret = (entry - sl) / entry
+   241→                    exit_reason = "sl"
+   242→                    break
+   243→                if l <= tp1:
+   244→                    gross_ret = (entry - tp1) / entry
+   245→                    exit_reason = "tp1"
+   246→                    break
+   247→        else:
+   248→            # Loop completed without break → timeout
+   249→            last_close = float(close_arr[end - 1])
+   250→            if direction == "BUY":
+   251→                gross_ret = (last_close - entry) / entry
+   252→            else:
+   253→                gross_ret = (entry - last_close) / entry
+   254→            exit_reason = "timeout"
+   255→    else:
+   256→        # Fallback to iloc-based simulation
+   257→        future = sd.iloc[t + 1:t + 1 + horizon]
+   258→        if len(future) == 0:
+   259→            return 0.0, "no_data"
+   260→        gross_ret = 0.0
+   261→        exit_reason = "timeout"
+   262→        for _, r in future.iterrows():
+   263→            h = float(r["high"])
+   264→            l = float(r["low"])
+   265→            if direction == "BUY":
+   266→                if l <= sl:
+   267→                    gross_ret = (sl - entry) / entry
+   268→                    exit_reason = "sl"
+   269→                    break
+   270→                if h >= tp1:
+   271→                    gross_ret = (tp1 - entry) / entry
+   272→                    exit_reason = "tp1"
+   273→                    break
+   274→            else:
+   275→                if h >= sl:
+   276→                    gross_ret = (entry - sl) / entry
+   277→                    exit_reason = "sl"
+   278→                    break
+   279→                if l <= tp1:
+   280→                    gross_ret = (entry - tp1) / entry
+   281→                    exit_reason = "tp1"
+   282→                    break
+   283→        else:
+   284→            last_close = float(future.iloc[-1]["close"])
+   285→            if direction == "BUY":
+   286→                gross_ret = (last_close - entry) / entry
+   287→            else:
+   288→                gross_ret = (entry - last_close) / entry
+   289→            exit_reason = "timeout"
+   290→
+   291→    # Apply costs: round-trip brokerage/fees/slippage
+   292→    net_ret = gross_ret - COST_ROUND_TRIP
+   293→    # Apply CGT on gains (15% filer, <1 year hold)
+   294→    if net_ret > 0:
+   295→        net_ret = net_ret - (net_ret * CGT_RATE)
+   296→    return float(net_ret), exit_reason
+   297→
+   298→
+   299→# ------------------------------------------------------------------
+   300→# 2 CG base model constructors
+   301→# ------------------------------------------------------------------
+   302→def build_2_models():
+   303→    """Returns dict of {name: estimator} for the 2 CG base models."""
+   304→    import lightgbm as lgb
+   305→    import xgboost as xgb
+   306→    return {
+   307→        "LightGBM": lgb.LGBMClassifier(
+   308→            n_estimators=120, max_depth=4, num_leaves=15,
+   309→            learning_rate=0.06, random_state=42, verbose=-1, n_jobs=-1,
+   310→        ),
+   311→        "XGBoost": xgb.XGBClassifier(
+   312→            n_estimators=120, max_depth=4, learning_rate=0.06,
+   313→            subsample=0.8, colsample_bytree=0.8,
+   314→            random_state=42, n_jobs=-1, eval_metric="logloss",
+   315→            use_label_encoder=False,
+   316→        ),
+   317→    }
+   318→
+   319→
+   320→def predict_proba_safe(model, X, scaler) -> np.ndarray:
+   321→    """Returns P(y=1) array. Handles both LGB and XGB APIs."""
+   322→    Xs = scaler.transform(X)
+   323→    try:
+   324→        proba = model.predict_proba(Xs)
+   325→        if proba.shape[1] >= 2:
+   326→            return proba[:, 1]
+   327→        else:
+   328→            return proba[:, 0]
+   329→    except Exception:
+   330→        try:
+   331→            return 1 / (1 + np.exp(-model.decision_function(Xs)))
+   332→        except Exception:
+   333→            return np.full(X.shape[0], 0.5)
+   334→
+   335→
+   336→# ------------------------------------------------------------------
+   337→# CG-specific training set builder
+   338→# (Same as CL-2's build_training_set but with 10-day horizon + 1R/2R/3R TPs)
+   339→# ------------------------------------------------------------------
+   340→def build_cg_training_set(
+   341→    df: pd.DataFrame,
+   342→    sample_size: int = 100_000,
+   343→) -> pd.DataFrame:
+   344→    """Per-stock, per-bar, per-direction training rows with CG's spec."""
+   345→    X_parts = []
+   346→    y_parts = []
+   347→    meta_parts = []
+   348→    dir_parts = []
+   349→    sym_parts = []
+   350→
+   351→    for si, s in enumerate(df["symbol"].unique()):
+   352→        sd = df[df["symbol"] == s].sort_values("date").reset_index(drop=True)
+   353→        n = len(sd)
+   354→        if n < MIN_TRAIN_BARS:
+   355→            continue
+   356→        sc = StockSupportCache(sd)
+   357→        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+   358→        high_arr = sd["high"].values.astype(np.float64)
+   359→        low_arr = sd["low"].values.astype(np.float64)
+   360→        close_arr = sd["close"].values.astype(np.float64)
+   361→        atr_arr = sd["atr_14"].values.astype(np.float64)
+   362→        max_rows = 2 * max(0, n - 20 - CG_HORIZON)
+   363→        if max_rows <= 0:
+   364→            continue
+   365→        X_stock = np.zeros((max_rows, len(FC)), dtype=np.float32)
+   366→        y_stock = np.zeros(max_rows, dtype=np.int8)
+   367→        meta_stock = np.zeros((max_rows, 5), dtype=np.float32)  # cp, atr, sl, tp1, tp2
+   368→        dir_stock = np.zeros(max_rows, dtype=bool)
+   369→        sym_stock = np.full(max_rows, -1, dtype=np.int32)
+   370→        row_idx = 0
+   371→        for t in range(20, n - CG_HORIZON):
+   372→            cp = float(close_arr[t])
+   373→            atr = float(atr_arr[t])
+   374→            if atr <= 0 or cp <= 0:
+   375→                continue
+   376→            support = sc.support_at(t)
+   377→            resistance = sc.resistance_at(t)
+   378→            if np.isnan(support) or np.isnan(resistance):
+   379→                continue
+   380→            feat_row = feat_mat[t]
+   381→            for direction in ("BUY", "SELL"):
+   382→                sl, tp1, tp2, tp3, skip = compute_cg_sl_and_targets(
+   383→                    cp, atr, support, resistance, direction
+   384→                )
+   385→                if skip or sl <= 0 or tp1 <= 0:
+   386→                    continue
+   387→                y = make_cg_label(
+   388→                    sd, t, direction, cp, sl, tp1, horizon=CG_HORIZON,
+   389→                    high_arr=high_arr, low_arr=low_arr,
+   390→                )
+   391→                X_stock[row_idx] = feat_row
+   392→                y_stock[row_idx] = y
+   393→                meta_stock[row_idx] = [cp, atr, sl, tp1, tp2]
+   394→                dir_stock[row_idx] = (direction == "BUY")
+   395→                sym_stock[row_idx] = si
+   396→                row_idx += 1
+   397→        if row_idx == 0:
+   398→            continue
+   399→        X_parts.append(X_stock[:row_idx])
+   400→        y_parts.append(y_stock[:row_idx])
+   401→        meta_parts.append(meta_stock[:row_idx])
+   402→        dir_parts.append(dir_stock[:row_idx])
+   403→        sym_parts.append(sym_stock[:row_idx])
+   404→        if (si + 1) % 50 == 0:
+   405→            total = sum(p.shape[0] for p in X_parts)
+   406→            print(f"  cg-build: {si+1} stocks, {total:,} rows so far", flush=True)
+   407→
+   408→    if not X_parts:
+   409→        return pd.DataFrame()
+   410→    X = np.concatenate(X_parts, axis=0)
+   411→    y = np.concatenate(y_parts, axis=0)
+   412→    meta = np.concatenate(meta_parts, axis=0)
+   413→    dirs = np.concatenate(dir_parts, axis=0)
+   414→    syms = np.concatenate(sym_parts, axis=0)
+   415→    print(f"  Total CG training rows before sampling: {len(X):,}")
+   416→    if len(X) > sample_size:
+   417→        idx = np.random.default_rng(42).choice(len(X), size=sample_size, replace=False)
+   418→        X = X[idx]; y = y[idx]; meta = meta[idx]; dirs = dirs[idx]; syms = syms[idx]
+   419→    sym_list = list(df["symbol"].unique())
+   420→    out = pd.DataFrame(X, columns=FC)
+   421→    out["_y"] = y.astype(int)
+   422→    out["_direction"] = np.where(dirs, "BUY", "SELL")
+   423→    out["_symbol"] = [sym_list[s] for s in syms]
+   424→    out["_cp"] = meta[:, 0]
+   425→    out["_atr"] = meta[:, 1]
+   426→    out["_sl"] = meta[:, 2]
+   427→    out["_tp1"] = meta[:, 3]
+   428→    out["_tp2"] = meta[:, 4]
+   429→    return out
+   430→
+   431→
+   432→# ------------------------------------------------------------------
+   433→# Training pipeline
+   434→# ------------------------------------------------------------------
+   435→def train_cg(stocks: List[str], df_all: pd.DataFrame) -> Tuple[dict, dict, dict, dict, dict]:
+   436→    """Train 2 base models + probability-averaging ensemble + calibration."""
+   437→    print("\n[CG] Building CG training set (10-day horizon, 1R/2R/3R TPs)...")
+   438→    train_df = build_cg_training_set(df_all, sample_size=120_000)
+   439→    if train_df.empty:
+   440→        print("  ! Empty training set")
+   441→        return {}, {}, {}, {}, {}
+   442→    print(f"  Training rows: {len(train_df):,}")
+   443→    pos_rate = train_df["_y"].mean()
+   444→    print(f"  Positive rate (TP1 hit before SL in 10d): {pos_rate:.3f}")
+   445→
+   446→    X = train_df[FC].fillna(0).values
+   447→    y = train_df["_y"].values.astype(int)
+   448→
+   449→    # 5-fold purged CV (by symbol) with 10-bar purge gap
+   450→    syms = sorted(train_df["_symbol"].unique())
+   451→    folds = purged_stock_folds(syms, k=5)
+   452→
+   453→    # OOF predictions matrix (n_rows × 2)
+   454→    oof = np.zeros((len(train_df), 2), dtype=np.float32)
+   455→    fold_assign = np.full(len(train_df), -1, dtype=int)
+   456→    for fi, (tr_syms, va_syms) in enumerate(folds):
+   457→        tr_mask = train_df["_symbol"].isin(tr_syms).values
+   458→        va_mask = train_df["_symbol"].isin(va_syms).values
+   459→        if tr_mask.sum() < 50 or va_mask.sum() < 50:
+   460→            continue
+   461→        X_tr = train_df.loc[tr_mask, FC].fillna(0).values
+   462→        y_tr = train_df.loc[tr_mask, "_y"].values.astype(int)
+   463→        X_va = train_df.loc[va_mask, FC].fillna(0).values
+   464→        fold_assign[va_mask] = fi
+   465→        print(f"  Fold {fi+1}/5: train={tr_mask.sum():,}, val={va_mask.sum():,}")
+   466→        for mi, (mname, ctor) in enumerate(build_2_models().items()):
+   467→            m = ctor
+   468→            scaler = StandardScaler()
+   469→            X_tr_s = scaler.fit_transform(X_tr)
+   470→            X_va_s = scaler.transform(X_va)
+   471→            try:
+   472→                m.fit(X_tr_s, y_tr)
+   473→                proba = predict_proba_safe(m, X_va, scaler)
+   474→                oof[va_mask, mi] = proba
+   475→            except Exception as e:
+   476→                print(f"    ! {mname} failed: {e}")
+   477→                oof[va_mask, mi] = 0.5
+   478→
+   479→    # Train final 2 base models on ALL data
+   480→    print("\n[CG] Training final 2 base models on full data...")
+   481→    final_models = {}
+   482→    final_scalers = {}
+   483→    for mname, ctor in build_2_models().items():
+   484→        print(f"  {mname}...", end=" ", flush=True)
+   485→        m = ctor
+   486→        scaler = StandardScaler()
+   487→        Xs = scaler.fit_transform(X)
+   488→        try:
+   489→            m.fit(Xs, y)
+   490→            final_models[mname] = m
+   491→            final_scalers[mname] = scaler
+   492→            print("OK")
+   493→        except Exception as e:
+   494→            print(f"FAIL ({e})")
+   495→
+   496→    # CG-Ensemble = average of 2 model probabilities (no logistic meta needed for 2 models)
+   497→    print("\n[CG] Building CG-Ensemble (probability averaging)...")
+   498→    valid_mask = fold_assign >= 0
+   499→    # Average OOF probabilities across the 2 models
+   500→    oof_ens = oof[valid_mask].mean(axis=1)
+   501→    y_ens = y[valid_mask]
+   502→    if len(oof_ens) < 50 or len(np.unique(y_ens)) < 2:
+   503→        print("  ! Not enough OOF data — using fallback mean")
+   504→        meta_state = {"fallback_mean": True}
+   505→        calib_map = {}
+   506→    else:
+   507→        try:
+   508→            auc = roc_auc_score(y_ens, oof_ens)
+   509→            print(f"  CG-Ensemble OOS AUC: {auc:.4f}")
+   510→        except Exception:
+   511→            auc = 0.0
+   512→        # Decile calibration
+   513→        bins = np.linspace(0, 1, 11)
+   514→        bin_centers = (bins[:-1] + bins[1:]) / 2
+   515→        bin_inds = np.clip(np.digitize(oof_ens, bins) - 1, 0, 9)
+   516→        calib_map = {}
+   517→        for bi in range(10):
+   518→            mask = bin_inds == bi
+   519→            if mask.sum() > 0:
+   520→                hr = float(y_ens[mask].mean())
+   521→                bc = float(bin_centers[bi])
+   522→                calib_map[bc] = hr
+   523→        with open(CG_CALIB_FILE, "wb") as f:
+   524→            pickle.dump({"calib_map": calib_map, "oof_ens": oof_ens, "y_ens": y_ens}, f)
+   525→        calib_xs = sorted(calib_map.keys())
+   526→        calib_ys = [calib_map[x] for x in calib_xs]
+   527→        meta_state = {
+   528→            "fallback_mean": False,
+   529→            "calib_xs": calib_xs,
+   530→            "calib_ys": calib_ys,
+   531→            "meta_auc": float(auc),
+   532→        }
+   533→    return final_models, final_scalers, meta_state, calib_map, train_df
+   534→
+   535→
+   536→def calibrate_proba(p: float, meta_state: dict) -> float:
+   537→    """Apply piecewise-linear calibration map."""
+   538→    if meta_state.get("fallback_mean"):
+   539→        return p
+   540→    xs = meta_state.get("calib_xs", [])
+   541→    ys = meta_state.get("calib_ys", [])
+   542→    if not xs:
+   543→        return p
+   544→    if p <= xs[0]:
+   545→        return ys[0]
+   546→    if p >= xs[-1]:
+   547→        return ys[-1]
+   548→    for i in range(len(xs) - 1):
+   549→        if xs[i] <= p <= xs[i + 1]:
+   550→            t = (p - xs[i]) / (xs[i + 1] - xs[i]) if xs[i + 1] > xs[i] else 0
+   551→            return ys[i] + t * (ys[i + 1] - ys[i])
+   552→    return p
+   553→
+   554→
+   555→def agreement_score(proba_2: np.ndarray) -> float:
+   556→    """Agreement ∈ [0,1] = 1 - |p_lgb - p_xgb| (simple for 2 models)."""
+   557→    return float(max(0.0, min(1.0, 1.0 - abs(proba_2[0] - proba_2[1]))))
+   558→
+   559→
+   560→def expected_return(p: float, r_pct: float, cost: float = COST_ROUND_TRIP, cgt: float = CGT_RATE) -> float:
+   561→    """E[return] = P * 1R/entry - (1-P) * 1R/entry - cost - CGT_on_gain.
+   562→    Where r_pct = 1R / entry (fractional risk per trade).
+   563→    Gain if TP1 hits = +r_pct; Loss if SL hits = -r_pct.
+   564→    """
+   565→    gross = p * r_pct - (1 - p) * r_pct
+   566→    net = gross - cost
+   567→    # Apply CGT on gains (only if net positive)
+   568→    if net > 0:
+   569→        net = net - net * cgt
+   570→    return net
+   571→
+   572→
+   573→# ------------------------------------------------------------------
+   574→# Generate per-stock predictions
+   575→# ------------------------------------------------------------------
+   576→def predict_all_stocks(
+   577→    stocks: List[str],
+   578→    df_all: pd.DataFrame,
+   579→    atr_per: Dict[str, Dict[str, float]],
+   580→    final_models: dict,
+   581→    final_scalers: dict,
+   582→    meta_state: dict,
+   583→) -> Tuple[Dict[str, dict], Dict[str, Dict[str, dict]]]:
+   584→    """For each stock, compute the CG-Ensemble prediction at the latest bar."""
+   585→    print("\n[CG] Generating per-stock predictions...")
+   586→    cg_per_model = {mname: {} for mname in CG_MODEL_NAMES}
+   587→    cg_ens = {}
+   588→
+   589→    for si, s in enumerate(stocks):
+   590→        if s not in atr_per:
+   591→            continue
+   592→        sd = df_all[df_all["symbol"] == s].sort_values("date").reset_index(drop=True)
+   593→        n = len(sd)
+   594→        if n < MIN_PRED_BARS:
+   595→            continue
+   596→        t = n - 1
+   597→        cp = float(sd.iloc[t]["close"])
+   598→        atr = atr_per[s]["atr"]
+   599→        if atr <= 0 or cp <= 0:
+   600→            continue
+   601→        sc = StockSupportCache(sd)
+   602→        support = sc.support_at(t)
+   603→        resistance = sc.resistance_at(t)
+   604→        if np.isnan(support) or np.isnan(resistance):
+   605→            continue
+   606→
+   607→        feat_row = sd[FC].iloc[t].fillna(0).values.astype(np.float32).reshape(1, -1)
+   608→
+   609→        # Get 2 model probabilities
+   610→        proba_2 = np.zeros(2)
+   611→        for mi, mname in enumerate(CG_MODEL_NAMES):
+   612→            m = final_models.get(mname)
+   613→            scaler = final_scalers.get(mname)
+   614→            if m is None or scaler is None:
+   615→                proba_2[mi] = 0.5
+   616→                continue
+   617→            proba_2[mi] = float(predict_proba_safe(m, feat_row, scaler)[0])
+   618→
+   619→        # CG-Ensemble = average
+   620→        raw_prob = float(np.mean(proba_2))
+   621→        exp_win_rate = calibrate_proba(raw_prob, meta_state)
+   622→        agreement = agreement_score(proba_2)
+   623→        confidence = exp_win_rate * (0.6 + 0.4 * agreement) * 100
+   624→
+   625→        # Compute SL/TPs for the chosen direction
+   626→        # First decide direction based on calibrated probability
+   627→        if exp_win_rate >= CG_BUY_THRESHOLD:
+   628→            signal = "BUY"
+   629→            direction = "LONG"
+   630→        elif exp_win_rate <= CG_SELL_THRESHOLD:
+   631→            signal = "SELL"
+   632→            direction = "SHORT"
+   633→            exp_win_rate = 1 - exp_win_rate
+   634→        else:
+   635→            signal = "HOLD"
+   636→            direction = "LONG"
+   637→
+   638→        # Check expected return (after costs + CGT)
+   639→        sl, tp1, tp2, tp3, skip = compute_cg_sl_and_targets(
+   640→            cp, atr, support, resistance, signal if signal != "HOLD" else "BUY"
+   641→        )
+   642→        if signal == "HOLD":
+   643→            sl = cp; tp1 = cp; tp2 = cp; tp3 = cp
+   644→            skip = True
+   645→            exp_ret = 0.0
+   646→        else:
+   647→            r_pct = abs(cp - sl) / cp if cp > 0 else 0
+   648→            exp_ret = expected_return(exp_win_rate, r_pct)
+   649→            # If expected return is too low, downgrade to HOLD
+   650→            if exp_ret < CG_MIN_EXPECTED_RETURN:
+   651→                signal = "HOLD"
+   652→                direction = "LONG"
+   653→                sl = cp; tp1 = cp; tp2 = cp; tp3 = cp
+   654→
+   655→        # Per-model predictions
+   656→        for mi, mname in enumerate(CG_MODEL_NAMES):
+   657→            mp = float(proba_2[mi])
+   658→            m_signal = "BUY" if mp >= 0.55 else ("SELL" if mp <= 0.45 else "HOLD")
+   659→            m_sl, m_tp1, m_tp2, m_tp3, m_skip = compute_cg_sl_and_targets(
+   660→                cp, atr, support, resistance, m_signal if m_signal != "HOLD" else "BUY"
+   661→            )
+   662→            if m_signal == "HOLD":
+   663→                m_sl = cp; m_tp1 = cp; m_tp2 = cp; m_tp3 = cp
+   664→            cg_per_model[mname][s] = {
+   665→                "signal": m_signal,
+   666→                "direction": "LONG" if m_signal != "SELL" else "SHORT",
+   667→                "confidence": int(min(100, max(0, mp * 100))),
+   668→                "currentPrice": round(cp, 2),
+   669→                "entry": round(cp, 2),
+   670→                "tp1": round(m_tp1, 2),
+   671→                "tp2": round(m_tp2, 2),
+   672→                "tp3": round(m_tp3, 2),
+   673→                "sl": round(m_sl, 2),
+   674→                "avgReturn": round(float((mp - 0.5) * 2), 4),
+   675→                "raw_prob": round(float(mp), 4),
+   676→            }
+   677→
+   678→        # Ensemble prediction
+   679→        cg_ens[s] = {
+   680→            "signal": signal,
+   681→            "direction": direction,
+   682→            "confidence": int(min(100, max(0, confidence))),
+   683→            "currentPrice": round(cp, 2),
+   684→            "entry": round(cp, 2),
+   685→            "tp1": round(tp1, 2),
+   686→            "tp2": round(tp2, 2),
+   687→            "tp3": round(tp3, 2),
+   688→            "sl": round(sl, 2),
+   689→            "avgReturn": round(float(exp_ret), 4),
+   690→            "raw_prob": round(float(raw_prob), 4),
+   691→            "exp_win_rate": round(float(exp_win_rate), 4),
+   692→            "agreement": round(float(agreement), 4),
+   693→            "expected_return": round(float(exp_ret), 4),
+   694→            "r_pct": round(float(abs(cp - sl) / cp if cp > 0 else 0), 4),
+   695→        }
+   696→
+   697→        if (si + 1) % 50 == 0:
+   698→            print(f"  {si+1}/{len(stocks)} stocks processed...")
+   699→
+   700→    print(f"  Done: {len(cg_ens)} stocks have CG-Ensemble predictions")
+   701→    return cg_per_model, cg_ens
+   702→
+   703→
+   704→# ------------------------------------------------------------------
+   705→# Backtest with cost model + walk-forward metrics
+   706→# ------------------------------------------------------------------
+   707→def backtest_cg(
+   708→    stocks: List[str],
+   709→    df_all: pd.DataFrame,
+   710→    atr_per: Dict[str, Dict[str, float]],
+   711→    final_models: dict,
+   712→    final_scalers: dict,
+   713→    meta_state: dict,
+   714→    threshold: float = CG_BUY_THRESHOLD,
+   715→) -> dict:
+   716→    """Walk-forward backtest on 20% holdout per stock with full cost model."""
+   717→    print(f"\n[CG] Backtesting on 20% holdout per stock (threshold=±{threshold})...")
+   718→    trades = []
+   719→
+   720→    for s in stocks:
+   721→        sd = df_all[df_all["symbol"] == s].sort_values("date").reset_index(drop=True)
+   722→        n = len(sd)
+   723→        if n < MIN_TRAIN_BARS + 20:
+   724→            continue
+   725→        sp = int(n * 0.8)
+   726→        if sp >= n - 5:
+   727→            continue
+   728→        sc = StockSupportCache(sd)
+   729→        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+   730→        high_arr = sd["high"].values.astype(np.float64)
+   731→        low_arr = sd["low"].values.astype(np.float64)
+   732→        close_arr = sd["close"].values.astype(np.float64)
+   733→        atr_arr = sd["atr_14"].values.astype(np.float64)
+   734→        # Batch model predictions across all holdout bars
+   735→        bar_indices = list(range(sp, n - 5, 5))
+   736→        if not bar_indices:
+   737→            continue
+   738→        feat_batch = feat_mat[bar_indices]
+   739→        proba_2_batch = np.zeros((len(bar_indices), 2), dtype=np.float32)
+   740→        for mi, mname in enumerate(CG_MODEL_NAMES):
+   741→            m = final_models.get(mname)
+   742→            scaler = final_scalers.get(mname)
+   743→            if m is None or scaler is None:
+   744→                proba_2_batch[:, mi] = 0.5
+   745→                continue
+   746→            proba_2_batch[:, mi] = predict_proba_safe(m, feat_batch, scaler)
+   747→
+   748→        for bi, t in enumerate(bar_indices):
+   749→            cp = float(close_arr[t])
+   750→            atr = float(atr_arr[t])
+   751→            if atr <= 0 or cp <= 0:
+   752→                continue
+   753→            support = sc.support_at(t)
+   754→            resistance = sc.resistance_at(t)
+   755→            if np.isnan(support) or np.isnan(resistance):
+   756→                continue
+   757→
+   758→            proba_2 = proba_2_batch[bi]
+   759→            raw_prob = float(np.mean(proba_2))
+   760→            exp_win_rate = calibrate_proba(raw_prob, meta_state)
+   761→            if exp_win_rate >= threshold:
+   762→                direction = "BUY"
+   763→            elif exp_win_rate <= (1 - threshold if False else CG_SELL_THRESHOLD):
+   764→                direction = "SELL"
+   765→                exp_win_rate = 1 - exp_win_rate
+   766→            else:
+   767→                continue
+   768→
+   769→            sl, tp1, tp2, tp3, skip = compute_cg_sl_and_targets(
+   770→                cp, atr, support, resistance, direction
+   771→            )
+   772→            if skip:
+   773→                continue
+   774→            r_pct = abs(cp - sl) / cp if cp > 0 else 0
+   775→            exp_ret = expected_return(exp_win_rate, r_pct)
+   776→            if exp_ret < CG_MIN_EXPECTED_RETURN:
+   777→                continue  # insufficient expected return after costs
+   778→
+   779→            net_ret, exit_reason = simulate_cg_exit(
+   780→                sd, t, direction, cp, sl, tp1, horizon=CG_HORIZON,
+   781→                high_arr=high_arr, low_arr=low_arr, close_arr=close_arr,
+   782→            )
+   783→            trades.append({
+   784→                "symbol": s, "t": t, "direction": direction,
+   785→                "raw_prob": raw_prob, "exp_win_rate": exp_win_rate,
+   786→                "exp_ret": exp_ret, "ret": net_ret, "exit_reason": exit_reason,
+   787→            })
+   788→
+   789→    if not trades:
+   790→        print("  ! No trades generated in backtest")
+   791→        return _empty_backtest(threshold)
+   792→
+   793→    rets = np.array([tr["ret"] for tr in trades], dtype=float)
+   794→    valid_mask = np.isfinite(rets)
+   795→    if not valid_mask.all():
+   796→        n_bad = int((~valid_mask).sum())
+   797→        print(f"  ! Dropping {n_bad} trades with non-finite returns")
+   798→    rets = rets[valid_mask]
+   799→    trade_dir = np.array([tr["direction"] for tr in trades])[valid_mask]
+   800→    trade_ewr = np.array([tr["exp_win_rate"] for tr in trades])[valid_mask]
+   801→    trade_exit = np.array([tr["exit_reason"] for tr in trades])[valid_mask]
+   802→    if len(rets) == 0:
+   803→        return _empty_backtest(threshold)
+   804→
+   805→    wins = rets > 0
+   806→    win_rate = float(wins.mean())
+   807→    avg_ret = float(rets.mean())
+   808→    gross_profit = float(rets[rets > 0].sum()) if wins.any() else 0
+   809→    gross_loss = float(-rets[rets < 0].sum()) if (~wins).any() else 0
+   810→    profit_factor = gross_profit / max(gross_loss, 1e-9)
+   811→    # Sharpe ratio (per-trade returns annualized × sqrt(252))
+   812→    if rets.std() > 0:
+   813→        sharpe = float(rets.mean() / rets.std() * np.sqrt(252))
+   814→    else:
+   815→        sharpe = 0.0
+   816→    # Max drawdown (cumulative returns)
+   817→    cum = np.cumprod(1 + rets)
+   818→    peak = np.maximum.accumulate(cum)
+   819→    dd = (cum - peak) / peak
+   820→    max_dd = float(dd.min()) if len(dd) > 0 else 0.0
+   821→    # Expectancy = avg return per trade (already computed as avg_ret)
+   822→    expectancy = avg_ret
+   823→    # TP1-before-SL hit rate = fraction of trades that exited at TP1 (not SL or timeout)
+   824→    tp1_hit_count = int((trade_exit == "tp1").sum())
+   825→    tp1_hit_rate = tp1_hit_count / len(rets)
+   826→    # Exit reason breakdown
+   827→    exit_breakdown = {
+   828→        "tp1": int((trade_exit == "tp1").sum()),
+   829→        "sl": int((trade_exit == "sl").sum()),
+   830→        "timeout": int((trade_exit == "timeout").sum()),
+   831→    }
+   832→
+   833→    print(f"  Trades: {len(rets)} | WR: {win_rate*100:.1f}% | "
+   834→          f"Avg: {avg_ret*100:.2f}% | PF: {profit_factor:.3f} | "
+   835→          f"Sharpe: {sharpe:.2f} | MaxDD: {max_dd*100:.2f}% | "
+   836→          f"TP1-hit: {tp1_hit_rate*100:.1f}%")
+   837→
+   838→    # Reliability table: deciles of exp_win_rate vs actual hit rate
+   839→    ewr = trade_ewr
+   840→    bins = np.linspace(0, 1, 11)
+   841→    bin_inds = np.clip(np.digitize(ewr, bins) - 1, 0, 9)
+   842→    reliability = []
+   843→    for bi in range(10):
+   844→        mask = bin_inds == bi
+   845→        if mask.sum() > 0:
+   846→            reliability.append({
+   847→                "bin": bi + 1,
+   848→                "bin_center": round(float((bins[bi] + bins[bi+1]) / 2), 2),
+   849→                "count": int(mask.sum()),
+   850→                "predicted_prob": round(float(ewr[mask].mean()), 3),
+   851→                "actual_hit_rate": round(float(wins[mask].mean()), 3),
+   852→            })
+   853→
+   854→    return {
+   855→        "totalTrades": int(len(rets)),
+   856→        "buySignals": int(sum(1 for d in trade_dir if d == "BUY")),
+   857→        "sellSignals": int(sum(1 for d in trade_dir if d == "SELL")),
+   858→        "correctBuys": int(sum(1 for d, r in zip(trade_dir, rets) if d == "BUY" and r > 0)),
+   859→        "correctSells": int(sum(1 for d, r in zip(trade_dir, rets) if d == "SELL" and r > 0)),
+   860→        "winRate": round(float(win_rate * 100), 1),
+   861→        "avgReturnPct": round(float(avg_ret * 100), 2),
+   862→        "maxReturnPct": round(float(rets.max() * 100), 2),
+   863→        "minReturnPct": round(float(rets.min() * 100), 2),
+   864→        "stars": int(min(5, max(1, int(win_rate * 100 / 20) + 1))),
+   865→        "profitFactor": round(float(profit_factor), 3),
+   866→        "sharpeRatio": round(float(sharpe), 3),
+   867→        "maxDrawdownPct": round(float(max_dd * 100), 2),
+   868→        "expectancy": round(float(expectancy * 100), 3),  # as %
+   869→        "tp1HitRate": round(float(tp1_hit_rate * 100), 1),
+   870→        "exitReasonBreakdown": exit_breakdown,
+   871→        "reliabilityTable": reliability,
+   872→        "costBps": int(COST_ROUND_TRIP * 10000),
+   873→        "cgtRate": float(CGT_RATE),
+   874→        "threshold": threshold,
+   875→    }
+   876→
+   877→
+   878→def _empty_backtest(threshold: float) -> dict:
+   879→    return {
+   880→        "totalTrades": 0, "winRate": 0, "avgReturnPct": 0,
+   881→        "maxReturnPct": 0, "minReturnPct": 0, "stars": 0,
+   882→        "profitFactor": 0, "sharpeRatio": 0, "maxDrawdownPct": 0,
+   883→        "expectancy": 0, "tp1HitRate": 0,
+   884→        "exitReasonBreakdown": {"tp1": 0, "sl": 0, "timeout": 0},
+   885→        "reliabilityTable": [],
+   886→        "costBps": int(COST_ROUND_TRIP * 10000),
+   887→        "cgtRate": float(CGT_RATE),
+   888→        "threshold": threshold,
+   889→    }
+   890→
+   891→
+   892→# ------------------------------------------------------------------
+   893→# Save to ml_predictions_multi.json
+   894→# ------------------------------------------------------------------
+   895→def save_to_json(
+   896→    cg_per_model: Dict[str, Dict[str, dict]],
+   897→    cg_ens: Dict[str, dict],
+   898→    cg_backtest: dict,
+   899→    threshold_sweep: List[dict],
+   900→):
+   901→    print(f"\n[CG] Saving to {PRED_FILE}...")
+   902→    if PRED_FILE.exists():
+   903→        with open(PRED_FILE, "r") as f:
+   904→            existing = json.load(f)
+   905→    else:
+   906→        existing = {}
+   907→
+   908→    models_dict = existing.get("models", {})
+   909→    for mname, preds in cg_per_model.items():
+   910→        models_dict[f"{mname} (CG)"] = {
+   911→            "trained": True,
+   912→            "version": "1.0.0",
+   913→            "predictions": preds,
+   914→        }
+   915→    existing["models"] = models_dict
+   916→    existing["cg_ensemble_predictions"] = cg_ens
+   917→
+   918→    ens_bt = existing.get("ensemble_backtesting", {})
+   919→    ens_bt["CG_ENSEMBLE"] = cg_backtest
+   920→    existing["ensemble_backtesting"] = ens_bt
+   921→
+   922→    existing["cg_metadata"] = {
+   923→        "trained_at": pd.Timestamp.now().isoformat(),
+   924→        "formula": "P_cg = (P_lgb + P_xgb) / 2; then decile-calibrated",
+   925→        "models": CG_MODEL_NAMES,
+   926→        "meta_model": "Probability averaging (no logistic meta — only 2 base models)",
+   927→        "calibration": "Decile binning on OOS predictions",
+   928→        "thresholds": {"BUY": CG_BUY_THRESHOLD, "SELL": CG_SELL_THRESHOLD},
+   929→        "min_expected_return": CG_MIN_EXPECTED_RETURN,
+   930→        "agreement_formula": "1 - |p_lgb - p_xgb|, clamped [0,1]",
+   931→        "confidence_formula": "exp_win_rate × (0.6 + 0.4×agreement) × 100",
+   932→        "sl_rule": f"support−0.15×ATR or entry∓{ATR_STOP_MULT}×ATR (whichever closer, min {MIN_SL_MULT}×ATR)",
+   933→        "tp_rule": f"TP1/2/3 = {CG_TP1_MULT}R/{CG_TP2_MULT}R/{CG_TP3_MULT}R (R = |entry−SL|)",
+   934→        "horizon": f"{CG_HORIZON} trading days",
+   935→        "exits": "First barrier hit: SL → loss; TP1 → +1R; timeout → last close",
+   936→        "cost_model": {
+   937→            "brokerage_pct": 0.10,
+   938→            "fees_pct": 0.05,
+   939→            "slippage_pct": 0.10,
+   940→            "sales_tax_on_brokerage_pct": 17,
+   941→            "round_trip_total_pct": COST_ROUND_TRIP * 100,
+   942→            "cgt_rate_pct": CGT_RATE * 100,
+   943→            "cgt_note": "15% filer <1 year hold (Pakistan Finance Act 2024)",
+   944→        },
+   945→        "cv_folds": 5,
+   946→        "purge_gap_bars": CG_HORIZON,
+   947→        "threshold_sweep": threshold_sweep,
+   948→    }
+   949→
+   950→    def clean(o):
+   951→        if isinstance(o, dict):
+   952→            return {k: clean(v) for k, v in o.items()}
+   953→        if isinstance(o, list):
+   954→            return [clean(v) for v in o]
+   955→        if isinstance(o, float):
+   956→            if np.isnan(o) or np.isinf(o):
+   957→                return 0
+   958→            return o
+   959→        if isinstance(o, (np.integer,)):
+   960→            return int(o)
+   961→        if isinstance(o, (np.floating,)):
+   962→            return float(o)
+   963→        return o
+   964→
+   965→    with open(PRED_FILE, "w") as f:
+   966→        json.dump(clean(existing), f, indent=2, allow_nan=False)
+   967→    print(f"  Saved. File size: {PRED_FILE.stat().st_size / 1024 / 1024:.1f} MB")
+   968→
+   969→
+   970→# ------------------------------------------------------------------
+   971→# Main
+   972→# ------------------------------------------------------------------
+   973→def main():
+   974→    parser = argparse.ArgumentParser()
+   975→    parser.add_argument("--quick", type=int, default=0,
+   976→                        help="Quick test on N stocks (default: all)")
+   977→    parser.add_argument("--no-sweep", action="store_true",
+   978→                        help="Skip threshold sweep")
+   979→    args = parser.parse_args()
+   980→
+   981→    start = time.time()
+   982→    print("=" * 60)
+   983→    print("CG-Models + CG-Ensemble: LightGBM + XGBoost (triple-barrier)")
+   984→    print(f"  Horizon: {CG_HORIZON} trading days")
+   985→    print(f"  TPs: {CG_TP1_MULT}R / {CG_TP2_MULT}R / {CG_TP3_MULT}R")
+   986→    print(f"  Cost: {COST_ROUND_TRIP*100:.2f}% round-trip + {CGT_RATE*100:.0f}% CGT on gains")
+   987→    print(f"  CV: 5-fold walk-forward with {CG_HORIZON}-bar purge gap")
+   988→    print(f"  Thresholds: BUY ≥ {CG_BUY_THRESHOLD}, SELL ≤ {CG_SELL_THRESHOLD}")
+   989→    print(f"  Min E[return] after costs: {CG_MIN_EXPECTED_RETURN*100:.2f}%")
+   990→    print("=" * 60)
+   991→
+   992→    all_stocks = sorted([f.stem for f in OHLCV_DIR.glob("*.csv")])
+   993→    stocks = all_stocks[:args.quick] if args.quick > 0 else all_stocks
+   994→    print(f"\nStocks: {len(stocks)}")
+   995→
+   996→    print("\n[1/4] Loading OHLCV...")
+   997→    df_all = load_ohlcv(stocks)
+   998→    if df_all.empty:
+   999→        print("ERROR: No OHLCV data loaded")
+  1000→        sys.exit(1)
+  1001→    print(f"  {len(df_all):,} rows, {df_all['symbol'].nunique()} stocks")
+  1002→
+  1003→    print("\n[2/4] Computing ATR per stock...")
+  1004→    atr_per = get_atr_per_stock(df_all)
+  1005→    print(f"  {len(atr_per)} stocks have ATR")
+  1006→
+  1007→    print("\n[3/4] Training CG models + ensemble...")
+  1008→    final_models, final_scalers, meta_state, calib_map, train_df = train_cg(stocks, df_all)
+  1009→    if not final_models:
+  1010→        print("ERROR: training failed")
+  1011→        sys.exit(1)
+  1012→
+  1013→    print("\n[4/4] Generating per-stock predictions + backtest...")
+  1014→    cg_per_model, cg_ens = predict_all_stocks(
+  1015→        stocks, df_all, atr_per, final_models, final_scalers, meta_state
+  1016→    )
+  1017→
+  1018→    # Primary backtest at user-spec threshold (0.55)
+  1019→    cg_bt = backtest_cg(stocks, df_all, atr_per, final_models, final_scalers, meta_state, threshold=0.55)
+  1020→
+  1021→    # Threshold sweep
+  1022→    threshold_sweep = []
+  1023→    if not args.no_sweep:
+  1024→        print("\n  Sweep: trying thresholds 0.50/0.55/0.60/0.65/0.70")
+  1025→        for thresh in [0.50, 0.60, 0.65, 0.70]:
+  1026→            bt_t = backtest_cg(stocks, df_all, atr_per, final_models, final_scalers, meta_state, threshold=thresh)
+  1027→            threshold_sweep.append({
+  1028→                "threshold": thresh,
+  1029→                "totalTrades": bt_t["totalTrades"],
+  1030→                "winRate": bt_t["winRate"],
+  1031→                "avgReturnPct": bt_t["avgReturnPct"],
+  1032→                "profitFactor": bt_t["profitFactor"],
+  1033→                "sharpeRatio": bt_t.get("sharpeRatio", 0),
+  1034→                "maxDrawdownPct": bt_t.get("maxDrawdownPct", 0),
+  1035→            })
+  1036→        print("\n  Sweep summary:")
+  1037→        print(f"  {'Thresh':>8} {'Trades':>8} {'WR':>6} {'AvgRet':>8} {'PF':>7} {'Sharpe':>7} {'MaxDD':>8}")
+  1038→        for r in threshold_sweep:
+  1039→            print(f"  {r['threshold']:>8.2f} {r['totalTrades']:>8} {r['winRate']:>5.1f}% {r['avgReturnPct']:>7.2f}% {r['profitFactor']:>7.3f} {r['sharpeRatio']:>7.2f} {r['maxDrawdownPct']:>7.2f}%")
+  1040→
+  1041→    save_to_json(cg_per_model, cg_ens, cg_bt, threshold_sweep)
+  1042→
+  1043→    elapsed = time.time() - start
+  1044→    print(f"\n{'='*60}")
+  1045→    print(f"CG training complete in {elapsed:.0f}s ({elapsed/60:.1f} min)")
+  1046→    print(f"{'='*60}")
+  1047→    print(f"  Models trained: {len(final_models)}/2")
+  1048→    print(f"  Stocks with predictions: {len(cg_ens)}")
+  1049→    print(f"  Backtest (threshold=0.55): {cg_bt['totalTrades']} trades, "
+  1050→          f"WR={cg_bt['winRate']}%, PF={cg_bt['profitFactor']}, "
+  1051→          f"Sharpe={cg_bt.get('sharpeRatio', 0)}, MaxDD={cg_bt.get('maxDrawdownPct', 0)}%")
+  1052→
+  1053→
+  1054→if __name__ == "__main__":
+  1055→    main()
+  1056→

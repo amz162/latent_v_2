@@ -75,6 +75,81 @@ def drop_immature_targets(df, horizons=HORIZONS):
     return df[mask].reset_index(drop=True)
 
 
+# ─── Task 51: per-stock target-maturity timestamps ─────────────────────────
+def add_target_maturity_dates(df, date_col="date", symbol_col="symbol",
+                               horizons=HORIZONS):
+    """Add `target_maturity_{h}d` columns = the per-stock DATE h sessions
+    forward (the timestamp at which the target_{h}d outcome becomes
+    observable).
+
+    For a row at date T in stock S with target_5d using close[T+5], the
+    target_maturity_5d is the date at T+5 (per-stock forward session). This
+    is the timestamp at which the target outcome was fully observable.
+
+    Use this to filter training rows in walk-forward evaluation: a row is
+    eligible for training at prediction timestamp P only if BOTH:
+      (a) its feature date T < P (already enforced by train_data filter), AND
+      (b) its target_maturity_{h}d <= P (the target's forward window ENDED
+          at or before the prediction timestamp — so the target outcome
+          was observable at decision time P).
+
+    Without (b), a row at T = P - 3 with target_5d using close[T+5] = close[P+2]
+    would be included — but close[P+2] is a price strictly AFTER the prediction
+    timestamp P, which is a target-maturity leak (the model would train on a
+    target that depends on a future evaluation price).
+
+    This is INDEPENDENT of `drop_immature_targets`:
+      - `drop_immature_targets` drops rows whose target VALUE is NaN (the
+        target hasn't been computed because the row is in the last h rows
+        of the FULL dataset — i.e., the target endpoint is beyond the
+        dataset's last bar).
+      - `add_target_maturity_dates` + `filter_by_target_maturity` drops rows
+        whose target endpoint (T+h) extends beyond the SAMPLE's prediction
+        timestamp — even when the target VALUE is non-NaN (because the
+        endpoint is within the dataset but after the prediction date).
+
+    Both filters are required for leak-free walk-forward training.
+    """
+    df = df.copy().sort_values([symbol_col, date_col]).reset_index(drop=True)
+    g = df.groupby(symbol_col)[date_col]
+    for h in horizons:
+        df[f"target_maturity_{h}d"] = g.shift(-h)
+    return df
+
+
+def filter_by_target_maturity(train_data, prediction_date, horizon,
+                               date_col="date", symbol_col="symbol"):
+    """Filter `train_data` to rows whose target_maturity_{horizon}d is
+    matured at or before `prediction_date` (and whose target value is not NaN).
+
+    This is the per-horizon, per-stock walk-forward training filter that
+    prevents target-maturity leakage: a training row's forward-return label
+    must have been FULLY OBSERVABLE at the historical prediction timestamp.
+
+    Args:
+        train_data: DataFrame with `target_{horizon}d` + `target_maturity_{horizon}d`
+            columns (pre-computed by add_forward_returns + add_target_maturity_dates).
+        prediction_date: the sample's decision timestamp (scalar comparable to
+            train_data[date_col]).
+        horizon: integer (e.g. 5, 10, 21).
+
+    Returns the filtered DataFrame (a copy) — caller trains on this slice.
+    """
+    tcol = f"target_{horizon}d"
+    mcol = f"target_maturity_{horizon}d"
+    if tcol not in train_data.columns or mcol not in train_data.columns:
+        raise ValueError(
+            f"filter_by_target_maturity: columns {tcol} / {mcol} not found. "
+            f"Call add_forward_returns + add_target_maturity_dates first."
+        )
+    mask = (
+        train_data[tcol].notna()
+        & train_data[mcol].notna()
+        & (train_data[mcol] <= prediction_date)
+    )
+    return train_data[mask].reset_index(drop=True)
+
+
 # ─── Task 2: chronological train / validation / test split + purge ────────
 def chronological_split(df, date_col="date", symbol_col="symbol",
                         train_frac=0.60, val_frac=0.20,
@@ -362,6 +437,70 @@ def _self_test():
         # (Indirect but confirms the in-sequence/no-future property.)
         assert not np.isnan(y2).any(), f"{sym}: sequence target has NaN — immature row should've been skipped"
     print(f"  ✓ (10) no future timestamp in any input sequence (immature rows skipped)")
+
+    # (11) Task 51 — target-maturity filter: a training row whose feature date
+    # T precedes the prediction date P but whose target matures at T+h > P
+    # MUST be excluded by filter_by_target_maturity. This is the
+    # "target-maturity leakage" filter — distinct from drop_immature_targets
+    # (which only removes rows whose target VALUE is NaN).
+    # Build a deterministic 3-stock dataset with dates 2024-01-01..2024-03-15
+    # (50 business days per stock). For prediction date P = 2024-02-15 (the
+    # 33rd session), horizon h=21: a training row at T = 2024-02-01 (session
+    # 24) has target_21d using close[T+21] = close[session 45] = 2024-03-08.
+    # 2024-03-08 > 2024-02-15 → target endpoint is AFTER P → MUST be excluded.
+    rng51 = np.random.default_rng(51)
+    frames51 = []
+    for sym in ["AAA", "BBB", "CCC"]:
+        n51 = 50
+        dates51 = pd.bdate_range("2024-01-01", periods=n51)
+        close51 = 100 * np.cumprod(1 + rng51.normal(0, 0.01, n51))
+        frames51.append(pd.DataFrame({
+            "date": dates51, "symbol": sym, "close": close51,
+            "high": close51 * 1.01, "low": close51 * 0.99, "volume": 1000,
+            "open": close51,
+        }))
+    df51 = pd.concat(frames51, ignore_index=True)
+    df51 = add_forward_returns(df51)
+    df51 = add_target_maturity_dates(df51)
+    # Prediction date P = 33rd session's date (2024-02-15) for stock AAA.
+    aaa = df51[df51["symbol"] == "AAA"].sort_values("date").reset_index(drop=True)
+    P = aaa.iloc[32]["date"]  # 33rd session (index 32)
+    # filter_by_target_maturity at horizon 21: must exclude rows whose
+    # target_maturity_21d > P.
+    td21 = filter_by_target_maturity(aaa, P, horizon=21)
+    # Verify: the latest target_maturity_21d in the filtered set is <= P.
+    latest_maturity = td21["target_maturity_21d"].max()
+    assert latest_maturity <= P, (
+        f"filter_by_target_maturity let through a row with maturity {latest_maturity} "
+        f"> prediction_date {P} — target-maturity leak!"
+    )
+    # Verify: a row at T = P-3 (session 30) has target_maturity_21d at session
+    # 51 which is BEYOND the dataset — its target value is NaN, so
+    # filter_by_target_maturity correctly excludes it (via the notna check).
+    # A row at T = session 12 (well before P) has target_maturity_21d at
+    # session 33 = P — this is the boundary; it SHOULD be included.
+    boundary_row = aaa[aaa["date"] == aaa.iloc[11]["date"]].iloc[0]
+    boundary_maturity = boundary_row["target_maturity_21d"]
+    assert boundary_maturity == P, f"boundary row maturity {boundary_maturity} != P {P}"
+    assert boundary_row["date"] in td21["date"].values, (
+        "boundary row (maturity == P) should be INCLUDED — outcome observable at P"
+    )
+    # Cross-horizon independence: a row immature for h=21 may still be
+    # eligible for h=5 (if its target_maturity_5d <= P).
+    td5 = filter_by_target_maturity(aaa, P, horizon=5)
+    assert len(td5) >= len(td21), (
+        f"5d filter should preserve >= rows than 21d filter: "
+        f"5d={len(td5)} < 21d={len(td21)} (per-horizon independence violated)"
+    )
+    # Pooled across stocks: different stocks have different trading calendars
+    # (no missing dates here, but the filter must work per-stock via groupby).
+    td_pooled = filter_by_target_maturity(df51, P, horizon=21)
+    assert td_pooled["target_maturity_21d"].max() <= P, (
+        "pooled filter let through a row with maturity > P"
+    )
+    print(f"  ✓ (11) filter_by_target_maturity excludes target-maturity leaks "
+          f"(per-horizon, per-stock, pooled): latest_maturity={latest_maturity.date()} <= P={P.date()}; "
+          f"5d preserves {len(td5)} >= 21d's {len(td21)} rows; pooled={len(td_pooled)}")
 
     print("\nAll ml_integrity self-tests PASSED.")
     return True

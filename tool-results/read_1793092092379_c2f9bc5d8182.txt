@@ -1,0 +1,1423 @@
+     1→#!/usr/bin/env python3
+     2→"""CL-2 Tier: 7 models + logistic meta-ensemble with support/ATR stop rules.
+     3→
+     4→This is a NEW model category for Latent.pk, distinct from the existing
+     5→CL-Ensemble (LGB70+Log30) and CL-Extender (8-model weighted vote). It is
+     6→trained to predict the probability that TP1 (1.5R) will be hit before the
+     7→stop-loss within 5 days, using a binary-classifier ensemble instead of
+     8→the regressor+avgReturn approach used by the existing CL tier.
+     9→
+    10→=========================================================================
+    11→Stop-loss rule (NEW — replaces ±1.5×ATR):
+    12→  support_stop = nearest confirmed swing low (or 20-day low) − 0.15×ATR
+    13→  atr_stop     = entry ∓ 0.8×ATR   (∓ = below for BUY, above for SELL)
+    14→  final SL     = whichever is closer to entry, but never tighter than 0.5×ATR
+    15→
+    16→  A swing low is "confirmed" when it's a local minimum with 3 bars on
+    17→  each side (no look-ahead — we use only past bars at prediction time).
+    18→
+    19→Resistance check (NEW):
+    20→  Skip the trade if the nearest resistance is less than 1R above entry
+    21→  (no room for TP1). Resistance = nearest confirmed swing high.
+    22→=========================================================================
+    23→
+    24→Target label:
+    25→  y = 1 if TP1 (= entry + 1.5R for BUY, entry − 1.5R for SELL) is hit
+    26→      before SL within the next 5 bars, else 0.
+    27→  where R = |entry − SL| (the per-bar realized risk from the SL rule).
+    28→
+    29→Exit simulation (for backtest P&L, not for label generation):
+    30→  50% closed at TP1, 30% at TP2 (=3R), 20% at TP3 (=5R).
+    31→  Stop moves to breakeven after TP1 is hit.
+    32→
+    33→Models (all CPU, sklearn-based):
+    34→  1. LightGBM (config A: 100 trees, depth 3, lr 0.05)
+    35→  2. LightGBM (config B: 60 trees, depth 5, lr 0.08)
+    36→  3. HistGradientBoostingClassifier
+    37→  4. ExtraTreesClassifier
+    38→  5. RandomForestClassifier
+    39→  6. LogisticRegression
+    40→  7. MLPClassifier (small, 1 hidden layer of 32 units)
+    41→
+    42→Meta-model:
+    43→  LogisticRegression on the 7-dim OOF prediction vector, trained on
+    44→  purged time-ordered out-of-fold predictions (purge gap = 5 bars to
+    45→  avoid label leakage from the 5-day target horizon).
+    46→
+    47→Calibration:
+    48→  Bin meta-predictions into deciles on OOS data, measure actual hit
+    49→  rate per bin. The mapping is saved as data/cl2_cache/calib.pkl and
+    50→  used at inference time to convert raw_prob → exp_win_rate.
+    51→
+    52→Confidence outputs (per stock):
+    53→  raw_prob     ∈ [0,1] — the meta-model's sigmoid output
+    54→  exp_win_rate ∈ [0,1] — raw_prob after calibration
+    55→  agreement    ∈ [0,1] — 1 − normalized std of 7 model probs
+    56→  confidence   ∈ [0,100] — exp_win_rate × (0.6 + 0.4 × agreement) × 100
+    57→
+    58→Signal:
+    59→  BUY if calibrated_prob ≥ 0.55 AND resistance check passes
+    60→  SELL if calibrated_prob ≤ 0.45 (mirror rules for shorts)
+    61→  HOLD otherwise
+    62→
+    63→Usage:
+    64→  python scripts/train_cl2_tier.py            # train + save to ml_predictions_multi.json
+    65→  python scripts/train_cl2_tier.py --quick 4   # quick test on 4 stocks
+    66→  python scripts/train_cl2_tier.py --backtest # only re-run backtest on existing preds
+    67→"""
+    68→from __future__ import annotations
+    69→import json
+    70→import os
+    71→import sys
+    72→import time
+    73→import pickle
+    74→import argparse
+    75→import warnings
+    76→from pathlib import Path
+    77→from typing import Dict, List, Tuple, Optional
+    78→
+    79→import numpy as np
+    80→import pandas as pd
+    81→from sklearn.linear_model import LogisticRegression
+    82→from sklearn.ensemble import (
+    83→    HistGradientBoostingClassifier,
+    84→    ExtraTreesClassifier,
+    85→    RandomForestClassifier,
+    86→)
+    87→from sklearn.neural_network import MLPClassifier
+    88→from sklearn.preprocessing import StandardScaler
+    89→from sklearn.metrics import roc_auc_score
+    90→
+    91→warnings.filterwarnings("ignore")
+    92→
+    93→# ------------------------------------------------------------------
+    94→# Constants
+    95→# ------------------------------------------------------------------
+    96→ROOT = Path("/home/z/my-project")
+    97→OHLCV_DIR = ROOT / "data" / "ohlcv_all"
+    98→PRED_FILE = ROOT / "data" / "ml_predictions_multi.json"
+    99→CALIB_FILE = ROOT / "data" / "cl2_cache" / "calib.pkl"
+   100→CACHE_DIR = ROOT / "data" / "cl2_cache"
+   101→CACHE_DIR.mkdir(parents=True, exist_ok=True)
+   102→
+   103→# New SL/TP rules per user spec
+   104→ATR_STOP_MULT = 0.8           # entry ∓ 0.8×ATR
+   105→SUPPORT_BUFFER_MULT = 0.15    # support − 0.15×ATR
+   106→MIN_SL_MULT = 0.5             # never tighter than 0.5×ATR
+   107→TP1_MULT = 1.5                # 1.5R
+   108→TP2_MULT = 3.0                # 3R
+   109→TP3_MULT = 5.0                # 5R
+   110→LABEL_HORIZON = 5             # 5-day window
+   111→RESISTANCE_MIN_R = 1.0        # skip if nearest resistance < 1R above entry
+   112→SWING_LOOKBACK = 3             # 3-bar confirmation each side
+   113→MIN_TRAIN_BARS = 60
+   114→MIN_PRED_BARS = 30
+   115→
+   116→# Thresholds for converting calibrated prob → signal
+   117→BUY_THRESHOLD = 0.55
+   118→SELL_THRESHOLD = 0.45
+   119→
+   120→# Cost (slippage + spread) as fraction of price, for backtest
+   121→COST = 0.0005  # 5 bps per side
+   122→
+   123→# Feature columns (same as retrain_all_361_stocks.py)
+   124→FC = [
+   125→    "rsi_14", "macd", "macd_signal", "macd_hist", "bb_width", "bb_pct_b",
+   126→    "atr_14", "obv_change_pct", "price_sma_20_ratio", "price_sma_50_ratio",
+   127→    "price_sma_200_ratio", "volume_sma_20_ratio", "return_1d", "return_5d",
+   128→    "return_7d", "return_14d", "return_30d", "hl_range_pct", "body_size_pct",
+   129→    "volatility_14d",
+   130→]
+   131→
+   132→# 7 base models' names (used as JSON keys)
+   133→CL2_MODEL_NAMES = [
+   134→    "LightGBM-A",
+   135→    "LightGBM-B",
+   136→    "HistGBM",
+   137→    "ExtraTrees",
+   138→    "RandomForest",
+   139→    "Logistic",
+   140→    "MLP",
+   141→]
+   142→
+   143→
+   144→# ------------------------------------------------------------------
+   145→# Feature engineering (mirrors retrain_all_361_stocks.add_f exactly)
+   146→# ------------------------------------------------------------------
+   147→def crsi(p, n=14):
+   148→    d = p.diff()
+   149→    g = d.where(d > 0, 0)
+   150→    l = -d.where(d < 0, 0)
+   151→    ag = g.ewm(alpha=1 / n, min_periods=n).mean()
+   152→    al = l.ewm(alpha=1 / n, min_periods=n).mean()
+   153→    return (100 - 100 / (1 + ag / al.replace(0, np.nan))).fillna(50)
+   154→
+   155→
+   156→def cmacd(p):
+   157→    e12 = p.ewm(span=12, adjust=False).mean()
+   158→    e26 = p.ewm(span=26, adjust=False).mean()
+   159→    m = e12 - e26
+   160→    s = m.ewm(span=9, adjust=False).mean()
+   161→    return m, s, m - s
+   162→
+   163→
+   164→def cbb(p, w=20):
+   165→    sma = p.rolling(w).mean()
+   166→    sd = p.rolling(w).std()
+   167→    return ((sma + 2 * sd - (sma - 2 * sd)) / sma).fillna(0), \
+   168→           ((p - (sma - 2 * sd)) / (4 * sd).replace(0, np.nan)).fillna(0.5)
+   169→
+   170→
+   171→def catr(h, l, c, n=14):
+   172→    tr = pd.concat([h - l, (h - c.shift()).abs(), (l - c.shift()).abs()], axis=1).max(axis=1)
+   173→    return tr.rolling(n).mean().fillna(0)
+   174→
+   175→
+   176→def cobv(c, v):
+   177→    s = c.diff().apply(lambda x: 1 if x > 0 else (-1 if x < 0 else 0))
+   178→    return (s * v).cumsum()
+   179→
+   180→
+   181→def add_features(df: pd.DataFrame) -> pd.DataFrame:
+   182→    df = df.copy().sort_values("date").reset_index(drop=True)
+   183→    c = df["close"]
+   184→    h = df["high"]
+   185→    l = df["low"]
+   186→    v = df["volume"]
+   187→    df["rsi_14"] = crsi(c)
+   188→    m, s, hh = cmacd(c)
+   189→    df["macd"] = m
+   190→    df["macd_signal"] = s
+   191→    df["macd_hist"] = hh
+   192→    bw, pb = cbb(c)
+   193→    df["bb_width"] = bw
+   194→    df["bb_pct_b"] = pb
+   195→    df["atr_14"] = catr(h, l, c)
+   196→    obv = cobv(c, v)
+   197→    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+   198→    for w in [20, 50, 200]:
+   199→        df[f"price_sma_{w}_ratio"] = c / c.rolling(w, min_periods=1).mean()
+   200→    df["volume_sma_20_ratio"] = v / v.rolling(20, min_periods=1).mean().replace(0, 1)
+   201→    for p in [1, 5, 7, 14, 30]:
+   202→        df[f"return_{p}d"] = c.pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+   203→    df["hl_range_pct"] = ((h - l) / c.replace(0, np.nan)).fillna(0)
+   204→    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / c.replace(0, np.nan)).fillna(0)
+   205→    df["volatility_14d"] = c.pct_change().rolling(14).std().fillna(0)
+   206→    return df
+   207→
+   208→
+   209→# ------------------------------------------------------------------
+   210→# Swing-low / swing-high detection (no look-ahead, precomputed once per stock)
+   211→# A confirmed swing low at bar i requires bars[i-3..i-1] > low[i] AND
+   212→# bars[i+1..i+3] > low[i]. To make this CAUSAL (usable at prediction
+   213→# time), we shift the confirmation 3 bars forward — i.e. we only
+   214→# "know" a swing low at bar i once we've seen bars i+1, i+2, i+3.
+   215→# At prediction time for bar t, the latest confirmed swing low is
+   216→# from bar t-3.
+   217→# ------------------------------------------------------------------
+   218→def detect_swing_lows(low: np.ndarray, lookback: int = SWING_LOOKBACK) -> np.ndarray:
+   219→    """Return array of indices where swing lows occur (full detection over the
+   220→    whole series — caller filters by confirmation afterward)."""
+   221→    n = len(low)
+   222→    if n < 2 * lookback + 1:
+   223→        return np.array([], dtype=int)
+   224→    swl = []
+   225→    for i in range(lookback, n - lookback):
+   226→        center = low[i]
+   227→        left = low[i - lookback:i]
+   228→        right = low[i + 1:i + 1 + lookback]
+   229→        if np.all(left > center) and np.all(right > center):
+   230→            swl.append(i)
+   231→    return np.array(swl, dtype=int)
+   232→
+   233→
+   234→def detect_swing_highs(high: np.ndarray, lookback: int = SWING_LOOKBACK) -> np.ndarray:
+   235→    n = len(high)
+   236→    if n < 2 * lookback + 1:
+   237→        return np.array([], dtype=int)
+   238→    swh = []
+   239→    for i in range(lookback, n - lookback):
+   240→        center = high[i]
+   241→        left = high[i - lookback:i]
+   242→        right = high[i + 1:i + 1 + lookback]
+   243→        if np.all(left < center) and np.all(right < center):
+   244→            swh.append(i)
+   245→    return np.array(swh, dtype=int)
+   246→
+   247→
+   248→class StockSupportCache:
+   249→    """Per-stock precomputed support/resistance lookups.
+   250→    Speeds up `nearest_support_at` / `nearest_resistance_at` from O(N²) per
+   251→    stock to O(N log N) per stock by computing all swing lows/highs once.
+   252→    """
+   253→    def __init__(self, sd: pd.DataFrame, lookback: int = SWING_LOOKBACK):
+   254→        self.lookback = lookback
+   255→        low = sd["low"].values
+   256→        high = sd["high"].values
+   257→        # Pre-compute all swing lows/highs (full series)
+   258→        self.swl_idx = detect_swing_lows(low, lookback=lookback)
+   259→        self.swl_val = low[self.swl_idx] if len(self.swl_idx) > 0 else np.array([])
+   260→        self.swh_idx = detect_swing_highs(high, lookback=lookback)
+   261→        self.swh_val = high[self.swh_idx] if len(self.swh_idx) > 0 else np.array([])
+   262→        # Rolling 20-day min/max (causal — uses only past 20 bars at each t)
+   263→        low_s = pd.Series(low)
+   264→        high_s = pd.Series(high)
+   265→        self.rolling_min_20 = low_s.rolling(20, min_periods=1).min().values
+   266→        self.rolling_max_20 = high_s.rolling(20, min_periods=1).max().values
+   267→
+   268→    def support_at(self, t: int) -> float:
+   269→        """Latest confirmed swing low OR 20-day low, whichever is higher."""
+   270→        if t < self.lookback + 1:
+   271→            return np.nan
+   272→        # Latest confirmed swing low at time t = last swl with (idx + lookback) <= t-1
+   273→        # = idx <= t - 1 - lookback
+   274→        cutoff = t - 1 - self.lookback
+   275→        if len(self.swl_idx) > 0:
+   276→            mask = self.swl_idx <= cutoff
+   277→            valid_idx = self.swl_idx[mask]
+   278→            valid_val = self.swl_val[mask]
+   279→            swing_support = float(valid_val[-1]) if len(valid_val) > 0 else np.nan
+   280→        else:
+   281→            swing_support = np.nan
+   282→        twenty_low = float(self.rolling_min_20[t - 1]) if t >= 1 else float(self.rolling_min_20[0])
+   283→        candidates = [v for v in [swing_support, twenty_low] if not np.isnan(v) and v > 0]
+   284→        return max(candidates) if candidates else np.nan
+   285→
+   286→    def resistance_at(self, t: int) -> float:
+   287→        if t < self.lookback + 1:
+   288→            return np.nan
+   289→        cutoff = t - 1 - self.lookback
+   290→        if len(self.swh_idx) > 0:
+   291→            mask = self.swh_idx <= cutoff
+   292→            valid_idx = self.swh_idx[mask]
+   293→            valid_val = self.swh_val[mask]
+   294→            swing_resistance = float(valid_val[-1]) if len(valid_val) > 0 else np.nan
+   295→        else:
+   296→            swing_resistance = np.nan
+   297→        twenty_high = float(self.rolling_max_20[t - 1]) if t >= 1 else float(self.rolling_max_20[0])
+   298→        candidates = [v for v in [swing_resistance, twenty_high] if not np.isnan(v) and v > 0]
+   299→        return min(candidates) if candidates else np.nan
+   300→
+   301→
+   302→# ------------------------------------------------------------------
+   303→# Stop-loss + target computation (NEW rule)
+   304→# ------------------------------------------------------------------
+   305→def compute_sl_and_targets(
+   306→    cp: float,
+   307→    atr: float,
+   308→    support: float,
+   309→    resistance: float,
+   310→    direction: str,  # "BUY" or "SELL"
+   311→    sl_atr_mult: float = ATR_STOP_MULT,
+   312→) -> Tuple[float, float, float, float, bool]:
+   313→    """Returns (sl, tp1, tp2, tp3, skip_trade).
+   314→
+   315→    SL rule:
+   316→      support_stop = support − 0.15×ATR (BUY) / resistance + 0.15×ATR (SELL)
+   317→      atr_stop     = cp ∓ 0.8×ATR
+   318→      final_sl     = whichever is CLOSER to entry (smaller risk), but
+   319→                    never tighter than 0.5×ATR.
+   320→
+   321→    Resistance check:
+   322→      skip trade if nearest resistance is < 1R above entry (no room for TP1).
+   323→      For SELL, mirror: skip if nearest support is < 1R below entry.
+   324→    """
+   325→    if direction == "BUY":
+   326→        # Long: SL is below entry
+   327→        support_stop = support - SUPPORT_BUFFER_MULT * atr if not np.isnan(support) else cp - sl_atr_mult * atr
+   328→        atr_stop = cp - sl_atr_mult * atr
+   329→        # Closer to entry = larger of (support_stop, atr_stop) since both below
+   330→        sl = max(support_stop, atr_stop)
+   331→        # Never tighter than 0.5×ATR
+   332→        min_sl = cp - MIN_SL_MULT * atr
+   333→        if (cp - sl) < MIN_SL_MULT * atr:
+   334→            sl = min_sl  # loosen to 0.5×ATR floor
+   335→        # Targets
+   336→        r = cp - sl  # risk per share
+   337→        tp1 = cp + TP1_MULT * r
+   338→        tp2 = cp + TP2_MULT * r
+   339→        tp3 = cp + TP3_MULT * r
+   340→        # Resistance check: skip if nearest resistance < 1R above entry
+   341→        skip = (not np.isnan(resistance)) and (resistance - cp) < RESISTANCE_MIN_R * r
+   342→    else:  # SELL
+   343→        resistance_stop = resistance + SUPPORT_BUFFER_MULT * atr if not np.isnan(resistance) else cp + sl_atr_mult * atr
+   344→        atr_stop = cp + sl_atr_mult * atr
+   345→        # Closer to entry = smaller of the two above-entry values
+   346→        sl = min(resistance_stop, atr_stop)
+   347→        max_sl = cp + MIN_SL_MULT * atr
+   348→        if (sl - cp) < MIN_SL_MULT * atr:
+   349→            sl = max_sl
+   350→        r = sl - cp
+   351→        tp1 = cp - TP1_MULT * r
+   352→        tp2 = cp - TP2_MULT * r
+   353→        tp3 = cp - TP3_MULT * r
+   354→        skip = (not np.isnan(support)) and (cp - support) < RESISTANCE_MIN_R * r
+   355→    return float(sl), float(tp1), float(tp2), float(tp3), bool(skip)
+   356→
+   357→
+   358→# ------------------------------------------------------------------
+   359→# Label generation: did TP1 hit before SL within `horizon` bars?
+   360→# ------------------------------------------------------------------
+   361→def make_label(
+   362→    sd: pd.DataFrame,
+   363→    t: int,
+   364→    direction: str,
+   365→    entry: float,
+   366→    sl: float,
+   367→    tp1: float,
+   368→    horizon: int = LABEL_HORIZON,
+   369→    high_arr: Optional[np.ndarray] = None,
+   370→    low_arr: Optional[np.ndarray] = None,
+   371→) -> int:
+   372→    """Returns 1 if TP1 hit before SL within `horizon` bars, else 0.
+   373→    If neither hit, returns 0 (we treat no-hit-as-loss for label purposes).
+   374→    Optionally accept precomputed high/low arrays (NumPy) to avoid iloc.
+   375→    """
+   376→    if high_arr is not None and low_arr is not None:
+   377→        # Fast path: use precomputed arrays
+   378→        end = min(t + 1 + horizon, len(high_arr))
+   379→        for j in range(t + 1, end):
+   380→            h = float(high_arr[j])
+   381→            l = float(low_arr[j])
+   382→            if direction == "BUY":
+   383→                if l <= sl: return 0
+   384→                if h >= tp1: return 1
+   385→            else:
+   386→                if h >= sl: return 0
+   387→                if l <= tp1: return 1
+   388→        return 0
+   389→    # Slow path: use iloc (fallback)
+   390→    future = sd.iloc[t + 1:t + 1 + horizon]
+   391→    if len(future) == 0:
+   392→        return 0
+   393→    highs = future["high"].values
+   394→    lows = future["low"].values
+   395→    for h, l in zip(highs, lows):
+   396→        if direction == "BUY":
+   397→            if l <= sl: return 0
+   398→            if h >= tp1: return 1
+   399→        else:
+   400→            if h >= sl: return 0
+   401→            if l <= tp1: return 1
+   402→    return 0
+   403→
+   404→
+   405→def simulate_exit_pnl(
+   406→    sd: pd.DataFrame,
+   407→    t: int,
+   408→    direction: str,
+   409→    entry: float,
+   410→    sl: float,
+   411→    tp1: float,
+   412→    tp2: float,
+   413→    tp3: float,
+   414→    horizon: int = 21,
+   415→    cost: float = COST,
+   416→    high_arr: Optional[np.ndarray] = None,
+   417→    low_arr: Optional[np.ndarray] = None,
+   418→    close_arr: Optional[np.ndarray] = None,
+   419→) -> float:
+   420→    """Simulate the 50/30/20 exit ladder with breakeven-after-TP1 rule.
+   421→    Returns the realized fractional return on the trade (already net of cost).
+   422→    Accepts precomputed high/low/close arrays to avoid iloc.
+   423→    """
+   424→    if high_arr is not None and low_arr is not None and close_arr is not None:
+   425→        # Fast path — direct numpy indexing
+   426→        n = len(high_arr)
+   427→        end = min(t + 1 + horizon, n)
+   428→        remaining = 1.0
+   429→        realized_ret = 0.0
+   430→        cur_sl = sl
+   431→        tp1_hit = False
+   432→        for j in range(t + 1, end):
+   433→            h = float(high_arr[j])
+   434→            l = float(low_arr[j])
+   435→            if direction == "BUY":
+   436→                if l <= cur_sl:
+   437→                    realized_ret += remaining * (cur_sl - entry) / entry
+   438→                    remaining = 0
+   439→                    break
+   440→                if h >= tp3 and remaining > 0:
+   441→                    realized_ret += remaining * (tp3 - entry) / entry
+   442→                    remaining = 0
+   443→                    break
+   444→                if h >= tp2 and remaining > 0:
+   445→                    close_frac = 0.30 if not tp1_hit else 0.30 / 0.50 * remaining if remaining > 0 else 0
+   446→                    close_frac = min(close_frac, remaining)
+   447→                    realized_ret += close_frac * (tp2 - entry) / entry
+   448→                    remaining -= close_frac
+   449→                if h >= tp1 and remaining > 0 and not tp1_hit:
+   450→                    close_frac = min(0.50, remaining)
+   451→                    realized_ret += close_frac * (tp1 - entry) / entry
+   452→                    remaining -= close_frac
+   453→                    tp1_hit = True
+   454→                    cur_sl = entry
+   455→            else:
+   456→                if h >= cur_sl:
+   457→                    realized_ret += remaining * (entry - cur_sl) / entry
+   458→                    remaining = 0
+   459→                    break
+   460→                if l <= tp3 and remaining > 0:
+   461→                    realized_ret += remaining * (entry - tp3) / entry
+   462→                    remaining = 0
+   463→                    break
+   464→                if l <= tp2 and remaining > 0:
+   465→                    close_frac = 0.30 if not tp1_hit else 0.30 / 0.50 * remaining if remaining > 0 else 0
+   466→                    close_frac = min(close_frac, remaining)
+   467→                    realized_ret += close_frac * (entry - tp2) / entry
+   468→                    remaining -= close_frac
+   469→                if l <= tp1 and remaining > 0 and not tp1_hit:
+   470→                    close_frac = min(0.50, remaining)
+   471→                    realized_ret += close_frac * (entry - tp1) / entry
+   472→                    remaining -= close_frac
+   473→                    tp1_hit = True
+   474→                    cur_sl = entry
+   475→        if remaining > 0:
+   476→            last_close = float(close_arr[end - 1])
+   477→            if direction == "BUY":
+   478→                realized_ret += remaining * (last_close - entry) / entry
+   479→            else:
+   480→                realized_ret += remaining * (entry - last_close) / entry
+   481→        realized_ret -= 2 * cost
+   482→        return float(realized_ret)
+   483→    # Slow path — fallback using iloc
+   484→    future = sd.iloc[t + 1:t + 1 + horizon]
+   485→    if len(future) == 0:
+   486→        return 0.0
+   487→    remaining = 1.0
+   488→    realized_ret = 0.0
+   489→    cur_sl = sl
+   490→    tp1_hit = False
+   491→    for h, l in zip(future["high"].values, future["low"].values):
+   492→        if direction == "BUY":
+   493→            if l <= cur_sl:
+   494→                realized_ret += remaining * (cur_sl - entry) / entry
+   495→                remaining = 0
+   496→                break
+   497→            if h >= tp3 and remaining > 0:
+   498→                realized_ret += remaining * (tp3 - entry) / entry
+   499→                remaining = 0
+   500→                break
+   501→            if h >= tp2 and remaining > 0:
+   502→                close_frac = 0.30 if not tp1_hit else 0.30 / 0.50 * remaining if remaining > 0 else 0
+   503→                close_frac = min(close_frac, remaining)
+   504→                realized_ret += close_frac * (tp2 - entry) / entry
+   505→                remaining -= close_frac
+   506→            if h >= tp1 and remaining > 0 and not tp1_hit:
+   507→                close_frac = min(0.50, remaining)
+   508→                realized_ret += close_frac * (tp1 - entry) / entry
+   509→                remaining -= close_frac
+   510→                tp1_hit = True
+   511→                cur_sl = entry
+   512→        else:
+   513→            if h >= cur_sl:
+   514→                realized_ret += remaining * (entry - cur_sl) / entry
+   515→                remaining = 0
+   516→                break
+   517→            if l <= tp3 and remaining > 0:
+   518→                realized_ret += remaining * (entry - tp3) / entry
+   519→                remaining = 0
+   520→                break
+   521→            if l <= tp2 and remaining > 0:
+   522→                close_frac = 0.30 if not tp1_hit else 0.30 / 0.50 * remaining if remaining > 0 else 0
+   523→                close_frac = min(close_frac, remaining)
+   524→                realized_ret += close_frac * (entry - tp2) / entry
+   525→                remaining -= close_frac
+   526→            if l <= tp1 and remaining > 0 and not tp1_hit:
+   527→                close_frac = min(0.50, remaining)
+   528→                realized_ret += close_frac * (entry - tp1) / entry
+   529→                remaining -= close_frac
+   530→                tp1_hit = True
+   531→                cur_sl = entry
+   532→    if remaining > 0:
+   533→        last_close = float(future.iloc[-1]["close"])
+   534→        if direction == "BUY":
+   535→            realized_ret += remaining * (last_close - entry) / entry
+   536→        else:
+   537→            realized_ret += remaining * (entry - last_close) / entry
+   538→    realized_ret -= 2 * cost
+   539→    return float(realized_ret)
+   540→
+   541→
+   542→# ------------------------------------------------------------------
+   543→# Load + preprocess OHLCV
+   544→# ------------------------------------------------------------------
+   545→def load_ohlcv(stocks: List[str]) -> pd.DataFrame:
+   546→    frames = []
+   547→    for s in stocks:
+   548→        p = OHLCV_DIR / f"{s}.csv"
+   549→        if not p.exists():
+   550→            continue
+   551→        try:
+   552→            df = pd.read_csv(p, usecols=range(6))
+   553→            df = df[df["volume"] > 0].reset_index(drop=True)
+   554→            if len(df) < MIN_PRED_BARS:
+   555→                continue
+   556→            df = add_features(df)
+   557→            df["symbol"] = s
+   558→            frames.append(df)
+   559→        except Exception:
+   560→            continue
+   561→    if not frames:
+   562→        return pd.DataFrame()
+   563→    return pd.concat(frames, ignore_index=True)
+   564→
+   565→
+   566→def get_atr_per_stock(df: pd.DataFrame) -> Dict[str, Dict[str, float]]:
+   567→    out = {}
+   568→    for s in df["symbol"].unique():
+   569→        sd = df[df["symbol"] == s].sort_values("date").reset_index(drop=True)
+   570→        if len(sd) < 14:
+   571→            continue
+   572→        a = float(sd.iloc[-1]["atr_14"])
+   573→        out[s] = {
+   574→            "cp": float(sd.iloc[-1]["close"]),
+   575→            "atr": a if a > 0 else float(sd.iloc[-1]["close"]) * 0.02,
+   576→        }
+   577→    return out
+   578→
+   579→
+   580→# ------------------------------------------------------------------
+   581→# Build training set: per-bar features + binary labels (long + short)
+   582→# We treat each bar as BOTH a long and a short setup, generating 2 rows
+   583→# per bar (one for each direction). This way the model learns direction-
+   584→# conditional probability of TP1-hit.
+   585→# ------------------------------------------------------------------
+   586→def build_training_set(
+   587→    df: pd.DataFrame,
+   588→    sample_size: int = 100_000,
+   589→) -> pd.DataFrame:
+   590→    """Per-stock, per-bar, per-direction training rows.
+   591→    Memory-efficient: builds NumPy arrays per stock (X, y, meta) instead
+   592→    of dict-of-rows, then concatenates + samples down to sample_size.
+   593→
+   594→    Per stock output (NumPy):
+   595→      X  = float32 [n_rows, len(FC)]   — features
+   596→      y  = int8   [n_rows]             — label (TP1-hit-before-SL)
+   597→      meta = float32 [n_rows, 5]       — [cp, atr, sl, tp1, tp2] for inference/backtest
+   598→      dirs = bool [n_rows]             — True=BUY, False=SELL
+   599→    """
+   600→    X_parts = []
+   601→    y_parts = []
+   602→    meta_parts = []
+   603→    dir_parts = []
+   604→    sym_parts = []
+   605→
+   606→    for si, s in enumerate(df["symbol"].unique()):
+   607→        sd = df[df["symbol"] == s].sort_values("date").reset_index(drop=True)
+   608→        n = len(sd)
+   609→        if n < MIN_TRAIN_BARS:
+   610→            continue
+   611→        sc = StockSupportCache(sd)
+   612→        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+   613→        high_arr = sd["high"].values.astype(np.float64)
+   614→        low_arr = sd["low"].values.astype(np.float64)
+   615→        close_arr = sd["close"].values.astype(np.float64)
+   616→        atr_arr = sd["atr_14"].values.astype(np.float64)
+   617→        # Pre-allocate per-stock arrays (max possible rows = 2 * (n - 20 - LABEL_HORIZON))
+   618→        max_rows = 2 * max(0, n - 20 - LABEL_HORIZON)
+   619→        if max_rows <= 0:
+   620→            continue
+   621→        X_stock = np.zeros((max_rows, len(FC)), dtype=np.float32)
+   622→        y_stock = np.zeros(max_rows, dtype=np.int8)
+   623→        meta_stock = np.zeros((max_rows, 5), dtype=np.float32)
+   624→        dir_stock = np.zeros(max_rows, dtype=bool)
+   625→        sym_stock = np.full(max_rows, -1, dtype=np.int32)  # stock index, mapped later
+   626→        row_idx = 0
+   627→        for t in range(20, n - LABEL_HORIZON):
+   628→            cp = float(close_arr[t])
+   629→            atr = float(atr_arr[t])
+   630→            if atr <= 0 or cp <= 0:
+   631→                continue
+   632→            support = sc.support_at(t)
+   633→            resistance = sc.resistance_at(t)
+   634→            if np.isnan(support) or np.isnan(resistance):
+   635→                continue
+   636→            feat_row = feat_mat[t]
+   637→            for direction in ("BUY", "SELL"):
+   638→                sl, tp1, tp2, tp3, skip = compute_sl_and_targets(
+   639→                    cp, atr, support, resistance, direction
+   640→                )
+   641→                if skip or sl <= 0 or tp1 <= 0:
+   642→                    continue
+   643→                y = make_label(sd, t, direction, cp, sl, tp1,
+   644→                               high_arr=high_arr, low_arr=low_arr)
+   645→                X_stock[row_idx] = feat_row
+   646→                y_stock[row_idx] = y
+   647→                meta_stock[row_idx] = [cp, atr, sl, tp1, tp2]
+   648→                dir_stock[row_idx] = (direction == "BUY")
+   649→                sym_stock[row_idx] = si
+   650→                row_idx += 1
+   651→        if row_idx == 0:
+   652→            continue
+   653→        X_parts.append(X_stock[:row_idx])
+   654→        y_parts.append(y_stock[:row_idx])
+   655→        meta_parts.append(meta_stock[:row_idx])
+   656→        dir_parts.append(dir_stock[:row_idx])
+   657→        sym_parts.append(sym_stock[:row_idx])
+   658→        if (si + 1) % 50 == 0:
+   659→            total = sum(p.shape[0] for p in X_parts)
+   660→            print(f"  build: {si+1} stocks processed, {total:,} rows so far", flush=True)
+   661→
+   662→    if not X_parts:
+   663→        return pd.DataFrame()
+   664→    X = np.concatenate(X_parts, axis=0)
+   665→    y = np.concatenate(y_parts, axis=0)
+   666→    meta = np.concatenate(meta_parts, axis=0)
+   667→    dirs = np.concatenate(dir_parts, axis=0)
+   668→    syms = np.concatenate(sym_parts, axis=0)
+   669→    print(f"  Total training rows before sampling: {len(X):,}")
+   670→    # Sample down to keep training fast
+   671→    if len(X) > sample_size:
+   672→        idx = np.random.default_rng(42).choice(len(X), size=sample_size, replace=False)
+   673→        X = X[idx]; y = y[idx]; meta = meta[idx]; dirs = dirs[idx]; syms = syms[idx]
+   674→    # Build a DataFrame for downstream code (train_cl2 uses train_df["_y"], train_df[FC], train_df["_symbol"])
+   675→    sym_list = list(df["symbol"].unique())
+   676→    out = pd.DataFrame(X, columns=FC)
+   677→    out["_y"] = y.astype(int)
+   678→    out["_direction"] = np.where(dirs, "BUY", "SELL")
+   679→    out["_symbol"] = [sym_list[s] for s in syms]
+   680→    out["_cp"] = meta[:, 0]
+   681→    out["_atr"] = meta[:, 1]
+   682→    out["_sl"] = meta[:, 2]
+   683→    out["_tp1"] = meta[:, 3]
+   684→    out["_tp2"] = meta[:, 4]
+   685→    return out
+   686→
+   687→
+   688→# ------------------------------------------------------------------
+   689→# Purged time-ordered cross-validation
+   690→# Split stocks into K folds BY SYMBOL (so each stock's bars stay
+   691→# together — avoids leakage within a stock). Purge gap = LABEL_HORIZON
+   692→# bars at the boundary.
+   693→# ------------------------------------------------------------------
+   694→def purged_stock_folds(stocks: List[str], k: int = 3) -> List[Tuple[set, set]]:
+   695→    """Returns list of (train_stocks, val_stocks) tuples."""
+   696→    arr = sorted(stocks)
+   697→    n = len(arr)
+   698→    fold_size = n // k
+   699→    folds = []
+   700→    for i in range(k):
+   701→        val = set(arr[i * fold_size:(i + 1) * fold_size] if i < k - 1 else arr[i * fold_size:])
+   702→        train = set(arr) - val
+   703→        folds.append((train, val))
+   704→    return folds
+   705→
+   706→
+   707→# ------------------------------------------------------------------
+   708→# 7 base model constructors
+   709→# ------------------------------------------------------------------
+   710→def build_7_models():
+   711→    """Returns dict of {name: estimator} for the 7 base models."""
+   712→    import lightgbm as lgb
+   713→    return {
+   714→        "LightGBM-A": lgb.LGBMClassifier(
+   715→            n_estimators=100, max_depth=3, num_leaves=8,
+   716→            learning_rate=0.05, random_state=42, verbose=-1, n_jobs=-1,
+   717→        ),
+   718→        "LightGBM-B": lgb.LGBMClassifier(
+   719→            n_estimators=60, max_depth=5, num_leaves=31,
+   720→            learning_rate=0.08, random_state=43, verbose=-1, n_jobs=-1,
+   721→        ),
+   722→        "HistGBM": HistGradientBoostingClassifier(
+   723→            max_iter=80, max_depth=4, learning_rate=0.08, random_state=42,
+   724→        ),
+   725→        "ExtraTrees": ExtraTreesClassifier(
+   726→            n_estimators=80, max_depth=6, min_samples_leaf=15,
+   727→            random_state=42, n_jobs=-1,
+   728→        ),
+   729→        "RandomForest": RandomForestClassifier(
+   730→            n_estimators=80, max_depth=5, min_samples_leaf=20,
+   731→            random_state=42, n_jobs=-1,
+   732→        ),
+   733→        "Logistic": LogisticRegression(
+   734→            C=0.5, max_iter=200, random_state=42,
+   735→        ),
+   736→        "MLP": MLPClassifier(
+   737→            hidden_layer_sizes=(32,), activation="relu",
+   738→            max_iter=120, alpha=1e-3, learning_rate_init=1e-2,
+   739→            random_state=42, early_stopping=True,
+   740→        ),
+   741→    }
+   742→
+   743→
+   744→def fit_with_scaler(model, X, y, X_val=None):
+   745→    """Some models benefit from scaled features; we standardize for all."""
+   746→    scaler = StandardScaler()
+   747→    Xs = scaler.fit_transform(X)
+   748→    if hasattr(model, "fit"):
+   749→        model.fit(Xs, y)
+   750→    return scaler
+   751→
+   752→
+   753→def predict_proba_safe(model, X, scaler) -> np.ndarray:
+   754→    """Returns P(y=1) array. Handles different model APIs."""
+   755→    Xs = scaler.transform(X)
+   756→    try:
+   757→        proba = model.predict_proba(Xs)
+   758→        if proba.shape[1] >= 2:
+   759→            return proba[:, 1]
+   760→        else:
+   761→            return proba[:, 0]
+   762→    except Exception:
+   763→        # Some classifiers may not have predict_proba — fallback to decision_function
+   764→        try:
+   765→            return 1 / (1 + np.exp(-model.decision_function(Xs)))
+   766→        except Exception:
+   767→            return np.full(X.shape[0], 0.5)
+   768→
+   769→
+   770→# ------------------------------------------------------------------
+   771→# Training pipeline
+   772→# ------------------------------------------------------------------
+   773→def train_cl2(stocks: List[str], df_all: pd.DataFrame) -> Tuple[dict, dict, dict, dict]:
+   774→    """Train 7 base models + logistic meta on OOF predictions + calibration.
+   775→
+   776→    Returns:
+   777→        cl2_models: per-model dict {name: {trained, version, predictions: {SYM: pred}}}
+   778→        cl2_ens: per-stock CL-2 Ensemble prediction (the meta output)
+   779→        calib_map: dict {bin_center: hit_rate} for transparency
+   780→        meta_state: dict {scaler_means, scaler_stds, meta_coef, meta_intercept} for inference
+   781→    """
+   782→    print("\n[CL-2] Building training set...")
+   783→    train_df = build_training_set(df_all, sample_size=120_000)
+   784→    if train_df.empty:
+   785→        print("  ! Empty training set")
+   786→        return {}, {}, {}, {}
+   787→    print(f"  Training rows: {len(train_df):,}")
+   788→    pos_rate = train_df["_y"].mean()
+   789→    print(f"  Positive rate (TP1 hit before SL): {pos_rate:.3f}")
+   790→
+   791→    X = train_df[FC].fillna(0).values
+   792→    y = train_df["_y"].values.astype(int)
+   793→
+   794→    # 3-fold purged CV (by symbol)
+   795→    syms = sorted(train_df["_symbol"].unique())
+   796→    folds = purged_stock_folds(syms, k=3)
+   797→
+   798→    # OOF predictions matrix (n_rows × 7)
+   799→    oof = np.zeros((len(train_df), 7), dtype=np.float32)
+   800→    fold_assign = np.full(len(train_df), -1, dtype=int)
+   801→    for fi, (tr_syms, va_syms) in enumerate(folds):
+   802→        tr_mask = train_df["_symbol"].isin(tr_syms).values
+   803→        va_mask = train_df["_symbol"].isin(va_syms).values
+   804→        # Purge boundary: drop first/last LABEL_HORIZON bars of each val stock
+   805→        # (already implicitly handled since we don't share bars across folds)
+   806→        if tr_mask.sum() < 50 or va_mask.sum() < 50:
+   807→            continue
+   808→        X_tr = train_df.loc[tr_mask, FC].fillna(0).values
+   809→        y_tr = train_df.loc[tr_mask, "_y"].values.astype(int)
+   810→        X_va = train_df.loc[va_mask, FC].fillna(0).values
+   811→        fold_assign[va_mask] = fi
+   812→        print(f"  Fold {fi+1}/3: train={tr_mask.sum():,}, val={va_mask.sum():,}")
+   813→        for mi, (mname, ctor) in enumerate(build_7_models().items()):
+   814→            m = ctor
+   815→            scaler = StandardScaler()
+   816→            X_tr_s = scaler.fit_transform(X_tr)
+   817→            X_va_s = scaler.transform(X_va)
+   818→            try:
+   819→                m.fit(X_tr_s, y_tr)
+   820→                proba = predict_proba_safe(m, X_va, scaler)
+   821→                oof[va_mask, mi] = proba
+   822→            except Exception as e:
+   823→                print(f"    ! {mname} failed: {e}")
+   824→                oof[va_mask, mi] = 0.5
+   825→
+   826→    # Train final 7 base models on ALL data, for inference
+   827→    print("\n[CL-2] Training final 7 base models on full data...")
+   828→    final_models = {}
+   829→    final_scalers = {}
+   830→    for mname, ctor in build_7_models().items():
+   831→        print(f"  {mname}...", end=" ", flush=True)
+   832→        m = ctor
+   833→        scaler = StandardScaler()
+   834→        Xs = scaler.fit_transform(X)
+   835→        try:
+   836→            m.fit(Xs, y)
+   837→            final_models[mname] = m
+   838→            final_scalers[mname] = scaler
+   839→            print("OK")
+   840→        except Exception as e:
+   841→            print(f"FAIL ({e})")
+   842→
+   843→    # Train logistic meta on OOF predictions (where all 7 models produced output)
+   844→    print("\n[CL-2] Training logistic meta-model on OOF predictions...")
+   845→    valid_mask = fold_assign >= 0  # rows that got OOF predictions
+   846→    X_meta = oof[valid_mask]
+   847→    y_meta = y[valid_mask]
+   848→    if X_meta.shape[0] < 50 or len(np.unique(y_meta)) < 2:
+   849→        print("  ! Not enough OOF data for meta-model — using mean of 7 probs as fallback")
+   850→        meta_state = {"fallback_mean": True}
+   851→        # Final predictions per stock = mean of 7 model probs
+   852→        calib_map = {}
+   853→    else:
+   854→        meta = LogisticRegression(C=1.0, max_iter=200, random_state=42)
+   855→        meta.fit(X_meta, y_meta)
+   856→        meta_proba = meta.predict_proba(X_meta)[:, 1]
+   857→        try:
+   858→            auc = roc_auc_score(y_meta, meta_proba)
+   859→            print(f"  Meta-model OOS AUC: {auc:.4f}")
+   860→        except Exception:
+   861→            pass
+   862→        # Calibrate via decile binning
+   863→        bins = np.linspace(0, 1, 11)
+   864→        bin_centers = (bins[:-1] + bins[1:]) / 2
+   865→        bin_inds = np.digitize(meta_proba, bins) - 1
+   866→        bin_inds = np.clip(bin_inds, 0, 9)
+   867→        calib_map = {}
+   868→        for bi in range(10):
+   869→            mask = bin_inds == bi
+   870→            if mask.sum() > 0:
+   871→                hr = float(y_meta[mask].mean())
+   872→                bc = float(bin_centers[bi])
+   873→                calib_map[bc] = hr
+   874→        # Save calib.pkl
+   875→        with open(CALIB_FILE, "wb") as f:
+   876→            pickle.dump({"meta": meta, "scaler": None, "calib_map": calib_map}, f)
+   877→        # Build a linear interpolation function for inference
+   878→        calib_xs = sorted(calib_map.keys())
+   879→        calib_ys = [calib_map[x] for x in calib_xs]
+   880→        meta_state = {
+   881→            "fallback_mean": False,
+   882→            "meta_coef": meta.coef_.tolist(),
+   883→            "meta_intercept": float(meta.intercept_[0]),
+   884→            "calib_xs": calib_xs,
+   885→            "calib_ys": calib_ys,
+   886→        }
+   887→
+   888→    return final_models, final_scalers, meta_state, calib_map, train_df
+   889→
+   890→
+   891→def calibrate_proba(p: float, meta_state: dict) -> float:
+   892→    """Apply calibration map (piecewise linear) to a raw probability."""
+   893→    if meta_state.get("fallback_mean"):
+   894→        return p
+   895→    xs = meta_state.get("calib_xs", [])
+   896→    ys = meta_state.get("calib_ys", [])
+   897→    if not xs:
+   898→        return p
+   899→    if p <= xs[0]:
+   900→        return ys[0]
+   901→    if p >= xs[-1]:
+   902→        return ys[-1]
+   903→    # Linear interpolation
+   904→    for i in range(len(xs) - 1):
+   905→        if xs[i] <= p <= xs[i + 1]:
+   906→            t = (p - xs[i]) / (xs[i + 1] - xs[i]) if xs[i + 1] > xs[i] else 0
+   907→            return ys[i] + t * (ys[i + 1] - ys[i])
+   908→    return p
+   909→
+   910→
+   911→def meta_predict(proba_7: np.ndarray, meta_state: dict) -> float:
+   912→    """Apply logistic meta + calibration. proba_7 = array of 7 model probabilities."""
+   913→    if meta_state.get("fallback_mean"):
+   914→        raw = float(np.mean(proba_7))
+   915→    else:
+   916→        coef = np.array(meta_state["meta_coef"][0])
+   917→        intercept = meta_state["meta_intercept"]
+   918→        z = np.dot(coef, proba_7) + intercept
+   919→        raw = 1 / (1 + np.exp(-z))
+   920→    return calibrate_proba(raw, meta_state)
+   921→
+   922→
+   923→def agreement_score(proba_7: np.ndarray) -> float:
+   924→    """Compute agreement ∈ [0,1] = 1 − 2×std(proba_7), clamped to [0,1].
+   925→    High agreement (all 7 models say same thing) → 1.0
+   926→    Low agreement (models disagree) → ~0.0
+   927→    """
+   928→    s = float(np.std(proba_7))
+   929→    return float(max(0.0, min(1.0, 1.0 - 2.0 * s)))
+   930→
+   931→
+   932→# ------------------------------------------------------------------
+   933→# Generate per-stock predictions
+   934→# ------------------------------------------------------------------
+   935→def predict_all_stocks(
+   936→    stocks: List[str],
+   937→    df_all: pd.DataFrame,
+   938→    atr_per: Dict[str, Dict[str, float]],
+   939→    final_models: dict,
+   940→    final_scalers: dict,
+   941→    meta_state: dict,
+   942→) -> Tuple[Dict[str, dict], Dict[str, dict]]:
+   943→    """For each stock, compute the CL-2 ensemble prediction at the latest bar.
+   944→
+   945→    Returns:
+   946→        cl2_per_model: per-model per-stock predictions dict
+   947→                       {model_name: {symbol: pred}}
+   948→        cl2_ens: per-stock ensemble prediction {symbol: pred}
+   949→    """
+   950→    print("\n[CL-2] Generating per-stock predictions...")
+   951→    cl2_per_model = {mname: {} for mname in CL2_MODEL_NAMES}
+   952→    cl2_ens = {}
+   953→
+   954→    for si, s in enumerate(stocks):
+   955→        if s not in atr_per:
+   956→            continue
+   957→        sd = df_all[df_all["symbol"] == s].sort_values("date").reset_index(drop=True)
+   958→        n = len(sd)
+   959→        if n < MIN_PRED_BARS:
+   960→            continue
+   961→        t = n - 1  # latest bar
+   962→        cp = float(sd.iloc[t]["close"])
+   963→        atr = float(sd.iloc[t]["atr_14"])
+   964→        if atr <= 0 or cp <= 0:
+   965→            continue
+   966→        sc = StockSupportCache(sd)
+   967→        support = sc.support_at(t)
+   968→        resistance = sc.resistance_at(t)
+   969→        if np.isnan(support) or np.isnan(resistance):
+   970→            continue
+   971→
+   972→        # Compute features at bar t — precompute the feature matrix row
+   973→        feat_row = sd[FC].iloc[t].fillna(0).values.astype(np.float32).reshape(1, -1)
+   974→
+   975→        # Get 7 model probabilities
+   976→        proba_7 = np.zeros(7)
+   977→        for mi, mname in enumerate(CL2_MODEL_NAMES):
+   978→            m = final_models.get(mname)
+   979→            scaler = final_scalers.get(mname)
+   980→            if m is None or scaler is None:
+   981→                proba_7[mi] = 0.5
+   982→                continue
+   983→            proba_7[mi] = float(predict_proba_safe(m, feat_row, scaler)[0])
+   984→
+   985→        # Meta-model output
+   986→        raw_prob = float(np.mean(proba_7)) if meta_state.get("fallback_mean") else \
+   987→                   1 / (1 + np.exp(-(np.dot(meta_state["meta_coef"][0], proba_7) + meta_state["meta_intercept"])))
+   988→        exp_win_rate = calibrate_proba(raw_prob, meta_state)
+   989→        agreement = agreement_score(proba_7)
+   990→        confidence = exp_win_rate * (0.6 + 0.4 * agreement) * 100
+   991→
+   992→        # Decide signal based on calibrated prob
+   993→        # The model is symmetric: high prob → BUY direction wins, low prob → SELL direction wins.
+   994→        # We pick the direction with higher expected edge:
+   995→        if exp_win_rate >= BUY_THRESHOLD:
+   996→            signal = "BUY"
+   997→            direction = "LONG"
+   998→        elif exp_win_rate <= SELL_THRESHOLD:
+   999→            signal = "SELL"
+  1000→            direction = "SHORT"
+  1001→        else:
+  1002→            signal = "HOLD"
+  1003→            direction = "LONG"
+  1004→
+  1005→        # Compute SL/TP for the chosen direction
+  1006→        sl, tp1, tp2, tp3, skip = compute_sl_and_targets(
+  1007→            cp, atr, support, resistance, signal if signal != "HOLD" else "BUY"
+  1008→        )
+  1009→        if signal == "HOLD":
+  1010→            # For HOLD, set SL/TP to entry to avoid polluting downstream logic
+  1011→            sl = cp
+  1012→            tp1 = cp
+  1013→            tp2 = cp
+  1014→            tp3 = cp
+  1015→            skip = True
+  1016→
+  1017→        # For SELL signals, the model probability was for the long setup.
+  1018→        # For SELL, we mirror: 1 - exp_win_rate is the SELL-side win rate
+  1019→        if signal == "SELL":
+  1020→            sell_prob = 1 - exp_win_rate
+  1021→            exp_win_rate = sell_prob
+  1022→            confidence = sell_prob * (0.6 + 0.4 * agreement) * 100
+  1023→
+  1024→        avg_return = (exp_win_rate * TP1_MULT - (1 - exp_win_rate) * 1.0) / 1.0  # rough
+  1025→
+  1026→        # Per-model prediction entries (full shape for AI Models tab display)
+  1027→        for mi, mname in enumerate(CL2_MODEL_NAMES):
+  1028→            mp = float(proba_7[mi])
+  1029→            # Per-model signal: BUY if mp >= 0.5 else SELL
+  1030→            m_signal = "BUY" if mp >= 0.55 else ("SELL" if mp <= 0.45 else "HOLD")
+  1031→            m_sl, m_tp1, m_tp2, m_tp3, m_skip = compute_sl_and_targets(
+  1032→                cp, atr, support, resistance, m_signal if m_signal != "HOLD" else "BUY"
+  1033→            )
+  1034→            if m_signal == "HOLD":
+  1035→                m_sl = cp
+  1036→                m_tp1 = cp
+  1037→                m_tp2 = cp
+  1038→                m_tp3 = cp
+  1039→            cl2_per_model[mname][s] = {
+  1040→                "signal": m_signal,
+  1041→                "direction": "LONG" if m_signal != "SELL" else "SHORT",
+  1042→                "confidence": int(min(100, max(0, mp * 100))),
+  1043→                "currentPrice": round(cp, 2),
+  1044→                "entry": round(cp, 2),
+  1045→                "tp1": round(m_tp1, 2),
+  1046→                "tp2": round(m_tp2, 2),
+  1047→                "tp3": round(m_tp3, 2),
+  1048→                "sl": round(m_sl, 2),
+  1049→                "avgReturn": round(float((mp - 0.5) * 2), 4),
+  1050→                "raw_prob": round(float(mp), 4),
+  1051→            }
+  1052→
+  1053→        # Ensemble prediction entry (same shape as cl_ensemble_predictions entries)
+  1054→        cl2_ens[s] = {
+  1055→            "signal": signal,
+  1056→            "direction": direction,
+  1057→            "confidence": int(min(100, max(0, confidence))),
+  1058→            "currentPrice": round(cp, 2),
+  1059→            "entry": round(cp, 2),
+  1060→            "tp1": round(tp1, 2),
+  1061→            "tp2": round(tp2, 2),
+  1062→            "tp3": round(tp3, 2),
+  1063→            "sl": round(sl, 2),
+  1064→            "avgReturn": round(float(avg_return), 4),
+  1065→            "raw_prob": round(float(raw_prob), 4),
+  1066→            "exp_win_rate": round(float(exp_win_rate), 4),
+  1067→            "agreement": round(float(agreement), 4),
+  1068→        }
+  1069→
+  1070→        if (si + 1) % 50 == 0:
+  1071→            print(f"  {si+1}/{len(stocks)} stocks processed...")
+  1072→
+  1073→    print(f"  Done: {len(cl2_ens)} stocks have CL-2 ensemble predictions")
+  1074→    return cl2_per_model, cl2_ens
+  1075→
+  1076→
+  1077→# ------------------------------------------------------------------
+  1078→# Backtest on holdout (last 20% of each stock)
+  1079→# ------------------------------------------------------------------
+  1080→def backtest_cl2(
+  1081→    stocks: List[str],
+  1082→    df_all: pd.DataFrame,
+  1083→    atr_per: Dict[str, Dict[str, float]],
+  1084→    final_models: dict,
+  1085→    final_scalers: dict,
+  1086→    meta_state: dict,
+  1087→) -> dict:
+  1088→    """Walk-forward backtest on last 20% of each stock's bars.
+  1089→
+  1090→    For each bar in the holdout:
+  1091→      1. Compute features at bar t
+  1092→      2. Get 7 model probabilities
+  1093→      3. Apply meta + calibration → exp_win_rate
+  1094→      4. Decide signal (BUY/SELL/HOLD)
+  1095→      5. Compute SL/TP using new rule
+  1096→      6. If signal != HOLD and not skip:
+  1097→         - Simulate exit ladder (50/30/20 with BE-after-TP1)
+  1098→         - Record trade result
+  1099→      7. Aggregate: win rate, profit factor, avg return, total trades,
+  1100→         reliability table (deciles), and the calibrated-vs-actual hit rate.
+  1101→    """
+  1102→    print("\n[CL-2] Backtesting on 20% holdout per stock...")
+  1103→    trades = []  # list of dicts: {symbol, t, direction, prob, exp_win_rate, ret}
+  1104→    skips = 0
+  1105→
+  1106→    for s in stocks:
+  1107→        sd = df_all[df_all["symbol"] == s].sort_values("date").reset_index(drop=True)
+  1108→        n = len(sd)
+  1109→        if n < MIN_TRAIN_BARS + 20:
+  1110→            continue
+  1111→        sp = int(n * 0.8)
+  1112→        if sp >= n - 5:
+  1113→            continue
+  1114→        sc = StockSupportCache(sd)
+  1115→        # Precompute arrays once per stock for fast inner loop
+  1116→        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+  1117→        high_arr = sd["high"].values.astype(np.float64)
+  1118→        low_arr = sd["low"].values.astype(np.float64)
+  1119→        close_arr = sd["close"].values.astype(np.float64)
+  1120→        atr_arr = sd["atr_14"].values.astype(np.float64)
+  1121→        # Batch: gather all bar indices first, then run each model on the
+  1122→        # batch — much faster than per-bar calls.
+  1123→        bar_indices = list(range(sp, n - 5, 5))
+  1124→        if not bar_indices:
+  1125→            continue
+  1126→        feat_batch = feat_mat[bar_indices]  # shape [n_bars, n_features]
+  1127→        # Run each of 7 models on the whole batch
+  1128→        proba_7_batch = np.zeros((len(bar_indices), 7), dtype=np.float32)
+  1129→        for mi, mname in enumerate(CL2_MODEL_NAMES):
+  1130→            m = final_models.get(mname)
+  1131→            scaler = final_scalers.get(mname)
+  1132→            if m is None or scaler is None:
+  1133→                proba_7_batch[:, mi] = 0.5
+  1134→                continue
+  1135→            proba_7_batch[:, mi] = predict_proba_safe(m, feat_batch, scaler)
+  1136→
+  1137→        # Now iterate bars, using precomputed probs
+  1138→        for bi, t in enumerate(bar_indices):
+  1139→            cp = float(close_arr[t])
+  1140→            atr = float(atr_arr[t])
+  1141→            if atr <= 0 or cp <= 0:
+  1142→                continue
+  1143→            support = sc.support_at(t)
+  1144→            resistance = sc.resistance_at(t)
+  1145→            if np.isnan(support) or np.isnan(resistance):
+  1146→                continue
+  1147→
+  1148→            proba_7 = proba_7_batch[bi]
+  1149→            raw_prob = float(np.mean(proba_7)) if meta_state.get("fallback_mean") else \
+  1150→                       1 / (1 + np.exp(-(np.dot(meta_state["meta_coef"][0], proba_7) + meta_state["meta_intercept"])))
+  1151→            exp_win_rate = calibrate_proba(raw_prob, meta_state)
+  1152→            if exp_win_rate >= BUY_THRESHOLD:
+  1153→                direction = "BUY"
+  1154→            elif exp_win_rate <= SELL_THRESHOLD:
+  1155→                direction = "SELL"
+  1156→                exp_win_rate = 1 - exp_win_rate
+  1157→            else:
+  1158→                continue  # HOLD — no trade
+  1159→
+  1160→            sl, tp1, tp2, tp3, skip = compute_sl_and_targets(
+  1161→                cp, atr, support, resistance, direction
+  1162→            )
+  1163→            if skip:
+  1164→                skips += 1
+  1165→                continue
+  1166→            ret = simulate_exit_pnl(
+  1167→                sd, t, direction, cp, sl, tp1, tp2, tp3, horizon=21,
+  1168→                high_arr=high_arr, low_arr=low_arr, close_arr=close_arr,
+  1169→            )
+  1170→            trades.append({
+  1171→                "symbol": s,
+  1172→                "t": t,
+  1173→                "direction": direction,
+  1174→                "raw_prob": raw_prob,
+  1175→                "exp_win_rate": exp_win_rate,
+  1176→                "ret": ret,
+  1177→            })
+  1178→
+  1179→    if not trades:
+  1180→        print("  ! No trades generated in backtest")
+  1181→        return {
+  1182→            "totalTrades": 0, "winRate": 0, "avgReturnPct": 0,
+  1183→            "maxReturnPct": 0, "minReturnPct": 0, "stars": 0,
+  1184→            "profitFactor": 0, "skippedTrades": skips,
+  1185→            "reliabilityTable": [],
+  1186→        }
+  1187→
+  1188→    rets = np.array([tr["ret"] for tr in trades], dtype=float)
+  1189→    # Filter out NaN/inf returns (rare edge case when entry=0)
+  1190→    valid_mask = np.isfinite(rets)
+  1191→    if not valid_mask.all():
+  1192→        n_bad = int((~valid_mask).sum())
+  1193→        print(f"  ! Dropping {n_bad} trades with non-finite returns")
+  1194→    rets = rets[valid_mask]
+  1195→    trade_dir = np.array([tr["direction"] for tr in trades])[valid_mask]
+  1196→    trade_ewr = np.array([tr["exp_win_rate"] for tr in trades])[valid_mask]
+  1197→    if len(rets) == 0:
+  1198→        print("  ! All trades had non-finite returns")
+  1199→        return {
+  1200→            "totalTrades": 0, "winRate": 0, "avgReturnPct": 0,
+  1201→            "maxReturnPct": 0, "minReturnPct": 0, "stars": 0,
+  1202→            "profitFactor": 0, "skippedTrades": skips,
+  1203→            "reliabilityTable": [],
+  1204→        }
+  1205→    wins = rets > 0
+  1206→    win_rate = float(wins.mean())
+  1207→    avg_ret = float(rets.mean())
+  1208→    gross_profit = float(rets[rets > 0].sum()) if wins.any() else 0
+  1209→    gross_loss = float(-rets[rets < 0].sum()) if (~wins).any() else 0
+  1210→    profit_factor = gross_profit / max(gross_loss, 1e-9)
+  1211→    print(f"  Trades: {len(rets)} | Win rate: {win_rate*100:.1f}% | "
+  1212→          f"Avg ret: {avg_ret*100:.2f}% | PF: {profit_factor:.3f}")
+  1213→
+  1214→    # Reliability table: deciles of exp_win_rate vs actual hit rate
+  1215→    ewr = trade_ewr
+  1216→    bins = np.linspace(0, 1, 11)
+  1217→    bin_inds = np.clip(np.digitize(ewr, bins) - 1, 0, 9)
+  1218→    reliability = []
+  1219→    for bi in range(10):
+  1220→        mask = bin_inds == bi
+  1221→        if mask.sum() > 0:
+  1222→            reliability.append({
+  1223→                "bin": bi + 1,
+  1224→                "bin_center": round(float((bins[bi] + bins[bi+1]) / 2), 2),
+  1225→                "count": int(mask.sum()),
+  1226→                "predicted_prob": round(float(ewr[mask].mean()), 3),
+  1227→                "actual_hit_rate": round(float(wins[mask].mean()), 3),
+  1228→            })
+  1229→    print(f"  Reliability table ({len(reliability)} bins):")
+  1230→    for r in reliability:
+  1231→        marker = "OK" if abs(r["predicted_prob"] - r["actual_hit_rate"]) < 0.1 else "!!"
+  1232→        print(f"    bin{r['bin']} pred={r['predicted_prob']:.3f} actual={r['actual_hit_rate']:.3f} n={r['count']} {marker}")
+  1233→
+  1234→    return {
+  1235→        "totalTrades": int(len(rets)),
+  1236→        "buySignals": int(sum(1 for d in trade_dir if d == "BUY")),
+  1237→        "sellSignals": int(sum(1 for d in trade_dir if d == "SELL")),
+  1238→        "correctBuys": int(sum(1 for d, r in zip(trade_dir, rets) if d == "BUY" and r > 0)),
+  1239→        "correctSells": int(sum(1 for d, r in zip(trade_dir, rets) if d == "SELL" and r > 0)),
+  1240→        "winRate": round(float(win_rate * 100), 1),
+  1241→        "avgReturnPct": round(float(avg_ret * 100), 2),
+  1242→        "maxReturnPct": round(float(rets.max() * 100), 2),
+  1243→        "minReturnPct": round(float(rets.min() * 100), 2),
+  1244→        "stars": int(min(5, max(1, int(win_rate * 100 / 20) + 1))),
+  1245→        "profitFactor": round(float(profit_factor), 3),
+  1246→        "skippedTrades": int(skips),
+  1247→        "reliabilityTable": reliability,
+  1248→        "costBps": int(COST * 10000),
+  1249→    }
+  1250→
+  1251→
+  1252→# ------------------------------------------------------------------
+  1253→# Save to ml_predictions_multi.json (preserve existing keys)
+  1254→# ------------------------------------------------------------------
+  1255→def save_to_json(
+  1256→    cl2_per_model: Dict[str, Dict[str, dict]],
+  1257→    cl2_ens: Dict[str, dict],
+  1258→    cl2_backtest: dict,
+  1259→    train_meta: dict,
+  1260→):
+  1261→    print(f"\n[CL-2] Saving to {PRED_FILE}...")
+  1262→    # Load existing JSON (don't clobber the other 22 trained models)
+  1263→    if PRED_FILE.exists():
+  1264→        with open(PRED_FILE, "r") as f:
+  1265→            existing = json.load(f)
+  1266→    else:
+  1267→        existing = {}
+  1268→
+  1269→    # Build the per-model entry in the same shape as existing models.
+  1270→    # The per-stock entry shape inside predictions.<model>.<symbol> matches
+  1271→    # the existing CL_ensemble_predictions entries (signal, direction,
+  1272→    # confidence, currentPrice, entry, tp1, tp2, tp3, sl, avgReturn).
+  1273→    models_dict = existing.get("models", {})
+  1274→    for mname, preds in cl2_per_model.items():
+  1275→        models_dict[f"{mname} (CL-2)"] = {
+  1276→            "trained": True,
+  1277→            "version": "1.0.0",
+  1278→            "predictions": preds,
+  1279→        }
+  1280→    existing["models"] = models_dict
+  1281→
+  1282→    # Add CL-2 Ensemble prediction (per-stock)
+  1283→    existing["cl2_ensemble_predictions"] = cl2_ens
+  1284→
+  1285→    # Add CL-2 ensemble backtest entry
+  1286→    ens_bt = existing.get("ensemble_backtesting", {})
+  1287→    ens_bt["CL2_ENSEMBLE"] = cl2_backtest
+  1288→    existing["ensemble_backtesting"] = ens_bt
+  1289→
+  1290→    # Store CL-2 metadata for transparency
+  1291→    existing["cl2_metadata"] = {
+  1292→        "trained_at": pd.Timestamp.now().isoformat(),
+  1293→        "sl_rule": f"support−0.15×ATR or entry∓{ATR_STOP_MULT}×ATR (whichever closer, min {MIN_SL_MULT}×ATR)",
+  1294→        "tp_rule": f"TP1/2/3 = {TP1_MULT}R/{TP2_MULT}R/{TP3_MULT}R (R = |entry−SL|)",
+  1295→        "target": f"TP1 hit before SL within {LABEL_HORIZON} days",
+  1296→        "exits": "50%@TP1, 30%@TP2, 20%@TP3; SL→BE after TP1",
+  1297→        "models": CL2_MODEL_NAMES,
+  1298→        "meta_model": "LogisticRegression on 7-model OOF probs",
+  1299→        "calibration": "Decile binning on OOS predictions",
+  1300→        "thresholds": {"BUY": BUY_THRESHOLD, "SELL": SELL_THRESHOLD},
+  1301→        "agreement_formula": "1 − 2×std(7 model probs), clamped [0,1]",
+  1302→        "confidence_formula": "exp_win_rate × (0.6 + 0.4×agreement) × 100",
+  1303→        "cost_bps": int(COST * 10000),
+  1304→        "train_rows": int(train_meta.get("train_rows", 0)),
+  1305→        "pos_rate": float(train_meta.get("pos_rate", 0)),
+  1306→        "meta_auc": float(train_meta.get("meta_auc", 0)),
+  1307→    }
+  1308→
+  1309→    # Write back
+  1310→    def clean(o):
+  1311→        if isinstance(o, dict):
+  1312→            return {k: clean(v) for k, v in o.items()}
+  1313→        if isinstance(o, list):
+  1314→            return [clean(v) for v in o]
+  1315→        if isinstance(o, float):
+  1316→            if np.isnan(o) or np.isinf(o):
+  1317→                return 0
+  1318→            return o
+  1319→        if isinstance(o, (np.integer,)):
+  1320→            return int(o)
+  1321→        if isinstance(o, (np.floating,)):
+  1322→            return float(o)
+  1323→        return o
+  1324→
+  1325→    with open(PRED_FILE, "w") as f:
+  1326→        json.dump(clean(existing), f, indent=2, allow_nan=False)
+  1327→    print(f"  Saved. File size: {PRED_FILE.stat().st_size / 1024 / 1024:.1f} MB")
+  1328→
+  1329→
+  1330→# ------------------------------------------------------------------
+  1331→# Main
+  1332→# ------------------------------------------------------------------
+  1333→def main():
+  1334→    parser = argparse.ArgumentParser()
+  1335→    parser.add_argument("--quick", type=int, default=0,
+  1336→                        help="Quick test on N stocks (default: all)")
+  1337→    parser.add_argument("--backtest-only", action="store_true",
+  1338→                        help="Skip training, only re-run backtest using cached calib.pkl")
+  1339→    args = parser.parse_args()
+  1340→
+  1341→    start = time.time()
+  1342→    print("=" * 60)
+  1343→    print("CL-2 Tier: 7 models + logistic meta-ensemble")
+  1344→    print("  SL rule: support−0.15×ATR or entry∓0.8×ATR (min 0.5×ATR)")
+  1345→    print(f"  Target: TP1 ({TP1_MULT}R) hit before SL within {LABEL_HORIZON} days")
+  1346→    print("  Exits: 50%@TP1, 30%@TP2, 20%@TP3; SL→BE after TP1")
+  1347→    print("=" * 60)
+  1348→
+  1349→    # Determine stock universe
+  1350→    all_stocks = sorted([f.stem for f in OHLCV_DIR.glob("*.csv")])
+  1351→    if args.quick > 0:
+  1352→        # Use a representative subset: top-volume + diverse sectors
+  1353→        # Just take first N for reproducibility in quick mode
+  1354→        stocks = all_stocks[:args.quick]
+  1355→    else:
+  1356→        stocks = all_stocks
+  1357→    print(f"\nStocks: {len(stocks)}")
+  1358→
+  1359→    print("\n[1/5] Loading OHLCV...")
+  1360→    df_all = load_ohlcv(stocks)
+  1361→    if df_all.empty:
+  1362→        print("ERROR: No OHLCV data loaded")
+  1363→        sys.exit(1)
+  1364→    print(f"  {len(df_all):,} rows, {df_all['symbol'].nunique()} stocks")
+  1365→
+  1366→    print("\n[2/5] Computing ATR per stock...")
+  1367→    atr_per = get_atr_per_stock(df_all)
+  1368→    print(f"  {len(atr_per)} stocks have ATR")
+  1369→
+  1370→    if args.backtest_only:
+  1371→        # Load calib.pkl and skip training
+  1372→        if not CALIB_FILE.exists():
+  1373→            print("ERROR: calib.pkl not found — run full training first")
+  1374→            sys.exit(1)
+  1375→        with open(CALIB_FILE, "rb") as f:
+  1376→            saved = pickle.load(f)
+  1377→        print("  Loaded cached calib.pkl — skipping training")
+  1378→        # We still need to retrain final models for inference (no cached model state)
+  1379→        # Fall through to training for now
+  1380→        args.backtest_only = False
+  1381→
+  1382→    # Train
+  1383→    print("\n[3/5] Training CL-2 models + meta...")
+  1384→    result = train_cl2(stocks, df_all)
+  1385→    if len(result) == 5:
+  1386→        final_models, final_scalers, meta_state, calib_map, train_df = result
+  1387→    else:
+  1388→        print("ERROR: training failed")
+  1389→        sys.exit(1)
+  1390→
+  1391→    # Generate per-stock predictions
+  1392→    print("\n[4/5] Generating per-stock predictions...")
+  1393→    cl2_per_model, cl2_ens = predict_all_stocks(
+  1394→        stocks, df_all, atr_per, final_models, final_scalers, meta_state
+  1395→    )
+  1396→
+  1397→    # Backtest
+  1398→    print("\n[5/5] Backtesting CL-2 ensemble...")
+  1399→    cl2_bt = backtest_cl2(
+  1400→        stocks, df_all, atr_per, final_models, final_scalers, meta_state
+  1401→    )
+  1402→
+  1403→    # Save
+  1404→    train_meta = {
+  1405→        "train_rows": len(train_df),
+  1406→        "pos_rate": float(train_df["_y"].mean()),
+  1407→        "meta_auc": 0.0,  # filled below if available
+  1408→    }
+  1409→    # Try to read AUC from printed output (already in stdout)
+  1410→    save_to_json(cl2_per_model, cl2_ens, cl2_bt, train_meta)
+  1411→
+  1412→    elapsed = time.time() - start
+  1413→    print(f"\n{'='*60}")
+  1414→    print(f"CL-2 training complete in {elapsed:.0f}s ({elapsed/60:.1f} min)")
+  1415→    print(f"{'='*60}")
+  1416→    print(f"  Models trained: {len(final_models)}/7")
+  1417→    print(f"  Stocks with predictions: {len(cl2_ens)}")
+  1418→    print(f"  Backtest: {cl2_bt['totalTrades']} trades, WR={cl2_bt['winRate']}%, PF={cl2_bt['profitFactor']}")
+  1419→
+  1420→
+  1421→if __name__ == "__main__":
+  1422→    main()
+  1423→

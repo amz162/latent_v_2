@@ -1,0 +1,763 @@
+     1→#!/usr/bin/env python3
+     2→"""PI Tier: 4 models (Linear/Logistic Regression, Pattern Matcher KNN, Neural Network)
+     3→+ logistic meta-ensemble, trained on the same support/ATR SL rule as CL-2.
+     4→
+     5→This is a NEW model category for Latent.pk, distinct from CL (avgReturn
+     6→heuristic), CL-2 (calibrated classifier ensemble with 7 models), and the
+     7→existing tier-1/2/3/4 models.
+     8→
+     9→=========================================================================
+    10→Stop-loss rule (shared with CL-2):
+    11→  support_stop = nearest confirmed swing low (or 20-day low) − 0.15×ATR
+    12→  atr_stop     = entry ∓ 0.8×ATR
+    13→  final SL     = whichever is closer to entry, but never tighter than 0.5×ATR
+    14→
+    15→Target label (shared with CL-2):
+    16→  y = 1 if TP1 (=1.5R) hits before SL within 5 days, else 0.
+    17→
+    18→Exits (backtest):
+    19→  50% at TP1, 30% at TP2 (3R), 20% at TP3 (5R); SL→BE after TP1.
+    20→
+    21→4 base models (all sklearn, CPU-only):
+    22→  1. Linear Regression (regressor) — predicts 5-day forward return;
+    23→     signal = BUY if pred > 0.005, SELL if pred < -0.005, else HOLD.
+    24→  2. Logistic Regression (classifier) — same TP1-hit-before-SL target as CL-2.
+    25→  3. Pattern Matcher (KNN) — k=15 distance-weighted neighbors classifier,
+    26→     same TP1 target.
+    27→  4. Neural Network (MLPClassifier) — distinct config from CL-2's MLP:
+    28→     2 hidden layers (64, 32), tanh activation, larger max_iter.
+    29→
+    30→Meta-model (PI-Ensemble):
+    31→  LogisticRegression on the 4-dim OOF prediction vector:
+    32→    [logistic_prob, knn_prob, mlp_prob, linear_reg_normalized_return]
+    33→  Trained on purged time-ordered OOF predictions.
+    34→
+    35→Calibration:
+    36→  Decile binning on OOS predictions (saved as data/pi_cache/calib.pkl).
+    37→
+    38→Confidence outputs (per stock):
+    39→  raw_prob     ∈ [0,1] — meta-model sigmoid output
+    40→  exp_win_rate ∈ [0,1] — raw_prob after calibration
+    41→  agreement    ∈ [0,1] — 1 − 2×std(4 model probs), clamped [0,1]
+    42→  confidence   ∈ [0,100] — exp_win_rate × (0.6 + 0.4×agreement) × 100
+    43→
+    44→Signal thresholds:
+    45→  BUY  if calibrated_prob ≥ 0.55 AND resistance check passes
+    46→  SELL if calibrated_prob ≤ 0.45 (mirror for shorts)
+    47→  HOLD otherwise
+    48→
+    49→Usage:
+    50→  python scripts/train_pi_tier.py             # full training on 361 stocks
+    51→  python scripts/train_pi_tier.py --quick 20  # quick test on 20 stocks
+    52→"""
+    53→from __future__ import annotations
+    54→import json
+    55→import os
+    56→import sys
+    57→import time
+    58→import pickle
+    59→import argparse
+    60→import warnings
+    61→from pathlib import Path
+    62→from typing import Dict, List, Tuple, Optional
+    63→
+    64→import numpy as np
+    65→import pandas as pd
+    66→from sklearn.linear_model import LinearRegression, LogisticRegression
+    67→from sklearn.neighbors import KNeighborsClassifier
+    68→from sklearn.neural_network import MLPClassifier
+    69→from sklearn.preprocessing import StandardScaler
+    70→from sklearn.metrics import roc_auc_score
+    71→
+    72→warnings.filterwarnings("ignore")
+    73→
+    74→# Import shared SL/TP/label/exit logic + feature engineering from CL-2 trainer
+    75→sys.path.insert(0, str(Path(__file__).parent))
+    76→from train_cl2_tier import (
+    77→    OHLCV_DIR, PRED_FILE, FC,
+    78→    ATR_STOP_MULT, SUPPORT_BUFFER_MULT, MIN_SL_MULT,
+    79→    TP1_MULT, TP2_MULT, TP3_MULT, LABEL_HORIZON,
+    80→    RESISTANCE_MIN_R, SWING_LOOKBACK, MIN_TRAIN_BARS, MIN_PRED_BARS,
+    81→    BUY_THRESHOLD, SELL_THRESHOLD, COST,
+    82→    add_features, load_ohlcv, get_atr_per_stock,
+    83→    StockSupportCache, compute_sl_and_targets,
+    84→    make_label, simulate_exit_pnl,
+    85→    build_training_set, purged_stock_folds,
+    86→)
+    87→
+    88→# ------------------------------------------------------------------
+    89→# Constants
+    90→# ------------------------------------------------------------------
+    91→PI_CALIB_FILE = ROOT = Path("/home/z/my-project") / "data" / "pi_cache" / "calib.pkl"
+    92→PI_CACHE_DIR = Path("/home/z/my-project") / "data" / "pi_cache"
+    93→PI_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    94→
+    95→# 4 PI models' names (used as JSON keys)
+    96→PI_MODEL_NAMES = [
+    97→    "Linear Regression",
+    98→    "Logistic Regression",
+    99→    "Pattern Matcher KNN",
+   100→    "Neural Network",
+   101→]
+   102→
+   103→
+   104→# ------------------------------------------------------------------
+   105→# 4 base model constructors — distinct from CL-2 where applicable
+   106→# ------------------------------------------------------------------
+   107→def build_4_models():
+   108→    """Returns dict of {name: estimator} for the 4 PI base models."""
+   109→    return {
+   110→        # Regressor — predicts 5-day forward return (continuous)
+   111→        "Linear Regression": LinearRegression(),
+   112→        # Classifier — predicts P(TP1 hit before SL within 5 days)
+   113→        "Logistic Regression": LogisticRegression(
+   114→            C=0.5, max_iter=200, random_state=42,
+   115→        ),
+   116→        # Pattern Matcher — k=15 distance-weighted KNN
+   117→        "Pattern Matcher KNN": KNeighborsClassifier(
+   118→            n_neighbors=15, weights="distance", algorithm="auto",
+   119→            n_jobs=-1,
+   120→        ),
+   121→        # Neural Network — DISTINCT config from CL-2's MLP
+   122→        # (CL-2 uses (32,) relu with 120 max_iter; PI uses (64, 32) tanh with 200)
+   123→        "Neural Network": MLPClassifier(
+   124→            hidden_layer_sizes=(64, 32), activation="tanh",
+   125→            max_iter=200, alpha=1e-3, learning_rate_init=5e-3,
+   126→            random_state=42, early_stopping=True,
+   127→            validation_fraction=0.15, n_iter_no_change=10,
+   128→        ),
+   129→    }
+   130→
+   131→
+   132→def predict_proba_safe(model, X, scaler) -> np.ndarray:
+   133→    """Returns P(y=1) array. Handles classifiers and regressors uniformly.
+   134→    For a regressor, we map predicted return → [0,1] via 1/(1+exp(-k*x)).
+   135→    """
+   136→    Xs = scaler.transform(X)
+   137→    if hasattr(model, "predict_proba"):
+   138→        proba = model.predict_proba(Xs)
+   139→        if proba.shape[1] >= 2:
+   140→            return proba[:, 1]
+   141→        else:
+   142→            return proba[:, 0]
+   143→    # Regressor — squash the predicted return through a scaled sigmoid
+   144→    pred = model.predict(Xs)
+   145→    # k=20 so that a ±5% predicted return maps to ~0.73 / ~0.27
+   146→    return 1 / (1 + np.exp(-20.0 * pred))
+   147→
+   148→
+   149→# ------------------------------------------------------------------
+   150→# Training pipeline
+   151→# ------------------------------------------------------------------
+   152→def train_pi(stocks: List[str], df_all: pd.DataFrame) -> Tuple[dict, dict, dict, dict, dict]:
+   153→    """Train 4 base models + logistic meta on OOF predictions + calibration.
+   154→
+   155→    Returns:
+   156→        final_models: per-model dict {name: estimator}
+   157→        final_scalers: per-model dict {name: StandardScaler}
+   158→        meta_state: dict (calibration + meta coefficients)
+   159→        calib_map: dict {bin_center: hit_rate}
+   160→        train_df: the training DataFrame (for stats)
+   161→    """
+   162→    print("\n[PI] Building training set (shared with CL-2 logic)...")
+   163→    train_df = build_training_set(df_all, sample_size=120_000)
+   164→    if train_df.empty:
+   165→        print("  ! Empty training set")
+   166→        return {}, {}, {}, {}, {}
+   167→    print(f"  Training rows: {len(train_df):,}")
+   168→    pos_rate = train_df["_y"].mean()
+   169→    print(f"  Positive rate (TP1 hit before SL): {pos_rate:.3f}")
+   170→
+   171→    X = train_df[FC].fillna(0).values
+   172→    y = train_df["_y"].values.astype(int)
+   173→
+   174→    # For the linear regressor, target = the realized 5-day return (we use the
+   175→    # sign-flipped label as a coarse proxy: 1 → positive return, 0 → negative).
+   176→    # Better: regress on the actual forward 5-day return. We have _cp and _tp1
+   177→    # in the training rows, so we can compute realized return = (tp1-cp)/cp
+   178→    # for trades where TP1 hits before SL (y=1) and = -1*R/cp where SL hits
+   179→    # first (y=0). But this is complex; simpler — regress on _y itself is fine
+   180→    # since it's strongly correlated with the realized return.
+   181→    # Use a continuous target for the linear regressor:
+   182→    #   realized_pct = ((1.5 if y else -1) * risk_per_share / cp)
+   183→    # The training rows have _sl, _tp1, _cp fields — we can compute this.
+   184→    if {"_sl", "_tp1", "_cp"}.issubset(train_df.columns):
+   185→        # Realized return per training row: if y=1 (TP1 hit) → +1.5R/cp
+   186→        # else (SL hit) → -1R/cp (R = |entry - SL|)
+   187→        R = np.abs(train_df["_cp"].values - train_df["_sl"].values)
+   188→        cp = train_df["_cp"].values
+   189→        # Avoid div-by-zero
+   190→        safe_cp = np.where(cp > 0, cp, 1.0)
+   191→        # When y=1: realized = +1.5R/cp; when y=0: realized = -1R/cp
+   192→        y_lin = np.where(
+   193→            y == 1,
+   194→            1.5 * R / safe_cp,
+   195→            -1.0 * R / safe_cp,
+   196→        )
+   197→        # Sanitize: replace any NaN/inf with 0 (LinearRegression can't handle NaN)
+   198→        y_lin = np.nan_to_num(y_lin, nan=0.0, posinf=0.0, neginf=0.0)
+   199→    else:
+   200→        y_lin = y.astype(float)  # fallback
+   201→
+   202→    # 3-fold purged CV (by symbol)
+   203→    syms = sorted(train_df["_symbol"].unique())
+   204→    folds = purged_stock_folds(syms, k=3)
+   205→
+   206→    # OOF predictions matrix (n_rows × 4)
+   207→    oof = np.zeros((len(train_df), 4), dtype=np.float32)
+   208→    fold_assign = np.full(len(train_df), -1, dtype=int)
+   209→    for fi, (tr_syms, va_syms) in enumerate(folds):
+   210→        tr_mask = train_df["_symbol"].isin(tr_syms).values
+   211→        va_mask = train_df["_symbol"].isin(va_syms).values
+   212→        if tr_mask.sum() < 50 or va_mask.sum() < 50:
+   213→            continue
+   214→        X_tr = train_df.loc[tr_mask, FC].fillna(0).values
+   215→        y_tr = train_df.loc[tr_mask, "_y"].values.astype(int)
+   216→        y_tr_lin = y_lin[tr_mask]
+   217→        X_va = train_df.loc[va_mask, FC].fillna(0).values
+   218→        fold_assign[va_mask] = fi
+   219→        print(f"  Fold {fi+1}/3: train={tr_mask.sum():,}, val={va_mask.sum():,}")
+   220→        for mi, (mname, ctor) in enumerate(build_4_models().items()):
+   221→            m = ctor
+   222→            scaler = StandardScaler()
+   223→            X_tr_s = scaler.fit_transform(X_tr)
+   224→            X_va_s = scaler.transform(X_va)
+   225→            try:
+   226→                if mname == "Linear Regression":
+   227→                    m.fit(X_tr_s, y_tr_lin)
+   228→                else:
+   229→                    m.fit(X_tr_s, y_tr)
+   230→                proba = predict_proba_safe(m, X_va, scaler)
+   231→                oof[va_mask, mi] = proba
+   232→            except Exception as e:
+   233→                print(f"    ! {mname} failed: {e}")
+   234→                oof[va_mask, mi] = 0.5
+   235→
+   236→    # Train final 4 base models on ALL data
+   237→    print("\n[PI] Training final 4 base models on full data...")
+   238→    final_models = {}
+   239→    final_scalers = {}
+   240→    for mname, ctor in build_4_models().items():
+   241→        print(f"  {mname}...", end=" ", flush=True)
+   242→        m = ctor
+   243→        scaler = StandardScaler()
+   244→        Xs = scaler.fit_transform(X)
+   245→        try:
+   246→            if mname == "Linear Regression":
+   247→                m.fit(Xs, y_lin)
+   248→            else:
+   249→                m.fit(Xs, y)
+   250→            final_models[mname] = m
+   251→            final_scalers[mname] = scaler
+   252→            print("OK")
+   253→        except Exception as e:
+   254→            print(f"FAIL ({e})")
+   255→
+   256→    # Train logistic meta on OOF predictions
+   257→    print("\n[PI] Training logistic meta-model on OOF predictions...")
+   258→    valid_mask = fold_assign >= 0
+   259→    X_meta = oof[valid_mask]
+   260→    y_meta = y[valid_mask]
+   261→    if X_meta.shape[0] < 50 or len(np.unique(y_meta)) < 2:
+   262→        print("  ! Not enough OOF data for meta-model — using mean of 4 probs as fallback")
+   263→        meta_state = {"fallback_mean": True}
+   264→        calib_map = {}
+   265→    else:
+   266→        meta = LogisticRegression(C=1.0, max_iter=200, random_state=42)
+   267→        meta.fit(X_meta, y_meta)
+   268→        meta_proba = meta.predict_proba(X_meta)[:, 1]
+   269→        try:
+   270→            auc = roc_auc_score(y_meta, meta_proba)
+   271→            print(f"  Meta-model OOS AUC: {auc:.4f}")
+   272→        except Exception:
+   273→            auc = 0.0
+   274→        # Calibrate via decile binning
+   275→        bins = np.linspace(0, 1, 11)
+   276→        bin_centers = (bins[:-1] + bins[1:]) / 2
+   277→        bin_inds = np.digitize(meta_proba, bins) - 1
+   278→        bin_inds = np.clip(bin_inds, 0, 9)
+   279→        calib_map = {}
+   280→        for bi in range(10):
+   281→            mask = bin_inds == bi
+   282→            if mask.sum() > 0:
+   283→                hr = float(y_meta[mask].mean())
+   284→                bc = float(bin_centers[bi])
+   285→                calib_map[bc] = hr
+   286→        # Save calib.pkl
+   287→        with open(PI_CALIB_FILE, "wb") as f:
+   288→            pickle.dump({"meta": meta, "scaler": None, "calib_map": calib_map}, f)
+   289→        calib_xs = sorted(calib_map.keys())
+   290→        calib_ys = [calib_map[x] for x in calib_xs]
+   291→        meta_state = {
+   292→            "fallback_mean": False,
+   293→            "meta_coef": meta.coef_.tolist(),
+   294→            "meta_intercept": float(meta.intercept_[0]),
+   295→            "calib_xs": calib_xs,
+   296→            "calib_ys": calib_ys,
+   297→            "meta_auc": float(auc),
+   298→        }
+   299→
+   300→    return final_models, final_scalers, meta_state, calib_map, train_df
+   301→
+   302→
+   303→def calibrate_proba(p: float, meta_state: dict) -> float:
+   304→    """Apply calibration map (piecewise linear) to a raw probability."""
+   305→    if meta_state.get("fallback_mean"):
+   306→        return p
+   307→    xs = meta_state.get("calib_xs", [])
+   308→    ys = meta_state.get("calib_ys", [])
+   309→    if not xs:
+   310→        return p
+   311→    if p <= xs[0]:
+   312→        return ys[0]
+   313→    if p >= xs[-1]:
+   314→        return ys[-1]
+   315→    for i in range(len(xs) - 1):
+   316→        if xs[i] <= p <= xs[i + 1]:
+   317→            t = (p - xs[i]) / (xs[i + 1] - xs[i]) if xs[i + 1] > xs[i] else 0
+   318→            return ys[i] + t * (ys[i + 1] - ys[i])
+   319→    return p
+   320→
+   321→
+   322→def meta_predict(proba_4: np.ndarray, meta_state: dict) -> float:
+   323→    """Apply logistic meta + calibration. proba_4 = array of 4 model probabilities."""
+   324→    if meta_state.get("fallback_mean"):
+   325→        raw = float(np.mean(proba_4))
+   326→    else:
+   327→        coef = np.array(meta_state["meta_coef"][0])
+   328→        intercept = meta_state["meta_intercept"]
+   329→        z = np.dot(coef, proba_4) + intercept
+   330→        raw = 1 / (1 + np.exp(-z))
+   331→    return calibrate_proba(raw, meta_state)
+   332→
+   333→
+   334→def agreement_score(proba_4: np.ndarray) -> float:
+   335→    """Compute agreement ∈ [0,1] = 1 − 2×std(proba_4), clamped to [0,1]."""
+   336→    s = float(np.std(proba_4))
+   337→    return float(max(0.0, min(1.0, 1.0 - 2.0 * s)))
+   338→
+   339→
+   340→# ------------------------------------------------------------------
+   341→# Generate per-stock predictions
+   342→# ------------------------------------------------------------------
+   343→def predict_all_stocks(
+   344→    stocks: List[str],
+   345→    df_all: pd.DataFrame,
+   346→    atr_per: Dict[str, Dict[str, float]],
+   347→    final_models: dict,
+   348→    final_scalers: dict,
+   349→    meta_state: dict,
+   350→) -> Tuple[Dict[str, dict], Dict[str, dict]]:
+   351→    """For each stock, compute the PI-Ensemble prediction at the latest bar."""
+   352→    print("\n[PI] Generating per-stock predictions...")
+   353→    pi_per_model = {mname: {} for mname in PI_MODEL_NAMES}
+   354→    pi_ens = {}
+   355→
+   356→    for si, s in enumerate(stocks):
+   357→        if s not in atr_per:
+   358→            continue
+   359→        sd = df_all[df_all["symbol"] == s].sort_values("date").reset_index(drop=True)
+   360→        n = len(sd)
+   361→        if n < MIN_PRED_BARS:
+   362→            continue
+   363→        t = n - 1
+   364→        cp = float(sd.iloc[t]["close"])
+   365→        atr = float(sd.iloc[t]["atr_14"])
+   366→        if atr <= 0 or cp <= 0:
+   367→            continue
+   368→        sc = StockSupportCache(sd)
+   369→        support = sc.support_at(t)
+   370→        resistance = sc.resistance_at(t)
+   371→        if np.isnan(support) or np.isnan(resistance):
+   372→            continue
+   373→
+   374→        feat_row = sd[FC].iloc[t].fillna(0).values.astype(np.float32).reshape(1, -1)
+   375→
+   376→        # Get 4 model probabilities
+   377→        proba_4 = np.zeros(4)
+   378→        for mi, mname in enumerate(PI_MODEL_NAMES):
+   379→            m = final_models.get(mname)
+   380→            scaler = final_scalers.get(mname)
+   381→            if m is None or scaler is None:
+   382→                proba_4[mi] = 0.5
+   383→                continue
+   384→            proba_4[mi] = float(predict_proba_safe(m, feat_row, scaler)[0])
+   385→
+   386→        # Meta-model output
+   387→        if meta_state.get("fallback_mean"):
+   388→            raw_prob = float(np.mean(proba_4))
+   389→        else:
+   390→            coef = np.array(meta_state["meta_coef"][0])
+   391→            intercept = meta_state["meta_intercept"]
+   392→            z = float(np.dot(coef, proba_4) + intercept)
+   393→            raw_prob = 1 / (1 + np.exp(-z))
+   394→        exp_win_rate = calibrate_proba(raw_prob, meta_state)
+   395→        agreement = agreement_score(proba_4)
+   396→        confidence = exp_win_rate * (0.6 + 0.4 * agreement) * 100
+   397→
+   398→        if exp_win_rate >= BUY_THRESHOLD:
+   399→            signal = "BUY"
+   400→            direction = "LONG"
+   401→        elif exp_win_rate <= SELL_THRESHOLD:
+   402→            signal = "SELL"
+   403→            direction = "SHORT"
+   404→        else:
+   405→            signal = "HOLD"
+   406→            direction = "LONG"
+   407→
+   408→        sl, tp1, tp2, tp3, skip = compute_sl_and_targets(
+   409→            cp, atr, support, resistance, signal if signal != "HOLD" else "BUY"
+   410→        )
+   411→        if signal == "HOLD":
+   412→            sl = cp
+   413→            tp1 = cp
+   414→            tp2 = cp
+   415→            tp3 = cp
+   416→            skip = True
+   417→
+   418→        if signal == "SELL":
+   419→            sell_prob = 1 - exp_win_rate
+   420→            exp_win_rate = sell_prob
+   421→            confidence = sell_prob * (0.6 + 0.4 * agreement) * 100
+   422→
+   423→        avg_return = (exp_win_rate * TP1_MULT - (1 - exp_win_rate) * 1.0) / 1.0
+   424→
+   425→        # Per-model prediction entries
+   426→        for mi, mname in enumerate(PI_MODEL_NAMES):
+   427→            mp = float(proba_4[mi])
+   428→            m_signal = "BUY" if mp >= 0.55 else ("SELL" if mp <= 0.45 else "HOLD")
+   429→            m_sl, m_tp1, m_tp2, m_tp3, m_skip = compute_sl_and_targets(
+   430→                cp, atr, support, resistance, m_signal if m_signal != "HOLD" else "BUY"
+   431→            )
+   432→            if m_signal == "HOLD":
+   433→                m_sl = cp
+   434→                m_tp1 = cp
+   435→                m_tp2 = cp
+   436→                m_tp3 = cp
+   437→            pi_per_model[mname][s] = {
+   438→                "signal": m_signal,
+   439→                "direction": "LONG" if m_signal != "SELL" else "SHORT",
+   440→                "confidence": int(min(100, max(0, mp * 100))),
+   441→                "currentPrice": round(cp, 2),
+   442→                "entry": round(cp, 2),
+   443→                "tp1": round(m_tp1, 2),
+   444→                "tp2": round(m_tp2, 2),
+   445→                "tp3": round(m_tp3, 2),
+   446→                "sl": round(m_sl, 2),
+   447→                "avgReturn": round(float((mp - 0.5) * 2), 4),
+   448→                "raw_prob": round(float(mp), 4),
+   449→            }
+   450→
+   451→        # Ensemble prediction
+   452→        pi_ens[s] = {
+   453→            "signal": signal,
+   454→            "direction": direction,
+   455→            "confidence": int(min(100, max(0, confidence))),
+   456→            "currentPrice": round(cp, 2),
+   457→            "entry": round(cp, 2),
+   458→            "tp1": round(tp1, 2),
+   459→            "tp2": round(tp2, 2),
+   460→            "tp3": round(tp3, 2),
+   461→            "sl": round(sl, 2),
+   462→            "avgReturn": round(float(avg_return), 4),
+   463→            "raw_prob": round(float(raw_prob), 4),
+   464→            "exp_win_rate": round(float(exp_win_rate), 4),
+   465→            "agreement": round(float(agreement), 4),
+   466→        }
+   467→
+   468→        if (si + 1) % 50 == 0:
+   469→            print(f"  {si+1}/{len(stocks)} stocks processed...")
+   470→
+   471→    print(f"  Done: {len(pi_ens)} stocks have PI-Ensemble predictions")
+   472→    return pi_per_model, pi_ens
+   473→
+   474→
+   475→# ------------------------------------------------------------------
+   476→# Backtest
+   477→# ------------------------------------------------------------------
+   478→def backtest_pi(
+   479→    stocks: List[str],
+   480→    df_all: pd.DataFrame,
+   481→    atr_per: Dict[str, Dict[str, float]],
+   482→    final_models: dict,
+   483→    final_scalers: dict,
+   484→    meta_state: dict,
+   485→) -> dict:
+   486→    """Walk-forward backtest on last 20% of each stock's bars."""
+   487→    print("\n[PI] Backtesting on 20% holdout per stock...")
+   488→    trades = []
+   489→    skips = 0
+   490→
+   491→    for s in stocks:
+   492→        sd = df_all[df_all["symbol"] == s].sort_values("date").reset_index(drop=True)
+   493→        n = len(sd)
+   494→        if n < MIN_TRAIN_BARS + 20:
+   495→            continue
+   496→        sp = int(n * 0.8)
+   497→        if sp >= n - 5:
+   498→            continue
+   499→        sc = StockSupportCache(sd)
+   500→        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+   501→        high_arr = sd["high"].values.astype(np.float64)
+   502→        low_arr = sd["low"].values.astype(np.float64)
+   503→        close_arr = sd["close"].values.astype(np.float64)
+   504→        atr_arr = sd["atr_14"].values.astype(np.float64)
+   505→        bar_indices = list(range(sp, n - 5, 5))
+   506→        if not bar_indices:
+   507→            continue
+   508→        feat_batch = feat_mat[bar_indices]
+   509→        proba_4_batch = np.zeros((len(bar_indices), 4), dtype=np.float32)
+   510→        for mi, mname in enumerate(PI_MODEL_NAMES):
+   511→            m = final_models.get(mname)
+   512→            scaler = final_scalers.get(mname)
+   513→            if m is None or scaler is None:
+   514→                proba_4_batch[:, mi] = 0.5
+   515→                continue
+   516→            proba_4_batch[:, mi] = predict_proba_safe(m, feat_batch, scaler)
+   517→
+   518→        for bi, t in enumerate(bar_indices):
+   519→            cp = float(close_arr[t])
+   520→            atr = float(atr_arr[t])
+   521→            if atr <= 0 or cp <= 0:
+   522→                continue
+   523→            support = sc.support_at(t)
+   524→            resistance = sc.resistance_at(t)
+   525→            if np.isnan(support) or np.isnan(resistance):
+   526→                continue
+   527→
+   528→            proba_4 = proba_4_batch[bi]
+   529→            if meta_state.get("fallback_mean"):
+   530→                raw_prob = float(np.mean(proba_4))
+   531→            else:
+   532→                coef = np.array(meta_state["meta_coef"][0])
+   533→                intercept = meta_state["meta_intercept"]
+   534→                z = float(np.dot(coef, proba_4) + intercept)
+   535→                raw_prob = 1 / (1 + np.exp(-z))
+   536→            exp_win_rate = calibrate_proba(raw_prob, meta_state)
+   537→            if exp_win_rate >= BUY_THRESHOLD:
+   538→                direction = "BUY"
+   539→            elif exp_win_rate <= SELL_THRESHOLD:
+   540→                direction = "SELL"
+   541→                exp_win_rate = 1 - exp_win_rate
+   542→            else:
+   543→                continue
+   544→
+   545→            sl, tp1, tp2, tp3, skip = compute_sl_and_targets(
+   546→                cp, atr, support, resistance, direction
+   547→            )
+   548→            if skip:
+   549→                skips += 1
+   550→                continue
+   551→            ret = simulate_exit_pnl(
+   552→                sd, t, direction, cp, sl, tp1, tp2, tp3, horizon=21,
+   553→                high_arr=high_arr, low_arr=low_arr, close_arr=close_arr,
+   554→            )
+   555→            trades.append({
+   556→                "symbol": s, "t": t, "direction": direction,
+   557→                "raw_prob": raw_prob, "exp_win_rate": exp_win_rate, "ret": ret,
+   558→            })
+   559→
+   560→    if not trades:
+   561→        print("  ! No trades generated in backtest")
+   562→        return {
+   563→            "totalTrades": 0, "winRate": 0, "avgReturnPct": 0,
+   564→            "maxReturnPct": 0, "minReturnPct": 0, "stars": 0,
+   565→            "profitFactor": 0, "skippedTrades": skips, "reliabilityTable": [],
+   566→        }
+   567→
+   568→    rets = np.array([tr["ret"] for tr in trades], dtype=float)
+   569→    valid_mask = np.isfinite(rets)
+   570→    if not valid_mask.all():
+   571→        n_bad = int((~valid_mask).sum())
+   572→        print(f"  ! Dropping {n_bad} trades with non-finite returns")
+   573→    rets = rets[valid_mask]
+   574→    trade_dir = np.array([tr["direction"] for tr in trades])[valid_mask]
+   575→    trade_ewr = np.array([tr["exp_win_rate"] for tr in trades])[valid_mask]
+   576→    if len(rets) == 0:
+   577→        return {
+   578→            "totalTrades": 0, "winRate": 0, "avgReturnPct": 0,
+   579→            "maxReturnPct": 0, "minReturnPct": 0, "stars": 0,
+   580→            "profitFactor": 0, "skippedTrades": skips, "reliabilityTable": [],
+   581→        }
+   582→    wins = rets > 0
+   583→    win_rate = float(wins.mean())
+   584→    avg_ret = float(rets.mean())
+   585→    gross_profit = float(rets[rets > 0].sum()) if wins.any() else 0
+   586→    gross_loss = float(-rets[rets < 0].sum()) if (~wins).any() else 0
+   587→    profit_factor = gross_profit / max(gross_loss, 1e-9)
+   588→    print(f"  Trades: {len(rets)} | Win rate: {win_rate*100:.1f}% | "
+   589→          f"Avg ret: {avg_ret*100:.2f}% | PF: {profit_factor:.3f}")
+   590→
+   591→    ewr = trade_ewr
+   592→    bins = np.linspace(0, 1, 11)
+   593→    bin_inds = np.clip(np.digitize(ewr, bins) - 1, 0, 9)
+   594→    reliability = []
+   595→    for bi in range(10):
+   596→        mask = bin_inds == bi
+   597→        if mask.sum() > 0:
+   598→            reliability.append({
+   599→                "bin": bi + 1,
+   600→                "bin_center": round(float((bins[bi] + bins[bi+1]) / 2), 2),
+   601→                "count": int(mask.sum()),
+   602→                "predicted_prob": round(float(ewr[mask].mean()), 3),
+   603→                "actual_hit_rate": round(float(wins[mask].mean()), 3),
+   604→            })
+   605→    print(f"  Reliability table ({len(reliability)} bins):")
+   606→    for r in reliability:
+   607→        marker = "OK" if abs(r["predicted_prob"] - r["actual_hit_rate"]) < 0.1 else "!!"
+   608→        print(f"    bin{r['bin']} pred={r['predicted_prob']:.3f} actual={r['actual_hit_rate']:.3f} n={r['count']} {marker}")
+   609→
+   610→    return {
+   611→        "totalTrades": int(len(rets)),
+   612→        "buySignals": int(sum(1 for d in trade_dir if d == "BUY")),
+   613→        "sellSignals": int(sum(1 for d in trade_dir if d == "SELL")),
+   614→        "correctBuys": int(sum(1 for d, r in zip(trade_dir, rets) if d == "BUY" and r > 0)),
+   615→        "correctSells": int(sum(1 for d, r in zip(trade_dir, rets) if d == "SELL" and r > 0)),
+   616→        "winRate": round(float(win_rate * 100), 1),
+   617→        "avgReturnPct": round(float(avg_ret * 100), 2),
+   618→        "maxReturnPct": round(float(rets.max() * 100), 2),
+   619→        "minReturnPct": round(float(rets.min() * 100), 2),
+   620→        "stars": int(min(5, max(1, int(win_rate * 100 / 20) + 1))),
+   621→        "profitFactor": round(float(profit_factor), 3),
+   622→        "skippedTrades": int(skips),
+   623→        "reliabilityTable": reliability,
+   624→        "costBps": int(COST * 10000),
+   625→    }
+   626→
+   627→
+   628→# ------------------------------------------------------------------
+   629→# Save to ml_predictions_multi.json (preserve existing keys)
+   630→# ------------------------------------------------------------------
+   631→def save_to_json(
+   632→    pi_per_model: Dict[str, Dict[str, dict]],
+   633→    pi_ens: Dict[str, dict],
+   634→    pi_backtest: dict,
+   635→    train_meta: dict,
+   636→):
+   637→    print(f"\n[PI] Saving to {PRED_FILE}...")
+   638→    if PRED_FILE.exists():
+   639→        with open(PRED_FILE, "r") as f:
+   640→            existing = json.load(f)
+   641→    else:
+   642→        existing = {}
+   643→
+   644→    models_dict = existing.get("models", {})
+   645→    for mname, preds in pi_per_model.items():
+   646→        models_dict[f"{mname} (PI)"] = {
+   647→            "trained": True,
+   648→            "version": "1.0.0",
+   649→            "predictions": preds,
+   650→        }
+   651→    existing["models"] = models_dict
+   652→    existing["pi_ensemble_predictions"] = pi_ens
+   653→
+   654→    ens_bt = existing.get("ensemble_backtesting", {})
+   655→    ens_bt["PI_ENSEMBLE"] = pi_backtest
+   656→    existing["ensemble_backtesting"] = ens_bt
+   657→
+   658→    existing["pi_metadata"] = {
+   659→        "trained_at": pd.Timestamp.now().isoformat(),
+   660→        "sl_rule": f"support−0.15×ATR or entry∓{ATR_STOP_MULT}×ATR (whichever closer, min {MIN_SL_MULT}×ATR)",
+   661→        "tp_rule": f"TP1/2/3 = {TP1_MULT}R/{TP2_MULT}R/{TP3_MULT}R (R = |entry−SL|)",
+   662→        "target": f"TP1 hit before SL within {LABEL_HORIZON} days",
+   663→        "exits": "50%@TP1, 30%@TP2, 20%@TP3; SL→BE after TP1",
+   664→        "models": PI_MODEL_NAMES,
+   665→        "meta_model": "LogisticRegression on 4-model OOF probs + linear-reg normalized return",
+   666→        "calibration": "Decile binning on OOS predictions",
+   667→        "thresholds": {"BUY": BUY_THRESHOLD, "SELL": SELL_THRESHOLD},
+   668→        "agreement_formula": "1 − 2×std(4 model probs), clamped [0,1]",
+   669→        "confidence_formula": "exp_win_rate × (0.6 + 0.4×agreement) × 100",
+   670→        "cost_bps": int(COST * 10000),
+   671→        "train_rows": int(train_meta.get("train_rows", 0)),
+   672→        "pos_rate": float(train_meta.get("pos_rate", 0)),
+   673→        "meta_auc": float(train_meta.get("meta_auc", 0)),
+   674→    }
+   675→
+   676→    def clean(o):
+   677→        if isinstance(o, dict):
+   678→            return {k: clean(v) for k, v in o.items()}
+   679→        if isinstance(o, list):
+   680→            return [clean(v) for v in o]
+   681→        if isinstance(o, float):
+   682→            if np.isnan(o) or np.isinf(o):
+   683→                return 0
+   684→            return o
+   685→        if isinstance(o, (np.integer,)):
+   686→            return int(o)
+   687→        if isinstance(o, (np.floating,)):
+   688→            return float(o)
+   689→        return o
+   690→
+   691→    with open(PRED_FILE, "w") as f:
+   692→        json.dump(clean(existing), f, indent=2, allow_nan=False)
+   693→    print(f"  Saved. File size: {PRED_FILE.stat().st_size / 1024 / 1024:.1f} MB")
+   694→
+   695→
+   696→# ------------------------------------------------------------------
+   697→# Main
+   698→# ------------------------------------------------------------------
+   699→def main():
+   700→    parser = argparse.ArgumentParser()
+   701→    parser.add_argument("--quick", type=int, default=0,
+   702→                        help="Quick test on N stocks (default: all)")
+   703→    args = parser.parse_args()
+   704→
+   705→    start = time.time()
+   706→    print("=" * 60)
+   707→    print("PI Tier: 4 models (Linear/Logistic, KNN, Neural Network) + logistic meta")
+   708→    print("  SL rule: support−0.15×ATR or entry∓0.8×ATR (min 0.5×ATR)")
+   709→    print(f"  Target: TP1 ({TP1_MULT}R) hit before SL within {LABEL_HORIZON} days")
+   710→    print("  Exits: 50%@TP1, 30%@TP2, 20%@TP3; SL→BE after TP1")
+   711→    print("=" * 60)
+   712→
+   713→    all_stocks = sorted([f.stem for f in OHLCV_DIR.glob("*.csv")])
+   714→    stocks = all_stocks[:args.quick] if args.quick > 0 else all_stocks
+   715→    print(f"\nStocks: {len(stocks)}")
+   716→
+   717→    print("\n[1/5] Loading OHLCV...")
+   718→    df_all = load_ohlcv(stocks)
+   719→    if df_all.empty:
+   720→        print("ERROR: No OHLCV data loaded")
+   721→        sys.exit(1)
+   722→    print(f"  {len(df_all):,} rows, {df_all['symbol'].nunique()} stocks")
+   723→
+   724→    print("\n[2/5] Computing ATR per stock...")
+   725→    atr_per = get_atr_per_stock(df_all)
+   726→    print(f"  {len(atr_per)} stocks have ATR")
+   727→
+   728→    print("\n[3/5] Training PI models + meta...")
+   729→    final_models, final_scalers, meta_state, calib_map, train_df = train_pi(stocks, df_all)
+   730→    if not final_models:
+   731→        print("ERROR: training failed")
+   732→        sys.exit(1)
+   733→
+   734→    print("\n[4/5] Generating per-stock predictions...")
+   735→    pi_per_model, pi_ens = predict_all_stocks(
+   736→        stocks, df_all, atr_per, final_models, final_scalers, meta_state
+   737→    )
+   738→
+   739→    print("\n[5/5] Backtesting PI-Ensemble...")
+   740→    pi_bt = backtest_pi(
+   741→        stocks, df_all, atr_per, final_models, final_scalers, meta_state
+   742→    )
+   743→
+   744→    meta_auc = meta_state.get("meta_auc", 0.0) if isinstance(meta_state, dict) else 0.0
+   745→    train_meta = {
+   746→        "train_rows": len(train_df),
+   747→        "pos_rate": float(train_df["_y"].mean()),
+   748→        "meta_auc": float(meta_auc),
+   749→    }
+   750→    save_to_json(pi_per_model, pi_ens, pi_bt, train_meta)
+   751→
+   752→    elapsed = time.time() - start
+   753→    print(f"\n{'='*60}")
+   754→    print(f"PI training complete in {elapsed:.0f}s ({elapsed/60:.1f} min)")
+   755→    print(f"{'='*60}")
+   756→    print(f"  Models trained: {len(final_models)}/4")
+   757→    print(f"  Stocks with predictions: {len(pi_ens)}")
+   758→    print(f"  Backtest: {pi_bt['totalTrades']} trades, WR={pi_bt['winRate']}%, PF={pi_bt['profitFactor']}")
+   759→
+   760→
+   761→if __name__ == "__main__":
+   762→    main()
+   763→

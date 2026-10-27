@@ -1,0 +1,580 @@
+     1→#!/usr/bin/env python3
+     2→"""Latent.pk — Train ALL models + compute backtesting for each model AND ensemble."""
+     3→import json,sys,warnings,numpy as np,pandas as pd
+     4→# ML-integrity helpers (leakage-free targets, chronological split, train-only
+     5→# scalers). See scripts/ml_integrity.py. Replaces the old .fillna(0) targets
+     6→# + global row-based splits + full-history scaler fits.
+     7→from ml_integrity import (
+     8→    add_forward_returns, drop_immature_targets, chronological_split,
+     9→    fit_scaler_on_train, per_stock_train_idx, split_sequences_by_date,
+    10→    HORIZONS, MAX_HORIZON,
+    11→)
+    12→import xgboost as xgb,lightgbm as lgb,catboost as cb
+    13→from sklearn.ensemble import RandomForestRegressor
+    14→from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score
+    15→from sklearn.preprocessing import StandardScaler
+    16→from pathlib import Path
+    17→warnings.filterwarnings("ignore")
+    18→OHLCV=Path("data/ohlcv");OUT=Path("data/ml_predictions_multi.json")
+    19→STOCKS=["ENGRO","HUBC","LUCK","SYS","MEBL","PSO","OGDC","PPL"]
+    20→FC=["rsi_14","macd","macd_signal","macd_hist","bb_width","bb_pct_b","atr_14","obv_change_pct",
+    21→"price_sma_20_ratio","price_sma_50_ratio","price_sma_200_ratio","volume_sma_20_ratio",
+    22→"return_1d","return_7d","return_14d","return_30d","hl_range_pct","body_size_pct","volatility_14d"]
+    23→TIER_W={"TIER_1":0.35,"TIER_2":0.25,"TIER_3":0.30,"TIER_4":0.10}
+    24→
+    25→def compute_rsi(p,n=14):
+    26→ d=p.diff();g=d.where(d>0,0);l=-d.where(d<0,0)
+    27→ ag=g.ewm(alpha=1/n,min_periods=n).mean();al=l.ewm(alpha=1/n,min_periods=n).mean()
+    28→ return(100-100/(1+ag/al.replace(0,np.nan))).fillna(50)
+    29→def compute_macd(p):
+    30→ e12=p.ewm(span=12,adjust=False).mean();e26=p.ewm(span=26,adjust=False).mean()
+    31→ m=e12-e26;s=m.ewm(span=9,adjust=False).mean();return m,s,m-s
+    32→def compute_bb(p,w=20):
+    33→ sma=p.rolling(w).mean();sd=p.rolling(w).std()
+    34→ return((sma+2*sd-(sma-2*sd))/sma).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+    35→def compute_atr(h,l,c,n=14):
+    36→ tr=pd.concat([h-l,(h-c.shift()).abs(),(l-c.shift()).abs()],axis=1).max(axis=1)
+    37→ return tr.rolling(n).mean().fillna(0)
+    38→def compute_obv(c,v):
+    39→ s=c.diff().apply(lambda x:1 if x>0 else(-1 if x<0 else 0));return(s*v).cumsum()
+    40→def add_features(df):
+    41→ df=df.copy().sort_values("date").reset_index(drop=True)
+    42→ c=df["close"];h=df["high"];l=df["low"];v=df["volume"]
+    43→ df["rsi_14"]=compute_rsi(c);m,s,hh=compute_macd(c)
+    44→ df["macd"]=m;df["macd_signal"]=s;df["macd_hist"]=hh
+    45→ bw,pb=compute_bb(c);df["bb_width"]=bw;df["bb_pct_b"]=pb
+    46→ df["atr_14"]=compute_atr(h,l,c)
+    47→ obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+    48→ for w in[20,50,200]:df[f"price_sma_{w}_ratio"]=c/c.rolling(w,min_periods=1).mean()
+    49→ df["volume_sma_20_ratio"]=v/v.rolling(20,min_periods=1).mean().replace(0,1)
+    50→ for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+    51→ df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+    52→ df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+    53→ df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+    54→ return df
+    55→def add_labels(df):
+    56→ # ML integrity (Task 1): per-stock forward returns, NO .fillna(0).
+    57→ # Immature rows (last hz per stock) are left NaN and dropped before training
+    58→ # (see load() → drop_immature_targets). Kept for backward-compat callers.
+    59→ df=df.copy()
+    60→ sym = df["symbol"] if "symbol" in df.columns else None
+    61→ for hz in HORIZONS:
+    62→  future = sym.shift(-hz) if sym is not None else df["close"].shift(-hz)
+    63→  df[f"target_{hz}d"]=(future-df["close"])/df["close"]
+    64→ return df
+    65→def load():
+    66→ frames=[]
+    67→ for s in STOCKS:
+    68→  p=OHLCV/f"{s}.csv"
+    69→  if not p.exists():continue
+    70→  df=pd.read_csv(p,usecols=range(6));df=df[df["volume"]>0].reset_index(drop=True)
+    71→  if len(df)<50:continue
+    72→  df=add_features(df);df["symbol"]=s;frames.append(df)
+    73→ df=pd.concat(frames,ignore_index=True) if frames else pd.DataFrame()
+    74→ if df.empty:return df
+    75→ # ML integrity (Task 1): per-stock forward returns via groupby(symbol).shift
+    76→ # (no cross-stock shift, no .fillna(0)). Immature rows are left NaN — callers
+    77→ # drop them per-horizon (train_classical) or via in-loop skip (train_lstm etc.)
+    78→ # so per-horizon models keep shorter-horizon rows whose longest-horizon target
+    79→ # is immature (Phase A1 requirement: "do not inadvertently remove useful
+    80→ # training rows from a shorter-horizon model merely because the longest-horizon
+    81→ # target is immature").
+    82→ df=add_forward_returns(df)
+    83→ return df
+    84→
+    85→def gen_preds(df, predict_fn):
+    86→ preds={}
+    87→ for s in STOCKS:
+    88→  sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
+    89→  if len(sdf)==0:continue
+    90→  cp=float(sdf.iloc[-1]["close"])
+    91→  r5,r10,r21=predict_fn(sdf)
+    92→  sl=round(float(np.min(sdf["low"].tail(14).values)),2)
+    93→  avg=(r5+r10+r21)/3
+    94→  sig="BUY"if avg>0.01 else"SELL"if avg<-0.01 else"HOLD"
+    95→  d="LONG"if sig!="SELL"else"SHORT"
+    96→  preds[s]={"signal":sig,"direction":d,"confidence":min(100,int(abs(avg)*1000)),
+    97→   "currentPrice":round(cp,2),"entry":round(cp,2),
+    98→   "tp1":round(cp*(1+r5),2),"tp2":round(cp*(1+r10),2),"tp3":round(cp*(1+r21),2),
+    99→   "sl":sl,"avgReturn":round(avg,4)}
+   100→ return preds
+   101→
+   102→def train_classical(df):
+   103→ targets=["target_5d","target_10d","target_21d"]
+   104→ # ML integrity (Task 2): date-based chronological split + purge on the FULL df
+   105→ # (with NaN targets where immature). Per-horizon NaN drop happens INSIDE the
+   106→ # per-horizon loop so per-horizon models keep rows whose target_5d is mature
+   107→ # even when target_21d is immature (Phase A1 requirement). The purge uses
+   108→ # MAX_HORIZON=21 (safe upper bound for all horizons).
+   109→ tr,va,te=chronological_split(df)
+   110→ cfg={"XGBoost":lambda:xgb.XGBRegressor(n_estimators=150,max_depth=3,learning_rate=0.05,subsample=0.7,colsample_bytree=0.7,random_state=42),
+   111→  "LightGBM":lambda:lgb.LGBMRegressor(n_estimators=150,num_leaves=15,learning_rate=0.05,subsample=0.7,colsample_bytree=0.7,random_state=42,verbose=-1),
+   112→  "CatBoost":lambda:cb.CatBoostRegressor(iterations=150,depth=3,learning_rate=0.05,random_state=42,verbose=0,allow_writing_files=False),
+   113→  "Random Forest":lambda:RandomForestRegressor(n_estimators=150,max_depth=5,min_samples_leaf=15,max_features=0.7,random_state=42,n_jobs=-1)}
+   114→ results={}
+   115→ for name,factory in cfg.items():
+   116→  print(f"  Training {name}...")
+   117→  metrics={};preds={}
+   118→  for tc in targets:
+   119→   hz=int(tc.split("_")[1].replace("d",""))
+   120→   # ML integrity (Phase A1): drop ONLY rows whose THIS-horizon target is NaN
+   121→   # (per-horizon drop, not all-horizon). Preserves shorter-horizon rows.
+   122→   tr_h=tr.dropna(subset=[tc]);te_h=te.dropna(subset=[tc])
+   123→   Xtr=tr_h[FC].values;Xte=te_h[FC].values
+   124→   ytr=tr_h[tc].values;yte=te_h[tc].values
+   125→   m=factory();m.fit(Xtr,ytr);yp=m.predict(Xte)
+   126→   metrics[f"{hz}d"]={"mse":float(mean_squared_error(yte,yp)),"mae":float(mean_absolute_error(yte,yp)),"r2":float(r2_score(yte,yp))}
+   127→   for s in STOCKS:
+   128→    sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
+   129→    if len(sdf)==0:continue
+   130→    latest=sdf.iloc[-1];lf=latest[FC].values.reshape(1,-1)
+   131→    pr=float(m.predict(lf)[0]);cp=float(latest["close"])
+   132→    if s not in preds:preds[s]={"currentPrice":round(cp,2),"entry":round(cp,2)}
+   133→    preds[s][f"ret_{hz}d"]=round(pr,4)
+   134→  for s,pd_ in preds.items():
+   135→   r5=pd_.get("ret_5d",0);r10=pd_.get("ret_10d",0);r21=pd_.get("ret_21d",0)
+   136→   cp=pd_["currentPrice"]
+   137→   sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
+   138→   sl=round(float(np.min(sdf["low"].tail(14).values)),2)
+   139→   avg=(r5+r10+r21)/3
+   140→   sig="BUY"if avg>0.01 else"SELL"if avg<-0.01 else"HOLD"
+   141→   d="LONG"if sig!="SELL"else"SHORT"
+   142→   pd_.update({"signal":sig,"direction":d,"confidence":min(100,int(abs(avg)*1000)),
+   143→    "tp1":round(cp*(1+r5),2),"tp2":round(cp*(1+r10),2),"tp3":round(cp*(1+r21),2),
+   144→    "sl":sl,"avgReturn":round(avg,4)})
+   145→  results[name]={"trained":True,"version":"2.0.0","metrics":metrics,"predictions":preds}
+   146→  print(f"    R²(5d)={metrics['5d']['r2']:.3f}")
+   147→ return results
+   148→
+   149→def train_lstm(df):
+   150→ try:
+   151→  import torch,torch.nn as nn
+   152→  from torch.utils.data import DataLoader,TensorDataset
+   153→  print("  Training LSTM...")
+   154→  # ML integrity (Task 2 + Task C): get the global train_end / val_end dates
+   155→  # from chronological_split so every per-stock scaler is fit on the SAME
+   156→  # global TRAIN partition (not an arbitrary first-60%-per-stock slice that
+   157→  # could straddle the global train/val boundary).
+   158→  _tr,_va,_te=chronological_split(df)
+   159→  train_end_date=_tr["date"].max();val_end_date=_va["date"].max()
+   160→  SEQ=30;seqs=[];targs=[];seq_dates=[]
+   161→  for s in STOCKS:
+   162→   sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
+   163→   if len(sdf)<SEQ+21:continue
+   164→   f=sdf[FC].values
+   165→   # ML integrity (Task 3, Task C): fit scaler on the per-stock TRAIN partition
+   166→   # (rows with date <= train_end_date) — consistent with chronological_split.
+   167→   ti=per_stock_train_idx(sdf,train_end_date)
+   168→   if ti<SEQ+5:continue  # stock has too few TRAIN rows
+   169→   sc=fit_scaler_on_train(f[:ti]);fs=sc.transform(f)
+   170→   for i in range(len(sdf)-SEQ-21):
+   171→    di=i+SEQ  # decision bar (after the sequence window — no in-seq future)
+   172→    row=sdf.iloc[di]
+   173→    tgts=[row["target_5d"],row["target_10d"],row["target_21d"]]
+   174→    if any(pd.isna(t) or not np.isfinite(t) for t in tgts):continue
+   175→    seqs.append(fs[i:i+SEQ]);targs.append(tgts);seq_dates.append(row["date"])
+   176→  if len(seqs)<50:return{"trained":False,"error":"Not enough sequences"}
+   177→  X=np.array(seqs,dtype=np.float32);y=np.array(targs,dtype=np.float32)
+   178→  # ML integrity (Task 2): date-disjoint train/val/test split by DECISION DATE
+   179→  # (replaces the old sp=int(len(X)*0.8) global row split).
+   180→  Xtr,ytr,Xva,yva,Xte,yte=split_sequences_by_date(
+   181→   X,y,seq_dates,train_end_date,val_end_date
+   182→  )
+   183→  dl=DataLoader(TensorDataset(torch.from_numpy(Xtr),torch.from_numpy(ytr)),batch_size=32,shuffle=True)
+   184→  class M(nn.Module):
+   185→   def __init__(s):
+   186→    super().__init__();s.lstm=nn.LSTM(len(FC),64,2,batch_first=True,dropout=0.1);s.fc=nn.Linear(64,3)
+   187→   def forward(s,x):
+   188→    o,_=s.lstm(x);return s.fc(o[:,-1,:])
+   189→  model=M();crit=nn.MSELoss();opt=torch.optim.Adam(model.parameters(),lr=0.001)
+   190→  model.train()
+   191→  for ep in range(30):
+   192→   for bx,by in dl:opt.zero_grad();loss=crit(model(bx),by);loss.backward();opt.step()
+   193→   if ep%10==0:print(f"    Epoch {ep}: loss={loss.item():.6f}")
+   194→  model.eval()
+   195→  with torch.no_grad():ypt=model(torch.from_numpy(Xte)).numpy()
+   196→  metrics={"5d":{"mse":float(mean_squared_error(yte[:,0],ypt[:,0]))},
+   197→   "10d":{"mse":float(mean_squared_error(yte[:,1],ypt[:,1]))},
+   198→   "21d":{"mse":float(mean_squared_error(yte[:,2],ypt[:,2]))}}
+   199→  def predict_fn(sdf):
+   200→   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+   201→   sq=fs[-SEQ:].reshape(1,SEQ,len(FC))
+   202→   with torch.no_grad():p=model(torch.from_numpy(sq.astype(np.float32)))[0].numpy()
+   203→   return float(p[0]),float(p[1]),float(p[2])
+   204→  preds=gen_preds(df,predict_fn)
+   205→  print(f"    Done.")
+   206→  return{"trained":True,"version":"2.0.0","metrics":metrics,"predictions":preds}
+   207→ except Exception as e:
+   208→  print(f"    LSTM FAILED: {e}",file=sys.stderr)
+   209→  return{"trained":False,"error":str(e)}
+   210→
+   211→def train_cnn_lstm(df):
+   212→ try:
+   213→  import torch,torch.nn as nn
+   214→  from torch.utils.data import DataLoader,TensorDataset
+   215→  print("  Training CNN-LSTM...")
+   216→  # ML integrity (Task 2 + Task C): global chronological boundaries so every
+   217→  # per-stock scaler is fit on the SAME TRAIN partition.
+   218→  _tr,_va,_te=chronological_split(df)
+   219→  train_end_date=_tr["date"].max();val_end_date=_va["date"].max()
+   220→  SEQ=30;seqs=[];targs=[];seq_dates=[]
+   221→  for s in STOCKS:
+   222→   sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
+   223→   if len(sdf)<SEQ+21:continue
+   224→   f=sdf[FC].values
+   225→   # ML integrity (Task 3): fit scaler on the per-stock TRAIN partition only
+   226→   # (rows with date <= train_end_date) — replaces the old leaky
+   227→   # StandardScaler().fit_transform(f) on the FULL per-stock history.
+   228→   ti=per_stock_train_idx(sdf,train_end_date)
+   229→   if ti<SEQ+5:continue
+   230→   sc=fit_scaler_on_train(f[:ti]);fs=sc.transform(f)
+   231→   for i in range(len(sdf)-SEQ-21):
+   232→    di=i+SEQ  # decision bar (after the sequence window — no in-seq future)
+   233→    row=sdf.iloc[di]
+   234→    tgts=[row["target_5d"],row["target_10d"],row["target_21d"]]
+   235→    if any(pd.isna(t) or not np.isfinite(t) for t in tgts):continue
+   236→    seqs.append(fs[i:i+SEQ]);targs.append(tgts);seq_dates.append(row["date"])
+   237→  if len(seqs)<50:return{"trained":False,"error":"Not enough sequences"}
+   238→  X=np.array(seqs,dtype=np.float32);y=np.array(targs,dtype=np.float32)
+   239→  # ML integrity (Task 2): date-disjoint train/val/test split by DECISION DATE.
+   240→  Xtr,ytr,Xva,yva,Xte,yte=split_sequences_by_date(
+   241→   X,y,seq_dates,train_end_date,val_end_date
+   242→  )
+   243→  dl=DataLoader(TensorDataset(torch.from_numpy(Xtr),torch.from_numpy(ytr)),batch_size=32,shuffle=True)
+   244→  class CNNLSTM(nn.Module):
+   245→   def __init__(s):
+   246→    super().__init__()
+   247→    s.conv1=nn.Conv1d(len(FC),32,kernel_size=3,padding=1);s.relu=nn.ReLU()
+   248→    s.conv2=nn.Conv1d(32,32,kernel_size=3,padding=1)
+   249→    s.lstm=nn.LSTM(32,64,2,batch_first=True,dropout=0.1);s.fc=nn.Linear(64,3)
+   250→   def forward(s,x):
+   251→    x=x.transpose(1,2);x=s.relu(s.conv1(x));x=s.relu(s.conv2(x))
+   252→    x=x.transpose(1,2);o,_=s.lstm(x);return s.fc(o[:,-1,:])
+   253→  model=CNNLSTM();crit=nn.MSELoss();opt=torch.optim.Adam(model.parameters(),lr=0.001)
+   254→  model.train()
+   255→  for ep in range(30):
+   256→   for bx,by in dl:opt.zero_grad();loss=crit(model(bx),by);loss.backward();opt.step()
+   257→   if ep%10==0:print(f"    Epoch {ep}: loss={loss.item():.6f}")
+   258→  model.eval()
+   259→  with torch.no_grad():ypt=model(torch.from_numpy(Xte)).numpy()
+   260→  metrics={"5d":{"mse":float(mean_squared_error(yte[:,0],ypt[:,0]))},
+   261→   "10d":{"mse":float(mean_squared_error(yte[:,1],ypt[:,1]))},
+   262→   "21d":{"mse":float(mean_squared_error(yte[:,2],ypt[:,2]))}}
+   263→  def predict_fn(sdf):
+   264→   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+   265→   sq=fs[-SEQ:].reshape(1,SEQ,len(FC))
+   266→   with torch.no_grad():p=model(torch.from_numpy(sq.astype(np.float32)))[0].numpy()
+   267→   return float(p[0]),float(p[1]),float(p[2])
+   268→  preds=gen_preds(df,predict_fn)
+   269→  print(f"    Done.")
+   270→  return{"trained":True,"version":"2.0.0","metrics":metrics,"predictions":preds}
+   271→ except Exception as e:
+   272→  print(f"    CNN-LSTM FAILED: {e}",file=sys.stderr)
+   273→  return{"trained":False,"error":str(e)}
+   274→
+   275→def train_transformer_lstm(df):
+   276→ try:
+   277→  import torch,torch.nn as nn
+   278→  from torch.utils.data import DataLoader,TensorDataset
+   279→  print("  Training Transformer-LSTM...")
+   280→  # ML integrity (Task 2 + Task C): global chronological boundaries for the
+   281→  # per-stock scaler fit (replaces the old full-history fit_transform).
+   282→  _tr,_va,_te=chronological_split(df)
+   283→  train_end_date=_tr["date"].max();val_end_date=_va["date"].max()
+   284→  SEQ=30;seqs=[];targs=[];seq_dates=[]
+   285→  for s in STOCKS:
+   286→   sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
+   287→   if len(sdf)<SEQ+21:continue
+   288→   f=sdf[FC].values
+   289→   ti=per_stock_train_idx(sdf,train_end_date)
+   290→   if ti<SEQ+5:continue
+   291→   sc=fit_scaler_on_train(f[:ti]);fs=sc.transform(f)
+   292→   for i in range(len(sdf)-SEQ-21):
+   293→    di=i+SEQ  # decision bar (after the sequence window — no in-seq future)
+   294→    row=sdf.iloc[di]
+   295→    tgts=[row["target_5d"],row["target_10d"],row["target_21d"]]
+   296→    if any(pd.isna(t) or not np.isfinite(t) for t in tgts):continue
+   297→    seqs.append(fs[i:i+SEQ]);targs.append(tgts);seq_dates.append(row["date"])
+   298→  if len(seqs)<50:return{"trained":False,"error":"Not enough sequences"}
+   299→  X=np.array(seqs,dtype=np.float32);y=np.array(targs,dtype=np.float32)
+   300→  Xtr,ytr,Xva,yva,Xte,yte=split_sequences_by_date(
+   301→   X,y,seq_dates,train_end_date,val_end_date
+   302→  )
+   303→  dl=DataLoader(TensorDataset(torch.from_numpy(Xtr),torch.from_numpy(ytr)),batch_size=32,shuffle=True)
+   304→  class TL(nn.Module):
+   305→   def __init__(s):
+   306→    super().__init__()
+   307→    s.el=nn.TransformerEncoderLayer(d_model=len(FC),nhead=1,dim_feedforward=64,dropout=0.1,batch_first=True)
+   308→    s.enc=nn.TransformerEncoder(s.el,num_layers=2)
+   309→    s.lstm=nn.LSTM(len(FC),64,2,batch_first=True,dropout=0.1);s.fc=nn.Linear(64,3)
+   310→   def forward(s,x):
+   311→    x=s.enc(x);o,_=s.lstm(x);return s.fc(o[:,-1,:])
+   312→  model=TL();crit=nn.MSELoss();opt=torch.optim.Adam(model.parameters(),lr=0.001)
+   313→  model.train()
+   314→  for ep in range(30):
+   315→   for bx,by in dl:opt.zero_grad();loss=crit(model(bx),by);loss.backward();opt.step()
+   316→   if ep%10==0:print(f"    Epoch {ep}: loss={loss.item():.6f}")
+   317→  model.eval()
+   318→  with torch.no_grad():ypt=model(torch.from_numpy(Xte)).numpy()
+   319→  metrics={"5d":{"mse":float(mean_squared_error(yte[:,0],ypt[:,0]))},
+   320→   "10d":{"mse":float(mean_squared_error(yte[:,1],ypt[:,1]))},
+   321→   "21d":{"mse":float(mean_squared_error(yte[:,2],ypt[:,2]))}}
+   322→  def predict_fn(sdf):
+   323→   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+   324→   sq=fs[-SEQ:].reshape(1,SEQ,len(FC))
+   325→   with torch.no_grad():p=model(torch.from_numpy(sq.astype(np.float32)))[0].numpy()
+   326→   return float(p[0]),float(p[1]),float(p[2])
+   327→  preds=gen_preds(df,predict_fn)
+   328→  print(f"    Done.")
+   329→  return{"trained":True,"version":"2.0.0","metrics":metrics,"predictions":preds}
+   330→ except Exception as e:
+   331→  print(f"    Transformer-LSTM FAILED: {e}",file=sys.stderr)
+   332→  return{"trained":False,"error":str(e)}
+   333→
+   334→def train_neuralforecast(df):
+   335→ from neuralforecast import NeuralForecast
+   336→ from neuralforecast.models import PatchTST,NBEATS,TimesNet,Informer
+   337→ results={}
+   338→ nf_df=pd.DataFrame()
+   339→ for s in STOCKS:
+   340→  sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True).copy()
+   341→  sdf["ds"]=pd.to_datetime(sdf["date"],unit="ms");sdf["y"]=sdf["close"];sdf["unique_id"]=s
+   342→  nf_df=pd.concat([nf_df,sdf[["ds","y","unique_id"]]],ignore_index=True)
+   343→ models=[
+   344→  ("PatchTST",PatchTST,{"h":21,"input_size":30,"max_steps":50,"patch_len":4,"stride":4}),
+   345→  ("N-BEATS",NBEATS,{"h":21,"input_size":30,"max_steps":50,"n_blocks":[1,1,1]}),
+   346→  ("TimesNet",TimesNet,{"h":21,"input_size":30,"max_steps":50,"hidden_size":32,"top_k":5}),
+   347→  ("Informer",Informer,{"h":21,"input_size":30,"max_steps":50,"hidden_size":32,"factor":3,"n_head":4}),
+   348→ ]
+   349→ for name,cls,params in models:
+   350→  print(f"  Training {name}...")
+   351→  try:
+   352→   model=cls(**params);nf=NeuralForecast(models=[model],freq="D");nf.fit(df=nf_df)
+   353→   fc=nf.predict()
+   354→   col=[c for c in fc.columns if c not in["unique_id","ds"]][0]
+   355→   preds={}
+   356→   for s in STOCKS:
+   357→    sdf=df[df["symbol"]==s].sort_values("date").reset_index(drop=True)
+   358→    if len(sdf)==0:continue
+   359→    cp=float(sdf.iloc[-1]["close"])
+   360→    sc=fc[fc["unique_id"]==s]if"unique_id"in fc.columns else fc
+   361→    vals=sc[col].values if col in(sc.columns if hasattr(sc,"columns")else[])else np.array([cp*1.02])
+   362→    if len(vals)>=21:tp1,tp2,tp3=float(vals[4]),float(vals[9]),float(vals[20])
+   363→    elif len(vals)>=3:tp1,tp2,tp3=float(vals[0]),float(vals[len(vals)//2]),float(vals[-1])
+   364→    else:tp1,tp2,tp3=cp*1.02,cp*1.03,cp*1.05
+   365→    sl=round(float(np.min(sdf["low"].tail(14).values)),2)
+   366→    avg=((tp1+tp2+tp3)/3-cp)/cp
+   367→    sig="BUY"if avg>0.01 else"SELL"if avg<-0.01 else"HOLD"
+   368→    d="LONG"if sig!="SELL"else"SHORT"
+   369→    preds[s]={"signal":sig,"direction":d,"confidence":min(100,int(abs(avg)*1000)),
+   370→     "currentPrice":round(cp,2),"entry":round(cp,2),
+   371→     "tp1":round(tp1,2),"tp2":round(tp2,2),"tp3":round(tp3,2),
+   372→     "sl":sl,"avgReturn":round(avg,4)}
+   373→   results[name]={"trained":True,"version":"2.0.0","predictions":preds}
+   374→   print(f"    Done — {len(preds)} stocks")
+   375→  except Exception as e:
+   376→   print(f"    {name} FAILED: {e}",file=sys.stderr)
+   377→   results[name]={"trained":False,"error":str(e)}
+   378→ return results
+   379→
+   380→# ─── Model metadata (tier mapping) ───
+   381→MODEL_TIERS={
+   382→ "PatchTST":"TIER_1","N-BEATS":"TIER_1","TimesNet":"TIER_1","Informer":"TIER_1",
+   383→ "Chronos (Amazon)":"TIER_2","Lag-Llama":"TIER_2","Moirai (Salesforce)":"TIER_2","Time-LLM":"TIER_2",
+   384→ "XGBoost":"TIER_3","LightGBM":"TIER_3","CatBoost":"TIER_3","Random Forest":"TIER_3","LSTM":"TIER_3",
+   385→ "CNN-LSTM":"TIER_4","Transformer-LSTM":"TIER_4","TabNet":"TIER_4","FinGPT":"TIER_4",
+   386→}
+   387→
+   388→def backtest_individual(df, models):
+   389→ """Backtest each individual model on the chronological test partition.
+   390→
+   391→ ML-integrity note (Phase B audit Pattern #10): this is a SIMPLIFIED backtest —
+   392→ it applies each model's LATEST per-stock signal to every historical test
+   393→ row, NOT a walk-forward re-prediction. For honest walk-forward evaluation
+   394→ see scripts/walk_forward_backtesting.py. The test partition itself IS
+   395→ chronological (date-based, not row-based) thanks to chronological_split.
+   396→ """
+   397→ _tr,_va,te=chronological_split(df);te=te.copy()
+   398→ bt={}
+   399→ for name,md in models.items():
+   400→  if not md.get("trained"):continue
+   401→  buys=sells=cb_=cs=0;rets=[]
+   402→  for s in STOCKS:
+   403→   ste=te[te["symbol"]==s].sort_values("date").reset_index(drop=True)
+   404→   if len(ste)<21:continue
+   405→   for i in range(0,len(ste)-21,5):
+   406→    ar=(ste.iloc[min(i+21,len(ste)-1)]["close"]-ste.iloc[i]["close"])/ste.iloc[i]["close"]
+   407→    pr=md.get("predictions",{}).get(s,{});sig=pr.get("signal","HOLD")
+   408→    if sig=="BUY":buys+=1;rets.append(ar);cb_+=ar>0
+   409→    elif sig=="SELL":sells+=1;rets.append(-ar);cs+=ar<0
+   410→  tt=buys+sells;wr=(cb_+cs)/max(tt,1)*100;ar_=float(np.mean(rets))*100 if rets else 0
+   411→  bt[name]={"totalTrades":int(tt),"buySignals":int(buys),"sellSignals":int(sells),
+   412→   "correctBuys":int(cb_),"correctSells":int(cs),
+   413→   "winRate":round(float(wr),1),"avgReturnPct":round(float(ar_),2),
+   414→   "maxReturnPct":round(float(max(rets)*100 if rets else 0),2),
+   415→   "minReturnPct":round(float(min(rets)*100 if rets else 0),2),
+   416→   "stars":int(min(5,max(1,int(wr/20)+1)))}
+   417→ return bt
+   418→
+   419→def backtest_ensemble(df, models):
+   420→ """Backtest the 3 ensemble methods + final consensus on the chronological test partition.
+   421→
+   422→ ML-integrity note (Phase B audit Pattern #10): SIMPLIFIED backtest — applies
+   423→ each model's LATEST per-stock signal to every historical test row, NOT a
+   424→ walk-forward re-prediction. For honest walk-forward see
+   425→ scripts/walk_forward_backtesting.py. Test partition is date-based.
+   426→ """
+   427→ _tr,_va,te=chronological_split(df);te=te.copy()
+   428→ trained_models={n:m for n,m in models.items() if m.get("trained") and m.get("predictions",{})}
+   429→ if not trained_models:return{}
+   430→
+   431→ # For each test sample, collect all model signals + compute ensemble
+   432→ ens_bt={"MAJORITY_VOTE":{"trades":0,"wins":0,"rets":[]},
+   433→  "PROBABILITY_WEIGHTED":{"trades":0,"wins":0,"rets":[]},
+   434→  "TIER_WEIGHTED":{"trades":0,"wins":0,"rets":[]},
+   435→  "FINAL_CONSENSUS":{"trades":0,"wins":0,"rets":[]}}
+   436→
+   437→ for s in STOCKS:
+   438→  ste=te[te["symbol"]==s].sort_values("date").reset_index(drop=True)
+   439→  if len(ste)<21:continue
+   440→  for i in range(0,len(ste)-21,5):
+   441→   ar=(ste.iloc[min(i+21,len(ste)-1)]["close"]-ste.iloc[i]["close"])/ste.iloc[i]["close"]
+   442→
+   443→   # Collect signals from all trained models
+   444→   signals=[];avg_returns=[]
+   445→   for mn,md in trained_models.items():
+   446→    pr=md.get("predictions",{}).get(s,{})
+   447→    sig=pr.get("signal","HOLD")
+   448→    ar_m=pr.get("avgReturn",0)
+   449→    tier=MODEL_TIERS.get(mn,"TIER_3")
+   450→    signals.append((mn,sig,ar_m,tier))
+   451→
+   452→   if not signals:continue
+   453→
+   454→   # A. Majority Vote
+   455→   buys=sum(1 for _,s,_,_ in signals if s=="BUY")
+   456→   sells=sum(1 for _,s,_,_ in signals if s=="SELL")
+   457→   holds=sum(1 for _,s,_,_ in signals if s=="HOLD")
+   458→   if buys>sells and buys>holds:ens_sig="BUY"
+   459→   elif sells>buys and sells>holds:ens_sig="SELL"
+   460→   else:ens_sig="HOLD"
+   461→
+   462→   if ens_sig!="HOLD":
+   463→    ens_bt["MAJORITY_VOTE"]["trades"]+=1
+   464→    if (ens_sig=="BUY"and ar>0)or(ens_sig=="SELL"and ar<0):ens_bt["MAJORITY_VOTE"]["wins"]+=1
+   465→    ens_bt["MAJORITY_VOTE"]["rets"].append(ar if ens_sig=="BUY"else -ar)
+   466→
+   467→   # B. Probability-Weighted
+   468→   avg_ret=sum(ar_m for _,_,ar_m,_ in signals)/len(signals)
+   469→   if avg_ret>0.01:ens_sig2="BUY"
+   470→   elif avg_ret<-0.01:ens_sig2="SELL"
+   471→   else:ens_sig2="HOLD"
+   472→
+   473→   if ens_sig2!="HOLD":
+   474→    ens_bt["PROBABILITY_WEIGHTED"]["trades"]+=1
+   475→    if (ens_sig2=="BUY"and ar>0)or(ens_sig2=="SELL"and ar<0):ens_bt["PROBABILITY_WEIGHTED"]["wins"]+=1
+   476→    ens_bt["PROBABILITY_WEIGHTED"]["rets"].append(ar if ens_sig2=="BUY"else -ar)
+   477→
+   478→   # C. Tier-Weighted
+   479→   ws=sum(ar_m*TIER_W.get(t,0.25)for _,_,ar_m,t in signals)
+   480→   wt=sum(TIER_W.get(t,0.25)for _,_,_,t in signals)
+   481→   wr_=ws/wt if wt>0 else 0
+   482→   if wr_>0.01:ens_sig3="BUY"
+   483→   elif wr_<-0.01:ens_sig3="SELL"
+   484→   else:ens_sig3="HOLD"
+   485→
+   486→   if ens_sig3!="HOLD":
+   487→    ens_bt["TIER_WEIGHTED"]["trades"]+=1
+   488→    if (ens_sig3=="BUY"and ar>0)or(ens_sig3=="SELL"and ar<0):ens_bt["TIER_WEIGHTED"]["wins"]+=1
+   489→    ens_bt["TIER_WEIGHTED"]["rets"].append(ar if ens_sig3=="BUY"else -ar)
+   490→
+   491→   # Final Consensus (2+ methods agree)
+   492→   votes=[ens_sig,ens_sig2,ens_sig3]
+   493→   buy_v=sum(1 for v in votes if v=="BUY")
+   494→   sell_v=sum(1 for v in votes if v=="SELL")
+   495→   if buy_v>=2:fc_sig="BUY"
+   496→   elif sell_v>=2:fc_sig="SELL"
+   497→   else:fc_sig="HOLD"
+   498→
+   499→   if fc_sig!="HOLD":
+   500→    ens_bt["FINAL_CONSENSUS"]["trades"]+=1
+   501→    if (fc_sig=="BUY"and ar>0)or(fc_sig=="SELL"and ar<0):ens_bt["FINAL_CONSENSUS"]["wins"]+=1
+   502→    ens_bt["FINAL_CONSENSUS"]["rets"].append(ar if fc_sig=="BUY"else -ar)
+   503→
+   504→ # Compute stats
+   505→ result={}
+   506→ for method,data in ens_bt.items():
+   507→  t=data["trades"];w=data["wins"];r=data["rets"]
+   508→  result[method]={"totalTrades":int(t),"wins":int(w),
+   509→   "winRate":round(float(w/max(t,1)*100),1),
+   510→   "avgReturnPct":round(float(np.mean(r)*100)if r else 0,2),
+   511→   "maxReturnPct":round(float(max(r)*100)if r else 0,2),
+   512→   "minReturnPct":round(float(min(r)*100)if r else 0,2),
+   513→   "stars":int(min(5,max(1,int(w/max(t,1)*100/20)+1)))if t>0 else 0}
+   514→ return result
+   515→
+   516→def main():
+   517→ print("="*60);print("Latent.pk — Train ALL Models + Ensemble Backtesting");print("="*60)
+   518→ df=load();print(f"\nLoaded: {len(df)} rows from {df['symbol'].nunique()} stocks")
+   519→
+   520→ print("\n[1/4] Classical regressors...")
+   521→ cl=train_classical(df)
+   522→
+   523→ print("\n[2/4] Deep learning (LSTM, CNN-LSTM, Transformer-LSTM)...")
+   524→ lstm=train_lstm(df)
+   525→ cnn=train_cnn_lstm(df)
+   526→ tl=train_transformer_lstm(df)
+   527→
+   528→ print("\n[3/4] Neuralforecast (PatchTST, N-BEATS, TimesNet, Informer)...")
+   529→ nf=train_neuralforecast(df)
+   530→
+   531→ all_models={}
+   532→ all_models.update(cl)
+   533→ all_models["LSTM"]=lstm
+   534→ all_models["CNN-LSTM"]=cnn
+   535→ all_models["Transformer-LSTM"]=tl
+   536→ all_models.update(nf)
+   537→
+   538→ # Mark untrained
+   539→ untrained={"Chronos (Amazon)":"Requires chronos-forecasting package",
+   540→  "Lag-Llama":"Requires custom repo","Moirai (Salesforce)":"Requires uni2ts",
+   541→  "Time-LLM":"Requires LLM pipeline","TabNet":"Data type issue","FinGPT":"Requires BloombergGPT"}
+   542→ for n,r in untrained.items():
+   543→  if n not in all_models:all_models[n]={"trained":False,"error":r}
+   544→
+   545→ print("\n[4/4] Computing backtesting (individual models + ensemble)...")
+   546→ bt_ind=backtest_individual(df,all_models)
+   547→ bt_ens=backtest_ensemble(df,all_models)
+   548→
+   549→ out={"trained_at":pd.Timestamp.now().isoformat(),"data_source":"askanalyst.com.pk",
+   550→  "training_rows":int(len(df)),"model_type":"multi_horizon_regressor",
+   551→  "targets":["return_5d","return_10d","return_21d"],
+   552→  "sl_rule":"min(low[-14:])","tp_rule":"TP1=5d,TP2=10d,TP3=21d",
+   553→  "models":all_models,"untrained_models":untrained,
+   554→  "backtesting":bt_ind,"ensemble_backtesting":bt_ens,
+   555→  "ml_integrity":{
+   556→   "target_construction":"per-stock groupby(symbol).shift(-h); no .fillna(0); immature rows left NaN",
+   557→   "split":"date-based chronological_split (60/20/20) with per-stock purge of MAX_HORIZON=21 rows at each boundary",
+   558→   "scaler_fitting":"fit_scaler_on_train on per-stock TRAIN partition (date <= train_end_date); transform-only on val/test",
+   559→   "sequence_construction":"per-stock; decision point = i+SEQ (after the sequence window); immature-target rows skipped",
+   560→   "backtest_methodology":"SIMPLIFIED backtest (Pattern #10): applies each model's LATEST per-stock signal to every historical test row in the chronological test partition; NOT a walk-forward re-prediction. For honest walk-forward see scripts/walk_forward_backtesting.py. Negative out-of-sample R² is accepted as honest (model did not outperform constant-mean baseline on this test).",
+   561→  }}
+   562→
+   563→ OUT.parent.mkdir(parents=True,exist_ok=True)
+   564→ OUT.write_text(json.dumps(out,indent=2,default=lambda o:int(o)if isinstance(o,(np.integer,))else float(o)if isinstance(o,(np.floating,))else str(o)))
+   565→
+   566→ tc=sum(1 for m in all_models.values()if m.get("trained"))
+   567→ print(f"\n{'='*60}")
+   568→ print(f"TRAINING + BACKTESTING COMPLETE")
+   569→ print(f"{'='*60}")
+   570→ print(f"Trained: {tc}/{len(all_models)} models")
+   571→ print(f"\nIndividual model backtesting:")
+   572→ for n,b in bt_ind.items():
+   573→  print(f"  {n}: winRate={b['winRate']}% avgReturn={b['avgReturnPct']}% stars={'★'*b['stars']}")
+   574→ print(f"\nEnsemble backtesting:")
+   575→ for n,b in bt_ens.items():
+   576→  print(f"  {n}: trades={b['totalTrades']} winRate={b['winRate']}% avgReturn={b['avgReturnPct']}% stars={'★'*b['stars']}")
+   577→ print(f"\nSaved: {OUT}")
+   578→
+   579→if __name__=="__main__":main()
+   580→

@@ -1,0 +1,1101 @@
+     1→"use client";
+     2→
+     3→import { useState } from "react";
+     4→import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     5→import { Button } from "@/components/ui/button";
+     6→import { Badge } from "@/components/ui/badge";
+     7→import { Skeleton } from "@/components/ui/skeleton";
+     8→import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+     9→import { StockSearch } from "./StockSearch";
+    10→import {
+    11→  MOCK_COMPANY_RESULTS,
+    12→  detectPatterns,
+    13→  groupByCompany,
+    14→  computeCAGR,
+    15→  computeStdDev,
+    16→  computeSlope,
+    17→  generateQuarterlySummary,
+    18→  type QuarterlyResult,
+    19→  type DetectedPattern,
+    20→  type QuarterSummary,
+    21→  type PatternStrength,
+    22→  type SupportingDataPoint,
+    23→} from "@/lib/latent/mock-company-results";
+    24→import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+    25→import {
+    26→  Search,
+    27→  TrendingUp,
+    28→  TrendingDown,
+    29→  Activity,
+    30→  RefreshCw,
+    31→  CheckCircle2,
+    32→  AlertTriangle,
+    33→  Info,
+    34→  Coins,
+    35→  BarChart3,
+    36→  ArrowLeft,
+    37→  Calendar,
+    38→} from "lucide-react";
+    39→import { toast } from "sonner";
+    40→
+    41→const POPULAR_SUGGESTIONS = ["ENGRO", "HUBC", "LUCK", "SYS", "MEBL", "OGDC", "PPL", "PSO"];
+    42→
+    43→const FY_PALETTE = ["#00E676", "#22E881", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0", "#FBBF24", "#FB923C"];
+    44→
+    45→function fmtNum(n: number): string {
+    46→  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}B`;
+    47→  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}M`;
+    48→  return n.toFixed(0);
+    49→}
+    50→
+    51→function fyOf(period: string): string {
+    52→  const m = period.match(/FY\s?(\d+)/i);
+    53→  return m ? m[1] : period.slice(-2);
+    54→}
+    55→
+    56→export function PatternFinder() {
+    57→  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+    58→  const [results, setResults] = useState<QuarterlyResult[]>([]);
+    59→  const [company, setCompany] = useState<string>("");
+    60→  const [loading, setLoading] = useState(false);
+    61→  const [error, setError] = useState<string | null>(null);
+    62→
+    63→  const handleSelect = (symbol: string) => {
+    64→    if (!symbol) {
+    65→      setSelectedSymbol(null);
+    66→      setResults([]);
+    67→      setCompany("");
+    68→      setError(null);
+    69→      return;
+    70→    }
+    71→    setSelectedSymbol(symbol);
+    72→    setLoading(true);
+    73→    setError(null);
+    74→    setResults([]);
+    75→    fetch(`/api/psx/financial-results/${encodeURIComponent(symbol)}`)
+    76→      .then((r) => r.json())
+    77→      .then((d) => {
+    78→        if (d.error) throw new Error(d.error);
+    79→        if (!d.results || d.results.length === 0) {
+    80→          throw new Error("No quarterly data available for this stock yet.");
+    81→        }
+    82→        setResults(d.results as QuarterlyResult[]);
+    83→        setCompany(d.company || symbol);
+    84→        toast.success(`Loaded ${d.results.length} quarters for ${symbol}`);
+    85→      })
+    86→      .catch((err) => {
+    87→        const msg = err instanceof Error ? err.message : "Unknown error";
+    88→        setError(msg);
+    89→        toast.error(`Could not load ${symbol}: ${msg}`);
+    90→      })
+    91→      .finally(() => setLoading(false));
+    92→  };
+    93→
+    94→  const refresh = () => {
+    95→    if (selectedSymbol) handleSelect(selectedSymbol);
+    96→  };
+    97→
+    98→  return (
+    99→    <main className="px-4 md:px-6 py-6 max-w-6xl mx-auto">
+   100→        {/* Header */}
+   101→        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+   102→          <div>
+   103→            <h1 className="text-2xl font-bold text-[#F4F7FB]">Pattern Finder</h1>
+   104→            <p className="text-sm text-[#94A3B8] mt-1">
+   105→              Discover earnings, dividend, and margin patterns in quarterly results — explained in plain English.
+   106→            </p>
+   107→          </div>
+   108→          {selectedSymbol && (
+   109→            <Button
+   110→              variant="outline"
+   111→              size="sm"
+   112→              onClick={refresh}
+   113→              disabled={loading}
+   114→              className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB]"
+   115→            >
+   116→              <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${loading ? "animate-spin" : ""}`} />
+   117→              Refresh
+   118→            </Button>
+   119→          )}
+   120→        </div>
+   121→
+   122→        {/* Search bar */}
+   123→        <Card className="bg-[#131829] border-white/[0.08] mb-4">
+   124→          <CardContent className="p-4">
+   125→            <div className="flex items-center gap-2 mb-2">
+   126→              <Search className="h-4 w-4 text-[#00E676]" />
+   127→              <span className="text-sm font-semibold text-[#F4F7FB]">Search any PSX-listed company</span>
+   128→              <Badge variant="outline" className="text-[9px] border-[#00E676]/40 text-[#00E676] ml-auto">
+   129→                1000+ stocks
+   130→              </Badge>
+   131→            </div>
+   132→            <StockSearch
+   133→              value={selectedSymbol || ""}
+   134→              onChange={handleSelect}
+   135→              placeholder="Search by symbol or name — e.g. ENGRO, Hub Power, Systems..."
+   136→              className="w-full"
+   137→            />
+   138→            <div className="text-[10px] text-[#64748B] mt-2 flex items-center gap-1.5 flex-wrap">
+   139→              <span>Quick try:</span>
+   140→              {POPULAR_SUGGESTIONS.map((s) => (
+   141→                <button
+   142→                  key={s}
+   143→                  onClick={() => handleSelect(s)}
+   144→                  className="font-mono text-[10px] text-[#94A3B8] hover:text-[#00E676] underline-offset-2 hover:underline"
+   145→                >
+   146→                  {s}
+   147→                </button>
+   148→              ))}
+   149→            </div>
+   150→          </CardContent>
+   151→        </Card>
+   152→
+   153→        {/* Loading state */}
+   154→        {loading && (
+   155→          <Card className="bg-[#131829] border-white/[0.08]">
+   156→            <CardContent className="p-6 space-y-4">
+   157→              <div className="flex items-center gap-2 text-sm text-[#94A3B8]">
+   158→                <RefreshCw className="h-4 w-4 animate-spin text-[#00E676]" />
+   159→                Fetching quarterly results for {selectedSymbol}...
+   160→              </div>
+   161→              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+   162→                {Array.from({ length: 8 }).map((_, i) => (
+   163→                  <Skeleton key={i} className="h-16 bg-white/[0.04]" />
+   164→                ))}
+   165→              </div>
+   166→              <Skeleton className="h-64 w-full bg-white/[0.04]" />
+   167→            </CardContent>
+   168→          </Card>
+   169→        )}
+   170→
+   171→        {/* Error state */}
+   172→        {!loading && error && results.length === 0 && (
+   173→          <Card className="bg-[#131829] border-white/[0.08]">
+   174→            <CardContent className="p-6 text-center">
+   175→              <AlertTriangle className="h-8 w-8 text-[#FF5C5C] mx-auto mb-2" />
+   176→              <p className="text-sm font-semibold text-[#F4F7FB] mb-1">Could not load results</p>
+   177→              <p className="text-xs text-[#64748B] max-w-md mx-auto">{error}</p>
+   178→              <p className="text-[10px] text-[#64748B] mt-2">
+   179→                The askanalyst.com.pk upstream may be rate-limited. Try again or pick another stock.
+   180→              </p>
+   181→            </CardContent>
+   182→          </Card>
+   183→        )}
+   184→
+   185→        {/* Deep dive */}
+   186→        {!loading && !error && results.length > 0 && selectedSymbol && (
+   187→          <StockDeepDive
+   188→            results={results}
+   189→            symbol={selectedSymbol}
+   190→            company={company}
+   191→            onBack={() => handleSelect("")}
+   192→          />
+   193→        )}
+   194→
+   195→        {/* Empty state — no symbol selected */}
+   196→        {!loading && !selectedSymbol && <EmptyState onPickSymbol={handleSelect} />}
+   197→      </main>
+   198→  );
+   199→}
+   200→
+   201→function EmptyState({ onPickSymbol }: { onPickSymbol: (s: string) => void }) {
+   202→  const groups = groupByCompany(MOCK_COMPANY_RESULTS);
+   203→
+   204→  return (
+   205→    <Card className="bg-[#131829] border-white/[0.08]">
+   206→      <CardContent className="p-6">
+   207→        {groups.length === 0 ? (
+   208→          <div className="text-center py-10">
+   209→            <div className="h-12 w-12 rounded-full bg-[#00E676]/10 flex items-center justify-center mx-auto mb-3">
+   210→              <Search className="h-5 w-5 text-[#00E676]" />
+   211→            </div>
+   212→            <p className="text-base font-semibold text-[#F4F7FB] mb-1">Search any stock above</p>
+   213→            <p className="text-xs text-[#64748B] max-w-md mx-auto leading-relaxed">
+   214→              Pick any of 361 PSX-listed companies to see quarterly patterns, seasonality, growth rates,
+   215→              dividend trends, and margin trajectory — all explained in plain English.
+   216→            </p>
+   217→            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 max-w-2xl mx-auto">
+   218→              {MOCK_STOCKS.slice(0, 8).map((s) => (
+   219→                <button
+   220→                  key={s.symbol}
+   221→                  onClick={() => onPickSymbol(s.symbol)}
+   222→                  className="rounded-md border border-white/[0.06] bg-[#0A0E1A] p-2 hover:border-[#00E676]/30 hover:bg-[#00E676]/[0.04] transition-colors text-left"
+   223→                >
+   224→                  <div className="text-xs font-mono font-semibold text-[#F4F7FB]">{s.symbol}</div>
+   225→                  <div className="text-[10px] text-[#64748B] truncate">{s.name}</div>
+   226→                  <div className="text-[9px] text-[#00E676] mt-0.5">{s.sector}</div>
+   227→                </button>
+   228→              ))}
+   229→            </div>
+   230→            <p className="text-[10px] text-[#64748B] mt-4">
+   231→              Data fetched on-demand from askanalyst.com.pk income-statement endpoint.
+   232→            </p>
+   233→          </div>
+   234→        ) : (
+   235→          <div className="space-y-3">
+   236→            <div className="text-[10px] uppercase tracking-wider text-[#64748B]">
+   237→              {groups.length} companies with cached patterns
+   238→            </div>
+   239→            {groups.map((g) => (
+   240→              <button
+   241→                key={g.symbol}
+   242→                onClick={() => onPickSymbol(g.symbol)}
+   243→                className="w-full text-left rounded-lg border border-white/[0.06] bg-[#0A0E1A] p-3 hover:border-[#00E676]/30 transition-colors"
+   244→              >
+   245→                <div className="flex items-center gap-3 mb-1">
+   246→                  <span className="font-mono font-semibold text-sm text-[#F4F7FB]">{g.symbol}</span>
+   247→                  <span className="text-xs text-[#94A3B8] truncate">{g.company}</span>
+   248→                  <Badge variant="outline" className="text-[9px] border-white/[0.08] text-[#64748B] ml-auto">
+   249→                    {g.results.length} q
+   250→                  </Badge>
+   251→                </div>
+   252→                <div className="text-[10px] text-[#64748B]">
+   253→                  {detectPatterns(g.results).length} patterns detected
+   254→                </div>
+   255→              </button>
+   256→            ))}
+   257→          </div>
+   258→        )}
+   259→      </CardContent>
+   260→    </Card>
+   261→  );
+   262→}
+   263→
+   264→function StockDeepDive({
+   265→  results,
+   266→  symbol,
+   267→  company,
+   268→  onBack,
+   269→}: {
+   270→  results: QuarterlyResult[];
+   271→  symbol: string;
+   272→  company: string;
+   273→  onBack: () => void;
+   274→}) {
+   275→  const patterns = detectPatterns(results);
+   276→  const quarters = generateQuarterlySummary(results, symbol);
+   277→  const yearsBetween =
+   278→    results.length >= 2
+   279→      ? (new Date(results[results.length - 1].periodEnd).getTime() -
+   280→          new Date(results[0].periodEnd).getTime()) /
+   281→        (365 * 24 * 60 * 60 * 1000)
+   282→      : 0;
+   283→  const revCAGR = computeCAGR(results[0].metrics.revenue, results[results.length - 1].metrics.revenue, yearsBetween);
+   284→  const profCAGR = computeCAGR(
+   285→    results[0].metrics.profitAfterTax,
+   286→    results[results.length - 1].metrics.profitAfterTax,
+   287→    yearsBetween
+   288→  );
+   289→  const epsCAGR = computeCAGR(results[0].metrics.eps, results[results.length - 1].metrics.eps, yearsBetween);
+   290→  const totalDPS = results.reduce((s, r) => s + r.metrics.dividendPerShare, 0);
+   291→  const volatility = computeStdDev(results.map((r) => r.metrics.epsYoYGrowth));
+   292→  const revVolatility = computeStdDev(results.map((r) => r.metrics.revenueYoYGrowth));
+   293→  const marginSlope = computeSlope(results.map((r) => r.metrics.netMargin));
+   294→
+   295→  const stats: { label: string; value: string; sub: string; tone?: "pos" | "neg" | "neutral"; explanation: string }[] = [
+   296→    { label: "Revenue CAGR", value: `${revCAGR.toFixed(1)}%`, sub: `${yearsBetween.toFixed(1)}y compound`, tone: revCAGR >= 0 ? "pos" : "neg", explanation: "How fast sales grew per year, on average, over the entire period" },
+   297→    { label: "Profit CAGR", value: `${profCAGR.toFixed(1)}%`, sub: "PAT growth", tone: profCAGR >= 0 ? "pos" : "neg", explanation: "How fast profit grew per year, on average" },
+   298→    { label: "EPS CAGR", value: `${epsCAGR.toFixed(1)}%`, sub: "per-share profit", tone: epsCAGR >= 0 ? "pos" : "neg", explanation: "How fast per-share profit grew per year" },
+   299→    { label: "Total DPS", value: `Rs. ${totalDPS.toFixed(2)}`, sub: `${results.length} quarters`, tone: "neutral", explanation: "Total cash dividends paid per share over the entire period" },
+   300→    { label: "EPS volatility", value: `${volatility.toFixed(1)}pp`, sub: "EPS YoY std dev", tone: volatility > 15 ? "neg" : "neutral", explanation: "How unpredictable the profit growth is. Higher = more risky/uncertain" },
+   301→    { label: "Revenue volatility", value: `${revVolatility.toFixed(1)}pp`, sub: "Rev YoY std dev", tone: revVolatility > 15 ? "neg" : "neutral", explanation: "How unpredictable the sales growth is" },
+   302→    { label: "Margin trend slope", value: `${marginSlope >= 0 ? "+" : ""}${marginSlope.toFixed(2)}pp/q`, sub: "net margin trend", tone: marginSlope >= 0 ? "pos" : "neg", explanation: "Whether profit margin is improving (positive) or declining (negative) over time" },
+   303→    { label: "Patterns detected", value: `${patterns.length}`, sub: "fundamental signals", tone: "neutral", explanation: "Number of fundamental patterns found in the data" },
+   304→  ];
+   305→
+   306→  return (
+   307→    <div className="space-y-4">
+   308→      {/* Header with back button */}
+   309→      <Card className="bg-[#131829] border-white/[0.08]">
+   310→        <CardContent className="p-4">
+   311→          <div className="flex items-start gap-3">
+   312→            <Button
+   313→              variant="outline"
+   314→              size="sm"
+   315→              onClick={onBack}
+   316→              className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] shrink-0"
+   317→            >
+   318→              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back
+   319→            </Button>
+   320→            <div className="flex-1 min-w-0">
+   321→              <div className="flex items-baseline gap-2 flex-wrap">
+   322→                <h2 className="text-xl font-bold text-[#F4F7FB]">{symbol}</h2>
+   323→                <span className="text-sm text-[#94A3B8] truncate">{company}</span>
+   324→              </div>
+   325→              <p className="text-xs text-[#64748B] mt-1">
+   326→                Deep dive on {results.length} quarters ·{" "}
+   327→                {new Date(results[0].periodEnd).toLocaleDateString("en-PK", { year: "numeric", month: "short" })} →{" "}
+   328→                {new Date(results[results.length - 1].periodEnd).toLocaleDateString("en-PK", { year: "numeric", month: "short" })}
+   329→              </p>
+   330→            </div>
+   331→          </div>
+   332→        </CardContent>
+   333→      </Card>
+   334→
+   335→      {/* 8 summary stats */}
+   336→      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+   337→        {stats.map((s, i) => (
+   338→          <SummaryStat key={i} label={s.label} value={s.value} sub={s.sub} tone={s.tone} explanation={s.explanation} />
+   339→        ))}
+   340→      </div>
+   341→
+   342→      {/* Multi-line chart */}
+   343→      <Card className="bg-[#131829] border-white/[0.08]">
+   344→        <CardHeader>
+   345→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   346→            <BarChart3 className="h-4 w-4 text-[#00E676]" />
+   347→            Revenue · Profit · EPS trend (normalized 0–100)
+   348→          </CardTitle>
+   349→        </CardHeader>
+   350→        <CardContent>
+   351→          <MultiLineChart results={results} />
+   352→        </CardContent>
+   353→      </Card>
+   354→
+   355→      {/* Quarterly seasonal pattern */}
+   356→      <Card className="bg-[#131829] border-white/[0.08]">
+   357→        <CardHeader>
+   358→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   359→            <Calendar className="h-4 w-4 text-[#00E676]" />
+   360→            Quarterly seasonal pattern
+   361→          </CardTitle>
+   362→        </CardHeader>
+   363→        <CardContent>
+   364→          {quarters.length === 0 ? (
+   365→            <p className="text-xs text-[#64748B]">
+   366→              Need at least 4 quarters (ideally spanning multiple FYs) to compute seasonality.
+   367→            </p>
+   368→          ) : (
+   369→            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+   370→              {quarters.map((q) => (
+   371→                <QuarterSummaryCard key={q.quarter} q={q} />
+   372→              ))}
+   373→            </div>
+   374→          )}
+   375→        </CardContent>
+   376→      </Card>
+   377→
+   378→      {/* Revenue bar chart (CSS) */}
+   379→      <Card className="bg-[#131829] border-white/[0.08]">
+   380→        <CardHeader>
+   381→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   382→            <TrendingUp className="h-4 w-4 text-[#00E676]" />
+   383→            Revenue by quarter (PKR, color-coded by FY)
+   384→          </CardTitle>
+   385→        </CardHeader>
+   386→        <CardContent>
+   387→          <RevenueBars results={results} />
+   388→        </CardContent>
+   389→      </Card>
+   390→
+   391→      {/* EPS bars + net margin overlay */}
+   392→      <Card className="bg-[#131829] border-white/[0.08]">
+   393→        <CardHeader>
+   394→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   395→            <Coins className="h-4 w-4 text-[#00E676]" />
+   396→            EPS bars + net margin overlay
+   397→          </CardTitle>
+   398→        </CardHeader>
+   399→        <CardContent>
+   400→          <EpsMarginChart results={results} />
+   401→        </CardContent>
+   402→      </Card>
+   403→
+   404→      {/* YoY growth chart */}
+   405→      <Card className="bg-[#131829] border-white/[0.08]">
+   406→        <CardHeader>
+   407→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2">
+   408→            <Activity className="h-4 w-4 text-[#00E676]" />
+   409→            YoY growth — Revenue vs EPS
+   410→          </CardTitle>
+   411→        </CardHeader>
+   412→        <CardContent>
+   413→          <YoYGrowthChart results={results} />
+   414→        </CardContent>
+   415→      </Card>
+   416→
+   417→      {/* Detected patterns */}
+   418→      <Card className="bg-[#131829] border-white/[0.08]">
+   419→        <CardHeader>
+   420→          <CardTitle className="text-base text-[#F4F7FB] flex items-center gap-2 flex-wrap">
+   421→            <Info className="h-4 w-4 text-[#00E676]" />
+   422→            Detected patterns ({patterns.length})
+   423→            {patterns.length > 0 && (
+   424→              <span className="flex items-center gap-1.5 ml-auto text-[10px] font-normal">
+   425→                {(() => {
+   426→                  const bull = patterns.filter((p) => p.severity === "positive").length;
+   427→                  const bear = patterns.filter((p) => p.severity === "negative").length;
+   428→                  const neutr = patterns.filter((p) => p.severity === "neutral").length;
+   429→                  return (
+   430→                    <>
+   431→                      {bull > 0 && (
+   432→                        <span className="text-[#00E676] font-mono">{bull} bullish</span>
+   433→                      )}
+   434→                      {bear > 0 && (
+   435→                        <span className="text-[#FF5C5C] font-mono">{bear} bearish</span>
+   436→                      )}
+   437→                      {neutr > 0 && (
+   438→                        <span className="text-[#94A3B8] font-mono">{neutr} neutral</span>
+   439→                      )}
+   440→                      <span className="text-[#64748B]">·</span>
+   441→                      <span className="text-[#64748B]">
+   442→                        {patterns.filter((p) => p.strength === "Strong").length} strong ·{" "}
+   443→                        {patterns.filter((p) => p.strength === "Moderate").length} moderate ·{" "}
+   444→                        {patterns.filter((p) => p.strength === "Weak").length} weak
+   445→                      </span>
+   446→                    </>
+   447→                  );
+   448→                })()}
+   449→              </span>
+   450→            )}
+   451→          </CardTitle>
+   452→        </CardHeader>
+   453→        <CardContent>
+   454→          {patterns.length === 0 ? (
+   455→            <p className="text-xs text-[#64748B]">
+   456→              No strong patterns detected yet — need more quarters or larger moves to trigger detection rules.
+   457→            </p>
+   458→          ) : (
+   459→            <div className="space-y-2">
+   460→              {patterns.map((p, i) => (
+   461→                <PatternRow key={i} pattern={p} />
+   462→              ))}
+   463→            </div>
+   464→          )}
+   465→        </CardContent>
+   466→      </Card>
+   467→
+   468→      {/* Full quarterly history table */}
+   469→      <Card className="bg-[#131829] border-white/[0.08]">
+   470→        <CardHeader>
+   471→          <CardTitle className="text-base text-[#F4F7FB]">Full quarterly history</CardTitle>
+   472→        </CardHeader>
+   473→        <CardContent>
+   474→          <div className="max-h-96 overflow-y-auto custom-scroll rounded-md border border-white/[0.04]">
+   475→            <table className="w-full text-xs">
+   476→              <thead className="sticky top-0 bg-[#131829] z-10">
+   477→                <tr className="text-[#64748B] text-[10px] uppercase tracking-wider">
+   478→                  <th className="text-left p-2 font-medium">Period</th>
+   479→                  <th className="text-right p-2 font-medium">Revenue</th>
+   480→                  <th className="text-right p-2 font-medium">PAT</th>
+   481→                  <th className="text-right p-2 font-medium">EPS</th>
+   482→                  <th className="text-right p-2 font-medium">Rev YoY</th>
+   483→                  <th className="text-right p-2 font-medium">EPS YoY</th>
+   484→                  <th className="text-right p-2 font-medium">N. margin</th>
+   485→                  <th className="text-right p-2 font-medium">DPS</th>
+   486→                </tr>
+   487→              </thead>
+   488→              <tbody>
+   489→                {results.map((r, i) => (
+   490→                  <tr key={i} className="border-t border-white/[0.04] hover:bg-white/[0.02]">
+   491→                    <td className="p-2 text-[#F4F7FB] font-mono">{r.period}</td>
+   492→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{fmtNum(r.metrics.revenue)}</td>
+   493→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{fmtNum(r.metrics.profitAfterTax)}</td>
+   494→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{r.metrics.eps.toFixed(2)}</td>
+   495→                    <td
+   496→                      className={`p-2 text-right font-mono ${
+   497→                        r.metrics.revenueYoYGrowth >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"
+   498→                      }`}
+   499→                    >
+   500→                      {r.metrics.revenueYoYGrowth >= 0 ? "+" : ""}
+   501→                      {r.metrics.revenueYoYGrowth.toFixed(1)}%
+   502→                    </td>
+   503→                    <td
+   504→                      className={`p-2 text-right font-mono ${
+   505→                        r.metrics.epsYoYGrowth >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"
+   506→                      }`}
+   507→                    >
+   508→                      {r.metrics.epsYoYGrowth >= 0 ? "+" : ""}
+   509→                      {r.metrics.epsYoYGrowth.toFixed(1)}%
+   510→                    </td>
+   511→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{r.metrics.netMargin.toFixed(1)}%</td>
+   512→                    <td className="p-2 text-right text-[#94A3B8] font-mono">{r.metrics.dividendPerShare.toFixed(2)}</td>
+   513→                  </tr>
+   514→                ))}
+   515→              </tbody>
+   516→            </table>
+   517→          </div>
+   518→        </CardContent>
+   519→      </Card>
+   520→    </div>
+   521→  );
+   522→}
+   523→
+   524→function SummaryStat({
+   525→  label,
+   526→  value,
+   527→  sub,
+   528→  tone = "neutral",
+   529→  explanation,
+   530→}: {
+   531→  label: string;
+   532→  value: string;
+   533→  sub?: string;
+   534→  tone?: "pos" | "neg" | "neutral";
+   535→  explanation?: string;
+   536→}) {
+   537→  const toneColor =
+   538→    tone === "pos" ? "text-[#00E676]" : tone === "neg" ? "text-[#FF5C5C]" : "text-[#F4F7FB]";
+   539→  return (
+   540→    <Card className="bg-[#131829] border-white/[0.08]">
+   541→      <CardContent className="p-3">
+   542→        <div className="flex items-center justify-between gap-1">
+   543→          <div className="text-[10px] uppercase tracking-wider text-[#64748B] truncate">{label}</div>
+   544→          {explanation && (
+   545→            <Tooltip>
+   546→              <TooltipTrigger asChild>
+   547→                <button
+   548→                  type="button"
+   549→                  aria-label={`Explanation: ${label}`}
+   550→                  className="text-[#64748B] hover:text-[#00E676] transition-colors shrink-0"
+   551→                >
+   552→                  <Info className="h-3 w-3" />
+   553→                </button>
+   554→              </TooltipTrigger>
+   555→              <TooltipContent
+   556→                side="top"
+   557→                className="bg-[#0A0E1A] border border-white/[0.12] text-[#F4F7FB] max-w-[220px] text-[10px] leading-relaxed font-normal px-2.5 py-1.5"
+   558→              >
+   559→                {explanation}
+   560→              </TooltipContent>
+   561→            </Tooltip>
+   562→          )}
+   563→        </div>
+   564→        <div className={`text-lg font-bold font-mono mt-0.5 ${toneColor}`}>{value}</div>
+   565→        {sub && <div className="text-[10px] text-[#64748B] truncate">{sub}</div>}
+   566→      </CardContent>
+   567→    </Card>
+   568→  );
+   569→}
+   570→
+   571→function QuarterSummaryCard({ q }: { q: QuarterSummary }) {
+   572→  const tone = q.typicalPattern === "peak" ? "pos" : q.typicalPattern === "low" ? "neg" : "neutral";
+   573→  const toneColor =
+   574→    tone === "pos" ? "text-[#00E676]" : tone === "neg" ? "text-[#FF5C5C]" : "text-[#94A3B8]";
+   575→  return (
+   576→    <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 flex flex-col">
+   577→      <div className="flex items-center justify-between mb-2">
+   578→        <span className="text-sm font-bold text-[#F4F7FB]">{q.quarterLabel}</span>
+   579→        <Badge variant="outline" className="text-[9px] border-white/[0.08] text-[#64748B]">
+   580→          {q.monthsLabel}
+   581→        </Badge>
+   582→      </div>
+   583→      <p className="text-xs text-[#94A3B8] leading-relaxed mb-2">{q.summary}</p>
+   584→      {q.causeSummary && (
+   585→        <p className="text-[11px] text-[#00E676] font-medium mb-2 flex items-start gap-1.5 leading-relaxed bg-[#00E676]/[0.04] border border-[#00E676]/15 rounded-md p-2">
+   586→          <Info className="h-3 w-3 mt-0.5 shrink-0" />
+   587→          <span>
+   588→            <span className="font-semibold">Why this happens: </span>
+   589→            {q.causeSummary}
+   590→          </span>
+   591→        </p>
+   592→      )}
+   593→      <div className="flex items-center justify-between text-[10px] mt-auto pt-2 border-t border-white/[0.04]">
+   594→        <div className="text-[#64748B]">
+   595→          Rev <span className={`font-mono ${toneColor}`}>{q.avgRevenuePctOfTotal.toFixed(1)}%</span>
+   596→        </div>
+   597→        <div className="text-[#64748B]">
+   598→          Margin <span className="font-mono text-[#F4F7FB]">{q.avgNetMargin.toFixed(1)}%</span>
+   599→        </div>
+   600→      </div>
+   601→    </div>
+   602→  );
+   603→}
+   604→
+   605→function PatternRow({ pattern }: { pattern: DetectedPattern }) {
+   606→  const isPositive = pattern.severity === "positive";
+   607→  const isNegative = pattern.severity === "negative";
+   608→  const icon = isPositive ? (
+   609→    <CheckCircle2 className="h-3.5 w-3.5 text-[#00E676]" />
+   610→  ) : isNegative ? (
+   611→    <AlertTriangle className="h-3.5 w-3.5 text-[#FF5C5C]" />
+   612→  ) : (
+   613→    <Info className="h-3.5 w-3.5 text-[#94A3B8]" />
+   614→  );
+   615→  const sevClass = isPositive
+   616→    ? "border-[#00E676]/30 text-[#00E676] bg-[#00E676]/[0.06]"
+   617→    : isNegative
+   618→    ? "border-[#FF5C5C]/30 text-[#FF5C5C] bg-[#FF5C5C]/[0.06]"
+   619→    : "border-white/[0.08] text-[#94A3B8] bg-white/[0.02]";
+   620→  const borderClass = isPositive
+   621→    ? "border-[#00E676]/20"
+   622→    : isNegative
+   623→    ? "border-[#FF5C5C]/20"
+   624→    : "border-white/[0.06]";
+   625→
+   626→  // Issue 9: strength tier — Strong / Moderate / Weak — colour-coded so the
+   627→  // user can scan a list of patterns at a glance and pick out only the ones
+   628→  // that genuinely matter. Strong = solid green/red; Moderate = softer tint;
+   629→  // Weak = muted gray so it visually de-emphasises less informative signals.
+   630→  const strength: PatternStrength | undefined = pattern.strength;
+   631→  const strengthClass =
+   632→    strength === "Strong"
+   633→      ? isPositive
+   634→        ? "border-[#00E676] bg-[#00E676] text-[#0A0E1A] font-bold"
+   635→        : "border-[#FF5C5C] bg-[#FF5C5C] text-[#0A0E1A] font-bold"
+   636→      : strength === "Moderate"
+   637→      ? isPositive
+   638→        ? "border-[#00E676]/50 text-[#00E676] bg-[#00E676]/[0.12]"
+   639→        : "border-[#FF5C5C]/50 text-[#FF5C5C] bg-[#FF5C5C]/[0.12]"
+   640→      : "border-white/[0.12] text-[#94A3B8] bg-white/[0.04]";
+   641→
+   642→  // Issue 9: confidence bar — visualises the 0-100 score alongside the
+   643→  // discrete strength tier, so the user sees both signals.
+   644→  const confPct = Math.max(0, Math.min(100, Math.round(pattern.confidence)));
+   645→  const confColor = isPositive ? "#00E676" : isNegative ? "#FF5C5C" : "#94A3B8";
+   646→
+   647→  return (
+   648→    <div className={`rounded-lg border ${borderClass} bg-[#0A0E1A] p-3`}>
+   649→      <div className="flex items-start justify-between gap-2 mb-1.5">
+   650→        <div className="flex items-center gap-2 min-w-0">
+   651→          {icon}
+   652→          <span className="text-sm font-semibold text-[#F4F7FB] truncate">{pattern.label}</span>
+   653→        </div>
+   654→        <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+   655→          {strength && (
+   656→            <Badge variant="outline" className={`text-[9px] uppercase ${strengthClass}`}>
+   657→              {strength}
+   658→            </Badge>
+   659→          )}
+   660→          <Badge variant="outline" className={`text-[9px] uppercase ${sevClass}`}>
+   661→            {isPositive ? "bullish" : isNegative ? "bearish" : "neutral"}
+   662→          </Badge>
+   663→        </div>
+   664→      </div>
+   665→
+   666→      {/* Detail + confidence bar */}
+   667→      <p className="text-xs text-[#94A3B8] mb-2 leading-relaxed">{pattern.detail}</p>
+   668→      <div className="flex items-center gap-2 mb-2">
+   669→        <div className="flex-1 h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
+   670→          <div
+   671→            className="h-full rounded-full transition-all"
+   672→            style={{ width: `${confPct}%`, backgroundColor: confColor }}
+   673→          />
+   674→        </div>
+   675→        <span className="text-[9px] font-mono text-[#64748B] shrink-0">{confPct}% conf</span>
+   676→      </div>
+   677→
+   678→      {/* Issue 9: supporting data points — small grid the user can verify at a glance */}
+   679→      {pattern.supportingData && pattern.supportingData.length > 0 && (
+   680→        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-2 rounded-md bg-white/[0.02] border border-white/[0.04] p-2">
+   681→          {pattern.supportingData.map((d: SupportingDataPoint, i: number) => (
+   682→            <div key={i} className="flex flex-col min-w-0">
+   683→              <span className="text-[9px] uppercase tracking-wider text-[#64748B] truncate">{d.label}</span>
+   684→              <span className="text-[11px] font-mono text-[#F4F7FB] truncate" title={d.value}>{d.value}</span>
+   685→            </div>
+   686→          ))}
+   687→        </div>
+   688→      )}
+   689→
+   690→      {pattern.laymanSummary && (
+   691→        <div className="mb-1.5 rounded-md bg-[#00E676]/[0.05] border border-[#00E676]/20 p-2 flex items-start gap-2 leading-relaxed">
+   692→          <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-[#00E676]" />
+   693→          <div>
+   694→            <span className="text-[9px] uppercase tracking-wider text-[#00E676] font-semibold block mb-0.5">
+   695→              In plain English
+   696→            </span>
+   697→            <p className="text-xs text-[#00E676] font-medium">{pattern.laymanSummary}</p>
+   698→          </div>
+   699→        </div>
+   700→      )}
+   701→      {pattern.affectedQuarters.length > 0 && (
+   702→        <div className="flex items-center gap-1 flex-wrap mt-2 pt-2 border-t border-white/[0.04]">
+   703→          <span className="text-[10px] text-[#64748B]">Triggered:</span>
+   704→          {pattern.affectedQuarters.map((q, i) => (
+   705→            <Badge key={i} variant="outline" className="text-[9px] font-mono border-white/[0.08] text-[#64748B]">
+   706→              {q}
+   707→            </Badge>
+   708→          ))}
+   709→        </div>
+   710→      )}
+   711→    </div>
+   712→  );
+   713→}
+   714→
+   715→// ---- Pure-SVG multi-line chart: revenue (green), profit (blue dashed), EPS (yellow dotted)
+   716→function MultiLineChart({ results }: { results: QuarterlyResult[] }) {
+   717→  const W = 800;
+   718→  const H = 280;
+   719→  const P = { top: 20, right: 30, bottom: 36, left: 40 };
+   720→  const innerW = W - P.left - P.right;
+   721→  const innerH = H - P.top - P.bottom;
+   722→
+   723→  const revs = results.map((r) => r.metrics.revenue);
+   724→  const profits = results.map((r) => r.metrics.profitAfterTax);
+   725→  const epss = results.map((r) => r.metrics.eps);
+   726→
+   727→  const rangeOf = (arr: number[]) => {
+   728→    const mn = Math.min(...arr);
+   729→    const mx = Math.max(...arr);
+   730→    return { mn, mx: mx === mn ? mn + 1 : mx };
+   731→  };
+   732→  const revR = rangeOf(revs);
+   733→  const profR = rangeOf(profits);
+   734→  const epsR = rangeOf(epss);
+   735→
+   736→  const norm = (v: number, r: { mn: number; mx: number }) =>
+   737→    r.mx === r.mn ? 0.5 : (v - r.mn) / (r.mx - r.mn);
+   738→
+   739→  const xAt = (i: number) =>
+   740→    P.left + (results.length === 1 ? innerW / 2 : (i / (results.length - 1)) * innerW);
+   741→  const yAt = (n: number) => P.top + (1 - n) * innerH;
+   742→
+   743→  const linePath = (vals: number[], r: { mn: number; mx: number }) =>
+   744→    vals
+   745→      .map((v, i) => `${i === 0 ? "M" : "L"} ${xAt(i).toFixed(1)} ${yAt(norm(v, r)).toFixed(1)}`)
+   746→      .join(" ");
+   747→
+   748→  const areaPath = (vals: number[], r: { mn: number; mx: number }) => {
+   749→    if (vals.length === 0) return "";
+   750→    const top = vals
+   751→      .map((v, i) => `${i === 0 ? "M" : "L"} ${xAt(i).toFixed(1)} ${yAt(norm(v, r)).toFixed(1)}`)
+   752→      .join(" ");
+   753→    return `${top} L ${xAt(vals.length - 1).toFixed(1)} ${(P.top + innerH).toFixed(1)} L ${xAt(0).toFixed(
+   754→      1
+   755→    )} ${(P.top + innerH).toFixed(1)} Z`;
+   756→  };
+   757→
+   758→  const gridLines = Array.from({ length: 5 }, (_, i) => P.top + (i / 4) * innerH);
+   759→  const labelStep = Math.max(1, Math.ceil(results.length / 8));
+   760→
+   761→  const lastRev = revs[revs.length - 1];
+   762→  const lastProf = profits[profits.length - 1];
+   763→  const lastEps = epss[epss.length - 1];
+   764→
+   765→  return (
+   766→    <div className="w-full">
+   767→      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+   768→        <defs>
+   769→          <linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1">
+   770→            <stop offset="0%" stopColor="#00E676" stopOpacity="0.25" />
+   771→            <stop offset="100%" stopColor="#00E676" stopOpacity="0" />
+   772→          </linearGradient>
+   773→        </defs>
+   774→        {/* Grid */}
+   775→        {gridLines.map((y, i) => (
+   776→          <line
+   777→            key={i}
+   778→            x1={P.left}
+   779→            y1={y}
+   780→            x2={P.left + innerW}
+   781→            y2={y}
+   782→            stroke="#1E2536"
+   783→            strokeWidth="1"
+   784→            strokeDasharray="2 4"
+   785→          />
+   786→        ))}
+   787→        {/* X-axis labels */}
+   788→        {results.map((r, i) =>
+   789→          i % labelStep === 0 ? (
+   790→            <text
+   791→              key={i}
+   792→              x={xAt(i)}
+   793→              y={H - 8}
+   794→              fill="#64748B"
+   795→              fontSize="9"
+   796→              textAnchor="middle"
+   797→              fontFamily="monospace"
+   798→            >
+   799→              {r.period}
+   800→            </text>
+   801→          ) : null
+   802→        )}
+   803→        {/* Filled area under revenue */}
+   804→        <path d={areaPath(revs, revR)} fill="url(#revFill)" />
+   805→        {/* Revenue line (green solid) */}
+   806→        <path d={linePath(revs, revR)} fill="none" stroke="#00E676" strokeWidth="2" />
+   807→        {/* Profit line (blue dashed) */}
+   808→        <path d={linePath(profits, profR)} fill="none" stroke="#3B82F6" strokeWidth="2" strokeDasharray="6 4" />
+   809→        {/* EPS line (yellow dotted) */}
+   810→        <path d={linePath(epss, epsR)} fill="none" stroke="#FBBF24" strokeWidth="2" strokeDasharray="2 3" />
+   811→        {/* Endpoint markers */}
+   812→        {revs.length > 0 && (
+   813→          <circle cx={xAt(revs.length - 1)} cy={yAt(norm(lastRev, revR))} r="3.5" fill="#00E676" />
+   814→        )}
+   815→        {profits.length > 0 && (
+   816→          <circle cx={xAt(profits.length - 1)} cy={yAt(norm(lastProf, profR))} r="3.5" fill="#3B82F6" />
+   817→        )}
+   818→        {epss.length > 0 && (
+   819→          <circle cx={xAt(epss.length - 1)} cy={yAt(norm(lastEps, epsR))} r="3.5" fill="#FBBF24" />
+   820→        )}
+   821→      </svg>
+   822→      {/* Legend */}
+   823→      <div className="flex items-center gap-4 mt-3 text-[10px] text-[#94A3B8] flex-wrap justify-center">
+   824→        <span className="flex items-center gap-1.5">
+   825→          <span className="h-0.5 w-4 bg-[#00E676] inline-block" />
+   826→          Revenue (PKR)
+   827→        </span>
+   828→        <span className="flex items-center gap-1.5">
+   829→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px dashed #3B82F6" }} />
+   830→          Profit after tax (PKR)
+   831→        </span>
+   832→        <span className="flex items-center gap-1.5">
+   833→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px dotted #FBBF24" }} />
+   834→          EPS (PKR)
+   835→        </span>
+   836→        <span className="text-[#64748B]">Each line scaled to its own min–max for trend comparison.</span>
+   837→      </div>
+   838→    </div>
+   839→  );
+   840→}
+   841→
+   842→// ---- CSS-based revenue bars color-coded by FY year
+   843→function RevenueBars({ results }: { results: QuarterlyResult[] }) {
+   844→  const max = Math.max(...results.map((r) => r.metrics.revenue), 1);
+   845→  const fyList = Array.from(new Set(results.map((r) => fyOf(r.period))));
+   846→  const fyColor = (fy: string) => {
+   847→    const idx = fyList.indexOf(fy);
+   848→    return FY_PALETTE[idx % FY_PALETTE.length];
+   849→  };
+   850→
+   851→  return (
+   852→    <div>
+   853→      <div className="flex items-end gap-1 h-48 overflow-x-auto custom-scroll pb-2">
+   854→        {results.map((r, i) => {
+   855→          const h = (r.metrics.revenue / max) * 100;
+   856→          const fy = fyOf(r.period);
+   857→          return (
+   858→            <div key={i} className="flex flex-col items-center gap-1 min-w-[28px] flex-1 h-full">
+   859→              <div className="text-[9px] font-mono text-[#64748B]">{fmtNum(r.metrics.revenue)}</div>
+   860→              <div className="w-full flex-1 flex items-end">
+   861→                <div
+   862→                  className="w-full rounded-t transition-all hover:opacity-80"
+   863→                  style={{
+   864→                    height: `${h}%`,
+   865→                    backgroundColor: fyColor(fy),
+   866→                    minHeight: "2px",
+   867→                  }}
+   868→                  title={`${r.period}: ${fmtNum(r.metrics.revenue)}`}
+   869→                />
+   870→              </div>
+   871→              <div className="text-[8px] font-mono text-[#64748B] whitespace-nowrap truncate w-full text-center">
+   872→                {r.period}
+   873→              </div>
+   874→            </div>
+   875→          );
+   876→        })}
+   877→      </div>
+   878→      {/* FY legend */}
+   879→      <div className="flex items-center gap-3 mt-3 text-[10px] text-[#94A3B8] flex-wrap">
+   880→        {fyList.map((fy) => (
+   881→          <span key={fy} className="flex items-center gap-1.5">
+   882→            <span className="h-2.5 w-2.5 rounded-sm inline-block" style={{ backgroundColor: fyColor(fy) }} />
+   883→            FY{fy}
+   884→          </span>
+   885→        ))}
+   886→      </div>
+   887→    </div>
+   888→  );
+   889→}
+   890→
+   891→// ---- EPS bars (SVG) + net margin line overlay (SVG)
+   892→function EpsMarginChart({ results }: { results: QuarterlyResult[] }) {
+   893→  const W = 800;
+   894→  const H = 240;
+   895→  const P = { top: 20, right: 40, bottom: 30, left: 40 };
+   896→  const innerW = W - P.left - P.right;
+   897→  const innerH = H - P.top - P.bottom;
+   898→
+   899→  const maxAbsEps = Math.max(...results.map((r) => Math.abs(r.metrics.eps)), 0.01);
+   900→  const step = innerW / Math.max(1, results.length);
+   901→  const barW = step * 0.6;
+   902→
+   903→  const margins = results.map((r) => r.metrics.netMargin);
+   904→  const mMin = Math.min(...margins);
+   905→  const mMax = Math.max(...margins);
+   906→  const mRange = mMax === mMin ? 1 : mMax - mMin;
+   907→
+   908→  const yMargin = (m: number) => P.top + (1 - (m - mMin) / mRange) * innerH;
+   909→  const marginPath = margins
+   910→    .map((m, i) => `${i === 0 ? "M" : "L"} ${(P.left + step * i + step / 2).toFixed(1)} ${yMargin(m).toFixed(1)}`)
+   911→    .join(" ");
+   912→
+   913→  const gridLines = Array.from({ length: 5 }, (_, i) => P.top + (i / 4) * innerH);
+   914→  const labelStep = Math.max(1, Math.ceil(results.length / 8));
+   915→
+   916→  return (
+   917→    <div className="w-full">
+   918→      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+   919→        {/* Grid */}
+   920→        {gridLines.map((y, i) => (
+   921→          <line
+   922→            key={i}
+   923→            x1={P.left}
+   924→            y1={y}
+   925→            x2={P.left + innerW}
+   926→            y2={y}
+   927→            stroke="#1E2536"
+   928→            strokeWidth="1"
+   929→            strokeDasharray="2 4"
+   930→          />
+   931→        ))}
+   932→        {/* EPS bars */}
+   933→        {results.map((r, i) => {
+   934→          const h = (Math.abs(r.metrics.eps) / maxAbsEps) * innerH;
+   935→          const x = P.left + step * i + (step - barW) / 2;
+   936→          const y = P.top + innerH - h;
+   937→          return (
+   938→            <g key={i}>
+   939→              <rect
+   940→                x={x}
+   941→                y={y}
+   942→                width={barW}
+   943→                height={h}
+   944→                fill={r.metrics.eps >= 0 ? "#00E676" : "#FF5C5C"}
+   945→                opacity="0.85"
+   946→              />
+   947→              {i % labelStep === 0 && (
+   948→                <text
+   949→                  x={x + barW / 2}
+   950→                  y={H - 8}
+   951→                  fill="#64748B"
+   952→                  fontSize="9"
+   953→                  textAnchor="middle"
+   954→                  fontFamily="monospace"
+   955→                >
+   956→                  {r.period}
+   957→                </text>
+   958→              )}
+   959→            </g>
+   960→          );
+   961→        })}
+   962→        {/* Net margin overlay line */}
+   963→        <path d={marginPath} fill="none" stroke="#FBBF24" strokeWidth="2" />
+   964→        {margins.map((m, i) => (
+   965→          <circle
+   966→            key={i}
+   967→            cx={P.left + step * i + step / 2}
+   968→            cy={yMargin(m)}
+   969→            r="2.5"
+   970→            fill="#FBBF24"
+   971→          />
+   972→        ))}
+   973→      </svg>
+   974→      <div className="flex items-center gap-4 mt-3 text-[10px] text-[#94A3B8] flex-wrap justify-center">
+   975→        <span className="flex items-center gap-1.5">
+   976→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#00E676]" />
+   977→          EPS (PKR, positive)
+   978→        </span>
+   979→        <span className="flex items-center gap-1.5">
+   980→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#FF5C5C]" />
+   981→          EPS (loss)
+   982→        </span>
+   983→        <span className="flex items-center gap-1.5">
+   984→          <span className="h-0.5 w-4 inline-block" style={{ borderBottom: "2px solid #FBBF24" }} />
+   985→          Net margin (%)
+   986→        </span>
+   987→      </div>
+   988→    </div>
+   989→  );
+   990→}
+   991→
+   992→// ---- YoY growth chart: revenue vs EPS bars (SVG, supports negative values)
+   993→function YoYGrowthChart({ results }: { results: QuarterlyResult[] }) {
+   994→  const items = results.filter(
+   995→    (r) => r.metrics.revenueYoYGrowth !== 0 || r.metrics.epsYoYGrowth !== 0
+   996→  );
+   997→  if (items.length === 0) {
+   998→    return <p className="text-xs text-[#64748B]">No YoY growth data available (need 4+ quarters).</p>;
+   999→  }
+  1000→
+  1001→  const W = 800;
+  1002→  const H = 240;
+  1003→  const P = { top: 20, right: 30, bottom: 30, left: 40 };
+  1004→  const innerW = W - P.left - P.right;
+  1005→  const innerH = H - P.top - P.bottom;
+  1006→  const zeroY = P.top + innerH / 2;
+  1007→
+  1008→  const maxAbs = Math.max(
+  1009→    ...items.flatMap((r) => [
+  1010→      Math.abs(r.metrics.revenueYoYGrowth),
+  1011→      Math.abs(r.metrics.epsYoYGrowth),
+  1012→    ]),
+  1013→    1
+  1014→  );
+  1015→
+  1016→  const step = innerW / Math.max(1, items.length);
+  1017→  const barW = step * 0.3;
+  1018→  const gap = step * 0.1;
+  1019→  const labelStep = Math.max(1, Math.ceil(items.length / 8));
+  1020→
+  1021→  return (
+  1022→    <div className="w-full overflow-x-auto">
+  1023→      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+  1024→        {/* Zero line */}
+  1025→        <line
+  1026→          x1={P.left}
+  1027→          y1={zeroY}
+  1028→          x2={P.left + innerW}
+  1029→          y2={zeroY}
+  1030→          stroke="#3A4256"
+  1031→          strokeWidth="1"
+  1032→        />
+  1033→        {/* Grid */}
+  1034→        {Array.from({ length: 5 }, (_, i) => P.top + (i / 4) * innerH).map((y, i) => (
+  1035→          <line
+  1036→            key={i}
+  1037→            x1={P.left}
+  1038→            y1={y}
+  1039→            x2={P.left + innerW}
+  1040→            y2={y}
+  1041→            stroke="#1E2536"
+  1042→            strokeWidth="1"
+  1043→            strokeDasharray="2 4"
+  1044→          />
+  1045→        ))}
+  1046→        {/* Bars */}
+  1047→        {items.map((r, i) => {
+  1048→          const cx = P.left + step * i + step / 2;
+  1049→          const revH = (Math.abs(r.metrics.revenueYoYGrowth) / maxAbs) * (innerH / 2);
+  1050→          const epsH = (Math.abs(r.metrics.epsYoYGrowth) / maxAbs) * (innerH / 2);
+  1051→          const revY = r.metrics.revenueYoYGrowth >= 0 ? zeroY - revH : zeroY;
+  1052→          const epsY = r.metrics.epsYoYGrowth >= 0 ? zeroY - epsH : zeroY;
+  1053→          return (
+  1054→            <g key={i}>
+  1055→              <rect
+  1056→                x={cx - barW - gap / 2}
+  1057→                y={revY}
+  1058→                width={barW}
+  1059→                height={revH}
+  1060→                fill={r.metrics.revenueYoYGrowth >= 0 ? "#00E676" : "#FF5C5C"}
+  1061→                opacity="0.85"
+  1062→              />
+  1063→              <rect
+  1064→                x={cx + gap / 2}
+  1065→                y={epsY}
+  1066→                width={barW}
+  1067→                height={epsH}
+  1068→                fill={r.metrics.epsYoYGrowth >= 0 ? "#FBBF24" : "#FF5C5C"}
+  1069→                opacity="0.85"
+  1070→              />
+  1071→              {i % labelStep === 0 && (
+  1072→                <text
+  1073→                  x={cx}
+  1074→                  y={H - 8}
+  1075→                  fill="#64748B"
+  1076→                  fontSize="9"
+  1077→                  textAnchor="middle"
+  1078→                  fontFamily="monospace"
+  1079→                >
+  1080→                  {r.period}
+  1081→                </text>
+  1082→              )}
+  1083→            </g>
+  1084→          );
+  1085→        })}
+  1086→      </svg>
+  1087→      <div className="flex items-center gap-4 mt-3 text-[10px] text-[#94A3B8] flex-wrap justify-center">
+  1088→        <span className="flex items-center gap-1.5">
+  1089→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#00E676]" />
+  1090→          Revenue YoY
+  1091→        </span>
+  1092→        <span className="flex items-center gap-1.5">
+  1093→          <span className="h-2.5 w-2.5 rounded-sm inline-block bg-[#FBBF24]" />
+  1094→          EPS YoY
+  1095→        </span>
+  1096→        <span className="text-[#64748B]">Negative growth shown in red (below zero line).</span>
+  1097→      </div>
+  1098→    </div>
+  1099→  );
+  1100→}
+  1101→

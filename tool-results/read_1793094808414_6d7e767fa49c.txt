@@ -1,0 +1,714 @@
+     1→"use client";
+     2→import{useEffect,useState,useRef}from"react";
+     3→import{Card,CardContent,CardHeader,CardTitle}from"@/components/ui/card";
+     4→import{Button}from"@/components/ui/button";
+     5→import{Badge}from"@/components/ui/badge";
+     6→import{Skeleton}from"@/components/ui/skeleton";
+     7→import{Dialog,DialogContent,DialogHeader,DialogTitle}from"@/components/ui/dialog";
+     8→import{StockSearch}from"./StockSearch";
+     9→import{useLatentStore}from"@/lib/latent/store";
+    10→import{Brain,Sparkles,Layers,Cpu,BarChart3,DollarSign,Play,Loader2,Eye,ChevronLeft,TrendingUp,TrendingDown}from"lucide-react";
+    11→import{toast}from"sonner";
+    12→import{LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend}from"recharts";
+    13→
+    14→interface MP{name:string;tier:string;tierLabel:string;category:string;trained:boolean;untrainedReason?:string;direction?:"LONG"|"SHORT";signal?:"BUY"|"SELL"|"HOLD";confidence?:number;currentPrice?:number;entry?:number;sl?:number;tp1?:number;tp2?:number;tp3?:number;avgReturn?:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;metrics?:any;backtest?:{totalTrades:number;buySignals:number;sellSignals:number;correctBuys:number;correctSells:number;winRate:number;avgReturnPct:number;maxReturnPct:number;minReturnPct:number;stars:number;coveredSymbols?:number;};extended?:boolean;}
+    15→interface ER{method:string;methodLabel:string;signal:"BUY"|"SELL"|"HOLD";direction:"LONG"|"SHORT";confidence:number;predictedPrice:number;entry:number;sl:number;tp1:number;tp2:number;tp3:number;modelCount:number;buyCount:number;sellCount:number;holdCount:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;total_score?:number;pillars?:any;expected_return?:number;r_pct?:number;strategy_signals?:any;}
+    16→interface FC{signal:"BUY"|"SELL"|"HOLD";direction:"LONG"|"SHORT";confidence:number;agreement:number;predictedPriceRange:{min:number;max:number};entry:number;sl:number;tp1:number;tp2:number;tp3:number;}
+    17→interface API{symbol:string;stockName:string;currentPrice:number;tiers:{tier:string;label:string;models:MP[]}[];ensembles:ER[];finalConsensus:FC;trainedModelCount:number;totalModelCount:number;trainedAt:string;cached:boolean;latencyMs:number;backtesting:Record<string,any>;ensembleBacktesting:Record<string,any>;extendedCount?:number;extendedAt?:string|null;backtestSource?:string;}
+    18→
+    19→export function AiModelSignals(){
+    20→ const selectedSymbol=useLatentStore(s=>s.selectedSymbol);
+    21→ const[symbol,setSymbol]=useState(selectedSymbol||"ENGRO");
+    22→ const[data,setData]=useState<API|null>(null);
+    23→ const[loading,setLoading]=useState(false);
+    24→ const[btOpen,setBtOpen]=useState(false);
+    25→ const[simOpen,setSimOpen]=useState(false);
+    26→ const[simAmount,setSimAmount]=useState("100000");
+    27→ // Issue 5 — Portfolio Simulation redesign: removed "Position Size" input.
+    28→ // Added "No of days" + "No of trades" inputs per user spec.
+    29→ const[simDays,setSimDays]=useState("10");
+    30→ const[simTrades,setSimTrades]=useState("20");
+    31→ const[simSymbol,setSimSymbol]=useState(""); // optional stock filter (default "" = ALL stocks)
+    32→ const[simRankBy,setSimRankBy]=useState<"winRate"|"netPnl"|"prediction">("winRate"); // ranking metric
+    33→ const[predictScores,setPredictScores]=useState<Record<string,number>>({}); // streak: consecutive 100% win-rate simulations per ensemble
+    34→ const[simTargetScore,setSimTargetScore]=useState("1"); // target prediction score for automate
+    35→ const[simWinRateThreshold,setSimWinRateThreshold]=useState("100"); // min win rate % to count as a prediction score
+    36→ const[automateRunning,setAutomateRunning]=useState(false);
+    37→ const[automateCount,setAutomateCount]=useState(0);
+    38→ const[automateFinalCount,setAutomateFinalCount]=useState(0); // persists after automate finishes
+    39→ const predictScoresRef=useRef<Record<string,number>>({}); // reliable score tracking in async loop
+    40→ const automateStopRef=useRef(false); // stop flag for the automate loop
+    41→ // Phase 3: per-model actual-vs-predicted graph view (in the Backtesting modal).
+    42→ // Enhanced: multi-model checkboxes (All/None), user-tunable decision-point
+    43→ // cadence (step), StockSearch symbol picker, KSE-100-only vs whole-market filter.
+    44→ const[graphModels,setGraphModels]=useState<string[]>(["XGBoost"]); // multi-select
+    45→ const[graphSymbol,setGraphSymbol]=useState(""); // "" = use the current data.symbol
+    46→ const[graphHorizon,setGraphHorizon]=useState("21");
+    47→ const[graphStep,setGraphStep]=useState("21"); // decision-point cadence (bars between decisions)
+    48→ const[graphUniverse,setGraphUniverse]=useState<"all"|"kse100">("all");
+    49→ const[kse100Syms,setKse100Syms]=useState<string[]>([]);
+    50→ const[graphChart,setGraphChart]=useState<{dates:string[];actual:(number|null)[];models:any[]}|null>(null);
+    51→ const[graphLoading,setGraphLoading]=useState(false);
+    52→ const[graphMeta,setGraphMeta]=useState<{points?:number;dataSourceDate?:string|null}|null>(null);
+    53→ // KSE-100 constituents (fetched once) — used to restrict the StockSearch picker.
+    54→ useEffect(()=>{fetch("/api/psx/indices/KSE100").then(r=>r.ok?r.json():null).then(j=>{if(j?.constituents)setKse100Syms(j.constituents.map((c:any)=>c.symbol));}).catch(()=>{});},[]);
+    55→ const GRAPH_MODEL_OPTIONS=["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression","ARIMA","Holt-Winters","GARCH","Prophet","Kalman Filter","GRU","LSTM","CNN-LSTM","Transformer-LSTM","PatchTST","N-BEATS","TimesNet","Informer","XGBoost (CL)","LightGBM (CL)","Random Forest (CL)","LightGBM-A (CL-2)","Logistic (CL-2)","Linear Regression (PI)","Pattern Matcher KNN (PI)","LightGBM (CG)","XGBoost (CG)","Trend Multi-TF (X)","Gian-Ensemble (GIAN)","M-Ensemble (M)","majority_vote","probability_weighted","tier_weighted","cl_ensemble","cl2_ensemble","pi_ensemble","gm_model","cg_ensemble","x_ensemble","gian_ensemble","m_ensemble"];
+    56→ const GRAPH_COLORS=["#FBBF24","#60A5FA","#A78BFA","#34D399","#F472B6","#22D3EE","#FB923C","#E879F9"];
+    57→ const toggleModel=(k:string)=>setGraphModels(prev=>prev.includes(k)?prev.filter(x=>x!==k):[...prev,k]);
+    58→ const loadGraph=async()=>{
+    59→  const sym=(graphSymbol||data?.symbol||"LUCK").trim().toUpperCase();
+    60→  if(!sym){toast.error("Pick a symbol");return;}
+    61→  if(graphModels.length===0){toast.error("Select at least one model");return;}
+    62→  setGraphLoading(true);
+    63→  try{
+    64→   const r=await fetch(`/api/backtest/model-graph?models=${encodeURIComponent(graphModels.join(","))}&symbol=${encodeURIComponent(sym)}&horizon=${encodeURIComponent(graphHorizon)}&step=${encodeURIComponent(graphStep)}`);
+    65→   const j=await r.json();
+    66→   if(j.error){toast.error(j.error);setGraphChart(null);setGraphMeta(null);return;}
+    67→   setGraphChart({dates:j.dates||[],actual:j.actual||[],models:j.models||[]});
+    68→   setGraphMeta({points:j.points,dataSourceDate:j.dataSourceDate});
+    69→  }catch{toast.error("Graph load failed");}
+    70→  finally{setGraphLoading(false);}
+    71→ };
+    72→ useEffect(()=>{ predictScoresRef.current={}; setPredictScores({}); }, [simSymbol]); // reset all scores when the stock changes
+    73→ const[simData,setSimData]=useState<any>(null);
+    74→ const[simLoading,setSimLoading]=useState(false);
+    75→ // "View in depth — Trade by trade" toggle: null = show ranking; an ensemble
+    76→ // name = show that ensemble's per-trade table for that section (top-5 or
+    77→ // the "rest" list).
+    78→ const[simDrilldown,setSimDrilldown]=useState<string|null>(null);
+    79→ // Issue 1: LIVE current-price overlay (psxdata-api.fastapicloud.dev), fetched
+    80→ // whenever the selected symbol changes. The ml_predictions snapshot price
+    81→ // baked into the model file is ~2 days stale — this overlays the live quote.
+    82→ const[livePrice,setLivePrice]=useState<number|null>(null);
+    83→ const[liveLoading,setLiveLoading]=useState(false);
+    84→ const[liveFailed,setLiveFailed]=useState(false);
+    85→ // When the user navigates here from another view (e.g. SignalSection's
+    86→ // "View in depth" button → setView("ai_model_signals") after selectSymbol),
+    87→ // pick up the newly-selected symbol.
+    88→ useEffect(()=>{if(selectedSymbol)setSymbol(selectedSymbol);},[selectedSymbol]);
+    89→ const load=async()=>{setLoading(true);try{const r=await fetch(`/api/ai-model-signals/${encodeURIComponent(symbol)}`);if(!r.ok)throw new Error(`Failed(${r.status})`);const j=await r.json();setData(j);toast.success(`${j.trainedModelCount}/${j.totalModelCount} models·${j.finalConsensus.signal}(${j.finalConsensus.confidence}%)`);}catch(e){toast.error(e instanceof Error?e.message:"Failed");}finally{setLoading(false);}};
+    90→ useEffect(()=>{load();},[symbol]);
+    91→ // Issue 1: refetch the live quote every time the symbol changes (independent
+    92→ // of the main data load so it doesn't block the model cards). Falls back to
+    93→ // data.currentPrice (snapshot) if the upstream is unreachable.
+    94→ useEffect(()=>{
+    95→  let cancelled=false;
+    96→  setLivePrice(null);
+    97→  setLiveFailed(false);
+    98→  setLiveLoading(true);
+    99→  fetch(`/api/psx/live?symbol=${encodeURIComponent(symbol)}`)
+   100→   .then(r=>r.ok?r.json():null)
+   101→   .then(j=>{
+   102→    if(cancelled)return;
+   103→    if(j&&typeof j.price==="number"&&j.price>0){setLivePrice(j.price as number);}
+   104→    else{setLiveFailed(true);}
+   105→   })
+   106→   .catch(()=>{if(!cancelled)setLiveFailed(true);})
+   107→   .finally(()=>{if(!cancelled)setLiveLoading(false);});
+   108→  return()=>{cancelled=true;};
+   109→ },[symbol]);
+   110→ const sc=(s?:string)=>s==="BUY"?"text-[#00E676]":s==="SELL"?"text-[#FF5C5C]":"text-[#94A3B8]";
+   111→ const sb=(s?:string)=>s==="BUY"?"bg-[#00E676]/10 border-[#00E676]/40 text-[#00E676]":s==="SELL"?"bg-[#FF5C5C]/10 border-[#FF5C5C]/40 text-[#FF5C5C]":"bg-white/[0.04] border-white/[0.12] text-[#94A3B8]";
+   112→ // Collect backtesting data
+   113→ const indBt=data?Object.entries(data.backtesting||{}).map(([name,b]:[string,any])=>({name,...b})).sort((a,b)=>b.winRate-a.winRate):[];
+   114→ const ensBt=data?Object.entries(data.ensembleBacktesting||{}).map(([name,b]:[string,any])=>({name,...b})):[];
+   115→
+   116→ return(<div className="min-h-screen bg-[#0A0E1A]">
+   117→ <main className="px-3 md:px-6 py-4 md:py-6 max-w-5xl mx-auto">
+   118→  <div className="mb-4 md:mb-6">
+   119→   <h1 className="text-xl md:text-2xl font-bold text-[#F4F7FB] flex items-center gap-2"><Brain className="h-5 w-5 md:h-6 md:w-6 text-[#00E676]"/>AI Model Signals</h1>
+   120→   <p className="text-xs md:text-sm text-[#94A3B8] mt-1">{data?`${data.trainedModelCount}/${data.totalModelCount} models trained·SL=support·TP1/2/3=5d/10d/21d predictions`:"Loading..."}</p>
+   121→  </div>
+   122→
+   123→  <Card className="bg-[#131829] border-white/[0.08] mb-3 md:mb-4"><CardContent className="p-3 md:p-4">
+   124→   <div className="flex items-center gap-3 flex-wrap">
+   125→    <div className="flex-1 min-w-[180px]"><label className="text-[10px] uppercase tracking-wider text-[#64748B]">Select Stock (any of 1000+ PSX-listed companies)</label>
+   126→    <div className="mt-1"><StockSearch value={symbol} onChange={(sym)=>setSymbol(sym)} placeholder="Search any PSX stock..." /></div>
+   127→    </div>
+   128→    {data&&<div className="text-right">
+   129→     <div className="text-[10px] uppercase text-[#64748B] flex items-center gap-1 justify-end">
+   130→      {liveLoading?<span className="flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin"/>Live</span>:(livePrice!=null&&!liveFailed)?<span className="text-[#00E676] flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-[#00E676] animate-pulse"/>Live</span>:"Current Price"}
+   131→     </div>
+   132→     <div className="text-xl md:text-2xl font-bold text-[#F4F7FB] font-mono">PKR {(livePrice!=null?livePrice:data.currentPrice).toFixed(2)}</div>
+   133→     {liveFailed&&livePrice==null&&<div className="text-[9px] text-[#64748B]">snapshot fallback</div>}
+   134→    </div>}
+   135→    <Button size="sm" variant="outline" onClick={load} disabled={loading} className="border-white/[0.12] text-[#94A3B8]">{loading?"...":"Refresh"}</Button>
+   136→   </div>
+   137→  </CardContent></Card>
+   138→
+   139→  {loading&&!data&&<div className="space-y-3">{[1,2,3].map(i=><Skeleton key={i} className="h-20 md:h-24 bg-white/[0.04]"/>)}</div>}
+   140→
+   141→  {data&&(<>
+   142→   <Card className="bg-gradient-to-br from-[#00E676]/[0.07] to-[#131829] border-[#00E676]/30 mb-3 md:mb-4">
+   143→    <CardHeader className="pb-2"><CardTitle className="text-sm md:text-base text-[#F4F7FB] flex items-center gap-2"><Sparkles className="h-4 w-4 text-[#00E676]"/>Final Ensemble Consensus</CardTitle></CardHeader>
+   144→    <CardContent>
+   145→     <div className="grid md:grid-cols-2 gap-3">
+   146→      <div><div className="text-[10px] uppercase text-[#64748B] mb-1">Signal</div>
+   147→      <div className="flex items-center gap-2"><span className={`text-2xl md:text-3xl font-bold ${sc(data.finalConsensus.signal)}`}>{data.finalConsensus.signal}</span><Badge variant="outline" className={`${sb(data.finalConsensus.signal)} border`}>{data.finalConsensus.direction}</Badge></div>
+   148→      <div className="text-xs text-[#94A3B8] mt-2">Conf:<span className="text-[#F4F7FB] font-mono">{data.finalConsensus.confidence}%</span>·Agreement:<span className="text-[#F4F7FB] font-mono">{data.finalConsensus.agreement}%</span></div></div>
+   149→      <div><div className="text-[10px] uppercase text-[#64748B] mb-1">Predicted Range</div><div className="text-base md:text-lg font-mono text-[#F4F7FB]">PKR {data.finalConsensus.predictedPriceRange.min.toFixed(2)} — {data.finalConsensus.predictedPriceRange.max.toFixed(2)}</div></div>
+   150→     </div>
+   151→     <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-3">
+   152→      <TS label="Entry" v={data.finalConsensus.entry.toFixed(2)}/><TS label="SL(support)" v={data.finalConsensus.sl.toFixed(2)} tone="negative"/><TS label="TP1(5d)" v={data.finalConsensus.tp1.toFixed(2)} tone="positive"/><TS label="TP2(10d)" v={data.finalConsensus.tp2.toFixed(2)} tone="positive"/><TS label="TP3(21d)" v={data.finalConsensus.tp3.toFixed(2)} tone="positive"/>
+   153→     </div>
+   154→    </CardContent>
+   155→   </Card>
+   156→
+   157→   <Card className="bg-[#131829] border-white/[0.08] mb-3 md:mb-4"><CardHeader className="pb-2"><CardTitle className="text-sm md:text-base text-[#F4F7FB] flex items-center gap-2"><Layers className="h-4 w-4 text-[#00E676]"/>Ensemble Methods</CardTitle></CardHeader><CardContent>
+   158→    <div className="grid md:grid-cols-3 gap-2 md:gap-3">{data.ensembles.map(en=>(
+   159→     <div key={en.method} className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5 md:p-3">
+   160→      <div className="text-[10px] uppercase text-[#64748B] mb-1.5">{en.methodLabel}</div>
+   161→      <div className={`text-lg md:text-xl font-bold mb-1 ${sc(en.signal)}`}>{en.signal}</div>
+   162→      <div className="text-[10px] text-[#94A3B8] mb-1.5">Confidence:<span className="font-mono">{en.confidence}%</span></div>
+   163→      <div className="grid grid-cols-2 gap-1 text-[10px]">
+   164→       <div><span className="text-[#64748B]">Entry:</span><span className="font-mono text-[#F4F7FB]">{en.entry.toFixed(2)}</span></div>
+   165→       <div><span className="text-[#64748B]">SL:</span><span className="font-mono text-[#FF5C5C]">{en.sl.toFixed(2)}</span></div>
+   166→       <div><span className="text-[#64748B]">TP1:</span><span className="font-mono text-[#00E676]">{en.tp1.toFixed(2)}</span></div>
+   167→       <div><span className="text-[#64748B]">TP2:</span><span className="font-mono text-[#00E676]">{en.tp2.toFixed(2)}</span></div>
+   168→       <div><span className="text-[#64748B]">TP3:</span><span className="font-mono text-[#00E676]">{en.tp3.toFixed(2)}</span></div>
+   169→       <div><span className="text-[#64748B]">Pred:</span><span className="font-mono text-[#F4F7FB]">{en.predictedPrice.toFixed(2)}</span></div>
+   170→      </div>
+   171→      <div className="text-[10px] text-[#64748B] mt-1.5 pt-1.5 border-t border-white/[0.04]">{en.buyCount}B·{en.sellCount}S·{en.holdCount}H</div>
+   172→      {en.raw_prob!=null&&en.exp_win_rate!=null&&en.agreement!=null&&(
+   173→       <div className="text-[10px] text-[#64748B] mt-1 pt-1 border-t border-white/[0.04]">
+   174→        <div className="flex items-center justify-between"><span>raw_prob:</span><span className="font-mono text-[#94A3B8]">{typeof en.raw_prob==="number"?en.raw_prob.toFixed(3):String(en.raw_prob)}</span></div>
+   175→        <div className="flex items-center justify-between"><span>exp_win_rate:</span><span className="font-mono text-[#00E676]">{typeof en.exp_win_rate==="number"?(en.exp_win_rate*100).toFixed(1)+"%":String(en.exp_win_rate)}</span></div>
+   176→        <div className="flex items-center justify-between"><span>agreement:</span><span className="font-mono text-[#F4F7FB]">{typeof en.agreement==="number"?(en.agreement*100).toFixed(0)+"%":String(en.agreement)}</span></div>
+   177→       </div>
+   178→      )}
+   179→      {en.total_score!=null&&en.pillars!=null&&typeof en.total_score==="number"&&(
+   180→       <div className="text-[10px] text-[#64748B] mt-1 pt-1 border-t border-white/[0.04]">
+   181→        <div className="flex items-center justify-between mb-0.5">
+   182→          <span className="text-[#94A3B8] font-semibold">GM 4-Pillar Score:</span>
+   183→          <span className={`font-mono font-bold ${en.total_score>=0.45?"text-[#00E676]":en.total_score<=-0.45?"text-[#FF5C5C]":"text-[#94A3B8]"}`}>{en.total_score>=0?"+":""}{en.total_score.toFixed(3)}</span>
+   184→        </div>
+   185→        {typeof en.pillars.tech_score==="number"&&<div className="flex items-center justify-between"><span>Tech (35%):</span><span className="font-mono text-[#00E676]">{en.pillars.tech_score>=0?"+":""}{en.pillars.tech_score.toFixed(3)}</span></div>}
+   186→        {typeof en.pillars.anno_score==="number"&&<div className="flex items-center justify-between"><span>Anno (30%):</span><span className="font-mono text-[#00E676]">{en.pillars.anno_score>=0?"+":""}{en.pillars.anno_score.toFixed(3)}</span></div>}
+   187→        {typeof en.pillars.fund_score==="number"&&<div className="flex items-center justify-between"><span>Fund (20%):</span><span className="font-mono text-[#00E676]">{en.pillars.fund_score>=0?"+":""}{en.pillars.fund_score.toFixed(3)}</span></div>}
+   188→        {typeof en.pillars.macro_score==="number"&&<div className="flex items-center justify-between"><span>Macro (15%):</span><span className="font-mono text-[#00E676]">{en.pillars.macro_score>=0?"+":""}{en.pillars.macro_score.toFixed(3)}</span></div>}
+   189→       </div>
+   190→      )}
+   191→      {typeof en.expected_return==="number"&&typeof en.r_pct==="number"&&(
+   192→       <div className="text-[10px] text-[#64748B] mt-1 pt-1 border-t border-white/[0.04]">
+   193→        <div className="flex items-center justify-between mb-0.5">
+   194→          <span className="text-[#94A3B8] font-semibold">CG Cost-Aware:</span>
+   195→          <span className={`font-mono font-bold ${en.expected_return>0?"text-[#00E676]":"text-[#FF5C5C]"}`}>{en.expected_return>=0?"+":""}{(en.expected_return*100).toFixed(2)}%</span>
+   196→        </div>
+   197→        <div className="flex items-center justify-between"><span>R (risk/share):</span><span className="font-mono text-[#94A3B8]">{(en.r_pct*100).toFixed(2)}%</span></div>
+   198→        <div className="text-[9px] text-[#64748B] mt-0.5 italic">net of 50bps round-trip + 15% CGT on gains</div>
+   199→       </div>
+   200→      )}
+   201→      {en.strategy_signals!=null&&typeof en.strategy_signals==="object"&&(
+   202→       <div className="text-[10px] text-[#64748B] mt-1 pt-1 border-t border-white/[0.04]">
+   203→        <div className="text-[#94A3B8] font-semibold mb-0.5">X 10-Strategy Signals:</div>
+   204→        {Object.entries(en.strategy_signals).slice(0,10).map(([sname,sval]:[string,any])=>(
+   205→          <div key={sname} className="flex items-center justify-between">
+   206→            <span className="truncate">{sval===1?"✓":"✗"} {sname}</span>
+   207→            <span className={`font-mono ${sval===1?"text-[#00E676]":"text-[#64748B]"}`}>{sval===1?"BUY":"—"}</span>
+   208→          </div>
+   209→        ))}
+   210→       </div>
+   211→      )}
+   212→     </div>))}</div>
+   213→   </CardContent></Card>
+   214→
+   215→   {data.tiers.map(tg=>(
+   216→    <Card key={tg.tier} className="bg-[#131829] border-white/[0.08] mb-3 md:mb-4"><CardHeader className="pb-2"><CardTitle className="text-sm md:text-base text-[#F4F7FB] flex items-center gap-2"><Cpu className="h-4 w-4 text-[#00E676]"/>{tg.label}</CardTitle><p className="text-[10px] md:text-xs text-[#94A3B8] mt-0.5">{tg.models.filter(m=>m.trained).length}/{tg.models.length} trained</p></CardHeader><CardContent>
+   217→     <div className="space-y-2">{tg.models.map(m=>{
+   218→      // coveredSymbols (stocks the model was backtested across) lives in the
+   219→      // DB ModelBacktestCache, which the route merges into data.backtesting
+   220→      // (NOT into m.backtest — that's the file-based subset). Merge it here so
+   221→      // the model card's "Stocks covered" badge reflects the full extended
+   222→      // universe (the user spec: "how much stock each model is trained on").
+   223→      const btAny=data?.backtesting?.[m.name]as any;
+   224→      const m2=btAny&&btAny.coveredSymbols!==undefined?{...m,backtest:{...(m.backtest as any),coveredSymbols:btAny.coveredSymbols}}:m;
+   225→      return <MC key={m.name} m={m2}/>;
+   226→     })}</div>
+   227→    </CardContent></Card>
+   228→   ))}
+   229→
+   230→   {/* Action Buttons */}
+   231→   <div className="text-center py-4 md:py-6 flex gap-3 justify-center flex-wrap">
+   232→    <Button onClick={()=>setBtOpen(true)} size="lg" className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold">
+   233→     <BarChart3 className="h-4 w-4 md:h-5 md:w-5 mr-2"/>Check Backtesting Results
+   234→    </Button>
+   235→    <Button onClick={()=>setSimOpen(true)} size="lg" variant="outline" className="border-[#00E676]/40 text-[#00E676] hover:bg-[#00E676]/10 font-semibold">
+   236→     <DollarSign className="h-4 w-4 md:h-5 md:w-5 mr-2"/>Portfolio Simulation
+   237→    </Button>
+   238→   </div>
+   239→
+   240→   {/* Simulation Modal — Issue 5 redesign */}
+   241→   <Dialog open={simOpen} onOpenChange={o=>{if(!o){setSimOpen(false);setSimDrilldown(null);}}}>
+   242→    <DialogContent className="bg-[#131829] border-white/[0.12] w-[95vw] max-w-[1600px] max-h-[90vh] overflow-y-auto">
+   243→     <DialogHeader><DialogTitle className="text-[#F4F7FB] flex items-center gap-2"><DollarSign className="h-5 w-5 text-[#00E676]"/>Portfolio Simulation</DialogTitle></DialogHeader>
+   244→     <div className="space-y-4">
+   245→      <p className="text-xs text-[#94A3B8]">
+   246→       <span className="text-[#F4F7FB] font-semibold">REAL-history simulation</span> — each ensemble runs on ITS OWN per-stock BUY signals
+   247→       (from ml_predictions_multi.json) over the <span className="text-[#00E676]">real</span> DB-backed daily OHLCV. Trades enter at <span className="text-[#00E676]">real</span> bar closes
+   248→       + use the ensemble's SL/TP distances. <span className="text-[#F4F7FB]">No of days (optional)</span>:
+   249→       if given → window = the last N real bars (today back N days, e.g. 5 → 18–23 Oct); if blank → any start day.
+   250→       Take <span className="text-[#00E676] font-mono">N trades</span> within the window; exit by <span className="text-[#00E676]">TP3</span> (best TP) / TP2 / TP1 / SL / window-end
+   251→       (TP rule: check TP3 → TP2 → TP1). Costs: 0.30% commission (0.15% × 2 sides) + 0.50% round-trip slippage + 15% CGT on net gains.
+   252→      </p>
+   253→
+   254→      {/* Input controls — Issue 5: removed "Position Size %", added "No of days" + "No of trades" */}
+   255→      <div className="flex gap-3 flex-wrap items-end">
+   256→       <div>
+   257→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Capital (PKR)</label>
+   258→        <input type="number" value={simAmount} onChange={e=>setSimAmount(e.target.value)} placeholder="100000" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-sm w-[160px]" />
+   259→       </div>
+   260→       <div>
+   261→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">No of days (optional · blank = any start)</label>
+   262→        <input type="number" value={simDays} onChange={e=>setSimDays(e.target.value)} placeholder="5 (recent N days)" min="0" max="252" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-sm w-[140px]" />
+   263→       </div>
+   264→       <div>
+   265→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">No of trades</label>
+   266→        <input type="number" value={simTrades} onChange={e=>setSimTrades(e.target.value)} placeholder="20" min="1" max="100" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-sm w-[120px]" />
+   267→       </div>
+   268→       <div className="min-w-[200px] flex-1">
+   269→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Stock (optional · default ALL)</label>
+   270→        <div className="bg-[#0A0E1A] border border-white/[0.12] rounded"><StockSearch value={simSymbol} onChange={(s)=>setSimSymbol(s)} placeholder="ALL stocks — or pick one" /></div>
+   271→       </div>
+   272→       <div>
+   273→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Rank by</label>
+   274→        <div className="flex bg-[#0A0E1A] border border-white/[0.12] rounded p-0.5">
+   275→         <button onClick={()=>setSimRankBy("winRate")} className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-semibold transition-colors ${simRankBy==="winRate"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>Win Rate</button>
+   276→         <button onClick={()=>setSimRankBy("netPnl")} className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-semibold transition-colors ${simRankBy==="netPnl"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>Net P&L</button>
+   277→         <button onClick={()=>setSimRankBy("prediction")} className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-semibold transition-colors ${simRankBy==="prediction"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>Prediction</button>
+   278→        </div>
+   279→       </div>
+   280→       <div>
+   281→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Prediction Score (target)</label>
+   282→        <input type="number" value={simTargetScore} onChange={e=>setSimTargetScore(e.target.value)} placeholder="1" min="1" max="999" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-sm w-[100px]" />
+   283→       </div>
+   284→       <div>
+   285→        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Win Rate (min %)</label>
+   286→        <input type="number" value={simWinRateThreshold} onChange={e=>setSimWinRateThreshold(e.target.value)} placeholder="100" min="0" max="100" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-sm w-[100px]" />
+   287→       </div>
+   288→       <Button onClick={async()=>{
+   289→         setSimLoading(true); setSimDrilldown(null);
+   290→         try{
+   291→          const symParam = simSymbol ? `&symbol=${encodeURIComponent(simSymbol)}` : "";
+   292→          const r=await fetch(`/api/backtest/ensembles?capital=${encodeURIComponent(simAmount)}&numTrades=${encodeURIComponent(simTrades)}&numDays=${encodeURIComponent(simDays)}${symParam}&rankBy=${simRankBy === "prediction" ? "winRate" : simRankBy}`);
+   293→          const d=await r.json();
+   294→          if(d.error){toast.error(d.error);return;}
+   295→          setSimData(d);
+   296→          const threshold = parseInt(simWinRateThreshold) || 100;
+   297→          const currentScores = { ...predictScoresRef.current };
+   298→          for (const r of [...(d.top5||[]), ...(d.rest||[])]) {
+   299→            if (r.metrics && r.metrics.winRate >= threshold) {
+   300→              currentScores[r.ensembleName] = (currentScores[r.ensembleName] || 0) + 1;
+   301→            }
+   302→          }
+   303→          predictScoresRef.current = currentScores;
+   304→          setPredictScores(currentScores);
+   305→          toast.success(`Simulated ${d.totalEnsembles} ensembles · ${d.numTrades} trades each · ${d.numDays}-day hold`);
+   306→         }catch(e){toast.error("Simulation failed");}
+   307→         finally{setSimLoading(false);}
+   308→        }} disabled={simLoading||automateRunning} size="sm" className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881]">
+   309→        {simLoading?"Running...":"Simulate"}<Play className="h-3 w-3 ml-2"/>
+   310→       </Button>
+   311→       <Button onClick={async()=>{
+   312→         const target = parseInt(simTargetScore) || 1;
+   313→         const maxRuns = 50;
+   314→         automateStopRef.current = false;
+   315→         setAutomateRunning(true); setAutomateCount(0); setSimDrilldown(null);
+   316→         predictScoresRef.current={}; setPredictScores({}); setAutomateFinalCount(0); // reset scores + count to 0 on each Automate click
+   317→         let count = 0; let reached = false;
+   318→         while (count < maxRuns && !automateStopRef.current) {
+   319→          count++; setAutomateCount(count);
+   320→          try{
+   321→           const symParam = simSymbol ? `&symbol=${encodeURIComponent(simSymbol)}` : "";
+   322→           const r=await fetch(`/api/backtest/ensembles?capital=${encodeURIComponent(simAmount)}&numTrades=${encodeURIComponent(simTrades)}&numDays=${encodeURIComponent(simDays)}${symParam}&rankBy=winRate`);
+   323→           const d=await r.json();
+   324→           if(d.error){toast.error(d.error);break;}
+   325→           setSimData(d);
+   326→           const threshold = parseInt(simWinRateThreshold) || 100;
+   327→           const currentScores = { ...predictScoresRef.current };
+   328→           reached = false;
+   329→           for (const r of [...(d.top5||[]), ...(d.rest||[])]) {
+   330→             if (r.metrics && r.metrics.winRate >= threshold) {
+   331→               currentScores[r.ensembleName] = (currentScores[r.ensembleName] || 0) + 1;
+   332→               if (currentScores[r.ensembleName] >= target) reached = true;
+   333→             }
+   334→           }
+   335→           predictScoresRef.current = currentScores;
+   336→           setPredictScores(currentScores);
+   337→           if (reached) {
+   338→             toast.success(`Target score ${target} reached after ${count} simulations!`);
+   339→             break;
+   340→           }
+   341→          }catch(e){toast.error("Simulation failed");break;}
+   342→         }
+   343→         setAutomateRunning(false);
+   344→         setAutomateFinalCount(count); // persist the count after automate finishes
+   345→         if (!reached && count >= maxRuns) {
+   346→          toast.info(`Stopped after ${count} simulations (max). No ensemble reached score ${target}.`);
+   347→         }
+   348→        }} disabled={automateRunning||simLoading} size="sm" className="bg-[#FBBF24] text-[#0A0E1A] hover:bg-[#FBBF24]/90">
+   349→        {automateRunning?`Auto (${automateCount})`:"Automate"}<Play className="h-3 w-3 ml-2"/>
+   350→       </Button>
+   351→       {automateRunning && <Button onClick={()=>{automateStopRef.current=true;}} size="sm" className="bg-[#FF5C5C] text-white hover:bg-[#FF5C5C]/90">Stop</Button>}
+   352→       {automateRunning && <span className="text-[10px] text-[#FBBF24] animate-pulse">Running simulation {automateCount}...</span>}
+   353→       {!automateRunning && automateFinalCount > 0 && (
+   354→         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#FBBF24]/10 border border-[#FBBF24]/30 text-[11px] text-[#FBBF24] font-semibold">
+   355→           <TrendingUp className="h-3.5 w-3.5" /> Automate finished: {automateFinalCount} simulation{automateFinalCount===1?"":"s"} run.
+   356→         </div>
+   357→       )}
+   358→      </div>
+   359→
+   360→      {simData&&simData.top5&&(
+   361→       <>
+   362→       {/* Summary */}
+   363→       <div className="rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-3">
+   364→        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+   365→         <div><div className="text-[10px] uppercase text-[#64748B]">Starting Capital</div><div className="font-mono font-bold text-[#F4F7FB]">PKR {Number(simData.capital).toLocaleString()}</div></div>
+   366→         <div><div className="text-[10px] uppercase text-[#64748B]">Amount Per Trade</div><div className="font-mono font-bold text-[#F4F7FB]">PKR {Number(simData.amountPerTrade).toLocaleString()}</div></div>
+   367→         <div><div className="text-[10px] uppercase text-[#64748B]">Ensembles Simulated</div><div className="font-mono font-bold text-[#00E676]">{simData.totalEnsembles}</div></div>
+   368→         <div><div className="text-[10px] uppercase text-[#64748B]">Days · Trades</div><div className="font-mono font-bold text-[#F4F7FB]">{simData.numDays}d · {simData.numTrades}</div></div>
+   369→        </div>
+   370→       </div>
+   371→
+   372→       {/* Drill-down: show one ensemble's trade-by-trade table */}
+   373→       {simDrilldown?(()=>{
+   374→         const all=[...simData.top5,...simData.rest];
+   375→         const ens=all.find(e=>e.ensembleName===simDrilldown);
+   376→         if(!ens)return null;
+   377→         return (
+   378→          <div>
+   379→           <Button onClick={()=>setSimDrilldown(null)} variant="outline" size="sm" className="border-white/[0.12] text-[#94A3B8] hover:text-[#F4F7FB] mb-3">
+   380→            <ChevronLeft className="h-3.5 w-3.5 mr-1"/>Back to ranking
+   381→           </Button>
+   382→           <h3 className="text-sm font-semibold text-[#00E676] mb-2">{ens.ensembleLabel} — Trade by trade</h3>
+   383→           {ens.trades.length===0?(
+   384→            <p className="text-xs text-[#64748B] py-4 text-center">No trades — this ensemble had no actionable signals with OHLCV bars in the DB.</p>
+   385→           ):(
+   386→            <div className="overflow-x-auto custom-scroll rounded-md border border-white/[0.06]">
+   387→             <table className="w-full text-[10px] whitespace-nowrap">
+   388→              <thead className="bg-[#0A0E1A] sticky top-0">
+   389→               <tr className="border-b border-white/[0.08] text-[#64748B]">
+   390→                <th className="text-left py-1.5 px-1.5">#</th>
+   391→                <th className="text-left py-1.5 px-1.5">Symbol</th>
+   392→                <th className="text-right py-1.5 px-1.5">Entry date</th>
+   393→                <th className="text-right py-1.5 px-1.5">Closing date</th>
+   394→                <th className="text-left py-1.5 px-1.5">Signal</th>
+   395→                <th className="text-right py-1.5 px-1.5">CS</th>
+   396→                <th className="text-right py-1.5 px-1.5">Entry</th>
+   397→                <th className="text-right py-1.5 px-1.5">Close</th>
+   398→                <th className="text-right py-1.5 px-1.5">SL</th>
+   399→                <th className="text-left py-1.5 px-1.5">Hit</th>
+   400→                <th className="text-right py-1.5 px-1.5">TP1</th>
+   401→                <th className="text-right py-1.5 px-1.5">TP2</th>
+   402→                <th className="text-right py-1.5 px-1.5">TP3</th>
+   403→                <th className="text-right py-1.5 px-1.5">Invested</th>
+   404→                <th className="text-left py-1.5 px-1.5">Result</th>
+   405→                <th className="text-right py-1.5 px-1.5">P&amp;L</th>
+   406→                <th className="text-right py-1.5 px-1.5">Portfolio</th>
+   407→               </tr>
+   408→              </thead>
+   409→              <tbody>
+   410→               {ens.trades.map((t:any)=>(
+   411→                <tr key={t.tradeNo} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+   412→                 <td className="py-1 px-1.5 font-mono text-[#64748B]">{t.tradeNo}</td>
+   413→                 <td className="py-1 px-1.5 font-mono font-semibold text-[#F4F7FB]">{t.symbol}</td>
+   414→                 <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{t.entryDate ? new Date(t.entryDate).toLocaleDateString("en-PK",{year:"2-digit",month:"short",day:"numeric"}) : "—"}</td>
+   415→                 <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{t.exitDate ? new Date(t.exitDate).toLocaleDateString("en-PK",{year:"2-digit",month:"short",day:"numeric"}) : "—"}</td>
+   416→                 <td className="py-1 px-1.5"><Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#00E676]/40 text-[#00E676]">{t.signal || t.side}</Badge></td>
+   417→                 <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{t.confidence ?? 0}</td>
+   418→                 <td className="py-1 px-1.5 text-right font-mono text-[#F4F7FB]">{t.entryPrice.toFixed(2)}</td>
+   419→                 <td className="py-1 px-1.5 text-right font-mono text-[#F4F7FB]">{(t.close ?? t.exitPrice ?? 0).toFixed(2)}</td>
+   420→                 <td className="py-1 px-1.5 text-right font-mono text-[#FF5C5C]/80">{t.sl.toFixed(2)}</td>
+   421→                 <td className="py-1 px-1.5"><Badge variant="outline" className={`text-[8px] py-0 h-3.5 ${t.exitReason==="TP3"?"border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10":t.exitReason==="TP2"?"border-[#00E676]/30 text-[#00E676] bg-[#00E676]/8":t.exitReason==="TP1"?"border-[#00E676]/25 text-[#00E676]/90 bg-[#00E676]/6":t.exitReason==="SL"?"border-[#FF5C5C]/40 text-[#FF5C5C] bg-[#FF5C5C]/10":"border-white/[0.12] text-[#64748B] bg-white/[0.04]"}`}>{t.exitReason === "TIME" ? "Close" : t.exitReason}</Badge></td>
+   422→                 <td className="py-1 px-1.5 text-right font-mono text-[#00E676]/80">{t.tp1.toFixed(2)}</td>
+   423→                 <td className="py-1 px-1.5 text-right font-mono text-[#00E676]/90">{t.tp2.toFixed(2)}</td>
+   424→                 <td className="py-1 px-1.5 text-right font-mono text-[#00E676]">{t.tp3.toFixed(2)}</td>
+   425→                 <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{Math.round(t.invested).toLocaleString()}</td>
+   426→                 <td className={`py-1 px-1.5 font-mono font-semibold ${t.isWin?"text-[#00E676]":"text-[#FF5C5C]"}`}>{t.isWin?"✓ W":"✗ L"}</td>
+   427→                 <td className={`py-1 px-1.5 text-right font-mono font-semibold ${t.netPnl>=0?"text-[#00E676]":"text-[#FF5C5C]"}`}>{t.netPnl>=0?"+":""}{Math.round(t.netPnl).toLocaleString()}</td>
+   428→                 <td className={`py-1 px-1.5 text-right font-mono ${t.portfolio>=ens.metrics.startingCapital?"text-[#00E676]":"text-[#FF5C5C]"}`}>{Math.round(t.portfolio).toLocaleString()}</td>
+   429→                </tr>
+   430→               ))}
+   431→              </tbody>
+   432→             </table>
+   433→            </div>
+   434→           )}
+   435→          </div>
+   436→         );
+   437→       })():(
+   438→        <>
+   439→         {/* ALL ensemble models — ranked by win rate, full metrics each (per user spec) */}
+   440→         <div>
+   441→          <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5">
+   442→           <TrendingUp className="h-4 w-4"/>All ensemble models ({[...simData.top5, ...simData.rest].length}) — ranked by {simRankBy === "winRate" ? "win rate" : simRankBy === "netPnl" ? "net P&L" : "prediction score"}
+   443→          </h3>
+   444→          <div className="space-y-2">
+   445→           {(simRankBy === "prediction"
+   446→             ? [...simData.top5, ...simData.rest].sort((a:any,b:any) => (predictScores[b.ensembleName]||0) - (predictScores[a.ensembleName]||0))
+   447→             : [...simData.top5, ...simData.rest]
+   448→           ).map((r:any,idx:number)=>(
+   449→            <div key={r.ensembleName} className="rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-3">
+   450→             <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+   451→              <div className="flex items-center gap-2">
+   452→               <span className="h-6 w-6 rounded-full bg-[#00E676] text-[#0A0E1A] font-bold text-xs flex items-center justify-center">{idx+1}</span>
+   453→               <span className="text-sm font-semibold text-[#00E676]">{r.ensembleLabel}</span>
+   454→               {predictScores[r.ensembleName] > 0 && <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10 ml-1">Score: {predictScores[r.ensembleName]}</Badge>}
+   455→              </div>
+   456→              <Button onClick={()=>setSimDrilldown(r.ensembleName)} size="sm" variant="outline" className="border-[#00E676]/30 text-[#00E676] hover:bg-[#00E676]/10 h-7 text-[11px]">
+   457→               <Eye className="h-3 w-3 mr-1"/>View in depth — Trade by trade
+   458→              </Button>
+   459→             </div>
+   460→             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+   461→              <div><div className="text-[10px] uppercase text-[#64748B]">Starting Capital</div><div className="font-mono text-[#F4F7FB]">PKR {Math.round(r.metrics.startingCapital).toLocaleString()}</div></div>
+   462→              <div><div className="text-[10px] uppercase text-[#64748B]">Amount Per Trade</div><div className="font-mono text-[#F4F7FB]">PKR {Math.round(r.metrics.amountPerTrade).toLocaleString()}</div></div>
+   463→              <div><div className="text-[10px] uppercase text-[#64748B]">Total Trades (BUY only)</div><div className="font-mono text-[#F4F7FB]">{r.metrics.totalTrades} <span className="text-[#64748B] text-[10px]">(natural: {r.metrics.naturalBuyCount})</span></div></div>
+   464→              <div><div className="text-[10px] uppercase text-[#64748B]">Days</div><div className="font-mono text-[#F4F7FB]">{r.metrics.numDays} days <span className="text-[#64748B] text-[10px]">({r.metrics.tradesPerDay}/day)</span></div></div>
+   465→              <div><div className="text-[10px] uppercase text-[#64748B]">Win Rate</div><div className="font-mono text-[#00E676]">{r.metrics.winRate.toFixed(2)}%</div></div>
+   466→              <div><div className="text-[10px] uppercase text-[#64748B]">Win/Loss Trades</div><div className="font-mono"><span className="text-[#00E676]">{r.metrics.winTrades}</span>/<span className="text-[#FF5C5C]">{r.metrics.lossTrades}</span></div></div>
+   467→              <div><div className="text-[10px] uppercase text-[#64748B]">Avg Win</div><div className="font-mono text-[#00E676]">+{r.metrics.avgWinPct.toFixed(2)}%</div></div>
+   468→              <div><div className="text-[10px] uppercase text-[#64748B]">Avg Loss</div><div className="font-mono text-[#FF5C5C]">{r.metrics.avgLossPct.toFixed(2)}%</div></div>
+   469→              <div><div className="text-[10px] uppercase text-[#64748B]">Gross Profit</div><div className="font-mono text-[#00E676]">PKR {Math.round(r.metrics.grossProfit).toLocaleString()}</div></div>
+   470→              <div><div className="text-[10px] uppercase text-[#64748B]">Gross Loss</div><div className="font-mono text-[#FF5C5C]">PKR {Math.round(r.metrics.grossLoss).toLocaleString()}</div></div>
+   471→              <div><div className="text-[10px] uppercase text-[#64748B]">Total Costs (comm+slip+CGT)</div><div className="font-mono text-[#94A3B8]">PKR {Math.round(r.metrics.totalCosts).toLocaleString()}</div></div>
+   472→              <div><div className="text-[10px] uppercase text-[#64748B]">Gross Before Costs</div><div className="font-mono text-[#94A3B8]">PKR {Math.round(r.metrics.grossBeforeCosts).toLocaleString()}</div></div>
+   473→              <div><div className="text-[10px] uppercase text-[#64748B]">Net P&L</div><div className={`font-mono font-bold ${r.metrics.netPnL>=0?"text-[#00E676]":"text-[#FF5C5C]"}`}>{r.metrics.netPnL>=0?"+":""}PKR {Math.round(r.metrics.netPnL).toLocaleString()}</div></div>
+   474→              <div><div className="text-[10px] uppercase text-[#64748B]">Final Portfolio Value</div><div className={`font-mono font-bold ${r.metrics.finalValue>=r.metrics.startingCapital?"text-[#00E676]":"text-[#FF5C5C]"}`}>PKR {Math.round(r.metrics.finalValue).toLocaleString()}</div></div>
+   475→              <div><div className="text-[10px] uppercase text-[#64748B]">ROI</div><div className={`font-mono font-bold ${r.metrics.roiPct>=0?"text-[#00E676]":"text-[#FF5C5C]"}`}>{r.metrics.roiPct>=0?"+":""}{r.metrics.roiPct.toFixed(2)}%</div></div>
+   476→              <div><div className="text-[10px] uppercase text-[#64748B]">Max Drawdown</div><div className="font-mono text-[#FF5C5C]">PKR {Math.round(r.metrics.maxDrawdownPkr).toLocaleString()} <span className="text-[10px]">(-{r.metrics.maxDrawdownPct.toFixed(2)}%)</span></div></div>
+   477→              <div><div className="text-[10px] uppercase text-[#64748B]">Sharpe / Sortino</div><div className="font-mono text-[#94A3B8]">{r.metrics.sharpe.toFixed(2)} / {r.metrics.sortino.toFixed(2)}</div></div>
+   478→              <div><div className="text-[10px] uppercase text-[#64748B]">Profit Factor</div><div className={`font-mono ${r.metrics.profitFactor>=1.3?"text-[#00E676]":r.metrics.profitFactor>=1?"text-[#FBBF24]":"text-[#FF5C5C]"}`}>{r.metrics.profitFactor.toFixed(2)}</div></div>
+   479→             </div>
+   480→            </div>
+   481→           ))}
+   482→           {[...simData.top5, ...simData.rest].length===0&&<p className="text-xs text-[#64748B] py-4 text-center">No results — no ensemble produced any trades for this stock/filter.</p>}
+   483→          </div>
+   484→         </div>
+   485→        </>
+   486→       )}
+   487→
+   488→       <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3 text-[11px] text-[#64748B] leading-relaxed">
+   489→        <span className="text-[#94A3B8] font-semibold">Simulation notes:</span> Each ensemble is treated as a
+   490→        separate "model" in the ranking; each uses its own per-symbol signals (entry/SL/TP1/TP2/TP3) —
+   491→        the per-ensemble values computed from ml_predictions_multi.json. Trades are sorted by R:R
+   492→        (deterministic). Entry bar = the bar `numDays` before the latest DB bar; fill = that bar's close.
+   493→        Exit at first TP-tier / SL hit during the hold period, or time-up at the N-day close. Per-trade
+   494→        costs: 0.15% × 2 sides commission + 0.50% round-trip slippage + 15% CGT on net gains. MaxDD =
+   495→        peak-to-trough on the equity curve. Past performance does not guarantee future returns.
+   496→       </div>
+   497→       </>
+   498→      )}
+   499→
+   500→      {!simData&&(
+   501→       <div className="text-center py-8">
+   502→        <DollarSign className="h-10 w-10 text-[#00E676]/30 mx-auto mb-3"/>
+   503→        <p className="text-sm text-[#94A3B8]">Enter capital, days, and trade count — then click Simulate to rank all 10 ensembles by net ROI.</p>
+   504→       </div>
+   505→      )}
+   506→     </div>
+   507→    </DialogContent>
+   508→   </Dialog>
+   509→
+   510→   {/* Backtesting Modal */}
+   511→   <Dialog open={btOpen} onOpenChange={o=>!o&&setBtOpen(false)}>
+   512→    <DialogContent className="bg-[#131829] border-white/[0.12] max-w-3xl max-h-[80vh] overflow-y-auto">
+   513→     <DialogHeader><DialogTitle className="text-[#F4F7FB] flex items-center gap-2"><BarChart3 className="h-5 w-5 text-[#00E676]"/>Backtesting Report</DialogTitle></DialogHeader>
+   514→     <div className="space-y-4">
+   515→      <p className="text-xs text-[#94A3B8]">Backtesting on 20% holdout test set. Star ratings:★★★★★=80%+win,★★★★=60%+,★★★=40%+.</p>
+   516→      {data?.backtestSource==="db-extended-universe"&&<p className="text-[10px] text-[#FBBF24] mt-1">Full-universe backtest (includes new/low-data PSX stocks via extended training) — DB-cached.</p>}
+   517→      {/* ML-integrity honesty banner (Priority 3): the runtime backtest below
+   518→          evaluates every model via the shared strategySignal() indicator engine,
+   519→          NOT trained-ML artifacts. Treated as a technical-rule-strategy evaluation. */}
+   520→      <div className="rounded-md border border-[#22D3EE]/30 bg-[#22D3EE]/[0.06] p-2 text-[10px] text-[#94A3B8] leading-relaxed">
+   521→       <span className="text-[#22D3EE] font-semibold">ML-integrity note:</span> The backtest stats below are a <span className="text-[#F4F7FB]">technical-rule-strategy evaluation</span>, not a trained-ML artifact evaluation. The runtime backtest engine (<code className="text-[#00E676]">model-backtest.ts → runAllBacktests</code>) computes every model&apos;s signal via the shared <code className="text-[#00E676]">strategySignal()</code> indicator engine in <code className="text-[#00E676]">fallback-predictions.ts</code> — i.e. 65 indicator-strategy variants, not 65 trained models. Live per-stock predictions (shown on the model cards above) DO use Python-trained artifacts from <code className="text-[#00E676]">data/ml_predictions_multi.json</code> where available. Genuine walk-forward trained-ML backtests are a pending task.
+   522→      </div>
+   523→
+   524→      {/* Ensemble Backtesting Section */}
+   525→      <div>
+   526→       <h3 className="text-sm font-semibold text-[#00E676] mb-2">Ensemble Backtesting</h3>
+   527→       <div className="space-y-2">
+   528→        {ensBt.map(m=>(
+   529→         <div key={m.name} className="rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-3">
+   530→          <div className="flex items-center justify-between mb-2">
+   531→           <span className="text-sm font-semibold text-[#00E676]">{m.name.replace(/_/g," ")}</span>
+   532→           <span className="text-[#FBBF24] text-sm">{"★".repeat(m.stars||0)}<span className="text-[#64748B]">{"★".repeat(5-(m.stars||0))}</span></span>
+   533→          </div>
+   534→          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+   535→           <div><div className="text-[10px] uppercase text-[#64748B]">Win Rate</div><div className="font-mono font-bold text-[#00E676]">{m.winRate}%</div></div>
+   536→           <div><div className="text-[10px] uppercase text-[#64748B]">Avg Return</div><div className="font-mono text-[#F4F7FB]">{m.avgReturnPct}%</div></div>
+   537→           <div><div className="text-[10px] uppercase text-[#64748B]">Best Trade</div><div className="font-mono text-[#00E676]">{m.maxReturnPct}%</div></div>
+   538→           <div><div className="text-[10px] uppercase text-[#64748B]">Worst Trade</div><div className="font-mono text-[#FF5C5C]">{m.minReturnPct}%</div></div>
+   539→           <div><div className="text-[10px] uppercase text-[#64748B]">Total Trades</div><div className="font-mono text-[#F4F7FB]">{m.totalTrades}</div></div>
+   540→           {typeof m.winTrades==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">Win Trades</div><div className="font-mono font-bold text-[#00E676]">{m.winTrades}</div></div>}
+   541→           {typeof m.lossTrades==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">Loss Trades</div><div className="font-mono font-bold text-[#FF5C5C]">{m.lossTrades}</div></div>}
+   542→           {typeof m.profitFactor==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">Profit Factor</div><div className={`font-mono font-bold ${m.profitFactor>=1.3?"text-[#00E676]":m.profitFactor>=1.0?"text-[#FBBF24]":"text-[#FF5C5C]"}`}>{m.profitFactor.toFixed(2)}</div></div>}
+   543→           {typeof m.sharpe==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">Sharpe</div><div className="font-mono text-[#94A3B8]">{m.sharpe.toFixed(2)}</div></div>}
+   544→           {typeof m.sortino==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">Sortino</div><div className="font-mono text-[#94A3B8]">{m.sortino.toFixed(2)}</div></div>}
+   545→           {typeof m.maxDrawdownPct==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">Max Drawdown</div><div className="font-mono text-[#FF5C5C]">{m.maxDrawdownPct}%</div></div>}
+   546→           {typeof m.tp1HitRate==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">TP1 Hit Rate</div><div className="font-mono text-[#00E676]">{(m.tp1HitRate*100).toFixed(1)}%</div></div>}
+   547→           {typeof m.costBps==="number"&&<div><div className="text-[10px] uppercase text-[#64748B]">Cost (bps)</div><div className="font-mono text-[#94A3B8]">{m.costBps}</div></div>}
+   548→          </div>
+   549→          {m.reliabilityTable&&m.reliabilityTable.length>0&&(
+   550→           <div className="mt-2 pt-2 border-t border-white/[0.04]">
+   551→            <div className="text-[10px] uppercase text-[#64748B] mb-1">Reliability Table (predicted vs actual hit rate)</div>
+   552→            <div className="grid grid-cols-2 md:grid-cols-5 gap-1 text-[10px]">
+   553→             {m.reliabilityTable.map((r:any)=>{
+   554→              // CL-2 / PI use "predicted_prob"; GM uses "avg_score". Handle both.
+   555→              const predLabel = r.predicted_prob!=null?"pred":(r.avg_score!=null?"score":"pred");
+   556→              const predVal = typeof r.predicted_prob==="number"?r.predicted_prob:(typeof r.avg_score==="number"?r.avg_score:0);
+   557→              const actVal = typeof r.actual_hit_rate==="number"?r.actual_hit_rate:0;
+   558→              return (
+   559→               <div key={r.bin} className="rounded bg-[#0A0E1A] border border-white/[0.06] px-1.5 py-1">
+   560→                <div className="text-[#64748B] text-[9px]">bin{r.bin}·n={r.count}</div>
+   561→                <div className="font-mono text-[#94A3B8]">{predLabel} {predVal.toFixed(2)}</div>
+   562→                <div className="font-mono text-[#F4F7FB]">act {actVal.toFixed(2)}</div>
+   563→               </div>
+   564→              );
+   565→             })}
+   566→            </div>
+   567→           </div>
+   568→          )}
+   569→         </div>
+   570→        ))}
+   571→        {ensBt.length===0&&<p className="text-xs text-[#64748B] text-center py-4">No ensemble backtesting data.</p>}
+   572→       </div>
+   573→      </div>
+   574→
+   575→      {/* Individual Model Backtesting Section */}
+   576→      <div>
+   577→       <h3 className="text-sm font-semibold text-[#00E676] mb-2">Individual Model Backtesting</h3>
+   578→       <div className="space-y-2">
+   579→        {indBt.map(m=>(
+   580→         <div key={m.name} className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3">
+   581→          <div className="flex items-center justify-between mb-2">
+   582→           <span className="text-sm font-semibold text-[#F4F7FB]">{m.name}</span>
+   583→           <span className="text-[#FBBF24] text-sm">{"★".repeat(m.stars||0)}<span className="text-[#64748B]">{"★".repeat(5-(m.stars||0))}</span></span>
+   584→          </div>
+   585→          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+   586→           <div><div className="text-[10px] uppercase text-[#64748B]">Win Rate</div><div className="font-mono font-bold text-[#00E676]">{m.winRate}%</div></div>
+   587→           <div><div className="text-[10px] uppercase text-[#64748B]">Avg Return</div><div className="font-mono text-[#F4F7FB]">{m.avgReturnPct}%</div></div>
+   588→           <div><div className="text-[10px] uppercase text-[#64748B]">Best Trade</div><div className="font-mono text-[#00E676]">{m.maxReturnPct}%</div></div>
+   589→           <div><div className="text-[10px] uppercase text-[#64748B]">Worst Trade</div><div className="font-mono text-[#FF5C5C]">{m.minReturnPct}%</div></div>
+   590→           <div><div className="text-[10px] uppercase text-[#64748B]">Total Trades</div><div className="font-mono text-[#F4F7FB]">{m.totalTrades}</div></div>
+   591→           <div><div className="text-[10px] uppercase text-[#64748B]">Buy Signals</div><div className="font-mono text-[#00E676]">{m.buySignals}</div></div>
+   592→           <div><div className="text-[10px] uppercase text-[#64748B]">Correct Buys</div><div className="font-mono text-[#F4F7FB]">{m.correctBuys}</div></div>
+   593→           <div><div className="text-[10px] uppercase text-[#64748B]">Sell Signals</div><div className="font-mono text-[#FF5C5C]">{m.sellSignals}</div></div>
+   594→          </div>
+   595→         </div>
+   596→        ))}
+   597→        {indBt.length===0&&<p className="text-xs text-[#64748B] text-center py-4">No individual backtesting data.</p>}
+   598→       </div>
+   599→      </div>
+   600→
+   601→      {/* Phase 3: freshness chip — is the backtest up to date? */}
+   602→      <div className="flex items-center gap-2 flex-wrap text-[10px] text-[#64748B]">
+   603→       <Badge variant="outline" className={`h-4 py-0 ${data?.backtestSource==="db-extended-universe"?"border-[#00E676]/40 text-[#00E676]":"border-[#FBBF24]/40 text-[#FBBF24]"}`} title="Backtest was recomputed over the full extended universe (original ML-trained + fallback-covered stocks)">{data?.backtestSource==="db-extended-universe"?"FRESH · full-universe":"FILE · subset"}</Badge>
+   604→       <span>{data?.backtestSource==="db-extended-universe"?"Backtest freshly recomputed across all DB stocks (ModelBacktestCache populated).":"Backtest from the file subset — run the precompute for full-universe coverage."}</span>
+   605→      </div>
+   606→
+   607→      {/* Phase 3: per-model Actual vs Predicted graph view (enhanced) */}
+   608→      <div>
+   609→       <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5"><TrendingUp className="h-4 w-4"/>Model Graph View — Actual vs Predicted</h3>
+   610→       <p className="text-[10px] text-[#94A3B8] mb-2">At each decision point (every <span className="text-[#F4F7FB]">{graphStep}</span> bars), each selected model&apos;s predicted target price (entry × (1+predictedReturn)) vs the actual realized close {graphHorizon} bars later. Only actionable (BUY/SELL) points are plotted.</p>
+   611→       <div className="flex gap-2 flex-wrap items-end mb-3">
+   612→        <div className="min-w-[200px] flex-1">
+   613→         <label className="text-[10px] uppercase text-[#64748B] block mb-1">Symbol {graphUniverse==="kse100"&&kse100Syms.length>0?`· KSE-100 only (${kse100Syms.length})`:"· whole market"}</label>
+   614→         <div className="bg-[#0A0E1A] border border-white/[0.12] rounded"><StockSearch value={graphSymbol} onChange={(s)=>setGraphSymbol(s)} placeholder={data?.symbol||"LUCK"} showSuggestions={true} allowedSymbols={graphUniverse==="kse100"&&kse100Syms.length>0?kse100Syms:undefined} /></div>
+   615→        </div>
+   616→        <div>
+   617→         <label className="text-[10px] uppercase text-[#64748B] block mb-1">Universe</label>
+   618→         <div className="flex bg-[#0A0E1A] border border-white/[0.12] rounded p-0.5">
+   619→          <button onClick={()=>setGraphUniverse("all")} className={`px-2 py-1.5 rounded text-[10px] font-mono font-semibold ${graphUniverse==="all"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>All stocks</button>
+   620→          <button onClick={()=>setGraphUniverse("kse100")} className={`px-2 py-1.5 rounded text-[10px] font-mono font-semibold ${graphUniverse==="kse100"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>KSE-100 only</button>
+   621→         </div>
+   622→        </div>
+   623→        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Decision pts (bars)</label>
+   624→         <input type="number" value={graphStep} onChange={e=>setGraphStep(e.target.value)} min="2" max="252" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-2 text-[#F4F7FB] font-mono text-xs w-[110px]" />
+   625→        </div>
+   626→        <div><label className="text-[10px] uppercase text-[#64748B] block mb-1">Horizon (bars)</label>
+   627→         <input type="number" value={graphHorizon} onChange={e=>setGraphHorizon(e.target.value)} min="3" max="63" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-2 text-[#F4F7FB] font-mono text-xs w-[90px]" />
+   628→        </div>
+   629→        <Button size="sm" onClick={loadGraph} disabled={graphLoading} className="bg-[#00E676] text-[#0A0E1A] hover:bg-[#22E881] font-semibold">
+   630→         {graphLoading?<Loader2 className="h-4 w-4 mr-1 animate-spin"/>:<Play className="h-4 w-4 mr-1"/>}Load graph
+   631→        </Button>
+   632→       </div>
+   633→       {/* Multi-model checkboxes (All / None) */}
+   634→       <div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2 mb-3">
+   635→        <div className="flex items-center justify-between mb-1.5">
+   636→         <span className="text-[10px] uppercase tracking-wider text-[#64748B]">Models ({graphModels.length} selected)</span>
+   637→         <div className="flex gap-1">
+   638→          <button onClick={()=>setGraphModels([...GRAPH_MODEL_OPTIONS])} className="px-2 py-0.5 rounded text-[9px] font-mono bg-[#00E676]/10 text-[#00E676] hover:bg-[#00E676]/20">All</button>
+   639→          <button onClick={()=>setGraphModels([])} className="px-2 py-0.5 rounded text-[9px] font-mono bg-white/[0.04] text-[#64748B] hover:bg-white/[0.08]">None</button>
+   640→         </div>
+   641→        </div>
+   642→        <div className="max-h-32 overflow-y-auto grid grid-cols-2 md:grid-cols-3 gap-1 pr-1">
+   643→         {GRAPH_MODEL_OPTIONS.map((k,mi)=>{
+   644→          const on=graphModels.includes(k);
+   645→          const color=GRAPH_COLORS[mi%8];
+   646→          return <label key={k} className={`flex items-center gap-1.5 text-[10px] font-mono px-1.5 py-1 rounded cursor-pointer hover:bg-white/[0.04] ${on?"text-[#F4F7FB]":"text-[#64748B]"}`}>
+   647→           <input type="checkbox" checked={on} onChange={()=>toggleModel(k)} className="h-2.5 w-2.5 accent-[#00E676]" />
+   648→           <span className="inline-block h-2 w-2 rounded-full shrink-0" style={{background:on?color:"rgba(255,255,255,0.15)"}} />
+   649→           <span className="truncate">{k.replace(/_/g," ")}</span>
+   650→          </label>;
+   651→         })}
+   652→        </div>
+   653→       </div>
+   654→       {graphMeta&&<div className="text-[10px] text-[#64748B] mb-2">{graphModels.join(", ")} on {graphSymbol||data?.symbol||"LUCK"} · {graphMeta.points} decision points · data through {graphMeta.dataSourceDate||"—"}</div>}
+   655→       {graphChart&&graphChart.dates.length>0&&(()=>{
+   656→        const chartData=graphChart.dates.map((d,i)=>{const row:any={date:d,Actual:graphChart.actual[i]};for(const m of graphChart.models)row[m.label]=m.predicted[i];return row;});
+   657→        return (
+   658→        <div className="rounded-lg bg-[#0A0E1A] border border-white/[0.06] p-3" style={{height:360}}>
+   659→         <ResponsiveContainer width="100%" height="100%">
+   660→          <LineChart data={chartData} margin={{top:8,right:16,left:0,bottom:8}}>
+   661→           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)"/>
+   662→           <XAxis dataKey="date" tick={{fill:"#64748B",fontSize:9}} tickFormatter={(d:string)=>String(d).slice(5)} angle={-20} textAnchor="end" height={50}/>
+   663→           <YAxis tick={{fill:"#64748B",fontSize:10}} domain={["auto","auto"]} width={48}/>
+   664→           <Tooltip contentStyle={{background:"#0A0E1A",border:"1px solid rgba(0,230,118,0.3)",borderRadius:6,fontSize:11}} labelStyle={{color:"#94A3B8"}} formatter={(v:number,n:string)=>[`${n}: PKR ${(v as number).toFixed(2)}`,n]}/>
+   665→           <Legend wrapperStyle={{fontSize:10}}/>
+   666→           <Line type="monotone" dataKey="Actual" name="Actual" stroke="#00E676" strokeWidth={2.5} dot={{r:2}}/>
+   667→           {graphChart.models.map((m:any,mi:number)=><Line key={m.key} type="monotone" dataKey={m.label} name={m.label} stroke={GRAPH_COLORS[mi%8]} strokeWidth={1.5} dot={false} connectNulls />)}
+   668→          </LineChart>
+   669→         </ResponsiveContainer>
+   670→        </div>
+   671→        );
+   672→       })()}
+   673→      </div>
+   674→     </div>
+   675→    </DialogContent>
+   676→   </Dialog>
+   677→  </>)}
+   678→ </main></div>);
+   679→}
+   680→
+   681→function MC({m}:{m:MP}){
+   682→ const sc=m.signal==="BUY"?"text-[#00E676]":m.signal==="SELL"?"text-[#FF5C5C]":"text-[#94A3B8]";
+   683→ const sb=m.signal==="BUY"?"bg-[#00E676]/10 border-[#00E676]/40 text-[#00E676]":m.signal==="SELL"?"bg-[#FF5C5C]/10 border-[#FF5C5C]/40 text-[#FF5C5C]":"bg-white/[0.04] border-white/[0.12] text-[#94A3B8]";
+   684→ if(!m.trained)return(<div className="rounded-md bg-[#0A0E1A]/50 border border-white/[0.04] p-2.5 opacity-70">
+   685→  <div className="flex items-center gap-1.5 mb-0.5"><span className="text-xs md:text-sm font-semibold text-[#94A3B8]">{m.name}</span><Badge variant="outline" className="text-[9px] py-0 h-3.5 border-white/[0.08] text-[#64748B]">Not trained</Badge></div>
+   686→  <div className="text-[10px] text-[#64748B] mt-0.5">{m.category}</div><div className="text-[10px] text-[#64748B] mb-1.5 mt-1">{m.untrainedReason}</div>
+   687→  <div className="grid grid-cols-5 gap-1 text-[10px]">{["Predicted","Entry","SL","TP1","TP2"].map(l=><div key={l}><div className="text-[#64748B]">{l}</div><div className="font-mono text-[#64748B]">—</div></div>)}</div></div>);
+   688→ return(<div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5 md:p-3">
+   689→  <div className="flex items-start justify-between gap-2 mb-1.5"><div><div className="flex items-center gap-1.5 flex-wrap">
+   690→   <span className="text-xs md:text-sm font-semibold text-[#F4F7FB]">{m.name}</span>
+   691→   <Badge className={`text-[9px] py-0 h-3.5 md:h-4 border ${sb}`}>{m.signal}</Badge>
+   692→   {m.extended&&<Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#FBBF24]/40 text-[#FBBF24]" title="Extended training — indicator-based engine covering stocks outside the original ML universe">EXT</Badge>}
+   693→   {m.trained&&<Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#22D3EE]/30 text-[#22D3EE]" title="A Python-trained artifact exists in ml_predictions_multi.json for LIVE per-stock predictions. The RUNTIME BACKTEST shown here uses the shared strategySignal() indicator engine — NOT this trained artifact — so the BT stats below are an indicator-strategy evaluation, not a trained-ML evaluation.">ML·live</Badge>}
+   694→   {m.backtest&&<span className="text-[9px] text-[#FBBF24]">{"★".repeat(m.backtest.stars)}<span className="text-[#64748B]">{"★".repeat(5-m.backtest.stars)}</span></span>}
+   695→  </div><div className="text-[10px] text-[#64748B] mt-0.5">{m.category}</div></div>
+   696→  <div className="text-right"><div className="text-[9px] text-[#64748B]">TP3</div><div className={`text-xs md:text-sm font-mono font-bold ${sc}`}>PKR {m.tp3?.toFixed(2)}</div></div></div>
+   697→  <div className="grid grid-cols-5 gap-1.5 md:gap-2 text-[10px] mt-1.5 pt-1.5 border-t border-white/[0.06]">
+   698→   <div><div className="text-[#64748B] uppercase">Entry</div><div className="font-mono text-[#F4F7FB]">{m.entry?.toFixed(2)}</div></div>
+   699→   <div><div className="text-[#64748B] uppercase">SL</div><div className="font-mono text-[#FF5C5C]">{m.sl?.toFixed(2)}</div></div>
+   700→   <div><div className="text-[#64748B] uppercase">TP1</div><div className="font-mono text-[#00E676]">{m.tp1?.toFixed(2)}</div></div>
+   701→   <div><div className="text-[#64748B] uppercase">TP2</div><div className="font-mono text-[#00E676]">{m.tp2?.toFixed(2)}</div></div>
+   702→   <div><div className="text-[#64748B] uppercase">TP3</div><div className="font-mono text-[#00E676]">{m.tp3?.toFixed(2)}</div></div>
+   703→  </div>
+   704→  <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-white/[0.04]">
+   705→   <div className="text-[10px] text-[#64748B]">Conf:<span className="font-mono text-[#F4F7FB]">{m.confidence}%</span>{m.avgReturn!==undefined&&<>·Avg:<span className="font-mono text-[#F4F7FB]">{(m.avgReturn*100).toFixed(1)}%</span></>}</div>
+   706→   {m.backtest&&<div className="text-[10px] text-[#64748B]" title="The runtime backtest (model-backtest.ts) evaluates this model via the shared strategySignal() indicator engine — these BT stats are a technical-rule-strategy evaluation, NOT a trained-ML artifact evaluation.">Rule-BT:<span className="font-mono text-[#94A3B8]">{(m.backtest.winRate||0).toFixed(2)}%win</span>·<span className="font-mono text-[#94A3B8]">{(m.backtest.avgReturnPct||0).toFixed(2)}%avg</span>·<span className="font-mono text-[#94A3B8]" title="Number of PSX stocks this model was backtested across (the extended universe — original ML-trained + fallback-covered)">{m.backtest.coveredSymbols??0}stk</span></div>}
+   707→  </div></div>);
+   708→}
+   709→
+   710→function TS({label,v,tone}:{label:string;v:string;tone?:"positive"|"negative"}){
+   711→ const c=tone==="positive"?"text-[#00E676]":tone==="negative"?"text-[#FF5C5C]":"text-[#F4F7FB]";
+   712→ return<div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-1.5 md:p-2"><div className="text-[9px] md:text-[10px] uppercase text-[#64748B]">{label}</div><div className={`text-xs md:text-sm font-mono font-bold ${c}`}>{v}</div></div>;
+   713→}
+   714→

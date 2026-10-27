@@ -1,0 +1,237 @@
+{
+  "generated_at": "2026-10-25T09:14:29.126901",
+  "generated_by": "scripts/backtest_all_models.py",
+  "source_of_truth": true,
+  "methodology": {
+    "walk_forward_purged": "every model retrained at each step date only on rows whose full 21-day label window ended before that date",
+    "entry_exit": "signal at close t, entry at open t+1, exit at open t+1+21",
+    "universe": "point-in-time: trailing-60d median traded value >= PKR 20m, >= 400 bars history, evaluated at each step date",
+    "portfolio_rule": "top-10 scores, equal weight, non-overlapping 21-day periods, 0.8% round-trip cost per position",
+    "metrics": "CAGR/Sharpe/MaxDD from a compounded equity curve of non-overlapping period returns; Sharpe annualised with sqrt(252/21)"
+  },
+  "assumptions": {
+    "horizon_days": 21,
+    "step_days": 21,
+    "top_n": 10,
+    "round_trip_cost_pct": 0.8,
+    "min_median_traded_value_pkr": 20000000.0,
+    "min_history_bars": 400,
+    "start": "2019-01-01",
+    "end": null,
+    "symbol_cap": "all (point-in-time eligibility applies)",
+    "train_row_cap": 250000,
+    "lean_hyperparams": true,
+    "seed": 42
+  },
+  "data": {
+    "source": "db/custom.db (OhlcvBar)",
+    "rows": 1006845,
+    "symbols": 808,
+    "date_min": "2016-10-21",
+    "date_max": "2026-10-21"
+  },
+  "universe": {
+    "n_steps": 91,
+    "first_step": "2019-01-02",
+    "last_step": "2026-08-21",
+    "eligible_min": 41,
+    "eligible_median": 85,
+    "eligible_max": 153,
+    "symbols_ever_eligible": 142
+  },
+  "results": {
+    "momentum_rule": {
+      "status": "measured",
+      "role": "baseline",
+      "note": "21-day return cross-sectional momentum \u2014 no training; the baseline every AI model must beat",
+      "profit_factor": 1.135,
+      "expectancy_pct": 0.831,
+      "cagr_pct": 1.98,
+      "sharpe": 0.24,
+      "max_drawdown_pct": -67.4,
+      "position_win_rate_pct": 44.95,
+      "avg_win_pct": 15.489,
+      "avg_loss_pct": -11.136,
+      "total_return_pct": 16.0,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    },
+    "ridge": {
+      "status": "measured",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params",
+      "profit_factor": 1.045,
+      "expectancy_pct": 0.302,
+      "cagr_pct": -4.99,
+      "sharpe": 0.09,
+      "max_drawdown_pct": -69.1,
+      "position_win_rate_pct": 46.15,
+      "avg_win_pct": 15.231,
+      "avg_loss_pct": -12.493,
+      "total_return_pct": -32.2,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    },
+    "logistic": {
+      "status": "measured",
+      "role": "challenger",
+      "note": "P(close>0 over the 21d window); score = P(up)",
+      "profit_factor": 0.91,
+      "expectancy_pct": -0.548,
+      "cagr_pct": -12.95,
+      "sharpe": -0.17,
+      "max_drawdown_pct": -72.7,
+      "position_win_rate_pct": 44.95,
+      "avg_win_pct": 12.352,
+      "avg_loss_pct": -11.08,
+      "total_return_pct": -65.1,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    },
+    "histgbm": {
+      "status": "measured",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params",
+      "profit_factor": 1.242,
+      "expectancy_pct": 1.541,
+      "cagr_pct": 9.19,
+      "sharpe": 0.41,
+      "max_drawdown_pct": -63.6,
+      "position_win_rate_pct": 47.69,
+      "avg_win_pct": 16.608,
+      "avg_loss_pct": -12.197,
+      "total_return_pct": 94.8,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    },
+    "lightgbm": {
+      "status": "measured",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params",
+      "profit_factor": 1.132,
+      "expectancy_pct": 0.877,
+      "cagr_pct": 1.1,
+      "sharpe": 0.24,
+      "max_drawdown_pct": -64.3,
+      "position_win_rate_pct": 47.03,
+      "avg_win_pct": 15.986,
+      "avg_loss_pct": -12.539,
+      "total_return_pct": 8.7,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    },
+    "xgboost": {
+      "status": "measured",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params",
+      "profit_factor": 1.136,
+      "expectancy_pct": 0.911,
+      "cagr_pct": 1.19,
+      "sharpe": 0.24,
+      "max_drawdown_pct": -70.4,
+      "position_win_rate_pct": 46.37,
+      "avg_win_pct": 16.435,
+      "avg_loss_pct": -12.513,
+      "total_return_pct": 9.4,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    },
+    "random_forest": {
+      "status": "measured",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params",
+      "profit_factor": 1.137,
+      "expectancy_pct": 0.94,
+      "cagr_pct": 2.0,
+      "sharpe": 0.26,
+      "max_drawdown_pct": -71.1,
+      "position_win_rate_pct": 45.71,
+      "avg_win_pct": 17.112,
+      "avg_loss_pct": -12.679,
+      "total_return_pct": 16.2,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    },
+    "extra_trees": {
+      "status": "measured",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params",
+      "profit_factor": 1.088,
+      "expectancy_pct": 0.641,
+      "cagr_pct": -2.69,
+      "sharpe": 0.17,
+      "max_drawdown_pct": -72.3,
+      "position_win_rate_pct": 46.59,
+      "avg_win_pct": 16.998,
+      "avg_loss_pct": -13.629,
+      "total_return_pct": -18.7,
+      "n_positions": 910,
+      "n_periods": 91,
+      "periods_in_cash": 0
+    }
+  },
+  "ranking": [
+    "histgbm",
+    "random_forest",
+    "xgboost",
+    "momentum_rule",
+    "lightgbm",
+    "extra_trees",
+    "ridge",
+    "logistic"
+  ],
+  "registry": {
+    "momentum_rule": {
+      "kind": "rule",
+      "role": "baseline",
+      "note": "21-day return cross-sectional momentum \u2014 no training; the baseline every AI model must beat"
+    },
+    "ridge": {
+      "kind": "regressor",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params"
+    },
+    "logistic": {
+      "kind": "classifier",
+      "role": "challenger",
+      "note": "P(close>0 over the 21d window); score = P(up)"
+    },
+    "histgbm": {
+      "kind": "regressor",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params"
+    },
+    "lightgbm": {
+      "kind": "regressor",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params"
+    },
+    "xgboost": {
+      "kind": "regressor",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params"
+    },
+    "random_forest": {
+      "kind": "regressor",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params"
+    },
+    "extra_trees": {
+      "kind": "regressor",
+      "role": "challenger",
+      "note": "lean (CI) hyper-params"
+    }
+  },
+  "notes": [
+    "Positions whose 21-day outcome is unknown (row too close to dataset end) are excluded from selection for ALL models equally, including the baseline.",
+    "train_row_cap keeps only the most recent rows per step when training history exceeds the cap \u2014 a disclosed speed knob, identical across models.",
+    "Selection uses each symbol's own trading calendar: entry is the next available open after the step date."
+  ]
+}

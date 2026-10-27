@@ -1,0 +1,247 @@
+/home/z/my-project/scripts/audit_cg_model.py:324:        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/audit_cg_model.py:479:            X_tr_s = scaler.fit_transform(X_tr)
+/home/z/my-project/scripts/audit_cg_model.py:499:        Xs = scaler.fit_transform(X)
+/home/z/my-project/scripts/audit_cg_model.py:830:    X_train = train_df[FC_AUDIT].fillna(0).values
+/home/z/my-project/scripts/audit_cg_model.py:840:    X_calib = calib_df[FC_AUDIT].fillna(0).values
+/home/z/my-project/scripts/audit_cg_model.py:863:    X_test = test_df[FC_AUDIT].fillna(0).values
+/home/z/my-project/scripts/train_multi_models.py:88:    return width.fillna(0), pct_b.fillna(0.5)
+/home/z/my-project/scripts/train_multi_models.py:96:    return tr.rolling(period).mean().fillna(0)
+/home/z/my-project/scripts/train_multi_models.py:119:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_multi_models.py:127:        df[f"return_{period}d"] = close.pct_change(periods=period).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_multi_models.py:128:    df["hl_range_pct"] = ((high - low) / close.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_multi_models.py:129:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / close.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_multi_models.py:130:    df["volatility_14d"] = close.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/backtest_all_models.py:268:    entry_open = df.groupby("symbol")["open"].shift(-1)
+/home/z/my-project/scripts/backtest_all_models.py:269:    exit_open = df.groupby("symbol")["open"].shift(-1 - HORIZON)
+/home/z/my-project/scripts/backtest_all_models.py:271:    df["label_end_date"] = df.groupby("symbol")["date"].shift(-1 - HORIZON)
+/home/z/my-project/scripts/train_all_models_db.py:31: sma=p.rolling(w).mean();sd=p.rolling(w).std();return((sma+2*sd-(sma-2*sd))/sma.replace(0,1)).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/train_all_models_db.py:33: tr=pd.concat([(h-l),(h-c.shift()).abs(),(l-c.shift()).abs()],axis=1).max(axis=1);return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_all_models_db.py:40: obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_all_models_db.py:43: for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_all_models_db.py:44: df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_models_db.py:45: df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_models_db.py:46: df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0);return df
+/home/z/my-project/scripts/train_all_models_db.py:49: for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/train_all_models_db.py:51: df["tp1_before_sl_5d"]=((df["close"].shift(-5)-df["close"])>0).astype(int).shift(-5).fillna(0).clip(0,1)
+/home/z/my-project/scripts/train_all_models_db.py:66: split=int(len(sdf)*0.8);tr=sdf.iloc[:split];Xtr=tr[FC].values;ytr=tr[hz_col].values
+/home/z/my-project/scripts/train_all_models_db.py:123: split=int(len(sdf)*0.8);tr=sdf.iloc[:split];Xtr=tr[FC].values;ytr=tr["tp1_before_sl_5d"].values
+/home/z/my-project/scripts/train_all_models_db.py:136: split=int(len(sdf)*0.8);tr=sdf.iloc[:split];Xtr=tr[FC].values;ytr=tr[hz_col].values
+/home/z/my-project/scripts/train_all_models_db.py:185: split=int(len(sdf)*0.8);tr=sdf.iloc[:split];Xtr=tr[FC].values;ytr=(tr["target_10d"]>0).astype(int).values
+/home/z/my-project/scripts/walk_forward_backtesting.py:45: return((sma+2*sd-(sma-2*sd))/sma).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/walk_forward_backtesting.py:48: return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/walk_forward_backtesting.py:58: obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/walk_forward_backtesting.py:61: for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/walk_forward_backtesting.py:62: df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/walk_forward_backtesting.py:63: df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/walk_forward_backtesting.py:64: df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/walk_forward_backtesting.py:65: for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/improve_models.py:33:    df["bb_width"]=((sma+2*sd-(sma-2*sd))/sma).fillna(0)
+/home/z/my-project/scripts/improve_models.py:36:    df["atr_14"]=tr.rolling(14).mean().fillna(0)
+/home/z/my-project/scripts/improve_models.py:38:    df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/improve_models.py:41:    for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/improve_models.py:42:    df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/improve_models.py:43:    df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/improve_models.py:44:    df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/improve_models.py:45:    for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/improve_models.py:138:    split=int(len(df)*0.8);tr=df.iloc[:split];te=df.iloc[split:]
+/home/z/my-project/scripts/improve_models.py:177:    te=df.iloc[int(len(df)*0.8):].copy()
+/home/z/my-project/scripts/improve_models.py:229:    te=df.iloc[int(len(df)*0.8):].copy()
+/home/z/my-project/scripts/retrain_all_361_stocks.py:23:    sma=p.rolling(w).mean();sd=p.rolling(w).std();return((sma+2*sd-(sma-2*sd))/sma).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/retrain_all_361_stocks.py:25:    tr=pd.concat([h-l,(h-c.shift()).abs(),(l-c.shift()).abs()],axis=1).max(axis=1);return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/retrain_all_361_stocks.py:32:    df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/retrain_all_361_stocks.py:35:    for p in[1,5,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/retrain_all_361_stocks.py:36:    df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/retrain_all_361_stocks.py:37:    df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/retrain_all_361_stocks.py:38:    df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0);return df
+/home/z/my-project/scripts/retrain_all_361_stocks.py:87:    sp=int(len(dft)*0.8);Xtr=dft.iloc[:sp][FC].fillna(0).values
+/home/z/my-project/scripts/retrain_all_361_stocks.py:92:        lat[s]={"f":sd.iloc[-1][FC].fillna(0).values.reshape(1,-1),"cp":float(sd.iloc[-1]["close"])}
+/home/z/my-project/scripts/retrain_all_361_stocks.py:154:        avg=((sl*21)/cp+float(np.mean(pr.pct_change(5).fillna(0).tail(10).values))*21)/2
+/home/z/my-project/scripts/retrain_all_361_stocks.py:341:    for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].groupby(df["symbol"]).shift(-hz)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:34:    return ((s+2*sd-(s-2*sd))/s).fillna(0),((p-(s-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/train_multi_horizon.py:37:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:48:    obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:51:    for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:52:    df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:53:    df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:54:    df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:59:    for h in[5,10,21]:df[f"target_{h}d"]=((df["close"].shift(-h)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/train_multi_horizon.py:88:    split=int(len(df)*0.8);tr=df.iloc[:split];te=df.iloc[split:]
+/home/z/my-project/scripts/train_multi_horizon.py:137:            f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_multi_horizon.py:165:            f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_multi_horizon.py:230:    te=df.iloc[int(len(df)*0.8):].copy();bt={}
+/home/z/my-project/scripts/train_pi_tier.py:171:    X = train_df[FC].fillna(0).values
+/home/z/my-project/scripts/train_pi_tier.py:214:        X_tr = train_df.loc[tr_mask, FC].fillna(0).values
+/home/z/my-project/scripts/train_pi_tier.py:217:        X_va = train_df.loc[va_mask, FC].fillna(0).values
+/home/z/my-project/scripts/train_pi_tier.py:223:            X_tr_s = scaler.fit_transform(X_tr)
+/home/z/my-project/scripts/train_pi_tier.py:244:        Xs = scaler.fit_transform(X)
+/home/z/my-project/scripts/train_pi_tier.py:374:        feat_row = sd[FC].iloc[t].fillna(0).values.astype(np.float32).reshape(1, -1)
+/home/z/my-project/scripts/train_pi_tier.py:500:        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:58:    return ((sma + 2*sd - (sma - 2*sd)) / sma).fillna(0), \
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:64:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:80:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:85:        df[f"return_{p}d"] = c.pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:86:    df["hl_range_pct"] = ((h - l) / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:87:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:88:    df["volatility_14d"] = c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:206:            df[f"target_{hz}d"] = ((df["close"].shift(-hz) - df["close"]) / df["close"]).fillna(0)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:207:    split = int(len(df) * 0.8)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:500:            seasonal = float(np.mean(prices.pct_change(5).fillna(0).tail(10).values)) * 21
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:549:        split = int(len(sdf) * 0.8)
+/home/z/my-project/scripts/fix_predictions_and_backtest.py:654:        split = int(len(sdf) * 0.8)
+/home/z/my-project/scripts/train_all_with_backtesting.py:5:# scalers). See scripts/ml_integrity.py. Replaces the old .fillna(0) targets
+/home/z/my-project/scripts/train_all_with_backtesting.py:30: return((sma+2*sd-(sma-2*sd))/sma).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/train_all_with_backtesting.py:33: return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_all_with_backtesting.py:43: obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_all_with_backtesting.py:46: for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_all_with_backtesting.py:47: df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_with_backtesting.py:48: df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_with_backtesting.py:49: df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_all_with_backtesting.py:52: # ML integrity (Task 1): per-stock forward returns, NO .fillna(0).
+/home/z/my-project/scripts/train_all_with_backtesting.py:72: # (no cross-stock shift, no .fillna(0)); drop immature/invalid target rows.
+/home/z/my-project/scripts/train_all_with_backtesting.py:97: # old global row-based split=int(len(df)*0.8) on concatenated histories).
+/home/z/my-project/scripts/train_all_with_backtesting.py:178:   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_all_with_backtesting.py:198:   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_all_with_backtesting.py:224:   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_all_with_backtesting.py:244:   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_all_with_backtesting.py:269:   f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_all_with_backtesting.py:336: te=df.iloc[int(len(df)*0.8):].copy()
+/home/z/my-project/scripts/train_all_with_backtesting.py:360: te=df.iloc[int(len(df)*0.8):].copy()
+/home/z/my-project/scripts/train_x_model.py:392:    kse100_returns_50d = kse100_series.pct_change(50).fillna(0)
+/home/z/my-project/scripts/train_x_model.py:414:        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/train_x_model.py:639:        X_tr_s = scaler.fit_transform(X_tr)
+/home/z/my-project/scripts/train_x_model.py:655:    Xs = scaler.fit_transform(X)
+/home/z/my-project/scripts/train_x_model.py:905:    kse100_returns_50d = kse100_series.pct_change(50).fillna(0)
+/home/z/my-project/scripts/train_x_model.py:934:        feat_row = sd[FC].iloc[t].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/train_x_model.py:1148:    X_train = train_df[FC_X].fillna(0).values
+/home/z/my-project/scripts/train_x_model.py:1154:    X_calib = calib_df[FC_X].fillna(0).values
+/home/z/my-project/scripts/train_x_model.py:1169:    X_test = test_df[FC_X].fillna(0).values
+/home/z/my-project/scripts/train_cl2_tier.py:167:    return ((sma + 2 * sd - (sma - 2 * sd)) / sma).fillna(0), \
+/home/z/my-project/scripts/train_cl2_tier.py:173:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_cl2_tier.py:197:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_cl2_tier.py:202:        df[f"return_{p}d"] = c.pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_cl2_tier.py:203:    df["hl_range_pct"] = ((h - l) / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_cl2_tier.py:204:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_cl2_tier.py:205:    df["volatility_14d"] = c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_cl2_tier.py:612:        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/train_cl2_tier.py:747:    Xs = scaler.fit_transform(X)
+/home/z/my-project/scripts/train_cl2_tier.py:791:    X = train_df[FC].fillna(0).values
+/home/z/my-project/scripts/train_cl2_tier.py:808:        X_tr = train_df.loc[tr_mask, FC].fillna(0).values
+/home/z/my-project/scripts/train_cl2_tier.py:810:        X_va = train_df.loc[va_mask, FC].fillna(0).values
+/home/z/my-project/scripts/train_cl2_tier.py:816:            X_tr_s = scaler.fit_transform(X_tr)
+/home/z/my-project/scripts/train_cl2_tier.py:834:        Xs = scaler.fit_transform(X)
+/home/z/my-project/scripts/train_cl2_tier.py:973:        feat_row = sd[FC].iloc[t].fillna(0).values.astype(np.float32).reshape(1, -1)
+/home/z/my-project/scripts/train_cl2_tier.py:1116:        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/train_remaining_models.py:33:    return((sma+2*sd-(sma-2*sd))/sma).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/train_remaining_models.py:36:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_remaining_models.py:46:    obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_remaining_models.py:49:    for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_remaining_models.py:50:    df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_remaining_models.py:51:    df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_remaining_models.py:52:    df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_remaining_models.py:56:    for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/train_remaining_models.py:97:        f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_remaining_models.py:128:        f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_remaining_models.py:147:        f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_remaining_models.py:174:        f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_remaining_models.py:188:    split=int(len(df)*0.8);tr=df.iloc[:split];te=df.iloc[split:]
+/home/z/my-project/scripts/train_remaining_models.py:250:    te=df.iloc[int(len(df)*0.8):].copy();bt={}
+/home/z/my-project/scripts/train_cg_model.py:357:        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/train_cg_model.py:446:    X = train_df[FC].fillna(0).values
+/home/z/my-project/scripts/train_cg_model.py:461:        X_tr = train_df.loc[tr_mask, FC].fillna(0).values
+/home/z/my-project/scripts/train_cg_model.py:463:        X_va = train_df.loc[va_mask, FC].fillna(0).values
+/home/z/my-project/scripts/train_cg_model.py:469:            X_tr_s = scaler.fit_transform(X_tr)
+/home/z/my-project/scripts/train_cg_model.py:487:        Xs = scaler.fit_transform(X)
+/home/z/my-project/scripts/train_cg_model.py:607:        feat_row = sd[FC].iloc[t].fillna(0).values.astype(np.float32).reshape(1, -1)
+/home/z/my-project/scripts/train_cg_model.py:729:        feat_mat = sd[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/train_tier2_foundations.py:49:    return ((sma + 2*sd - (sma - 2*sd)) / sma).fillna(0), \
+/home/z/my-project/scripts/train_tier2_foundations.py:55:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:71:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:76:        df[f"return_{p}d"] = c.pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:77:    df["hl_range_pct"] = ((h - l) / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:78:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:79:    df["volatility_14d"] = c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:86:        df[f"target_{hz}d"] = ((df["close"].shift(-hz) - df["close"]) / df["close"]).fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:143:    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+/home/z/my-project/scripts/train_tier2_foundations.py:213:    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+/home/z/my-project/scripts/train_tier2_foundations.py:222:            df[lag_col] = df.groupby("symbol")[col].shift(L).fillna(0)
+/home/z/my-project/scripts/train_tier2_foundations.py:268:    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+/home/z/my-project/scripts/train_tier2_foundations.py:272:    Xtr = sc.fit_transform(tr[FC].values)
+/home/z/my-project/scripts/train_tier2_foundations.py:316:    split = int(len(df) * 0.8); tr = df.iloc[:split]; te = df.iloc[split:]
+/home/z/my-project/scripts/train_tier2_foundations.py:338:        base_returns[bn] = df["symbol"].map(per_stock).fillna(0).values
+/home/z/my-project/scripts/train_tier2_foundations.py:403:    te = df.iloc[int(len(df) * 0.8):].copy()
+/home/z/my-project/scripts/train_all_optimized.py:70:    width = ((sma + 2*sd - (sma - 2*sd)) / sma).fillna(0)
+/home/z/my-project/scripts/train_all_optimized.py:81:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_all_optimized.py:117:    df["obv_change_pct"] = obv.groupby(df["symbol"]).pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_all_optimized.py:130:        df[f"return_{p}d"] = groups["close"].pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_all_optimized.py:133:    df["hl_range_pct"] = ((df["high"] - df["low"]) / df["close"].replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_optimized.py:136:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / df["close"].replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_optimized.py:139:    df["volatility_14d"] = groups["close"].pct_change().groupby(df["symbol"]).rolling(14).std().reset_index(level=0, drop=True).fillna(0)
+/home/z/my-project/scripts/train_all_optimized.py:144:    df["target_5d"] = (df.groupby("symbol")["close"].shift(-5) - df["close"]) / df["close"]
+/home/z/my-project/scripts/train_all_optimized.py:145:    df["target_10d"] = (df.groupby("symbol")["close"].shift(-10) - df["close"]) / df["close"]
+/home/z/my-project/scripts/train_all_optimized.py:146:    df["target_21d"] = (df.groupby("symbol")["close"].shift(-21) - df["close"]) / df["close"]
+/home/z/my-project/scripts/train_all_optimized.py:246:    Xtr = dft.iloc[:sp][FC].fillna(0).values
+/home/z/my-project/scripts/train_all_optimized.py:254:        lat[s] = {"f": sd.iloc[-1][FC].fillna(0).values.reshape(1, -1), "cp": float(sd.iloc[-1]["close"])}
+/home/z/my-project/scripts/train_all_optimized.py:331:            avg = ((sl * 21) / cp + float(np.mean(pr.pct_change(5).fillna(0).tail(10).values)) * 21) / 2
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:38:    return ((sma + 2*sd - (sma - 2*sd)) / sma).fillna(0), \
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:44:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:60:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:65:        df[f"return_{p}d"] = c.pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:66:    df["hl_range_pct"] = ((h - l) / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:67:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:68:    df["volatility_14d"] = c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/fix_ensemble_backtesting.py:133:        split = int(len(sdf) * 0.8)
+/home/z/my-project/scripts/ml_integrity.py:6:  L1: .fillna(0) on forward-return targets → immature rows become 0-return
+/home/z/my-project/scripts/ml_integrity.py:185:    # (2) no .fillna(0) — immature/invalid rows are DROPPED, not zeroed.
+/home/z/my-project/scripts/train_cl_tier.py:32:    return((sma+2*sd-(sma-2*sd))/sma).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/train_cl_tier.py:35:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_cl_tier.py:45:    obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_cl_tier.py:48:    for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_cl_tier.py:49:    df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_cl_tier.py:50:    df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_cl_tier.py:51:    df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_cl_tier.py:52:    for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/train_cl_tier.py:155:    split=int(len(df)*0.8);tr=df.iloc[:split];te=df.iloc[split:]
+/home/z/my-project/scripts/train_cl_tier.py:237:        f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_cl_tier.py:264:        f=sdf[FC].values;sc=StandardScaler();fs=sc.fit_transform(f)
+/home/z/my-project/scripts/train_cl_tier.py:299:    te=df.iloc[int(len(df)*0.8):].copy()
+/home/z/my-project/scripts/cl_extender.py:46: return((sma+2*sd-(sma-2*sd))/sma).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/cl_extender.py:49: return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/cl_extender.py:56: for p in[1,3,5,10]:df[f"return_{p}d"]=c.pct_change(p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/cl_extender.py:61: obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/cl_extender.py:64: df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/cl_extender.py:65: df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/cl_extender.py:66: df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/cl_extender.py:133: sc=StandardScaler();Xs=sc.fit_transform(X)
+/home/z/my-project/scripts/train_all_db.py:32: return((sma+2*sd-(sma-2*sd))/sma.replace(0,1)).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+/home/z/my-project/scripts/train_all_db.py:35: return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_all_db.py:45: obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_all_db.py:48: for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+/home/z/my-project/scripts/train_all_db.py:49: df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_db.py:50: df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+/home/z/my-project/scripts/train_all_db.py:51: df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_all_db.py:55: for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"]).fillna(0)
+/home/z/my-project/scripts/train_all_db.py:73: split=int(len(sdf)*0.8);tr=sdf.iloc[:split];te=sdf.iloc[split:]
+/home/z/my-project/scripts/train_cl_ensembles.py:59:    return ((sma + 2*sd - (sma - 2*sd)) / sma).fillna(0), \
+/home/z/my-project/scripts/train_cl_ensembles.py:65:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_cl_ensembles.py:81:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_cl_ensembles.py:86:        df[f"return_{p}d"] = c.pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_cl_ensembles.py:87:    df["hl_range_pct"] = ((h - l) / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_cl_ensembles.py:88:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_cl_ensembles.py:89:    df["volatility_14d"] = c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:195:    bw = ((sma + 2 * sd - (sma - 2 * sd)) / sma).fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:204:    return tr.rolling(n).mean().fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:238:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:243:        df[f"return_{p}d"] = c.pct_change(periods=p).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:244:    df["hl_range_pct"] = ((h - l) / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:245:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / c.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:246:    df["volatility_14d"] = c.pct_change().rolling(14).std().fillna(0)
+/home/z/my-project/scripts/train_missing_stocks.py:596:    X = feat[FC].fillna(0).values.astype(np.float32)
+/home/z/my-project/scripts/train_missing_stocks.py:599:    latest = feat.iloc[-1][FC].fillna(0).values.astype(np.float32).reshape(1, -1)
+/home/z/my-project/scripts/train_missing_stocks.py:607:            Xs = scaler.fit_transform(X)
+/home/z/my-project/scripts/train_xgboost.py:86:    return width.fillna(0), pct_b.fillna(0.5)
+/home/z/my-project/scripts/train_xgboost.py:95:    return tr.rolling(period).mean().fillna(0)
+/home/z/my-project/scripts/train_xgboost.py:131:    df["obv_change_pct"] = obv.pct_change(periods=14).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_xgboost.py:145:        df[f"return_{period}d"] = close.pct_change(periods=period).replace([np.inf, -np.inf], 0).fillna(0)
+/home/z/my-project/scripts/train_xgboost.py:148:    df["hl_range_pct"] = ((high - low) / close.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_xgboost.py:151:    df["body_size_pct"] = ((df["close"] - df["open"]).abs() / close.replace(0, np.nan)).fillna(0)
+/home/z/my-project/scripts/train_xgboost.py:154:    df["volatility_14d"] = close.pct_change().rolling(14).std().fillna(0)

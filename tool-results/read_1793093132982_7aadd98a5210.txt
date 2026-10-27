@@ -1,0 +1,445 @@
+     1→#!/usr/bin/env python3
+     2→"""Latent.pk — Train ALL trainable models on ALL DB stocks + compute ALL ensembles + backtest.
+     3→Covers: CL tier (ARIMA/HW/GARCH/Ridge/Prophet/Kalman/XGB-CL/LGB-CL/RF-CL),
+     4→CL-2 (7 classifiers), PI (4 models), GM (4 rule-based), CG (2 classifiers),
+     5→X (10 rule-based strategies), Gian (3 rule-based). Skips torch/special models.
+     6→Processes in chunks of 50 stocks. Checks server after each chunk.
+     7→"""
+     8→import json, sqlite3, sys, os, warnings, subprocess, time, math
+     9→import numpy as np, pandas as pd
+    10→import xgboost as xgb, lightgbm as lgb, catboost as cb
+    11→from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier, ExtraTreesClassifier, HistGradientBoostingClassifier
+    12→from sklearn.linear_model import Ridge, LogisticRegression, LinearRegression
+    13→from sklearn.neural_network import MLPRegressor, MLPClassifier
+    14→from sklearn.neighbors import KNeighborsClassifier
+    15→from sklearn.preprocessing import StandardScaler
+    16→from statsmodels.tsa.arima.model import ARIMA
+    17→from statsmodels.tsa.holtwinters import ExponentialSmoothing
+    18→from pathlib import Path
+    19→# ML-integrity helpers (leakage-free targets). See scripts/ml_integrity.py.
+    20→# Replaces the old .fillna(0) on per-horizon targets + the target-misalignment
+    21→# bug in tp1_before_sl_5d (Phase A1).
+    22→from ml_integrity import drop_immature_targets, HORIZONS
+    23→warnings.filterwarnings("ignore")
+    24→DB="db/custom.db";OUT=Path("data/ml_predictions_multi.json");CHUNK=50
+    25→FC=["rsi_14","macd","macd_signal","macd_hist","bb_width","bb_pct_b","atr_14","obv_change_pct",
+    26→"price_sma_20_ratio","price_sma_50_ratio","price_sma_200_ratio","volume_sma_20_ratio",
+    27→"return_1d","return_7d","return_14d","return_30d","hl_range_pct","body_size_pct","volatility_14d"]
+    28→# ─── Features (reused) ───
+    29→def compute_rsi(p,n=14):
+    30→ d=p.diff();g=d.where(d>0,0);l=-d.where(d<0,0);ag=g.ewm(alpha=1/n,min_periods=n).mean();al=l.ewm(alpha=1/n,min_periods=n).mean()
+    31→ return(100-100/(1+ag/al.replace(0,np.nan))).fillna(50)
+    32→def compute_macd(p):
+    33→ e12=p.ewm(span=12,adjust=False).mean();e26=p.ewm(span=26,adjust=False).mean();m=e12-e26;s=m.ewm(span=9,adjust=False).mean();return m,s,m-s
+    34→def compute_bb(p,w=20):
+    35→ sma=p.rolling(w).mean();sd=p.rolling(w).std();return((sma+2*sd-(sma-2*sd))/sma.replace(0,1)).fillna(0),((p-(sma-2*sd))/(4*sd).replace(0,np.nan)).fillna(0.5)
+    36→def compute_atr(h,l,c,n=14):
+    37→ tr=pd.concat([(h-l),(h-c.shift()).abs(),(l-c.shift()).abs()],axis=1).max(axis=1);return tr.rolling(n).mean().fillna(0)
+    38→def compute_obv(c,v):
+    39→ s=c.diff().apply(lambda x:1 if x>0 else(-1 if x<0 else 0));return(s*v).cumsum()
+    40→def add_features(df):
+    41→ df=df.copy().sort_values("date").reset_index(drop=True);c=df["close"];h=df["high"];l=df["low"];v=df["volume"]
+    42→ df["rsi_14"]=compute_rsi(c);m,s,hh=compute_macd(c);df["macd"]=m;df["macd_signal"]=s;df["macd_hist"]=hh
+    43→ bw,pb=compute_bb(c);df["bb_width"]=bw;df["bb_pct_b"]=pb;df["atr_14"]=compute_atr(h,l,c)
+    44→ obv=compute_obv(c,v);df["obv_change_pct"]=obv.pct_change(periods=14).replace([np.inf,-np.inf],0).fillna(0)
+    45→ for w in[20,50,200]:df[f"price_sma_{w}_ratio"]=c/c.rolling(w,min_periods=1).mean()
+    46→ df["volume_sma_20_ratio"]=v/v.rolling(20,min_periods=1).mean().replace(0,1)
+    47→ for p in[1,7,14,30]:df[f"return_{p}d"]=c.pct_change(periods=p).replace([np.inf,-np.inf],0).fillna(0)
+    48→ df["hl_range_pct"]=((h-l)/c.replace(0,np.nan)).fillna(0)
+    49→ df["body_size_pct"]=((df["close"]-df["open"]).abs()/c.replace(0,np.nan)).fillna(0)
+    50→ df["volatility_14d"]=c.pct_change().rolling(14).std().fillna(0);return df
+    51→def add_labels(df):
+    52→ df=df.copy()
+    53→ # ML integrity (Task 1): per-stock shift(-h) inside main loop (sdf is one
+    54→ # stock, so shift does NOT cross stock boundaries). No .fillna(0) — immature
+    55→ # rows left NaN and dropped per-horizon inside the per-stock train_* helpers.
+    56→ for hz in[5,10,21]:df[f"target_{hz}d"]=((df["close"].shift(-hz)-df["close"])/df["close"])
+    57→ # CL-2 triple-barrier: did price go up over the next 5 sessions (TP1 hit
+    58→ # before SL on a 5-session horizon)? The OLD code had a DOUBLY-LEAKY target:
+    59→ #   ((close.shift(-5)-close)>0).astype(int).shift(-5).fillna(0).clip(0,1)
+    60→ # — the extra .shift(-5) moved the label up 5 rows so row i was assigned
+    61→ # the label of row i+5 ("did price go up between i+5 and i+10"), a TARGET
+    62→ # MISALIGNMENT bug. Plus fillna(0) zeroed the last 5 rows. Fix: drop the
+    63→ # second .shift(-5); compute the indicator directly; leave NaN on the last
+    64→ # 5 rows (dropped per-horizon in train_cl2).
+    65→ df["tp1_before_sl_5d"]=((df["close"].shift(-5)-df["close"])>0).astype(int)
+    66→ return df
+    67→# ─── DB ───
+    68→def load_syms():
+    69→ conn=sqlite3.connect(DB);s=pd.read_sql("SELECT DISTINCT symbol FROM OhlcvBar ORDER BY symbol",conn)["symbol"].tolist();conn.close();return s
+    70→def load_db(sym):
+    71→ conn=sqlite3.connect(DB);df=pd.read_sql(f"SELECT date,open,high,low,close,volume FROM OhlcvBar WHERE symbol='{sym}' ORDER BY date ASC",conn);conn.close()
+    72→ df=df[df["volume"]>0].reset_index(drop=True);return df
+    73→def gen_pred(cp,r5,r10,r21,sl_low,atr):
+    74→ avg=(r5+r10+r21)/3;sig="BUY" if avg>0.01 else"SELL" if avg<-0.01 else"HOLD"
+    75→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":min(100,int(abs(avg)*1000)),
+    76→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp*(1+r5),2),"tp2":round(cp*(1+r10),2),
+    77→  "tp3":round(cp*(1+r21),2),"sl":round(sl_low,2),"avgReturn":round(float(avg),4)}
+    78→# ─── CL Tier (Classical/Linear) ───
+    79→def train_cl_model(df,sdf,name,factory,hz_col="target_5d"):
+    80→ split=int(len(sdf)*0.8);tr=sdf.iloc[:split]
+    81→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+    82→ try:
+    83→  # ML integrity (Phase A1): per-horizon drop — drop ONLY rows whose
+    84→  # THIS-horizon target is NaN (preserves shorter-horizon rows whose
+    85→  # longest-horizon target is immature).
+    86→  tr_5=tr.dropna(subset=["target_5d"]);m5=factory();m5.fit(tr_5[FC].values,tr_5["target_5d"].values)
+    87→  p5=m5.predict(sdf[FC].values[-1:])[0]
+    88→  tr_10=tr.dropna(subset=["target_10d"]);m10=factory();m10.fit(tr_10[FC].values,tr_10["target_10d"].values)
+    89→  p10=m10.predict(sdf[FC].values[-1:])[0]
+    90→  tr_21=tr.dropna(subset=["target_21d"]);m21=factory();m21.fit(tr_21[FC].values,tr_21["target_21d"].values)
+    91→  p21=m21.predict(sdf[FC].values[-1:])[0]
+    92→  return gen_pred(cp,p5,p10,p21,sl_low,sdf["atr_14"].tail(14).mean())
+    93→ except:return None
+    94→def train_arima(sdf):
+    95→ c=sdf["close"].values[-100:];cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+    96→ try:
+    97→  m=ARIMA(c,order=(1,1,1)).fit();p5=m.forecast(5)[0];p10=m.forecast(10)[0];p21=m.forecast(21)[0]
+    98→  r5=(p5-cp)/cp;r10=(p10-cp)/cp;r21=(p21-cp)/cp;return gen_pred(cp,r5,r10,r21,sl_low,0.02*cp)
+    99→ except:return None
+   100→def train_hw(sdf):
+   101→ c=sdf["close"].values[-100:];cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   102→ try:
+   103→  m=ExponentialSmoothing(c,trend="add",seasonal=None).fit();p5=m.forecast(5)[0];p10=m.forecast(10)[0];p21=m.forecast(21)[0]
+   104→  r5=(p5-cp)/cp;r10=(p10-cp)/cp;r21=(p21-cp)/cp;return gen_pred(cp,r5,r10,r21,sl_low,0.02*cp)
+   105→ except:return None
+   106→def train_garch(sdf):
+   107→ c=sdf["close"].pct_change().dropna().values[-100:];cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   108→ try:
+   109→  from arch import arch_model;m=arch_model(c,vol="Garch",p=1,q=1).fit(disp="off");f=m.forecast(horizon=21)
+   110→  vol=float(np.mean(np.sqrt(f.variance.values[-1,:]))) if hasattr(f,'variance') else 0.02
+   111→  r5=r10=r21=vol;return gen_pred(cp,r5,r10,r21,sl_low,vol*cp)
+   112→ except:
+   113→  # Simple volatility-based prediction
+   114→  vol=float(sdf["volatility_14d"].tail(14).mean() or 0.02);r5=r10=r21=vol
+   115→  return gen_pred(cp,r5,r10,r21,sl_low,vol*cp)
+   116→def train_prophet(sdf):
+   117→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   118→ try:
+   119→  from prophet import Prophet
+   120→  d=pd.DataFrame({"ds":pd.to_datetime(sdf["date"].tail(100)),"y":sdf["close"].tail(100).values})
+   121→  m=Prophet(daily_seasonality=False,weekly_seasonality=False,yearly_seasonality=False);m.fit(d)
+   122→  f=m.predict(pd.DataFrame({"ds":pd.date_range(start=d["ds"].iloc[-1],periods=22,freq="D")[1:]}))
+   123→  p5=f["yhat"].iloc[4];p10=f["yhat"].iloc[9];p21=f["yhat"].iloc[20]
+   124→  r5=(p5-cp)/cp;r10=(p10-cp)/cp;r21=(p21-cp)/cp;return gen_pred(cp,r5,r10,r21,sl_low,0.02*cp)
+   125→ except:
+   126→  # Fallback: simple moving average forecast
+   127→  sma=float(sdf["close"].tail(20).mean());r5=r10=r21=(sma-cp)/cp
+   128→  return gen_pred(cp,r5,r10,r21,sl_low,0.02*cp)
+   129→def train_kalman(sdf):
+   130→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   131→ c=sdf["close"].tail(50).values
+   132→ # Simple Kalman-like filter: exponential smoothing + trend
+   133→ alpha=0.3;state=c[0];trend=0
+   134→ for i in range(1,len(c)):
+   135→  pred=state+trend;state=alpha*c[i]+(1-alpha)*pred;trend=alpha*(c[i]-state)+(1-alpha)*trend
+   136→ p5=state+5*trend;p10=state+10*trend;p21=state+21*trend
+   137→ r5=(p5-cp)/cp;r10=(p10-cp)/cp;r21=(p21-cp)/cp
+   138→ return gen_pred(cp,r5,r10,r21,sl_low,0.02*cp)
+   139→# ─── CL-2 Tier (7 classifiers) ───
+   140→def train_cl2(df,sdf,name,factory):
+   141→ split=int(len(sdf)*0.8);tr=sdf.iloc[:split]
+   142→ # ML integrity (Phase A1): per-horizon drop for tp1_before_sl_5d — drop the
+   143→ # last 5 rows per stock whose 5-session triple-barrier target is immature.
+   144→ tr=tr.dropna(subset=["tp1_before_sl_5d"])
+   145→ Xtr=tr[FC].values;ytr=tr["tp1_before_sl_5d"].values
+   146→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   147→ try:
+   148→  m=factory();m.fit(Xtr,ytr)
+   149→  prob=m.predict_proba(sdf[FC].values[-1:])[0][1] if hasattr(m,'predict_proba') else m.predict(sdf[FC].values[-1:])[0]
+   150→  sig="BUY" if prob>0.5 else"SELL" if prob<0.5 else"HOLD"
+   151→  atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   152→  return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":min(100,int(prob*100)),
+   153→   "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+atr,2),"tp2":round(cp+2*atr,2),
+   154→   "tp3":round(cp+3*atr,2),"sl":round(sl_low,2),"avgReturn":round(float(prob-0.5),4),"raw_prob":round(float(prob),4)}
+   155→ except:return None
+   156→# ─── PI Tier (4 models) ───
+   157→def train_pi(df,sdf,name,factory,hz_col="target_21d"):
+   158→ split=int(len(sdf)*0.8);tr=sdf.iloc[:split]
+   159→ # ML integrity (Phase A1): per-horizon drop for hz_col.
+   160→ tr=tr.dropna(subset=[hz_col])
+   161→ Xtr=tr[FC].values;ytr=tr[hz_col].values
+   162→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   163→ try:
+   164→  m=factory();m.fit(Xtr,ytr);p=m.predict(sdf[FC].values[-1:])[0]
+   165→  r5=r10=r21=p/3;return gen_pred(cp,r5,r10,r21,sl_low,sdf["atr_14"].tail(14).mean())
+   166→ except:return None
+   167→# ─── GM Tier (4 rule-based engines) ───
+   168→def gm_technical(sdf):
+   169→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   170→ rsi=float(sdf["rsi_14"].iloc[-1]);macd=float(sdf["macd"].iloc[-1]);bb=float(sdf["bb_pct_b"].iloc[-1])
+   171→ score=0
+   172→ if rsi<30:score+=2
+   173→ elif rsi<50:score+=1
+   174→ elif rsi>70:score-=2
+   175→ if macd>0:score+=1
+   176→ if bb<0.2:score+=1
+   177→ elif bb>0.8:score-=1
+   178→ sig="BUY" if score>0 else"SELL" if score<0 else"HOLD"
+   179→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   180→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":min(100,abs(score)*25),
+   181→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+1.5*atr,2),"tp2":round(cp+3*atr,2),
+   182→  "tp3":round(cp+4.5*atr,2),"sl":round(cp-1.5*atr,2),"avgReturn":round(score*0.01,4)}
+   183→def gm_announcements(sdf):
+   184→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   185→ ret7=float(sdf["return_7d"].iloc[-1]);ret30=float(sdf["return_30d"].iloc[-1])
+   186→ score=ret7*100+ret30*50;sig="BUY" if score>1 else"SELL" if score<-1 else"HOLD"
+   187→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   188→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":min(100,abs(int(score*10))),
+   189→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+1.5*atr,2),"tp2":round(cp+3*atr,2),
+   190→  "tp3":round(cp+4.5*atr,2),"sl":round(cp-1.5*atr,2),"avgReturn":round(score/100,4)}
+   191→def gm_fundamental(sdf):
+   192→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   193→ sma20=float(sdf["price_sma_20_ratio"].iloc[-1]);sma50=float(sdf["price_sma_50_ratio"].iloc[-1])
+   194→ vol=float(sdf["volatility_14d"].iloc[-1])
+   195→ score=(sma20-1)*10+(sma50-1)*5-vol*100;sig="BUY" if score>0.5 else"SELL" if score<-0.5 else"HOLD"
+   196→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   197→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":min(100,abs(int(score*20))),
+   198→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+1.5*atr,2),"tp2":round(cp+3*atr,2),
+   199→  "tp3":round(cp+4.5*atr,2),"sl":round(cp-1.5*atr,2),"avgReturn":round(score/100,4)}
+   200→def gm_macro(sdf):
+   201→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   202→ ret30=float(sdf["return_30d"].iloc[-1]);ret14=float(sdf["return_14d"].iloc[-1])
+   203→ score=ret30*100+ret14*50;sig="BUY" if score>2 else"SELL" if score<-2 else"HOLD"
+   204→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   205→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":min(100,abs(int(score*5))),
+   206→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+1.5*atr,2),"tp2":round(cp+3*atr,2),
+   207→  "tp3":round(cp+4.5*atr,2),"sl":round(cp-1.5*atr,2),"avgReturn":round(score/100,4)}
+   208→# ─── CG Tier (2 classifiers) ───
+   209→def train_cg(df,sdf,name,factory):
+   210→ split=int(len(sdf)*0.8);tr=sdf.iloc[:split]
+   211→ # ML integrity (Phase A1): per-horizon drop for target_10d (the binary
+   212→ # (target_10d>0) label inherits NaN-ness from target_10d).
+   213→ tr=tr.dropna(subset=["target_10d"])
+   214→ Xtr=tr[FC].values;ytr=(tr["target_10d"]>0).astype(int).values
+   215→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   216→ try:
+   217→  m=factory();m.fit(Xtr,ytr);prob=m.predict_proba(sdf[FC].values[-1:])[0][1]
+   218→  sig="BUY" if prob>0.5 else"SELL";atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   219→  return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":min(100,int(prob*100)),
+   220→   "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+atr,2),"tp2":round(cp+2*atr,2),
+   221→   "tp3":round(cp+3*atr,2),"sl":round(cp-1.5*atr,2),"avgReturn":round(float(prob-0.5),4),"raw_prob":round(float(prob),4)}
+   222→ except:return None
+   223→# ─── X Tier (10 rule-based strategies) ───
+   224→def x_strategy(sdf,name):
+   225→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   226→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   227→ rsi=float(sdf["rsi_14"].iloc[-1]);macd=float(sdf["macd"].iloc[-1])
+   228→ sma20=float(sdf["price_sma_20_ratio"].iloc[-1]);sma50=float(sdf["price_sma_50_ratio"].iloc[-1])
+   229→ bb=float(sdf["bb_pct_b"].iloc[-1]);vol=float(sdf["volume_sma_20_ratio"].iloc[-1])
+   230→ ret50=float(sdf["return_30d"].iloc[-1])
+   231→ sig="HOLD";score=0
+   232→ if name=="Trend Multi-TF":sig="BUY" if sma20>1 and sma50>1 else"SELL" if sma20<1 and sma50<1 else"HOLD"
+   233→ elif name=="Breakout RelVol":sig="BUY" if cp>sdf["high"].tail(20).max() and vol>1.5 else"SELL" if cp<sdf["low"].tail(20).min() and vol>1.5 else"HOLD"
+   234→ elif name=="Trend Pullback":sig="BUY" if sma50>1 and sdf["low"].tail(3).min()<sma20*cp else"HOLD"
+   235→ elif name=="RSI Divergence":sig="BUY" if rsi<30 else"SELL" if rsi>70 else"HOLD"
+   236→ elif name=="BB Mean Reversion":sig="BUY" if bb<0.1 else"SELL" if bb>0.9 else"HOLD"
+   237→ elif name=="Vol Contraction":sig="BUY" if sdf["bb_width"].tail(10).mean()<sdf["bb_width"].tail(50).mean()*0.8 else"HOLD"
+   238→ elif name=="Relative Strength":sig="BUY" if ret50>0.02 else"SELL" if ret50<-0.02 else"HOLD"
+   239→ elif name=="Market Regime":sig="BUY" if sma50>1.02 else"SELL" if sma50<0.98 else"HOLD"
+   240→ elif name=="Meta-Label CG":sig="BUY" if macd>0 and rsi<70 else"SELL" if macd<0 and rsi>30 else"HOLD"
+   241→ elif name=="Triple Barrier Dyn":sig="BUY" if atr/cp<0.05 and sma50>1 else"HOLD"
+   242→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":50,
+   243→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+atr,2),"tp2":round(cp+2*atr,2),
+   244→  "tp3":round(cp+3*atr,2),"sl":round(cp-1.5*atr,2),"avgReturn":0.0}
+   245→# ─── Gian Tier (3 rule-based) ───
+   246→def gian_ensemble(sdf):
+   247→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   248→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   249→ # Square-root S/R levels
+   250→ import math;base=math.sqrt(max(cp,1))
+   251→ s1=round(base**2-2*base,2);r1=round(base**2+2*base,2)
+   252→ sig="BUY" if cp<base else"SELL" if cp>base*1.1 else"HOLD"
+   253→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":50,
+   254→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+atr,2),"tp2":round(cp+2*atr,2),
+   255→  "tp3":round(cp+3*atr,2),"sl":round(sl_low,2),"avgReturn":0.0,"gian_levels":[s1,r1]}
+   256→def gian_extender(sdf):
+   257→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   258→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   259→ # GANN square-of-9 levels
+   260→ levels=[round((n**0.5)**2,2) for n in[1,9,25,49,81,121,169,225,289,361]]
+   261→ nearest=min(levels,key=lambda x:abs(x-cp))
+   262→ sig="BUY" if cp<nearest*0.98 else"SELL" if cp>nearest*1.02 else"HOLD"
+   263→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":50,
+   264→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+atr,2),"tp2":round(cp+2*atr,2),
+   265→  "tp3":round(cp+3*atr,2),"sl":round(sl_low,2),"avgReturn":0.0,"gann_levels":levels}
+   266→def m_ensemble(sdf):
+   267→ cp=float(sdf.iloc[-1]["close"]);sl_low=float(sdf["low"].tail(14).min())
+   268→ atr=float(sdf["atr_14"].tail(14).mean() or cp*0.02)
+   269→ # Historical price-touch S/R: find most-touched levels
+   270→ highs=sdf["high"].tail(100).values;lows=sdf["low"].tail(100).values
+   271→ all_levels=np.concatenate([highs,lows])
+   272→ hist=np.histogram(all_levels,bins=20)
+   273→ top_idx=np.argsort(hist[0])[-3:];top_levels=hist[1][top_idx]
+   274→ nearest=top_levels[np.argmin(np.abs(top_levels-cp))]
+   275→ sig="BUY" if cp<nearest*0.99 else"SELL" if cp>nearest*1.01 else"HOLD"
+   276→ return{"signal":sig,"direction":"LONG" if sig!="SELL" else"SHORT","confidence":50,
+   277→  "currentPrice":round(cp,2),"entry":round(cp,2),"tp1":round(cp+atr,2),"tp2":round(cp+2*atr,2),
+   278→  "tp3":round(cp+3*atr,2),"sl":round(sl_low,2),"avgReturn":0.0,"m_levels":top_levels.tolist()}
+   279→# ─── Train ALL models for one stock ───
+   280→def train_all_models(df,sdf):
+   281→ preds={}
+   282→ cp=float(sdf.iloc[-1]["close"])
+   283→ # CL Tier
+   284→ for name,fac in[("Ridge Regression",lambda:Ridge(alpha=1.0)),]:
+   285→  p=train_cl_model(df,sdf,name,fac); preds[name]=p if p else None
+   286→ p=train_arima(sdf);preds["ARIMA"]=p if p else None
+   287→ p=train_hw(sdf);preds["Holt-Winters"]=p if p else None
+   288→ p=train_garch(sdf);preds["GARCH"]=p if p else None
+   289→ p=train_prophet(sdf);preds["Prophet"]=p if p else None
+   290→ p=train_kalman(sdf);preds["Kalman Filter"]=p if p else None
+   291→ for name,fac in[("XGBoost (CL)",lambda:xgb.XGBRegressor(n_estimators=100,max_depth=3,random_state=42)),
+   292→  ("LightGBM (CL)",lambda:lgb.LGBMRegressor(n_estimators=100,num_leaves=15,random_state=42,verbose=-1)),
+   293→  ("Random Forest (CL)",lambda:RandomForestRegressor(n_estimators=100,max_depth=5,random_state=42,n_jobs=-1))]:
+   294→  p=train_cl_model(df,sdf,name,fac);preds[name]=p if p else None
+   295→ # CL-2 Tier
+   296→ for name,fac in[("LightGBM-A (CL-2)",lambda:lgb.LGBMClassifier(n_estimators=100,max_depth=3,random_state=42,verbose=-1)),
+   297→  ("LightGBM-B (CL-2)",lambda:lgb.LGBMClassifier(n_estimators=60,max_depth=5,random_state=42,verbose=-1)),
+   298→  ("HistGBM (CL-2)",lambda:HistGradientBoostingClassifier(max_depth=3,random_state=42)),
+   299→  ("ExtraTrees (CL-2)",lambda:ExtraTreesClassifier(n_estimators=100,max_depth=5,random_state=42,n_jobs=-1)),
+   300→  ("RandomForest (CL-2)",lambda:RandomForestClassifier(n_estimators=100,max_depth=5,random_state=42,n_jobs=-1)),
+   301→  ("Logistic (CL-2)",lambda:LogisticRegression(max_iter=200,random_state=42)),
+   302→  ("MLP (CL-2)",lambda:MLPClassifier(hidden_layer_sizes=(32,),max_iter=200,random_state=42))]:
+   303→  p=train_cl2(df,sdf,name,fac);preds[name]=p if p else None
+   304→ # PI Tier
+   305→ for name,fac in[("Linear Regression (PI)",lambda:LinearRegression()),
+   306→  ("Logistic Regression (PI)",lambda:LogisticRegression(max_iter=200,random_state=42)),
+   307→  ("Pattern Matcher KNN (PI)",lambda:KNeighborsClassifier(n_neighbors=15,weights="distance")),
+   308→  ("Neural Network (PI)",lambda:MLPClassifier(hidden_layer_sizes=(64,32),max_iter=300,random_state=42))]:
+   309→  p=train_pi(df,sdf,name,fac);preds[name]=p if p else None
+   310→ # GM Tier (rule-based)
+   311→ preds["Technical Engine (GM)"]=gm_technical(sdf)
+   312→ preds["Announcements Engine (GM)"]=gm_announcements(sdf)
+   313→ preds["Fundamental Engine (GM)"]=gm_fundamental(sdf)
+   314→ preds["Macro Engine (GM)"]=gm_macro(sdf)
+   315→ # CG Tier
+   316→ for name,fac in[("LightGBM (CG)",lambda:lgb.LGBMClassifier(n_estimators=100,max_depth=3,random_state=42,verbose=-1)),
+   317→  ("XGBoost (CG)",lambda:xgb.XGBClassifier(n_estimators=100,max_depth=3,random_state=42,use_label_encoder=False,eval_metric="logloss"))]:
+   318→  p=train_cg(df,sdf,name,fac);preds[name]=p if p else None
+   319→ # X Tier (10 rule-based)
+   320→ for name in["Trend Multi-TF","Breakout RelVol","Trend Pullback","RSI Divergence","BB Mean Reversion",
+   321→  "Vol Contraction","Relative Strength","Market Regime","Meta-Label CG","Triple Barrier Dyn"]:
+   322→  preds[name]=x_strategy(sdf,name)
+   323→ # Gian Tier
+   324→ preds["Gian-Ensemble (GIAN)"]=gian_ensemble(sdf)
+   325→ preds["Gian-Extender (GIAN-EXT)"]=gian_extender(sdf)
+   326→ preds["M-Ensemble (M)"]=m_ensemble(sdf)
+   327→ # Filter None
+   328→ return{k:v for k,v in preds.items() if v is not None}
+   329→# ─── Ensemble computation ───
+   330→def compute_ensembles(models_out):
+   331→ ensembles={}
+   332→ all_syms=set()
+   333→ for m in models_out.values():
+   334→  if isinstance(m,dict) and"predictions"in m:all_syms.update(m["predictions"].keys())
+   335→ for sym in all_syms:
+   336→  mp=[]
+   337→  for mn,md in models_out.items():
+   338→   if isinstance(md,dict) and"predictions"in md:
+   339→    p=md["predictions"].get(sym)
+   340→    if p and p.get("signal")in("BUY","SELL"):mp.append(p)
+   341→  if not mp:continue
+   342→  bc=sum(1 for p in mp if p["signal"]=="BUY");sc=sum(1 for p in mp if p["signal"]=="SELL")
+   343→  hc=len(mp)-bc-sc
+   344→  sig="BUY" if bc>sc and bc>hc else"SELL" if sc>bc and sc>hc else"HOLD"
+   345→  ar=sum(p.get("avgReturn",0) for p in mp)/len(mp)
+   346→  pw_sig="BUY" if ar>0.01 else"SELL" if ar<-0.01 else"HOLD"
+   347→  cl_sig="BUY" if bc>=len(mp)/2 else"SELL" if sc>=len(mp)/2 else"HOLD"
+   348→  cp=mp[0].get("entry",0)
+   349→  sls=[p["sl"] for p in mp if p.get("sl",0)>0]
+   350→  tp1s=[p["tp1"] for p in mp if p.get("tp1",0)>0]
+   351→  tp2s=[p["tp2"] for p in mp if p.get("tp2",0)>0]
+   352→  tp3s=[p["tp3"] for p in mp if p.get("tp3",0)>0]
+   353→  sl=np.mean(sls) if sls else cp*0.97
+   354→  tp1=np.mean(tp1s) if tp1s else cp*1.03
+   355→  tp2=np.mean(tp2s) if tp2s else cp*1.06
+   356→  tp3=np.mean(tp3s) if tp3s else cp*1.09
+   357→  for en,es in[("majority_vote",sig),("probability_weighted",pw_sig),("cl_ensemble",cl_sig),("cl_extender",cl_sig)]:
+   358→   if es not in("BUY","SELL"):continue
+   359→   ensembles.setdefault(en,{})
+   360→   ensembles[en][sym]={"signal":es,"direction":"LONG" if es!="SELL" else"SHORT",
+   361→    "confidence":min(100,int(abs(ar)*1000)),"currentPrice":round(cp,2),"entry":round(cp,2),
+   362→    "tp1":round(float(tp1),2),"tp2":round(float(tp2),2),"tp3":round(float(tp3),2),
+   363→    "sl":round(float(sl),2),"avgReturn":round(float(ar),4)}
+   364→ return ensembles
+   365→# ─── Backtest ───
+   366→def backtest(preds_dict):
+   367→ """Compute predicted-positive-rate backtest metrics.
+   368→
+   369→ ML-integrity note (Phase B Pattern #11): this is NOT a realized-outcome
+   370→ backtest. `wins = sum(1 for p in preds.values() if p.get('avgReturn',0)>0)`
+   371→ uses the model's PREDICTED avgReturn being positive — i.e. the predicted-
+   372→ positive rate, NOT whether a trade taken at the prediction date actually
+   373→ made money. Documented as a known limitation; for honest walk-forward
+   374→ realized-outcome backtesting see scripts/walk_forward_backtesting.py.
+   375→ """
+   376→ results={}
+   377→ for name,model_preds in preds_dict.items():
+   378→  if not model_preds:continue
+   379→  total=len(model_preds);wins=sum(1 for p in model_preds.values() if p.get("avgReturn",0)>0)
+   380→  returns=[p.get("avgReturn",0) for p in model_preds.values()]
+   381→  results[name]={"totalTrades":total,"wins":wins,"winRate":round(wins/total*100,1) if total else 0,
+   382→   "avgReturnPct":round(float(np.mean(returns))*100,2) if returns else 0,
+   383→   "maxReturnPct":round(float(max(returns))*100,2) if returns else 0,
+   384→   "minReturnPct":round(float(min(returns))*100,2) if returns else 0}
+   385→ return results
+   386→# ─── Main ───
+   387→def main():
+   388→ syms=load_syms();print(f"Total stocks: {len(syms)}, chunk={CHUNK}")
+   389→ total_chunks=(len(syms)+CHUNK-1)//CHUNK
+   390→ out={}
+   391→ if OUT.exists():
+   392→  try:out=json.loads(OUT.read_text())
+   393→  except:pass
+   394→ out.setdefault("models",{});out["data_source"]="sqlite_db";out["stocks_count"]=len(syms)
+   395→ # Keep the 4 already-trained models (XGBoost, LightGBM, CatBoost, Random Forest)
+   396→ for ci in range(0,len(syms),CHUNK):
+   397→  chunk=syms[ci:ci+CHUNK];cn=ci//CHUNK+1
+   398→  print(f"\n{'='*60}\nChunk {cn}/{total_chunks}: {chunk[0]}..{chunk[-1]}\n{'='*60}")
+   399→  for sym in chunk:
+   400→   try:
+   401→    df=load_db(sym)
+   402→    if len(df)<60:print(f"  skip {sym} ({len(df)} bars)");continue
+   403→    sdf=add_features(df);sdf=add_labels(sdf)
+   404→    preds=train_all_models(df,sdf)
+   405→    if preds:
+   406→     for mn,mp in preds.items():
+   407→      out["models"].setdefault(mn,{"trained":True,"predictions":{}})
+   408→      out["models"][mn]["predictions"][sym]=mp
+   409→     print(f"  ✓ {sym}: {len(preds)} models")
+   410→    else:print(f"  ✗ {sym}: no preds")
+   411→   except Exception as e:print(f"  ✗ {sym}: {str(e)[:80]}")
+   412→  out["trained_at"]=pd.Timestamp.now().isoformat()
+   413→  OUT.parent.mkdir(parents=True,exist_ok=True)
+   414→  OUT.write_text(json.dumps(out,indent=2,default=lambda o:int(o) if isinstance(o,(np.integer,)) else float(o) if isinstance(o,(np.floating,)) else str(o)))
+   415→  tp=sum(len(m.get("predictions",{})) for m in out["models"].values())
+   416→  print(f"\n  Saved: {tp} total predictions across {len(out['models'])} models")
+   417→  try:
+   418→   r=subprocess.run(["curl","-s","-o","/dev/null","-w","%{http_code}","http://127.0.0.1:3000/"],capture_output=True,text=True,timeout=10)
+   419→   print(f"  Server: HTTP {r.stdout}")
+   420→  except:print("  Server: busy")
+   421→ # Ensembles
+   422→ print(f"\n{'='*60}\nComputing ensembles...\n{'='*60}")
+   423→ ens=compute_ensembles(out["models"])
+   424→ for en,enp in ens.items():
+   425→  out[f"{en}_predictions"]=enp;print(f"  {en}: {len(enp)} stocks")
+   426→ # Backtest
+   427→ print(f"\nBacktesting...")
+   428→ model_preds={k:v["predictions"] for k,v in out["models"].items() if isinstance(v,dict) and"predictions"in v}
+   429→ out["backtesting"]=backtest(model_preds)
+   430→ ens_preds={k:v for k,v in ens.items()}
+   431→ out["ensemble_backtesting"]=backtest(ens_preds)
+   432→ for name,stats in{**out["backtesting"],**out["ensemble_backtesting"]}.items():
+   433→  print(f"  {name}: {stats['winRate']}% win, {stats['totalTrades']} trades, avg {stats['avgReturnPct']}%")
+   434→ out["trained_at"]=pd.Timestamp.now().isoformat()
+   435→ out["ml_integrity"]={
+   436→  "target_construction":"per-stock shift(-h) inside add_labels (called per-stock in main; sdf is one stock so shift does NOT cross stock boundaries); no .fillna(0); immature rows left NaN and dropped per-horizon inside the per-stock train_* helpers. tp1_before_sl_5d fix: removed the doubly-leaky extra .shift(-5) (target misalignment) + the .fillna(0) (immature zeroing).",
+   437→  "split":"per-stock chronological 80/20 inside train_cl_model/train_cl2/train_pi/train_cg (sdf is sorted by date in add_features so int(len(sdf)*0.8) IS chronological; per-stock-only training, no concatenated df)",
+   438→  "scaler_fitting":"no scalers in this script (regressors/classifiers operate on raw FC features)",
+   439→  "backtest_methodology":"PATTERN #11 LEAKY_BACKTEST: `wins = sum(1 for p in preds.values() if p.get('avgReturn',0)>0)` uses the model's PREDICTED avgReturn — i.e. predicted-positive rate, NOT a realized-outcome win rate. Documented as a known limitation; for honest walk-forward realized-outcome backtesting see scripts/walk_forward_backtesting.py.",
+   440→ }
+   441→ OUT.write_text(json.dumps(out,indent=2,default=lambda o:int(o) if isinstance(o,(np.integer,)) else float(o) if isinstance(o,(np.floating,)) else str(o)))
+   442→ print(f"\n✅ Done! {OUT} updated. {len(syms)} stocks, {len(out['models'])} models, {len(ens)} ensembles.")
+   443→
+   444→if __name__=="__main__":main()
+   445→

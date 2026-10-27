@@ -617,17 +617,24 @@ export function AiModelSignals(){
               <th className="text-right py-1 px-1.5 font-medium">RMSE</th>
               <th className="text-right py-1 px-1.5 font-medium">R²</th>
               <th className="text-right py-1 px-1.5 font-medium">Dir Acc</th>
-              <th className="text-right py-1 px-1.5 font-medium">Baseline MAE</th>
-              <th className="text-right py-1 px-1.5 font-medium">Baseline R²</th>
+              {/* Task 51 Phase 3: 3 baselines — constant-mean (R² reference), zero-return, training-only-mean */}
+              <th className="text-right py-1 px-1.5 font-medium" title="Constant-mean baseline (R² reference — R²=0 by construction)">CM R²</th>
+              <th className="text-right py-1 px-1.5 font-medium" title="Zero-return baseline (predict 0 for all — measures no-trade strategy)">Zero R²</th>
+              <th className="text-right py-1 px-1.5 font-medium" title="Training-only-mean baseline (per-sample, predict mean of matured training targets — pooled market-wide)">Train-Mean R²</th>
              </tr>
             </thead>
             <tbody>
              {wfData.models.flatMap((m:any)=>(wfData.forecast_horizons||[]).map((hz:number)=>{
               const h=m.horizons?.[String(hz)]||m.horizons?.[hz]||{status:"unavailable"};
               const completed=h.status==="completed";
+              const baselines=h.baselines||{};  // Task 51: {constant_mean, zero_return, training_only_mean}
               // R² color: negative = red, 0 = amber, positive = green (honest — no clamping)
               const r2Color=completed&&typeof h.r2==="number"?(h.r2<-0.001?"text-[#FF5C5C]":h.r2>0.001?"text-[#00E676]":"text-[#FBBF24]"):completed&&!h.r2?"text-[#FBBF24]":"text-[#64748B]";
               const r2Display=completed?(h.r2===null||h.r2===undefined?"NaN":h.r2.toFixed(4)):"—";
+              const cmR2=baselines.constant_mean?.r2;
+              const zeroR2=baselines.zero_return?.r2;
+              const tboR2=baselines.training_only_mean?.r2;
+              const tboStatus=baselines.training_only_mean?.status||"unavailable";
               return (
                <tr key={m.name+"-"+hz} className="border-b border-white/[0.04] hover:bg-[#22D3EE]/[0.04]">
                 <td className="py-1 px-1.5 text-[#F4F7FB] font-medium">{m.name}</td>
@@ -638,13 +645,53 @@ export function AiModelSignals(){
                 <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{completed&&typeof h.rmse==="number"?h.rmse.toFixed(6):"—"}</td>
                 <td className={`py-1 px-1.5 text-right font-mono font-bold ${r2Color}`} title={completed?(h.r2===null?"R² undefined (actual is constant)":"Negative R² = model worse than constant-mean baseline — honest"):"Not evaluated"}>{r2Display}</td>
                 <td className="py-1 px-1.5 text-right font-mono text-[#94A3B8]">{completed&&typeof h.directional_accuracy==="number"?(h.directional_accuracy*100).toFixed(2)+"%":"—"}</td>
-                <td className="py-1 px-1.5 text-right font-mono text-[#64748B]">{completed&&h.baseline&&typeof h.baseline.mae==="number"?h.baseline.mae.toFixed(6):"—"}</td>
-                <td className="py-1 px-1.5 text-right font-mono text-[#64748B]">{completed&&h.baseline&&typeof h.baseline.r2==="number"?h.baseline.r2.toFixed(4):completed?"—":"—"}</td>
+                {/* Task 51 Phase 3: 3 baselines — R² values, NOT clamped */}
+                <td className="py-1 px-1.5 text-right font-mono text-[#64748B]" title={baselines.constant_mean?.definition}>{typeof cmR2==="number"?cmR2.toFixed(4):(cmR2===null?"NaN":"—")}</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#64748B]" title={baselines.zero_return?.definition}>{typeof zeroR2==="number"?zeroR2.toFixed(4):(zeroR2===null?"NaN":"—")}</td>
+                <td className="py-1 px-1.5 text-right font-mono text-[#64748B]" title={baselines.training_only_mean?.definition}>
+                 {tboStatus==="completed"?(typeof tboR2==="number"?tboR2.toFixed(4):(tboR2===null?"NaN":"—")):<span className="text-[#FBBF24]">unavail</span>}
+                </td>
                </tr>
               );
              }))}
             </tbody>
            </table>
+          </div>
+         )}
+
+         {/* Task 51 Phase 2: WIN_RATE_WEIGHTED ensemble methodology note */}
+         {wfData.win_rate_weighted_ensemble_methodology&&(
+          <div className="rounded-md border border-[#22D3EE]/20 bg-[#22D3EE]/[0.04] p-2 text-[10px] text-[#94A3B8]">
+           <div className="text-[#22D3EE] font-semibold mb-0.5">WIN_RATE_WEIGHTED ensemble — Phase 2 fix (Option A)</div>
+           <div>{wfData.win_rate_weighted_ensemble_methodology.phase_2_fix} — frozen validation-period weights (validation samples marked unavailable; final-test samples use frozen weights). No future-outcome leakage.</div>
+           {wfData.win_rate_weighted_ensemble_methodology.frozen_weights&&(
+            <div className="mt-1 font-mono text-[10px]">
+             Frozen weights: {Object.entries(wfData.win_rate_weighted_ensemble_methodology.frozen_weights).map(([k,v]:any)=>`${k}=${(v as number).toFixed(3)}`).join(", ")}
+            </div>
+           )}
+          </div>
+         )}
+
+         {/* Task 51 Phase 5: explicit sample-count metadata */}
+         <div className="rounded-md border border-white/[0.06] bg-[#0A0E1A]/40 p-2 text-[10px]">
+          <div className="text-[#94A3B8] font-semibold mb-1">Sample-count metadata</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px]">
+           <div><div className="text-[9px] uppercase text-[#64748B]">Unique (stock,date) samples</div><div className="font-mono text-[#F4F7FB]">{wfData.n_unique_stock_date_samples??"—"}</div></div>
+           <div><div className="text-[9px] uppercase text-[#64748B]">Total model fits</div><div className="font-mono text-[#F4F7FB]">{wfData.n_model_fits??"—"}</div></div>
+           <div><div className="text-[9px] uppercase text-[#64748B]">Unique prediction dates</div><div className="font-mono text-[#F4F7FB]">{wfData.n_unique_prediction_dates??"—"}</div></div>
+           <div><div className="text-[9px] uppercase text-[#64748B]">Sampling interval</div><div className="font-mono text-[#F4F7FB]">{wfData.sampling_interval_sessions??"—"} sessions</div></div>
+          </div>
+          <div className="mt-1 text-[9px] text-[#64748B]">
+           Do NOT interpret {String(wfData.n_unique_stock_date_samples??"")} as "samples per stock" — it's total unique (stock, decision-date) pairs across {wfData.universe_size} stocks. Per-stock sample count ≈ {wfData.n_unique_stock_date_samples&&wfData.universe_size?Math.round(wfData.n_unique_stock_date_samples/wfData.universe_size):"—"}.
+          </div>
+         </div>
+
+         {/* Task 51 Phase 4: trading-metrics label */}
+         {wfData.trading_metrics?.label&&(
+          <div className="rounded-md border border-[#FBBF24]/20 bg-[#FBBF24]/[0.04] p-2 text-[10px] text-[#94A3B8]">
+           <div className="text-[#FBBF24] font-semibold">Trading metrics: {wfData.trading_metrics.label}</div>
+           <div className="mt-0.5">{wfData.trading_metrics.definition}</div>
+           <div className="mt-0.5 text-[#FF5C5C]">Net trading P&L: {wfData.trading_metrics.net_trading_pnl} — {wfData.trading_metrics.net_trading_pnl_reason}</div>
           </div>
          )}
 

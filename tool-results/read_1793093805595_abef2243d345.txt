@@ -1,0 +1,650 @@
+     1→/**
+     2→ * investment-simulator.ts — chronological, compounding trade-by-trade
+     3→ * simulator for the Tracker → Signal Tracker → Investment Simulator.
+     4→ *
+     5→ * User spec (latest, 2026-10-26):
+     6→ *   - "simulate will must have to no of trade provided by user" — the number
+     7→ *     of trades MUST be fulfilled (no fewer because signals ran out or a
+     8→ *     trade's long hold consumed the window).
+     9→ *   - "you have to check trade on that day on all stock which matches the
+    10→ *     criteria you can use that but you must have to take trade" — for each
+    11→ *     slot, scan ALL matching signals; place the entry on the bar closest to
+    12→ *     the slot's target day. With ~900 DB-backed symbols there is almost
+    13→ *     always a bar on any trading day, so every slot fills.
+    14→ *   - "you can take multiple trade on multiple stock on same day as well to
+    15→ *     full fill the no of trade" — parallel trades allowed (multiple open at
+    16→ *     once on different stocks). This is REQUIRED to fit, e.g., 40 trades in
+    17→ *     ~117 days when each TP-rule hold can span weeks.
+    18→ *   - "don't take all trade in a day or a 1 week (short time)" — slot targets
+    19→ *     are evenly spaced across [startMs, endMs] so trades spread out.
+    20→ *   - "cover each month (when month and year is given) and each day (when day
+    21→ *     less then the month selected)" — month unit → ≥1 slot per calendar
+    22→ *     month; day unit ≥1 slot per day (multiple per day allowed).
+    23→ *   - "1st sip is shown from after completing first month, also add result of
+    24→ *     current month as well" — SIP installments at the 1st of each calendar
+    25→ *     month STRICTLY AFTER the start month, INCLUDING the current (partial)
+    26→ *     month. So periodValue=3 (month, today=Oct 26) → start Jul 1 → window
+    27→ *     Jul→Oct → SIPs at Aug 1, Sep 1, Oct 1 = 3 installments (= periodValue),
+    28→ *     and October trades run up to today.
+    29→ *
+    30→ * Compounding model (realized, parallel-safe):
+    31→ *   - Each trade enters with the REALIZED pool = initial capital + SIPs
+    32→ *     deposited before this trade's entry + P&L from trades that already
+    33→ *     CLOSED at or before this trade's entry. Trades still open when the next
+    34→ *     enters do NOT fund the next entry (no borrowing unrealized gains).
+    35→ *   - This honors the original "compounding" intent (winners grow the pool)
+    36→ *     while allowing the same-day multi-stock entries the user needs.
+    37→ *
+    38→ * Earlier spec (still honored):
+    39→ *   - Result columns: symbol, entry/exit date, entry/exit price, HIT
+    40→ *     (TP3 > TP2 > TP1 > SL), sl/tp1/tp2/tp3, win/loss, entry amount, P&L,
+    41→ *     total gain (cumulative), exit amount.
+    42→ *
+    43→ * Per-trade costs: commission 0.15%×2, slippage 0.15%, CGT 15% on gains.
+    44→ */
+    45→
+    46→import { db } from "@/lib/db";
+    47→
+    48→export type PeriodUnit = "day" | "month" | "year";
+    49→const UNIT_DAYS: Record<PeriodUnit, number> = { day: 1, month: 21, year: 252 };
+    50→const COMMISSION_RATE = 0.0015;
+    51→const SLIPPAGE_RATE = 0.0015;
+    52→const CGT_RATE = 0.15;
+    53→
+    54→export interface SimSignal {
+    55→  symbol: string;
+    56→  signal: "BUY" | "SELL";
+    57→  confidence: number;
+    58→  entry?: number;
+    59→  sl?: number;
+    60→  tp1?: number;
+    61→  tp2?: number;
+    62→  tp3?: number;
+    63→}
+    64→
+    65→export interface SimTradeRow {
+    66→  tradeNo: number;
+    67→  type: "TRADE" | "SIP";
+    68→  month: number;
+    69→  symbol: string;
+    70→  side: "BUY" | "SELL" | "SIP";
+    71→  direction: "LONG" | "SHORT" | "SIP";
+    72→  entryDate: number; // epoch ms
+    73→  entryPrice: number;
+    74→  exitDate: number; // epoch ms
+    75→  exitPrice: number;
+    76→  exitReason: string; // "TP3_HIT" | "TP2_HIT" | "TP1_HIT" | "SL_HIT" | "TIME_UP" | "SIP_DEPOSIT"
+    77→  hit: string; // "TP3" | "TP2" | "TP1" | "SL" | "—"
+    78→  sl: number;
+    79→  tp1: number;
+    80→  tp2: number;
+    81→  tp3: number;
+    82→  entryAmount: number;
+    83→  pnl: number;
+    84→  totalGain: number; // cumulative net P&L up to and including this row
+    85→  exitAmount: number;
+    86→  returnPct: number;
+    87→  isWin: boolean;
+    88→  confidence: number;
+    89→}
+    90→
+    91→export interface InvestmentSimResult {
+    92→  initialAmount: number;
+    93→  finalAmount: number;
+    94→  totalPnl: number; // = totalGain
+    95→  totalReturnPct: number;
+    96→  totalGain: number;
+    97→  totalSip: number;
+    98→  totalInvested: number;
+    99→  wins: number;
+   100→  losses: number;
+   101→  tradeCount: number;
+   102→  rows: SimTradeRow[];
+   103→  startDate: string; // ISO
+   104→  endDate: string; // ISO
+   105→  config: {
+   106→    periodValue: number;
+   107→    periodUnit: PeriodUnit;
+   108→    monthlySip: number;
+   109→    numTrades: number;
+   110→    minConfidence: number;
+   111→    direction: "BOTH" | "LONG" | "SHORT";
+   112→    numMonths: number;
+   113→    numSips: number;
+   114→    totalSip: number;
+   115→    totalInvested: number;
+   116→    numSignalsAvailable: number;
+   117→    seed: number;
+   118→    startDate: string;
+   119→    endDate: string;
+   120→  };
+   121→}
+   122→
+   123→interface Bar {
+   124→  date: string; // ISO date (OhlcvBar.date)
+   125→  open: number;
+   126→  high: number;
+   127→  low: number;
+   128→  close: number;
+   129→}
+   130→
+   131→function atr(highs: number[], lows: number[], closes: number[], period = 14): number {
+   132→  if (closes.length < period + 1) {
+   133→    const ranges = highs.map((h, i) => h - lows[i]).filter((x) => x >= 0);
+   134→    return ranges.length ? ranges.reduce((s, v) => s + v, 0) / ranges.length : 0;
+   135→  }
+   136→  const trs: number[] = [];
+   137→  for (let i = 1; i < closes.length; i++) {
+   138→    trs.push(Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i - 1]), Math.abs(lows[i] - closes[i - 1])));
+   139→  }
+   140→  const slice = trs.slice(-period);
+   141→  return slice.reduce((s, v) => s + v, 0) / slice.length;
+   142→}
+   143→
+   144→// Compute the simulation start date = "go back periodValue units from now".
+   145→//   month unit → 1st of (now − periodValue months). E.g. now=2026-10-26,
+   146→//     periodValue=3 → 2026-07-01 (the user's "if its oct, go back 3 months
+   147→//     = july, take 1st july" example).
+   148→//   day unit → now − periodValue days.
+   149→//   year unit → 1st of (now − periodValue years).
+   150→function computeStartDate(periodValue: number, periodUnit: PeriodUnit): Date {
+   151→  const now = new Date();
+   152→  if (periodUnit === "day") {
+   153→    const d = new Date(now);
+   154→    d.setDate(d.getDate() - periodValue);
+   155→    return d;
+   156→  }
+   157→  if (periodUnit === "year") {
+   158→    const d = new Date(now);
+   159→    d.setFullYear(d.getFullYear() - periodValue);
+   160→    d.setDate(1);
+   161→    d.setHours(0, 0, 0, 0);
+   162→    return d;
+   163→  }
+   164→  const d = new Date(now);
+   165→  d.setMonth(d.getMonth() - periodValue);
+   166→  d.setDate(1); // "take 1st july"
+   167→  d.setHours(0, 0, 0, 0);
+   168→  return d;
+   169→}
+   170→
+   171→// Find the bar in `bars` whose date is closest to targetMs, within
+   172→// [searchStartMs, windowEndMs]. Returns the bar index or -1 if none. Used to
+   173→// place a trade entry on the trading day nearest the slot's target — allows
+   174→// multiple trades on the SAME day on different stocks (the user spec:
+   175→// "multiple trade on multiple stock on same day").
+   176→function findEntryIdx(bars: Bar[], targetMs: number, searchStartMs: number, windowEndMs: number): number {
+   177→  if (bars.length < 5) return -1;
+   178→  let bestIdx = -1;
+   179→  let bestDiff = Infinity;
+   180→  for (let i = 0; i < bars.length; i++) {
+   181→    const t = Date.parse(bars[i].date);
+   182→    if (t < searchStartMs || t > windowEndMs) continue;
+   183→    const diff = Math.abs(t - targetMs);
+   184→    if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+   185→  }
+   186→  return bestIdx;
+   187→}
+   188→
+   189→// Find the K bars in `bars` whose dates are closest to targetMs, within
+   190→// [searchStartMs, windowEndMs], sorted nearest-first. Used to try MULTIPLE
+   191→// candidate entry bars per signal so a TP/SL-hitting entry is found even when
+   192→// the single nearest bar wouldn't hit (maximizes TP/SL-only fills → keeps the
+   193→// numTrades guarantee WITHOUT any time-up exits).
+   194→function findEntryIdxList(bars: Bar[], targetMs: number, searchStartMs: number, windowEndMs: number, k: number): number[] {
+   195→  if (bars.length < 5) return [];
+   196→  const cand: { idx: number; diff: number }[] = [];
+   197→  for (let i = 0; i < bars.length; i++) {
+   198→    const t = Date.parse(bars[i].date);
+   199→    if (t < searchStartMs || t > windowEndMs) continue;
+   200→    cand.push({ idx: i, diff: Math.abs(t - targetMs) });
+   201→  }
+   202→  cand.sort((a, b) => a.diff - b.diff);
+   203→  return cand.slice(0, k).map((c) => c.idx);
+   204→}
+   205→
+   206→// Run ONE trade for a symbol starting at a chosen entry bar (entryIdx), held
+   207→// until SL or a TP is reached (TP3 > TP2 > TP1 > SL priority) within
+   208→// [entryIdx, windowEndMs]. Returns null if NOTHING is hit by windowEnd (the
+   209→// caller skips it so the HIT column is never "—").
+   210→function simulateFromIdx(
+   211→  sig: SimSignal,
+   212→  bars: Bar[],
+   213→  entryIdx: number,
+   214→  windowEndMs: number
+   215→): {
+   216→  exitIdx: number;
+   217→  entryPrice: number;
+   218→  exitPrice: number;
+   219→  exitReason: SimTradeRow["exitReason"];
+   220→  hit: string;
+   221→  sl: number;
+   222→  tp1: number;
+   223→  tp2: number;
+   224→  tp3: number;
+   225→  direction: "BUY" | "SELL";
+   226→} | null {
+   227→  if (entryIdx < 0 || bars.length < 5) return null;
+   228→  const direction = sig.signal === "SELL" ? "SELL" : "BUY";
+   229→  const entryBar = bars[entryIdx];
+   230→  const entryPrice = entryBar.close;
+   231→  const sigEntry = sig.entry && sig.entry > 0 ? sig.entry : entryPrice;
+   232→  const atrSlice = bars.slice(Math.max(0, entryIdx - 13), entryIdx + 1);
+   233→  const atrVal = atr(atrSlice.map((b) => b.high), atrSlice.map((b) => b.low), atrSlice.map((b) => b.close)) || entryPrice * 0.02;
+   234→
+   235→  const slDist = sig.sl && sig.sl > 0 && sigEntry ? Math.abs(sigEntry - sig.sl) : atrVal * 1.5;
+   236→  const tp1Dist = sig.tp1 && sig.tp1 > 0 && sigEntry ? Math.abs(sig.tp1 - sigEntry) : atrVal;
+   237→  const tp2Dist = sig.tp2 && sig.tp2 > 0 && sigEntry ? Math.abs(sig.tp2 - sigEntry) : 2 * atrVal;
+   238→  const tp3Dist = sig.tp3 && sig.tp3 > 0 && sigEntry ? Math.abs(sig.tp3 - sigEntry) : 3 * atrVal;
+   239→
+   240→  const sl = direction === "BUY" ? entryPrice - slDist : entryPrice + slDist;
+   241→  const tp1 = direction === "BUY" ? entryPrice + tp1Dist : entryPrice - tp1Dist;
+   242→  const tp2 = direction === "BUY" ? entryPrice + tp2Dist : entryPrice - tp2Dist;
+   243→  const tp3 = direction === "BUY" ? entryPrice + tp3Dist : entryPrice - tp3Dist;
+   244→
+   245→  // TP rule: scan forward through the FULL remaining window. Each trade holds
+   246→  // until SL or a TP is reached; if NOTHING is hit by windowEnd the trade is
+   247→  // skipped (return null) so the HIT column is never "—".
+   248→  let end = Math.min(bars.length - 1, entryIdx);
+   249→  for (let i = bars.length - 1; i > entryIdx; i--) {
+   250→    if (Date.parse(bars[i].date) <= windowEndMs) { end = i; break; }
+   251→  }
+   252→  let tp3Idx = -1, tp2Idx = -1, tp1Idx = -1, slIdx = -1;
+   253→  for (let i = entryIdx + 1; i <= end; i++) {
+   254→    const b = bars[i];
+   255→    if (direction === "BUY") {
+   256→      if (tp3Idx < 0 && b.high >= tp3) tp3Idx = i;
+   257→      if (tp2Idx < 0 && b.high >= tp2) tp2Idx = i;
+   258→      if (tp1Idx < 0 && b.high >= tp1) tp1Idx = i;
+   259→      if (slIdx < 0 && b.low <= sl) slIdx = i;
+   260→    } else {
+   261→      if (tp3Idx < 0 && b.low <= tp3) tp3Idx = i;
+   262→      if (tp2Idx < 0 && b.low <= tp2) tp2Idx = i;
+   263→      if (tp1Idx < 0 && b.low <= tp1) tp1Idx = i;
+   264→      if (slIdx < 0 && b.high >= sl) slIdx = i;
+   265→    }
+   266→  }
+   267→  // Priority 5B: chronological first-touch wins; on a same-bar collision
+   268→  // (TP + SL both crossed in one bar, no intraday data to disambiguate) the
+   269→  // STOP wins (conservative). This replaces the old optimistic TP3>TP2>TP1>SL
+   270→  // priority that awarded a TP win even when SL was touched first.
+   271→  const crossed: { idx: number; price: number; reason: SimTradeRow["exitReason"]; hit: string; isSl: boolean }[] = [];
+   272→  if (slIdx >= 0) crossed.push({ idx: slIdx, price: sl, reason: "SL_HIT", hit: "SL", isSl: true });
+   273→  if (tp1Idx >= 0) crossed.push({ idx: tp1Idx, price: tp1, reason: "TP1_HIT", hit: "TP1", isSl: false });
+   274→  if (tp2Idx >= 0) crossed.push({ idx: tp2Idx, price: tp2, reason: "TP2_HIT", hit: "TP2", isSl: false });
+   275→  if (tp3Idx >= 0) crossed.push({ idx: tp3Idx, price: tp3, reason: "TP3_HIT", hit: "TP3", isSl: false });
+   276→  if (crossed.length === 0) return null; // nothing hit within the window — skip
+   277→  // Sort by first-touch bar index; SL wins ties (stop-first).
+   278→  crossed.sort((a, b) => (a.idx - b.idx) || (a.isSl ? -1 : 1));
+   279→  const first = crossed[0];
+   280→  const exitIdx = first.idx;
+   281→  const exitPrice = first.price;
+   282→  const exitReason = first.reason;
+   283→  const hit = first.hit;
+   284→
+   285→  return { exitIdx, entryPrice, exitPrice, exitReason, hit, sl, tp1, tp2, tp3, direction };
+   286→}
+   287→
+   288→export interface InvestmentSimInput {
+   289→  capital: number;
+   290→  periodValue: number;
+   291→  periodUnit: PeriodUnit;
+   292→  monthlySip: number;
+   293→  numTrades: number;
+   294→  minConfidence: number;
+   295→  direction: "BOTH" | "LONG" | "SHORT";
+   296→  signals: SimSignal[];
+   297→  seed?: number;
+   298→}
+   299→
+   300→export async function runInvestmentSimulation(input: InvestmentSimInput): Promise<InvestmentSimResult> {
+   301→  const {
+   302→    capital,
+   303→    periodValue,
+   304→    periodUnit,
+   305→    monthlySip,
+   306→    numTrades,
+   307→    minConfidence,
+   308→    direction,
+   309→    signals: rawSignals,
+   310→    seed = Date.now(),
+   311→  } = input;
+   312→
+   313→  const startDate = computeStartDate(periodValue, periodUnit);
+   314→  const endDate = new Date(); // now
+   315→  const startMs = startDate.getTime();
+   316→  const endMs = endDate.getTime();
+   317→
+   318→  // Calendar months spanned by the window (info only — for the UI label).
+   319→  // month unit, periodValue=3 from Oct → start Jul 1 → window Jul+Aug+Sep+Oct
+   320→  // (current partial) = 4 calendar months = periodValue + 1.
+   321→  const numMonths =
+   322→    periodUnit === "month"
+   323→      ? Math.max(1, periodValue + 1)
+   324→      : periodUnit === "year"
+   325→        ? Math.max(1, periodValue * 12 + 1)
+   326→        : Math.max(1, Math.ceil((endMs - startMs) / (30 * 86400000)));
+   327→
+   328→  // SIP schedule: 1st of each calendar month STRICTLY after the start month,
+   329→  // within [startMs, endMs]. For periodValue=3 (start=Jul 1): Aug 1, Sep 1,
+   330→  // Oct 1 = 3 installments (= periodValue). The current partial month (Oct)
+   331→  // gets its SIP + trades up to today ("also add result of current month").
+   332→  const sipDeposits: { date: number; amount: number; month: number }[] = [];
+   333→  if (monthlySip > 0) {
+   334→    const d = new Date(startDate);
+   335→    d.setMonth(d.getMonth() + 1);
+   336→    d.setDate(1);
+   337→    d.setHours(0, 0, 0, 0);
+   338→    let m = 2;
+   339→    while (d.getTime() <= endMs) {
+   340→      sipDeposits.push({ date: d.getTime(), amount: monthlySip, month: m });
+   341→      d.setMonth(d.getMonth() + 1);
+   342→      m++;
+   343→    }
+   344→  }
+   345→  const numSips = sipDeposits.length;
+   346→  const totalSip = sipDeposits.reduce((s, x) => s + x.amount, 0);
+   347→  const totalInvested = capital + totalSip;
+   348→
+   349→  // Filter signals by confidence + direction.
+   350→  let signals = rawSignals.filter((s) => (s.confidence ?? 0) >= minConfidence);
+   351→  if (direction === "LONG") signals = signals.filter((s) => s.signal === "BUY");
+   352→  if (direction === "SHORT") signals = signals.filter((s) => s.signal === "SELL");
+   353→
+   354→  // Keep only DB-backed symbols (have OHLCV history to trade on).
+   355→  let backedSymbols: Set<string> | null = null;
+   356→  try {
+   357→    const backed = await db.ohlcvBar.findMany({ select: { symbol: true }, distinct: ["symbol"] });
+   358→    backedSymbols = new Set(backed.map((b) => b.symbol));
+   359→    signals = signals.filter((s) => backedSymbols!.has(s.symbol));
+   360→  } catch {
+   361→    // DB unavailable — proceed with whatever signals we have.
+   362→  }
+   363→  const numSignalsAvailable = signals.length;
+   364→
+   365→  // Seeded shuffle (deterministic per seed) — rotates which signal is tried
+   366→  // first per slot so the same stock isn't always picked first.
+   367→  let s = seed;
+   368→  const rng = () => {
+   369→    s = (s * 9301 + 49297) % 233280;
+   370→    return s / 233280;
+   371→  };
+   372→  const shuffled = [...signals].sort(() => rng() - 0.5);
+   373→
+   374→  // Evenly-spaced target entry timestamps across [startMs, endMs]. This is the
+   375→  // "don't cluster all trades in a day/week" guarantee: slots are spread across
+   376→  // the whole window. For month unit each calendar month naturally gets
+   377→  // numTrades/numMonths slots (≥1 per month → "cover each month"); for day unit
+   378→  // each day gets numTrades/periodValue slots (multiple per day allowed →
+   379→  // same-day multi-stock trades → "cover each day").
+   380→  const windowMs = Math.max(1, endMs - startMs);
+   381→  const targets: number[] = [];
+   382→  for (let i = 0; i < numTrades; i++) {
+   383→    targets.push(startMs + (i + 0.5) * (windowMs / numTrades));
+   384→  }
+   385→
+   386→  // Bar cache (per-run).
+   387→  const cache = new Map<string, Bar[]>();
+   388→  const getBars = async (symbol: string): Promise<Bar[]> => {
+   389→    let b = cache.get(symbol);
+   390→    if (!b) {
+   391→      try {
+   392→        const rows2 = await db.ohlcvBar.findMany({ where: { symbol }, orderBy: { date: "asc" } });
+   393→        b = rows2.map((r) => ({ date: r.date, open: r.open, high: r.high, low: r.low, close: r.close }));
+   394→      } catch {
+   395→        b = [];
+   396→      }
+   397→      cache.set(symbol, b);
+   398→    }
+   399→    return b;
+   400→  };
+   401→
+   402→  // Month index of a timestamp relative to startDate (1 = the start month).
+   403→  const monthIndexOf = (ms: number) => {
+   404→    const d = new Date(ms);
+   405→    return (d.getFullYear() - startDate.getFullYear()) * 12 + (d.getMonth() - startDate.getMonth()) + 1;
+   406→  };
+   407→
+   408→  const rows: SimTradeRow[] = [];
+   409→  // Realized-compounding model (parallel trades allowed). entryAmount for a
+   410→  // trade = the REALIZED pool at its entry (capital + SIPs deposited before
+   411→  // this entry + P&L from trades that already CLOSED before this entry).
+   412→  // Trades still open when the next enters do NOT fund the next entry — this
+   413→  // honors "compounding" while allowing the same-day multi-stock trades the
+   414→  // user needs to fulfill numTrades.
+   415→  let realizedPool = capital;
+   416→  let wins = 0;
+   417→  let losses = 0;
+   418→  let cursor = 0; // rotating pointer into the shuffled signal pool
+   419→  let sipIdx = 0;
+   420→  // Trades entered but not yet closed at the time a later trade enters.
+   421→  const openTrades: { exitMs: number; netPnl: number }[] = [];
+   422→
+   423→  for (let i = 0; i < numTrades; i++) {
+   424→    if (numSignalsAvailable === 0) break;
+   425→    const targetMs = targets[i];
+   426→
+   427→    // Scan ALL matching signals round-robin; for each, find the bar closest to
+   428→    // targetMs within [startMs, endMs], then simulate from that bar. Pick the
+   429→    // candidate whose entry bar is closest to targetMs. The triedThisSlot set
+   430→    // prevents re-picking the SAME symbol within one slot, but the same symbol
+   431→    // CAN be picked again in a later slot (and a DIFFERENT symbol may be picked
+   432→    // for the SAME day's slot — "multiple trade on multiple stock on same day").
+   433→    let pickedSig: SimSignal | null = null;
+   434→    let pickedBars: Bar[] = [];
+   435→    let pickedRes: ReturnType<typeof simulateFromIdx> = null;
+   436→    let pickedEntryIdx = -1;
+   437→    let pickedEntryMs = endMs;
+   438→    const triedThisSlot = new Set<string>();
+   439→    for (let attempt = 0; attempt < numSignalsAvailable; attempt++) {
+   440→      const candidate = shuffled[cursor % shuffled.length];
+   441→      cursor++;
+   442→      if (triedThisSlot.has(candidate.symbol)) continue;
+   443→      triedThisSlot.add(candidate.symbol);
+   444→      const candBars = await getBars(candidate.symbol);
+   445→      if (candBars.length < 5) continue;
+   446→      // Priority 5A: do NOT force a fill. Take the signal at its single closest
+   447→      // historical bar to the slot target; simulate once. If it hits TP/SL, it's
+   448→      // a genuine eligible trade; if not, SKIP this slot (report the actual
+   449→      // available count — never sample extra bars to reach numTrades). This
+   450→      // supersedes the earlier "must fulfill numTrades" multi-bar search.
+   451→      const entryIdx = findEntryIdx(candBars, targetMs, startMs, endMs);
+   452→      if (entryIdx < 0) continue;
+   453→      const r = simulateFromIdx(candidate, candBars, entryIdx, endMs);
+   454→      if (r) {
+   455→        const entryMs = Date.parse(candBars[entryIdx].date);
+   456→        if (!pickedRes || Math.abs(entryMs - targetMs) < Math.abs(pickedEntryMs - targetMs)) {
+   457→          pickedSig = candidate;
+   458→          pickedBars = candBars;
+   459→          pickedRes = r;
+   460→          pickedEntryIdx = entryIdx;
+   461→          pickedEntryMs = entryMs;
+   462→        }
+   463→        // Near-perfect (within a day) — stop scanning more signals.
+   464→        if (Math.abs(entryMs - targetMs) < 86400000) break;
+   465→      }
+   466→    }
+   467→    if (!pickedRes || !pickedSig || pickedEntryIdx < 0) continue; // no in-window signal this slot (rare w/ 900 stocks)
+   468→
+   469→    // REALIZE closes: move P&L from trades that closed at/before this entry
+   470→    // into the realized pool (so this trade's entry funds from realized gains
+   471→    // only — parallel trades don't borrow unrealized P&L).
+   472→    const stillOpen: { exitMs: number; netPnl: number }[] = [];
+   473→    for (const ot of openTrades) {
+   474→      if (ot.exitMs <= pickedEntryMs) realizedPool += ot.netPnl; // realize
+   475→      else stillOpen.push(ot);
+   476→    }
+   477→    openTrades.length = 0;
+   478→    openTrades.push(...stillOpen);
+   479→
+   480→    // Apply any SIP deposits whose date is on/before this trade's entry bar
+   481→    // (SIPs are applied to the realized pool chronologically before the trade).
+   482→    while (sipIdx < sipDeposits.length && sipDeposits[sipIdx].date <= pickedEntryMs) {
+   483→      const dep = sipDeposits[sipIdx];
+   484→      realizedPool += dep.amount;
+   485→      rows.push({
+   486→        tradeNo: 0, // assigned after chronological sort
+   487→        type: "SIP",
+   488→        month: dep.month,
+   489→        symbol: `Month ${dep.month} deposit`,
+   490→        side: "SIP",
+   491→        direction: "SIP",
+   492→        entryDate: dep.date,
+   493→        entryPrice: 0,
+   494→        exitDate: dep.date,
+   495→        exitPrice: 0,
+   496→        exitReason: "SIP_DEPOSIT",
+   497→        hit: "—",
+   498→        sl: 0, tp1: 0, tp2: 0, tp3: 0,
+   499→        entryAmount: dep.amount,
+   500→        pnl: 0,
+   501→        totalGain: 0, // assigned after chronological sort
+   502→        exitAmount: dep.amount,
+   503→        returnPct: 0,
+   504→        isWin: false,
+   505→        confidence: 0,
+   506→      });
+   507→      sipIdx++;
+   508→    }
+   509→
+   510→    // COMPOUNDING: this trade enters with the realized pool.
+   511→    const entryAmount = realizedPool;
+   512→    const grossPnlPct =
+   513→      pickedRes.direction === "BUY"
+   514→        ? ((pickedRes.exitPrice - pickedRes.entryPrice) / pickedRes.entryPrice) * 100
+   515→        : ((pickedRes.entryPrice - pickedRes.exitPrice) / pickedRes.entryPrice) * 100;
+   516→    const grossPnl = (grossPnlPct / 100) * entryAmount;
+   517→    const commission = entryAmount * COMMISSION_RATE * 2; // both sides
+   518→    const slippage = entryAmount * SLIPPAGE_RATE;
+   519→    const cgt = grossPnl > 0 ? grossPnl * CGT_RATE : 0;
+   520→    const cost = commission + slippage + cgt;
+   521→    const netPnl = grossPnl - cost;
+   522→    const exitAmount = entryAmount + netPnl;
+   523→    // Win/loss by HIT (a TP hit = WIN; an SL hit = LOSS — the user spec:
+   524→    // "tp3 hit and it still count my loss"). HIT is always TP3/TP2/TP1/SL —
+   525→    // never TIME (time-up trades are skipped in simulateFromIdx).
+   526→    const isWin =
+   527→      pickedRes.hit === "TP3" ||
+   528→      pickedRes.hit === "TP2" ||
+   529→      pickedRes.hit === "TP1";
+   530→    if (isWin) wins++;
+   531→    else losses++;
+   532→
+   533→    const entryBarDateMs = Date.parse(pickedBars[pickedEntryIdx].date);
+   534→    const exitBarDateMs = Date.parse(pickedBars[pickedRes.exitIdx].date);
+   535→    // Track this trade as open; its P&L is realized when a later trade enters
+   536→    // after its exit (or at the end of the simulation).
+   537→    openTrades.push({ exitMs: exitBarDateMs, netPnl });
+   538→
+   539→    rows.push({
+   540→      tradeNo: 0, // assigned after chronological sort
+   541→      type: "TRADE",
+   542→      month: monthIndexOf(entryBarDateMs),
+   543→      symbol: pickedSig.symbol,
+   544→      side: pickedRes.direction,
+   545→      direction: pickedRes.direction === "BUY" ? "LONG" : "SHORT",
+   546→      entryDate: entryBarDateMs,
+   547→      entryPrice: pickedRes.entryPrice,
+   548→      exitDate: exitBarDateMs,
+   549→      exitPrice: pickedRes.exitPrice,
+   550→      exitReason: pickedRes.exitReason,
+   551→      hit: pickedRes.hit,
+   552→      sl: pickedRes.sl,
+   553→      tp1: pickedRes.tp1,
+   554→      tp2: pickedRes.tp2,
+   555→      tp3: pickedRes.tp3,
+   556→      entryAmount,
+   557→      pnl: netPnl,
+   558→      totalGain: 0, // assigned after chronological sort
+   559→      exitAmount,
+   560→      returnPct: entryAmount > 0 ? (netPnl / entryAmount) * 100 : 0,
+   561→      isWin,
+   562→      confidence: pickedSig.confidence ?? 0,
+   563→    });
+   564→  }
+   565→
+   566→  // Realize any still-open trades' P&L into the pool (all close by window end).
+   567→  for (const ot of openTrades) realizedPool += ot.netPnl;
+   568→  openTrades.length = 0;
+   569→
+   570→  // Apply any SIP deposits due AFTER the last trade's entry but within the
+   571→  // window (e.g. a SIP on the 1st when the last trade entered on the 28th).
+   572→  while (sipIdx < sipDeposits.length) {
+   573→    const dep = sipDeposits[sipIdx];
+   574→    realizedPool += dep.amount;
+   575→    rows.push({
+   576→      tradeNo: 0,
+   577→      type: "SIP",
+   578→      month: dep.month,
+   579→      symbol: `Month ${dep.month} deposit`,
+   580→      side: "SIP",
+   581→      direction: "SIP",
+   582→      entryDate: dep.date,
+   583→      entryPrice: 0,
+   584→      exitDate: dep.date,
+   585→      exitPrice: 0,
+   586→      exitReason: "SIP_DEPOSIT",
+   587→      hit: "—",
+   588→      sl: 0, tp1: 0, tp2: 0, tp3: 0,
+   589→      entryAmount: dep.amount,
+   590→      pnl: 0,
+   591→      totalGain: 0,
+   592→      exitAmount: dep.amount,
+   593→      returnPct: 0,
+   594→      isWin: false,
+   595→      confidence: 0,
+   596→    });
+   597→    sipIdx++;
+   598→  }
+   599→
+   600→  // Sort chronologically for display (trades by entryDate, SIPs by their date)
+   601→  // and renumber tradeNo in chronological order. Then compute the cumulative
+   602→  // totalGain per row (sum of netPnl of all trades entered at or before this
+   603→  // row's date — a forward-running total so the user sees the running P&L).
+   604→  rows.sort((a, b) => (a.entryDate || 0) - (b.entryDate || 0));
+   605→  let cumGain = 0;
+   606→  for (const r of rows) {
+   607→    if (r.type === "TRADE") cumGain += r.pnl;
+   608→    r.totalGain = cumGain;
+   609→  }
+   610→  rows.forEach((r, idx) => { r.tradeNo = idx + 1; });
+   611→
+   612→  const totalGain = cumGain; // = sum of all trades' net P&L
+   613→  const finalAmount = realizedPool; // = capital + totalSip + totalGain
+   614→  const totalPnl = totalGain;
+   615→  const totalReturnPct = totalInvested > 0 ? (totalPnl / totalInvested) * 100 : 0;
+   616→  const tradeCount = rows.filter((r) => r.type === "TRADE").length;
+   617→
+   618→  return {
+   619→    initialAmount: capital,
+   620→    finalAmount,
+   621→    totalPnl,
+   622→    totalReturnPct,
+   623→    totalGain,
+   624→    totalSip,
+   625→    totalInvested,
+   626→    wins,
+   627→    losses,
+   628→    tradeCount,
+   629→    rows,
+   630→    startDate: startDate.toISOString(),
+   631→    endDate: endDate.toISOString(),
+   632→    config: {
+   633→      periodValue,
+   634→      periodUnit,
+   635→      monthlySip,
+   636→      numTrades,
+   637→      minConfidence,
+   638→      direction,
+   639→      numMonths,
+   640→      numSips,
+   641→      totalSip,
+   642→      totalInvested,
+   643→      numSignalsAvailable,
+   644→      seed,
+   645→      startDate: startDate.toISOString(),
+   646→      endDate: endDate.toISOString(),
+   647→    },
+   648→  };
+   649→}
+   650→
