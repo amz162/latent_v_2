@@ -2,7 +2,7 @@
   "schema_version": "1.2",
   "evaluation_status": "completed",
   "evaluation_method": "walk-forward-expanding-window",
-  "generated_at": "2026-10-27T21:04:19.271033",
+  "generated_at": "2026-10-27T21:40:40.976712",
   "data_cutoff": "2026-08-27T19:00:00",
   "training_window": {
     "start": "2026-01-12T19:00:00",
@@ -36,6 +36,96 @@
     "data_source": "data/ohlcv/*.csv"
   },
   "per_stock_results": {
+    "ENGRO": {
+      "samples_count": 0,
+      "models": {
+        "XGBoost": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "LightGBM": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "CatBoost": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "Random Forest": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "10": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          },
+          "21": {
+            "status": "unavailable",
+            "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+            "n_observations": 0
+          }
+        }
+      }
+    },
     "HUBC": {
       "samples_count": 16,
       "models": {
