@@ -115214,3 +115214,1256 @@ prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `d
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
 prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+ POST /api/price-patterns/precompute 200 in 2.0min (compile: 2ms, render: 2.0min)
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLCPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+ POST /api/price-patterns/precompute 200 in 83s (compile: 3ms, render: 83s)
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLCPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT 1
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+ POST /api/price-patterns/precompute 200 in 1520ms (compile: 1442µs, render: 1518ms)
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+ POST /api/price-patterns/precompute 200 in 11.4s (compile: 3ms, render: 11.4s)
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for AVN: API request failed with status 429: {"error":"Too many requests, please try again later"}
+ POST /api/price-patterns/precompute 200 in 1861ms (compile: 1350µs, render: 1860ms)
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for AVN: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+ POST /api/price-patterns/precompute 200 in 1845ms (compile: 1693µs, render: 1843ms)
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for AVN: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+ POST /api/price-patterns/precompute 200 in 2.1s (compile: 1301µs, render: 2.1s)
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for AVN: API request failed with status 429: {"error":"Too many requests, please try again later"}
+ POST /api/price-patterns/precompute 200 in 1947ms (compile: 2ms, render: 1945ms)
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT 1
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATBA: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATIL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for AVN: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATLH: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+ POST /api/price-patterns/precompute 200 in 1778ms (compile: 1607µs, render: 1776ms)
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASLPS: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASRL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ATRLXD: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTL: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for AVN: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+ POST /api/price-patterns/precompute 200 in 1992ms (compile: 1364µs, render: 1990ms)
+prisma:query SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+Failed to make API request: Error: API request failed with status 429: {"error":"Too many requests, please try again later"}
+    at async explainPricePatterns (src/lib/latent/price-pattern-llm.ts:117:24)
+    at async computeAndSaveReport (src/lib/latent/price-patterns-service.ts:68:9)
+    at async POST (src/app/api/price-patterns/precompute/route.ts:72:7)
+  115 |       { role: "user", content: userMessage },
+  116 |     ];
+> 117 |     const completion = await zai.chat.completions.create({
+      |                        ^
+  118 |       messages,
+  119 |       temperature: 0.3,
+  120 |       max_tokens: 2400,
+[price-pattern-llm] explanation failed for ASTM: API request failed with status 429: {"error":"Too many requests, please try again later"}
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
