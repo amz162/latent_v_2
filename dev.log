@@ -141855,3 +141855,9 @@ Failed to make API request: Error: API request failed with status 429: {"error":
 prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
  POST /api/price-patterns/precompute 200 in 2.4s (compile: 1360µs, render: 2.4s)
  GET / 200 in 140ms (compile: 10ms, render: 130ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 9ms (compile: 2ms, render: 7ms)
