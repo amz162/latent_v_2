@@ -141935,3 +141935,5 @@ prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`
 prisma:query BEGIN IMMEDIATE
 prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
 prisma:query COMMIT
+ GET / 200 in 55ms (compile: 4ms, render: 52ms)
+ GET /api/backtest/walk-forward 200 in 6ms (compile: 1392µs, render: 5ms)
