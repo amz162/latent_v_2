@@ -1,5 +1,5 @@
 "use client";
-import{useEffect,useState,useRef}from"react";
+import{useEffect,useState,useRef,Fragment}from"react";
 import{Card,CardContent,CardHeader,CardTitle}from"@/components/ui/card";
 import{Button}from"@/components/ui/button";
 import{Badge}from"@/components/ui/badge";
@@ -596,7 +596,7 @@ export function AiModelSignals(){
           <div><div className="text-[9px] uppercase text-[#64748B]">Generated</div><div className="font-mono text-[#94A3B8]">{wfData.generated_at?new Date(wfData.generated_at).toLocaleString():"—"}</div></div>
           <div><div className="text-[9px] uppercase text-[#64748B]">Data cutoff</div><div className="font-mono text-[#94A3B8]">{wfData.data_cutoff?new Date(wfData.data_cutoff).toLocaleDateString():"—"}</div></div>
           <div><div className="text-[9px] uppercase text-[#64748B]">Eval range</div><div className="font-mono text-[#94A3B8]">{wfData.evaluation_date_range?.start?new Date(wfData.evaluation_date_range.start).toLocaleDateString():"—"}→{wfData.evaluation_date_range?.end?new Date(wfData.evaluation_date_range.end).toLocaleDateString():"—"}</div></div>
-          <div><div className="text-[9px] uppercase text-[#64748B]">Universe</div><div className="font-mono text-[#94A3B8]">{wfData.universe_size} stocks · {wfData.n_eligible_samples} samples</div></div>
+          <div><div className="text-[9px] uppercase text-[#64748B]">Universe</div><div className="font-mono text-[#94A3B8]">{wfData.universe_size} stocks · {wfData.n_eligible_samples} samples{wfData.universe?.mode?` · ${wfData.universe.mode}`:""}</div></div>
          </div>
          <div className="flex items-center gap-2 flex-wrap text-[10px]">
           <span className="text-[#64748B]">Symbols:</span>
@@ -693,6 +693,70 @@ export function AiModelSignals(){
            <div className="mt-0.5">{wfData.trading_metrics.definition}</div>
            <div className="mt-0.5 text-[#FF5C5C]">Net trading P&L: {wfData.trading_metrics.net_trading_pnl} — {wfData.trading_metrics.net_trading_pnl_reason}</div>
           </div>
+         )}
+
+         {/* Task 52: universe selector metadata + per-stock results */}
+         {wfData.universe&&(
+          <div className="rounded-md border border-[#22D3EE]/20 bg-[#22D3EE]/[0.04] p-2 text-[10px] text-[#94A3B8]">
+           <div className="text-[#22D3EE] font-semibold mb-0.5">Universe selector — mode: {wfData.universe.mode}</div>
+           <div className="text-[9px]">{wfData.universe.criteria}</div>
+           <div className="mt-1 grid grid-cols-2 md:grid-cols-4 gap-2 font-mono text-[9px]">
+            <div><div className="text-[#64748B] uppercase text-[8px]">Candidates</div>{wfData.universe.candidate_count??"—"}</div>
+            <div><div className="text-[#64748B] uppercase text-[8px]">Eligible</div>{wfData.universe.eligible_count??"—"}</div>
+            <div><div className="text-[#64748B] uppercase text-[8px]">Included</div>{wfData.universe.included_count??"—"}</div>
+            <div><div className="text-[#64748B] uppercase text-[8px]">Excluded</div><span className={wfData.universe.excluded_count?"text-[#FF5C5C]":""}>{wfData.universe.excluded_count??0}</span></div>
+           </div>
+           <div className="mt-1 text-[9px] text-[#64748B]">Data source: {wfData.universe.data_source}{wfData.universe.min_bars_required?` · min ${wfData.universe.min_bars_required} bars`:""}</div>
+          </div>
+         )}
+
+         {/* Task 52: per-stock results table (collapsible) */}
+         {wfData.per_stock_results&&Object.keys(wfData.per_stock_results).length>0&&(
+          <details className="text-[10px] text-[#94A3B8]">
+           <summary className="cursor-pointer text-[#22D3EE] font-semibold">Per-stock results ({Object.keys(wfData.per_stock_results).length} stocks)</summary>
+           <div className="mt-1 overflow-x-auto max-h-72 overflow-y-auto">
+            <table className="w-full text-[9px] border-collapse">
+             <thead className="sticky top-0 bg-[#0A0E1A]">
+              <tr className="text-[#64748B] border-b border-white/[0.06]">
+               <th className="text-left py-1 pr-2 font-medium">Symbol</th>
+               <th className="text-right py-1 px-1 font-medium">Samples</th>
+               {Array.isArray(wfData.models)&&wfData.models.flatMap((m:any)=>m?[(m.name)]:[]).slice(0,5).map((mn:string)=>(
+                <th key={mn} colSpan={3} className="text-center py-1 px-1 font-medium border-l border-white/[0.06]">{mn}</th>
+               ))}
+              </tr>
+              <tr className="text-[#64748B] text-[8px]">
+               <th className="py-0.5"></th><th className=""></th>
+               {Array.isArray(wfData.models)&&wfData.models.flatMap((m:any)=>m?[(m.name)]:[]).slice(0,5).map((_:string)=>(
+                <Fragment key={_+"-h"}>
+                 <th className="text-right px-1 border-l border-white/[0.06]">5d R²</th>
+                 <th className="text-right px-1">10d R²</th>
+                 <th className="text-right px-1">21d R²</th>
+                </Fragment>
+               ))}
+              </tr>
+             </thead>
+             <tbody>
+              {Object.entries(wfData.per_stock_results).sort().map(([sym, info]:[string,any])=>(
+               <tr key={sym} className="border-b border-white/[0.04]">
+                <td className="py-1 pr-2 font-mono text-[#F4F7FB]">{sym}</td>
+                <td className="text-right px-1 text-[#94A3B8]">{info.samples_count}</td>
+                {Array.isArray(wfData.models)&&wfData.models.flatMap((m:any)=>m?[(m.name)]:[]).slice(0,5).map((mn:string)=>{
+                 const m=info.models?.[mn]||{};
+                 return (
+                  <Fragment key={sym+mn}>
+                   <td className={"text-right px-1 border-l border-white/[0.06] "+((m[5]?.r2!=null&&m[5]?.r2<0)?"text-[#FF5C5C]":"text-[#94A3B8]")}>{m[5]?.status==="completed"?(m[5]?.r2!=null?m[5].r2.toFixed(3):"—"):"unavail"}</td>
+                   <td className={"text-right px-1 "+((m[10]?.r2!=null&&m[10]?.r2<0)?"text-[#FF5C5C]":"text-[#94A3B8]")}>{m[10]?.status==="completed"?(m[10]?.r2!=null?m[10].r2.toFixed(3):"—"):"unavail"}</td>
+                   <td className={"text-right px-1 "+((m[21]?.r2!=null&&m[21]?.r2<0)?"text-[#FF5C5C]":"text-[#94A3B8]")}>{m[21]?.status==="completed"?(m[21]?.r2!=null?m[21].r2.toFixed(3):"—"):"unavail"}</td>
+                  </Fragment>
+                 );
+                })}
+               </tr>
+              ))}
+             </tbody>
+            </table>
+           </div>
+           <div className="mt-1 text-[9px] text-[#64748B]">R² shown per stock × model × horizon. Negative R² in red — model worse than constant-mean baseline on that stock. "unavail" = fewer than 2 matured samples for that stock×model×horizon.</div>
+          </details>
          )}
 
          {/* Unevaluated combos */}
