@@ -141887,3 +141887,12 @@ prisma:query BEGIN IMMEDIATE
 prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
 prisma:query COMMIT
  GET / 200 in 145ms (compile: 4ms, render: 142ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 11ms (compile: 3ms, render: 8ms)
+ GET /api/backtest/walk-forward 200 in 15ms (compile: 4ms, render: 12ms)
+ GET / 200 in 183ms (compile: 3ms, render: 180ms)
+ GET /api/track-record 200 in 8ms (compile: 3ms, render: 5ms)

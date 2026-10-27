@@ -692,13 +692,28 @@ def main():
 # (set in the sample loop). Partition by stock + compute the same
 # MAE/RMSE/R²/DirAcc as the pooled wf_forecast. R² can be NEGATIVE — not clamped.
  print("\nComputing per-stock forecast metrics...")
- per_stock_results_clear = sorted(set(
+ # Task 52: iterate the FULL universe (eval_stocks), not just stocks with
+ # matured predictions. Stocks with 0 test samples (e.g. ENGRO whose CSV
+ # ends before the pooled test window) are listed honestly as "unavailable"
+ # with the reason — more diagnostic than silently omitting them.
+ stocks_with_preds = set(
   p["stock"] for name in MODEL_NAMES for hz in [5,10,21]
   for p in per_model_per_horizon[name][hz]
- ))
- for sym in per_stock_results_clear:
+ )
+ for sym in sorted(eval_stocks):
   per_stock_results[sym] = {"samples_count": 0, "models": {}}
   sym_dates_seen = set()
+  if sym not in stocks_with_preds:
+   # No matured predictions at any horizon — record honestly.
+   for name in MODEL_NAMES:
+    per_stock_results[sym]["models"][name] = {}
+    for hz in [5, 10, 21]:
+     per_stock_results[sym]["models"][name][hz] = {
+      "status": "unavailable",
+      "reason": "no test samples in the evaluation window for this stock (CSV ends before the pooled test partition, or < 21 sessions after the last sample)",
+      "n_observations": 0,
+     }
+   continue
   for name in MODEL_NAMES:
    per_stock_results[sym]["models"][name] = {}
    for hz in [5, 10, 21]:
