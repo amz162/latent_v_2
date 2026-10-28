@@ -2458,3 +2458,82 @@ Honest limitations:
 - The date-ordered validation/final-test split changes the ensemble val/final-test composition vs Task 51's stock-grouped order (documented; pooled model metrics unaffected). WIN_RATE_WEIGHTED/FINAL_CONSENSUS numbers in the new canonical8 report differ from the previous report for this reason — the previous report is preserved.
 - LightGBM multithreaded histogram building can introduce tiny numerical nondeterminism on re-fit; resumed samples are genuine OOS re-fits, so honesty is unaffected.
 - The run directories (manifest + per-sample records) accumulate under data/backtest_reports/runs/ — cleanup of old completed runs is left to the operator.
+
+---
+Task ID: 55 (IN PROGRESS — Phase 1-3 partial; Phase 4/5 pending finalization)
+Agent: main (interactive session 2026-10-27 → 2026-10-28)
+Task: Execute the pilot25 walk-forward evaluation in chunked, resumable fashion (point-in-time universe, sample_step=50, chunk_size=25, run_id=pilot25_step50_20261028), finalize, and validate end-to-end. No GitHub push. ml_predictions_multi.json must remain unchanged.
+
+Work Log:
+- Phase 1 (Inspect & prepare):
+  - Confirmed env var names in scripts/walk_forward_backtesting.py: WALK_FORWARD_UNIVERSE, WALK_FORWARD_SAMPLE_STEP, WALK_FORWARD_CHUNK_SIZE, WALK_FORWARD_RUN_ID, WALK_FORWARD_RESUME, WALK_FORWARD_FINALIZE_ONLY, WALK_FORWARD_NO_PROMOTE, WALK_FORWARD_CANDIDATE_PATH (WALK_FORWARD_MAX_STOCKS deprecated).
+  - Verified runs/ dir had only the 2 canonical8 dirs (no pilot25 run yet) → fresh run.
+  - Verified ml_predictions_multi.json baseline hash: 41442cd7ece9d137ec19310e2d771f55 (must stay unchanged throughout).
+  - Verified dev server up (HTTP 200 on /api/backtest/walk-forward/status).
+  - Verified the script does NOT touch ml_predictions_multi.json (only references it in comments + a print statement).
+
+- Phase 2 (First chunk):
+  - Launched: WALK_FORWARD_UNIVERSE=pilot25 WALK_FORWARD_SAMPLE_STEP=50 WALK_FORWARD_RUN_ID=pilot25_step50_20261028 WALK_FORWARD_CHUNK_SIZE=25 python3 scripts/walk_forward_backtesting.py
+  - Verified point-in-time selection: cutoff=2023-04-13, 25 stocks selected (541 eligible / 25 included / 201 excluded for insufficient history as of cutoff), canonical8-first fill + top 17 by PRE-CUTOFF volume.
+  - Universe: ENGRO, HUBC, LUCK, SYS, MEBL, PSO, OGDC, PPL, WTL, KEL, TRG, UNITY, BOP, CNERGY, HASCOL, MLCF, BYCO, PAEL, PIBTL, LOTCHEM, PRL, TELE, ANL, HUMNL, FCCL.
+  - Total samples: 400 (25 stocks × 16 samples/stock at step 50). Test window 2023-04-17 → 2026-12-19.
+  - Chunk 1 completed: 25/400 samples, exit code 0, manifest + checkpoint + progress + 25 sample records written.
+  - Verified: PARTIAL RUN — walk_forward_latest.json NOT touched (canonical8 schema 1.3 still there, hash 20f2e0f4...).
+  - Verified: ml_predictions_multi.json unchanged (41442cd7...).
+  - First-evaluation-decision-date strict-after-cutoff guard passed.
+
+- BUG FOUND + FIXED in build_resume_command (scripts/walk_forward_backtesting.py line 607-613):
+  - The auto-printed resume command omitted WALK_FORWARD_SAMPLE_STEP, causing chunk-2's first attempt to fail with "ERROR: config mismatch on sample_step: manifest=50 current=10 — refusing to resume; start a NEW run." (exit 2).
+  - This is a real safety-check demonstration: the resume verification correctly refused to run with a mismatched config.
+  - One-line fix: added `f"WALK_FORWARD_SAMPLE_STEP={manifest['sample_step']}",` to build_resume_command parts list.
+  - Verified py_compile passes after fix.
+  - Chunk 2 re-launched with explicit WALK_FORWARD_SAMPLE_STEP=50 → succeeded.
+
+- Phase 3 (Continue in chunks — IN PROGRESS):
+  - Wrote /home/z/pilot25_run_all.sh wrapper: reliably waits for any running python (pgrep -f walk_forward_backtesting.py), then launches next chunk with full env (UNIVERSE + SAMPLE_STEP + RUN_ID + RESUME + CHUNK_SIZE). Auto-detects status=complete → stop. 20-chunk safety cap.
+  - Initial wrapper attempt had a race (log-mtime check too aggressive; samples take 30-55s with gaps) → chunk 3 started while chunk 2 was still running. Killed chunk 3's python (PID 32093) immediately. Verified no corruption: no leftover .tmp files, sample_000027.json (the one both processes briefly touched) was well-formed (5 models, n_model_fits, actuals, train_cutoff_date all present; chunk 2 had completed it before chunk 3 could write). Fixed wrapper to use pgrep-only check (no log-mtime).
+  - Re-launched fixed wrapper (PID 32274→32277) at 23:48. It correctly waited for chunk 2 to finish, then started chunk 3 at 00:05:59.
+  - Chunks completed so far (all exit 0, ~20-21 min each):
+    * Chunk 1 (manual): 23:35-ish → 25/400 done
+    * Chunk 2 (manual, with SAMPLE_STEP=50 fix): → 50/400 done
+    * Chunk 3 (wrapper): 00:05:59 → 00:26:09 → 75/400 done
+    * Chunk 4 (wrapper): 00:26:12 → 00:47:00 → 100/400 done
+    * Chunk 5 (wrapper): 00:47:04 → 01:08:42 → 125/400 done
+    * Chunk 6 (wrapper): 01:08:45 → in progress (currently at sample 127/400, 2/25 of this chunk)
+  - Verified at every poll: progress.json completed count matches sample-files-on-disk count (no duplicates, no missing); ml_predictions_multi.json hash stays 41442cd7...; walk_forward_latest.json hash stays 20f2e0f4... (partial run never promotes).
+  - Verified status endpoint returns progress-only (no metrics) for the partial run: GET /api/backtest/walk-forward/status shows completed/remaining/total/fits/status/cutoff per run + honesty note "Progress only — NO forecast metrics here."
+
+Stage Summary (current state at time of this entry):
+- Run state: pilot25_step50_20261028, status=running, completed=127/400 (31.75%), model_fits=1905 (= 127 × 15 ✓), remaining=273.
+- Universe: 25 stocks, point-in-time cutoff 2023-04-13, universe_fingerprint d8088bf891daf7b2..., data_fingerprint c071e0227985f90d...
+- ~11 more chunks needed (273/25 = 10.92 chunks) × ~20 min/chunk ≈ 3.5 hours remaining.
+- Wrapper is running in setsid -f background (survives session end). It will auto-finalize on the last chunk (script behavior: when len(completed) >= n_samples, calls finalize_run() in the same invocation).
+- ml_predictions_multi.json UNCHANGED: 41442cd7ece9d137ec19310e2d771f55.
+- walk_forward_latest.json UNCHANGED: 20f2e0f476cd19aab251c3cb88962169 (canonical8 schema 1.3, 112 samples, 1680 fits — preserved).
+- No GitHub push occurred (local autosave commits only, per standing rule).
+
+Pending (to be completed in a follow-up session after the wrapper finishes):
+- Phase 4 verification: confirm finalize_run() executed; candidate report written + validated; old latest preserved as previous; new latest is pilot25 schema 1.3 with 400 samples / 6000 fits; maturity purge applied to frozen weights.
+- Phase 5 end-to-end validation: universe list = the 25 symbols above; sample_step=50 recorded; n_unique_stock_date_samples=400 distinguished from n_model_fits=6000; per-stock diagnostics honest (unavailable stocks flagged); negative R² unclamped; API returns the new report; AI Models tab shows it after Refresh; previous canonical8 report preserved as walk_forward_previous.json; ml_predictions_multi.json unchanged; no GitHub push.
+- Final worklog update: append the completion record with actual pooled MAE/RMSE/R²/DirAcc per model per horizon, baseline comparisons, ensemble weights (post-maturity-purge), per-stock R² matrix, runtime, resumed/failed chunks, and honest limitations.
+
+Resume / finalize commands (for the follow-up session, if the wrapper has died or the last chunk crashed during finalization):
+  # Check progress without touching anything:
+  curl -s http://127.0.0.1:3000/api/backtest/walk-forward/status
+  # Or read progress.json directly:
+  cat data/backtest_reports/runs/pilot25_step50_20261028/progress.json
+
+  # If status=running and wrapper is dead, continue chunks:
+  WALK_FORWARD_UNIVERSE=pilot25 WALK_FORWARD_SAMPLE_STEP=50 WALK_FORWARD_RUN_ID=pilot25_step50_20261028 WALK_FORWARD_RESUME=1 WALK_FORWARD_CHUNK_SIZE=25 python3 scripts/walk_forward_backtesting.py
+
+  # If status=running and all 400 sample records exist but finalization didn't happen (last chunk crashed mid-finalize):
+  WALK_FORWARD_UNIVERSE=pilot25 WALK_FORWARD_SAMPLE_STEP=50 WALK_FORWARD_RUN_ID=pilot25_step50_20261028 WALK_FORWARD_RESUME=1 WALK_FORWARD_FINALIZE_ONLY=1 python3 scripts/walk_forward_backtesting.py
+
+  # If status=complete: Phase 5 validation can proceed (read walk_forward_latest.json, hit the API, refresh the UI).
+
+Honest limitations (so far):
+- The complete pilot25 evaluation is NOT yet done. ~127/400 samples (31.75%) as of this entry. The wrapper is still running.
+- This entry is an IN-PROGRESS record, NOT a completion record. Task 55 cannot be claimed complete until Phase 4 (finalization) and Phase 5 (end-to-end validation) succeed.
+- The 5-chunk sample is enough to prove the chunked architecture works end-to-end (5 clean chunk transitions, no duplicates, no promote, no ml_predictions_multi.json change, no look-ahead bias — cutoff 2023-04-13 strictly before all evaluation decision dates), but the final pooled metrics + frozen ensemble weights + per-stock diagnostics are only available after finalization.
+- One bug found and fixed (build_resume_command missing SAMPLE_STEP). The fix is necessary for any non-default sample_step run to be resumable via the auto-printed command. (canonical8 with sample_step=10 = default was unaffected, which is why the bug wasn't caught earlier.)
+- A completed pilot25 evaluation is NOT proof of performance over all 908 PSX stocks — it is a 25-stock, 400-sample, step-50 walk-forward on a point-in-time-liquidity-ranked universe.

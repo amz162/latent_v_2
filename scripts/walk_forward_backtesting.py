@@ -606,6 +606,7 @@ def write_progress(run_dir,manifest,records_by_idx,status):
 
 def build_resume_command(manifest,chunk_size):
  parts=[f"WALK_FORWARD_UNIVERSE={manifest['universe_mode']}",
+        f"WALK_FORWARD_SAMPLE_STEP={manifest['sample_step']}",
         f"WALK_FORWARD_RUN_ID={manifest['run_id']}",
         "WALK_FORWARD_RESUME=1"]
  if chunk_size>0:parts.append(f"WALK_FORWARD_CHUNK_SIZE={chunk_size}")

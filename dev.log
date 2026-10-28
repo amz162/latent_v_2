@@ -283519,3 +283519,60 @@ prisma:query BEGIN IMMEDIATE
 prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
 prisma:query COMMIT
  GET /api/cron/check-tp-sl 200 in 13ms (compile: 5ms, render: 8ms)
+ GET / 200 in 48ms (compile: 2ms, render: 46ms)
+ GET / 200 in 52ms (compile: 3ms, render: 49ms)
+ GET / 200 in 113ms (compile: 2ms, render: 111ms)
+ GET /api/backtest/walk-forward/status 200 in 10ms (compile: 3ms, render: 6ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 25ms (compile: 2ms, render: 23ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+ GET /api/cron/check-tp-sl 200 in 19ms (compile: 2ms, render: 16ms)
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 26ms (compile: 5ms, render: 20ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 16ms (compile: 5ms, render: 11ms)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 12ms (compile: 3ms, render: 9ms)
+ GET /api/backtest/walk-forward/status 200 in 10ms (compile: 2ms, render: 8ms)
+ GET /api/backtest/walk-forward/status 200 in 13ms (compile: 4ms, render: 9ms)
+ GET / 200 in 125ms (compile: 3ms, render: 122ms)
+ GET / 200 in 126ms (compile: 3ms, render: 124ms)
+ GET / 200 in 266ms (compile: 3ms, render: 263ms)
+ GET / 200 in 166ms (compile: 28ms, render: 138ms)
+ GET / 200 in 154ms (compile: 3ms, render: 151ms)
+ GET / 200 in 128ms (compile: 3ms, render: 125ms)
+ GET / 200 in 127ms (compile: 3ms, render: 125ms)
+ GET / 200 in 107ms (compile: 3ms, render: 104ms)
+ GET / 200 in 215ms (compile: 4ms, render: 211ms)
+ GET / 200 in 109ms (compile: 9ms, render: 100ms)
+ GET / 200 in 145ms (compile: 4ms, render: 142ms)
+ GET / 200 in 121ms (compile: 3ms, render: 118ms)
+ GET / 200 in 111ms (compile: 2ms, render: 108ms)
+ GET / 200 in 116ms (compile: 3ms, render: 114ms)
+ GET / 200 in 168ms (compile: 2ms, render: 166ms)
+ GET / 200 in 105ms (compile: 4ms, render: 101ms)
+ GET / 200 in 198ms (compile: 2ms, render: 196ms)
+ GET / 200 in 94ms (compile: 3ms, render: 91ms)
+ GET / 200 in 100ms (compile: 2ms, render: 98ms)
+ GET / 200 in 181ms (compile: 30ms, render: 151ms)
+ GET / 200 in 87ms (compile: 32ms, render: 55ms)

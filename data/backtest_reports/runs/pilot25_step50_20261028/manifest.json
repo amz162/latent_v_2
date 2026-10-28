@@ -1,0 +1,4218 @@
+{
+  "run_id": "pilot25_step50_20261028",
+  "created_at": "2026-10-27T23:23:05.369582+00:00",
+  "script_task": "task54",
+  "universe_mode": "pilot25",
+  "sample_step": 50,
+  "chunk_size_requested": 25,
+  "data_source_kind": "db",
+  "data_fingerprint": "c071e0227985f90d485ac8a9d95203e065b402de8470c069d0a968fb2e6bc4c4",
+  "universe": {
+    "mode": "pilot25",
+    "criteria": "canonical8 (if eligible as of cutoff) + top 17 by PRE-CUTOFF total volume (liquidity proxy), >= 250 bars as of the selection cutoff \u2014 evaluation-period volume excluded",
+    "selection_method": "point_in_time_volume_ranking",
+    "selection_cutoff": "2023-04-13",
+    "candidate_count": 742,
+    "eligible_count": 541,
+    "included_count": 25,
+    "excluded_count": 201,
+    "exclusions": [
+      {
+        "symbol": "GTECH",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 237,
+        "min_required": 250
+      },
+      {
+        "symbol": "NIB",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 176,
+        "min_required": 250
+      },
+      {
+        "symbol": "UNITYR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "POWERR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "FLYNGR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "HASCOLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 18,
+        "min_required": 250
+      },
+      {
+        "symbol": "PRLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "MLCFR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "FFLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "GCIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 108,
+        "min_required": 250
+      },
+      {
+        "symbol": "JSCLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "OBOYR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "GTECHBR",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "GGLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "ASCR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "CLCPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 246,
+        "min_required": 250
+      },
+      {
+        "symbol": "HBLTETF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 116,
+        "min_required": 250
+      },
+      {
+        "symbol": "WAVESR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 11,
+        "min_required": 250
+      },
+      {
+        "symbol": "GGGLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "EPCLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "JSMFETF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 200,
+        "min_required": 250
+      },
+      {
+        "symbol": "IMAGER1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 15,
+        "min_required": 250
+      },
+      {
+        "symbol": "HADC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 246,
+        "min_required": 250
+      },
+      {
+        "symbol": "GAILR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 15,
+        "min_required": 250
+      },
+      {
+        "symbol": "MFTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 238,
+        "min_required": 250
+      },
+      {
+        "symbol": "POWERPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 241,
+        "min_required": 250
+      },
+      {
+        "symbol": "GCILB",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 78,
+        "min_required": 250
+      },
+      {
+        "symbol": "P05PIB131027",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 3,
+        "min_required": 250
+      },
+      {
+        "symbol": "ALIFE",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 205,
+        "min_required": 250
+      },
+      {
+        "symbol": "DATM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 130,
+        "min_required": 250
+      },
+      {
+        "symbol": "SHCI",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 167,
+        "min_required": 250
+      },
+      {
+        "symbol": "MERITR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "P10PIB101230",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 3,
+        "min_required": 250
+      },
+      {
+        "symbol": "JVDCR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "GEMSPNL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 143,
+        "min_required": 250
+      },
+      {
+        "symbol": "SMBLCPSB",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 23,
+        "min_required": 250
+      },
+      {
+        "symbol": "PNGRS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 95,
+        "min_required": 250
+      },
+      {
+        "symbol": "GRR",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "HSMPSR",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "ACIETF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 142,
+        "min_required": 250
+      },
+      {
+        "symbol": "MUGHALR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "NBPGETF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 214,
+        "min_required": 250
+      },
+      {
+        "symbol": "IFSL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 147,
+        "min_required": 250
+      },
+      {
+        "symbol": "P05PIB290427",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 1,
+        "min_required": 250
+      },
+      {
+        "symbol": "SEARLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 16,
+        "min_required": 250
+      },
+      {
+        "symbol": "GEMPAPL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 151,
+        "min_required": 250
+      },
+      {
+        "symbol": "THAS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 212,
+        "min_required": 250
+      },
+      {
+        "symbol": "BROT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 98,
+        "min_required": 250
+      },
+      {
+        "symbol": "HALEON",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 52,
+        "min_required": 250
+      },
+      {
+        "symbol": "TDIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 155,
+        "min_required": 250
+      },
+      {
+        "symbol": "GEMBLUEX",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 226,
+        "min_required": 250
+      },
+      {
+        "symbol": "GEMUNSL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 226,
+        "min_required": 250
+      },
+      {
+        "symbol": "EWLA",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 221,
+        "min_required": 250
+      },
+      {
+        "symbol": "FCEL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 129,
+        "min_required": 250
+      },
+      {
+        "symbol": "HSMR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 25,
+        "min_required": 250
+      },
+      {
+        "symbol": "ICLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 25,
+        "min_required": 250
+      },
+      {
+        "symbol": "GHGLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 25,
+        "min_required": 250
+      },
+      {
+        "symbol": "SMLR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 25,
+        "min_required": 250
+      },
+      {
+        "symbol": "AASM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 229,
+        "min_required": 250
+      },
+      {
+        "symbol": "SRSM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 161,
+        "min_required": 250
+      },
+      {
+        "symbol": "ANTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 205,
+        "min_required": 250
+      },
+      {
+        "symbol": "ISTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 141,
+        "min_required": 250
+      },
+      {
+        "symbol": "SNBLTFC3",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 237,
+        "min_required": 250
+      },
+      {
+        "symbol": "ASRL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "GLAT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 184,
+        "min_required": 250
+      },
+      {
+        "symbol": "ASLCPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 23,
+        "min_required": 250
+      },
+      {
+        "symbol": "NPSM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 191,
+        "min_required": 250
+      },
+      {
+        "symbol": "EWIC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 163,
+        "min_required": 250
+      },
+      {
+        "symbol": "PAKL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 131,
+        "min_required": 250
+      },
+      {
+        "symbol": "DMC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 201,
+        "min_required": 250
+      },
+      {
+        "symbol": "DMTX",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 201,
+        "min_required": 250
+      },
+      {
+        "symbol": "AHTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 195,
+        "min_required": 250
+      },
+      {
+        "symbol": "SZTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 162,
+        "min_required": 250
+      },
+      {
+        "symbol": "SUHJ",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 162,
+        "min_required": 250
+      },
+      {
+        "symbol": "SFLL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 125,
+        "min_required": 250
+      },
+      {
+        "symbol": "ELCM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 242,
+        "min_required": 250
+      },
+      {
+        "symbol": "JVDCPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 93,
+        "min_required": 250
+      },
+      {
+        "symbol": "DIIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 137,
+        "min_required": 250
+      },
+      {
+        "symbol": "BAFS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 245,
+        "min_required": 250
+      },
+      {
+        "symbol": "PCML",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "HCL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 101,
+        "min_required": 250
+      },
+      {
+        "symbol": "STL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 101,
+        "min_required": 250
+      },
+      {
+        "symbol": "HBLTFC2",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 222,
+        "min_required": 250
+      },
+      {
+        "symbol": "ALQT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 89,
+        "min_required": 250
+      },
+      {
+        "symbol": "HSMCPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 17,
+        "min_required": 250
+      },
+      {
+        "symbol": "BAHLTFC9",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 43,
+        "min_required": 250
+      },
+      {
+        "symbol": "DMIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 41,
+        "min_required": 250
+      },
+      {
+        "symbol": "SBLTFC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 194,
+        "min_required": 250
+      },
+      {
+        "symbol": "JSBLTFC2",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 207,
+        "min_required": 250
+      },
+      {
+        "symbol": "CASH",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 31,
+        "min_required": 250
+      },
+      {
+        "symbol": "HAFL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 123,
+        "min_required": 250
+      },
+      {
+        "symbol": "DOLCPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 14,
+        "min_required": 250
+      },
+      {
+        "symbol": "EWICR1",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 6,
+        "min_required": 250
+      },
+      {
+        "symbol": "PIAB",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 109,
+        "min_required": 250
+      },
+      {
+        "symbol": "PIAHCLB",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 109,
+        "min_required": 250
+      },
+      {
+        "symbol": "AWTX",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 162,
+        "min_required": 250
+      },
+      {
+        "symbol": "ASIC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 79,
+        "min_required": 250
+      },
+      {
+        "symbol": "BOPTFC2",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 11,
+        "min_required": 250
+      },
+      {
+        "symbol": "TPLSC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 27,
+        "min_required": 250
+      },
+      {
+        "symbol": "AKBLTFC6",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 103,
+        "min_required": 250
+      },
+      {
+        "symbol": "ISHT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "TPLTFC3",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 24,
+        "min_required": 250
+      },
+      {
+        "symbol": "MUGHALSC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 62,
+        "min_required": 250
+      },
+      {
+        "symbol": "AYTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "AAL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 2,
+        "min_required": 250
+      },
+      {
+        "symbol": "AATM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ABSON",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ADTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 69,
+        "min_required": 250
+      },
+      {
+        "symbol": "AGLNCPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 2,
+        "min_required": 250
+      },
+      {
+        "symbol": "AMSL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ANNT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "APOT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "AQTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "AYZT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "AZMT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "AZTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "BEEM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "BELA",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "BIIC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "COST",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "COTT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "DBCI",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "DBSL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "DCM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "DCTL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "DOMF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "DWAE",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ENGL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "EXTR",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "FAEL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "FCONM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "FDMF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "FIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "FIM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "FSWL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "FTHM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "GENP",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "GIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 87,
+        "min_required": 250
+      },
+      {
+        "symbol": "GLOT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "GOEM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "GSPM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "GUSM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "GUTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "HACC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 82,
+        "min_required": 250
+      },
+      {
+        "symbol": "HAJT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "HATM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "HKKT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "HMICL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "ICCI",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 2,
+        "min_required": 250
+      },
+      {
+        "symbol": "ICCT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 69,
+        "min_required": 250
+      },
+      {
+        "symbol": "INL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 1,
+        "min_required": 250
+      },
+      {
+        "symbol": "INMF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ITANZ",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ITSL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "JOVC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "KACM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "KAKL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "LPCL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "MDTM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "MOHE",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "MOIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "MOON",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "MSOTPS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 13,
+        "min_required": 250
+      },
+      {
+        "symbol": "MUKT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "MWMP",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "NAFL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "NATM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 93,
+        "min_required": 250
+      },
+      {
+        "symbol": "NINA",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "NMFL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "NORS",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "P10PFL180630",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 1,
+        "min_required": 250
+      },
+      {
+        "symbol": "P10PFL220829",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 1,
+        "min_required": 250
+      },
+      {
+        "symbol": "P10PIB120728",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 1,
+        "min_required": 250
+      },
+      {
+        "symbol": "P10PIB190929",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 1,
+        "min_required": 250
+      },
+      {
+        "symbol": "PAKCEM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "PASM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "PDGH",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "PGIC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 69,
+        "min_required": 250
+      },
+      {
+        "symbol": "PICL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "PRIB",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "PRIC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "PUDF",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "QUSW",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "REGAL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "SCHT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "SDIL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "SDOT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "SEPCO",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 69,
+        "min_required": 250
+      },
+      {
+        "symbol": "SGABL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 2,
+        "min_required": 250
+      },
+      {
+        "symbol": "SGFL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "SICL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "SLSO",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "SSIC",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "SUCM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "SURAJ",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "SWL",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 71,
+        "min_required": 250
+      },
+      {
+        "symbol": "TAJT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "TREI",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 70,
+        "min_required": 250
+      },
+      {
+        "symbol": "USMT",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ZELP",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      },
+      {
+        "symbol": "ZHCM",
+        "reason": "insufficient_history_asof_cutoff",
+        "bars_asof_cutoff": 72,
+        "min_required": 250
+      }
+    ],
+    "target_count": 25,
+    "min_bars_required": 250,
+    "data_source": "db/custom.db OhlcvBar table (pilot25); eligibility+ranking from records with date <= 2023-04-13 only",
+    "selected_asof": {
+      "WTL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 26209866359.0
+      },
+      "KEL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 19201012625.0
+      },
+      "TRG": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 17537453101.0
+      },
+      "UNITY": {
+        "bars_asof_cutoff": 1372,
+        "volume_asof_cutoff": 13888532537.0
+      },
+      "BOP": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 12644982500.0
+      },
+      "CNERGY": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 12195029114.0
+      },
+      "HASCOL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 10753467039.0
+      },
+      "MLCF": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 9238083557.0
+      },
+      "BYCO": {
+        "bars_asof_cutoff": 1281,
+        "volume_asof_cutoff": 8810567000.0
+      },
+      "PAEL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 8796101828.0
+      },
+      "PIBTL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 8132590000.0
+      },
+      "LOTCHEM": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 8096443158.0
+      },
+      "PRL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 7730906832.0
+      },
+      "TELE": {
+        "bars_asof_cutoff": 1609,
+        "volume_asof_cutoff": 7557284252.0
+      },
+      "ANL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 7410475687.0
+      },
+      "HUMNL": {
+        "bars_asof_cutoff": 1607,
+        "volume_asof_cutoff": 7379003917.0
+      },
+      "FCCL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 6953761000.0
+      },
+      "OGDC": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 4298294734.0
+      },
+      "PPL": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 3223347630.0
+      },
+      "HUBC": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 2986413097.0
+      },
+      "PSO": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 1776211419.0
+      },
+      "ENGRO": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 1306518563.0
+      },
+      "MEBL": {
+        "bars_asof_cutoff": 1593,
+        "volume_asof_cutoff": 1119952258.0
+      },
+      "LUCK": {
+        "bars_asof_cutoff": 1611,
+        "volume_asof_cutoff": 1009770455.0
+      },
+      "SYS": {
+        "bars_asof_cutoff": 1600,
+        "volume_asof_cutoff": 369412145.0
+      }
+    },
+    "fingerprint": "d8088bf891daf7b28bacf22936ca7824011435d5ded57b24b339db4c12da88a4",
+    "selection_iterations": 1,
+    "estimated_test_start": "2023-04-17",
+    "selection_cutoff_epoch": 1681344000000,
+    "first_evaluation_decision_date": 1681689600000,
+    "symbols": [
+      "ENGRO",
+      "HUBC",
+      "LUCK",
+      "SYS",
+      "MEBL",
+      "PSO",
+      "OGDC",
+      "PPL",
+      "WTL",
+      "KEL",
+      "TRG",
+      "UNITY",
+      "BOP",
+      "CNERGY",
+      "HASCOL",
+      "MLCF",
+      "BYCO",
+      "PAEL",
+      "PIBTL",
+      "LOTCHEM",
+      "PRL",
+      "TELE",
+      "ANL",
+      "HUMNL",
+      "FCCL"
+    ]
+  },
+  "model_names": [
+    "XGBoost",
+    "LightGBM",
+    "CatBoost",
+    "Random Forest",
+    "Ridge Regression"
+  ],
+  "feature_schema": [
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_width",
+    "bb_pct_b",
+    "atr_14",
+    "obv_change_pct",
+    "price_sma_20_ratio",
+    "price_sma_50_ratio",
+    "price_sma_200_ratio",
+    "volume_sma_20_ratio",
+    "return_1d",
+    "return_7d",
+    "return_14d",
+    "return_30d",
+    "hl_range_pct",
+    "body_size_pct",
+    "volatility_14d"
+  ],
+  "horizons": [
+    5,
+    10,
+    21
+  ],
+  "split": {
+    "train_frac": 0.5,
+    "val_frac": 0.15,
+    "purge_h": 21
+  },
+  "test_window": {
+    "start_epoch": 1681689600000,
+    "end_epoch": 1792540800000
+  },
+  "sample_ids": [
+    "ANL@1681689600000",
+    "BOP@1681689600000",
+    "CNERGY@1681689600000",
+    "ENGRO@1681689600000",
+    "FCCL@1681689600000",
+    "HASCOL@1681689600000",
+    "HUBC@1681689600000",
+    "HUMNL@1681689600000",
+    "KEL@1681689600000",
+    "LOTCHEM@1681689600000",
+    "LUCK@1681689600000",
+    "MEBL@1681689600000",
+    "MLCF@1681689600000",
+    "OGDC@1681689600000",
+    "PAEL@1681689600000",
+    "PIBTL@1681689600000",
+    "PPL@1681689600000",
+    "PRL@1681689600000",
+    "PSO@1681689600000",
+    "SYS@1681689600000",
+    "TELE@1681689600000",
+    "TRG@1681689600000",
+    "UNITY@1681689600000",
+    "WTL@1681689600000",
+    "ANL@1688515200000",
+    "BOP@1688515200000",
+    "CNERGY@1688515200000",
+    "ENGRO@1688515200000",
+    "FCCL@1688515200000",
+    "HASCOL@1688515200000",
+    "HUBC@1688515200000",
+    "HUMNL@1688515200000",
+    "KEL@1688515200000",
+    "LOTCHEM@1688515200000",
+    "LUCK@1688515200000",
+    "MEBL@1688515200000",
+    "MLCF@1688515200000",
+    "OGDC@1688515200000",
+    "PAEL@1688515200000",
+    "PIBTL@1688515200000",
+    "PPL@1688515200000",
+    "PRL@1688515200000",
+    "PSO@1688515200000",
+    "SYS@1688515200000",
+    "TELE@1688515200000",
+    "TRG@1688515200000",
+    "UNITY@1688515200000",
+    "WTL@1688515200000",
+    "ANL@1694736000000",
+    "BOP@1694736000000",
+    "CNERGY@1694736000000",
+    "ENGRO@1694736000000",
+    "FCCL@1694736000000",
+    "HASCOL@1694736000000",
+    "HUBC@1694736000000",
+    "HUMNL@1694736000000",
+    "KEL@1694736000000",
+    "LOTCHEM@1694736000000",
+    "LUCK@1694736000000",
+    "MEBL@1694736000000",
+    "MLCF@1694736000000",
+    "OGDC@1694736000000",
+    "PAEL@1694736000000",
+    "PIBTL@1694736000000",
+    "PPL@1694736000000",
+    "PRL@1694736000000",
+    "PSO@1694736000000",
+    "SYS@1694736000000",
+    "TELE@1694736000000",
+    "TRG@1694736000000",
+    "UNITY@1694736000000",
+    "WTL@1694736000000",
+    "ANL@1701129600000",
+    "BOP@1701129600000",
+    "CNERGY@1701129600000",
+    "ENGRO@1701129600000",
+    "FCCL@1701129600000",
+    "HASCOL@1701129600000",
+    "HUBC@1701129600000",
+    "HUMNL@1701129600000",
+    "KEL@1701129600000",
+    "LOTCHEM@1701129600000",
+    "LUCK@1701129600000",
+    "MEBL@1701129600000",
+    "MLCF@1701129600000",
+    "OGDC@1701129600000",
+    "PAEL@1701129600000",
+    "PIBTL@1701129600000",
+    "PPL@1701129600000",
+    "PRL@1701129600000",
+    "PSO@1701129600000",
+    "SYS@1701129600000",
+    "TELE@1701129600000",
+    "TRG@1701129600000",
+    "UNITY@1701129600000",
+    "WTL@1701129600000",
+    "ANL@1707436800000",
+    "BOP@1707436800000",
+    "CNERGY@1707436800000",
+    "ENGRO@1707436800000",
+    "FCCL@1707436800000",
+    "HASCOL@1707436800000",
+    "HUBC@1707436800000",
+    "HUMNL@1707436800000",
+    "KEL@1707436800000",
+    "LOTCHEM@1707436800000",
+    "LUCK@1707436800000",
+    "MEBL@1707436800000",
+    "MLCF@1707436800000",
+    "OGDC@1707436800000",
+    "PAEL@1707436800000",
+    "PIBTL@1707436800000",
+    "PPL@1707436800000",
+    "PRL@1707436800000",
+    "PSO@1707436800000",
+    "SYS@1707436800000",
+    "TELE@1707436800000",
+    "TRG@1707436800000",
+    "UNITY@1707436800000",
+    "WTL@1707436800000",
+    "ANL@1714003200000",
+    "BOP@1714003200000",
+    "CNERGY@1714003200000",
+    "ENGRO@1714003200000",
+    "FCCL@1714003200000",
+    "HASCOL@1714003200000",
+    "HUBC@1714003200000",
+    "HUMNL@1714003200000",
+    "KEL@1714003200000",
+    "LOTCHEM@1714003200000",
+    "LUCK@1714003200000",
+    "MEBL@1714003200000",
+    "MLCF@1714003200000",
+    "OGDC@1714003200000",
+    "PAEL@1714003200000",
+    "PIBTL@1714003200000",
+    "PPL@1714003200000",
+    "PRL@1714003200000",
+    "PSO@1714003200000",
+    "SYS@1714003200000",
+    "TELE@1714003200000",
+    "TRG@1714003200000",
+    "UNITY@1714003200000",
+    "WTL@1714003200000",
+    "ANL@1720656000000",
+    "BOP@1720656000000",
+    "CNERGY@1720656000000",
+    "ENGRO@1720656000000",
+    "FCCL@1720656000000",
+    "HASCOL@1720656000000",
+    "HUBC@1720656000000",
+    "HUMNL@1720656000000",
+    "KEL@1720656000000",
+    "LOTCHEM@1720656000000",
+    "LUCK@1720656000000",
+    "MEBL@1720656000000",
+    "MLCF@1720656000000",
+    "OGDC@1720656000000",
+    "PAEL@1720656000000",
+    "PIBTL@1720656000000",
+    "PPL@1720656000000",
+    "PRL@1720656000000",
+    "PSO@1720656000000",
+    "SYS@1720656000000",
+    "TELE@1720656000000",
+    "TRG@1720656000000",
+    "UNITY@1720656000000",
+    "WTL@1720656000000",
+    "ANL@1727222400000",
+    "BOP@1727222400000",
+    "CNERGY@1727222400000",
+    "ENGRO@1727222400000",
+    "FCCL@1727222400000",
+    "HASCOL@1727222400000",
+    "HUBC@1727222400000",
+    "HUMNL@1727222400000",
+    "KEL@1727222400000",
+    "LOTCHEM@1727222400000",
+    "LUCK@1727222400000",
+    "MEBL@1727222400000",
+    "MLCF@1727222400000",
+    "OGDC@1727222400000",
+    "PAEL@1727222400000",
+    "PIBTL@1727222400000",
+    "PPL@1727222400000",
+    "PRL@1727222400000",
+    "PSO@1727222400000",
+    "SYS@1727222400000",
+    "TELE@1727222400000",
+    "TRG@1727222400000",
+    "UNITY@1727222400000",
+    "WTL@1727222400000",
+    "ANL@1733270400000",
+    "BOP@1733270400000",
+    "CNERGY@1733270400000",
+    "ENGRO@1733270400000",
+    "FCCL@1733270400000",
+    "HASCOL@1733270400000",
+    "HUBC@1733270400000",
+    "HUMNL@1733270400000",
+    "KEL@1733270400000",
+    "LOTCHEM@1733270400000",
+    "LUCK@1733270400000",
+    "MEBL@1733270400000",
+    "MLCF@1733270400000",
+    "OGDC@1733270400000",
+    "PAEL@1733270400000",
+    "PIBTL@1733270400000",
+    "PPL@1733270400000",
+    "PRL@1733270400000",
+    "PSO@1733270400000",
+    "SYS@1733270400000",
+    "TELE@1733270400000",
+    "TRG@1733270400000",
+    "UNITY@1733270400000",
+    "WTL@1733270400000",
+    "ANL@1739491200000",
+    "BOP@1739491200000",
+    "CNERGY@1739491200000",
+    "FCCL@1739491200000",
+    "HASCOL@1739491200000",
+    "HUBC@1739491200000",
+    "HUMNL@1739491200000",
+    "KEL@1739491200000",
+    "LOTCHEM@1739491200000",
+    "LUCK@1739491200000",
+    "MEBL@1739491200000",
+    "MLCF@1739491200000",
+    "OGDC@1739491200000",
+    "PAEL@1739491200000",
+    "PIBTL@1739491200000",
+    "PPL@1739491200000",
+    "PRL@1739491200000",
+    "PSO@1739491200000",
+    "SYS@1739491200000",
+    "TELE@1739491200000",
+    "TRG@1739491200000",
+    "UNITY@1739491200000",
+    "WTL@1739491200000",
+    "ANL@1746144000000",
+    "BOP@1746144000000",
+    "CNERGY@1746144000000",
+    "FCCL@1746144000000",
+    "HASCOL@1746144000000",
+    "HUBC@1746144000000",
+    "HUMNL@1746144000000",
+    "KEL@1746144000000",
+    "LOTCHEM@1746144000000",
+    "MEBL@1746144000000",
+    "MLCF@1746144000000",
+    "OGDC@1746144000000",
+    "PAEL@1746144000000",
+    "PIBTL@1746144000000",
+    "PPL@1746144000000",
+    "PRL@1746144000000",
+    "PSO@1746144000000",
+    "SYS@1746144000000",
+    "TELE@1746144000000",
+    "TRG@1746144000000",
+    "UNITY@1746144000000",
+    "WTL@1746144000000",
+    "LUCK@1746748800000",
+    "ANL@1752624000000",
+    "BOP@1752624000000",
+    "CNERGY@1752624000000",
+    "FCCL@1752624000000",
+    "HASCOL@1752624000000",
+    "HUBC@1752624000000",
+    "HUMNL@1752624000000",
+    "KEL@1752624000000",
+    "LOTCHEM@1752624000000",
+    "MEBL@1752624000000",
+    "MLCF@1752624000000",
+    "OGDC@1752624000000",
+    "PAEL@1752624000000",
+    "PIBTL@1752624000000",
+    "PPL@1752624000000",
+    "PRL@1752624000000",
+    "PSO@1752624000000",
+    "TELE@1752624000000",
+    "TRG@1752624000000",
+    "UNITY@1752624000000",
+    "WTL@1752624000000",
+    "SYS@1752796800000",
+    "LUCK@1753228800000",
+    "ANL@1758758400000",
+    "BOP@1758758400000",
+    "CNERGY@1758758400000",
+    "FCCL@1758758400000",
+    "HASCOL@1758758400000",
+    "HUBC@1758758400000",
+    "HUMNL@1758758400000",
+    "KEL@1758758400000",
+    "LOTCHEM@1758758400000",
+    "MEBL@1758758400000",
+    "MLCF@1758758400000",
+    "OGDC@1758758400000",
+    "PAEL@1758758400000",
+    "PIBTL@1758758400000",
+    "PPL@1758758400000",
+    "PRL@1758758400000",
+    "PSO@1758758400000",
+    "TELE@1758758400000",
+    "TRG@1758758400000",
+    "UNITY@1758758400000",
+    "WTL@1758758400000",
+    "SYS@1759104000000",
+    "LUCK@1759363200000",
+    "ANL@1764806400000",
+    "BOP@1764806400000",
+    "CNERGY@1764806400000",
+    "FCCL@1764806400000",
+    "HASCOL@1764806400000",
+    "HUBC@1764806400000",
+    "HUMNL@1764806400000",
+    "KEL@1764806400000",
+    "LOTCHEM@1764806400000",
+    "MEBL@1764806400000",
+    "MLCF@1764806400000",
+    "OGDC@1764806400000",
+    "PAEL@1764806400000",
+    "PIBTL@1764806400000",
+    "PPL@1764806400000",
+    "PRL@1764806400000",
+    "PSO@1764806400000",
+    "TELE@1764806400000",
+    "TRG@1764806400000",
+    "UNITY@1764806400000",
+    "WTL@1764806400000",
+    "SYS@1765152000000",
+    "LUCK@1765411200000",
+    "ANL@1771200000000",
+    "BOP@1771200000000",
+    "CNERGY@1771200000000",
+    "FCCL@1771200000000",
+    "HASCOL@1771200000000",
+    "HUBC@1771200000000",
+    "HUMNL@1771200000000",
+    "KEL@1771200000000",
+    "LOTCHEM@1771200000000",
+    "MEBL@1771200000000",
+    "MLCF@1771200000000",
+    "OGDC@1771200000000",
+    "PAEL@1771200000000",
+    "PIBTL@1771200000000",
+    "PPL@1771200000000",
+    "PRL@1771200000000",
+    "PSO@1771200000000",
+    "TELE@1771200000000",
+    "TRG@1771200000000",
+    "UNITY@1771200000000",
+    "WTL@1771200000000",
+    "SYS@1771372800000",
+    "LUCK@1771804800000",
+    "ANL@1777420800000",
+    "BOP@1777420800000",
+    "CNERGY@1777420800000",
+    "FCCL@1777420800000",
+    "HASCOL@1777420800000",
+    "HUBC@1777420800000",
+    "HUMNL@1777420800000",
+    "KEL@1777420800000",
+    "LOTCHEM@1777420800000",
+    "MEBL@1777420800000",
+    "MLCF@1777420800000",
+    "OGDC@1777420800000",
+    "PAEL@1777420800000",
+    "PIBTL@1777420800000",
+    "PPL@1777420800000",
+    "PRL@1777420800000",
+    "PSO@1777420800000",
+    "TELE@1777420800000",
+    "TRG@1777420800000",
+    "UNITY@1777420800000",
+    "WTL@1777420800000",
+    "SYS@1777852800000",
+    "LUCK@1778112000000",
+    "ANL@1784160000000",
+    "BOP@1784160000000",
+    "CNERGY@1784160000000",
+    "FCCL@1784160000000",
+    "HASCOL@1784160000000",
+    "HUBC@1784160000000",
+    "HUMNL@1784160000000",
+    "KEL@1784160000000",
+    "LOTCHEM@1784160000000",
+    "MEBL@1784160000000",
+    "MLCF@1784160000000",
+    "OGDC@1784160000000",
+    "PAEL@1784160000000",
+    "PIBTL@1784160000000",
+    "PPL@1784160000000",
+    "PRL@1784160000000",
+    "PSO@1784160000000",
+    "TELE@1784160000000",
+    "TRG@1784160000000",
+    "UNITY@1784160000000",
+    "WTL@1784160000000",
+    "SYS@1784505600000",
+    "LUCK@1784764800000"
+  ],
+  "sample_meta": [
+    {
+      "idx": 0,
+      "stock": "ANL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 1,
+      "stock": "BOP",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 2,
+      "stock": "CNERGY",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 3,
+      "stock": "ENGRO",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 4,
+      "stock": "FCCL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 5,
+      "stock": "HASCOL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 6,
+      "stock": "HUBC",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 7,
+      "stock": "HUMNL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 8,
+      "stock": "KEL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 9,
+      "stock": "LOTCHEM",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 10,
+      "stock": "LUCK",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 11,
+      "stock": "MEBL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 12,
+      "stock": "MLCF",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 13,
+      "stock": "OGDC",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 14,
+      "stock": "PAEL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 15,
+      "stock": "PIBTL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 16,
+      "stock": "PPL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 17,
+      "stock": "PRL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 18,
+      "stock": "PSO",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 19,
+      "stock": "SYS",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 20,
+      "stock": "TELE",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 21,
+      "stock": "TRG",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 22,
+      "stock": "UNITY",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 23,
+      "stock": "WTL",
+      "date": 1681689600000,
+      "target_maturity_21d": 1684713600000
+    },
+    {
+      "idx": 24,
+      "stock": "ANL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 25,
+      "stock": "BOP",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 26,
+      "stock": "CNERGY",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 27,
+      "stock": "ENGRO",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 28,
+      "stock": "FCCL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 29,
+      "stock": "HASCOL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 30,
+      "stock": "HUBC",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 31,
+      "stock": "HUMNL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 32,
+      "stock": "KEL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 33,
+      "stock": "LOTCHEM",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 34,
+      "stock": "LUCK",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 35,
+      "stock": "MEBL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 36,
+      "stock": "MLCF",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 37,
+      "stock": "OGDC",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 38,
+      "stock": "PAEL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 39,
+      "stock": "PIBTL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 40,
+      "stock": "PPL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 41,
+      "stock": "PRL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 42,
+      "stock": "PSO",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 43,
+      "stock": "SYS",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 44,
+      "stock": "TELE",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 45,
+      "stock": "TRG",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 46,
+      "stock": "UNITY",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 47,
+      "stock": "WTL",
+      "date": 1688515200000,
+      "target_maturity_21d": 1691107200000
+    },
+    {
+      "idx": 48,
+      "stock": "ANL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 49,
+      "stock": "BOP",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 50,
+      "stock": "CNERGY",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 51,
+      "stock": "ENGRO",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 52,
+      "stock": "FCCL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 53,
+      "stock": "HASCOL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 54,
+      "stock": "HUBC",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 55,
+      "stock": "HUMNL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 56,
+      "stock": "KEL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 57,
+      "stock": "LOTCHEM",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 58,
+      "stock": "LUCK",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 59,
+      "stock": "MEBL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 60,
+      "stock": "MLCF",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 61,
+      "stock": "OGDC",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 62,
+      "stock": "PAEL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 63,
+      "stock": "PIBTL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 64,
+      "stock": "PPL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 65,
+      "stock": "PRL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 66,
+      "stock": "PSO",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 67,
+      "stock": "SYS",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 68,
+      "stock": "TELE",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 69,
+      "stock": "TRG",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 70,
+      "stock": "UNITY",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 71,
+      "stock": "WTL",
+      "date": 1694736000000,
+      "target_maturity_21d": 1697500800000
+    },
+    {
+      "idx": 72,
+      "stock": "ANL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 73,
+      "stock": "BOP",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 74,
+      "stock": "CNERGY",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 75,
+      "stock": "ENGRO",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 76,
+      "stock": "FCCL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 77,
+      "stock": "HASCOL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 78,
+      "stock": "HUBC",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 79,
+      "stock": "HUMNL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 80,
+      "stock": "KEL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 81,
+      "stock": "LOTCHEM",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 82,
+      "stock": "LUCK",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 83,
+      "stock": "MEBL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 84,
+      "stock": "MLCF",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 85,
+      "stock": "OGDC",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 86,
+      "stock": "PAEL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 87,
+      "stock": "PIBTL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 88,
+      "stock": "PPL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 89,
+      "stock": "PRL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 90,
+      "stock": "PSO",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 91,
+      "stock": "SYS",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 92,
+      "stock": "TELE",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 93,
+      "stock": "TRG",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 94,
+      "stock": "UNITY",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 95,
+      "stock": "WTL",
+      "date": 1701129600000,
+      "target_maturity_21d": 1703721600000
+    },
+    {
+      "idx": 96,
+      "stock": "ANL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 97,
+      "stock": "BOP",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 98,
+      "stock": "CNERGY",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 99,
+      "stock": "ENGRO",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 100,
+      "stock": "FCCL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 101,
+      "stock": "HASCOL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 102,
+      "stock": "HUBC",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 103,
+      "stock": "HUMNL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 104,
+      "stock": "KEL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 105,
+      "stock": "LOTCHEM",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 106,
+      "stock": "LUCK",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 107,
+      "stock": "MEBL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 108,
+      "stock": "MLCF",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 109,
+      "stock": "OGDC",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 110,
+      "stock": "PAEL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 111,
+      "stock": "PIBTL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 112,
+      "stock": "PPL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 113,
+      "stock": "PRL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 114,
+      "stock": "PSO",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 115,
+      "stock": "SYS",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 116,
+      "stock": "TELE",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 117,
+      "stock": "TRG",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 118,
+      "stock": "UNITY",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 119,
+      "stock": "WTL",
+      "date": 1707436800000,
+      "target_maturity_21d": 1710115200000
+    },
+    {
+      "idx": 120,
+      "stock": "ANL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 121,
+      "stock": "BOP",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 122,
+      "stock": "CNERGY",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 123,
+      "stock": "ENGRO",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 124,
+      "stock": "FCCL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 125,
+      "stock": "HASCOL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 126,
+      "stock": "HUBC",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 127,
+      "stock": "HUMNL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 128,
+      "stock": "KEL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 129,
+      "stock": "LOTCHEM",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 130,
+      "stock": "LUCK",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 131,
+      "stock": "MEBL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 132,
+      "stock": "MLCF",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 133,
+      "stock": "OGDC",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 134,
+      "stock": "PAEL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 135,
+      "stock": "PIBTL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 136,
+      "stock": "PPL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 137,
+      "stock": "PRL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 138,
+      "stock": "PSO",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 139,
+      "stock": "SYS",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 140,
+      "stock": "TELE",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 141,
+      "stock": "TRG",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 142,
+      "stock": "UNITY",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 143,
+      "stock": "WTL",
+      "date": 1714003200000,
+      "target_maturity_21d": 1716768000000
+    },
+    {
+      "idx": 144,
+      "stock": "ANL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 145,
+      "stock": "BOP",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 146,
+      "stock": "CNERGY",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 147,
+      "stock": "ENGRO",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 148,
+      "stock": "FCCL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 149,
+      "stock": "HASCOL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 150,
+      "stock": "HUBC",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 151,
+      "stock": "HUMNL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 152,
+      "stock": "KEL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 153,
+      "stock": "LOTCHEM",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 154,
+      "stock": "LUCK",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 155,
+      "stock": "MEBL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 156,
+      "stock": "MLCF",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 157,
+      "stock": "OGDC",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 158,
+      "stock": "PAEL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 159,
+      "stock": "PIBTL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 160,
+      "stock": "PPL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 161,
+      "stock": "PRL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 162,
+      "stock": "PSO",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 163,
+      "stock": "SYS",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 164,
+      "stock": "TELE",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 165,
+      "stock": "TRG",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 166,
+      "stock": "UNITY",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 167,
+      "stock": "WTL",
+      "date": 1720656000000,
+      "target_maturity_21d": 1723507200000
+    },
+    {
+      "idx": 168,
+      "stock": "ANL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 169,
+      "stock": "BOP",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 170,
+      "stock": "CNERGY",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 171,
+      "stock": "ENGRO",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 172,
+      "stock": "FCCL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 173,
+      "stock": "HASCOL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 174,
+      "stock": "HUBC",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 175,
+      "stock": "HUMNL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 176,
+      "stock": "KEL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 177,
+      "stock": "LOTCHEM",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 178,
+      "stock": "LUCK",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 179,
+      "stock": "MEBL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 180,
+      "stock": "MLCF",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 181,
+      "stock": "OGDC",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 182,
+      "stock": "PAEL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 183,
+      "stock": "PIBTL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 184,
+      "stock": "PPL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 185,
+      "stock": "PRL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 186,
+      "stock": "PSO",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 187,
+      "stock": "SYS",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 188,
+      "stock": "TELE",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 189,
+      "stock": "TRG",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 190,
+      "stock": "UNITY",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 191,
+      "stock": "WTL",
+      "date": 1727222400000,
+      "target_maturity_21d": 1729728000000
+    },
+    {
+      "idx": 192,
+      "stock": "ANL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 193,
+      "stock": "BOP",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 194,
+      "stock": "CNERGY",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 195,
+      "stock": "ENGRO",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 196,
+      "stock": "FCCL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 197,
+      "stock": "HASCOL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 198,
+      "stock": "HUBC",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 199,
+      "stock": "HUMNL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 200,
+      "stock": "KEL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 201,
+      "stock": "LOTCHEM",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 202,
+      "stock": "LUCK",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 203,
+      "stock": "MEBL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 204,
+      "stock": "MLCF",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 205,
+      "stock": "OGDC",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 206,
+      "stock": "PAEL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 207,
+      "stock": "PIBTL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 208,
+      "stock": "PPL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 209,
+      "stock": "PRL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 210,
+      "stock": "PSO",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 211,
+      "stock": "SYS",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 212,
+      "stock": "TELE",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 213,
+      "stock": "TRG",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 214,
+      "stock": "UNITY",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 215,
+      "stock": "WTL",
+      "date": 1733270400000,
+      "target_maturity_21d": 1735862400000
+    },
+    {
+      "idx": 216,
+      "stock": "ANL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 217,
+      "stock": "BOP",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 218,
+      "stock": "CNERGY",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 219,
+      "stock": "FCCL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 220,
+      "stock": "HASCOL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 221,
+      "stock": "HUBC",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 222,
+      "stock": "HUMNL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 223,
+      "stock": "KEL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 224,
+      "stock": "LOTCHEM",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 225,
+      "stock": "LUCK",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 226,
+      "stock": "MEBL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 227,
+      "stock": "MLCF",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 228,
+      "stock": "OGDC",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 229,
+      "stock": "PAEL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 230,
+      "stock": "PIBTL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 231,
+      "stock": "PPL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 232,
+      "stock": "PRL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 233,
+      "stock": "PSO",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 234,
+      "stock": "SYS",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 235,
+      "stock": "TELE",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 236,
+      "stock": "TRG",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 237,
+      "stock": "UNITY",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 238,
+      "stock": "WTL",
+      "date": 1739491200000,
+      "target_maturity_21d": 1742169600000
+    },
+    {
+      "idx": 239,
+      "stock": "ANL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 240,
+      "stock": "BOP",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 241,
+      "stock": "CNERGY",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 242,
+      "stock": "FCCL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 243,
+      "stock": "HASCOL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 244,
+      "stock": "HUBC",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 245,
+      "stock": "HUMNL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 246,
+      "stock": "KEL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 247,
+      "stock": "LOTCHEM",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 248,
+      "stock": "MEBL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 249,
+      "stock": "MLCF",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 250,
+      "stock": "OGDC",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 251,
+      "stock": "PAEL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 252,
+      "stock": "PIBTL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 253,
+      "stock": "PPL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 254,
+      "stock": "PRL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 255,
+      "stock": "PSO",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 256,
+      "stock": "SYS",
+      "date": 1746144000000,
+      "target_maturity_21d": 1749081600000
+    },
+    {
+      "idx": 257,
+      "stock": "TELE",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 258,
+      "stock": "TRG",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 259,
+      "stock": "UNITY",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 260,
+      "stock": "WTL",
+      "date": 1746144000000,
+      "target_maturity_21d": 1748908800000
+    },
+    {
+      "idx": 261,
+      "stock": "LUCK",
+      "date": 1746748800000,
+      "target_maturity_21d": 1749686400000
+    },
+    {
+      "idx": 262,
+      "stock": "ANL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 263,
+      "stock": "BOP",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 264,
+      "stock": "CNERGY",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 265,
+      "stock": "FCCL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 266,
+      "stock": "HASCOL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 267,
+      "stock": "HUBC",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 268,
+      "stock": "HUMNL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 269,
+      "stock": "KEL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 270,
+      "stock": "LOTCHEM",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 271,
+      "stock": "MEBL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 272,
+      "stock": "MLCF",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 273,
+      "stock": "OGDC",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 274,
+      "stock": "PAEL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 275,
+      "stock": "PIBTL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 276,
+      "stock": "PPL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 277,
+      "stock": "PRL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 278,
+      "stock": "PSO",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 279,
+      "stock": "TELE",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 280,
+      "stock": "TRG",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 281,
+      "stock": "UNITY",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 282,
+      "stock": "WTL",
+      "date": 1752624000000,
+      "target_maturity_21d": 1755216000000
+    },
+    {
+      "idx": 283,
+      "stock": "SYS",
+      "date": 1752796800000,
+      "target_maturity_21d": 1755561600000
+    },
+    {
+      "idx": 284,
+      "stock": "LUCK",
+      "date": 1753228800000,
+      "target_maturity_21d": 1755820800000
+    },
+    {
+      "idx": 285,
+      "stock": "ANL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 286,
+      "stock": "BOP",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 287,
+      "stock": "CNERGY",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 288,
+      "stock": "FCCL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 289,
+      "stock": "HASCOL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 290,
+      "stock": "HUBC",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 291,
+      "stock": "HUMNL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 292,
+      "stock": "KEL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 293,
+      "stock": "LOTCHEM",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 294,
+      "stock": "MEBL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 295,
+      "stock": "MLCF",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 296,
+      "stock": "OGDC",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 297,
+      "stock": "PAEL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 298,
+      "stock": "PIBTL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 299,
+      "stock": "PPL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 300,
+      "stock": "PRL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 301,
+      "stock": "PSO",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 302,
+      "stock": "TELE",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 303,
+      "stock": "TRG",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 304,
+      "stock": "UNITY",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 305,
+      "stock": "WTL",
+      "date": 1758758400000,
+      "target_maturity_21d": 1761264000000
+    },
+    {
+      "idx": 306,
+      "stock": "SYS",
+      "date": 1759104000000,
+      "target_maturity_21d": 1761609600000
+    },
+    {
+      "idx": 307,
+      "stock": "LUCK",
+      "date": 1759363200000,
+      "target_maturity_21d": 1761868800000
+    },
+    {
+      "idx": 308,
+      "stock": "ANL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 309,
+      "stock": "BOP",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 310,
+      "stock": "CNERGY",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 311,
+      "stock": "FCCL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 312,
+      "stock": "HASCOL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 313,
+      "stock": "HUBC",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 314,
+      "stock": "HUMNL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 315,
+      "stock": "KEL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 316,
+      "stock": "LOTCHEM",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 317,
+      "stock": "MEBL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 318,
+      "stock": "MLCF",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 319,
+      "stock": "OGDC",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 320,
+      "stock": "PAEL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 321,
+      "stock": "PIBTL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 322,
+      "stock": "PPL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 323,
+      "stock": "PRL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 324,
+      "stock": "PSO",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 325,
+      "stock": "TELE",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 326,
+      "stock": "TRG",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 327,
+      "stock": "UNITY",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 328,
+      "stock": "WTL",
+      "date": 1764806400000,
+      "target_maturity_21d": 1767571200000
+    },
+    {
+      "idx": 329,
+      "stock": "SYS",
+      "date": 1765152000000,
+      "target_maturity_21d": 1767744000000
+    },
+    {
+      "idx": 330,
+      "stock": "LUCK",
+      "date": 1765411200000,
+      "target_maturity_21d": 1768176000000
+    },
+    {
+      "idx": 331,
+      "stock": "ANL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 332,
+      "stock": "BOP",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 333,
+      "stock": "CNERGY",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 334,
+      "stock": "FCCL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 335,
+      "stock": "HASCOL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 336,
+      "stock": "HUBC",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 337,
+      "stock": "HUMNL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 338,
+      "stock": "KEL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 339,
+      "stock": "LOTCHEM",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 340,
+      "stock": "MEBL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 341,
+      "stock": "MLCF",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 342,
+      "stock": "OGDC",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 343,
+      "stock": "PAEL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 344,
+      "stock": "PIBTL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 345,
+      "stock": "PPL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 346,
+      "stock": "PRL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 347,
+      "stock": "PSO",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 348,
+      "stock": "TELE",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 349,
+      "stock": "TRG",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 350,
+      "stock": "UNITY",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 351,
+      "stock": "WTL",
+      "date": 1771200000000,
+      "target_maturity_21d": 1773705600000
+    },
+    {
+      "idx": 352,
+      "stock": "SYS",
+      "date": 1771372800000,
+      "target_maturity_21d": 1773878400000
+    },
+    {
+      "idx": 353,
+      "stock": "LUCK",
+      "date": 1771804800000,
+      "target_maturity_21d": 1774483200000
+    },
+    {
+      "idx": 354,
+      "stock": "ANL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 355,
+      "stock": "BOP",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 356,
+      "stock": "CNERGY",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 357,
+      "stock": "FCCL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 358,
+      "stock": "HASCOL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 359,
+      "stock": "HUBC",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 360,
+      "stock": "HUMNL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 361,
+      "stock": "KEL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 362,
+      "stock": "LOTCHEM",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 363,
+      "stock": "MEBL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 364,
+      "stock": "MLCF",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 365,
+      "stock": "OGDC",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 366,
+      "stock": "PAEL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 367,
+      "stock": "PIBTL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 368,
+      "stock": "PPL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 369,
+      "stock": "PRL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 370,
+      "stock": "PSO",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 371,
+      "stock": "TELE",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 372,
+      "stock": "TRG",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 373,
+      "stock": "UNITY",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 374,
+      "stock": "WTL",
+      "date": 1777420800000,
+      "target_maturity_21d": 1780444800000
+    },
+    {
+      "idx": 375,
+      "stock": "SYS",
+      "date": 1777852800000,
+      "target_maturity_21d": 1780617600000
+    },
+    {
+      "idx": 376,
+      "stock": "LUCK",
+      "date": 1778112000000,
+      "target_maturity_21d": 1781049600000
+    },
+    {
+      "idx": 377,
+      "stock": "ANL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 378,
+      "stock": "BOP",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 379,
+      "stock": "CNERGY",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 380,
+      "stock": "FCCL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 381,
+      "stock": "HASCOL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 382,
+      "stock": "HUBC",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 383,
+      "stock": "HUMNL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 384,
+      "stock": "KEL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 385,
+      "stock": "LOTCHEM",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 386,
+      "stock": "MEBL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 387,
+      "stock": "MLCF",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 388,
+      "stock": "OGDC",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 389,
+      "stock": "PAEL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 390,
+      "stock": "PIBTL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 391,
+      "stock": "PPL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 392,
+      "stock": "PRL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 393,
+      "stock": "PSO",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 394,
+      "stock": "TELE",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 395,
+      "stock": "TRG",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 396,
+      "stock": "UNITY",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 397,
+      "stock": "WTL",
+      "date": 1784160000000,
+      "target_maturity_21d": 1786924800000
+    },
+    {
+      "idx": 398,
+      "stock": "SYS",
+      "date": 1784505600000,
+      "target_maturity_21d": 1787097600000
+    },
+    {
+      "idx": 399,
+      "stock": "LUCK",
+      "date": 1784764800000,
+      "target_maturity_21d": 1787529600000
+    }
+  ],
+  "n_samples": 400,
+  "val_end_idx": 200,
+  "methodology_notes": [
+    "chunks split the evaluation SAMPLES only \u2014 every sample trains on the FULL frozen universe pooled by date + target-maturity filter",
+    "universe selected point-in-time (pre-cutoff eligibility + volume ranking only); evaluation decision dates strictly after the cutoff",
+    "ensemble predictions are computed ONLY at finalization with purged frozen validation weights"
+  ]
+}
