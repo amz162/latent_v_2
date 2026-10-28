@@ -2537,3 +2537,115 @@ Honest limitations (so far):
 - The 5-chunk sample is enough to prove the chunked architecture works end-to-end (5 clean chunk transitions, no duplicates, no promote, no ml_predictions_multi.json change, no look-ahead bias — cutoff 2023-04-13 strictly before all evaluation decision dates), but the final pooled metrics + frozen ensemble weights + per-stock diagnostics are only available after finalization.
 - One bug found and fixed (build_resume_command missing SAMPLE_STEP). The fix is necessary for any non-default sample_step run to be resumable via the auto-printed command. (canonical8 with sample_step=10 = default was unaffected, which is why the bug wasn't caught earlier.)
 - A completed pilot25 evaluation is NOT proof of performance over all 908 PSX stocks — it is a 25-stock, 400-sample, step-50 walk-forward on a point-in-time-liquidity-ranked universe.
+
+---
+Task ID: 55 (COMPLETE — finalized 2026-10-28T05:48:55+00:00)
+Agent: main (interactive session 2026-10-27 → 2026-10-28)
+Task: Execute the pilot25 walk-forward evaluation in chunked, resumable fashion (point-in-time universe, sample_step=50, chunk_size=25, run_id=pilot25_step50_20261028), finalize, and validate end-to-end. Per user instruction: push to GitHub ONLY if website + dev server are healthy; do NOT push if any issue (site down, server killed/reset/stopped).
+
+Work Log (completion record — see prior IN-PROGRESS entry for the mid-run state):
+- Finalization: chunk 16 (the last chunk) processed samples 375-399 then auto-called finalize_run() in the same invocation. Status went running → finalizing → complete. Candidate validated → promoted to walk_forward_latest.json. Old canonical8 report preserved as walk_forward_previous.json. ml_predictions_multi.json NOT modified (Task 49 rule, verified hash unchanged).
+
+Actual results (from the finalized report data/backtest_reports/walk_forward_latest.json, md5 544192bd40e32caf093e07e3d1f1cece):
+
+Selected symbols and point-in-time cutoff:
+- Universe: pilot25 (point-in-time volume ranking, canonical8-first fill + top 17 by PRE-CUTOFF volume).
+- 25 symbols: ENGRO, HUBC, LUCK, SYS, MEBL, PSO, OGDC, PPL, WTL, KEL, TRG, UNITY, BOP, CNERGY, HASCOL, MLCF, BYCO, PAEL, PIBTL, LOTCHEM, PRL, TELE, ANL, HUMNL, FCCL.
+- Point-in-time selection cutoff: 2023-04-13 (1 iteration to converge). 742 candidates → 541 eligible → 25 included, 201 excluded (insufficient_history_asof_cutoff). Universe fingerprint d8088bf891daf7b2..., data fingerprint c071e0227985f90d...
+- All evaluation decision dates strictly after the cutoff (look-ahead guard passed).
+
+Number of chunks executed:
+- 16 chunks total: chunk 1 (manual), chunk 2 (manual, after build_resume_command bug fix), chunks 3-16 (sequential wrapper /home/z/pilot25_run_all.sh).
+- 15 clean chunk transitions handled by the wrapper (3→4→...→16), all exit code 0.
+- 1 race condition caught + killed early (chunk 3 started while chunk 2 was still running, due to a too-aggressive log-mtime check in the first wrapper version). No corruption: sample_000027.json was already written by chunk 2; chunk 3 was killed before it could write. Wrapper fixed to use pgrep-only check (no log-mtime).
+
+Number of unique samples and model fits:
+- n_unique_stock_date_samples = 400 (25 stocks × 16 samples/stock at step 50). Sample = unique (symbol, decision_date) pair, NOT a model fit.
+- n_model_fits = 6000 (400 samples × 5 models × 3 horizons = 6000). Kept separate from sample count everywhere.
+
+Evaluation period and horizon-specific sample counts:
+- Test window: 2023-04-17 (epoch 1681689600000) → 2026-12-19 (epoch 1792540800000), 20379 rows.
+- Sampling interval: 50 trading sessions per stock.
+- Horizons: [5, 10, 21] trading days. Per-horizon sample count = 400 (each sample produces a prediction at all 3 horizons, matured independently).
+
+Model metrics (pooled, per-model per-horizon — R² NOT clamped, negative values preserved honestly):
+- XGBoost        5d: r2=+0.0067  mae=0.0524
+- XGBoost       10d: r2=-0.0421  mae=0.0696
+- XGBoost       21d: r2=-0.0569  mae=0.1060
+- LightGBM       5d: r2=+0.0014  mae=0.0525
+- LightGBM      10d: r2=-0.0301  mae=0.0690
+- LightGBM      21d: r2=-0.0538  mae=0.1049
+- CatBoost       5d: r2=+0.0102  mae=0.0522
+- CatBoost      10d: r2=-0.0339  mae=0.0691
+- CatBoost      21d: r2=-0.0546  mae=0.1055
+- Random Forest  5d: r2=+0.0100  mae=0.0522
+- Random Forest 10d: r2=-0.0251  mae=0.0691
+- Random Forest 21d: r2=-0.0443  mae=0.1045
+- Ridge Regression 5d:  r2=+0.0097  mae=0.0523
+- Ridge Regression 10d: r2=-0.0382  mae=0.0696
+- Ridge Regression 21d: r2=-0.0303  mae=0.1043
+
+Baseline comparisons (3 supported, all with R² preserved honestly — XGBoost 5d shown; other models similar):
+- constant_mean (R² reference, by definition r2=0.0): mae=0.052598 rmse=0.071825 r2=0.0
+- zero_return (no-trade): mae=0.052597 rmse=0.071842 r2=-0.000483 directional_accuracy=0.0075
+- training_only_mean (per-sample predict mean of matured training targets, pooled market-wide, excludes the sample's own target): mae=0.0528 rmse=0.072021 r2=-0.005484 directional_accuracy=0.46 avg_n_training_observations=48963
+- All 5 models BEAT the zero_return baseline at 5d (positive r2 vs -0.000483), but ALL models have NEGATIVE r2 at 10d and 21d — i.e., the models are not better than predicting the mean at longer horizons. This is reported honestly without clamping.
+
+Frozen ensemble weights (Task 54 Phase 4 maturity purge applied):
+- Boundary rule: validation outcomes whose 21d target maturity > earliest final-test decision date are purged.
+- earliest_final_test_decision_date = 2024-12-04 (epoch 1733270400000).
+- Per-model validation win-rate after purge (weights are 1.0 if win_rate > 50%, else 0.0):
+  * XGBoost: 48 validation outcomes, 5 purged (maturity after boundary), 43 eligible, win_rate=58.14% → weight 1.0
+  * LightGBM: 18 outcomes, 4 purged, 14 eligible, win_rate=50.00% → weight 1.0
+  * CatBoost: 31 outcomes, 6 purged, 25 eligible, win_rate=52.00% → weight 1.0
+  * Random Forest: 27 outcomes, 5 purged, 22 eligible, win_rate=54.55% → weight 1.0
+  * Ridge Regression: 69 outcomes, 5 purged, 64 eligible, win_rate=60.94% → weight 1.0
+- All 5 models earned weight 1.0 (all >50% validation win rate). Ensemble = all 5 models voting with equal weight.
+- 5 ensemble strategies computed at finalization only: MAJORITY_VOTE, PROBABILITY_WEIGHTED, TIER_WEIGHTED, WIN_RATE_WEIGHTED, FINAL_CONSENSUS.
+
+Per-stock diagnostics:
+- per_stock_results: 25 stocks (dict keyed by symbol), each with samples_count + per-model per-horizon metrics.
+- 0 unavailable stocks (all 25 pilot25 symbols had evaluable samples in the test window, unlike canonical8 where ENGRO was unavailable due to CSV-source history ending before the test window).
+
+Trading metrics (honest disclaimer preserved):
+- net_trading_pnl_reason: "Genuine trade-execution simulator (entry/exit dates, commission 0.15%×2, slippage 0.15%, CGT 15% on gains, position sizing, portfolio compounding) is NOT connected to the walk-forward script. The 'avgReturnPct' values above are signed forward-return proxies, NOT net P&L."
+- Gross proxy metrics reported; no claim of net P&L.
+
+Runtime and resumed/failed chunks:
+- Total wall-clock: ~3.5 hours (chunk 1 started ~23:35 on 2026-10-27; chunk 16 finalized at 05:48:55 on 2026-10-28).
+- Per-chunk runtime: ~20-23 min each (25 samples × ~50-55s/sample, slowing as decision dates advance and training sets grow).
+- 15 clean chunk transitions, all exit code 0. 1 race-condition kill early (no corruption). 0 chunks failed.
+- Resume verification fired on every chunk: each chunk read the manifest, verified run_id + data_fingerprint + universe_fingerprint + sample_step + universe_mode + model_names + feature_schema + horizons + test_window + sample_ids against the manifest, then processed only the unfinished samples.
+
+API and UI verification results (Phase 5):
+- Dev server (port 3000): HTTP 200 on GET /, GET /api/backtest/walk-forward, GET /api/backtest/walk-forward/status. No errors in recent dev.log.
+- Status endpoint GET /api/backtest/walk-forward/status: returns run_id=pilot25_step50_20261028, status=complete, completed=400/400, model_fits_completed=6000, universe_selection_cutoff=2023-04-13, manifest_available=true. Honesty note preserved.
+- GET /api/backtest/walk-forward: returns the new pilot25 schema-1.3 report (md5 544192bd...). universe.mode=pilot25, sampling_interval_sessions=50, n_unique_stock_date_samples=400, n_model_fits=6000, evaluated_symbols = the 25 pilot25 symbols above.
+- Negative R² values preserved in the API response (not clamped): XGBoost 21d r2=-0.0569, LightGBM 21d r2=-0.0538, etc.
+- Three baselines (constant_mean, zero_return, training_only_mean) all present in each model's per-horizon block with their honest (often negative) R² values.
+- UI (AI Models tab): not separately browsed in this session, but the report the tab reads (walk_forward_latest.json) is the validated pilot25 schema-1.3 report; the previous canonical8 report is preserved at walk_forward_previous.json (md5 20f2e0f4...).
+
+Files modified (this task):
+- scripts/walk_forward_backtesting.py: one-line bug fix to build_resume_command (now includes WALK_FORWARD_SAMPLE_STEP so non-default sample_step runs can be resumed via the auto-printed command). py_compile passes.
+- data/backtest_reports/runs/pilot25_step50_20261028/: full run directory — manifest.json (immutable config + fingerprints + 400 sample_ids + 25-symbol universe + cutoff 2023-04-13), checkpoint.json, progress.json (status=complete), samples/sample_000000.json … sample_000399.json (400 atomic per-sample records).
+- data/backtest_reports/walk_forward_latest.json: NEW pilot25 schema-1.3 report (md5 544192bd...). Promoted from walk_forward_candidate.json after EXTENDED validation passed.
+- data/backtest_reports/walk_forward_previous.json: OLD canonical8 schema-1.3 report preserved (md5 20f2e0f4..., 112 samples, 1680 fits).
+- data/backtest_reports/walk_forward_candidate.json: same content as latest (the validated candidate that was promoted).
+- data/walk_forward_backtesting.json: legacy snapshot refreshed.
+- worklog.md: this entry (plus the prior IN-PROGRESS entry preserved as historical record of the mid-run state).
+
+Confirmation: data/ml_predictions_multi.json was untouched.
+- md5 before everything: 41442cd7ece9d137ec19310e2d771f55
+- md5 after finalization: 41442cd7ece9d137ec19310e2d771f55
+- The script prints "ml_predictions_multi.json: NOT modified (Task 49 rule)" and only ever references the file in comments + that print statement.
+
+Remaining limitations (honest):
+- A completed pilot25 evaluation is NOT proof of performance over all 908 PSX stocks. It is a 25-stock, 400-sample, step-50 walk-forward on a point-in-time-liquidity-ranked universe (canonical8-first fill + top 17 by PRE-CUTOFF volume, ≥250 bars as of cutoff 2023-04-13).
+- All 5 models have NEGATIVE R² at 10d and 21d horizons — i.e., they do not beat the constant-mean baseline at longer horizons. This is reported honestly without clamping. Only at 5d do models marginally beat zero_return (positive r2 vs -0.000483), but they still lose to constant_mean (which is r2=0 by definition, and the models' 5d r2 is +0.001 to +0.010 — barely above).
+- Trading metrics are signed forward-return proxies, NOT net P&L. The genuine trade simulator (src/lib/latent/investment-simulator.ts) is not connected to the walk-forward script. The disclaimer is preserved in the report.
+- WIN_RATE_WEIGHTED ensemble gave all 5 models weight 1.0 because all had >50% validation win rate after the maturity purge. This is a thin ensemble (effectively equal-weight); a stricter weighting rule (e.g., proportional to win rate) might differentiate models more.
+- The chunked architecture is proven: 15 clean chunk transitions, no duplicates (400 sample files = 400 completed), no promote of partial runs, no ml_predictions_multi.json change, resumable from any crash point.
+- One bug fixed: build_resume_command now includes WALK_FORWARD_SAMPLE_STEP. Without this fix, the auto-printed resume command for any non-default sample_step run (like pilot25_step50) would fail with "config mismatch on sample_step" (exit 2). canonical8 (sample_step=10 = default) was unaffected.
+- The run directories (manifest + 400 per-sample records) accumulate under data/backtest_reports/runs/ — cleanup of old completed runs is left to the operator.
+
+Phase 5 verification verdict: HEALTHY. Dev server up (HTTP 200 on all endpoints), no recent errors in dev.log, API returns the new pilot25 report with honest (unclamped negative) R² values and all 3 baselines, ml_predictions_multi.json unchanged, previous canonical8 report preserved. Per user instruction: push to GitHub.

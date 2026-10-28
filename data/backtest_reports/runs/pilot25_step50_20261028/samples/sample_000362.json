@@ -1,0 +1,197 @@
+{
+  "sample_idx": 362,
+  "sample_id": "LOTCHEM@1777420800000",
+  "stock": "LOTCHEM",
+  "date": 1777420800000,
+  "close": 26.53,
+  "actual_5d": 0.04711647191858274,
+  "actual_10d": 0.017338861666038343,
+  "actual_21d": 0.051262721447417996,
+  "target_maturity_21d": 1780444800000,
+  "status": "evaluated",
+  "per_horizon_meta": {
+    "5": {
+      "latest_train_feature_date": 1776816000000,
+      "latest_target_maturity_date": 1777420800000,
+      "n_train_rows": 57229
+    },
+    "10": {
+      "latest_train_feature_date": 1776211200000,
+      "latest_target_maturity_date": 1777420800000,
+      "n_train_rows": 57104
+    },
+    "21": {
+      "latest_train_feature_date": 1774915200000,
+      "latest_target_maturity_date": 1777420800000,
+      "n_train_rows": 56829
+    }
+  },
+  "training_only_baseline": {
+    "5": {
+      "mean": 0.002426509706869395,
+      "n_obs": 57229
+    },
+    "10": {
+      "mean": 0.005030411763621614,
+      "n_obs": 57104
+    },
+    "21": {
+      "mean": 0.010284886337520817,
+      "n_obs": 56829
+    }
+  },
+  "models": {
+    "XGBoost": {
+      "horizon_preds": {
+        "5": {
+          "predicted": 0.0033984521869570017,
+          "actual": 0.04711647191858274,
+          "eval_skipped": false
+        },
+        "10": {
+          "predicted": 0.008031945675611496,
+          "actual": 0.017338861666038343,
+          "eval_skipped": false
+        },
+        "21": {
+          "predicted": 0.008415334858000278,
+          "actual": 0.051262721447417996,
+          "eval_skipped": false
+        }
+      },
+      "n_fits": 3,
+      "signal": "HOLD",
+      "avgReturn": 0.006615244240189592,
+      "actual_return": 0.051262721447417996,
+      "correct": false,
+      "r5": 0.0033984521869570017,
+      "r10": 0.008031945675611496,
+      "r21": 0.008415334858000278,
+      "eval_skipped_5d": false,
+      "eval_skipped_10d": false,
+      "eval_skipped_21d": false
+    },
+    "LightGBM": {
+      "horizon_preds": {
+        "5": {
+          "predicted": 0.0036384711722536683,
+          "actual": 0.04711647191858274,
+          "eval_skipped": false
+        },
+        "10": {
+          "predicted": 0.008497874225293075,
+          "actual": 0.017338861666038343,
+          "eval_skipped": false
+        },
+        "21": {
+          "predicted": 0.007618495418615684,
+          "actual": 0.051262721447417996,
+          "eval_skipped": false
+        }
+      },
+      "n_fits": 3,
+      "signal": "HOLD",
+      "avgReturn": 0.00658494693872081,
+      "actual_return": 0.051262721447417996,
+      "correct": false,
+      "r5": 0.0036384711722536683,
+      "r10": 0.008497874225293075,
+      "r21": 0.007618495418615684,
+      "eval_skipped_5d": false,
+      "eval_skipped_10d": false,
+      "eval_skipped_21d": false
+    },
+    "CatBoost": {
+      "horizon_preds": {
+        "5": {
+          "predicted": 0.003299580620794394,
+          "actual": 0.04711647191858274,
+          "eval_skipped": false
+        },
+        "10": {
+          "predicted": 0.008589008263923269,
+          "actual": 0.017338861666038343,
+          "eval_skipped": false
+        },
+        "21": {
+          "predicted": 0.006729941239988947,
+          "actual": 0.051262721447417996,
+          "eval_skipped": false
+        }
+      },
+      "n_fits": 3,
+      "signal": "HOLD",
+      "avgReturn": 0.006206176708235536,
+      "actual_return": 0.051262721447417996,
+      "correct": false,
+      "r5": 0.003299580620794394,
+      "r10": 0.008589008263923269,
+      "r21": 0.006729941239988947,
+      "eval_skipped_5d": false,
+      "eval_skipped_10d": false,
+      "eval_skipped_21d": false
+    },
+    "Random Forest": {
+      "horizon_preds": {
+        "5": {
+          "predicted": 0.00444236956907034,
+          "actual": 0.04711647191858274,
+          "eval_skipped": false
+        },
+        "10": {
+          "predicted": 0.00898587512405629,
+          "actual": 0.017338861666038343,
+          "eval_skipped": false
+        },
+        "21": {
+          "predicted": 0.00529089920812293,
+          "actual": 0.051262721447417996,
+          "eval_skipped": false
+        }
+      },
+      "n_fits": 3,
+      "signal": "HOLD",
+      "avgReturn": 0.006239714633749854,
+      "actual_return": 0.051262721447417996,
+      "correct": false,
+      "r5": 0.00444236956907034,
+      "r10": 0.00898587512405629,
+      "r21": 0.00529089920812293,
+      "eval_skipped_5d": false,
+      "eval_skipped_10d": false,
+      "eval_skipped_21d": false
+    },
+    "Ridge Regression": {
+      "horizon_preds": {
+        "5": {
+          "predicted": 0.004839112553841475,
+          "actual": 0.04711647191858274,
+          "eval_skipped": false
+        },
+        "10": {
+          "predicted": 0.014055821533293083,
+          "actual": 0.017338861666038343,
+          "eval_skipped": false
+        },
+        "21": {
+          "predicted": 0.01958306643336169,
+          "actual": 0.051262721447417996,
+          "eval_skipped": false
+        }
+      },
+      "n_fits": 3,
+      "signal": "BUY",
+      "avgReturn": 0.012826000173498749,
+      "actual_return": 0.051262721447417996,
+      "correct": true,
+      "r5": 0.004839112553841475,
+      "r10": 0.014055821533293083,
+      "r21": 0.01958306643336169,
+      "eval_skipped_5d": false,
+      "eval_skipped_10d": false,
+      "eval_skipped_21d": false
+    }
+  },
+  "train_cutoff_date": 1777334400000,
+  "n_model_fits": 15
+}

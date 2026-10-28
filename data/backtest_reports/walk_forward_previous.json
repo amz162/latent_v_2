@@ -2,7 +2,7 @@
   "schema_version": "1.3",
   "evaluation_status": "completed",
   "evaluation_method": "walk-forward-expanding-window",
-  "generated_at": "2026-10-27T22:35:39.173019",
+  "generated_at": "2026-10-27T22:43:40.963466",
   "data_cutoff": "2026-08-27T19:00:00",
   "training_window": {
     "start": "2026-01-12T19:00:00",
@@ -1803,13 +1803,13 @@
         "n_validation_period_excluded": 0
       },
       "WIN_RATE_WEIGHTED": {
-        "totalTrades": 0,
-        "wins": 0,
-        "winRate": 0.0,
-        "avgReturnPct": 0.0,
-        "maxReturnPct": 0,
-        "minReturnPct": 0,
-        "stars": 1,
+        "totalTrades": 50,
+        "wins": 20,
+        "winRate": 40.0,
+        "avgReturnPct": -0.5,
+        "maxReturnPct": 14.45,
+        "minReturnPct": -12.47,
+        "stars": 3,
         "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
         "net_trading_pnl": "unavailable",
         "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
@@ -1838,48 +1838,48 @@
     "phase_2_fix": "Option A \u2014 frozen validation-period weights",
     "task54_maturity_purge": {
       "boundary_rule": "validation outcomes whose 21d target maturity > earliest final-test decision date are purged",
-      "earliest_final_test_decision_date": "2026-01-13T19:00:00",
-      "earliest_final_test_decision_date_epoch": 1768330800000,
+      "earliest_final_test_decision_date": "2026-05-12T19:00:00",
+      "earliest_final_test_decision_date_epoch": 1778612400000,
       "per_model": {
         "XGBoost": {
-          "validation_non_hold_outcomes": 50,
-          "eligible_after_purge": 0,
-          "purged_maturity_after_boundary": 50,
+          "validation_non_hold_outcomes": 52,
+          "eligible_after_purge": 40,
+          "purged_maturity_after_boundary": 12,
           "purged_unknown_maturity": 0,
-          "validation_win_rate_pct": 0,
-          "frozen_weight": 0.0
+          "validation_win_rate_pct": 40.0,
+          "frozen_weight": 0.5
         },
         "LightGBM": {
-          "validation_non_hold_outcomes": 54,
-          "eligible_after_purge": 0,
-          "purged_maturity_after_boundary": 54,
+          "validation_non_hold_outcomes": 55,
+          "eligible_after_purge": 41,
+          "purged_maturity_after_boundary": 14,
           "purged_unknown_maturity": 0,
-          "validation_win_rate_pct": 0,
-          "frozen_weight": 0.0
+          "validation_win_rate_pct": 39.02,
+          "frozen_weight": 0.4512
         },
         "CatBoost": {
-          "validation_non_hold_outcomes": 52,
-          "eligible_after_purge": 0,
-          "purged_maturity_after_boundary": 52,
+          "validation_non_hold_outcomes": 54,
+          "eligible_after_purge": 40,
+          "purged_maturity_after_boundary": 14,
           "purged_unknown_maturity": 0,
-          "validation_win_rate_pct": 0,
-          "frozen_weight": 0.0
+          "validation_win_rate_pct": 37.5,
+          "frozen_weight": 0.375
         },
         "Random Forest": {
-          "validation_non_hold_outcomes": 53,
-          "eligible_after_purge": 0,
-          "purged_maturity_after_boundary": 53,
+          "validation_non_hold_outcomes": 54,
+          "eligible_after_purge": 40,
+          "purged_maturity_after_boundary": 14,
           "purged_unknown_maturity": 0,
-          "validation_win_rate_pct": 0,
-          "frozen_weight": 0.0
+          "validation_win_rate_pct": 40.0,
+          "frozen_weight": 0.5
         },
         "Ridge Regression": {
-          "validation_non_hold_outcomes": 53,
-          "eligible_after_purge": 0,
-          "purged_maturity_after_boundary": 53,
+          "validation_non_hold_outcomes": 48,
+          "eligible_after_purge": 34,
+          "purged_maturity_after_boundary": 14,
           "purged_unknown_maturity": 0,
-          "validation_win_rate_pct": 0,
-          "frozen_weight": 0.0
+          "validation_win_rate_pct": 38.24,
+          "frozen_weight": 0.4118
         }
       }
     },
@@ -1893,11 +1893,11 @@
       111
     ],
     "frozen_weights": {
-      "XGBoost": 0.0,
-      "LightGBM": 0.0,
-      "CatBoost": 0.0,
-      "Random Forest": 0.0,
-      "Ridge Regression": 0.0
+      "XGBoost": 0.5,
+      "LightGBM": 0.4512195121951219,
+      "CatBoost": 0.375,
+      "Random Forest": 0.5,
+      "Ridge Regression": 0.4117647058823529
     }
   },
   "sample_maturity_metadata_summary": {
@@ -1925,7 +1925,7 @@
     },
     "last_sample": {
       "sample_date": "2026-08-30T19:00:00",
-      "stock": "PPL",
+      "stock": "SYS",
       "per_horizon": {
         "5": {
           "latest_train_feature_date": "2026-08-20T19:00:00",
@@ -1948,16 +1948,16 @@
   },
   "run": {
     "architecture": "task54-resumable-chunked",
-    "run_id": "canonical8_20261027T222759Z_7a037ce7",
-    "manifest_path": "data/backtest_reports/runs/canonical8_20261027T222759Z_7a037ce7/manifest.json",
-    "created_at": "2026-10-27T22:27:59.502632+00:00",
+    "run_id": "canonical8_20261027T223654Z_7a037ce7",
+    "manifest_path": "data/backtest_reports/runs/canonical8_20261027T223654Z_7a037ce7/manifest.json",
+    "created_at": "2026-10-27T22:36:54.730395+00:00",
     "chunk_size_requested": 0,
     "resumable": true,
     "point_in_time_selection": "fixed_symbol_list (no volume ranking \u2014 no selection look-ahead possible)",
     "universe_selection_cutoff": "2026-01-12T19:00:00",
     "universe_fingerprint": "7a037ce7d86fab975b53bf68063d8d07b71e762db7649180241abdcc99225084",
     "data_fingerprint": "862d962f9173d4f9609c1a0f65fcb035f4cf802c4f5bb545feb71f15a30e6bf9",
-    "sample_records_dir": "data/backtest_reports/runs/canonical8_20261027T222759Z_7a037ce7/samples",
+    "sample_records_dir": "data/backtest_reports/runs/canonical8_20261027T223654Z_7a037ce7/samples",
     "promotion_rule": "only a FULLY-complete run whose candidate passes validation replaces walk_forward_latest.json; partial runs never touch it"
   },
   "limitations": [
