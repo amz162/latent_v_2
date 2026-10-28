@@ -25,6 +25,7 @@
  */
 
 import { db } from "@/lib/db";
+import { simulateProgressiveTpSl, mapExitReasonToLegacy, mapBestTargetToLegacy, type TpSlBar } from "./tp-sl-engine";
 
 export interface BacktestTrade {
   symbol: string;
@@ -33,12 +34,16 @@ export interface BacktestTrade {
   entryPrice: number;
   exitDate: string | null;
   exitPrice: number | null;
-  exitReason: "TP3" | "TP2" | "TP1" | "SL" | "TIME" | "NO_DATA";
-  bestTp: "TP3" | "TP2" | "TP1" | null; // highest TP reached (TP3>TP2>TP1), per the rule
+  exitReason: "TP3" | "TP2" | "TP1" | "SL" | "TIME" | "NO_DATA"; // backward-compat (old priority values). For the full chronological detail, see exitReasonDetailed.
+  // Task 58: canonical chronological exit reason (distinguishes SL_AFTER_TP1/TP2 from plain SL_HIT).
+  exitReasonDetailed: "TP3_HIT" | "SL_HIT" | "SL_AFTER_TP1" | "SL_AFTER_TP2" | "TIME_UP" | "NO_DATA";
+  bestTp: "TP3" | "TP2" | "TP1" | null; // highest TP reached (TP3>TP2>TP1), per the rule (backward-compat alias of bestTargetReached)
+  bestTargetReached: "TP3" | "TP2" | "TP1" | "—"; // Task 58: canonical (matches investment-simulator + signal-stats)
   sl: number;
   tp1: number;
   tp2: number;
   tp3: number;
+  activeStop: number; // Task 58: the currently-active stop (FIXED = sl; no trailing stop invented)
   holdingDays: number;
   grossPnlPct: number;
   netPnlPkr: number;
@@ -46,6 +51,13 @@ export interface BacktestTrade {
   invested: number;   // amountPerTrade
   portfolio: number;  // running equity after this trade
   confidence: number; // the ensemble's confidence for this signal (0-100)
+  unresolved: boolean; // Task 58: true if no SL/TP3 exit by scan-window end (TIME_UP)
+  nBarsExamined: number; // Task 58: candles scanned after entry
+  // Task 58 Phase 4: disclose the entry mode (price_match = genuine historical bar
+  // where close ≈ signal entry; random_fallback = no price-match bar found, a
+  // random bar was used to fulfill numTrades — this is an ARTIFICIAL entry, not a
+  // genuine signal-execution entry. Honest disclosure so consumers can filter.)
+  entryMode: "price_match" | "random_fallback";
 }
 
 export interface BacktestMetrics {
@@ -141,6 +153,9 @@ function simulateOne(
   let entryIdx: number;
   let entryPrice: number;
   let sl: number, tp1: number, tp2: number, tp3: number;
+  // Task 58 Phase 4: disclose the entry mode (price_match vs random_fallback)
+  // so consumers can filter out artificial entries if desired.
+  let entryMode: "price_match" | "random_fallback" = "random_fallback";
 
   if (entry) {
     const band = entry * 0.015; // ±1.5% of the signal's entry level
@@ -171,6 +186,7 @@ function simulateOne(
     } else {
       entryIdx = candidates[Math.floor(Math.random() * candidates.length)];
       entryPrice = entry;
+      entryMode = "price_match"; // genuine historical bar where close ≈ signal entry
       // ATR at entry (only used to fill any missing SL/TP)
       const atrSlice = bars.slice(Math.max(0, entryIdx - 13), entryIdx + 1);
       const atrVal = atr(atrSlice.map((b) => b.high), atrSlice.map((b) => b.low), atrSlice.map((b) => b.close)) || entry * 0.02;
@@ -197,49 +213,23 @@ function simulateOne(
 
   const entryBar = bars[entryIdx];
   const end = Math.min(bars.length - 1, entryIdx + numDays);
-  // TP rule (check TP3 → TP2 → TP1): scan the hold window. Exit at TP3 (best)
-  // if reached; else SL if hit; else time-up. Best TP = highest reached up to exit.
-  let tp3Idx = -1, tp2Idx = -1, tp1Idx = -1, slIdx = -1;
-  for (let i = entryIdx + 1; i <= end; i++) {
-    const b = bars[i];
-    if (direction === "BUY") {
-      if (tp3Idx < 0 && b.high >= tp3) tp3Idx = i;
-      if (tp2Idx < 0 && b.high >= tp2) tp2Idx = i;
-      if (tp1Idx < 0 && b.high >= tp1) tp1Idx = i;
-      if (slIdx < 0 && b.low <= sl) slIdx = i;
-    } else {
-      if (tp3Idx < 0 && b.low <= tp3) tp3Idx = i;
-      if (tp2Idx < 0 && b.low <= tp2) tp2Idx = i;
-      if (tp1Idx < 0 && b.low <= tp1) tp1Idx = i;
-      if (slIdx < 0 && b.high >= sl) slIdx = i;
-    }
-  }
+  // Task 58: delegate the chronological TP/SL state machine to the SHARED
+  // canonical helper (src/lib/latent/tp-sl-engine.ts → simulateProgressiveTpSl).
+  // This REPLACES the old priority-based logic (TP3 > TP2 > TP1 > SL > TIME)
+  // which incorrectly exited a TP1→TP2→SL sequence at TP2 instead of SL.
+  // The old `exitReason` field is preserved (mapped) for backward compat;
+  // the full chronological detail is in the NEW `exitReasonDetailed` field.
+  const scanBars: TpSlBar[] = bars.slice(entryIdx + 1, end + 1);
+  const tpSl = simulateProgressiveTpSl({ direction, entryPrice, sl, tp1, tp2, tp3, bars: scanBars });
+  const exitIdx = tpSl.exitBarIdx >= 0 ? entryIdx + 1 + tpSl.exitBarIdx : end;
+  const exitPrice = tpSl.exitPrice;
+  const exitReasonDetailed = tpSl.exitReason;
+  // Map canonical → legacy exitReason (backward-compat: TP3_HIT→TP3, SL_*→SL, TIME_UP→TIME)
+  const exitReason: BacktestTrade["exitReason"] = tpSl.unresolved && scanBars.length === 0 ? "NO_DATA" : mapExitReasonToLegacy(tpSl);
+  const bestTp = mapBestTargetToLegacy(tpSl);
+  const bestTargetReached = tpSl.bestTargetReached;
 
-  // TP rule (Issue 2): check TP3 → TP2 → TP1 → SL → time. Exit at the HIGHEST
-  // TP reached (TP3 if any bar hit it, else TP2, else TP1), at the first bar
-  // where that TP was hit. If NO TP reached, exit at SL (if hit); else time-up.
-  // "If price goes down (SL touched) then price goes up again → re-apply the TP
-  // rule" → a TP reached at ANY point takes precedence over an SL touch
-  // (checked in priority order TP3 > TP2 > TP1 before SL).
-  let exitIdx: number, exitPrice: number, exitReason: BacktestTrade["exitReason"];
-  if (tp3Idx >= 0) { exitIdx = tp3Idx; exitPrice = tp3; exitReason = "TP3"; }
-  else if (tp2Idx >= 0) { exitIdx = tp2Idx; exitPrice = tp2; exitReason = "TP2"; }
-  else if (tp1Idx >= 0) { exitIdx = tp1Idx; exitPrice = tp1; exitReason = "TP1"; }
-  else if (slIdx >= 0) { exitIdx = slIdx; exitPrice = sl; exitReason = "SL"; }
-  else { exitIdx = end; exitPrice = bars[end].close; exitReason = "TIME"; }
-
-  // Best TP = the exit TP (for TP exits) or the highest TP reached up to the
-  // SL/time exit bar (label only); null if no TP was ever reached.
-  let bestTp: BacktestTrade["bestTp"] = null;
-  if (exitReason === "TP3" || exitReason === "TP2" || exitReason === "TP1") {
-    bestTp = exitReason;
-  } else {
-    if (tp3Idx >= 0 && tp3Idx <= exitIdx) bestTp = "TP3";
-    else if (tp2Idx >= 0 && tp2Idx <= exitIdx) bestTp = "TP2";
-    else if (tp1Idx >= 0 && tp1Idx <= exitIdx) bestTp = "TP1";
-  }
-
-  const exitDate = bars[exitIdx].date;
+  const exitDate = bars[exitIdx]?.date ?? entryBar.date;
   const holdingDays = Math.max(1, Math.round((Date.parse(exitDate) - Date.parse(entryBar.date)) / 86400000));
   const grossPnlPct =
     direction === "BUY"
@@ -249,10 +239,14 @@ function simulateOne(
   return {
     symbol, direction,
     entryDate: entryBar.date, entryPrice,
-    exitDate, exitPrice, exitReason, bestTp,
-    sl, tp1, tp2, tp3, holdingDays,
+    exitDate, exitPrice, exitReason, exitReasonDetailed,
+    bestTp, bestTargetReached,
+    sl, tp1, tp2, tp3, activeStop: tpSl.activeStop, holdingDays,
     grossPnlPct,
     netPnlPkr: 0, costPkr: 0, invested: 0, portfolio: 0, confidence: levels?.confidence ?? 0,
+    unresolved: tpSl.unresolved,
+    nBarsExamined: tpSl.nBarsExamined,
+    entryMode,
   };
 }
 

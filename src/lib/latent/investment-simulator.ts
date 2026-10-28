@@ -44,6 +44,7 @@
  */
 
 import { db } from "@/lib/db";
+import { simulateProgressiveTpSl, type TpSlBar } from "./tp-sl-engine";
 
 export type PeriodUnit = "day" | "month" | "year";
 const UNIT_DAYS: Record<PeriodUnit, number> = { day: 1, month: 21, year: 252 };
@@ -214,8 +215,9 @@ function findEntryIdxList(bars: Bar[], targetMs: number, searchStartMs: number, 
 }
 
 // Run ONE trade for a symbol starting at a DETERMINISTIC entry bar (entryIdx),
-// scanned candle-by-candle in chronological order. Implements Task 57's
-// progressive TP tracking:
+// scanned candle-by-candle in chronological order. Implements Task 57/58's
+// progressive TP tracking via the SHARED canonical helper
+// (src/lib/latent/tp-sl-engine.ts → simulateProgressiveTpSl).
 //   - Check the active SL FIRST on every bar. If SL is touched on a bar, exit
 //     at the realistic stop-fill price (gap-aware). SL takes priority over any
 //     new TP on the SAME bar (do not award a new TP from a bar that already
@@ -229,7 +231,7 @@ function findEntryIdxList(bars: Bar[], targetMs: number, searchStartMs: number, 
 //   - The active stop is FIXED = sl (no trailing stop invented — Phase 3).
 // Realized P&L uses the ACTUAL exit price (sl / tp3 / last close), NOT the
 // best-target price. This separates target attainment from realized ROI.
-// EXPORTED for scripts/simulator_regression_check.ts (Task 57 Phase 6).
+// EXPORTED for scripts/simulator_regression_check.ts (Task 57/58 Phase 6).
 export function simulateFromIdx(
   sig: SimSignal,
   bars: Bar[],
@@ -271,7 +273,6 @@ export function simulateFromIdx(
   const tp1 = direction === "BUY" ? entryPrice + tp1Dist : entryPrice - tp1Dist;
   const tp2 = direction === "BUY" ? entryPrice + tp2Dist : entryPrice - tp2Dist;
   const tp3 = direction === "BUY" ? entryPrice + tp3Dist : entryPrice - tp3Dist;
-  const activeStop = sl; // FIXED stop — no trailing stop invented (Phase 3)
 
   // Determine the last bar index within the window (inclusive).
   let end = Math.min(bars.length - 1, entryIdx);
@@ -279,98 +280,30 @@ export function simulateFromIdx(
     if (Date.parse(bars[i].date) <= windowEndMs) { end = i; break; }
   }
 
-  // Progressive state
-  let bestTargetReached = 0; // 0=none, 1=TP1, 2=TP2, 3=TP3
-  let tp1HitIdx = -1, tp2HitIdx = -1, tp3HitIdx = -1;
-  let exitIdx = -1, exitPrice = 0, exitReason: SimTradeRow["exitReason"] = "TIME_UP";
-  let hit = "—";
-  let unresolved = false;
-  let nBarsExamined = 0;
+  // Task 58: delegate the chronological TP/SL state machine to the SHARED
+  // canonical helper (src/lib/latent/tp-sl-engine.ts). Pass the post-entry
+  // bars as the scan window.
+  const scanBars: TpSlBar[] = bars.slice(entryIdx + 1, end + 1);
+  const r = simulateProgressiveTpSl({ direction, entryPrice, sl, tp1, tp2, tp3, bars: scanBars });
 
-  // Gap-aware stop-fill: if the bar opens beyond the SL (gap), fill at the open
-  // (realistic — a gap beyond SL fills at the gap price, not the SL level).
-  const stopFillFor = (bar: Bar): number => {
-    if (direction === "BUY") {
-      // SL is below entry. Gap-down beyond SL → fill at open; else fill at SL.
-      return bar.open < sl ? bar.open : sl;
-    } else {
-      // SL is above entry (short). Gap-up beyond SL → fill at open; else at SL.
-      return bar.open > sl ? bar.open : sl;
-    }
-  };
-
-  for (let i = entryIdx + 1; i <= end; i++) {
-    nBarsExamined++;
-    const b = bars[i];
-    const slTouched =
-      direction === "BUY" ? b.low <= sl : b.high >= sl;
-
-    if (slTouched) {
-      // SL FIRST: exit at the realistic stop-fill. Do NOT award a new TP from
-      // this bar even if the bar also touched a new TP level (same-bar rule).
-      exitIdx = i;
-      exitPrice = stopFillFor(b);
-      hit = "SL";
-      exitReason = bestTargetReached === 0 ? "SL_HIT"
-        : bestTargetReached === 1 ? "SL_AFTER_TP1"
-        : "SL_AFTER_TP2";
-      break;
-    }
-
-    // SL not touched — check TP3 > TP2 > TP1 (descending: highest first).
-    // For BUY: bar.high touches targets; for SELL: bar.low.
-    const targetTouch = direction === "BUY" ? b.high : b.low;
-    const tp3Touched = direction === "BUY" ? b.high >= tp3 : b.low <= tp3;
-    const tp2Touched = direction === "BUY" ? b.high >= tp2 : b.low <= tp2;
-    const tp1Touched = direction === "BUY" ? b.high >= tp1 : b.low <= tp1;
-
-    // TP3 is FINAL — if touched (and not already reached), close the trade.
-    if (tp3Touched && bestTargetReached < 3) {
-      bestTargetReached = 3;
-      tp3HitIdx = i;
-      exitIdx = i;
-      exitPrice = tp3;
-      hit = "TP3";
-      exitReason = "TP3_HIT";
-      break;
-    }
-    // TP2 — upgrade bestTargetReached (do NOT close; continue scanning).
-    if (tp2Touched && bestTargetReached < 2) {
-      bestTargetReached = 2;
-      tp2HitIdx = i;
-      // continue to next bar — TP2 is not a terminal exit
-      continue;
-    }
-    // TP1 — upgrade bestTargetReached (do NOT close; continue scanning).
-    if (tp1Touched && bestTargetReached < 1) {
-      bestTargetReached = 1;
-      tp1HitIdx = i;
-      // continue to next bar
-      continue;
-    }
-  }
-
-  // If we exited the loop without an SL/TP3 exit → TIME_UP (unresolved).
-  if (exitIdx < 0) {
-    exitIdx = end;
-    exitPrice = bars[end].close; // mark-to-market at last bar in window
-    exitReason = "TIME_UP";
-    hit = "—";
-    unresolved = true;
-  }
-
-  const bestTargetStr =
-    bestTargetReached === 3 ? "TP3"
-    : bestTargetReached === 2 ? "TP2"
-    : bestTargetReached === 1 ? "TP1"
-    : "—";
+  // The helper's exitBarIdx is relative to scanBars; convert back to bars[] index.
+  const exitIdx = r.exitBarIdx >= 0 ? entryIdx + 1 + r.exitBarIdx : end;
 
   return {
-    exitIdx, entryPrice, exitPrice, exitReason, hit,
-    bestTargetReached: bestTargetStr,
-    tp1HitIdx, tp2HitIdx, tp3HitIdx,
-    sl, tp1, tp2, tp3, activeStop,
-    direction, nBarsExamined, unresolved,
+    exitIdx,
+    entryPrice,
+    exitPrice: r.exitPrice,
+    exitReason: r.exitReason,
+    hit: r.hit,
+    bestTargetReached: r.bestTargetReached,
+    tp1HitIdx: r.tp1HitIdx >= 0 ? entryIdx + 1 + r.tp1HitIdx : -1,
+    tp2HitIdx: r.tp2HitIdx >= 0 ? entryIdx + 1 + r.tp2HitIdx : -1,
+    tp3HitIdx: r.tp3HitIdx >= 0 ? entryIdx + 1 + r.tp3HitIdx : -1,
+    sl, tp1, tp2, tp3,
+    activeStop: r.activeStop,
+    direction,
+    nBarsExamined: r.nBarsExamined,
+    unresolved: r.unresolved,
   };
 }
 

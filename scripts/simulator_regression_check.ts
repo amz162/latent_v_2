@@ -21,6 +21,7 @@
  * Run: bun scripts/simulator_regression_check.ts
  */
 import { simulateFromIdx, type SimSignal, type Bar } from "../src/lib/latent/investment-simulator";
+import { simulateProgressiveTpSl, mapExitReasonToLegacy, mapBestTargetToLegacy } from "../src/lib/latent/tp-sl-engine";
 
 let pass = 0, fail = 0;
 const failures: string[] = [];
@@ -281,6 +282,103 @@ const WINDOW_END = Date.parse("2030-01-01");
   const r = simulateFromIdx(sig("T11", "BUY", 100, 95, 103, 106, 110), bars, entryIdx, WINDOW_END);
   check("T11 activeStop = sl (95, fixed — no trailing stop)", r?.activeStop === 95, `got ${r?.activeStop}`);
   check("T11 exitPrice = 95 (original sl, not moved)", r?.exitPrice === 95, `got ${r?.exitPrice}`);
+}
+
+// ─── Task 58: DIRECT shared-helper checks (simulateProgressiveTpSl) ─────────
+// The shared helper is the canonical TP/SL state machine used by all 3 paths.
+// These verify it directly (independent of simulateFromIdx).
+console.log("\n── Task 58: shared helper (simulateProgressiveTpSl) direct checks ──");
+{
+  // TP1 → TP2 → SL on BUY: scanBars are the post-entry bars.
+  const scanBars: Bar[] = [
+    bar("2024-01-02", 100, 104, 100, 103), // TP1
+    bar("2024-01-03", 103, 107, 103, 106), // TP2
+    bar("2024-01-04", 106, 106, 94, 95),   // SL
+  ];
+  const r = simulateProgressiveTpSl({ direction: "BUY", entryPrice: 100, sl: 95, tp1: 103, tp2: 106, tp3: 110, bars: scanBars });
+  check("H1 bestTargetReached = TP2", r.bestTargetReached === "TP2", `got ${r.bestTargetReached}`);
+  check("H1 exitReason = SL_AFTER_TP2", r.exitReason === "SL_AFTER_TP2", `got ${r.exitReason}`);
+  check("H1 hit = SL", r.hit === "SL", `got ${r.hit}`);
+  check("H1 exitPrice = 95", r.exitPrice === 95, `got ${r.exitPrice}`);
+  check("H1 unresolved = false", r.unresolved === false);
+  check("H1 activeStop = 95 (fixed)", r.activeStop === 95, `got ${r.activeStop}`);
+  check("H1 nBarsExamined = 3", r.nBarsExamined === 3, `got ${r.nBarsExamined}`);
+}
+{
+  // Unresolved (no TP/SL) — NOT discarded (returns TIME_UP)
+  const scanBars: Bar[] = [
+    bar("2024-01-02", 100, 101, 99, 100),
+    bar("2024-01-03", 100, 101, 99, 101),
+  ];
+  const r = simulateProgressiveTpSl({ direction: "BUY", entryPrice: 100, sl: 95, tp1: 103, tp2: 106, tp3: 110, bars: scanBars });
+  check("H2 exitReason = TIME_UP (unresolved, not discarded)", r.exitReason === "TIME_UP", `got ${r.exitReason}`);
+  check("H2 unresolved = true", r.unresolved === true);
+  check("H2 hit = —", r.hit === "—", `got ${r.hit}`);
+  check("H2 exitPrice = last close (101)", r.exitPrice === 101, `got ${r.exitPrice}`);
+  check("H2 bestTargetReached = —", r.bestTargetReached === "—", `got ${r.bestTargetReached}`);
+}
+{
+  // Same-bar SL + TP2 → SL priority
+  const scanBars: Bar[] = [bar("2024-01-02", 100, 107, 94, 95)];
+  const r = simulateProgressiveTpSl({ direction: "BUY", entryPrice: 100, sl: 95, tp1: 103, tp2: 106, tp3: 110, bars: scanBars });
+  check("H3 bestTargetReached = — (SL priority, no TP awarded)", r.bestTargetReached === "—", `got ${r.bestTargetReached}`);
+  check("H3 exitReason = SL_HIT", r.exitReason === "SL_HIT", `got ${r.exitReason}`);
+}
+{
+  // Gap-aware SL fill (BUY gap-down)
+  const scanBars: Bar[] = [bar("2024-01-02", 92, 93, 91, 92)];
+  const r = simulateProgressiveTpSl({ direction: "BUY", entryPrice: 100, sl: 95, tp1: 103, tp2: 106, tp3: 110, bars: scanBars });
+  check("H4 exitPrice = 92 (gap-open fill, not sl=95)", r.exitPrice === 92, `got ${r.exitPrice}`);
+}
+{
+  // SELL gap-up
+  const scanBars: Bar[] = [bar("2024-01-02", 108, 109, 107, 108)];
+  const r = simulateProgressiveTpSl({ direction: "SELL", entryPrice: 100, sl: 105, tp1: 97, tp2: 94, tp3: 90, bars: scanBars });
+  check("H5 SELL exitPrice = 108 (gap-open fill, not sl=105)", r.exitPrice === 108, `got ${r.exitPrice}`);
+}
+
+// ─── Task 58: legacy-mapping checks (mapExitReasonToLegacy + mapBestTargetToLegacy) ──
+console.log("\n── Task 58: legacy-mapping checks ──");
+{
+  const cases: Array<[string, string, "TP3" | "TP2" | "TP1" | "SL" | "TIME" | null]> = [
+    ["TP3_HIT", "TP3", "TP3"],
+    ["SL_HIT", "SL", null],
+    ["SL_AFTER_TP1", "SL", "TP1"],
+    ["SL_AFTER_TP2", "SL", "TP2"],
+    ["TIME_UP", "TIME", null],
+  ];
+  for (const [canon, expectedLegacy, expectedBest] of cases) {
+    const r = { exitReason: canon as any, bestTargetReached: (expectedBest ?? "—") as any } as any;
+    const mapped = mapExitReasonToLegacy(r);
+    const bestMapped = mapBestTargetToLegacy(r);
+    check(`map ${canon} → legacy exitReason = ${expectedLegacy}`, mapped === expectedLegacy, `got ${mapped}`);
+    check(`map ${canon} → legacy bestTp = ${expectedBest}`, bestMapped === expectedBest, `got ${bestMapped}`);
+  }
+}
+
+// ─── Task 58: 3-paths-agree (simulateFromIdx delegates to shared helper) ────
+// Verify that simulateFromIdx (which now calls simulateProgressiveTpSl) produces
+// results consistent with calling the helper directly on the same post-entry bars.
+console.log("\n── Task 58: 3-paths-agree (simulateFromIdx == direct helper) ──");
+{
+  // postBars[0] = entry bar (flat at 100); postBars[1..] = scan window.
+  const postBars: Bar[] = [
+    bar("2024-01-01", 100, 100, 100, 100), // entry (flat)
+    bar("2024-01-02", 100, 104, 100, 103), // TP1
+    bar("2024-01-03", 103, 107, 103, 106), // TP2
+    bar("2024-01-04", 106, 106, 94, 95),   // SL
+  ];
+  const { bars, entryIdx } = makeBars(postBars, 100);
+  const s = sig("AGREE", "BUY", 100, 95, 103, 106, 110);
+  const viaSim = simulateFromIdx(s, bars, entryIdx, WINDOW_END);
+  // Direct helper call: scanBars = postBars[1..] (the bars AFTER entry).
+  const scanBars = postBars.slice(1);
+  const viaHelper = simulateProgressiveTpSl({ direction: "BUY", entryPrice: 100, sl: 95, tp1: 103, tp2: 106, tp3: 110, bars: scanBars });
+  check("AGREE: simulateFromIdx bestTargetReached == helper", viaSim?.bestTargetReached === viaHelper.bestTargetReached, `${viaSim?.bestTargetReached} vs ${viaHelper.bestTargetReached}`);
+  check("AGREE: simulateFromIdx exitReason == helper", viaSim?.exitReason === viaHelper.exitReason, `${viaSim?.exitReason} vs ${viaHelper.exitReason}`);
+  check("AGREE: simulateFromIdx exitPrice == helper", Math.abs((viaSim?.exitPrice ?? 0) - viaHelper.exitPrice) < 1e-9, `${viaSim?.exitPrice} vs ${viaHelper.exitPrice}`);
+  check("AGREE: simulateFromIdx unresolved == helper", viaSim?.unresolved === viaHelper.unresolved);
+  check("AGREE: simulateFromIdx nBarsExamined == helper", viaSim?.nBarsExamined === viaHelper.nBarsExamined, `${viaSim?.nBarsExamined} vs ${viaHelper.nBarsExamined}`);
 }
 
 // ─── Summary ─────────────────────────────────────────────────────────────────

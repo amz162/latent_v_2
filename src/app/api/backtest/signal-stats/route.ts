@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { simulateProgressiveTpSl } from "@/lib/latent/tp-sl-engine";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -67,12 +68,23 @@ function atr(highs: number[], lows: number[], closes: number[], period = 14): nu
 
 // Replay ONE signal over its bars (already filtered to the window). Enters at
 // the first bar's close; uses the signal's absolute SL/TP1/TP2/TP3 levels
-// (ATR-derived if missing); scans forward TP3 > TP2 > TP1 > SL. Returns null
-// if nothing is hit (ACTIVE — not a closed trade).
-function replaySignal(sig: SignalIn, bars: Bar[]): { hit: "TP3" | "TP2" | "TP1" | "SL"; entryPrice: number; exitPrice: number; returnPct: number } | null {
+// (ATR-derived if missing); delegates the chronological TP/SL state machine
+// to the SHARED canonical helper (src/lib/latent/tp-sl-engine.ts — Task 58).
+// ALWAYS returns a result — unresolved (TIME_UP) trades are NOT discarded.
+// Returns null only if bars.length < 5 (defensive).
+function replaySignal(sig: SignalIn, bars: Bar[]): {
+  hit: "TP3" | "TP2" | "TP1" | "SL" | "—"; // backward-compat: TP3 for TP3 exit, SL for any SL exit, — for time-up
+  bestTargetReached: "TP3" | "TP2" | "TP1" | "—"; // Task 58: canonical
+  exitReason: "TP3_HIT" | "SL_HIT" | "SL_AFTER_TP1" | "SL_AFTER_TP2" | "TIME_UP"; // Task 58: canonical (distinguishes SL_AFTER_TP1/TP2)
+  entryPrice: number;
+  exitPrice: number;
+  returnPct: number; // realized net % (after costs)
+  unresolved: boolean; // Task 58: true if TIME_UP
+  nBarsExamined: number; // Task 58: candles scanned after entry
+} | null {
   if (bars.length < 5) return null;
   const direction = sig.signal === "SELL" ? "SELL" : "BUY";
-  const entryIdx = 0; // first bar in the window
+  const entryIdx = 0; // first bar in the window (deterministic — no cherry-picking)
   const entryBar = bars[entryIdx];
   const entryPrice = entryBar.close;
   const sigEntry = sig.entry && sig.entry > 0 ? sig.entry : entryPrice;
@@ -89,38 +101,35 @@ function replaySignal(sig: SignalIn, bars: Bar[]): { hit: "TP3" | "TP2" | "TP1" 
   const tp2 = direction === "BUY" ? entryPrice + tp2Dist : entryPrice - tp2Dist;
   const tp3 = direction === "BUY" ? entryPrice + tp3Dist : entryPrice - tp3Dist;
 
-  let tp3Idx = -1, tp2Idx = -1, tp1Idx = -1, slIdx = -1;
-  for (let i = entryIdx + 1; i < bars.length; i++) {
-    const b = bars[i];
-    if (direction === "BUY") {
-      if (tp3Idx < 0 && b.high >= tp3) tp3Idx = i;
-      if (tp2Idx < 0 && b.high >= tp2) tp2Idx = i;
-      if (tp1Idx < 0 && b.high >= tp1) tp1Idx = i;
-      if (slIdx < 0 && b.low <= sl) slIdx = i;
-    } else {
-      if (tp3Idx < 0 && b.low <= tp3) tp3Idx = i;
-      if (tp2Idx < 0 && b.low <= tp2) tp2Idx = i;
-      if (tp1Idx < 0 && b.low <= tp1) tp1Idx = i;
-      if (slIdx < 0 && b.high >= sl) slIdx = i;
-    }
-  }
-  let exitPrice: number;
-  let hit: "TP3" | "TP2" | "TP1" | "SL";
-  if (tp3Idx >= 0) { exitPrice = tp3; hit = "TP3"; }
-  else if (tp2Idx >= 0) { exitPrice = tp2; hit = "TP2"; }
-  else if (tp1Idx >= 0) { exitPrice = tp1; hit = "TP1"; }
-  else if (slIdx >= 0) { exitPrice = sl; hit = "SL"; }
-  else return null; // ACTIVE — nothing hit within the window
+  // Task 58: delegate to the SHARED canonical TP/SL state machine.
+  // scanBars = all bars AFTER the entry bar (the entry is at idx 0).
+  const scanBars = bars.slice(1);
+  const tpSl = simulateProgressiveTpSl({ direction, entryPrice, sl, tp1, tp2, tp3, bars: scanBars });
+  const exitPrice = tpSl.exitPrice;
 
+  // Per-trade costs: commission both sides + slippage (as % of entry); CGT on
+  // the gross profit (as % of entry = grossPct × CGT_RATE).
   const grossPct = direction === "BUY"
     ? ((exitPrice - entryPrice) / entryPrice) * 100
     : ((entryPrice - exitPrice) / entryPrice) * 100;
-  // Per-trade costs: commission both sides + slippage (as % of entry); CGT on
-  // the gross profit (as % of entry = grossPct × CGT_RATE).
   const costPct = (COMMISSION_RATE * 2 + SLIPPAGE_RATE) * 100;
   const cgtPct = grossPct > 0 ? grossPct * CGT_RATE : 0;
   const netPct = grossPct - costPct - cgtPct;
-  return { hit, entryPrice, exitPrice, returnPct: netPct };
+  // Map canonical hit → legacy "TP3"|"TP2"|"TP1"|"SL"|"—" (backward compat).
+  const hitLegacy: "TP3" | "TP2" | "TP1" | "SL" | "—" =
+    tpSl.exitReason === "TP3_HIT" ? "TP3"
+    : tpSl.exitReason === "TIME_UP" ? "—"
+    : "SL"; // SL_HIT, SL_AFTER_TP1, SL_AFTER_TP2 → "SL"
+  return {
+    hit: hitLegacy,
+    bestTargetReached: tpSl.bestTargetReached,
+    exitReason: tpSl.exitReason,
+    entryPrice,
+    exitPrice,
+    returnPct: netPct,
+    unresolved: tpSl.unresolved,
+    nBarsExamined: tpSl.nBarsExamined,
+  };
 }
 
 export async function GET(req: Request) {
@@ -197,11 +206,16 @@ export async function GET(req: Request) {
   }
 
   // 3. Replay each signal over its windowed bars.
+  // Task 58: replaySignal now ALWAYS returns a result (TIME_UP for unresolved,
+  // NOT discarded). Wins are based on realized net P&L (returnPct > 0), NOT on
+  // the hit field — consistent with investment-simulator + backtest.ts.
   let total = 0;
   let closed = 0;
+  let unresolvedCount = 0;
   let wins = 0;
   let losses = 0;
   let sumReturn = 0;
+  let sumReturnInclUnresolved = 0;
   let best = -Infinity;
   let worst = Infinity;
   for (const sig of signals) {
@@ -209,11 +223,17 @@ export async function GET(req: Request) {
     if (bars.length < 5) continue; // no in-window history for this symbol
     total++;
     const res = replaySignal(sig, bars);
-    if (!res) continue; // ACTIVE — nothing hit within the window
-    closed++;
-    if (res.hit === "TP3" || res.hit === "TP2" || res.hit === "TP1") wins++;
+    if (!res) continue; // defensive (bars.length < 5 already checked)
+    if (res.unresolved) {
+      unresolvedCount++;
+    } else {
+      closed++; // resolved SL/TP3 exit (backward-compat definition of "closed")
+    }
+    // Task 58: win/loss by REALIZED NET P&L (was: hit === TP3/TP2/TP1).
+    if (res.returnPct > 0) wins++;
     else losses++;
     sumReturn += res.returnPct;
+    sumReturnInclUnresolved += res.returnPct;
     if (res.returnPct > best) best = res.returnPct;
     if (res.returnPct < worst) worst = res.returnPct;
   }
@@ -221,12 +241,13 @@ export async function GET(req: Request) {
   if (!Number.isFinite(best)) best = 0;
   if (!Number.isFinite(worst)) worst = 0;
 
-  const winRate = closed > 0 ? (wins / closed) * 100 : 0;
-  const avgReturnPct = closed > 0 ? sumReturn / closed : 0;
+  const winRate = total > 0 ? (wins / total) * 100 : 0; // Task 58: over TOTAL (incl unresolved)
+  const avgReturnPct = total > 0 ? sumReturnInclUnresolved / total : 0;
 
   return NextResponse.json({
     total,
-    closed,
+    closed, // resolved SL/TP3 exits (backward-compat)
+    unresolvedCount, // Task 58: TIME_UP count (not discarded)
     wins,
     losses,
     winRate: Math.round(winRate * 100) / 100,
@@ -239,5 +260,6 @@ export async function GET(req: Request) {
     windowStart: startStr,
     windowEnd: endStr,
     cached: false,
+    note: "Task 58: win/loss now based on realized net P&L (returnPct > 0), not the TP/SL hit field — consistent with investment-simulator + backtest.ts. Unresolved (TIME_UP) trades are NOT discarded — winRate + avgReturnPct are over TOTAL (closed + unresolved). This is an illustrative current-signal replay over the last `days` window, NOT a genuine walk-forward ML evaluation.",
   });
 }

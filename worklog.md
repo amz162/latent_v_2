@@ -2851,3 +2851,93 @@ Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9
 Confirmation that the walk-forward artifacts (walk_forward_latest.json, walk_forward_previous.json, walk_forward_candidate.json, pilot25_robustness.json, the runs/ directory) were preserved unchanged.
 Confirmation that no GitHub push occurred: 2 local autosave commits ahead of origin (NOT pushed).
 Confirmation that no model training or pilot25 evaluation was rerun.
+
+---
+Task ID: 58 (COMPLETE)
+Agent: main (interactive session 2026-10-28)
+Task: Audit + align the two OTHER TP/SL implementations (src/app/api/backtest/signal-stats/route.ts → replaySignal, src/lib/latent/backtest.ts → BacktestTrade) with the canonical Task 57 behavior in src/lib/latent/investment-simulator.ts. Extract a shared canonical helper so all 3 use the same chronological TP/SL state machine. No breaking API changes. No silently changing historical metrics meaning. No GitHub push. ml_predictions_multi.json + Task 55/56 artifacts unchanged.
+
+Discrepancies found (Phase 1 audit):
+
+1. signal-stats/route.ts (replaySignal) — purpose: CURRENT-SIGNAL REPLAY (takes live signals from /api/signals/all, replays over last `days` bars). NOT a genuine historical ML backtest.
+   - OLD bug: priority-based exit (TP3>TP2>TP1>SL) — a TP1→TP2→SL sequence reported "TP2" instead of SL_AFTER_TP2.
+   - OLD bug: returned null for ACTIVE (unresolved) trades → DISCARDED them (violated "time-exit outcomes remain visible").
+   - OLD bug: wins counted by hit field (TP3/TP2/TP1), not net P&L.
+   - Entry: deterministic idx=0 (first bar in window) — OK, no cherry-picking.
+   - No gap-aware SL fill (used sl directly).
+
+2. backtest.ts (simulateOne/BacktestTrade) — purpose: TECHNICAL-RULE STRATEGY SIMULATION (Monte Carlo — random price-matching entry bar).
+   - OLD bug: priority-based exit (TP3>TP2>TP1>SL>TIME) — same as signal-stats.
+   - Had `bestTp` field (partial — recorded highest TP reached up to exit bar, but exit was still priority-based).
+   - Win/loss already netPnl>0 (CORRECT — no change needed).
+   - Entry: RANDOM bar among price-matching candidates (±1.5% of signal entry); FALLBACK random bar when no price match — the fallback is an ARTIFICIAL entry to fulfill numTrades (not a genuine signal-execution entry). Not outcome-based cherry-picking, but not disclosed.
+   - No gap-aware SL fill.
+
+3. investment-simulator.ts (simulateFromIdx) — canonical (Task 57). Chronological, SL-first, TP3 final, gap-aware, deterministic entry, unresolved recorded. No discrepancy (this is the reference).
+
+Canonical behavior implemented (Phase 2):
+
+NEW shared module: src/lib/latent/tp-sl-engine.ts — exports `simulateProgressiveTpSl(input)` + `mapExitReasonToLegacy()` + `mapBestTargetToLegacy()`. PURE (no DB, no side effects), direction-aware (BUY/SELL), chronological candle-by-candle:
+  - Check SL FIRST on each bar. Gap-aware stop-fill (bar.open beyond SL → fill at gap-open; else SL). SL takes priority over any new TP on the SAME bar.
+  - If SL not touched, check TP3 > TP2 > TP1 (descending). TP3 closes (final). TP1/TP2 upgrade bestTargetReached + continue.
+  - TIME_UP for unresolved (exit at last close, bestTargetReached preserved). NOT discarded.
+  - Returns: exitBarIdx, exitPrice, exitReason (TP3_HIT/SL_HIT/SL_AFTER_TP1/SL_AFTER_TP2/TIME_UP), hit (TP3/SL/—), bestTargetReached (TP3/TP2/TP1/—), tp1HitIdx/tp2HitIdx/tp3HitIdx, unresolved, nBarsExamined, activeStop (= sl, fixed).
+  - Does NOT compute costs (each caller computes in its own units: PKR vs %).
+
+All 3 implementations now delegate to this helper:
+- investment-simulator.ts: simulateFromIdx calls simulateProgressiveTpSl with bars[entryIdx+1..end]. (Minimal change — the inline logic was already canonical; extracted to the shared helper.)
+- backtest.ts: simulateOne calls simulateProgressiveTpSl with bars[entryIdx+1..entryIdx+numDays]. REPLACED the priority-based logic. Old `exitReason`/`bestTp` fields preserved (mapped via mapExitReasonToLegacy/mapBestTargetToLegacy) for backward compat.
+- signal-stats/route.ts: replaySignal calls simulateProgressiveTpSl with bars[1..] (after entry at idx 0). REPLACED the priority-based logic. Old `hit` field preserved (mapped). No longer returns null for unresolved — returns TIME_UP result.
+
+Result fields standardized (Phase 3 — backward-compatible: ADD explicit fields, don't silently change existing ones):
+- backtest.ts BacktestTrade: ADDED exitReasonDetailed (canonical: TP3_HIT/SL_HIT/SL_AFTER_TP1/SL_AFTER_TP2/TIME_UP/NO_DATA), bestTargetReached (canonical: TP3/TP2/TP1/—), activeStop, unresolved, nBarsExamined, entryMode (price_match | random_fallback). KEPT exitReason (old: TP3/TP2/TP1/SL/TIME/NO_DATA), bestTp (old: TP3/TP2/TP1/null) for backward compat.
+- signal-stats replaySignal: ADDED bestTargetReached, exitReason (canonical), unresolved, nBarsExamined. KEPT hit (old: TP3/TP2/TP1/SL/—) for backward compat.
+- investment-simulator: unchanged (already canonical from Task 57).
+- A TP2-then-SL trade now shows: exitReason="SL" (legacy), exitReasonDetailed="SL_AFTER_TP2", bestTp/bestTargetReached="TP2", exitPrice=sl, grossPnl=(sl-entry)/entry. The TP2 milestone is PRESERVED; the realized P&L reflects the SL exit (negative). NOT counted as 3 wins.
+
+Entry selection + execution (Phase 4):
+- signal-stats: deterministic idx=0 (first bar in window). No cherry-picking. OK.
+- backtest.ts: random price-matching bar (±1.5% of signal entry). NOT outcome-based cherry-picking. The fallback (random bar when no price match) is now DISCLOSED via the new `entryMode: "random_fallback"` field — consumers can filter artificial entries. Not changed to deterministic (it's the documented Monte Carlo behavior of this technical-rule strategy sim).
+- investment-simulator: deterministic nearest bar (Task 57). OK.
+- All 3 use the SAME gap-aware stop-fill (via the shared helper).
+- signal-stats is LABELED as an illustrative current-signal replay (in the response `note` field) — NOT presented as genuine historical ML predictive accuracy.
+
+Costs + accounting (Phase 5):
+- All 3 use the SAME rates: commission 0.15%×2, slippage 0.15%, CGT 15% on gains.
+- investment-simulator + backtest.ts compute costs in PKR (entryAmount/amountPerTrade × rates). signal-stats computes in % (rates × 100). Same formula, different units (documented).
+- The shared helper does NOT compute costs (only exit price + reason + best-target). Each caller computes costs from the actual exit price → consistent gross/net P&L under the same execution convention.
+- Win/loss now net-P&L-based across ALL 3 (signal-stats changed from hit-based to returnPct>0; backtest.ts was already netPnl>0; investment-simulator was already netPnl>0 from Task 57).
+
+Files changed:
+1. src/lib/latent/tp-sl-engine.ts (NEW) — shared canonical TP/SL helper + legacy mappers. ~165 lines.
+2. src/lib/latent/investment-simulator.ts — simulateFromIdx now delegates to simulateProgressiveTpSl (extracted the inline logic; behavior identical). Import added at top.
+3. src/lib/latent/backtest.ts — BacktestTrade interface extended (exitReasonDetailed, bestTargetReached, activeStop, unresolved, nBarsExamined, entryMode). simulateOne's TP/SL section replaced with simulateProgressiveTpSl call + legacy mapping. entryMode tracking added (price_match vs random_fallback).
+4. src/app/api/backtest/signal-stats/route.ts — replaySignal refactored to use simulateProgressiveTpSl. Returns non-null for unresolved (TIME_UP). Caller: wins by returnPct>0 (was hit-based), counts unresolved, winRate over TOTAL (closed+unresolved). Added `unresolvedCount` + `note` fields to the response disclosing the change.
+5. scripts/simulator_regression_check.ts — extended with Task 58 sections: direct shared-helper checks (H1-H5), legacy-mapping checks (10 cases), 3-paths-agree check (simulateFromIdx == direct helper).
+
+Tests actually executed (Phase 6 + 7):
+1. bun scripts/simulator_regression_check.ts → 82/82 PASSED (51 Task 57 + 31 Task 58: direct-helper, legacy-mapping, 3-paths-agree).
+2. bun run lint → clean (no errors).
+3. python3 scripts/ml_integrity.py → ALL 11 assertions PASSED.
+4. API smoke: GET / → 200; /api/backtest/signal-stats?days=30 → 200 (returns total=307, closed=303, unresolvedCount=4, wins=51, losses=256, winRate=16.61%, has `note` field); /api/backtest/walk-forward → 200 (unchanged).
+5. Agent Browser: page renders (title correct, no console errors).
+6. ml_predictions_multi.json UNCHANGED: md5 41442cd7ece9d137ec19310e2d771f55.
+7. walk_forward_latest.json UNCHANGED: md5 544192bd40e32caf093e07e3d1f1cece (Task 55 preserved).
+8. pilot25_robustness.json UNCHANGED: md5 2ca441fcd5627b688975a315daebf139 (Task 56 preserved).
+9. No GitHub push: 1 local autosave commit ahead of origin (NOT pushed).
+10. No model training or full-universe evaluation was launched.
+
+Remaining limitations:
+- backtest.ts's entry selection is RANDOM (Monte Carlo) among price-matching bars, with a random fallback when no price match. This is the documented technical-rule strategy simulation behavior (not outcome-based cherry-picking), but the random-fallback entries ARE artificial (disclosed via `entryMode: "random_fallback"` so consumers can filter them). Not changed to deterministic in this task — that would alter the Monte Carlo semantics.
+- signal-stats is an ILLUSTRATIVE current-signal replay over the last `days` window, NOT a genuine walk-forward ML evaluation. The `note` field in the response discloses this. Do NOT present its winRate as historical ML predictive accuracy.
+- The winRate in signal-stats CHANGED from hit-based (TP3/TP2/TP1) to net-P&L-based (returnPct > 0) — this is the documented Task 58 goal (consistency across all 3 implementations), disclosed in the response `note`. Historical signal-stats winRate values are NOT comparable across the change boundary.
+- signal-stats winRate + avgReturnPct now include unresolved (TIME_UP) trades in the denominator (over TOTAL, not just closed). This is the "don't discard unresolved" goal. The response separates `closed` (resolved SL/TP3 exits) from `unresolvedCount` so consumers can compute the old-style winRate over closed only if needed.
+- The shared helper does NOT compute costs — each caller computes costs in its own units (PKR vs %). The cost RATES are identical (0.15%/0.15%/15%) across all 3, so the same completed trade produces consistent gross/net P&L under the same execution convention + cost assumptions.
+- No partial-exit allocation or trailing stop is invented (Phase 3 of Task 57 still applies — the active stop is FIXED = sl). A future profit-locking/partial-exit policy must be explicit + configurable + evaluated as an actual execution strategy.
+- The regression checks verify the shared helper + simulateFromIdx (which delegates to it). signal-stats' replaySignal + backtest.ts' simulateOne are NOT directly tested with synthetic bars in the regression script (they're private/non-exported), but they delegate to the SAME shared helper (verified by code inspection + the fact that the Task 57 checks still pass after the refactor). A future task could export them + add direct regression coverage.
+- The ensembles API route (src/app/api/backtest/ensembles/route.ts) consumes BacktestTrade + already used isWin: t.netPnlPkr > 0 (correct). The new BacktestTrade fields (exitReasonDetailed, bestTargetReached, entryMode, unresolved, nBarsExamined) are available on the trade objects but the ensembles route's response shape was NOT changed in this task (it picks specific fields). A future task can surface the new fields in the ensembles response + the AiModelSignals ensembles-table UI if desired.
+
+Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9d137ec19310e2d771f55 before and after.
+Confirmation that Task 55 (walk_forward_latest.json) + Task 56 (pilot25_robustness.json) artifacts were preserved unchanged.
+Confirmation that no model training or pilot25/full-universe evaluation was launched.
+Confirmation that no GitHub push occurred: 1 local autosave commit ahead of origin (NOT pushed).
