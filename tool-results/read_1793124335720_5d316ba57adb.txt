@@ -1,0 +1,437 @@
+     1→   540→
+     2→   541→ # Final consensus (Task 51 Phase 2 fix — dual-mode):
+     3→   542→ #  - Validation period: 2+ of {MAJORITY, PROBABILITY, TIER} agree (skip WIN_RATE_WEIGHTED — being calibrated)
+     4→   543→ #  - Final-test period: 2+ of {MAJORITY, PROBABILITY, TIER, WIN_RATE_WEIGHTED} agree
+     5→   544→ final_preds=[]
+     6→   545→ for i in range(n_samples):
+     7→   546→  is_validation_period = (i < val_end_idx)
+     8→   547→  if is_validation_period:
+     9→   548→   votes = [ensemble_preds["MAJORITY_VOTE"][i]["signal"],
+    10→   549→            ensemble_preds["PROBABILITY_WEIGHTED"][i]["signal"],
+    11→   550→            ensemble_preds["TIER_WEIGHTED"][i]["signal"]]
+    12→   551→  else:
+    13→   552→   votes = [ensemble_preds["MAJORITY_VOTE"][i]["signal"],
+    14→   553→            ensemble_preds["PROBABILITY_WEIGHTED"][i]["signal"],
+    15→   554→            ensemble_preds["TIER_WEIGHTED"][i]["signal"],
+    16→   555→            ensemble_preds["WIN_RATE_WEIGHTED"][i]["signal"]]
+    17→   556→  buy_v=sum(1 for v in votes if v=="BUY")
+    18→   557→  sell_v=sum(1 for v in votes if v=="SELL")
+    19→   558→  if buy_v>=2:sig="BUY"
+    20→   559→  elif sell_v>=2:sig="SELL"
+    21→   560→  else:sig="HOLD"
+    22→   561→  actual=ensemble_preds["MAJORITY_VOTE"][i]["actual_return"]
+    23→   562→  final_preds.append({"signal":sig,"actual_return":actual, "period":"validation" if is_validation_period else "final-test"})
+    24→   563→ ensemble_preds["FINAL_CONSENSUS"]=final_preds
+    25→   564→
+    26→   565→ # Compute ensemble backtesting stats (Task 51 Phase 2: filter validation-period unavailable entries)
+    27→   566→ wf_ensemble={}
+    28→   567→ for method,preds in ensemble_preds.items():
+    29→   568→  # Task 51: skip preds marked "status":"unavailable" (validation-period WIN_RATE_WEIGHTED)
+    30→   569→  eligible = [p for p in preds if p.get("status", "ok") == "ok"]
+    31→   570→  trades=[p for p in eligible if p["signal"]!="HOLD"]
+    32→   571→  wins=[p for p in trades if(p["signal"]=="BUY"and p["actual_return"]>0)or(p["signal"]=="SELL"and p["actual_return"]<0)]
+    33→   572→  rets=[p["actual_return"] if p["signal"]=="BUY" else -p["actual_return"] for p in trades]
+    34→   573→  tt=len(trades);wr=len(wins)/max(tt,1)*100
+    35→   574→  ar_=float(np.mean(rets))*100 if rets else 0
+    36→   575→  # Task 51 Phase 4: label trading metrics as gross directional-return proxy
+    37→   576→  wf_ensemble[method]={
+    38→   577→   "totalTrades":int(tt),"wins":int(len(wins)),
+    39→   578→   "winRate":round(float(wr),1),"avgReturnPct":round(float(ar_),2),
+    40→   579→   "maxReturnPct":round(float(max(rets)*100)if rets else 0,2),
+    41→   580→   "minReturnPct":round(float(min(rets)*100)if rets else 0,2),
+    42→   581→   "stars":int(min(5,max(1,int(wr/20)+1))),
+    43→   582→   "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+    44→   583→   "net_trading_pnl": "unavailable",
+    45→   584→   "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+    46→   585→   "n_validation_period_excluded": int(sum(1 for p in preds if p.get("status") == "unavailable")),
+    47→   586→  }
+    48→   587→  print(f"  {method}: trades={tt} winRate={wr:.1f}% avgReturn={ar_:.2f}% stars={'★'*int(min(5,max(1,int(wr/20)+1)))} "
+    49→   588→        f"(validation-period excluded: {wf_ensemble[method]['n_validation_period_excluded']})")
+    50→   589→
+    51→   590→ # ─── NEW (Task 49): Forecast-quality metrics per model × horizon ──────────
+    52→   591→ # MAE / RMSE / R² / directional accuracy / n_observations.
+    53→   592→ # Task 51 Phase 3: TWO genuine prediction baselines (zero-return + training-only mean).
+    54→   593→ # The constant-mean baseline (predict mean(actual_arr) for all) is retained as
+    55→   594→ # the conventional R² reference but explicitly labeled as such.
+    56→   595→ print("\n\nComputing forecast-quality metrics (MAE / RMSE / R² / directional accuracy)...")
+    57→   596→ wf_forecast = {}  # {model_name: {horizon: {mae, rmse, r2, directional_accuracy, n_observations, baselines}}}
+    58→   597→ unevaluated = []  # list of {model, horizon, reason}
+    59→   598→ # Task 51 Phase 3 — per-horizon pooled actuals for baseline metrics (use the
+    60→   599→ # same matured eval observations as each ML model — they share samples).
+    61→   600→ # Build per-horizon actual arrays from per_model_per_horizon (same for all 5 models).
+    62→   601→ horizon_actuals = {}
+    63→   602→ horizon_pred_pairs_per_model = {}
+    64→   603→ for hz in [5, 10, 21]:
+    65→   604→  # Use the first model's pairs as the reference (all 5 models predict at the same samples)
+    66→   605→  ref_pairs = per_model_per_horizon[MODEL_NAMES[0]][hz]
+    67→   606→  if len(ref_pairs) >= 2:
+    68→   607→   horizon_actuals[hz] = np.array([p["actual"] for p in ref_pairs], dtype=np.float64)
+    69→   608→  else:
+    70→   609→   horizon_actuals[hz] = None
+    71→   610→ for name in MODEL_NAMES:
+    72→   611→  wf_forecast[name] = {}
+    73→   612→  for hz in [5, 10, 21]:
+    74→   613→   pairs = per_model_per_horizon[name][hz]
+    75→   614→   if len(pairs) < 2:
+    76→   615→    reason = (f"insufficient matured samples at horizon {hz}d "
+    77→   616→              f"(have {len(pairs)}, need ≥2)")
+    78→   617→    wf_forecast[name][hz] = {"status": "unavailable", "reason": reason,
+    79→   618→                              "n_observations": len(pairs)}
+    80→   619→    unevaluated.append({"model": name, "horizon": hz, "reason": reason})
+    81→   620→    continue
+    82→   621→   pred_arr = np.array([p["predicted"] for p in pairs], dtype=np.float64)
+    83→   622→   actual_arr = np.array([p["actual"] for p in pairs], dtype=np.float64)
+    84→   623→   mae = float(mean_absolute_error(actual_arr, pred_arr))
+    85→   624→   rmse = float(np.sqrt(mean_squared_error(actual_arr, pred_arr)))
+    86→   625→   # R² can be NEGATIVE — that's honest (model worse than constant-mean baseline).
+    87→   626→   # Do NOT clamp to zero.
+    88→   627→   if len(actual_arr) > 1 and actual_arr.std() > 0:
+    89→   628→    r2 = float(r2_score(actual_arr, pred_arr))
+    90→   629→   else:
+    91→   630→    r2 = float("nan")  # undefined when actual is constant
+    92→   631→   # Directional accuracy: sign(predicted) == sign(actual)
+    93→   632→   dir_acc = float(np.mean(np.sign(pred_arr) == np.sign(actual_arr)))
+    94→   633→   # ─── Task 51 Phase 3: TWO genuine prediction baselines ────────────────
+    95→   634→   # Baseline 1: Zero-return baseline — predict 0 for all samples.
+    96→   635→   zero_pred = np.zeros_like(actual_arr)
+    97→   636→   zero_mae = float(mean_absolute_error(actual_arr, zero_pred))
+    98→   637→   zero_rmse = float(np.sqrt(mean_squared_error(actual_arr, zero_pred)))
+    99→   638→   if len(actual_arr) > 1 and actual_arr.std() > 0:
+   100→   639→    zero_r2 = float(r2_score(actual_arr, zero_pred))
+   101→   640→   else:
+   102→   641→    zero_r2 = float("nan")
+   103→   642→   zero_dir_acc = float(np.mean(np.sign(zero_pred) == np.sign(actual_arr)))  # = fraction where actual == 0 (typically 0)
+   104→   643→   # Baseline 2: Training-only mean baseline — at each sample, predict the mean
+   105→   644→   # of matured training targets for that horizon (pooled market-wide, excludes
+   106→   645→   # the sample's own target). The `training_only_baseline_means[hz]` list was
+   107→   646→   # built in the per-sample loop using filter_by_target_maturity.
+   108→   647→   tbo = training_only_baseline_means.get(hz, [])
+   109→   648→   if len(tbo) == len(pairs):
+   110→   649→    tbo_pred = np.array([t["mean"] for t in tbo], dtype=np.float64)
+   111→   650→    tbo_mae = float(mean_absolute_error(actual_arr, tbo_pred))
+   112→   651→    tbo_rmse = float(np.sqrt(mean_squared_error(actual_arr, tbo_pred)))
+   113→   652→    if len(actual_arr) > 1 and actual_arr.std() > 0:
+   114→   653→     tbo_r2 = float(r2_score(actual_arr, tbo_pred))
+   115→   654→    else:
+   116→   655→     tbo_r2 = float("nan")
+   117→   656→    tbo_dir_acc = float(np.mean(np.sign(tbo_pred) == np.sign(actual_arr)))
+   118→   657→    tbo_n_obs = int(np.mean([t["n_obs"] for t in tbo]))
+   119→   658→    tbo_status = "completed"
+   120→   659→    tbo_reason = None
+   121→   660→   else:
+   122→   661→    tbo_pred = None
+   123→   662→    tbo_mae = tbo_rmse = tbo_r2 = tbo_dir_acc = None
+   124→   663→    tbo_n_obs = 0
+   125→   664→    tbo_status = "unavailable"
+   126→   665→    tbo_reason = (f"training-only baseline not aligned with eval pairs "
+   127→   666→                  f"(have {len(tbo)} training means for {len(pairs)} eval pairs)")
+   128→   667→   # Conventional constant-mean baseline (reference for R²)
+   129→   668→   cm_pred = np.full_like(actual_arr, actual_arr.mean())
+   130→   669→   cm_mae = float(mean_absolute_error(actual_arr, cm_pred))
+   131→   670→   cm_rmse = float(np.sqrt(mean_squared_error(actual_arr, cm_pred)))
+   132→   671→   if len(actual_arr) > 1 and actual_arr.std() > 0:
+   133→   672→    cm_r2 = float(r2_score(actual_arr, cm_pred))  # = 0.0 by construction
+   134→   673→   else:
+   135→   674→    cm_r2 = float("nan")
+   136→   675→   wf_forecast[name][hz] = {
+   137→   676→    "status": "completed",
+   138→   677→    "mae": round(mae, 6),
+   139→   678→    "rmse": round(rmse, 6),
+   140→   679→    "r2": None if np.isnan(r2) else round(r2, 6),
+   141→   680→    "directional_accuracy": round(dir_acc, 4),
+   142→   681→    "n_observations": int(len(pairs)),
+   143→   682→    "baselines": {
+   144→   683→     "constant_mean": {  # conventional R² reference (NOT a deployable strategy)
+   145→   684→      "definition": "predict mean(actual_eval) for all samples — this is the R² reference, NOT a deployable forecasting strategy",
+   146→   685→      "mae": round(cm_mae, 6),
+   147→   686→      "rmse": round(cm_rmse, 6),
+   148→   687→      "r2": None if np.isnan(cm_r2) else round(cm_r2, 6),
+   149→   688→     },
+   150→   689→     "zero_return": {  # Task 51 Phase 3 Baseline 1
+   151→   690→      "definition": "predict 0 future return for all samples",
+   152→   691→      "mae": round(zero_mae, 6),
+   153→   692→      "rmse": round(zero_rmse, 6),
+   154→   693→      "r2": None if np.isnan(zero_r2) else round(zero_r2, 6),
+   155→   694→      "directional_accuracy": round(zero_dir_acc, 4),
+   156→   695→     },
+   157→   696→     "training_only_mean": {  # Task 51 Phase 3 Baseline 2
+   158→   697→      "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+   159→   698→      "status": tbo_status,
+   160→   699→      "reason": tbo_reason,
+   161→   700→      "mae": round(tbo_mae, 6) if tbo_mae is not None else None,
+   162→   701→      "rmse": round(tbo_rmse, 6) if tbo_rmse is not None else None,
+   163→   702→      "r2": None if (tbo_r2 is None or np.isnan(tbo_r2)) else round(tbo_r2, 6),
+   164→   703→      "directional_accuracy": round(tbo_dir_acc, 4) if tbo_dir_acc is not None else None,
+   165→   704→      "n_training_observations_avg": tbo_n_obs,
+   166→   705→     },
+   167→   706→    },
+   168→   707→   }
+   169→   708→   r2_str = "NaN" if np.isnan(r2) else f"{r2:+.4f}"
+   170→   709→   print(f"  {name} {hz}d: n={len(pairs)} MAE={mae:.6f} RMSE={rmse:.6f} R²={r2_str} DirAcc={dir_acc:.4f} | "
+   171→   710→         f"zero-R²={zero_r2:+.4f} | train-mean-R²={'NaN' if (tbo_r2 is None or np.isnan(tbo_r2)) else f'{tbo_r2:+.4f}'}")
+   172→   711→
+   173→   712→ # ─── NEW (Task 49): Structured versioned report at data/backtest_reports/walk_forward_latest.json ───
+   174→   713→ # This is the artifact the /api/backtest/walk-forward route reads. SEPARATE
+   175→   714→ # from ml_predictions_multi.json (which we must NOT modify).
+   176→   715→ evaluation_status = "completed" if all(
+   177→   716→   wf_forecast.get(name, {}).get(hz, {}).get("status") == "completed"
+   178→   717→   for name in MODEL_NAMES for hz in [5, 10, 21]
+   179→   718→ ) else ("partial" if any(
+   180→   719→   wf_forecast.get(name, {}).get(hz, {}).get("status") == "completed"
+   181→   720→   for name in MODEL_NAMES for hz in [5, 10, 21]
+   182→   721→ ) else "failed")
+   183→   722→
+   184→   723→ # Convert epoch-ms int dates to ISO for the report schema.
+   185→   724→ def iso(ms):
+   186→   725→  try:
+   187→   726→   return pd.Timestamp(int(ms), unit="ms").isoformat()
+   188→   727→  except Exception:
+   189→   728→   return None
+   190→   729→
+   191→   730→ eval_start = iso(min(sample_dates_seen)) if sample_dates_seen else None
+   192→   731→ eval_end = iso(max(sample_dates_seen)) if sample_dates_seen else None
+   193→   732→ train_cutoff = iso(max(train_cutoff_dates_seen)) if train_cutoff_dates_seen else None
+   194→   733→ train_floor = iso(min(train_cutoff_dates_seen)) if train_cutoff_dates_seen else None
+   195→   734→
+   196→   735→ structured_report = {
+   197→   736→  "schema_version": REPORT_SCHEMA_VERSION,
+   198→   737→  "evaluation_status": evaluation_status,
+   199→   738→  "evaluation_method": "walk-forward-expanding-window",
+   200→   739→  "generated_at": pd.Timestamp.now().isoformat(),
+   201→   740→  "data_cutoff": train_cutoff,  # latest train-data date used by any sample
+   202→   741→  "training_window": {"start": train_floor, "end": train_cutoff},
+   203→   742→  "evaluation_date_range": {"start": eval_start, "end": eval_end},
+   204→   743→  # Task 52: universe mode + requested/actual size + excluded symbols
+   205→   744→  "universe_mode": UNIVERSE_MODE,
+   206→   745→  "universe_requested_size": {"canonical8":8,"pilot25":25,"pilot50":50,"full_db":0}.get(UNIVERSE_MODE,0),
+   207→   746→  "universe_actual_size": len(eval_stocks),
+   208→   747→  "evaluated_symbols": sorted(eval_stocks),
+   209→   748→  "universe_size": len(eval_stocks),  # legacy alias
+   210→   749→  "forecast_horizons": [5, 10, 21],
+   211→   750→  # Task 51 Phase 5: explicit sample-count metadata (was ambiguous before)
+   212→   751→  "n_unique_stock_date_samples": len(samples),  # unique (stock, decision-date) pairs
+   213→   752→  "n_model_fits": len(MODEL_NAMES) * 3 * len(samples),  # 5 models × 3 horizons × n_samples
+   214→   753→  "n_unique_prediction_dates": len(set(int(d) for d in sample_dates_seen)),
+   215→   754→  "sampling_interval_sessions": SAMPLE_STEP,  # SAMPLE_STEP trading days between samples per stock
+   216→   755→  "n_evaluated_models": len(MODEL_NAMES),
+   217→   756→  "n_evaluated_horizons": 3,
+   218→   757→  "n_eligible_samples": len(samples),  # legacy alias for n_unique_stock_date_samples (kept for backward compat)
+   219→   758→  "n_matured_outcomes": {
+   220→   759→   str(hz): sum(1 for name in MODEL_NAMES
+   221→   760→               for p in per_model_per_horizon[name][hz])
+   222→   761→   for hz in [5, 10, 21]
+   223→   762→  },
+   224→   763→  "n_incomplete_or_excluded_outcomes": {
+   225→   764→   str(hz): sum(1 for name in MODEL_NAMES
+   226→   765→                for p in all_predictions[name]
+   227→   766→                if p.get(f"eval_skipped_{hz}d", False))
+   228→   767→   for hz in [5, 10, 21]
+   229→   768→  },
+   230→   769→  "models": [
+   231→   770→   {
+   232→   771→    "name": name,
+   233→   772→    "implementation_type": "trained-ml",  # all 5 are genuinely trained (not technical-rule)
+   234→   773→    "horizons": {
+   235→   774→     str(hz): wf_forecast[name].get(hz, {"status": "unavailable"})
+   236→   775→     for hz in [5, 10, 21]
+   237→   776→    },
+   238→   777→   } for name in MODEL_NAMES
+   239→   778→  ],
+   240→   779→  "baselines": {
+   241→   780→   # Task 51 Phase 3: per-horizon pooled baselines (zero-return + training-only mean).
+   242→   781→   # Conventional R² reference (constant-mean) is per-model×horizon inside wf_forecast.
+   243→   782→   "per_horizon_pooled": {
+   244→   783→    str(hz): {
+   245→   784→     "zero_return": (wf_forecast[MODEL_NAMES[0]].get(hz, {}) or {}).get("baselines", {}).get("zero_return", {"status": "unavailable"}) if wf_forecast.get(MODEL_NAMES[0], {}).get(hz, {}).get("status") == "completed" else {"status": "unavailable"},
+   246→   785→     "training_only_mean": (wf_forecast[MODEL_NAMES[0]].get(hz, {}) or {}).get("baselines", {}).get("training_only_mean", {"status": "unavailable"}) if wf_forecast.get(MODEL_NAMES[0], {}).get(hz, {}).get("status") == "completed" else {"status": "unavailable"},
+   247→   786→    } for hz in [5, 10, 21]
+   248→   787→   },
+   249→   788→   "notes": (
+   250→   789→    "Conventional R² reference = constant-mean (predict mean(actual_eval) for all — R²=0 by construction). "
+   251→   790→    "Task 51 Phase 3 adds TWO deployable prediction baselines: "
+   252→   791→    "(1) zero-return (predict 0 — measures whether forecasting beats a no-trade strategy), "
+   253→   792→    "(2) training-only mean (per-sample, predict the mean of matured training targets for this horizon — "
+   254→   793→    "pooled market-wide across all stocks; uses filter_by_target_maturity to exclude the sample's own target). "
+   255→   794→    "A negative model R² vs constant-mean means the model did worse than the eval-set mean; "
+   256→   795→    "compare against zero-return + training-only-mean baselines for actual deployable-skill assessment."
+   257→   796→   ),
+   258→   797→  },
+   259→   798→  "trading_metrics": {
+   260→   799→   "individual": wf_individual,
+   261→   800→   "ensemble": wf_ensemble,
+   262→   801→   # Task 51 Phase 4: label ALL trading metrics as gross directional-return proxy
+   263→   802→   "label": "gross directional-return proxy",
+   264→   803→   "definition": "Per-trade return = signed forward 21-day return (BUY: actual_return; SELL: -actual_return). NO commission, slippage, CGT, or position-sizing applied.",
+   265→   804→   "net_trading_pnl": "unavailable",
+   266→   805→   "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission 0.15%×2, slippage 0.15%, CGT 15% on gains, position sizing, portfolio compounding) is NOT connected to the walk-forward script. The 'avgReturnPct' values above are signed forward-return proxies, NOT net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app (Tracker → Investment Simulator).",
+   267→   806→  },
+   268→   807→  "win_rate_weighted_ensemble_methodology": {
+   269→   808→   "phase_2_fix": "Option A — frozen validation-period weights",
+   270→   809→   "description": (
+   271→   810→    "Task 51 Phase 2: the OLD WIN_RATE_WEIGHTED used wf_individual[name].winRate computed from "
+   272→   811→    "the FULL evaluation period — leaky (weights at sample i used outcomes from samples i+1..n). "
+   273→   812→    "Fix: split samples into first half (VALIDATION) + second half (FINAL_TEST). Compute win rates "
+   274→   813→    "on VALIDATION only → freeze weights → apply to FINAL_TEST. VALIDATION-period "
+   275→   814→    "WIN_RATE_WEIGHTED entries are marked 'unavailable — validation period (weights being calibrated)'. "
+   276→   815→    "FINAL_CONSENSUS on validation: 2+ of {MAJORITY, PROBABILITY, TIER} agree (skip WIN_RATE_WEIGHTED). "
+   277→   816→    "FINAL_CONSENSUS on final-test: 2+ of {MAJORITY, PROBABILITY, TIER, WIN_RATE_WEIGHTED} agree."
+   278→   817→   ),
+   279→   818→   "validation_period_indices": [0, val_end_idx - 1],
+   280→   819→   "final_test_period_indices": [val_end_idx, n_samples - 1] if n_samples > val_end_idx else [],
+   281→   820→   "frozen_weights": frozen_weights,
+   282→   821→  },
+   283→   822→  "sample_maturity_metadata_summary": {
+   284→   823→   "n_samples_logged": len(sample_maturity_metadata),
+   285→   824→   "first_sample": {
+   286→   825→    "sample_date": iso(sample_maturity_metadata[0]["sample_date"]) if sample_maturity_metadata else None,
+   287→   826→    "stock": sample_maturity_metadata[0]["stock"] if sample_maturity_metadata else None,
+   288→   827→    "per_horizon": {
+   289→   828→     str(hz): {
+   290→   829→      "latest_train_feature_date": iso(sample_maturity_metadata[0]["per_horizon"][hz]["latest_train_feature_date"]) if sample_maturity_metadata and sample_maturity_metadata[0]["per_horizon"][hz]["latest_train_feature_date"] else None,
+   291→   830→      "latest_target_maturity_date": iso(sample_maturity_metadata[0]["per_horizon"][hz]["latest_target_maturity_date"]) if sample_maturity_metadata and sample_maturity_metadata[0]["per_horizon"][hz]["latest_target_maturity_date"] else None,
+   292→   831→      "n_train_rows": sample_maturity_metadata[0]["per_horizon"][hz]["n_train_rows"] if sample_maturity_metadata else 0,
+   293→   832→     } for hz in [5, 10, 21]
+   294→   833→    },
+   295→   834→   } if sample_maturity_metadata else None,
+   296→   835→   "last_sample": {
+   297→   836→    "sample_date": iso(sample_maturity_metadata[-1]["sample_date"]) if sample_maturity_metadata else None,
+   298→   837→    "stock": sample_maturity_metadata[-1]["stock"] if sample_maturity_metadata else None,
+   299→   838→    "per_horizon": {
+   300→   839→     str(hz): {
+   301→   840→      "latest_train_feature_date": iso(sample_maturity_metadata[-1]["per_horizon"][hz]["latest_train_feature_date"]) if sample_maturity_metadata and sample_maturity_metadata[-1]["per_horizon"][hz]["latest_train_feature_date"] else None,
+   302→   841→      "latest_target_maturity_date": iso(sample_maturity_metadata[-1]["per_horizon"][hz]["latest_target_maturity_date"]) if sample_maturity_metadata and sample_maturity_metadata[-1]["per_horizon"][hz]["latest_target_maturity_date"] else None,
+   303→   842→      "n_train_rows": sample_maturity_metadata[-1]["per_horizon"][hz]["n_train_rows"] if sample_maturity_metadata else 0,
+   304→   843→     } for hz in [5, 10, 21]
+   305→   844→    },
+   306→   845→   } if sample_maturity_metadata else None,
+   307→   846→   "verification": "For each sample, latest_target_maturity_date <= sample_date (no target-maturity leak)",
+   308→   847→  },
+   309→   848→  # Task 52: excluded symbols + selection methodology
+   310→   849→  "universe_selection_methodology": (
+   311→   850→    f"UNIVERSE_MODE={UNIVERSE_MODE}. " +
+   312→   851→    ("Canonical 8 stocks from data/ohlcv/ CSVs (fixed list, not DB-selected). " if UNIVERSE_MODE=="canonical8" else
+   313→   852→     f"Deterministic selection: query DB for symbols with >= {PILOT_MIN_BARS} bars, " +
+   314→   853→     (f"exclude *XD (right-share duplicates), " if PILOT_EXCLUDE_XD else "") +
+   315→   854→     f"sort by bar count DESC then symbol ASC, take top {UNIVERSE_MODE.replace('pilot','') if UNIVERSE_MODE.startswith('pilot') else 'all'}. " +
+   316→   855→     "Selection uses ONLY data coverage (bar count) — never test-period returns or model performance.")
+   317→   856→  ),
+   318→   857→  "excluded_symbols": excluded_symbols if UNIVERSE_MODE!="canonical8" else [],
+   319→   858→  "per_stock_results": _build_per_stock_results(per_model_per_horizon, MODEL_NAMES),
+   320→   859→  "limitations": [
+   321→   860→   f"Universe mode: {UNIVERSE_MODE} — {len(eval_stocks)} stock(s) evaluated" +
+   322→   861→   (f" of {UNIVERSE_MODE.replace('pilot','') if UNIVERSE_MODE.startswith('pilot') else 'all'} requested" if UNIVERSE_MODE.startswith('pilot') else " (canonical 8)") +
+   323→   862→   f": {', '.join(sorted(eval_stocks)[:10])}{'...' if len(eval_stocks)>10 else ''}. " +
+   324→   863→   ("NOT the full ~908 DB-backed universe. " if UNIVERSE_MODE!="full_db" else "") +
+   325→   864→   "NOT a fully production-validated benchmark.",
+   326→   865→   "5 classical models evaluated (XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression). The other ~60 registered models (LSTM, CNN-LSTM, Transformer-LSTM, PatchTST, N-BEATS, TimesNet, Informer, foundation analogs, rule-based strategies) are NOT evaluated here — see scripts/walk_forward_backtesting.py MODEL_NAMES.",
+   327→   866→   "Per-sample retraining on data[date < sample.date] (expanding window). No data leakage.",
+   328→   867→   f"Task 51 Phase 1: filter_by_target_maturity ensures training rows' target endpoint (T+h) <= sample's prediction date P. Per-horizon, per-stock, pooled across stocks. Preserves valid shorter-horizon training rows whose longest-horizon target is immature.",
+   329→   868→   "R² can be negative — that's honest (model did not outperform the constant-mean baseline on this test). Compare against zero-return + training-only-mean baselines for actual deployable-skill assessment.",
+   330→   869→   "Directional accuracy = fraction of samples where sign(predicted) == sign(actual). A value >50% is NOT proven predictive skill without considering sample size, baseline, serial dependence, and uncertainty.",
+   331→   870→   f"OVERLAPPING FORECAST WINDOWS: samples are {SAMPLE_STEP} trading days apart per stock, but the 21-day return windows at adjacent samples OVERLAP by 11 sessions. Outcomes are NOT independent — uncertainty estimates must use date-blocked resampling (NOT naive standard errors).",
+   332→   871→   f"Sample dates are every {SAMPLE_STEP} trading days per stock in the test partition; need ≥21 bars ahead for the 21d horizon to mature.",
+   333→   872→   f"Total unique (stock, decision-date) samples = {len(samples)}; total model fits = {len(MODEL_NAMES)} × 3 horizons × {len(samples)} samples = {len(MODEL_NAMES)*3*len(samples)}. Do NOT describe {len(samples)} as 'samples per stock'.",
+   334→   873→   "Trading metrics are GROSS directional-return proxies (signed forward 21-day return, NO commission/slippage/CGT/position-sizing). Net trading P&L is unavailable. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used in the Tracker.",
+   335→   874→   "WIN_RATE_WEIGHTED ensemble uses Option A (frozen validation-period weights) — validation-period entries are marked unavailable; final-test entries use frozen weights from the validation sub-period.",
+   336→   875→   "Training-only-mean baseline pools matured training targets across all stocks (market-wide mean). Per-stock means are NOT computed because most stocks have insufficient historical observations per horizon for a stable per-stock mean.",
+   337→   876→  ],
+   338→   877→  "unevaluated": unevaluated,
+   339→   878→  "ml_integrity": {
+   340→   879→   "target_construction": "per-stock groupby(symbol).shift(-h) via add_forward_returns; no .fillna(0); immature rows left NaN",
+   341→   880→   "target_maturity_filter": "Task 51 Phase 1: filter_by_target_maturity excludes training rows whose target endpoint (T+h) > prediction date P. Per-horizon, per-stock, pooled. Distinct from drop_immature_targets (which only removes rows whose target VALUE is NaN).",
+   342→   881→   "test_partition": "date-based chronological_split test partition (NOT global row split=int(len*0.8)) — all rows on a given test date belong to the test partition",
+   343→   882→   "per_sample_training": "per-sample train_data = df[df['date']<sample['date']] (strict chronological, no look-ahead) + filter_by_target_maturity(hz) per horizon",
+   344→   883→   "per_horizon_drop": "per-sample, per-horizon filter_by_target_maturity — preserves shorter-horizon rows whose longest-horizon target is immature or whose endpoint extends past P",
+   345→   884→   "realized_outcomes": "actual_return uses FUTURE close prices in the test partition (strictly AFTER the decision date) — no look-ahead leakage in the realized-outcome computation",
+   346→   885→   "ensemble_weighting": "Task 51 Phase 2: WIN_RATE_WEIGHTED uses frozen validation-period weights (Option A). MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED are per-sample (safe). FINAL_CONSENSUS uses dual-mode (skip WIN_RATE_WEIGHTED on validation, include on final-test).",
+   347→   886→   "baselines": "Task 51 Phase 3: zero-return + training-only-mean baselines added (per-horizon, pooled market-wide). Conventional constant-mean R² reference retained per-model×horizon.",
+   348→   887→   "walk_forward_methodology": "TRUE walk-forward: each test sample's models are re-fit on all data strictly before the sample's decision date AND with target-maturity filter applied per horizon. Distinct from the simplified backtest in train_all_with_backtesting.py (Pattern #10 — latest signal applied to all test rows).",
+   349→   888→  },
+   350→   889→ }
+   351→   890→ # Task 51 Phase 7: write to CANDIDATE artifact first, validate, then promote.
+   352→   891→ REPORT_DIR.mkdir(parents=True, exist_ok=True)
+   353→   892→ REPORT_CANDIDATE_FILE.write_text(json.dumps(structured_report, indent=2,
+   354→   893→   default=lambda o: int(o) if isinstance(o, (np.integer,))
+   355→   894→   else float(o) if isinstance(o, (np.floating,)) and not np.isnan(o)
+   356→   895→   else None if isinstance(o, float) and np.isnan(o)
+   357→   896→   else str(o)))
+   358→   897→
+   359→   898→ # Task 51 Phase 7: validate the candidate structure before promoting.
+   360→   899→ def _validate_candidate(rep):
+   361→   900→  if not isinstance(rep, dict): return False, "not a dict"
+   362→   901→  for k in ("schema_version", "evaluation_method", "generated_at", "models"):
+   363→   902→   if k not in rep: return False, f"missing key: {k}"
+   364→   903→  if not isinstance(rep.get("models"), list) or len(rep["models"]) == 0:
+   365→   904→   return False, "models list empty"
+   366→   905→  # Verify each model × horizon has either status:completed or status:unavailable
+   367→   906→  for m in rep["models"]:
+   368→   907→   for hz_str, h in m.get("horizons", {}).items():
+   369→   908→    if h.get("status") not in ("completed", "unavailable"):
+   370→   909→     return False, f"model {m.get('name')} hz {hz_str} invalid status {h.get('status')}"
+   371→   910→  # Verify evaluation_status is one of completed/partial/failed
+   372→   911→  if rep.get("evaluation_status") not in ("completed", "partial", "failed"):
+   373→   912→   return False, f"invalid evaluation_status {rep.get('evaluation_status')}"
+   374→   913→  return True, "ok"
+   375→   914→
+   376→   915→ candidate_ok, candidate_err = _validate_candidate(structured_report)
+   377→   916→ if candidate_ok:
+   378→   917→  # Promote: preserve old as previous, then move candidate to latest.
+   379→   918→  import shutil
+   380→   919→  if REPORT_FILE.exists():
+   381→   920→   shutil.copy2(REPORT_FILE, REPORT_PREVIOUS_FILE)
+   382→   921→   print(f"  Task 51 Phase 7: preserved previous report → {REPORT_PREVIOUS_FILE.name}")
+   383→   922→  shutil.copy2(REPORT_CANDIDATE_FILE, REPORT_FILE)
+   384→   923→  print(f"  Task 51 Phase 7: promoted candidate → {REPORT_FILE.name}")
+   385→   924→ else:
+   386→   925→  # Candidate failed validation — preserve the existing latest, do NOT overwrite.
+   387→   926→  print(f"  Task 51 Phase 7: candidate FAILED validation ({candidate_err}) — keeping existing {REPORT_FILE.name}")
+   388→   927→  if not REPORT_FILE.exists():
+   389→   928→   # No existing report — write the candidate anyway as a fallback (better than nothing)
+   390→   929→   shutil.copy2(REPORT_CANDIDATE_FILE, REPORT_FILE)
+   391→   930→   print(f"  Task 51 Phase 7: no existing report — wrote candidate as fallback")
+   392→   931→
+   393→   932→ # Save the original-format results (legacy artifact; kept for backward compat).
+   394→   933→ output={
+   395→   934→  "walk_forward_at":pd.Timestamp.now().isoformat(),
+   396→   935→  "n_samples":len(samples),
+   397→   936→  "models_trained":MODEL_NAMES,
+   398→   937→  "individual":wf_individual,
+   399→   938→  "ensemble":wf_ensemble,
+   400→   939→  "methodology":"Walk-forward: expanding window. For each test sample, models re-trained on ALL data before that point. No data leakage.",
+   401→   940→  "comparison_note":"Walk-forward results are MORE ACCURATE than simplified backtesting (which used latest prediction for all test rows).",
+   402→   941→  "ml_integrity": structured_report["ml_integrity"],
+   403→   942→ }
+   404→   943→ OUT_FILE.write_text(json.dumps(output,indent=2,default=lambda o:int(o)if isinstance(o,(np.integer,))else float(o)if isinstance(o,(np.floating,))else str(o)))
+   405→   944→
+   406→   945→ # NEW (Task 49): DO NOT merge into ml_predictions_multi.json.
+   407→   946→ # The structured report at data/backtest_reports/walk_forward_latest.json
+   408→   947→ # is the new source-of-truth for the API route. Touching ml_predictions_multi.json
+   409→   948→ # would mutate the running app's live predictions, which is forbidden.
+   410→   949→ print(f"\n{'='*60}")
+   411→   950→ print(f"WALK-FORWARD BACKTESTING COMPLETE")
+   412→   951→ print(f"{'='*60}")
+   413→   952→ print(f"Samples: {len(samples)}")
+   414→   953→ print(f"Model trainings: {len(samples)*len(MODEL_NAMES)*3} (5 models × 3 horizons × {len(samples)} samples)")
+   415→   954→ print(f"\nIndividual model walk-forward results:")
+   416→   955→ for name in MODEL_NAMES:
+   417→   956→  r=wf_individual[name]
+   418→   957→  print(f"  {name}: {r['winRate']}% win ({r['totalTrades']} trades) +{r['avgReturnPct']}% avg {'★'*r['stars']}")
+   419→   958→ print(f"\nEnsemble walk-forward results:")
+   420→   959→ for method,r in wf_ensemble.items():
+   421→   960→  print(f"  {method}: {r['winRate']}% win ({r['totalTrades']} trades) +{r['avgReturnPct']}% avg {'★'*r['stars']}")
+   422→   961→ print(f"\nForecast-quality metrics (MAE/RMSE/R²/DirAcc) per model × horizon:")
+   423→   962→ for name in MODEL_NAMES:
+   424→   963→  for hz in [5, 10, 21]:
+   425→   964→   m = wf_forecast[name].get(hz, {})
+   426→   965→   if m.get("status") == "completed":
+   427→   966→    r2v = m.get("r2")
+   428→   967→    r2s = "NaN" if r2v is None else f"{r2v:+.4f}"
+   429→   968→    print(f"  {name} {hz}d: n={m['n_observations']} MAE={m['mae']:.6f} RMSE={m['rmse']:.6f} R²={r2s} DirAcc={m['directional_accuracy']:.4f}")
+   430→   969→   else:
+   431→   970→    print(f"  {name} {hz}d: {m.get('status', 'unavailable')} — {m.get('reason', 'no reason')}")
+   432→   971→ print(f"\nSaved legacy: {OUT_FILE}")
+   433→   972→ print(f"Saved structured report (Task 49): {REPORT_FILE}")
+   434→   973→ print(f"ml_predictions_multi.json: NOT modified (Task 49 rule)")
+   435→   974→
+   436→   975→if __name__=="__main__":main()
+   437→   976→

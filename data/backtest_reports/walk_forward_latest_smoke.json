@@ -1,0 +1,1831 @@
+{
+  "schema_version": "1.2",
+  "evaluation_status": "completed",
+  "evaluation_method": "walk-forward-expanding-window",
+  "generated_at": "2026-10-27T18:42:34.339465",
+  "data_cutoff": "2026-07-14T19:00:00",
+  "training_window": {
+    "start": "2026-01-12T19:00:00",
+    "end": "2026-07-14T19:00:00"
+  },
+  "evaluation_date_range": {
+    "start": "2026-01-13T19:00:00",
+    "end": "2026-07-15T19:00:00"
+  },
+  "universe_mode": "canonical8",
+  "universe_requested_size": 8,
+  "universe_actual_size": 8,
+  "evaluated_symbols": [
+    "ENGRO",
+    "HUBC",
+    "LUCK",
+    "MEBL",
+    "OGDC",
+    "PPL",
+    "PSO",
+    "SYS"
+  ],
+  "universe_size": 8,
+  "forecast_horizons": [
+    5,
+    10,
+    21
+  ],
+  "n_unique_stock_date_samples": 21,
+  "n_samples_evaluated": 21,
+  "n_samples_per_stock": {
+    "ENGRO": 0,
+    "HUBC": 3,
+    "LUCK": 3,
+    "MEBL": 3,
+    "OGDC": 3,
+    "PPL": 3,
+    "PSO": 3,
+    "SYS": 3
+  },
+  "n_model_fits": 315,
+  "n_model_fits_nominal": 315,
+  "n_unique_prediction_dates": 3,
+  "sampling_interval_sessions": 60,
+  "n_evaluated_models": 5,
+  "n_evaluated_horizons": 3,
+  "n_eligible_samples": 21,
+  "n_matured_outcomes": {
+    "5": 105,
+    "10": 105,
+    "21": 105
+  },
+  "n_incomplete_or_excluded_outcomes": {
+    "5": 0,
+    "10": 0,
+    "21": 0
+  },
+  "models": [
+    {
+      "name": "XGBoost",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.052042,
+          "rmse": 0.05938,
+          "r2": 0.017964,
+          "directional_accuracy": 0.619,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.05429,
+              "rmse": 0.05992,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.056045,
+              "rmse": 0.065826,
+              "r2": -0.206849,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.054635,
+              "rmse": 0.061418,
+              "r2": -0.050627,
+              "directional_accuracy": 0.5714,
+              "n_training_observations_avg": 2708
+            }
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.043922,
+          "rmse": 0.052848,
+          "r2": 0.112873,
+          "directional_accuracy": 0.6667,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.045155,
+              "rmse": 0.056109,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.04834,
+              "rmse": 0.060288,
+              "r2": -0.154499,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.044691,
+              "rmse": 0.055234,
+              "r2": 0.030954,
+              "directional_accuracy": 0.619,
+              "n_training_observations_avg": 2668
+            }
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.066419,
+          "rmse": 0.07676,
+          "r2": -1.284321,
+          "directional_accuracy": 0.4762,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.040615,
+              "rmse": 0.050788,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.040732,
+              "rmse": 0.050879,
+              "r2": -0.003619,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.061063,
+              "rmse": 0.071144,
+              "r2": -0.962292,
+              "directional_accuracy": 0.5238,
+              "n_training_observations_avg": 2580
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "LightGBM",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.053174,
+          "rmse": 0.059882,
+          "r2": 0.001263,
+          "directional_accuracy": 0.619,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.05429,
+              "rmse": 0.05992,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.056045,
+              "rmse": 0.065826,
+              "r2": -0.206849,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.054635,
+              "rmse": 0.061418,
+              "r2": -0.050627,
+              "directional_accuracy": 0.5714,
+              "n_training_observations_avg": 2708
+            }
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.044387,
+          "rmse": 0.054157,
+          "r2": 0.068379,
+          "directional_accuracy": 0.6667,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.045155,
+              "rmse": 0.056109,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.04834,
+              "rmse": 0.060288,
+              "r2": -0.154499,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.044691,
+              "rmse": 0.055234,
+              "r2": 0.030954,
+              "directional_accuracy": 0.619,
+              "n_training_observations_avg": 2668
+            }
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.064471,
+          "rmse": 0.07467,
+          "r2": -1.161583,
+          "directional_accuracy": 0.4762,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.040615,
+              "rmse": 0.050788,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.040732,
+              "rmse": 0.050879,
+              "r2": -0.003619,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.061063,
+              "rmse": 0.071144,
+              "r2": -0.962292,
+              "directional_accuracy": 0.5238,
+              "n_training_observations_avg": 2580
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "CatBoost",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.051791,
+          "rmse": 0.059552,
+          "r2": 0.012257,
+          "directional_accuracy": 0.6667,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.05429,
+              "rmse": 0.05992,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.056045,
+              "rmse": 0.065826,
+              "r2": -0.206849,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.054635,
+              "rmse": 0.061418,
+              "r2": -0.050627,
+              "directional_accuracy": 0.5714,
+              "n_training_observations_avg": 2708
+            }
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.043782,
+          "rmse": 0.053628,
+          "r2": 0.086475,
+          "directional_accuracy": 0.6667,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.045155,
+              "rmse": 0.056109,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.04834,
+              "rmse": 0.060288,
+              "r2": -0.154499,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.044691,
+              "rmse": 0.055234,
+              "r2": 0.030954,
+              "directional_accuracy": 0.619,
+              "n_training_observations_avg": 2668
+            }
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.061751,
+          "rmse": 0.073723,
+          "r2": -1.107109,
+          "directional_accuracy": 0.4762,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.040615,
+              "rmse": 0.050788,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.040732,
+              "rmse": 0.050879,
+              "r2": -0.003619,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.061063,
+              "rmse": 0.071144,
+              "r2": -0.962292,
+              "directional_accuracy": 0.5238,
+              "n_training_observations_avg": 2580
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Random Forest",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.052333,
+          "rmse": 0.059324,
+          "r2": 0.0198,
+          "directional_accuracy": 0.6667,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.05429,
+              "rmse": 0.05992,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.056045,
+              "rmse": 0.065826,
+              "r2": -0.206849,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.054635,
+              "rmse": 0.061418,
+              "r2": -0.050627,
+              "directional_accuracy": 0.5714,
+              "n_training_observations_avg": 2708
+            }
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.045584,
+          "rmse": 0.054975,
+          "r2": 0.040015,
+          "directional_accuracy": 0.6667,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.045155,
+              "rmse": 0.056109,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.04834,
+              "rmse": 0.060288,
+              "r2": -0.154499,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.044691,
+              "rmse": 0.055234,
+              "r2": 0.030954,
+              "directional_accuracy": 0.619,
+              "n_training_observations_avg": 2668
+            }
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.065523,
+          "rmse": 0.0753,
+          "r2": -1.198219,
+          "directional_accuracy": 0.4762,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.040615,
+              "rmse": 0.050788,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.040732,
+              "rmse": 0.050879,
+              "r2": -0.003619,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.061063,
+              "rmse": 0.071144,
+              "r2": -0.962292,
+              "directional_accuracy": 0.5238,
+              "n_training_observations_avg": 2580
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Ridge Regression",
+      "implementation_type": "trained-ml",
+      "horizons": {
+        "5": {
+          "status": "completed",
+          "mae": 0.052561,
+          "rmse": 0.059494,
+          "r2": 0.014191,
+          "directional_accuracy": 0.5714,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.05429,
+              "rmse": 0.05992,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.056045,
+              "rmse": 0.065826,
+              "r2": -0.206849,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.054635,
+              "rmse": 0.061418,
+              "r2": -0.050627,
+              "directional_accuracy": 0.5714,
+              "n_training_observations_avg": 2708
+            }
+          }
+        },
+        "10": {
+          "status": "completed",
+          "mae": 0.04494,
+          "rmse": 0.054646,
+          "r2": 0.051464,
+          "directional_accuracy": 0.619,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.045155,
+              "rmse": 0.056109,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.04834,
+              "rmse": 0.060288,
+              "r2": -0.154499,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.044691,
+              "rmse": 0.055234,
+              "r2": 0.030954,
+              "directional_accuracy": 0.619,
+              "n_training_observations_avg": 2668
+            }
+          }
+        },
+        "21": {
+          "status": "completed",
+          "mae": 0.064926,
+          "rmse": 0.073159,
+          "r2": -1.075017,
+          "directional_accuracy": 0.5238,
+          "n_observations": 21,
+          "baselines": {
+            "constant_mean": {
+              "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+              "mae": 0.040615,
+              "rmse": 0.050788,
+              "r2": 0.0
+            },
+            "zero_return": {
+              "definition": "predict 0 future return for all samples",
+              "mae": 0.040732,
+              "rmse": 0.050879,
+              "r2": -0.003619,
+              "directional_accuracy": 0.0
+            },
+            "training_only_mean": {
+              "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+              "status": "completed",
+              "reason": null,
+              "mae": 0.061063,
+              "rmse": 0.071144,
+              "r2": -0.962292,
+              "directional_accuracy": 0.5238,
+              "n_training_observations_avg": 2580
+            }
+          }
+        }
+      }
+    }
+  ],
+  "baselines": {
+    "per_horizon_pooled": {
+      "5": {
+        "zero_return": {
+          "definition": "predict 0 future return for all samples",
+          "mae": 0.056045,
+          "rmse": 0.065826,
+          "r2": -0.206849,
+          "directional_accuracy": 0.0
+        },
+        "training_only_mean": {
+          "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+          "status": "completed",
+          "reason": null,
+          "mae": 0.054635,
+          "rmse": 0.061418,
+          "r2": -0.050627,
+          "directional_accuracy": 0.5714,
+          "n_training_observations_avg": 2708
+        }
+      },
+      "10": {
+        "zero_return": {
+          "definition": "predict 0 future return for all samples",
+          "mae": 0.04834,
+          "rmse": 0.060288,
+          "r2": -0.154499,
+          "directional_accuracy": 0.0
+        },
+        "training_only_mean": {
+          "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+          "status": "completed",
+          "reason": null,
+          "mae": 0.044691,
+          "rmse": 0.055234,
+          "r2": 0.030954,
+          "directional_accuracy": 0.619,
+          "n_training_observations_avg": 2668
+        }
+      },
+      "21": {
+        "zero_return": {
+          "definition": "predict 0 future return for all samples",
+          "mae": 0.040732,
+          "rmse": 0.050879,
+          "r2": -0.003619,
+          "directional_accuracy": 0.0
+        },
+        "training_only_mean": {
+          "definition": "at each sample, predict the mean of matured training targets for this horizon (pooled market-wide across all stocks; excludes the sample's own target; uses filter_by_target_maturity)",
+          "status": "completed",
+          "reason": null,
+          "mae": 0.061063,
+          "rmse": 0.071144,
+          "r2": -0.962292,
+          "directional_accuracy": 0.5238,
+          "n_training_observations_avg": 2580
+        }
+      }
+    },
+    "notes": "Conventional R\u00b2 reference = constant-mean (predict mean(actual_eval) for all \u2014 R\u00b2=0 by construction). Task 51 Phase 3 adds TWO deployable prediction baselines: (1) zero-return (predict 0 \u2014 measures whether forecasting beats a no-trade strategy), (2) training-only mean (per-sample, predict the mean of matured training targets for this horizon \u2014 pooled market-wide across all stocks; uses filter_by_target_maturity to exclude the sample's own target). A negative model R\u00b2 vs constant-mean means the model did worse than the eval-set mean; compare against zero-return + training-only-mean baselines for actual deployable-skill assessment."
+  },
+  "trading_metrics": {
+    "individual": {
+      "XGBoost": {
+        "totalTrades": 18,
+        "wins": 8,
+        "winRate": 44.4,
+        "avgReturnPct": -1.28,
+        "maxReturnPct": 8.26,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+      },
+      "LightGBM": {
+        "totalTrades": 19,
+        "wins": 10,
+        "winRate": 52.6,
+        "avgReturnPct": 0.05,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+      },
+      "CatBoost": {
+        "totalTrades": 19,
+        "wins": 9,
+        "winRate": 47.4,
+        "avgReturnPct": -0.67,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+      },
+      "Random Forest": {
+        "totalTrades": 18,
+        "wins": 9,
+        "winRate": 50.0,
+        "avgReturnPct": -0.3,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+      },
+      "Ridge Regression": {
+        "totalTrades": 21,
+        "wins": 11,
+        "winRate": 52.4,
+        "avgReturnPct": 0.31,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+      }
+    },
+    "ensemble": {
+      "MAJORITY_VOTE": {
+        "totalTrades": 18,
+        "wins": 9,
+        "winRate": 50.0,
+        "avgReturnPct": -0.3,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+        "n_validation_period_excluded": 0
+      },
+      "PROBABILITY_WEIGHTED": {
+        "totalTrades": 19,
+        "wins": 9,
+        "winRate": 47.4,
+        "avgReturnPct": -0.38,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+        "n_validation_period_excluded": 0
+      },
+      "TIER_WEIGHTED": {
+        "totalTrades": 18,
+        "wins": 9,
+        "winRate": 50.0,
+        "avgReturnPct": -0.3,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+        "n_validation_period_excluded": 0
+      },
+      "WIN_RATE_WEIGHTED": {
+        "totalTrades": 10,
+        "wins": 5,
+        "winRate": 50.0,
+        "avgReturnPct": 0.27,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+        "n_validation_period_excluded": 10
+      },
+      "FINAL_CONSENSUS": {
+        "totalTrades": 18,
+        "wins": 9,
+        "winRate": 50.0,
+        "avgReturnPct": -0.3,
+        "maxReturnPct": 10.3,
+        "minReturnPct": -8.77,
+        "stars": 3,
+        "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+        "net_trading_pnl": "unavailable",
+        "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+        "n_validation_period_excluded": 0
+      }
+    },
+    "label": "gross directional-return proxy",
+    "definition": "Per-trade return = signed forward 21-day return (BUY: actual_return; SELL: -actual_return). NO commission, slippage, CGT, or position-sizing applied.",
+    "net_trading_pnl": "unavailable",
+    "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission 0.15%\u00d72, slippage 0.15%, CGT 15% on gains, position sizing, portfolio compounding) is NOT connected to the walk-forward script. The 'avgReturnPct' values above are signed forward-return proxies, NOT net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app (Tracker \u2192 Investment Simulator)."
+  },
+  "win_rate_weighted_ensemble_methodology": {
+    "phase_2_fix": "Option A \u2014 frozen validation-period weights",
+    "description": "Task 51 Phase 2: the OLD WIN_RATE_WEIGHTED used wf_individual[name].winRate computed from the FULL evaluation period \u2014 leaky (weights at sample i used outcomes from samples i+1..n). Fix: split samples into first half (VALIDATION) + second half (FINAL_TEST). Compute win rates on VALIDATION only \u2192 freeze weights \u2192 apply to FINAL_TEST. VALIDATION-period WIN_RATE_WEIGHTED entries are marked 'unavailable \u2014 validation period (weights being calibrated)'. FINAL_CONSENSUS on validation: 2+ of {MAJORITY, PROBABILITY, TIER} agree (skip WIN_RATE_WEIGHTED). FINAL_CONSENSUS on final-test: 2+ of {MAJORITY, PROBABILITY, TIER, WIN_RATE_WEIGHTED} agree.",
+    "validation_period_indices": [
+      0,
+      9
+    ],
+    "final_test_period_indices": [
+      10,
+      20
+    ],
+    "frozen_weights": {
+      "XGBoost": 0.7222222222222221,
+      "LightGBM": 1.0,
+      "CatBoost": 0.7222222222222221,
+      "Random Forest": 1.0,
+      "Ridge Regression": 1.0
+    }
+  },
+  "sample_maturity_metadata_summary": {
+    "n_samples_logged": 21,
+    "first_sample": {
+      "sample_date": "2026-01-13T19:00:00",
+      "stock": "HUBC",
+      "per_horizon": {
+        "5": {
+          "latest_train_feature_date": "2026-01-06T19:00:00",
+          "latest_target_maturity_date": "2026-01-13T19:00:00",
+          "n_train_rows": 2288
+        },
+        "10": {
+          "latest_train_feature_date": "2025-12-30T19:00:00",
+          "latest_target_maturity_date": "2026-01-13T19:00:00",
+          "n_train_rows": 2248
+        },
+        "21": {
+          "latest_train_feature_date": "2025-12-14T19:00:00",
+          "latest_target_maturity_date": "2026-01-13T19:00:00",
+          "n_train_rows": 2160
+        }
+      }
+    },
+    "last_sample": {
+      "sample_date": "2026-07-15T19:00:00",
+      "stock": "SYS",
+      "per_horizon": {
+        "5": {
+          "latest_train_feature_date": "2026-07-08T19:00:00",
+          "latest_target_maturity_date": "2026-07-15T19:00:00",
+          "n_train_rows": 3128
+        },
+        "10": {
+          "latest_train_feature_date": "2026-07-01T19:00:00",
+          "latest_target_maturity_date": "2026-07-15T19:00:00",
+          "n_train_rows": 3088
+        },
+        "21": {
+          "latest_train_feature_date": "2026-06-11T19:00:00",
+          "latest_target_maturity_date": "2026-07-15T19:00:00",
+          "n_train_rows": 3000
+        }
+      }
+    },
+    "verification": "For each sample, latest_target_maturity_date <= sample_date (no target-maturity leak)"
+  },
+  "universe_selection_params": {
+    "mode": "canonical8",
+    "min_bars": null,
+    "exclude_xd": null,
+    "max_stocks": 8,
+    "data_source": "data/ohlcv/ CSVs"
+  },
+  "training_config": {
+    "models": [
+      "XGBoost",
+      "LightGBM",
+      "CatBoost",
+      "Random Forest",
+      "Ridge Regression"
+    ],
+    "hyperparameters": "fixed per train_one_model() \u2014 NO tuning on the test window",
+    "per_sample_train_row_cap": 5000,
+    "per_sample_train_row_cap_note": "When a (sample, horizon) has more than 5000 matured eligible training rows, a deterministic random subsample (seed=42, sorted by date) is fed to the model. The eligible-row set is unchanged; only rows fed to the model are capped (compute practicality for 10-year DB histories).",
+    "filter_before_cap": "filter_by_target_maturity (target-maturity + NaN filter) applied BEFORE the row cap"
+  },
+  "artifact": {
+    "file": "walk_forward_latest_smoke.json",
+    "report_suffix": "_smoke",
+    "note": "Suffixed artifact (WALK_FORWARD_REPORT_SUFFIX='_smoke') \u2014 the production walk_forward_latest.json is NOT overwritten by this run."
+  },
+  "universe_selection_methodology": "UNIVERSE_MODE=canonical8. Canonical 8 stocks from data/ohlcv/ CSVs (fixed list, not DB-selected). ",
+  "excluded_symbols": [],
+  "per_stock_results": {
+    "HUBC": {
+      "XGBoost": {
+        "5": {
+          "mae": 0.050093,
+          "rmse": 0.053612,
+          "r2": -0.167683,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.043155,
+          "rmse": 0.050966,
+          "r2": -0.365135,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.045496,
+          "rmse": 0.052688,
+          "r2": -2.988268,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "LightGBM": {
+        "5": {
+          "mae": 0.050472,
+          "rmse": 0.05379,
+          "r2": -0.175435,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.042172,
+          "rmse": 0.049973,
+          "r2": -0.312433,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.053252,
+          "rmse": 0.061558,
+          "r2": -4.444271,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "CatBoost": {
+        "5": {
+          "mae": 0.050408,
+          "rmse": 0.053914,
+          "r2": -0.180879,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.03875,
+          "rmse": 0.044748,
+          "r2": -0.052367,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.051093,
+          "rmse": 0.057739,
+          "r2": -3.789698,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Random Forest": {
+        "5": {
+          "mae": 0.049792,
+          "rmse": 0.053233,
+          "r2": -0.151216,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.040319,
+          "rmse": 0.047923,
+          "r2": -0.206988,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.058372,
+          "rmse": 0.06515,
+          "r2": -5.098033,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Ridge Regression": {
+        "5": {
+          "mae": 0.052626,
+          "rmse": 0.05455,
+          "r2": -0.208886,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.041247,
+          "rmse": 0.043343,
+          "r2": 0.012694,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.061572,
+          "rmse": 0.067022,
+          "r2": -5.453465,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      }
+    },
+    "LUCK": {
+      "XGBoost": {
+        "5": {
+          "mae": 0.033657,
+          "rmse": 0.038203,
+          "r2": 0.328155,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.031804,
+          "rmse": 0.034567,
+          "r2": -1.330915,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.037157,
+          "rmse": 0.046558,
+          "r2": -0.584052,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "LightGBM": {
+        "5": {
+          "mae": 0.036612,
+          "rmse": 0.04097,
+          "r2": 0.227276,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.028951,
+          "rmse": 0.034662,
+          "r2": -1.343724,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.049827,
+          "rmse": 0.061798,
+          "r2": -1.790858,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "CatBoost": {
+        "5": {
+          "mae": 0.030839,
+          "rmse": 0.036631,
+          "r2": 0.382304,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.033276,
+          "rmse": 0.036409,
+          "r2": -1.586058,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.040873,
+          "rmse": 0.056281,
+          "r2": -1.314771,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Random Forest": {
+        "5": {
+          "mae": 0.032945,
+          "rmse": 0.036615,
+          "r2": 0.382844,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.030766,
+          "rmse": 0.037221,
+          "r2": -1.702625,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.052066,
+          "rmse": 0.061286,
+          "r2": -1.744808,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Ridge Regression": {
+        "5": {
+          "mae": 0.033024,
+          "rmse": 0.038351,
+          "r2": 0.322932,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.046928,
+          "rmse": 0.046939,
+          "r2": -3.298164,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.079996,
+          "rmse": 0.082089,
+          "r2": -3.924433,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      }
+    },
+    "MEBL": {
+      "XGBoost": {
+        "5": {
+          "mae": 0.016295,
+          "rmse": 0.018313,
+          "r2": 0.121394,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.034449,
+          "rmse": 0.035484,
+          "r2": -6.98826,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.068684,
+          "rmse": 0.072368,
+          "r2": -4.514207,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "LightGBM": {
+        "5": {
+          "mae": 0.019006,
+          "rmse": 0.019544,
+          "r2": -0.00073,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.023228,
+          "rmse": 0.023258,
+          "r2": -2.431939,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.061211,
+          "rmse": 0.062713,
+          "r2": -3.140987,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "CatBoost": {
+        "5": {
+          "mae": 0.016793,
+          "rmse": 0.017239,
+          "r2": 0.221385,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.026112,
+          "rmse": 0.028214,
+          "r2": -4.050182,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.052337,
+          "rmse": 0.059775,
+          "r2": -2.7621,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Random Forest": {
+        "5": {
+          "mae": 0.017921,
+          "rmse": 0.018142,
+          "r2": 0.137675,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.025046,
+          "rmse": 0.025456,
+          "r2": -3.111269,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.061474,
+          "rmse": 0.064507,
+          "r2": -3.381237,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Ridge Regression": {
+        "5": {
+          "mae": 0.018486,
+          "rmse": 0.021055,
+          "r2": -0.161433,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.012799,
+          "rmse": 0.014746,
+          "r2": -0.379482,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.039615,
+          "rmse": 0.040474,
+          "r2": -0.72477,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      }
+    },
+    "OGDC": {
+      "XGBoost": {
+        "5": {
+          "mae": 0.071267,
+          "rmse": 0.074708,
+          "r2": -0.393554,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.058823,
+          "rmse": 0.061531,
+          "r2": -0.141999,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.082532,
+          "rmse": 0.088484,
+          "r2": -1.378275,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "LightGBM": {
+        "5": {
+          "mae": 0.071182,
+          "rmse": 0.074067,
+          "r2": -0.369734,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.059201,
+          "rmse": 0.060902,
+          "r2": -0.118746,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.07046,
+          "rmse": 0.075921,
+          "r2": -0.750847,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "CatBoost": {
+        "5": {
+          "mae": 0.071826,
+          "rmse": 0.075004,
+          "r2": -0.404603,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.05614,
+          "rmse": 0.058792,
+          "r2": -0.042599,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.06907,
+          "rmse": 0.076165,
+          "r2": -0.762155,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Random Forest": {
+        "5": {
+          "mae": 0.073006,
+          "rmse": 0.076287,
+          "r2": -0.453068,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.059378,
+          "rmse": 0.061851,
+          "r2": -0.153893,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.064511,
+          "rmse": 0.070677,
+          "r2": -0.517357,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Ridge Regression": {
+        "5": {
+          "mae": 0.068935,
+          "rmse": 0.071441,
+          "r2": -0.274315,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.052914,
+          "rmse": 0.053663,
+          "r2": 0.131405,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.063509,
+          "rmse": 0.069611,
+          "r2": -0.471912,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      }
+    },
+    "PPL": {
+      "XGBoost": {
+        "5": {
+          "mae": 0.090958,
+          "rmse": 0.094256,
+          "r2": -0.375758,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.056535,
+          "rmse": 0.068893,
+          "r2": 0.21859,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.070284,
+          "rmse": 0.077153,
+          "r2": -1.753099,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "LightGBM": {
+        "5": {
+          "mae": 0.09086,
+          "rmse": 0.093884,
+          "r2": -0.364927,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.06321,
+          "rmse": 0.072235,
+          "r2": 0.140923,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.054917,
+          "rmse": 0.067253,
+          "r2": -1.091917,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "CatBoost": {
+        "5": {
+          "mae": 0.090909,
+          "rmse": 0.093927,
+          "r2": -0.366184,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.05784,
+          "rmse": 0.071791,
+          "r2": 0.151467,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.063352,
+          "rmse": 0.072361,
+          "r2": -1.421771,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Random Forest": {
+        "5": {
+          "mae": 0.090583,
+          "rmse": 0.094173,
+          "r2": -0.373345,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.062363,
+          "rmse": 0.072843,
+          "r2": 0.126408,
+          "directional_accuracy": 1.0,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.057159,
+          "rmse": 0.066871,
+          "r2": -1.068235,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Ridge Regression": {
+        "5": {
+          "mae": 0.091564,
+          "rmse": 0.093376,
+          "r2": -0.350198,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.068266,
+          "rmse": 0.081063,
+          "r2": -0.08189,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.038051,
+          "rmse": 0.048996,
+          "r2": -0.11032,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      }
+    },
+    "PSO": {
+      "XGBoost": {
+        "5": {
+          "mae": 0.059205,
+          "rmse": 0.059647,
+          "r2": 0.091196,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.036928,
+          "rmse": 0.045162,
+          "r2": 0.372354,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.04953,
+          "rmse": 0.057796,
+          "r2": -0.709871,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "LightGBM": {
+        "5": {
+          "mae": 0.061034,
+          "rmse": 0.062094,
+          "r2": 0.015093,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.045096,
+          "rmse": 0.055325,
+          "r2": 0.05807,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.051108,
+          "rmse": 0.058262,
+          "r2": -0.737558,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "CatBoost": {
+        "5": {
+          "mae": 0.062562,
+          "rmse": 0.063825,
+          "r2": -0.040567,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.046028,
+          "rmse": 0.056092,
+          "r2": 0.031774,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.046918,
+          "rmse": 0.055187,
+          "r2": -0.558984,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Random Forest": {
+        "5": {
+          "mae": 0.057039,
+          "rmse": 0.057329,
+          "r2": 0.160444,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.047362,
+          "rmse": 0.055825,
+          "r2": 0.040969,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.048257,
+          "rmse": 0.054552,
+          "r2": -0.523312,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Ridge Regression": {
+        "5": {
+          "mae": 0.064165,
+          "rmse": 0.065247,
+          "r2": -0.087449,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.042288,
+          "rmse": 0.057584,
+          "r2": -0.020424,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.068206,
+          "rmse": 0.075315,
+          "r2": -1.903634,
+          "directional_accuracy": 0.6667,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      }
+    },
+    "SYS": {
+      "XGBoost": {
+        "5": {
+          "mae": 0.042819,
+          "rmse": 0.044601,
+          "r2": -0.661857,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.045762,
+          "rmse": 0.062664,
+          "r2": -1.159271,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.111247,
+          "rmse": 0.118075,
+          "r2": -7.573409,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "LightGBM": {
+        "5": {
+          "mae": 0.043052,
+          "rmse": 0.044627,
+          "r2": -0.663787,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.048853,
+          "rmse": 0.065599,
+          "r2": -1.366289,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.110523,
+          "rmse": 0.117499,
+          "r2": -7.489954,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "CatBoost": {
+        "5": {
+          "mae": 0.039197,
+          "rmse": 0.041926,
+          "r2": -0.468451,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.04833,
+          "rmse": 0.0652,
+          "r2": -1.337591,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.108613,
+          "rmse": 0.117847,
+          "r2": -7.54027,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Random Forest": {
+        "5": {
+          "mae": 0.045041,
+          "rmse": 0.046443,
+          "r2": -0.801971,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.053856,
+          "rmse": 0.067658,
+          "r2": -1.517186,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.11682,
+          "rmse": 0.122824,
+          "r2": -8.276898,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      },
+      "Ridge Regression": {
+        "5": {
+          "mae": 0.03913,
+          "rmse": 0.042505,
+          "r2": -0.509281,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "10": {
+          "mae": 0.050137,
+          "rmse": 0.061945,
+          "r2": -1.110026,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        },
+        "21": {
+          "mae": 0.10353,
+          "rmse": 0.108067,
+          "r2": -6.181597,
+          "directional_accuracy": 0.3333,
+          "n_observations": 3,
+          "status": "completed"
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Universe mode: canonical8 \u2014 8 stock(s) evaluated (canonical 8): ENGRO, HUBC, LUCK, MEBL, OGDC, PPL, PSO, SYS. NOT the full ~908 DB-backed universe. NOT a fully production-validated benchmark.",
+    "5 classical models evaluated (XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression). The other ~60 registered models (LSTM, CNN-LSTM, Transformer-LSTM, PatchTST, N-BEATS, TimesNet, Informer, foundation analogs, rule-based strategies) are NOT evaluated here \u2014 see scripts/walk_forward_backtesting.py MODEL_NAMES.",
+    "Per-sample retraining on data[date < sample.date] (expanding window). No data leakage.",
+    "Task 51 Phase 1: filter_by_target_maturity ensures training rows' target endpoint (T+h) <= sample's prediction date P. Per-horizon, per-stock, pooled across stocks. Preserves valid shorter-horizon training rows whose longest-horizon target is immature.",
+    "R\u00b2 can be negative \u2014 that's honest (model did not outperform the constant-mean baseline on this test). Compare against zero-return + training-only-mean baselines for actual deployable-skill assessment.",
+    "Directional accuracy = fraction of samples where sign(predicted) == sign(actual). A value >50% is NOT proven predictive skill without considering sample size, baseline, serial dependence, and uncertainty.",
+    "OVERLAPPING FORECAST WINDOWS: samples are 60 trading days apart per stock, but the 21-day return windows at adjacent samples OVERLAP by 11 sessions. Outcomes are NOT independent \u2014 uncertainty estimates must use date-blocked resampling (NOT naive standard errors).",
+    "Sample dates are every 60 trading days per stock in the test partition; need \u226521 bars ahead for the 21d horizon to mature.",
+    "Total unique (stock, decision-date) samples = 21; total model fits = 5 \u00d7 3 horizons \u00d7 21 samples = 315. Do NOT describe 21 as 'samples per stock'.",
+    "Trading metrics are GROSS directional-return proxies (signed forward 21-day return, NO commission/slippage/CGT/position-sizing). Net trading P&L is unavailable. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used in the Tracker.",
+    "WIN_RATE_WEIGHTED ensemble uses Option A (frozen validation-period weights) \u2014 validation-period entries are marked unavailable; final-test entries use frozen weights from the validation sub-period.",
+    "Training-only-mean baseline pools matured training targets across all stocks (market-wide mean). Per-stock means are NOT computed because most stocks have insufficient historical observations per horizon for a stable per-stock mean."
+  ],
+  "unevaluated": [],
+  "ml_integrity": {
+    "target_construction": "per-stock groupby(symbol).shift(-h) via add_forward_returns; no .fillna(0); immature rows left NaN",
+    "target_maturity_filter": "Task 51 Phase 1: filter_by_target_maturity excludes training rows whose target endpoint (T+h) > prediction date P. Per-horizon, per-stock, pooled. Distinct from drop_immature_targets (which only removes rows whose target VALUE is NaN).",
+    "test_partition": "date-based chronological_split test partition (NOT global row split=int(len*0.8)) \u2014 all rows on a given test date belong to the test partition",
+    "per_sample_training": "per-sample train_data = df[df['date']<sample['date']] (strict chronological, no look-ahead) + filter_by_target_maturity(hz) per horizon",
+    "per_horizon_drop": "per-sample, per-horizon filter_by_target_maturity \u2014 preserves shorter-horizon rows whose longest-horizon target is immature or whose endpoint extends past P",
+    "realized_outcomes": "actual_return uses FUTURE close prices in the test partition (strictly AFTER the decision date) \u2014 no look-ahead leakage in the realized-outcome computation",
+    "ensemble_weighting": "Task 51 Phase 2: WIN_RATE_WEIGHTED uses frozen validation-period weights (Option A). MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED are per-sample (safe). FINAL_CONSENSUS uses dual-mode (skip WIN_RATE_WEIGHTED on validation, include on final-test).",
+    "baselines": "Task 51 Phase 3: zero-return + training-only-mean baselines added (per-horizon, pooled market-wide). Conventional constant-mean R\u00b2 reference retained per-model\u00d7horizon.",
+    "walk_forward_methodology": "TRUE walk-forward: each test sample's models are re-fit on all data strictly before the sample's decision date AND with target-maturity filter applied per horizon. Distinct from the simplified backtest in train_all_with_backtesting.py (Pattern #10 \u2014 latest signal applied to all test rows)."
+  }
+}

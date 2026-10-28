@@ -2649,3 +2649,122 @@ Remaining limitations (honest):
 - The run directories (manifest + 400 per-sample records) accumulate under data/backtest_reports/runs/ — cleanup of old completed runs is left to the operator.
 
 Phase 5 verification verdict: HEALTHY. Dev server up (HTTP 200 on all endpoints), no recent errors in dev.log, API returns the new pilot25 report with honest (unclamped negative) R² values and all 3 baselines, ml_predictions_multi.json unchanged, previous canonical8 report preserved. Per user instruction: push to GitHub.
+
+---
+Task ID: 56 (COMPLETE)
+Agent: main (interactive session 2026-10-28)
+Task: Statistical robustness analysis of the completed pilot25 run — correct baseline interpretation, date-block bootstrap uncertainty, per-stock consistency, ensemble-weight verification, fix config-dependent limitations text, generate auditable robustness artifact + UI. Per user instruction: do NOT rerun pilot25, do NOT retrain models, do NOT invent raw predictions, do NOT push to GitHub, ml_predictions_multi.json must stay unchanged, Task 55 report must stay intact until new analysis validated.
+
+Work Log:
+
+Phase 1 — Inspect completed pilot25 run:
+- Located run directory: data/backtest_reports/runs/pilot25_step50_20261028/ (manifest.json 97KB, checkpoint.json, progress.json, samples/ with 400 records).
+- Verified 400 raw sample records exist (sorted sample_000000.json … sample_000399.json) — matches manifest n_samples=400 and report n_unique_stock_date_samples=400.
+- Verified 6000 model fits = 400 samples × 5 models × 3 horizons (each record's n_model_fits=15).
+- Confirmed exact config: run_id=pilot25_step50_20261028, universe_mode=pilot25, sample_step=50, 25 symbols (ENGRO, HUBC, LUCK, SYS, MEBL, PSO, OGDC, PPL, WTL, KEL, TRG, UNITY, BOP, CNERGY, HASCOL, MLCF, BYCO, PAEL, PIBTL, LOTCHEM, PRL, TELE, ANL, HUMNL, FCCL), point-in-time cutoff 2023-04-13, test window 2023-04-17 → 2026-12-19, horizons [5,10,21], 5 models, 19-feature schema.
+- Verified fingerprints: data_fingerprint c071e0227985f90d..., universe_fingerprint d8088bf891daf7b2...
+- Raw record structure confirmed: each has per-model per-horizon {predicted, actual, eval_skipped}, training_only_baseline {mean, n_obs} per horizon, actual_5d/10d/21d, target_maturity_21d, status, train_cutoff_date. ALL predictions + actuals present (0 eval_skipped, 0 None actuals, all 400 status="evaluated"). No need to invent anything.
+
+Phase 2 — Correct baseline interpretation:
+- For each (model, horizon), recomputed from RAW predictions on the SAME 400 eligible matured observations:
+  * Model MAE / RMSE / standard R² (unclamped) / DirAcc / n
+  * Zero-return baseline (predict 0.0): MAE / RMSE / R² / DirAcc
+  * Training-only-mean baseline (predict the sample's stored training mean): MAE / RMSE / R² / DirAcc
+  * Paired absolute-error differences: |model_err| − |base_err| per sample (negative = model better)
+  * Relative MAE/RMSE improvement: (base_error − model_error) / base_error (positive = model beats baseline)
+- Distinguished the standard R² reference (evaluation-set mean = constant_mean baseline) from the two actual forecast baselines (zero_return, training_only_mean). Positive R² means the model beats the eval-set mean, NOT necessarily the zero_return baseline.
+- Metrics MATCH the Task 55 report exactly (verified): XGBoost 5d r2=0.006724 mae=0.052417 diracc=0.5675 in both recomputation-from-raw AND finalization-computation → confirms the recomputation uses the same observations.
+
+Phase 3 — Block-bootstrap uncertainty:
+- Method: DATE-BLOCK bootstrap. Each block = all (stock) samples sharing one decision date (preserves cross-stock same-date dependence). Resample 30 decision-date blocks WITH replacement, recompute metrics, 1000 reps, 95% CI = 2.5th + 97.5th percentiles. Seed = 20261028 (deterministic).
+- n_decision_date_clusters = 30 (adequate for directional inference; >10 threshold for sufficient data).
+- Block-length rationale: sample_step=50 > max horizon=21 → same-stock forward windows do NOT overlap (overlap = max(0, 21−50) = 0). Cross-stock observations on the same market decision date remain correlated (same market conditions) — that's why we block on date, not on sample.
+- 95% CIs computed for: directional accuracy, model MAE, zero-return MAE, training-only-mean MAE, paired MAE diff vs zero-return, paired MAE diff vs training-only-mean.
+- Deterministic verification: re-ran the script twice with the same seed → IDENTICAL CIs (DirAcc CI [0.492582, 0.638436], PairedDiff CI [−0.001151, 0.000814] both runs). The block bootstrap is fully reproducible.
+- Key honest finding: XGBoost 5d DirAcc 95% CI [0.4926, 0.6384] INCLUDES 0.50 → directional accuracy is NOT statistically significant. XGBoost 5d paired MAE diff vs zero-return CI [−0.001151, 0.000814] INCLUDES 0 → model does NOT significantly beat the zero-return baseline. At 21d, the paired diff mean is POSITIVE (model slightly worse than zero-return) and the CI still includes 0.
+- Did NOT use arbitrary iid-row bootstrap (would manufacture artificially narrow CIs by ignoring cross-stock same-date dependence).
+
+Phase 4 — Per-stock consistency:
+- Per (stock, model, horizon): n_samples, MAE, RMSE, R² (unclamped), DirAcc, paired MAE diff vs zero_return + training_only_mean.
+- Stock coverage honesty: 25 universe symbols → 24 with evaluated samples, 1 UNAVAILABLE (BYCO — 0 evaluable test-window samples due to insufficient OHLCV history extending into the test window at the 50-session sampling interval). ENGRO has 9 samples (vs 17 typical) because its CSV history ends earlier in the test window — honestly visible in samples_per_stock.
+- Per-stock R² is very mixed (e.g., XGBoost 5d: ANL r2=−0.135, BOP r2=+0.058, CNERGY r2=−0.042) → the pooled positive R² (0.0067) is NOT driven by consistent performance across stocks; it's a weak average.
+- Kept per-stock metrics SEPARATE from pooled cross-stock estimates. Did NOT conclude the model generalizes across PSX from the pooled positive metric.
+
+Phase 5 — Ensemble weight verification:
+- frozen_weights = {XGBoost: 1.0, LightGBM: 1.0, CatBoost: 1.0, Random Forest: 1.0, Ridge Regression: 1.0}.
+- All 5 models earned weight 1.0 by exceeding the 50% validation-period win-rate threshold after the maturity purge. → The ensemble is EFFECTIVELY EQUAL-WEIGHTED among eligible models — NOT a learned performance-based weighting strategy. It is a binary inclusion rule (1.0 if win-rate > 50%, else 0.0), not a continuous weight.
+- Verified: final-test outcomes did NOT influence weights (computed at finalization using ONLY validation-period outcomes). Maturity purge intact (boundary = 2024-12-04; per-model: XGBoost 48→43 eligible, 5 purged; LightGBM 18→14, 4 purged; CatBoost 31→25, 6 purged; Random Forest 27→22, 5 purged; Ridge 69→64, 5 purged). Weights frozen throughout final-test predictions.
+- Did NOT optimize or replace the weights using final-test results in this task (read-only verification).
+
+Phase 6 — Fix configuration-dependent limitations text (scripts/walk_forward_backtesting.py):
+- Fixed the hard-coded "OVERLAP by 11 sessions" statement (line 1149). Now uses max(0, MAX_HORIZON − sample_step) = max(0, 21 − 50) = 0 for this run. The old text was correct only for step=10 (canonical8) but WRONG for step=50 (pilot25).
+- Added explicit cross-stock dependence clarification: "When the overlap is 0 (sample_step >= max horizon), same-stock forward windows do NOT overlap. However, cross-stock observations on the SAME market decision date remain correlated — uncertainty estimates must use DATE-BLOCKED resampling (block on decision date, keeping all same-date stock samples together), NOT naive iid standard errors."
+- Strengthened R²/baseline distinction: "Positive R² means the model beats the EVALUATION-SET MEAN reference — it does NOT automatically mean the model beats the zero-return or training-only-mean baseline."
+- Strengthened DirAcc significance: "A 95% CI that includes 0.50 means the directional accuracy is NOT statistically significant."
+- Added EQUAL-WEIGHTED ENSEMBLE limitation: "when the WIN_RATE_WEIGHTED rule gives every eligible model weight 1.0... the resulting ensemble is EFFECTIVELY EQUAL-WEIGHTED among eligible models — NOT a learned performance-based weighting strategy."
+- Note: these limitations text changes affect FUTURE reports (the pilot25 report at walk_forward_latest.json is preserved unchanged — Task 55 report intact).
+
+Phase 7 — Auditable robustness artifact + UI:
+- NEW script: scripts/pilot25_robustness_analysis.py — reads raw per-sample records + manifest + latest report, recomputes Phases 2-5, outputs data/backtest_reports/pilot25_robustness.json (209KB). Deterministic (seed=20261028). Does NOT modify walk_forward_latest.json or ml_predictions_multi.json.
+- NEW API endpoint: GET /api/backtest/walk-forward/robustness (src/app/api/backtest/walk-forward/robustness/route.ts) — read-only, serves the artifact. Returns available:false with instructions if the artifact is missing.
+- UI: added a collapsible "Statistical Robustness (Task 56)" section to the Backtesting modal in src/components/latent/AiModelSignals.tsx (lazy-loaded on expand). Displays: block-bootstrap method + cluster count + overlap=0 + block-length rationale; per-stock coverage honesty (BYCO unavailable); baseline comparison table (Model MAE / Zero MAE / Train MAE / Paired Δ vs Zero with 95% CI / DirAcc with 95% CI / R²); ensemble weight verification (equal-weighted clarification + frozen_weights + maturity_purge_boundary + final_test_influenced_weights: NO); robustness limitations list.
+- Verified via Agent Browser: the section renders correctly, expands on click, shows all data. Screenshot saved at task56_robustness_ui.png.
+- Backward-compatible: the existing report schema (walk_forward_latest.json) is NOT modified. The robustness artifact is a SEPARATE file linked via source_run_id + data_fingerprint + universe_fingerprint.
+
+Phase 8 — Verification:
+1. python3 scripts/ml_integrity.py → ALL 11 assertions PASS.
+2. python3 -m py_compile scripts/walk_forward_backtesting.py scripts/pilot25_robustness_analysis.py scripts/ml_integrity.py → OK.
+3. bun run lint → clean (fixed node_modules/.bin/eslint + node_modules/.bin/next broken symlinks first; both were regular files instead of symlinks, causing "Cannot find module" errors).
+4. Deterministic baseline + CI verification: re-ran the script twice with the same seed → IDENTICAL CIs (DirAcc CI [0.492582, 0.638436], PairedDiff CI [−0.001151, 0.000814] both runs). Recomputed metrics MATCH the report exactly (XGBoost 5d r2=0.006724 mae=0.052417 diracc=0.5675 in both) → confirms paired comparisons use the exact same observations.
+5. ml_predictions_multi.json UNCHANGED: md5 41442cd7ece9d137ec19310e2d771f55 (before and after).
+6. walk_forward_latest.json UNCHANGED: md5 544192bd40e32caf093e07e3d1f1cece (Task 55 report preserved — the robustness artifact is a separate file).
+7. API endpoints all HTTP 200: GET /, /api/backtest/walk-forward, /api/backtest/walk-forward/robustness, /api/backtest/walk-forward/status.
+8. UI verified via Agent Browser: the Backtesting modal renders the pilot25 report + the new "Statistical Robustness (Task 56)" collapsible section with all data.
+9. No GitHub push occurred: 1 local autosave commit ahead of origin (NOT pushed). Per user instruction, no push.
+
+Files changed (this task):
+1. scripts/pilot25_robustness_analysis.py — NEW (Phase 2-5 analysis script, ~340 lines, pure Python stdlib only, deterministic seed).
+2. scripts/walk_forward_backtesting.py — Phase 6 limitations text fixes (lines 1147-1150): R²/baseline distinction strengthened, DirAcc significance CI rule added, overlap now uses max(0, MAX_HORIZON − sample_step), equal-weighted ensemble limitation added.
+3. src/app/api/backtest/walk-forward/robustness/route.ts — NEW read-only API endpoint serving the robustness artifact.
+4. src/components/latent/AiModelSignals.tsx — added robustness state hooks (robData/robLoading/robError/robOpened + loadRob fetch) + collapsible "Statistical Robustness (Task 56)" UI section (block-bootstrap header, per-stock coverage, baseline+CI table, ensemble weight verification, limitations).
+5. data/backtest_reports/pilot25_robustness.json — NEW auditable artifact (209KB), recomputed from raw predictions.
+6. worklog.md — this entry.
+
+Actual analysis results (key honest findings):
+- XGBoost 5d: r2=+0.0067 (barely positive), DirAcc 95% CI [0.4926, 0.6384] INCLUDES 0.50 → NOT statistically significant. Paired MAE diff vs zero-return CI [−0.001151, 0.000814] INCLUDES 0 → model does NOT significantly beat zero-return baseline.
+- XGBoost 21d: r2=−0.0569 (negative, unclamped), DirAcc 95% CI [0.382, 0.551] includes 0.50, paired diff mean +0.001197 (model slightly WORSE than zero-return at 21d), CI [−0.000948, 0.003331] includes 0.
+- All 5 models: positive R² at 5d (marginal), negative R² at 10d and 21d (lose to constant-mean baseline). None statistically beat the zero-return baseline at any horizon (all paired-diff CIs include 0).
+- Per-stock R² is very mixed → pooled positive R² is NOT consistent across stocks.
+- Ensemble = effectively equal-weighted (all weights 1.0) — NOT a learned weighting strategy.
+
+Sample and date-cluster counts:
+- n_unique_stock_date_samples = 400 (25 stocks × 16 samples/stock avg; ENGRO=9, BYCO=0 unavailable, others=17).
+- n_model_fits = 6000 (400 × 5 models × 3 horizons).
+- n_decision_date_clusters = 30 (block-bootstrap blocks).
+- same_stock_window_overlap_sessions = max(0, 21−50) = 0 (no same-stock overlap; cross-stock same-date dependence remains).
+
+Uncertainty methodology:
+- Date-block bootstrap: resample 30 decision-date blocks with replacement, recompute metrics, 1000 reps, 95% CI = 2.5th + 97.5th percentiles.
+- Each block = all (stock) samples sharing one decision date (preserves cross-stock same-date market dependence).
+- Block length = 1 decision date (contains up to 24 stock-samples). Rationale: sample_step=50 > max horizon=21 → no same-stock serial overlap; the only remaining dependence is cross-stock same-date, which the date-block preserves.
+- Seed = 20261028 (deterministic — verified identical CIs across two runs).
+- Did NOT use iid-row bootstrap (would ignore cross-stock same-date dependence and manufacture artificially narrow CIs).
+- 30 blocks is adequate for directional inference (>10 threshold); narrow CIs are not over-interpreted.
+
+Test commands:
+- python3 scripts/ml_integrity.py  (11/11 PASS)
+- python3 -m py_compile scripts/walk_forward_backtesting.py scripts/pilot25_robustness_analysis.py scripts/ml_integrity.py  (OK)
+- bun run lint  (clean)
+- python3 scripts/pilot25_robustness_analysis.py  (produces the artifact; deterministic)
+- curl -s http://127.0.0.1:3000/api/backtest/walk-forward/robustness  (HTTP 200, returns the artifact)
+- Agent Browser: open / → AI Models tab → Check Backtesting Results → expand "Statistical Robustness (Task 56)"  (verified renders)
+
+Remaining limitations:
+- 30 date blocks is adequate but not large; narrow CIs should not be over-interpreted.
+- The robustness artifact is read-only — it does NOT modify walk_forward_latest.json. The limitations text fix in walk_forward_backtesting.py only affects FUTURE reports (the pilot25 report is preserved unchanged).
+- All honest findings are reported: negative R² unclamped, DirAcc CIs include 0.50 (not significant), paired-diff CIs include 0 (model doesn't significantly beat zero-return), per-stock R² very mixed, BYCO unavailable, ENGRO fewer samples, equal-weighted ensemble is not learned weighting.
+- A completed pilot25 robustness analysis is NOT proof of performance over all 908 PSX stocks — it's a 25-stock, 400-sample, step-50 walk-forward on a point-in-time-liquidity-ranked universe.
+
+Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9d137ec19310e2d771f55 before and after all work.
+Confirmation that the pilot25 report (walk_forward_latest.json) was preserved: md5 544192bd40e32caf093e07e3d1f1cece before and after.
+Confirmation that no GitHub push occurred: 1 local autosave commit ahead of origin (NOT pushed).

@@ -1,0 +1,153 @@
+{
+  "walk_forward_at": "2026-10-27T18:42:34.396141",
+  "n_samples": 21,
+  "models_trained": [
+    "XGBoost",
+    "LightGBM",
+    "CatBoost",
+    "Random Forest",
+    "Ridge Regression"
+  ],
+  "individual": {
+    "XGBoost": {
+      "totalTrades": 18,
+      "wins": 8,
+      "winRate": 44.4,
+      "avgReturnPct": -1.28,
+      "maxReturnPct": 8.26,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+    },
+    "LightGBM": {
+      "totalTrades": 19,
+      "wins": 10,
+      "winRate": 52.6,
+      "avgReturnPct": 0.05,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+    },
+    "CatBoost": {
+      "totalTrades": 19,
+      "wins": 9,
+      "winRate": 47.4,
+      "avgReturnPct": -0.67,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+    },
+    "Random Forest": {
+      "totalTrades": 18,
+      "wins": 9,
+      "winRate": 50.0,
+      "avgReturnPct": -0.3,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+    },
+    "Ridge Regression": {
+      "totalTrades": 21,
+      "wins": 11,
+      "winRate": 52.4,
+      "avgReturnPct": 0.31,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+    }
+  },
+  "ensemble": {
+    "MAJORITY_VOTE": {
+      "totalTrades": 18,
+      "wins": 9,
+      "winRate": 50.0,
+      "avgReturnPct": -0.3,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+      "n_validation_period_excluded": 0
+    },
+    "PROBABILITY_WEIGHTED": {
+      "totalTrades": 19,
+      "wins": 9,
+      "winRate": 47.4,
+      "avgReturnPct": -0.38,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+      "n_validation_period_excluded": 0
+    },
+    "TIER_WEIGHTED": {
+      "totalTrades": 18,
+      "wins": 9,
+      "winRate": 50.0,
+      "avgReturnPct": -0.3,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+      "n_validation_period_excluded": 0
+    },
+    "WIN_RATE_WEIGHTED": {
+      "totalTrades": 10,
+      "wins": 5,
+      "winRate": 50.0,
+      "avgReturnPct": 0.27,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+      "n_validation_period_excluded": 10
+    },
+    "FINAL_CONSENSUS": {
+      "totalTrades": 18,
+      "wins": 9,
+      "winRate": 50.0,
+      "avgReturnPct": -0.3,
+      "maxReturnPct": 10.3,
+      "minReturnPct": -8.77,
+      "stars": 3,
+      "trading_metrics_label": "gross directional-return proxy (signed forward return, NO commission/slippage/CGT deducted)",
+      "net_trading_pnl": "unavailable",
+      "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. The 'avgReturnPct' above is a signed forward-return proxy, not net P&L. See src/lib/latent/investment-simulator.ts for the genuine trade simulator used elsewhere in the app.",
+      "n_validation_period_excluded": 0
+    }
+  },
+  "methodology": "Walk-forward: expanding window. For each test sample, models re-trained on ALL data before that point. No data leakage.",
+  "comparison_note": "Walk-forward results are MORE ACCURATE than simplified backtesting (which used latest prediction for all test rows).",
+  "ml_integrity": {
+    "target_construction": "per-stock groupby(symbol).shift(-h) via add_forward_returns; no .fillna(0); immature rows left NaN",
+    "target_maturity_filter": "Task 51 Phase 1: filter_by_target_maturity excludes training rows whose target endpoint (T+h) > prediction date P. Per-horizon, per-stock, pooled. Distinct from drop_immature_targets (which only removes rows whose target VALUE is NaN).",
+    "test_partition": "date-based chronological_split test partition (NOT global row split=int(len*0.8)) \u2014 all rows on a given test date belong to the test partition",
+    "per_sample_training": "per-sample train_data = df[df['date']<sample['date']] (strict chronological, no look-ahead) + filter_by_target_maturity(hz) per horizon",
+    "per_horizon_drop": "per-sample, per-horizon filter_by_target_maturity \u2014 preserves shorter-horizon rows whose longest-horizon target is immature or whose endpoint extends past P",
+    "realized_outcomes": "actual_return uses FUTURE close prices in the test partition (strictly AFTER the decision date) \u2014 no look-ahead leakage in the realized-outcome computation",
+    "ensemble_weighting": "Task 51 Phase 2: WIN_RATE_WEIGHTED uses frozen validation-period weights (Option A). MAJORITY_VOTE / PROBABILITY_WEIGHTED / TIER_WEIGHTED are per-sample (safe). FINAL_CONSENSUS uses dual-mode (skip WIN_RATE_WEIGHTED on validation, include on final-test).",
+    "baselines": "Task 51 Phase 3: zero-return + training-only-mean baselines added (per-horizon, pooled market-wide). Conventional constant-mean R\u00b2 reference retained per-model\u00d7horizon.",
+    "walk_forward_methodology": "TRUE walk-forward: each test sample's models are re-fit on all data strictly before the sample's decision date AND with target-maturity filter applied per horizon. Distinct from the simplified backtest in train_all_with_backtesting.py (Pattern #10 \u2014 latest signal applied to all test rows)."
+  }
+}

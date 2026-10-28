@@ -1,0 +1,234 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Task 52: does the honest walk-forward conclusion (R2<0 on every model x horizon, no directional skill) hold when the universe expands from the canonical 8 CSV stocks to a deterministic 25-stock DB-selected pilot?",
+  "generated_at": "2026-10-27T19:42:37.728774+00:00",
+  "comparison_methodology": {
+    "matched_pair": "canonical8_cmp vs pilot25 SHARE identical evaluation methodology: SAMPLE_STEP=20 sessions, TRAIN_ROW_CAP=2500 (post-target-maturity-filter, deterministic seed=42), 50/15/35 chronological split, 5 models x 3 horizons, per-sample expanding-window retraining.",
+    "universe_difference": "canonical8_cmp uses the fixed 8-stock CSV set (~2yr history, data to 2026-08); pilot25 selects 25 DB symbols by bar-count DESC + symbol ASC among >=250-bar non-XD symbols (~10yr history, 2016-2026). History depth and universe breadth differ BY DESIGN of the data sources; selection uses ONLY data coverage.",
+    "production_run_note": "walk_forward_latest.json (canonical8, STEP=10, cap=5000) is the PRODUCTION artifact served by /api/backtest/walk-forward; it was re-run this task to restore the Task 51 production spec and is included for reference but is NOT part of the matched comparison pair."
+  },
+  "canonical8_cmp": {
+    "file": "walk_forward_latest_cmp8.json",
+    "universe_mode": "canonical8",
+    "universe_size": 8,
+    "sampling_interval_sessions": 20,
+    "train_row_cap": 2500,
+    "n_samples": 56,
+    "n_model_fits_actual": 840,
+    "evaluation_date_range": {
+      "start": "2026-01-13T19:00:00",
+      "end": "2026-08-12T19:00:00"
+    },
+    "data_source": "data/ohlcv/ CSVs",
+    "evaluation_status": "completed",
+    "avg_by_horizon": {
+      "5": {
+        "avg_mae": 0.04396,
+        "avg_rmse": 0.053484,
+        "avg_r2": -0.041119,
+        "avg_dir_acc": 0.41786,
+        "min_r2": -0.055606,
+        "max_r2": -0.028443
+      },
+      "10": {
+        "avg_mae": 0.050358,
+        "avg_rmse": 0.063614,
+        "avg_r2": -0.214495,
+        "avg_dir_acc": 0.46428,
+        "min_r2": -0.272471,
+        "max_r2": -0.160697
+      },
+      "21": {
+        "avg_mae": 0.083413,
+        "avg_rmse": 0.103995,
+        "avg_r2": -0.429225,
+        "avg_dir_acc": 0.45712,
+        "min_r2": -0.521667,
+        "max_r2": -0.357195
+      }
+    },
+    "ensemble_trading_proxy": {
+      "MAJORITY_VOTE": {
+        "totalTrades": 51,
+        "winRate": 47.1,
+        "avgReturnPct": -1.04
+      },
+      "PROBABILITY_WEIGHTED": {
+        "totalTrades": 53,
+        "winRate": 45.3,
+        "avgReturnPct": -1.17
+      },
+      "TIER_WEIGHTED": {
+        "totalTrades": 51,
+        "winRate": 47.1,
+        "avgReturnPct": -1.04
+      },
+      "WIN_RATE_WEIGHTED": {
+        "totalTrades": 26,
+        "winRate": 42.3,
+        "avgReturnPct": -2.18
+      },
+      "FINAL_CONSENSUS": {
+        "totalTrades": 51,
+        "winRate": 47.1,
+        "avgReturnPct": -1.04
+      }
+    },
+    "n_negative_r2_combos": 15,
+    "n_total_combos": 15
+  },
+  "pilot25": {
+    "file": "walk_forward_latest_pilot25.json",
+    "universe_mode": "pilot25",
+    "universe_size": 25,
+    "sampling_interval_sessions": 20,
+    "train_row_cap": 2500,
+    "n_samples": 1075,
+    "n_model_fits_actual": 16125,
+    "evaluation_date_range": {
+      "start": "2023-04-17T00:00:00",
+      "end": "2026-09-14T00:00:00"
+    },
+    "data_source": "db/custom.db OhlcvBar table",
+    "evaluation_status": "completed",
+    "avg_by_horizon": {
+      "5": {
+        "avg_mae": 0.048411,
+        "avg_rmse": 0.066403,
+        "avg_r2": -0.013881,
+        "avg_dir_acc": 0.51444,
+        "min_r2": -0.032993,
+        "max_r2": -0.007197
+      },
+      "10": {
+        "avg_mae": 0.0648,
+        "avg_rmse": 0.092977,
+        "avg_r2": -0.021147,
+        "avg_dir_acc": 0.49282,
+        "min_r2": -0.04048,
+        "max_r2": -0.008143
+      },
+      "21": {
+        "avg_mae": 0.106145,
+        "avg_rmse": 0.153319,
+        "avg_r2": -0.022383,
+        "avg_dir_acc": 0.47686,
+        "min_r2": -0.032842,
+        "max_r2": -0.014957
+      }
+    },
+    "ensemble_trading_proxy": {
+      "MAJORITY_VOTE": {
+        "totalTrades": 278,
+        "winRate": 48.9,
+        "avgReturnPct": 2.22
+      },
+      "PROBABILITY_WEIGHTED": {
+        "totalTrades": 296,
+        "winRate": 48.0,
+        "avgReturnPct": 1.57
+      },
+      "TIER_WEIGHTED": {
+        "totalTrades": 294,
+        "winRate": 50.3,
+        "avgReturnPct": 2.41
+      },
+      "WIN_RATE_WEIGHTED": {
+        "totalTrades": 97,
+        "winRate": 48.5,
+        "avgReturnPct": 2.14
+      },
+      "FINAL_CONSENSUS": {
+        "totalTrades": 291,
+        "winRate": 50.5,
+        "avgReturnPct": 2.48
+      }
+    },
+    "n_negative_r2_combos": 15,
+    "n_total_combos": 15
+  },
+  "canonical8_production_reference": {
+    "file": "walk_forward_latest.json",
+    "universe_mode": "canonical8",
+    "universe_size": 8,
+    "sampling_interval_sessions": 10,
+    "train_row_cap": 5000,
+    "n_samples": 112,
+    "n_model_fits_actual": 1680,
+    "evaluation_date_range": {
+      "start": "2026-01-13T19:00:00",
+      "end": "2026-08-30T19:00:00"
+    },
+    "data_source": "data/ohlcv/ CSVs",
+    "evaluation_status": "completed",
+    "avg_by_horizon": {
+      "5": {
+        "avg_mae": 0.037656,
+        "avg_rmse": 0.046473,
+        "avg_r2": -0.10378,
+        "avg_dir_acc": 0.425,
+        "min_r2": -0.150141,
+        "max_r2": -0.067176
+      },
+      "10": {
+        "avg_mae": 0.057092,
+        "avg_rmse": 0.072225,
+        "avg_r2": -0.368543,
+        "avg_dir_acc": 0.47678,
+        "min_r2": -0.475564,
+        "max_r2": -0.221675
+      },
+      "21": {
+        "avg_mae": 0.093537,
+        "avg_rmse": 0.114703,
+        "avg_r2": -0.559612,
+        "avg_dir_acc": 0.44286,
+        "min_r2": -0.586601,
+        "max_r2": -0.542007
+      }
+    },
+    "ensemble_trading_proxy": {
+      "MAJORITY_VOTE": {
+        "totalTrades": 103,
+        "winRate": 44.7,
+        "avgReturnPct": -1.09
+      },
+      "PROBABILITY_WEIGHTED": {
+        "totalTrades": 108,
+        "winRate": 44.4,
+        "avgReturnPct": -1.14
+      },
+      "TIER_WEIGHTED": {
+        "totalTrades": 104,
+        "winRate": 45.2,
+        "avgReturnPct": -1.07
+      },
+      "WIN_RATE_WEIGHTED": {
+        "totalTrades": 55,
+        "winRate": 41.8,
+        "avgReturnPct": -2.32
+      },
+      "FINAL_CONSENSUS": {
+        "totalTrades": 104,
+        "winRate": 45.2,
+        "avgReturnPct": -1.07
+      }
+    },
+    "n_negative_r2_combos": 15,
+    "n_total_combos": 15
+  },
+  "key_findings": [
+    "ALL model x horizon R2 values are NEGATIVE in every run (canonical8_cmp 15/15, pilot25 15/15, production 15/15) \u2014 no model beats the constant-mean R2 reference on any horizon.",
+    "Pilot25 avg R2 (-0.007..-0.041 by horizon) is closer to zero than canonical8_cmp (-0.028..-0.52): the 25-stock pooled cross-section + 10-year history gives models a richer training set, but still NO positive skill.",
+    "Directional accuracy stays ~coin-flip: pilot25 avg 0.472-0.517 by horizon vs canonical8_cmp 0.429-0.464. No horizon/model shows reliable directional skill.",
+    "At 10d/21d in pilot25, models UNDERPERFORM the zero-return baseline (avg model R2 -0.040/-0.026 vs zero-baseline -0.003/-0.027) \u2014 predicting 0 would have been as good or better.",
+    "Per-stock pilot results show a few small positive R2 values (max +0.082, GATM 21d, n=43) among 375 model-stock-horizon combos \u2014 consistent with noise given overlapping 21d windows and no uncertainty correction; NOT evidence of skill.",
+    "Conclusion: the honest negative-skill conclusion GENERALIZES from 8 to 25 stocks. Universe expansion does NOT change the assessment; the walk-forward harness now scales to the full DB universe."
+  ],
+  "honest_caveats": [
+    "Sampling interval 20 sessions for the matched pair (10 for production) \u2014 adjacent 21d windows still overlap by 1 session; outcomes NOT independent.",
+    "TRAIN_ROW_CAP=2500 rows (matched pair) is a compute-practicality cap applied AFTER the target-maturity filter; eligible-row sets unchanged.",
+    "pilot25 selection covers the 25 LONGEST-HISTORY DB symbols (bar-count rule) \u2014 these 590 excluded symbols include 26 *XD duplicates and 564 below-capacity exclusions; the selection is deterministic and reproducible but is NOT the full ~908-symbol universe.",
+    "Trading metrics remain GROSS directional-return proxies (no commission/slippage/CGT); net P&L unavailable."
+  ]
+}

@@ -1,75 +1,47 @@
-[00:00:04.406] Server  LOG     ✓ Ready in 3.4s
-[00:00:07.669] Server  LOG     ○ Compiling / ...
-[00:00:22.911] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:37.066] Server  WARN    ⚠ Blocked cross-origin request from preview-chat-205f391c-1dac-41d3-95bd-d232a3e7ba0b.space-z.ai to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+[00:00:00.974] Server  LOG     ✓ Ready in 748ms
+[00:00:07.096] Server  LOG     ○ Compiling / ...
+[00:01:14.233] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:32.923] Server  INFO    [cache] Using in-memory cache (set REDIS_URL env var for production Redis)
+[00:01:33.075] Server  LOG     prisma:query "SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
+[00:01:33.515] Server  WARN    [ai-model-signals] extended-training merge failed for ENGRO: PrismaClientKnownRequestError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].modelPredictionCache.findUnique()` invocation in
+/home/z/my-project/.next/dev/server/chunks/[root-of-the-server]__f9ad97c5._.js:2207:172
+
+  2204 let fbModels = {};
+  2205 let fbEnsembles = {};
+  2206 try {
+→ 2207     let cacheRow = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].modelPredictionCache.findUnique(
+The table `main.ModelPredictionCache` does not exist in the current database.
+[00:01:33.518] Server  LOG     prisma:query "SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?"
+[00:01:43.114] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:01:59.759] Server  LOG     prisma:query "SELECT 1"
+[00:01:59.760] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
+[00:01:59.763] Server  LOG     prisma:query "BEGIN IMMEDIATE"
+[00:01:59.764] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
+[00:01:59.764] Server  LOG     prisma:query "COMMIT"
+[00:15:26.546] Server  WARN    ⚠ Blocked cross-origin request from preview-chat-205f391c-1dac-41d3-95bd-d232a3e7ba0b.space-z.ai to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
 Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[00:14:47.401] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:01.131] Server  INFO    [cache] Using in-memory cache (set REDIS_URL env var for production Redis)
-[00:15:09.268] Server  LOG     prisma:query "SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
-[00:15:09.268] Server  LOG     prisma:query "SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?"
-[00:15:23.504] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
-[00:15:30.914] Server  LOG     prisma:query "SELECT 1"
-[00:15:30.914] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:15:30.917] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:15:30.919] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:15:30.920] Server  LOG     prisma:query "COMMIT"
-[00:20:00.873] Server  LOG     prisma:query "SELECT 1"
-[00:20:00.873] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:20:00.875] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:20:00.876] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:20:00.876] Server  LOG     prisma:query "COMMIT"
-[00:25:00.870] Server  LOG     prisma:query "SELECT 1"
-[00:25:00.871] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:25:00.872] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:25:00.872] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:25:00.872] Server  LOG     prisma:query "COMMIT"
-[00:30:00.871] Server  LOG     prisma:query "SELECT 1"
-[00:30:00.871] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:30:00.873] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:30:00.873] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:30:00.873] Server  LOG     prisma:query "COMMIT"
-[00:35:00.871] Server  LOG     prisma:query "SELECT 1"
-[00:35:00.871] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:35:00.874] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:35:00.874] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:35:00.874] Server  LOG     prisma:query "COMMIT"
-[00:40:00.870] Server  LOG     prisma:query "SELECT 1"
-[00:40:00.870] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:40:00.873] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:40:00.873] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:40:00.873] Server  LOG     prisma:query "COMMIT"
-[00:45:00.870] Server  LOG     prisma:query "SELECT 1"
-[00:45:00.870] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:45:00.872] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:45:00.872] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:45:00.872] Server  LOG     prisma:query "COMMIT"
-[00:50:00.872] Server  LOG     prisma:query "SELECT 1"
-[00:50:00.872] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:50:00.874] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:50:00.874] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:50:00.874] Server  LOG     prisma:query "COMMIT"
-[00:55:00.875] Server  LOG     prisma:query "SELECT 1"
-[00:55:00.875] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[00:55:00.879] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[00:55:00.879] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[00:55:00.879] Server  LOG     prisma:query "COMMIT"
-[01:00:00.871] Server  LOG     prisma:query "SELECT 1"
-[01:00:00.871] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[01:00:00.882] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[01:00:00.884] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[01:00:00.884] Server  LOG     prisma:query "COMMIT"
-[01:05:00.874] Server  LOG     prisma:query "SELECT 1"
-[01:05:00.875] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[01:05:00.886] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[01:05:00.886] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[01:05:00.886] Server  LOG     prisma:query "COMMIT"
-[01:10:00.875] Server  LOG     prisma:query "SELECT 1"
-[01:10:00.875] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[01:10:00.877] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[01:10:00.877] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[01:10:00.878] Server  LOG     prisma:query "COMMIT"
-[01:15:00.871] Server  LOG     prisma:query "SELECT 1"
-[01:15:00.871] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
-[01:15:00.873] Server  LOG     prisma:query "BEGIN IMMEDIATE"
-[01:15:00.873] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
-[01:15:00.873] Server  LOG     prisma:query "COMMIT"
+[00:16:56.337] Server  LOG     ✓ Compiled in 491ms
+[00:17:29.426] Server  LOG     ✓ Compiled in 522ms
+[00:18:09.623] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:18:17.642] Server  INFO    [cache] Using in-memory cache (set REDIS_URL env var for production Redis)
+[00:18:18.122] Server  LOG     prisma:query "SELECT 1"
+[00:18:18.123] Server  LOG     prisma:query "SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
+[00:18:18.506] Server  WARN    [ai-model-signals] extended-training merge failed for ENGRO: PrismaClientKnownRequestError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].modelPredictionCache.findUnique()` invocation in
+/home/z/my-project/.next/dev/server/chunks/[root-of-the-server]__f9ad97c5._.js:2207:172
+
+  2204 let fbModels = {};
+  2205 let fbEnsembles = {};
+  2206 try {
+→ 2207     let cacheRow = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].modelPredictionCache.findUnique(
+The table `main.ModelPredictionCache` does not exist in the current database.
+[00:18:18.520] Server  LOG     prisma:query "SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?"
+[00:18:29.364] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:18:47.244] Server  LOG     prisma:query "SELECT 1"
+[00:18:47.244] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
+[00:18:47.259] Server  LOG     prisma:query "BEGIN IMMEDIATE"
+[00:18:47.259] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
+[00:18:47.260] Server  LOG     prisma:query "COMMIT"
+[00:21:57.795] Server  LOG     ✓ Compiled in 508ms
+[00:22:05.360] Server  LOG     ✓ Compiled in 6.3s
