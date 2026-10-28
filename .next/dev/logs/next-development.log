@@ -80,3 +80,12 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
 [00:14:06.815] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
 [00:14:16.711] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
 [00:14:16.874] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
+[00:11:18.607] Server  LOG     ✓ Compiled in 0ms
+[00:11:31.110] Server  LOG     prisma:query "SELECT 1"
+[00:11:31.169] Server  LOG     prisma:query "SELECT DISTINCT symbol FROM OhlcvBar"
+[00:11:31.261] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
+[00:11:31.341] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
+[00:12:11.252] Server  LOG     prisma:query "SELECT 1"
+[00:12:11.265] Server  LOG     prisma:query "SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
+[00:12:31.379] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
+[00:12:31.538] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
