@@ -2941,3 +2941,108 @@ Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9
 Confirmation that Task 55 (walk_forward_latest.json) + Task 56 (pilot25_robustness.json) artifacts were preserved unchanged.
 Confirmation that no model training or pilot25/full-universe evaluation was launched.
 Confirmation that no GitHub push occurred: 1 local autosave commit ahead of origin (NOT pushed).
+
+---
+Task ID: 59 (COMPLETE)
+Agent: main (interactive session 2026-10-28)
+Task: Build a genuine trading simulation driven by actual historical out-of-sample ML predictions from the completed pilot25 run, with realistic execution prices, progressive TP/SL handling, trading costs, and honest net-P&L reporting. Replaces the "net_trading_pnl: unavailable" label with genuine executed-trade metrics. No GitHub push. ml_predictions_multi.json + Task 55/56 artifacts unchanged. No model retraining / walk-forward rerun.
+
+Discrepancies found + resolved:
+
+1. Phase 2 — slippage-rate discrepancy CONFIRMED + resolved:
+   - investment-simulator.ts: SLIPPAGE_RATE = 0.0015
+   - signal-stats/route.ts: SLIPPAGE_RATE = 0.0015
+   - backtest.ts: SLIPPAGE_RATE = 0.005 ← DIFFERENT (3.33× higher)
+   - Resolution: created src/lib/latent/trading-costs.ts with TWO clearly-named profiles:
+     * standard_psx (slippage 0.0015) — matches 2 of 3 simulators (majority documented convention) — PRIMARY
+     * high_slippage_psx (slippage 0.005) — matches backtest.ts — SENSITIVITY
+   - Selection by documented convention (majority of simulators), NOT by profitability.
+   - Did NOT change the existing simulators' constants (backward compat).
+
+2. Sandbox reset recovery: at the start of this task, the sandbox reset wiped the local git repo (HEAD reverted to an old UUID backup commit, origin remote removed, pilot25 run directory gone). Recovered by re-adding the origin remote (URL preserved in branch.main.remote config) + git reset --hard origin/main. All Tasks 55-58 work was safe on GitHub. NOTE: two Task 56 deliverables were found LOST in this reset (not pushed before the reset):
+   - walk_forward_backtesting.py limitations text fix (Phase 6 of Task 56 — the "FORECAST WINDOW OVERLAP = max(0, 21-50) = 0" fix) — NOT in the current codebase.
+   - AiModelSignals.tsx robustness UI section (Phase 7 of Task 56 — the "Statistical Robustness (Task 56)" collapsible) — NOT in the current codebase.
+   - The robustness ARTIFACT (pilot25_robustness.json) + API endpoint (/api/backtest/walk-forward/robustness) + analysis script ARE present + intact. Only the UI display section + the limitations text fix are missing. These should be re-added in a future task.
+
+Canonical behavior implemented (Phases 3-5):
+
+NEW shared cost module: src/lib/latent/trading-costs.ts — exports CostProfile interface, STANDARD_PSX + HIGH_SLIPPAGE_PSX profiles, computeTradeCosts(notional, grossPnl, profile). Formula: commission = notional × rate × 2 (both sides); slippage = notional × rate (once per round-trip); CGT = grossPnl × 0.15 if gross > 0; net = gross − total.
+
+NEW evaluator: scripts/walk_forward_trading_evaluator.ts — consumes the pilot25 raw records + OHLCV bars. For each final-test sample (idx >= val_end_idx=200) × model × horizon:
+  - Signal: BUY if stored OOS predicted return > +1% threshold (long-only; negative → HOLD, not short). Fixed threshold, NOT tuned on final-test.
+  - Entry: the NEXT eligible trading session's OPEN price (not the signal close; no retrospective fill; no cherry-picking).
+  - Strategy A (fixed-horizon): hold to horizon-end session's close, exit at that close. No TP/SL parameters.
+  - Strategy B (progressive TP/SL): ATR from 14 pre-decision bars (known at signal time). SL=1.5×ATR, TP1=1×ATR, TP2=2×ATR, TP3=3×ATR, anchored to entry open. Delegates to simulateProgressiveTpSl (src/lib/latent/tp-sl-engine.ts — the Task 58 shared helper). Horizon-end = HORIZON_EXIT (the position IS liquidated at the horizon-end close, NOT unresolved).
+  - Costs: standard_psx primary + high_slippage_psx sensitivity.
+  - Phase 1: execution-data fingerprint (sha256 of symbol+date+OHLCV+volume for all 25 symbols) + forward-return verification (reconstructs actual_5d/10d/21d from bars, compares to stored values, tolerance 1e-6).
+
+Output: data/backtest_reports/walk_forward_trading_latest.json (candidate validated before promotion; previous preserved at _previous.json).
+
+NEW API: GET /api/backtest/walk-forward/trading (read-only; serves the artifact; never starts an evaluation from an API request).
+
+UI: collapsible "Out-of-Sample ML Trading Simulation (Task 59)" section in the Backtesting modal (src/components/latent/AiModelSignals.tsx), lazy-loaded. Displays: strategy metrics table (fixed-horizon + progressive + high-slip sensitivity), exit reasons, target milestones, net P&L, profit factor, the long-only disclosure, the portfolio-metrics-unavailable note, the slippage-discrepancy disclosure. Agent Browser verified it renders.
+
+Actual trading results (final-test subset, 200 samples × 5 models × 3 horizons = 3000 eligible; 696 executed trades where predicted > +1%):
+
+Fixed-horizon strategy (standard_psx costs):
+  - 696 trades, wins=376, losses=320
+  - total_net_pnl = +1,265,627 PKR (on 69.6M total notional = +1.82% return)
+  - profit_factor = 1.518
+  - All exits: HORIZON_EXIT (696) — no TP/SL, just hold to horizon end
+
+Progressive TP/SL strategy (standard_psx costs):
+  - 696 trades, wins=330, losses=366
+  - total_net_pnl = +205,207 PKR
+  - profit_factor = 1.084
+  - Exit reasons: HORIZON_EXIT=185, TP3_HIT=240, SL_HIT=162, SL_AFTER_TP1=86, SL_AFTER_TP2=23
+  - Target milestones: TP1=153, TP2=70, TP3=240
+  - tp_then_sl = 109 (reached a TP then exited at SL — counted as LOSSES by net P&L; the "tp3 hit and it still count my loss" fix from Task 57)
+  - 888 negative forecasts not traded (long-only policy disclosed)
+
+Progressive TP/SL high-slippage sensitivity (0.5% slippage):
+  - 696 trades, total_net_pnl = −38,393 PKR (NEGATIVE — higher costs flip it to a loss)
+  - Honest: the strategy is NOT robust to the higher cost assumption.
+
+Interpretation: the fixed-horizon strategy shows a positive net P&L (+1.27M) because the >+1% predicted subset (696/3000 = 23.2% of samples) has positive average forward returns, even though the FULL 400-sample set has negative R² (Task 55/56). This is a meaningful finding: the models' forecasts may have SOME directional value when the signal is strong, but the progressive TP/SL strategy (which adds ATR-based stops) is barely positive + flips negative under higher costs. The fixed-horizon result is the more honest baseline (no parameter choices).
+
+Validation/test separation (Phase 3B):
+  - final_test_sample_range: idx 200-399 (200 samples) — the final-test portion from the manifest (val_end_idx=200).
+  - Validation portion (idx 0-199) was NOT used for parameter selection. The +1% threshold + ATR distances (1.5/1/2/3) are FIXED documented conventions, NOT tuned on final-test.
+  - Never selected strategy threshold/targets/costs/model by maximizing final-test P&L.
+
+Files changed:
+1. src/lib/latent/trading-costs.ts (NEW) — shared cost config with STANDARD_PSX + HIGH_SLIPPAGE_PSX profiles + computeTradeCosts.
+2. scripts/walk_forward_trading_evaluator.ts (NEW) — the genuine walk-forward trading evaluator. Reads pilot25 raw records + OHLCV, executes fixed-horizon + progressive TP/SL, computes net P&L, outputs the trading artifact.
+3. src/app/api/backtest/walk-forward/trading/route.ts (NEW) — read-only API serving the trading artifact.
+4. src/components/latent/AiModelSignals.tsx — added Task 59 state hook (trdData/loadTrd) + the collapsible "Out-of-Sample ML Trading Simulation" UI section.
+5. data/backtest_reports/walk_forward_trading_latest.json (NEW) — the trading artifact (27KB).
+6. data/backtest_reports/walk_forward_trading_candidate.json (NEW) — the validated candidate (identical to latest).
+7. worklog.md — this entry.
+
+Tests actually executed (Phase 7):
+1. bun run lint → clean (no errors).
+2. python3 scripts/ml_integrity.py → ALL 11 assertions PASSED.
+3. bun scripts/simulator_regression_check.ts → 82/82 PASSED (Task 57/58 TP/SL engine + 3-paths-agree intact).
+4. bun scripts/walk_forward_trading_evaluator.ts → produced the trading artifact; forward-return verification 200/200 verified, 0 mismatch (OHLCV matches the prediction run).
+5. API smoke: GET / → 200; /api/backtest/walk-forward/trading → 200 (returns the artifact with all metrics); /api/backtest/walk-forward → 200 (unchanged); /api/backtest/walk-forward/robustness → 200 (unchanged); /api/backtest/walk-forward/status → 200.
+6. Agent Browser: page renders (title correct, no errors); Backtesting modal → expand "Out-of-Sample ML Trading Simulation (Task 59)" → verified renders the strategy table + exit reasons + target milestones + disclosures. Screenshot saved.
+7. ml_predictions_multi.json UNCHANGED: md5 41442cd7ece9d137ec19310e2d771f55.
+8. walk_forward_latest.json UNCHANGED: md5 544192bd40e32caf093e07e3d1f1cece (Task 55 preserved).
+9. pilot25_robustness.json UNCHANGED: md5 2ca441fcd5627b688975a315daebf139 (Task 56 preserved).
+10. No GitHub push occurred: 0 local commits ahead of origin (the new files are in the working tree, uncommitted; the autosave watcher may commit them locally but they are NOT pushed).
+
+Remaining limitations:
+- Long-only strategy. 888 negative forecasts not traded (HOLD, not short). PSX short-sale execution not supported. A long-short directional-return proxy is a research metric only, NOT an executable net-P&L strategy.
+- Fixed notional per trade (PKR 100,000). No portfolio-level capital allocation, compounding, leverage, or cash-availability model. Multiple same-date entries across stocks are allowed but each is sized at the fixed notional (NOT portfolio-managed).
+- Portfolio-level metrics (ROI, Sharpe, Sortino, max drawdown) are UNAVAILABLE — would require a chronological portfolio-equity curve with capital allocation rules. Trade-level net P&L is reported instead (per Phase 4: "If portfolio accounting cannot be implemented safely, report trade-level net P&L and mark the unsupported portfolio metrics unavailable").
+- Same-stock holding windows do NOT overlap (sample_step=50 > max horizon=21 → overlap = max(0, 21-50) = 0). Cross-stock same-date entries are allowed but treated as independent fixed-notional trades.
+- The standard_psx cost profile (slippage 0.0015) is the primary. The high_slippage_psx sensitivity (0.005) is reported separately + flips the progressive TP/SL strategy to a net loss. Selection by documented convention, NOT by profitability.
+- The fixed-horizon positive net P&L (+1.27M) reflects the >+1% predicted subset only (696/3000 = 23.2% of eligible samples). It does NOT mean the models generalize — the full 400-sample forecast-quality evaluation (Task 55/56) showed negative R² + no significant skill. The trading result tests a DIFFERENT question: "do strong-signal forecasts translate to tradable returns?"
+- The progressive TP/SL strategy's positive net P&L (+205K, pf=1.084) is marginal + NOT robust to higher costs (flips to −38K with high_slippage_psx). The ATR distances (1.5/1/2/3) are the documented fallback convention, NOT optimized.
+- Two Task 56 deliverables were LOST in a sandbox reset before being pushed: (a) walk_forward_backtesting.py limitations text fix, (b) AiModelSignals.tsx robustness UI section. The robustness artifact + API + analysis script are intact. These should be re-added in a future task.
+- This is a GENUINE out-of-sample ML trading simulation using stored pilot25 predictions. It is DISTINCT from: (a) forecast-quality (walk_forward_latest.json), (b) signal-stats replay, (c) backtest.ts technical-rule strategy, (d) investment-simulator. Do not conflate. The UI labels them distinctly.
+
+Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9d137ec19310e2d771f55 before and after.
+Confirmation that Task 55 (walk_forward_latest.json) + Task 56 (pilot25_robustness.json) artifacts were preserved unchanged.
+Confirmation that no model training or walk-forward/pilot25 evaluation was rerun.
+Confirmation that no GitHub push occurred.

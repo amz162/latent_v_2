@@ -40,6 +40,21 @@ export function AiModelSignals(){
   }finally{setWfLoading(false);}
  };
  useEffect(()=>{if(btOpen&&!wfData&&!wfLoading)refreshWf();},[btOpen]);
+ // Task 59: genuine out-of-sample ML trading simulation artifact (lazy-loaded).
+ const[trdData,setTrdData]=useState<any|null>(null);
+ const[trdLoading,setTrdLoading]=useState(false);
+ const[trdError,setTrdError]=useState<string|null>(null);
+ const loadTrd=async()=>{
+  if(trdData||trdLoading) return;
+  setTrdLoading(true);setTrdError(null);
+  try{
+   const r=await fetch("/api/backtest/walk-forward/trading?_="+Date.now(),{cache:"no-store"});
+   const j=await r.json();
+   setTrdData(j);
+  }catch(e:any){
+   setTrdError(e?.message||"Failed to load trading artifact.");
+  }finally{setTrdLoading(false);}
+ };
  const[simOpen,setSimOpen]=useState(false);
  const[simAmount,setSimAmount]=useState("100000");
  // Issue 5 — Portfolio Simulation redesign: removed "Position Size" input.
@@ -771,6 +786,86 @@ export function AiModelSignals(){
            </ul>
           </div>
          )}
+
+         {/* Task 59: Out-of-Sample ML Trading Simulation (collapsible, lazy-loaded) */}
+         <details className="text-[10px] text-[#94A3B8]" onToggle={(e)=>{const o=(e.target as HTMLDetailsElement).open; if(o) loadTrd();}}>
+          <summary className="cursor-pointer text-[#00E676] font-semibold">
+            Out-of-Sample ML Trading Simulation (Task 59) — genuine executed trades, realized net P&L
+          </summary>
+          {trdLoading&&<div className="mt-1 text-[#94A3B8]">Loading trading artifact…</div>}
+          {trdError&&<div className="mt-1 text-[#FF5C5C]">{trdError}</div>}
+          {trdData&&trdData.available===true&&(
+           <div className="mt-1 space-y-2">
+             <div className="rounded-md border border-[#00E676]/20 bg-[#00E676]/[0.04] p-2 text-[9px]">
+               <div className="text-[#00E676] font-semibold mb-0.5">Genuine out-of-sample ML trading — DISTINCT from forecast-quality (R²/MAE) + signal-stats replay + technical-rule backtest</div>
+               <div className="text-[#94A3B8]">Signal: BUY if stored OOS predicted return &gt; +1% (long-only). Entry: next session OPEN. Costs: {trdData.cost_profile_primary?.label ?? "standard_psx"}. Final-test samples: {trdData.final_test_sample_range?.count}. Verified OHLCV: {trdData.forward_return_verification?.verified}/{trdData.forward_return_verification?.verified + trdData.forward_return_verification?.mismatch} (maxAbsDiff={trdData.forward_return_verification?.maxAbsDiff?.toExponential(2)}).</div>
+             </div>
+             {/* Strategy metrics table */}
+             <div className="overflow-x-auto">
+               <table className="w-full text-[9px] border-collapse">
+                 <thead className="bg-[#0A0E1A]">
+                   <tr className="text-[#64748B] border-b border-white/[0.06]">
+                     <th className="text-left py-1 pr-2 font-medium">Strategy</th>
+                     <th className="text-right py-1 px-1 font-medium">Trades</th>
+                     <th className="text-right py-1 px-1 font-medium">Wins</th>
+                     <th className="text-right py-1 px-1 font-medium">Losses</th>
+                     <th className="text-right py-1 px-1 font-medium">Net P&L (PKR)</th>
+                     <th className="text-right py-1 px-1 font-medium">Profit Factor</th>
+                     <th className="text-right py-1 px-1 font-medium">Avg Net %</th>
+                     <th className="text-right py-1 px-1 font-medium">TP-then-SL</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {trdData.metrics&&Object.entries(trdData.metrics).filter(([k]:[string,any])=>k!=="progressive_tp_sl_high_slippage_sensitivity").map(([k,m]:[string,any])=>(
+                     <tr key={k} className="border-b border-white/[0.04]">
+                       <td className="py-0.5 pr-2 font-mono text-[#F4F7FB]">{k==="fixed_horizon"?"Fixed-horizon":"Progressive TP/SL"}</td>
+                       <td className="text-right px-1 text-[#94A3B8]">{m.n_executed_trades}</td>
+                       <td className="text-right px-1 text-[#00E676]">{m.wins}</td>
+                       <td className="text-right px-1 text-[#FF5C5C]">{m.losses}</td>
+                       <td className={"text-right px-1 font-mono "+(m.total_net_pnl>=0?"text-[#00E676]":"text-[#FF5C5C]")}>{Math.round(m.total_net_pnl).toLocaleString()}</td>
+                       <td className="text-right px-1 font-mono text-[#94A3B8]">{m.profit_factor!=null?m.profit_factor.toFixed(3):"—"}</td>
+                       <td className="text-right px-1 font-mono text-[#94A3B8]">{(m.avg_net_return_pct??0).toFixed(3)}%</td>
+                       <td className="text-right px-1 text-[#FF5C5C]">{k==="progressive_tp_sl"?m.n_tp_then_sl:"—"}</td>
+                     </tr>
+                   ))}
+                   {/* High-slippage sensitivity row */}
+                   {trdData.metrics?.progressive_tp_sl_high_slippage_sensitivity&&(
+                     <tr className="border-b border-white/[0.04] bg-[#FBBF24]/[0.04]">
+                       <td className="py-0.5 pr-2 font-mono text-[#FBBF24]">Progressive TP/SL (high-slip sens.)</td>
+                       <td className="text-right px-1 text-[#94A3B8]">{trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.n_executed_trades}</td>
+                       <td className="text-right px-1 text-[#00E676]">{trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.wins}</td>
+                       <td className="text-right px-1 text-[#FF5C5C]">{trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.losses}</td>
+                       <td className={"text-right px-1 font-mono "+(trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.total_net_pnl>=0?"text-[#00E676]":"text-[#FF5C5C]")}>{Math.round(trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.total_net_pnl).toLocaleString()}</td>
+                       <td className="text-right px-1 font-mono text-[#94A3B8]">{trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.profit_factor!=null?trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.profit_factor.toFixed(3):"—"}</td>
+                       <td className="text-right px-1 font-mono text-[#94A3B8]">{(trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.avg_net_return_pct??0).toFixed(3)}%</td>
+                       <td className="text-right px-1 text-[#FF5C5C]">{trdData.metrics.progressive_tp_sl_high_slippage_sensitivity.n_tp_then_sl}</td>
+                     </tr>
+                   )}
+                 </tbody>
+               </table>
+             </div>
+             {/* Exit reasons + target milestones (progressive only) */}
+             {trdData.metrics?.progressive_tp_sl&&(
+               <div className="grid grid-cols-2 gap-2 text-[8px]">
+                 <div className="rounded border border-white/[0.06] p-1.5">
+                   <div className="text-[#64748B] uppercase text-[7px] mb-0.5">Exit reasons (progressive)</div>
+                   <div className="font-mono text-[#94A3B8]">{Object.entries(trdData.metrics.progressive_tp_sl.exit_reason_counts).map(([k,v]:[string,any])=>`${k}=${v}`).join(" · ")}</div>
+                 </div>
+                 <div className="rounded border border-white/[0.06] p-1.5">
+                   <div className="text-[#64748B] uppercase text-[7px] mb-0.5">Target milestones (progressive)</div>
+                   <div className="font-mono text-[#94A3B8]">TP1={trdData.metrics.progressive_tp_sl.target_reached_counts.TP1} · TP2={trdData.metrics.progressive_tp_sl.target_reached_counts.TP2} · TP3={trdData.metrics.progressive_tp_sl.target_reached_counts.TP3}</div>
+                 </div>
+               </div>
+             )}
+             <div className="text-[8px] text-[#64748B]">
+               Negative forecasts not traded (long-only): {trdData.metrics?.fixed_horizon?.n_negative_forecasts_not_traded ?? "—"}. Portfolio-level metrics (ROI/Sharpe/Sortino/maxDD) UNAVAILABLE — no portfolio capital-allocation model. Net P&L based on realized exit prices + {trdData.cost_profile_primary?.id ?? "standard_psx"} costs. {trdData.slippage_discrepancy_note ?? ""}
+             </div>
+           </div>
+          )}
+          {trdData&&trdData.available===false&&(
+           <div className="mt-1 text-[#FBBF24] text-[9px]">{trdData.note||"Trading artifact not available."}</div>
+          )}
+         </details>
 
          {/* Limitations */}
          {Array.isArray(wfData.limitations)&&wfData.limitations.length>0&&(

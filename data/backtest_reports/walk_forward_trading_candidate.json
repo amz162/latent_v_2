@@ -1,0 +1,917 @@
+{
+  "task": "task59_walk_forward_trading",
+  "schema_version": "1.0",
+  "generated_at": "2026-10-28T21:36:55.422Z",
+  "source_run_id": "pilot25_step50_20261028",
+  "source_manifest_path": "data/backtest_reports/runs/pilot25_step50_20261028/manifest.json",
+  "source_data_fingerprint": "c071e0227985f90d485ac8a9d95203e065b402de8470c069d0a968fb2e6bc4c4",
+  "source_universe_fingerprint": "d8088bf891daf7b28bacf22936ca7824011435d5ded57b24b339db4c12da88a4",
+  "execution_data_fingerprint": "cc56bfbd25bab0279cc3b2553ca608b9b5b736c1b99274b2f1d7081ecb63923e",
+  "forward_return_verification": {
+    "verified": 200,
+    "mismatch": 0,
+    "maxAbsDiff": 0,
+    "tolerance": 0.000001
+  },
+  "ml_predictions_md5": "41442cd7ece9d137ec19310e2d771f55",
+  "universe_symbols": [
+    "ENGRO",
+    "HUBC",
+    "LUCK",
+    "SYS",
+    "MEBL",
+    "PSO",
+    "OGDC",
+    "PPL",
+    "WTL",
+    "KEL",
+    "TRG",
+    "UNITY",
+    "BOP",
+    "CNERGY",
+    "HASCOL",
+    "MLCF",
+    "BYCO",
+    "PAEL",
+    "PIBTL",
+    "LOTCHEM",
+    "PRL",
+    "TELE",
+    "ANL",
+    "HUMNL",
+    "FCCL"
+  ],
+  "selection_cutoff": "2023-04-13",
+  "horizons": [
+    5,
+    10,
+    21
+  ],
+  "model_names": [
+    "XGBoost",
+    "LightGBM",
+    "CatBoost",
+    "Random Forest",
+    "Ridge Regression"
+  ],
+  "val_end_idx": 200,
+  "final_test_sample_range": {
+    "start": 200,
+    "end": 399,
+    "count": 200
+  },
+  "signal_threshold": 0.01,
+  "signal_policy": "long-only BUY when predicted return > +1% threshold. Negative forecasts = HOLD (not traded). No short-selling (PSX short-sale execution not supported).",
+  "entry_convention": "next eligible trading session's OPEN price after the signal-generating close. No retrospective fill. No cherry-picking among candidate bars.",
+  "cost_profile_primary": {
+    "id": "standard_psx",
+    "label": "Standard PSX (commission 0.15%×2, slippage 0.15% round-trip, CGT 15% on gains)",
+    "commissionRate": 0.0015,
+    "slippageRate": 0.0015,
+    "cgtRate": 0.15,
+    "description": "Commission 0.15% per side (×2 for entry+exit = 0.30% round-trip). Slippage 0.15% applied ONCE per round-trip (not per fill). CGT 15% on positive gross gains (Pakistan Finance Act). Matches investment-simulator.ts + signal-stats/route.ts."
+  },
+  "cost_profile_sensitivity": {
+    "id": "high_slippage_psx",
+    "label": "High-slippage PSX (commission 0.15%×2, slippage 0.50% round-trip, CGT 15% on gains)",
+    "commissionRate": 0.0015,
+    "slippageRate": 0.005,
+    "cgtRate": 0.15,
+    "description": "Same as standard_psx but slippage 0.50% (3.33× higher). Matches backtest.ts. Used as a conservative-cost sensitivity result, NOT the primary."
+  },
+  "slippage_discrepancy_note": "Phase 2 audit found backtest.ts uses SLIPPAGE_RATE=0.005 while investment-simulator.ts + signal-stats use 0.0015. The primary profile (standard_psx, 0.0015) matches 2 of 3 simulators (majority documented convention). The high_slippage_psx sensitivity (0.005) matches backtest.ts. Selection is by documented convention, NOT by profitability.",
+  "atr_config": {
+    "period": 14,
+    "sl_distance": "1.5×ATR",
+    "tp1_distance": "1×ATR",
+    "tp2_distance": "2×ATR",
+    "tp3_distance": "3×ATR",
+    "anchor": "entry open price (next session open), using decision-time ATR"
+  },
+  "notional_per_trade": 100000,
+  "notional_note": "Fixed notional per trade (PKR 100,000). No portfolio compounding, leverage, or double-spending. Multiple same-date entries across stocks are allowed but each is sized at the fixed notional (NOT a portfolio-level capital allocation).",
+  "metrics": {
+    "fixed_horizon": {
+      "n_eligible_samples": 3000,
+      "n_executed_trades": 696,
+      "n_skipped_no_next_bar": 0,
+      "n_skipped_no_decision_bar": 0,
+      "n_negative_forecasts_not_traded": 888,
+      "exit_reason_counts": {
+        "HORIZON_EXIT": 696
+      },
+      "target_reached_counts": {
+        "TP1": 0,
+        "TP2": 0,
+        "TP3": 0
+      },
+      "n_tp_then_sl": 0,
+      "wins": 376,
+      "losses": 320,
+      "avg_gross_return_pct": 3.2528902211181507,
+      "avg_net_return_pct": 1.8184294678665027,
+      "total_gross_pnl": 2264011.593898233,
+      "total_costs": 998384.68426315,
+      "total_net_pnl": 1265626.9096350858,
+      "profit_factor": 1.517720375540191,
+      "per_stock": {
+        "KEL": {
+          "n_trades": 34,
+          "wins": 4,
+          "net_pnl": -293865.8768680569,
+          "avg_net_pct": -8.643114025531084
+        },
+        "LUCK": {
+          "n_trades": 42,
+          "wins": 26,
+          "net_pnl": 24155.43240608449,
+          "avg_net_pct": 0.5751293430020116
+        },
+        "MLCF": {
+          "n_trades": 34,
+          "wins": 17,
+          "net_pnl": 7395.754036203039,
+          "avg_net_pct": 0.21752217753538347
+        },
+        "PAEL": {
+          "n_trades": 32,
+          "wins": 25,
+          "net_pnl": 215532.80010562332,
+          "avg_net_pct": 6.735400003300729
+        },
+        "PIBTL": {
+          "n_trades": 36,
+          "wins": 26,
+          "net_pnl": 103720.62318702671,
+          "avg_net_pct": 2.881128421861853
+        },
+        "PPL": {
+          "n_trades": 29,
+          "wins": 17,
+          "net_pnl": 73871.59536572112,
+          "avg_net_pct": 2.5472963919214178
+        },
+        "PRL": {
+          "n_trades": 58,
+          "wins": 34,
+          "net_pnl": 740851.0723765091,
+          "avg_net_pct": 12.773294351319123
+        },
+        "PSO": {
+          "n_trades": 18,
+          "wins": 18,
+          "net_pnl": 287243.5883041317,
+          "avg_net_pct": 15.957977128007316
+        },
+        "SYS": {
+          "n_trades": 18,
+          "wins": 17,
+          "net_pnl": 65545.88617429693,
+          "avg_net_pct": 3.641438120794274
+        },
+        "TELE": {
+          "n_trades": 26,
+          "wins": 20,
+          "net_pnl": 154761.9950004389,
+          "avg_net_pct": 5.952384423093805
+        },
+        "TRG": {
+          "n_trades": 18,
+          "wins": 2,
+          "net_pnl": -85665.30318408519,
+          "avg_net_pct": -4.759183510226955
+        },
+        "UNITY": {
+          "n_trades": 31,
+          "wins": 18,
+          "net_pnl": -6719.850239619782,
+          "avg_net_pct": -0.21676936256838003
+        },
+        "WTL": {
+          "n_trades": 72,
+          "wins": 24,
+          "net_pnl": -253999.21192747273,
+          "avg_net_pct": -3.5277668323260105
+        },
+        "BOP": {
+          "n_trades": 59,
+          "wins": 41,
+          "net_pnl": 380110.5903927227,
+          "avg_net_pct": 6.4425523795376725
+        },
+        "CNERGY": {
+          "n_trades": 34,
+          "wins": 16,
+          "net_pnl": 192537.05239342392,
+          "avg_net_pct": 5.662854482159527
+        },
+        "FCCL": {
+          "n_trades": 8,
+          "wins": 4,
+          "net_pnl": 18319.047847506947,
+          "avg_net_pct": 2.2898809809383684
+        },
+        "HASCOL": {
+          "n_trades": 44,
+          "wins": 22,
+          "net_pnl": -83424.08058402363,
+          "avg_net_pct": -1.8960018314550826
+        },
+        "LOTCHEM": {
+          "n_trades": 33,
+          "wins": 13,
+          "net_pnl": -165403.3535365246,
+          "avg_net_pct": -5.01222283444014
+        },
+        "MEBL": {
+          "n_trades": 11,
+          "wins": 11,
+          "net_pnl": 72605.31338081426,
+          "avg_net_pct": 6.6004830346194785
+        },
+        "ANL": {
+          "n_trades": 17,
+          "wins": 7,
+          "net_pnl": -55981.66103946424,
+          "avg_net_pct": -3.2930388846743672
+        },
+        "HUBC": {
+          "n_trades": 16,
+          "wins": 6,
+          "net_pnl": -73151.34069358841,
+          "avg_net_pct": -4.571958793349276
+        },
+        "HUMNL": {
+          "n_trades": 10,
+          "wins": 1,
+          "net_pnl": -53181.07327321152,
+          "avg_net_pct": -5.318107327321152
+        },
+        "OGDC": {
+          "n_trades": 16,
+          "wins": 7,
+          "net_pnl": 367.9100106267847,
+          "avg_net_pct": 0.022994375664174043
+        }
+      },
+      "per_model_horizon": {
+        "XGBoost": {
+          "5d": {
+            "n_trades": 17,
+            "wins": 7,
+            "total_net_pnl": -22632.13792433654,
+            "avg_net_pct": -1.3313022308433258
+          },
+          "10d": {
+            "n_trades": 58,
+            "wins": 27,
+            "total_net_pnl": -100652.19308880376,
+            "avg_net_pct": -1.735382639462134
+          },
+          "21d": {
+            "n_trades": 77,
+            "wins": 43,
+            "total_net_pnl": 206248.12383262906,
+            "avg_net_pct": 2.6785470627614165
+          }
+        },
+        "LightGBM": {
+          "5d": {
+            "n_trades": 7,
+            "wins": 3,
+            "total_net_pnl": -8483.306714023944,
+            "avg_net_pct": -1.2119009591462777
+          },
+          "10d": {
+            "n_trades": 37,
+            "wins": 20,
+            "total_net_pnl": 67926.7115681982,
+            "avg_net_pct": 1.8358570694107619
+          },
+          "21d": {
+            "n_trades": 59,
+            "wins": 35,
+            "total_net_pnl": 304223.5884323953,
+            "avg_net_pct": 5.156332007328734
+          }
+        },
+        "CatBoost": {
+          "10d": {
+            "n_trades": 40,
+            "wins": 18,
+            "total_net_pnl": -44595.93277242956,
+            "avg_net_pct": -1.114898319310739
+          },
+          "21d": {
+            "n_trades": 73,
+            "wins": 42,
+            "total_net_pnl": 267825.08871865954,
+            "avg_net_pct": 3.668836831762459
+          },
+          "5d": {
+            "n_trades": 10,
+            "wins": 5,
+            "total_net_pnl": -876.4433268665507,
+            "avg_net_pct": -0.08764433268665507
+          }
+        },
+        "Random Forest": {
+          "10d": {
+            "n_trades": 57,
+            "wins": 29,
+            "total_net_pnl": 68018.82004743062,
+            "avg_net_pct": 1.1933126324110634
+          },
+          "21d": {
+            "n_trades": 59,
+            "wins": 38,
+            "total_net_pnl": 336606.46712055936,
+            "avg_net_pct": 5.705194357975583
+          },
+          "5d": {
+            "n_trades": 8,
+            "wins": 3,
+            "total_net_pnl": -5097.81263804948,
+            "avg_net_pct": -0.6372265797561849
+          }
+        },
+        "Ridge Regression": {
+          "21d": {
+            "n_trades": 112,
+            "wins": 66,
+            "total_net_pnl": 308722.62530787004,
+            "avg_net_pct": 2.756452011677411
+          },
+          "5d": {
+            "n_trades": 22,
+            "wins": 10,
+            "total_net_pnl": -22319.94674990976,
+            "avg_net_pct": -1.0145430340868071
+          },
+          "10d": {
+            "n_trades": 60,
+            "wins": 30,
+            "total_net_pnl": -89286.7421782399,
+            "avg_net_pct": -1.4881123696373317
+          }
+        }
+      }
+    },
+    "progressive_tp_sl": {
+      "n_eligible_samples": 3000,
+      "n_executed_trades": 696,
+      "n_skipped_no_next_bar": 0,
+      "n_skipped_no_decision_bar": 0,
+      "n_negative_forecasts_not_traded": 888,
+      "exit_reason_counts": {
+        "HORIZON_EXIT": 185,
+        "SL_AFTER_TP2": 23,
+        "TP3_HIT": 240,
+        "SL_HIT": 162,
+        "SL_AFTER_TP1": 86
+      },
+      "target_reached_counts": {
+        "TP1": 153,
+        "TP2": 70,
+        "TP3": 240
+      },
+      "n_tp_then_sl": 109,
+      "wins": 330,
+      "losses": 366,
+      "avg_gross_return_pct": 1.4574334963554405,
+      "avg_net_return_pct": 0.29483744324987987,
+      "total_gross_pnl": 1014373.7134633865,
+      "total_costs": 809166.852961467,
+      "total_net_pnl": 205206.86050191638,
+      "profit_factor": 1.0836118265237065,
+      "per_stock": {
+        "KEL": {
+          "n_trades": 34,
+          "wins": 4,
+          "net_pnl": -250931.94382586912,
+          "avg_net_pct": -7.380351288996151
+        },
+        "LUCK": {
+          "n_trades": 42,
+          "wins": 27,
+          "net_pnl": 80353.37557733964,
+          "avg_net_pct": 1.913175608984277
+        },
+        "MLCF": {
+          "n_trades": 34,
+          "wins": 8,
+          "net_pnl": -112197.55125048631,
+          "avg_net_pct": -3.2999279779554795
+        },
+        "PAEL": {
+          "n_trades": 32,
+          "wins": 30,
+          "net_pnl": 202050.92011182164,
+          "avg_net_pct": 6.314091253494427
+        },
+        "PIBTL": {
+          "n_trades": 36,
+          "wins": 21,
+          "net_pnl": 161314.80648509687,
+          "avg_net_pct": 4.480966846808246
+        },
+        "PPL": {
+          "n_trades": 29,
+          "wins": 17,
+          "net_pnl": 79871.32390524402,
+          "avg_net_pct": 2.754183582939449
+        },
+        "PRL": {
+          "n_trades": 58,
+          "wins": 31,
+          "net_pnl": 98990.25609721702,
+          "avg_net_pct": 1.7067285534002934
+        },
+        "PSO": {
+          "n_trades": 18,
+          "wins": 8,
+          "net_pnl": -1680.1231484005589,
+          "avg_net_pct": -0.09334017491114216
+        },
+        "SYS": {
+          "n_trades": 18,
+          "wins": 17,
+          "net_pnl": 126418.21727399994,
+          "avg_net_pct": 7.023234292999997
+        },
+        "TELE": {
+          "n_trades": 26,
+          "wins": 20,
+          "net_pnl": 179845.10429555507,
+          "avg_net_pct": 6.917119395982888
+        },
+        "TRG": {
+          "n_trades": 18,
+          "wins": 0,
+          "net_pnl": -138733.06043083002,
+          "avg_net_pct": -7.707392246157224
+        },
+        "UNITY": {
+          "n_trades": 31,
+          "wins": 17,
+          "net_pnl": 65439.798352877115,
+          "avg_net_pct": 2.1109612371895845
+        },
+        "WTL": {
+          "n_trades": 72,
+          "wins": 15,
+          "net_pnl": -301099.1507521384,
+          "avg_net_pct": -4.1819326493352555
+        },
+        "BOP": {
+          "n_trades": 59,
+          "wins": 39,
+          "net_pnl": 298596.04890800663,
+          "avg_net_pct": 5.060949981491638
+        },
+        "CNERGY": {
+          "n_trades": 34,
+          "wins": 15,
+          "net_pnl": 487.83779586841774,
+          "avg_net_pct": 0.01434817046671817
+        },
+        "FCCL": {
+          "n_trades": 8,
+          "wins": 4,
+          "net_pnl": 12209.709509247925,
+          "avg_net_pct": 1.5262136886559907
+        },
+        "HASCOL": {
+          "n_trades": 44,
+          "wins": 21,
+          "net_pnl": 36106.04916375223,
+          "avg_net_pct": 0.8205920264489143
+        },
+        "LOTCHEM": {
+          "n_trades": 33,
+          "wins": 8,
+          "net_pnl": -210500.6776499644,
+          "avg_net_pct": -6.378808413635285
+        },
+        "MEBL": {
+          "n_trades": 11,
+          "wins": 8,
+          "net_pnl": 15163.330190596891,
+          "avg_net_pct": 1.3784845627815356
+        },
+        "ANL": {
+          "n_trades": 17,
+          "wins": 6,
+          "net_pnl": -62904.95844831542,
+          "avg_net_pct": -3.7002916734303186
+        },
+        "HUBC": {
+          "n_trades": 16,
+          "wins": 6,
+          "net_pnl": -42587.07316495657,
+          "avg_net_pct": -2.6616920728097857
+        },
+        "HUMNL": {
+          "n_trades": 10,
+          "wins": 1,
+          "net_pnl": -43278.9933600179,
+          "avg_net_pct": -4.32789933600179
+        },
+        "OGDC": {
+          "n_trades": 16,
+          "wins": 7,
+          "net_pnl": 12273.614866273596,
+          "avg_net_pct": 0.7671009291420997
+        }
+      },
+      "per_model_horizon": {
+        "XGBoost": {
+          "5d": {
+            "n_trades": 17,
+            "wins": 7,
+            "total_net_pnl": -23763.771658625275,
+            "avg_net_pct": -1.3978689210956046
+          },
+          "10d": {
+            "n_trades": 58,
+            "wins": 26,
+            "total_net_pnl": 8142.80642844822,
+            "avg_net_pct": 0.14039321428359
+          },
+          "21d": {
+            "n_trades": 77,
+            "wins": 35,
+            "total_net_pnl": 7421.651094715001,
+            "avg_net_pct": 0.09638507915214287
+          }
+        },
+        "LightGBM": {
+          "5d": {
+            "n_trades": 7,
+            "wins": 3,
+            "total_net_pnl": -15009.922995959369,
+            "avg_net_pct": -2.1442747137084814
+          },
+          "10d": {
+            "n_trades": 37,
+            "wins": 19,
+            "total_net_pnl": 39805.47594284853,
+            "avg_net_pct": 1.0758236741310414
+          },
+          "21d": {
+            "n_trades": 59,
+            "wins": 30,
+            "total_net_pnl": 74596.32875633884,
+            "avg_net_pct": 1.2643445551921837
+          }
+        },
+        "CatBoost": {
+          "10d": {
+            "n_trades": 40,
+            "wins": 18,
+            "total_net_pnl": 9282.999499581314,
+            "avg_net_pct": 0.23207498748953284
+          },
+          "21d": {
+            "n_trades": 73,
+            "wins": 35,
+            "total_net_pnl": 28371.01168782162,
+            "avg_net_pct": 0.3886439957235839
+          },
+          "5d": {
+            "n_trades": 10,
+            "wins": 5,
+            "total_net_pnl": -10442.965756940277,
+            "avg_net_pct": -1.0442965756940277
+          }
+        },
+        "Random Forest": {
+          "10d": {
+            "n_trades": 57,
+            "wins": 28,
+            "total_net_pnl": 56645.302632367384,
+            "avg_net_pct": 0.9937772391643401
+          },
+          "21d": {
+            "n_trades": 59,
+            "wins": 33,
+            "total_net_pnl": 109173.78195455203,
+            "avg_net_pct": 1.8504030839754584
+          },
+          "5d": {
+            "n_trades": 8,
+            "wins": 3,
+            "total_net_pnl": -11624.428919984906,
+            "avg_net_pct": -1.4530536149981133
+          }
+        },
+        "Ridge Regression": {
+          "21d": {
+            "n_trades": 112,
+            "wins": 52,
+            "total_net_pnl": 13731.525930953701,
+            "avg_net_pct": 0.12260291009780089
+          },
+          "5d": {
+            "n_trades": 22,
+            "wins": 10,
+            "total_net_pnl": -17218.913232541046,
+            "avg_net_pct": -0.7826778742064113
+          },
+          "10d": {
+            "n_trades": 60,
+            "wins": 26,
+            "total_net_pnl": -63904.02086165805,
+            "avg_net_pct": -1.0650670143609675
+          }
+        }
+      }
+    },
+    "progressive_tp_sl_high_slippage_sensitivity": {
+      "n_eligible_samples": 3000,
+      "n_executed_trades": 696,
+      "n_skipped_no_next_bar": 0,
+      "n_skipped_no_decision_bar": 0,
+      "n_negative_forecasts_not_traded": 888,
+      "exit_reason_counts": {
+        "HORIZON_EXIT": 185,
+        "SL_AFTER_TP2": 23,
+        "TP3_HIT": 240,
+        "SL_HIT": 162,
+        "SL_AFTER_TP1": 86
+      },
+      "target_reached_counts": {
+        "TP1": 153,
+        "TP2": 70,
+        "TP3": 240
+      },
+      "n_tp_then_sl": 109,
+      "wins": 314,
+      "losses": 382,
+      "avg_gross_return_pct": 1.4574334963554405,
+      "avg_net_return_pct": -0.05516255675012022,
+      "total_gross_pnl": 1014373.7134633865,
+      "total_costs": 1052766.8529614662,
+      "total_net_pnl": -38393.13949808367,
+      "profit_factor": 0.9851461660127766,
+      "per_stock": {
+        "KEL": {
+          "n_trades": 34,
+          "wins": 4,
+          "net_pnl": -262831.9438258691,
+          "avg_net_pct": -7.730351288996151
+        },
+        "LUCK": {
+          "n_trades": 42,
+          "wins": 27,
+          "net_pnl": 65653.37557733964,
+          "avg_net_pct": 1.5631756089842772
+        },
+        "MLCF": {
+          "n_trades": 34,
+          "wins": 8,
+          "net_pnl": -124097.5512504863,
+          "avg_net_pct": -3.649927977955479
+        },
+        "PAEL": {
+          "n_trades": 32,
+          "wins": 27,
+          "net_pnl": 190850.92011182164,
+          "avg_net_pct": 5.964091253494427
+        },
+        "PIBTL": {
+          "n_trades": 36,
+          "wins": 21,
+          "net_pnl": 148714.80648509687,
+          "avg_net_pct": 4.1309668468082466
+        },
+        "PPL": {
+          "n_trades": 29,
+          "wins": 17,
+          "net_pnl": 69721.32390524402,
+          "avg_net_pct": 2.404183582939449
+        },
+        "PRL": {
+          "n_trades": 58,
+          "wins": 31,
+          "net_pnl": 78690.25609721703,
+          "avg_net_pct": 1.3567285534002935
+        },
+        "PSO": {
+          "n_trades": 18,
+          "wins": 8,
+          "net_pnl": -7980.12314840056,
+          "avg_net_pct": -0.4433401749111422
+        },
+        "SYS": {
+          "n_trades": 18,
+          "wins": 17,
+          "net_pnl": 120118.21727399994,
+          "avg_net_pct": 6.673234292999997
+        },
+        "TELE": {
+          "n_trades": 26,
+          "wins": 20,
+          "net_pnl": 170745.1042955551,
+          "avg_net_pct": 6.567119395982888
+        },
+        "TRG": {
+          "n_trades": 18,
+          "wins": 0,
+          "net_pnl": -145033.06043083002,
+          "avg_net_pct": -8.057392246157223
+        },
+        "UNITY": {
+          "n_trades": 31,
+          "wins": 16,
+          "net_pnl": 54589.798352877115,
+          "avg_net_pct": 1.7609612371895844
+        },
+        "WTL": {
+          "n_trades": 72,
+          "wins": 9,
+          "net_pnl": -326299.15075213835,
+          "avg_net_pct": -4.531932649335254
+        },
+        "BOP": {
+          "n_trades": 59,
+          "wins": 39,
+          "net_pnl": 277946.04890800663,
+          "avg_net_pct": 4.710949981491638
+        },
+        "CNERGY": {
+          "n_trades": 34,
+          "wins": 15,
+          "net_pnl": -11412.162204131588,
+          "avg_net_pct": -0.335651829533282
+        },
+        "FCCL": {
+          "n_trades": 8,
+          "wins": 4,
+          "net_pnl": 9409.709509247925,
+          "avg_net_pct": 1.1762136886559906
+        },
+        "HASCOL": {
+          "n_trades": 44,
+          "wins": 21,
+          "net_pnl": 20706.049163752214,
+          "avg_net_pct": 0.47059202644891396
+        },
+        "LOTCHEM": {
+          "n_trades": 33,
+          "wins": 3,
+          "net_pnl": -222050.6776499644,
+          "avg_net_pct": -6.728808413635284
+        },
+        "MEBL": {
+          "n_trades": 11,
+          "wins": 8,
+          "net_pnl": 11313.330190596891,
+          "avg_net_pct": 1.0284845627815355
+        },
+        "ANL": {
+          "n_trades": 17,
+          "wins": 6,
+          "net_pnl": -68854.95844831543,
+          "avg_net_pct": -4.050291673430319
+        },
+        "HUBC": {
+          "n_trades": 16,
+          "wins": 5,
+          "net_pnl": -48187.07316495657,
+          "avg_net_pct": -3.011692072809786
+        },
+        "HUMNL": {
+          "n_trades": 10,
+          "wins": 1,
+          "net_pnl": -46778.9933600179,
+          "avg_net_pct": -4.67789933600179
+        },
+        "OGDC": {
+          "n_trades": 16,
+          "wins": 7,
+          "net_pnl": 6673.614866273585,
+          "avg_net_pct": 0.41710092914209906
+        }
+      },
+      "per_model_horizon": {
+        "XGBoost": {
+          "5d": {
+            "n_trades": 17,
+            "wins": 7,
+            "total_net_pnl": -29713.771658625275,
+            "avg_net_pct": -1.7478689210956042
+          },
+          "10d": {
+            "n_trades": 58,
+            "wins": 23,
+            "total_net_pnl": -12157.193571551812,
+            "avg_net_pct": -0.20960678571641053
+          },
+          "21d": {
+            "n_trades": 77,
+            "wins": 35,
+            "total_net_pnl": -19528.34890528498,
+            "avg_net_pct": -0.25361492084785686
+          }
+        },
+        "LightGBM": {
+          "5d": {
+            "n_trades": 7,
+            "wins": 3,
+            "total_net_pnl": -17459.92299595937,
+            "avg_net_pct": -2.4942747137084815
+          },
+          "10d": {
+            "n_trades": 37,
+            "wins": 17,
+            "total_net_pnl": 26855.475942848516,
+            "avg_net_pct": 0.7258236741310409
+          },
+          "21d": {
+            "n_trades": 59,
+            "wins": 30,
+            "total_net_pnl": 53946.328756338844,
+            "avg_net_pct": 0.9143445551921838
+          }
+        },
+        "CatBoost": {
+          "10d": {
+            "n_trades": 40,
+            "wins": 16,
+            "total_net_pnl": -4717.000500418671,
+            "avg_net_pct": -0.11792501251046679
+          },
+          "21d": {
+            "n_trades": 73,
+            "wins": 35,
+            "total_net_pnl": 2821.011687821677,
+            "avg_net_pct": 0.03864399572358461
+          },
+          "5d": {
+            "n_trades": 10,
+            "wins": 5,
+            "total_net_pnl": -13942.965756940277,
+            "avg_net_pct": -1.3942965756940278
+          }
+        },
+        "Random Forest": {
+          "10d": {
+            "n_trades": 57,
+            "wins": 25,
+            "total_net_pnl": 36695.3026323674,
+            "avg_net_pct": 0.6437772391643403
+          },
+          "21d": {
+            "n_trades": 59,
+            "wins": 33,
+            "total_net_pnl": 88523.78195455205,
+            "avg_net_pct": 1.5004030839754583
+          },
+          "5d": {
+            "n_trades": 8,
+            "wins": 3,
+            "total_net_pnl": -14424.428919984904,
+            "avg_net_pct": -1.8030536149981131
+          }
+        },
+        "Ridge Regression": {
+          "21d": {
+            "n_trades": 112,
+            "wins": 52,
+            "total_net_pnl": -25468.474069046315,
+            "avg_net_pct": -0.22739708990219926
+          },
+          "5d": {
+            "n_trades": 22,
+            "wins": 8,
+            "total_net_pnl": -24918.913232541046,
+            "avg_net_pct": -1.1326778742064112
+          },
+          "10d": {
+            "n_trades": 60,
+            "wins": 22,
+            "total_net_pnl": -84904.02086165802,
+            "avg_net_pct": -1.415067014360967
+          }
+        }
+      }
+    }
+  },
+  "unsupported_metrics": {
+    "portfolio_roi": "unavailable — no portfolio-level capital allocation / compounding / cash-availability model implemented",
+    "sharpe": "unavailable — no portfolio-equity time series (would require chronological capital allocation)",
+    "sortino": "unavailable — same as Sharpe",
+    "max_drawdown": "unavailable — no portfolio-equity curve"
+  },
+  "limitations": [
+    "Long-only strategy. Negative forecasts = HOLD (not traded). n_negative_forecasts_not_traded reports the count.",
+    "Fixed notional per trade (PKR 100,000). No portfolio-level capital allocation, compounding, leverage, or cash-availability model. Multiple same-date entries are NOT portfolio-managed.",
+    "Portfolio-level metrics (ROI, Sharpe, Sortino, max drawdown) are UNAVAILABLE — would require a chronological portfolio-equity curve with capital allocation rules. Trade-level net P&L is reported instead.",
+    "Signal threshold (+1%) is FIXED and was NOT tuned on final-test performance. ATR/SL/TP distances use the documented fallback convention (1.5/1/2/3 × ATR) — NOT tuned on final-test.",
+    "The standard_psx cost profile (slippage 0.0015) is the primary. The high_slippage_psx sensitivity (0.005) is reported separately. Selection by documented convention (majority of simulators), NOT by profitability.",
+    "Same-stock holding windows do NOT overlap (sample_step=50 > max horizon=21). Cross-stock same-date entries are allowed but treated as independent fixed-notional trades (no portfolio management).",
+    "This is a GENUINE out-of-sample ML trading simulation using the stored pilot25 predictions. It is DISTINCT from: (a) the forecast-quality evaluation (walk_forward_latest.json), (b) the signal-stats current-signal replay, (c) the backtest.ts technical-rule strategy. Do not conflate.",
+    "The execution-data fingerprint verifies the OHLCV bars haven't changed since the pilot25 run. The forward-return verification reconstructs actual_5d/10d/21d from bars + compares to stored values (tolerance 1e-6)."
+  ]
+}
