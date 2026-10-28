@@ -2768,3 +2768,86 @@ Remaining limitations:
 Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9d137ec19310e2d771f55 before and after all work.
 Confirmation that the pilot25 report (walk_forward_latest.json) was preserved: md5 544192bd40e32caf093e07e3d1f1cece before and after.
 Confirmation that no GitHub push occurred: 1 local autosave commit ahead of origin (NOT pushed).
+
+---
+Task ID: 57 (COMPLETE)
+Agent: main (interactive session 2026-10-28)
+Task: Implement stateful, candle-by-candle progressive TP tracking in the investment simulator. Preserve the highest TP level reached throughout the trade (bestTargetReached), separate target attainment from actual realized ROI, fix the "tp3 hit and it still count my loss" bug, do NOT cherry-pick entry bars, do NOT discard unresolved trades. No GitHub push. ml_predictions_multi.json + walk-forward artifacts must stay unchanged.
+
+Intended target-progression behavior (implemented):
+- Start checking from the FIRST eligible bar after a DETERMINISTIC entry (the single nearest bar to the signal timestamp — NO cherry-picking among K candidate bars based on which produces a TP/SL hit).
+- Check EVERY subsequent bar in chronological order:
+  * Check the active SL FIRST. If SL is touched on a bar, exit at the realistic stop-fill price (gap-aware: if the bar opens beyond the SL, fill at the gap-open price). SL takes PRIORITY over any new TP on the SAME bar (do not award a new TP from a bar that already closed the trade at SL).
+  * If SL is not touched, check TP3 > TP2 > TP1 (descending — highest first). Reaching TP3 closes the trade (TP3 is the final target). Reaching TP1 or TP2 UPGRADES bestTargetReached but does NOT close — continue scanning later bars.
+- Preserve bestTargetReached across subsequent bars (a TP1-then-TP2-then-SL sequence records bestTargetReached=TP2, exitReason=SL_AFTER_TP2, exitPrice=sl — NOT TP2_HIT).
+- Distinguish: entry timestamp + price, highest TP reached, timestamp each TP was first reached (tp1HitIdx/tp2HitIdx/tp3HitIdx), final exit reason, final exit timestamp + execution price, realized gross P&L, costs, realized net P&L + ROI, unresolved flag, nBarsExamined.
+- The active stop is FIXED = sl (no trailing stop invented — Phase 3. Future stop-adjustment can be implemented as an explicit configurable policy later).
+
+Changes made:
+1. src/lib/latent/investment-simulator.ts:
+   - SimTradeRow interface extended: added bestTargetReached ("TP3"|"TP2"|"TP1"|"—"), tp1HitIdx/tp2HitIdx/tp3HitIdx, activeStop, grossPnl, unresolved, nBarsExamined. Changed `hit` semantics from "priority exit (TP3>TP2>TP1>SL)" to "actual exit type (TP3|SL|—)". Changed `exitReason` to the chronological values: "TP3_HIT"|"SL_HIT"|"SL_AFTER_TP1"|"SL_AFTER_TP2"|"TIME_UP"|"SIP_DEPOSIT".
+   - InvestmentSimResult extended: added unresolvedCount + bestTargetAttainmentRate.
+   - simulateFromIdx REWRITTEN (and EXPORTED for the regression script):
+     * Chronological candle-by-candle loop (no more "find first index of each TP/SL then pick by priority").
+     * SL-first same-bar rule (SL takes priority over a new TP on the same bar).
+     * TP3 closes the trade (final target); TP1/TP2 upgrade bestTargetReached and CONTINUE scanning.
+     * Gap-aware stop-fill (bar.open beyond SL → fill at gap-open; else fill at SL).
+     * TIME_UP for unresolved trades (exit at last close, bestTargetReached preserved) — NO null return for "nothing hit" (unresolved trades are recorded, not discarded).
+     * Returns bestTargetReached, tp1HitIdx/tp2HitIdx/tp3HitIdx, activeStop, nBarsExamined, unresolved.
+   - runInvestmentSimulation caller updated:
+     * DETERMINISTIC entry: uses findEntryIdx (SINGLE nearest bar) instead of findEntryIdxList (K=5 candidate cherry-picking). No more "try 5 bars per signal, pick the one that produces a TP/SL hit".
+     * ALWAYS records the trade (does NOT skip when simulateFromIdx returns a result — unresolved/TIME_UP trades are kept, not discarded).
+     * isWin = netPnl > 0 (was: hit is TP3/TP2/TP1 — the "tp3 hit and it still count my loss" bug). A trade that touched TP2 then exited at SL now correctly shows as a LOSS.
+     * Realized grossPnl uses the ACTUAL exit price (sl / tp3 / last close), NOT the best-target price.
+     * Computes + returns unresolvedCount + bestTargetAttainmentRate.
+   - Bar interface exported (for the regression script).
+   - SIP row objects updated with the new fields (defaults: bestTargetReached="—", tp*HitIdx=-1, grossPnl=0, unresolved=false, nBarsExamined=0).
+
+2. src/components/latent/Tracker.tsx:
+   - SimRow interface extended to mirror the new SimTradeRow fields (bestTargetReached, activeStop, grossPnl, unresolved, nBarsExamined).
+   - SimResponse interface extended (unresolvedCount, bestTargetAttainmentRate).
+   - Trade row badge: now displays exitReason (color-coded: SL_HIT/SL_AFTER_TP1/SL_AFTER_TP2 = red, TP3_HIT = green, TIME_UP = amber) instead of the old `hit` field. Added a small "best: TP2" sub-line showing bestTargetReached when a TP was reached. Tooltip shows full state (exit, best target, bars scanned, unresolved flag).
+
+3. scripts/simulator_regression_check.ts (NEW — Task 57 Phase 6):
+   - Standalone deterministic verification script (NOT a jest/vitest test file — respects the environment restriction on adding test files). Imports simulateFromIdx directly + constructs synthetic OHLCV bars.
+   - 51 assertions across 13 test cases covering: TP1→TP2→SL (preserve TP2), TP1→SL (preserve TP1), TP1→TP2→TP3 (TP3 closes), SL+TP2 same bar (SL priority), TP2-then-SL, multiple TPs in one bar (TP3), SELL equivalents, SELL TP3, no-TP/SL (TIME_UP unresolved, not discarded), TP1-then-time-up (preserve TP1), gap-beyond-SL (gap-open fill for BUY + SELL), realized P&L uses actual exit (not best-target), active stop fixed (no trailing).
+
+Actual execution semantics (documented):
+- Entry: the SINGLE bar nearest to the signal's target timestamp within [startMs, endMs]. Deterministic per (signal, targetMs). NOT cherry-picked by TP/SL result.
+- Exit: chronological candle-by-candle. On each bar: SL checked first (gap-aware fill). If SL not touched, TP3 checked (closes if reached), then TP2 (upgrade + continue), then TP1 (upgrade + continue). At window end without SL/TP3: TIME_UP at last close.
+- Realized P&L: grossPnlPct = (exitPrice − entryPrice)/entryPrice × 100 for BUY (inverted for SELL), using the ACTUAL exitPrice. Commission 0.15%×2, slippage 0.15%, CGT 15% on gains. netPnl = grossPnl − costs.
+- isWin: netPnl > 0 (NOT based on which TP was touched). A TP2-then-SL trade is a LOSS (negative realized P&L) even though bestTargetReached=TP2.
+- bestTargetReached: the highest TP touched during the trade (preserved even if the trade later exits at SL or times up). This is a TARGET-ATTAINMENT metric, NOT a realized-ROI metric.
+- bestTargetAttainmentRate: fraction of trades where bestTargetReached ≥ TP1 (a separate metric from the win rate).
+- unresolved: true if no SL/TP3 exit by window end (TIME_UP). These trades are recorded (exitPrice = last close, P&L = mark-to-market), NOT discarded.
+- No partial-exit allocation exists (the model is one trade = one entry = one exit, full position). Per Phase 2: "If the existing implementation has no partial-exit allocation or profit-locking stop policy, do not invent arbitrary percentages. Keep target attainment separate from actual ROI and document the limitation." — DOCUMENTED: target attainment (bestTargetReached) is kept separate from realized ROI; no arbitrary partial-exit percentages were invented. A future profit-locking/partial-exit policy must be explicit + configurable + evaluated as an actual execution strategy.
+
+Verification results (Phase 6 + 8):
+1. bun scripts/simulator_regression_check.ts → 51/51 PASSED (all deterministic OHLCV sequences behave correctly).
+2. bun run lint → clean (no errors).
+3. python3 scripts/ml_integrity.py → ALL 11 assertions PASSED.
+4. ml_predictions_multi.json UNCHANGED: md5 41442cd7ece9d137ec19310e2d771f55 (before and after).
+5. walk_forward_latest.json UNCHANGED: md5 544192bd40e32caf093e07e3d1f1cece (Task 55 pilot25 report preserved).
+6. pilot25_robustness.json UNCHANGED: md5 2ca441fcd5627b688975a315daebf139 (Task 56 robustness artifact preserved).
+7. Dev server up: GET / → HTTP 200. Page renders (Agent Browser confirmed: title + no errors).
+8. investment-simulator API route exists + responds (GET method; the route passes through the new fields via ...result spread).
+9. No GitHub push occurred: 2 local autosave commits ahead of origin (NOT pushed).
+
+Test commands:
+- bun scripts/simulator_regression_check.ts  (51/51 PASSED)
+- bun run lint  (clean)
+- python3 scripts/ml_integrity.py  (11/11 PASSED)
+- Agent Browser: open http://127.0.0.1:3000/ → title "Latent.pk — AI-Driven Investment Intelligence for PSX", no console errors.
+
+Remaining limitations:
+- No partial-exit allocation or profit-locking stop policy exists. The model is one trade = one entry = one exit (full position). A trade that touched TP2 then exited at SL realizes the SL-exit P&L (negative), NOT a fraction of the TP2 gain. Target attainment (bestTargetReached) is kept separate from realized ROI per Phase 2. A future profit-locking strategy (partial exits at TP milestones, or moving the active SL after a target is reached) must be explicit + configurable + evaluated as an actual execution strategy — NOT assumed implicitly.
+- The active stop is FIXED = sl throughout the trade (no trailing stop invented — Phase 3). A future trailing-stop or break-even-stop policy can be implemented as an explicit configurable strategy.
+- Only the investment simulator (src/lib/latent/investment-simulator.ts) was refactored. Two SEPARATE TP/SL implementations were NOT changed in this task: src/app/api/backtest/signal-stats/route.ts (replaySignal) and src/lib/latent/backtest.ts (BacktestTrade). These have their own (older priority-based) logic and would need separate refactoring if the same progressive-TP semantics are desired there. They are noted but out of scope for Task 57.
+- The ensembles API route (src/app/api/backtest/ensembles/route.ts) already uses isWin: t.netPnlPkr > 0 (correct — based on P&L, not hit). Its exitReason values remain the older "TP3"/"TP2"/"TP1"/"SL" set (it's a separate implementation); the AiModelSignals.tsx ensembles-table consumer still color-codes those correctly.
+- Realized P&L uses the actual exit price (sl / tp3 / last close). For TIME_UP trades, the exit price is the last-bar close (mark-to-market) — this is an unrealized-become-realized proxy at window end, NOT a trade-execution exit. The unresolved flag distinguishes these.
+- The regression checks verify simulateFromIdx (the core trade logic) with synthetic bars. They do NOT verify the full runInvestmentSimulation flow (which requires DB OHLCV + signal selection) — that flow's changes (deterministic entry, always-record, isWin=netPnl>0) are type-checked via lint but not runtime-tested with real DB data in this task.
+
+Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9d137ec19310e2d771f55 before and after all work.
+Confirmation that the walk-forward artifacts (walk_forward_latest.json, walk_forward_previous.json, walk_forward_candidate.json, pilot25_robustness.json, the runs/ directory) were preserved unchanged.
+Confirmation that no GitHub push occurred: 2 local autosave commits ahead of origin (NOT pushed).
+Confirmation that no model training or pilot25 evaluation was rerun.

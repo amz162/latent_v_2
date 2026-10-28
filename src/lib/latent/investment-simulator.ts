@@ -73,18 +73,26 @@ export interface SimTradeRow {
   entryPrice: number;
   exitDate: number; // epoch ms
   exitPrice: number;
-  exitReason: string; // "TP3_HIT" | "TP2_HIT" | "TP1_HIT" | "SL_HIT" | "TIME_UP" | "SIP_DEPOSIT"
-  hit: string; // "TP3" | "TP2" | "TP1" | "SL" | "—"
+  exitReason: string; // "TP3_HIT" | "SL_HIT" | "SL_AFTER_TP1" | "SL_AFTER_TP2" | "TIME_UP" | "SIP_DEPOSIT"
+  hit: string; // EXIT type: "TP3" | "SL" | "—" (reflects actual exit, NOT highest TP)
+  bestTargetReached: string; // HIGHEST TP touched during the trade (preserved even if later SL exits): "TP3" | "TP2" | "TP1" | "—"
+  tp1HitIdx: number; // bar index where TP1 was first reached, or -1
+  tp2HitIdx: number; // bar index where TP2 was first reached, or -1
+  tp3HitIdx: number; // bar index where TP3 was first reached, or -1
   sl: number;
   tp1: number;
   tp2: number;
   tp3: number;
+  activeStop: number; // the currently-active stop level (fixed = sl; no trailing stop invented)
   entryAmount: number;
-  pnl: number;
+  pnl: number; // realized NET P&L (after costs)
+  grossPnl: number; // realized GROSS P&L (before costs)
   totalGain: number; // cumulative net P&L up to and including this row
   exitAmount: number;
-  returnPct: number;
-  isWin: boolean;
+  returnPct: number; // realized net return %
+  isWin: boolean; // based on netPnl > 0 (NOT on hit — fixes "tp3 hit and it still count my loss")
+  unresolved: boolean; // true if no SL/TP3 exit by window end (TIME_UP)
+  nBarsExamined: number; // number of bars scanned after entry
   confidence: number;
 }
 
@@ -99,6 +107,8 @@ export interface InvestmentSimResult {
   wins: number;
   losses: number;
   tradeCount: number;
+  unresolvedCount: number; // trades that did not hit SL or TP3 by window end (TIME_UP)
+  bestTargetAttainmentRate: number; // fraction of trades where bestTargetReached >= TP1
   rows: SimTradeRow[];
   startDate: string; // ISO
   endDate: string; // ISO
@@ -120,7 +130,7 @@ export interface InvestmentSimResult {
   };
 }
 
-interface Bar {
+export interface Bar {
   date: string; // ISO date (OhlcvBar.date)
   open: number;
   high: number;
@@ -203,11 +213,24 @@ function findEntryIdxList(bars: Bar[], targetMs: number, searchStartMs: number, 
   return cand.slice(0, k).map((c) => c.idx);
 }
 
-// Run ONE trade for a symbol starting at a chosen entry bar (entryIdx), held
-// until SL or a TP is reached (TP3 > TP2 > TP1 > SL priority) within
-// [entryIdx, windowEndMs]. Returns null if NOTHING is hit by windowEnd (the
-// caller skips it so the HIT column is never "—").
-function simulateFromIdx(
+// Run ONE trade for a symbol starting at a DETERMINISTIC entry bar (entryIdx),
+// scanned candle-by-candle in chronological order. Implements Task 57's
+// progressive TP tracking:
+//   - Check the active SL FIRST on every bar. If SL is touched on a bar, exit
+//     at the realistic stop-fill price (gap-aware). SL takes priority over any
+//     new TP on the SAME bar (do not award a new TP from a bar that already
+//     closed the trade at SL).
+//   - If SL is NOT touched, check TP3 > TP2 > TP1 (descending — highest first).
+//     Reaching TP3 closes the trade (TP3 is the final target). Reaching TP1 or
+//     TP2 UPGRADES bestTargetReached but does NOT close — continue scanning.
+//   - bestTargetReached is preserved even if a later bar exits at SL.
+//   - If no SL and no TP3 by window end: TIME_UP (unresolved), exit at last
+//     close, bestTargetReached preserved.
+//   - The active stop is FIXED = sl (no trailing stop invented — Phase 3).
+// Realized P&L uses the ACTUAL exit price (sl / tp3 / last close), NOT the
+// best-target price. This separates target attainment from realized ROI.
+// EXPORTED for scripts/simulator_regression_check.ts (Task 57 Phase 6).
+export function simulateFromIdx(
   sig: SimSignal,
   bars: Bar[],
   entryIdx: number,
@@ -218,11 +241,18 @@ function simulateFromIdx(
   exitPrice: number;
   exitReason: SimTradeRow["exitReason"];
   hit: string;
+  bestTargetReached: string;
+  tp1HitIdx: number;
+  tp2HitIdx: number;
+  tp3HitIdx: number;
   sl: number;
   tp1: number;
   tp2: number;
   tp3: number;
+  activeStop: number;
   direction: "BUY" | "SELL";
+  nBarsExamined: number;
+  unresolved: boolean;
 } | null {
   if (entryIdx < 0 || bars.length < 5) return null;
   const direction = sig.signal === "SELL" ? "SELL" : "BUY";
@@ -241,39 +271,107 @@ function simulateFromIdx(
   const tp1 = direction === "BUY" ? entryPrice + tp1Dist : entryPrice - tp1Dist;
   const tp2 = direction === "BUY" ? entryPrice + tp2Dist : entryPrice - tp2Dist;
   const tp3 = direction === "BUY" ? entryPrice + tp3Dist : entryPrice - tp3Dist;
+  const activeStop = sl; // FIXED stop — no trailing stop invented (Phase 3)
 
-  // TP rule: scan forward through the FULL remaining window. Each trade holds
-  // until SL or a TP is reached; if NOTHING is hit by windowEnd the trade is
-  // skipped (return null) so the HIT column is never "—".
+  // Determine the last bar index within the window (inclusive).
   let end = Math.min(bars.length - 1, entryIdx);
   for (let i = bars.length - 1; i > entryIdx; i--) {
     if (Date.parse(bars[i].date) <= windowEndMs) { end = i; break; }
   }
-  let tp3Idx = -1, tp2Idx = -1, tp1Idx = -1, slIdx = -1;
-  for (let i = entryIdx + 1; i <= end; i++) {
-    const b = bars[i];
+
+  // Progressive state
+  let bestTargetReached = 0; // 0=none, 1=TP1, 2=TP2, 3=TP3
+  let tp1HitIdx = -1, tp2HitIdx = -1, tp3HitIdx = -1;
+  let exitIdx = -1, exitPrice = 0, exitReason: SimTradeRow["exitReason"] = "TIME_UP";
+  let hit = "—";
+  let unresolved = false;
+  let nBarsExamined = 0;
+
+  // Gap-aware stop-fill: if the bar opens beyond the SL (gap), fill at the open
+  // (realistic — a gap beyond SL fills at the gap price, not the SL level).
+  const stopFillFor = (bar: Bar): number => {
     if (direction === "BUY") {
-      if (tp3Idx < 0 && b.high >= tp3) tp3Idx = i;
-      if (tp2Idx < 0 && b.high >= tp2) tp2Idx = i;
-      if (tp1Idx < 0 && b.high >= tp1) tp1Idx = i;
-      if (slIdx < 0 && b.low <= sl) slIdx = i;
+      // SL is below entry. Gap-down beyond SL → fill at open; else fill at SL.
+      return bar.open < sl ? bar.open : sl;
     } else {
-      if (tp3Idx < 0 && b.low <= tp3) tp3Idx = i;
-      if (tp2Idx < 0 && b.low <= tp2) tp2Idx = i;
-      if (tp1Idx < 0 && b.low <= tp1) tp1Idx = i;
-      if (slIdx < 0 && b.high >= sl) slIdx = i;
+      // SL is above entry (short). Gap-up beyond SL → fill at open; else at SL.
+      return bar.open > sl ? bar.open : sl;
+    }
+  };
+
+  for (let i = entryIdx + 1; i <= end; i++) {
+    nBarsExamined++;
+    const b = bars[i];
+    const slTouched =
+      direction === "BUY" ? b.low <= sl : b.high >= sl;
+
+    if (slTouched) {
+      // SL FIRST: exit at the realistic stop-fill. Do NOT award a new TP from
+      // this bar even if the bar also touched a new TP level (same-bar rule).
+      exitIdx = i;
+      exitPrice = stopFillFor(b);
+      hit = "SL";
+      exitReason = bestTargetReached === 0 ? "SL_HIT"
+        : bestTargetReached === 1 ? "SL_AFTER_TP1"
+        : "SL_AFTER_TP2";
+      break;
+    }
+
+    // SL not touched — check TP3 > TP2 > TP1 (descending: highest first).
+    // For BUY: bar.high touches targets; for SELL: bar.low.
+    const targetTouch = direction === "BUY" ? b.high : b.low;
+    const tp3Touched = direction === "BUY" ? b.high >= tp3 : b.low <= tp3;
+    const tp2Touched = direction === "BUY" ? b.high >= tp2 : b.low <= tp2;
+    const tp1Touched = direction === "BUY" ? b.high >= tp1 : b.low <= tp1;
+
+    // TP3 is FINAL — if touched (and not already reached), close the trade.
+    if (tp3Touched && bestTargetReached < 3) {
+      bestTargetReached = 3;
+      tp3HitIdx = i;
+      exitIdx = i;
+      exitPrice = tp3;
+      hit = "TP3";
+      exitReason = "TP3_HIT";
+      break;
+    }
+    // TP2 — upgrade bestTargetReached (do NOT close; continue scanning).
+    if (tp2Touched && bestTargetReached < 2) {
+      bestTargetReached = 2;
+      tp2HitIdx = i;
+      // continue to next bar — TP2 is not a terminal exit
+      continue;
+    }
+    // TP1 — upgrade bestTargetReached (do NOT close; continue scanning).
+    if (tp1Touched && bestTargetReached < 1) {
+      bestTargetReached = 1;
+      tp1HitIdx = i;
+      // continue to next bar
+      continue;
     }
   }
-  let exitIdx: number, exitPrice: number;
-  let exitReason: SimTradeRow["exitReason"];
-  let hit: string;
-  if (tp3Idx >= 0) { exitIdx = tp3Idx; exitPrice = tp3; exitReason = "TP3_HIT"; hit = "TP3"; }
-  else if (tp2Idx >= 0) { exitIdx = tp2Idx; exitPrice = tp2; exitReason = "TP2_HIT"; hit = "TP2"; }
-  else if (tp1Idx >= 0) { exitIdx = tp1Idx; exitPrice = tp1; exitReason = "TP1_HIT"; hit = "TP1"; }
-  else if (slIdx >= 0) { exitIdx = slIdx; exitPrice = sl; exitReason = "SL_HIT"; hit = "SL"; }
-  else return null; // nothing hit within the window — skip (HIT must be TP/SL only per user spec; no TIME entries)
 
-  return { exitIdx, entryPrice, exitPrice, exitReason, hit, sl, tp1, tp2, tp3, direction };
+  // If we exited the loop without an SL/TP3 exit → TIME_UP (unresolved).
+  if (exitIdx < 0) {
+    exitIdx = end;
+    exitPrice = bars[end].close; // mark-to-market at last bar in window
+    exitReason = "TIME_UP";
+    hit = "—";
+    unresolved = true;
+  }
+
+  const bestTargetStr =
+    bestTargetReached === 3 ? "TP3"
+    : bestTargetReached === 2 ? "TP2"
+    : bestTargetReached === 1 ? "TP1"
+    : "—";
+
+  return {
+    exitIdx, entryPrice, exitPrice, exitReason, hit,
+    bestTargetReached: bestTargetStr,
+    tp1HitIdx, tp2HitIdx, tp3HitIdx,
+    sl, tp1, tp2, tp3, activeStop,
+    direction, nBarsExamined, unresolved,
+  };
 }
 
 export interface InvestmentSimInput {
@@ -415,12 +513,13 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     if (numSignalsAvailable === 0) break;
     const targetMs = targets[i];
 
-    // Scan ALL matching signals round-robin; for each, find the bar closest to
-    // targetMs within [startMs, endMs], then simulate from that bar. Pick the
-    // candidate whose entry bar is closest to targetMs. The triedThisSlot set
-    // prevents re-picking the SAME symbol within one slot, but the same symbol
-    // CAN be picked again in a later slot (and a DIFFERENT symbol may be picked
-    // for the SAME day's slot — "multiple trade on multiple stock on same day").
+    // Task 57: DETERMINISTIC entry — use the SINGLE nearest bar to targetMs
+    // (findEntryIdx, NOT findEntryIdxList). Do NOT cherry-pick among multiple
+    // candidate bars based on which one produces a TP/SL hit. Round-robin
+    // through shuffled signals and pick the one whose nearest bar is closest
+    // to targetMs (this is timestamp-based selection, NOT result-based).
+    // The trade is ALWAYS recorded — unresolved (TIME_UP) trades are NOT
+    // discarded (Phase 4: "Unresolved positions are not silently discarded").
     let pickedSig: SimSignal | null = null;
     let pickedBars: Bar[] = [];
     let pickedRes: ReturnType<typeof simulateFromIdx> = null;
@@ -434,23 +533,19 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
       triedThisSlot.add(candidate.symbol);
       const candBars = await getBars(candidate.symbol);
       if (candBars.length < 5) continue;
-      // Try the K closest bars to the target — picks a TP/SL-hitting entry
-      // even when the single nearest bar wouldn't hit (maximizes TP/SL-only
-      // fills → keeps the numTrades guarantee WITHOUT time-up exits).
-      const entryIdxs = findEntryIdxList(candBars, targetMs, startMs, endMs, 5);
-      for (const entryIdx of entryIdxs) {
-        const r = simulateFromIdx(candidate, candBars, entryIdx, endMs);
-        if (r) {
-          const entryMs = Date.parse(candBars[entryIdx].date);
-          if (!pickedRes || Math.abs(entryMs - targetMs) < Math.abs(pickedEntryMs - targetMs)) {
-            pickedSig = candidate;
-            pickedBars = candBars;
-            pickedRes = r;
-            pickedEntryIdx = entryIdx;
-            pickedEntryMs = entryMs;
-          }
-          break; // this signal found a TP/SL hit — stop trying more bars for it
-        }
+      // Single deterministic nearest bar (no K-candidate cherry-picking).
+      const entryIdx = findEntryIdx(candBars, targetMs, startMs, endMs);
+      if (entryIdx < 0) continue;
+      const r = simulateFromIdx(candidate, candBars, entryIdx, endMs);
+      if (!r) continue; // bars < 5 or entryIdx < 0 (defensive)
+      const entryMs = Date.parse(candBars[entryIdx].date);
+      // Pick the signal whose entry bar is closest to targetMs (timestamp-based).
+      if (!pickedRes || Math.abs(entryMs - targetMs) < Math.abs(pickedEntryMs - targetMs)) {
+        pickedSig = candidate;
+        pickedBars = candBars;
+        pickedRes = r;
+        pickedEntryIdx = entryIdx;
+        pickedEntryMs = entryMs;
       }
       // Near-perfect (within a day) — stop scanning more signals to save DB reads.
       if (pickedRes && Math.abs(pickedEntryMs - targetMs) < 86400000) break;
@@ -486,13 +581,19 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
         exitPrice: 0,
         exitReason: "SIP_DEPOSIT",
         hit: "—",
+        bestTargetReached: "—",
+        tp1HitIdx: -1, tp2HitIdx: -1, tp3HitIdx: -1,
         sl: 0, tp1: 0, tp2: 0, tp3: 0,
+        activeStop: 0,
         entryAmount: dep.amount,
         pnl: 0,
+        grossPnl: 0,
         totalGain: 0, // assigned after chronological sort
         exitAmount: dep.amount,
         returnPct: 0,
         isWin: false,
+        unresolved: false,
+        nBarsExamined: 0,
         confidence: 0,
       });
       sipIdx++;
@@ -500,6 +601,8 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
 
     // COMPOUNDING: this trade enters with the realized pool.
     const entryAmount = realizedPool;
+    // Task 57: realized P&L uses the ACTUAL exit price (sl / tp3 / last close),
+    // NOT the best-target price. This separates target attainment from ROI.
     const grossPnlPct =
       pickedRes.direction === "BUY"
         ? ((pickedRes.exitPrice - pickedRes.entryPrice) / pickedRes.entryPrice) * 100
@@ -511,13 +614,11 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     const cost = commission + slippage + cgt;
     const netPnl = grossPnl - cost;
     const exitAmount = entryAmount + netPnl;
-    // Win/loss by HIT (a TP hit = WIN; an SL hit = LOSS — the user spec:
-    // "tp3 hit and it still count my loss"). HIT is always TP3/TP2/TP1/SL —
-    // never TIME (time-up trades are skipped in simulateFromIdx).
-    const isWin =
-      pickedRes.hit === "TP3" ||
-      pickedRes.hit === "TP2" ||
-      pickedRes.hit === "TP1";
+    // Task 57 Phase 2: isWin is based on REALIZED NET P&L > 0, NOT on the hit
+    // field. A trade that touched TP2 then exited at SL has negative P&L → LOSS
+    // (fixes the "tp3 hit and it still count my loss" bug — the old code used
+    // hit==TP3/TP2/TP1 which counted TP-touch-then-SL as a win).
+    const isWin = netPnl > 0;
     if (isWin) wins++;
     else losses++;
 
@@ -540,16 +641,24 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
       exitPrice: pickedRes.exitPrice,
       exitReason: pickedRes.exitReason,
       hit: pickedRes.hit,
+      bestTargetReached: pickedRes.bestTargetReached,
+      tp1HitIdx: pickedRes.tp1HitIdx,
+      tp2HitIdx: pickedRes.tp2HitIdx,
+      tp3HitIdx: pickedRes.tp3HitIdx,
       sl: pickedRes.sl,
       tp1: pickedRes.tp1,
       tp2: pickedRes.tp2,
       tp3: pickedRes.tp3,
+      activeStop: pickedRes.activeStop,
       entryAmount,
       pnl: netPnl,
+      grossPnl,
       totalGain: 0, // assigned after chronological sort
       exitAmount,
       returnPct: entryAmount > 0 ? (netPnl / entryAmount) * 100 : 0,
       isWin,
+      unresolved: pickedRes.unresolved,
+      nBarsExamined: pickedRes.nBarsExamined,
       confidence: pickedSig.confidence ?? 0,
     });
   }
@@ -576,13 +685,19 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
       exitPrice: 0,
       exitReason: "SIP_DEPOSIT",
       hit: "—",
+      bestTargetReached: "—",
+      tp1HitIdx: -1, tp2HitIdx: -1, tp3HitIdx: -1,
       sl: 0, tp1: 0, tp2: 0, tp3: 0,
+      activeStop: 0,
       entryAmount: dep.amount,
       pnl: 0,
+      grossPnl: 0,
       totalGain: 0,
       exitAmount: dep.amount,
       returnPct: 0,
       isWin: false,
+      unresolved: false,
+      nBarsExamined: 0,
       confidence: 0,
     });
     sipIdx++;
@@ -604,7 +719,12 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
   const finalAmount = realizedPool; // = capital + totalSip + totalGain
   const totalPnl = totalGain;
   const totalReturnPct = totalInvested > 0 ? (totalPnl / totalInvested) * 100 : 0;
-  const tradeCount = rows.filter((r) => r.type === "TRADE").length;
+  const tradeRows = rows.filter((r) => r.type === "TRADE");
+  const tradeCount = tradeRows.length;
+  const unresolvedCount = tradeRows.filter((r) => r.unresolved).length;
+  const bestTargetAttainmentRate = tradeCount > 0
+    ? tradeRows.filter((r) => r.bestTargetReached !== "—").length / tradeCount
+    : 0;
 
   return {
     initialAmount: capital,
@@ -617,6 +737,8 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     wins,
     losses,
     tradeCount,
+    unresolvedCount,
+    bestTargetAttainmentRate,
     rows,
     startDate: startDate.toISOString(),
     endDate: endDate.toISOString(),

@@ -464,18 +464,23 @@ export function Tracker() {
     entryPrice: number;
     exitDate: number;
     exitPrice: number;
-    exitReason: string;
-    hit: string; // "TP3" | "TP2" | "TP1" | "SL" | "—"
+    exitReason: string; // Task 57: "TP3_HIT" | "SL_HIT" | "SL_AFTER_TP1" | "SL_AFTER_TP2" | "TIME_UP" | "SIP_DEPOSIT"
+    hit: string; // EXIT type: "TP3" | "SL" | "—" (actual exit, NOT highest TP)
+    bestTargetReached: string; // Task 57: HIGHEST TP touched: "TP3" | "TP2" | "TP1" | "—"
     sl: number;
     tp1: number;
     tp2: number;
     tp3: number;
+    activeStop: number; // Task 57: the currently-active stop (fixed = sl)
     entryAmount: number;
     exitAmount: number;
     returnPct: number;
     pnl: number;
+    grossPnl: number; // Task 57: realized gross P&L
     totalGain: number; // cumulative net P&L up to and including this trade
-    isWin: boolean;
+    isWin: boolean; // Task 57: based on netPnl > 0 (NOT on hit)
+    unresolved: boolean; // Task 57: true if TIME_UP (no SL/TP3 by window end)
+    nBarsExamined: number; // Task 57: bars scanned after entry
     confidence: number;
   }
   interface SimResponse {
@@ -489,6 +494,8 @@ export function Tracker() {
     totalSip: number; // total SIP contributed over the whole period
     totalInvested: number; // initial capital + total SIP
     tradeCount: number; // real trades (SIP deposit rows excluded)
+    unresolvedCount: number; // Task 57: trades with no SL/TP3 exit by window end
+    bestTargetAttainmentRate: number; // Task 57: fraction of trades reaching >= TP1
     rows: SimRow[];
     startDate?: string; // ISO — the chronological window start (1st of N months ago)
     endDate?: string; // ISO — now
@@ -1170,15 +1177,20 @@ export function Tracker() {
                                       <Badge
                                         variant="outline"
                                         className={`text-[9px] py-0 h-4 ${
-                                          r.hit === "SL" ? "border-[#FF5C5C]/40 text-[#FF5C5C]"
-                                          : r.hit === "TP3" ? "border-[#00E676]/50 text-[#00E676]"
-                                          : r.hit === "TP2" ? "border-[#2DD4FF]/40 text-[#2DD4FF]"
-                                          : r.hit === "TP1" ? "border-[#FBBF24]/40 text-[#FBBF24]"
+                                          r.exitReason === "SL_HIT" || r.exitReason === "SL_AFTER_TP1" || r.exitReason === "SL_AFTER_TP2"
+                                            ? "border-[#FF5C5C]/40 text-[#FF5C5C]"
+                                          : r.exitReason === "TP3_HIT" ? "border-[#00E676]/50 text-[#00E676]"
+                                          : r.exitReason === "TIME_UP" ? "border-[#FBBF24]/40 text-[#FBBF24]"
+                                          : r.type === "SIP" ? "border-white/[0.12] text-[#64748B]"
                                           : "border-white/[0.12] text-[#64748B]"
                                         }`}
+                                        title={`Exit: ${r.exitReason} · Best target reached: ${r.bestTargetReached ?? "—"} · Bars scanned: ${r.nBarsExamined ?? 0}${r.unresolved ? " · UNRESOLVED (time-up)" : ""}`}
                                       >
-                                        {r.hit}
+                                        {r.exitReason === "TIME_UP" ? "TIME" : r.exitReason}
                                       </Badge>
+                                      {r.bestTargetReached && r.bestTargetReached !== "—" && r.type === "TRADE" && (
+                                        <div className="text-[8px] text-[#64748B] mt-0.5">best: {r.bestTargetReached}</div>
+                                      )}
                                     </td>
                                     <td className="py-2 px-2 text-right font-mono text-[11px] text-[#FF5C5C]/80">{r.sl.toFixed(2)}</td>
                                     <td className="py-2 px-2 text-right font-mono text-[11px] text-[#FBBF24]/80">{r.tp1.toFixed(2)}</td>
