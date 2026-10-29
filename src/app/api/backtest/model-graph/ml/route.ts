@@ -33,8 +33,10 @@ export async function GET(req: Request) {
     const period = url.searchParams.get("period") || "final-test"; // validation | final-test
 
     if (!symbol) return NextResponse.json({ available: false, error: "Missing symbol" }, { status: 400 });
-    if (!SUPPORTED_MODELS.includes(model)) return NextResponse.json({ available: false, error: `Unsupported model: ${model}` }, { status: 400 });
-    if (!SUPPORTED_HORIZONS.includes(horizon)) return NextResponse.json({ available: false, error: `Unsupported horizon: ${horizon}` }, { status: 400 });
+    if (!SUPPORTED_MODELS.includes(model)) return NextResponse.json({ available: false, error: `Unsupported model: ${model}. Supported: ${SUPPORTED_MODELS.join(", ")}` }, { status: 400 });
+    if (!SUPPORTED_HORIZONS.includes(horizon)) return NextResponse.json({ available: false, error: `Unsupported horizon: ${horizon}. Supported: ${SUPPORTED_HORIZONS.join(", ")}` }, { status: 400 });
+    const SUPPORTED_PERIODS = ["validation", "final-test"];
+    if (!SUPPORTED_PERIODS.includes(period)) return NextResponse.json({ available: false, error: `Unsupported period: ${period}. Supported: ${SUPPORTED_PERIODS.join(", ")}` }, { status: 400 });
 
     // Read manifest for val_end_idx + universe
     const manifest = JSON.parse(await fs.readFile(MANIFEST_PATH, "utf8"));
@@ -113,6 +115,11 @@ export async function GET(req: Request) {
       } catch { nOmitted++; }
     }
 
+    // Phase 2: separate counts for verified/mismatch/unavailable
+    const nVerified = points.filter(p => p.verification === "verified").length;
+    const nMismatch = points.filter(p => p.verification === "mismatch").length;
+    const nUnavailable = points.filter(p => p.verification === "unverified").length;
+
     return NextResponse.json({
       available: true,
       source_run_id: manifest.run_id,
@@ -120,6 +127,9 @@ export async function GET(req: Request) {
       model, horizon, symbol, period,
       n_points: points.length,
       n_omitted: nOmitted,
+      n_verified: nVerified,
+      n_mismatch: nMismatch,
+      n_unavailable_target: nUnavailable,
       points,
       methodology: "predictedPrice = decisionClose × (1 + predictedForwardReturn). actualPrice = decisionClose × (1 + actualForwardReturn). Target date = decision_date + horizon trading sessions (queried from OHLCV DB, NOT calendar days).",
       data_source: `Raw walk-forward sample records from ${RUN_DIR}/samples/. NOT strategySignal. NOT prospective PredictionHistory.`,

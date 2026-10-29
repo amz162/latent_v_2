@@ -1239,7 +1239,42 @@ export function AiModelSignals(){
            <div className="text-[10px] text-[#64748B] mb-2">
              Source: {mlGraphData.source_run_id} · {mlGraphData.n_points} valid points · {mlGraphData.n_omitted} omitted · {mlGraphData.model} {mlGraphData.horizon}d · {mlGraphData.period}
            </div>
-           {/* Simple chart: actual vs predicted price points */}
+           {/* Task 73: Visual line chart using Recharts */}
+           {(() => {
+             const mlChartData = mlGraphData.points.map((p:any)=>({
+               date: p.target_date||p.decision_date,
+               actual: p.actual_price,
+               predicted: p.predicted_price,
+               decisionDate: p.decision_date,
+               decisionClose: p.decision_close,
+               error: p.predicted_price - p.actual_price,
+               verification: p.verification,
+             }));
+             return (
+              <ResponsiveContainer width="100%" height={250} className="mb-2">
+                <LineChart data={mlChartData} margin={{top:8,right:16,left:0,bottom:8}}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1a1a2e" />
+                  <XAxis dataKey="date" tick={{fontSize:9,fill:"#64748B"}} angle={-25} textAnchor="end" height={50} />
+                  <YAxis tick={{fontSize:9,fill:"#64748B"}} />
+                  <Tooltip content={({active,payload}:any)=>active&&payload?.length?(
+                    <div className="bg-[#0A0E1A] border border-white/20 rounded p-2 text-[10px]">
+                      <div className="text-[#64748B]">Target: {payload[0]?.payload?.date}</div>
+                      <div className="text-[#64748B]">Decision: {payload[0]?.payload?.decisionDate}</div>
+                      <div className="text-[#64748B]">Close: {payload[0]?.payload?.decisionClose?.toFixed(2)}</div>
+                      <div className="text-[#00E676] font-mono">Actual: {payload[0]?.payload?.actual?.toFixed(2)} PKR</div>
+                      <div className="text-[#22D3EE] font-mono">Predicted: {payload[0]?.payload?.predicted?.toFixed(2)} PKR</div>
+                      <div className="text-[#FBBF24]">Error: {payload[0]?.payload?.error?.toFixed(2)}</div>
+                      <div className="text-[#64748B]">Verified: {payload[0]?.payload?.verification}</div>
+                    </div>
+                  ):null} />
+                  <Legend wrapperStyle={{fontSize:"10px"}} />
+                  <Line type="monotone" dataKey="actual" stroke="#00E676" name="Actual Target Price" dot={{r:3,fill:"#00E676"}} strokeWidth={2} connectNulls={false} />
+                  <Line type="monotone" dataKey="predicted" stroke="#22D3EE" name="Predicted Target Price" dot={{r:3,fill:"#22D3EE"}} strokeWidth={2} connectNulls={false} />
+                </LineChart>
+              </ResponsiveContainer>
+             );
+           })()}
+           {/* Table view (below chart) */}
            <div className="overflow-x-auto max-h-72 overflow-y-auto">
             <table className="w-full text-[9px] border-collapse">
              <thead className="sticky top-0 bg-[#0A0E1A]">
