@@ -3351,3 +3351,95 @@ Remaining limitations:
 Confirmation that Task 55/56/59/60 forecast + robustness + trading artifacts + data/ml_predictions_multi.json were preserved unchanged.
 Confirmation that no model training or pilot25/full-universe evaluation was rerun.
 Confirmation that no GitHub push occurred.
+
+---
+Task ID: 63 (COMPLETE)
+Agent: main (interactive session 2026-10-29)
+Task: Reconcile discrepancies between Task 62's reported fix + the actual code. Verify the portfolio metrics are derived from valid historical data + a genuinely chronological cash/equity ledger. Investigate the future-dated evaluation period (2026-12-19 > current 2026-10-29). No GitHub push. ml_predictions_multi.json + Task 55/56/59/60 artifacts unchanged.
+
+Phase 1 — Task 62 fix reconciliation:
+VERIFIED: The Task 62 fix IS in the code (both local + origin/main):
+- `onRealize(exitValue - pos.exit_commission - pos.exit_slippage - cgt, ...)` — uses EXIT PROCEEDS, not entryValue + net_pnl ✓ (lines 378, 407)
+- `dailyEquity.push({ date, equity: cash_d + openValue, cash: cash_d, ... })` — uses PER-DATE cash_d, NOT the final cash variable ✓ (line 268)
+- The per-date cash reconstruction loop (lines 249-269) correctly computes cash_d = initial_capital - sum(entry investments up to d) + sum(exit proceeds up to d) for each date d
+- `git show origin/main:scripts/walk_forward_portfolio_simulator.ts` confirms 11 matches for "cash_d"/"Task 62 FIX"/"per-date" — the fix IS on the public main branch
+- The user's concern that "the publicly accessible main branch still appears to construct its daily equity curve after processing the trades, using the final cash variable" was likely based on a cached/old version — the actual code uses per-date cash
+
+The per-date cash reconstruction is NOT "using final cash" — it's a chronological reconstruction that only includes trades up to each date. Future trades do NOT affect past equity values. The equity curve is correct.
+
+Phase 4 — Future-dated evaluation period investigation:
+
+CONFIRMED BUG: The portfolio artifact reported `evaluation_period.end = "2026-12-19"` — a HARDCODED string at line 493 of the simulator:
+  `evaluation_period: { start: "2023-04-17", end: "2026-12-19", ... }`
+
+The ACTUAL manifest test_window end is:
+  end_epoch = 1792540800000 → 2026-10-21 (verified via datetime conversion)
+  GLOBAL MAX OHLCV date in DB = 2026-10-21 (verified via SQL: SELECT MAX(date) FROM OhlcvBar)
+  Latest pilot25 sample decision date = 2026-07-23 (well before current date 2026-10-29)
+
+So:
+- NO future-dated bars exist in the OHLCV data — the latest bar is Oct 21, 2026 (8 days before the current date Oct 29)
+- The pilot25 samples are all from Dec 2024 → Jul 2026 — all genuinely historical
+- The "2026-12-19" was a METADATA bug ONLY — it did NOT affect any metric calculations (the simulator reads bars from the DB, which only go up to 2026-10-21)
+- The data fingerprint matches the manifest — the OHLCV data is consistent with the pilot25 prediction run
+
+FIX: Changed line 493 to derive the evaluation period from the manifest's test_window:
+  `evaluation_period: { start: epochMsToDateStr(manifest.test_window.start_epoch), end: epochMsToDateStr(manifest.test_window.end_epoch), ... }`
+Now correctly reports: start='2023-04-17', end='2026-10-21'
+
+Phase 3 — Cash-flow accounting verification:
+The Task 62 cash-accounting fix is confirmed correct:
+- At entry: cash -= (entryValue + entryCommission + entrySlippage) ✓
+- At exit: cash += (exitValue - exitCommission - exitSlippage - cgt) ✓ (sale proceeds, NOT entryValue + net_pnl)
+- Net cash change per trade = gross_pnl - entry_costs - exit_costs - tax = net_pnl ✓
+- Cash reconciliation: 10/10 portfolios, diff=0.00 for all ✓
+
+Phase 5 — Corrected portfolio metrics:
+Re-ran the same 10 combos with the corrected date metadata. Results are IDENTICAL to Task 62 (the date fix only affects metadata, not metrics):
+
+| Model | Strategy | Final Equity | Return % | Sharpe | Max DD % |
+|---|---|---|---|---|---|
+| XGBoost | fixed | 994,948 | -0.51% | 0.219 | 31.5% |
+| XGBoost | prog | 987,003 | -1.30% | 0.177 | 32.1% |
+| LightGBM | fixed | 997,617 | -0.24% | 0.106 | 19.7% |
+| LightGBM | prog | 992,840 | -0.72% | 0.098 | 20.1% |
+| CatBoost | fixed | 1,008,374 | +0.84% | 0.156 | 27.3% |
+| CatBoost | prog | 998,026 | -0.20% | 0.102 | 12.8% |
+| Random Forest | fixed | 998,297 | -0.17% | 0.120 | 17.4% |
+| Random Forest | prog | 993,506 | -0.65% | 0.105 | 17.4% |
+| Ridge | fixed | 1,011,913 | +1.19% | 0.281 | 37.4% |
+| Ridge | prog | 998,317 | -0.17% | 0.214 | 29.3% |
+
+Files changed:
+1. scripts/walk_forward_portfolio_simulator.ts — line 493: fixed the hardcoded "2026-12-19" to derive from manifest.test_window.end_epoch (now correctly reports "2026-10-21").
+2. data/backtest_reports/walk_forward_portfolio_latest.json — re-generated with corrected evaluation_period metadata.
+3. data/backtest_reports/walk_forward_portfolio_candidate.json — validated candidate.
+4. worklog.md — this entry.
+
+Tests + commands executed:
+1. bun run lint → clean.
+2. python3 scripts/ml_integrity.py → 11/11 PASSED.
+3. bun scripts/simulator_regression_check.ts → 82/82 PASSED.
+4. bun scripts/walk_forward_portfolio_simulator.ts → produced corrected artifact; cash reconciliation 10/10 perfect (diff=0.00); evaluation_period.end = "2026-10-21" (matches manifest + DB max date).
+5. API smoke: GET / → 200; /api/backtest/walk-forward/portfolio → 200 (evaluation_period.end = "2026-10-21").
+6. Agent Browser: Portfolio Simulation section renders with corrected metrics.
+7. SQL: SELECT MAX(date) FROM OhlcvBar → 2026-10-21 (global max, matches manifest test_window end).
+8. ml_predictions_multi.json UNCHANGED: 41442cd7.
+9. walk_forward_latest.json UNCHANGED: 544192bd (Task 55).
+10. pilot25_robustness.json UNCHANGED: 2ca441fc (Task 56).
+11. walk_forward_trading_latest.json UNCHANGED: 0ae5b02b (Task 59).
+12. walk_forward_trading_robustness.json UNCHANGED: 6cfd9375 (Task 60).
+13. No GitHub push: 1 local commit ahead (NOT pushed).
+
+Remaining limitations:
+- The "2026-12-19" date was a METADATA bug (hardcoded string), NOT a data issue. The actual OHLCV data is genuine historical data up to 2026-10-21 (8 days before the current date). No future-dated bars exist.
+- The Task 62 cash-accounting fix (exit proceeds, not entryValue + net_pnl) + chronological equity curve (per-date cash_d, not final cash) are confirmed present in both local + origin/main code.
+- The per-date cash reconstruction IS chronological — for each date, only trades up to that date are included. Future trades do NOT affect past equity.
+- EXPLORATORY final-test (prior tasks inspected results). No confirmatory claim without prospective paper-trading.
+- Only 5d horizon × standard_psx run (10 combos). Full 60-combo run deferred.
+- Each combo is a SEPARATE portfolio — P&L is NOT summed across combos.
+
+Confirmation that data/ml_predictions_multi.json was unchanged: md5 41442cd7ece9d137ec19310e2d771f55.
+Confirmation that Task 55/56/59/60 forecast + robustness + trading artifacts were preserved unchanged.
+Confirmation that no model training or pilot25/full-universe evaluation was rerun.
+Confirmation that no GitHub push occurred.

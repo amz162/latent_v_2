@@ -490,7 +490,7 @@ async function main() {
     ml_predictions_md5: mlHash,
     config: DEFAULT_PORTFOLIO_CONFIG,
     config_note: "Hypothetical PKR 1,000,000 initial capital. Long-only, max 10 concurrent positions, max 10% equity per position, max gross exposure = 100% (no leverage), one position per stock (no pyramiding). These are EXPLICIT RESEARCH ASSUMPTIONS, not claims of optimality.",
-    evaluation_period: { start: "2023-04-17", end: "2026-12-19", val_end_idx: manifest.val_end_idx, final_test_samples: records.length },
+    evaluation_period: { start: epochMsToDateStr(manifest.test_window.start_epoch), end: epochMsToDateStr(manifest.test_window.end_epoch), val_end_idx: manifest.val_end_idx, final_test_samples: records.length },
     portfolios: results,
     exploratory_warning: "EXPLORATORY final-test analysis — prior tasks (59/60) inspected these final-test results. Do NOT claim this as a fresh unbiased confirmation. No parameters were tuned on final-test. Prospective paper-trading or a new untouched future evaluation is required before a confirmatory claim.",
     unsupported_in_this_run: "Only 5d horizon × standard_psx is run (10 combos). Full 60-combo run (5 models × 3 horizons × 2 strategies × 2 cost profiles) deferred for runtime. Each combo is a SEPARATE portfolio — P&L is NOT aggregated across combos.",

@@ -1,7 +1,7 @@
 {
   "task": "task61_portfolio_simulation",
   "schema_version": "1.0",
-  "generated_at": "2026-10-29T00:34:52.210Z",
+  "generated_at": "2026-10-29T00:57:34.661Z",
   "source_run_id": "pilot25_step50_20261028",
   "source_data_fingerprint": "c071e0227985f90d485ac8a9d95203e065b402de8470c069d0a968fb2e6bc4c4",
   "source_universe_fingerprint": "d8088bf891daf7b28bacf22936ca7824011435d5ded57b24b339db4c12da88a4",
@@ -44,11 +44,11 @@
       "strategy": "fixed_horizon",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 991163.45,
-      "total_realized_net_pnl": -4975.01,
+      "final_equity": 994947.72,
+      "total_realized_net_pnl": -5052.28,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -8836.55,
-      "total_return_pct": -0.8837,
+      "total_net_equity_change": -5052.28,
+      "total_return_pct": -0.5052,
       "n_signals": 17,
       "n_executed": 17,
       "n_skipped": 0,
@@ -57,68 +57,68 @@
       "n_open_at_end": 0,
       "max_concurrent_positions": 4,
       "max_gross_exposure": 398224.61,
-      "total_costs": 7751.73,
-      "total_commission": 5167.82,
-      "total_slippage": 2583.91,
-      "total_cgt": 9955.59,
-      "sharpe": 0.2246,
-      "sortino": 0.0671,
-      "max_drawdown_pct": 0.2988,
-      "max_drawdown_pkr": null,
+      "total_costs": 7764.53,
+      "total_commission": 5176.35,
+      "total_slippage": 2588.18,
+      "total_cgt": 9967.97,
+      "sharpe": 0.2189,
+      "sortino": 0.0656,
+      "max_drawdown_pct": 0.3154,
+      "max_drawdown_pkr": 453294.92,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "PAEL": {
           "n_trades": 1,
-          "realized_pnl": 100826.12059
+          "realized_pnl": 101051.05698250001
         },
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 202563.04296750002
+          "realized_pnl": 203207.1506525
         },
         "PRL": {
           "n_trades": 1,
-          "realized_pnl": 100537.85912499999
+          "realized_pnl": 100762.00412499999
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 107199.95261749999
+          "realized_pnl": 107422.10328499999
         },
         "LUCK": {
           "n_trades": 2,
-          "realized_pnl": 206505.6709875
+          "realized_pnl": 207297.851645
         },
         "BOP": {
           "n_trades": 3,
-          "realized_pnl": 318123.64931749995
+          "realized_pnl": 319417.26606
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 95668.356795
+          "realized_pnl": 96039.02489999999
         },
         "PIBTL": {
           "n_trades": 1,
-          "realized_pnl": 102463.06433
+          "realized_pnl": 102853.000425
         },
         "PPL": {
           "n_trades": 1,
-          "realized_pnl": 99537.70378499999
+          "realized_pnl": 99967.5158625
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 92943.508725
+          "realized_pnl": 93430.407525
         },
         "HASCOL": {
           "n_trades": 1,
-          "realized_pnl": 80906.5659
+          "realized_pnl": 81353.4319975
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 102507.03242999999
+          "realized_pnl": 103073.66496000001
         },
         "CNERGY": {
           "n_trades": 1,
-          "realized_pnl": 101483.14714999999
+          "realized_pnl": 102051.82975749999
         }
       },
       "open_positions_at_end": [],
@@ -194,11 +194,11 @@
           "exit_date": "2025-05-12",
           "entry_price": 9.85,
           "exit_price": 10.12,
-          "shares": 10361,
+          "shares": 10372,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 2797.47,
-          "net_pnl": 1912.3,
+          "gross_pnl": 2800.44,
+          "net_pnl": 1914.33,
           "is_win": true
         },
         {
@@ -207,11 +207,11 @@
           "exit_date": "2025-05-19",
           "entry_price": 337.78,
           "exit_price": 338.15,
-          "shares": 299,
+          "shares": 300,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 110.63,
-          "net_pnl": -360.7,
+          "gross_pnl": 111,
+          "net_pnl": -361.9,
           "is_win": false
         },
         {
@@ -220,11 +220,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8173,
+          "shares": 8185,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -6048.02,
-          "net_pnl": -6494.14,
+          "gross_pnl": -6056.9,
+          "net_pnl": -6503.68,
           "is_win": false
         },
         {
@@ -233,11 +233,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 9.95,
           "exit_price": 10.03,
-          "shares": 10274,
+          "shares": 10290,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 821.92,
-          "net_pnl": 236.76,
+          "gross_pnl": 823.2,
+          "net_pnl": 237.13,
           "is_win": true
         },
         {
@@ -246,11 +246,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 26.85,
           "exit_price": 33.5,
-          "shares": 3780,
+          "shares": 3787,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 25137,
-          "net_pnl": 20853.17,
+          "gross_pnl": 25183.55,
+          "net_pnl": 20891.79,
           "is_win": true
         },
         {
@@ -259,11 +259,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 205,
           "exit_price": 202.41,
-          "shares": 494,
+          "shares": 495,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -1279.46,
-          "net_pnl": -1732.3,
+          "gross_pnl": -1282.05,
+          "net_pnl": -1735.8,
           "is_win": false
         },
         {
@@ -272,11 +272,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 1.85,
           "exit_price": 1.76,
-          "shares": 54757,
+          "shares": 54866,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -4928.13,
-          "net_pnl": -5372.89,
+          "gross_pnl": -4937.94,
+          "net_pnl": -5383.59,
           "is_win": false
         },
         {
@@ -285,11 +285,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 23.5,
           "exit_price": 21.35,
-          "shares": 4374,
+          "shares": 4386,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -9404.1,
-          "net_pnl": -9845.49,
+          "gross_pnl": -9429.9,
+          "net_pnl": -9872.5,
           "is_win": false
         },
         {
@@ -298,11 +298,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 21.01,
           "exit_price": 16.63,
-          "shares": 4890,
+          "shares": 4903,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -21418.2,
-          "net_pnl": -21832.33,
+          "gross_pnl": -21475.14,
+          "net_pnl": -21890.38,
           "is_win": false
         },
         {
@@ -311,11 +311,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 33.1,
           "exit_price": 29.7,
-          "shares": 3106,
+          "shares": 3115,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -10560.4,
-          "net_pnl": -10999.28,
+          "gross_pnl": -10591,
+          "net_pnl": -11031.15,
           "is_win": false
         },
         {
@@ -324,11 +324,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8037,
+          "shares": 8064,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 5304.42,
-          "net_pnl": 4053.78,
+          "gross_pnl": 5322.24,
+          "net_pnl": 4067.4,
           "is_win": true
         },
         {
@@ -337,11 +337,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 8.2,
           "exit_price": 8.53,
-          "shares": 12020,
+          "shares": 12061,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 3966.6,
-          "net_pnl": 2919.15,
+          "gross_pnl": 3980.13,
+          "net_pnl": 2929.1,
           "is_win": true
         }
       ]
@@ -352,11 +352,11 @@
       "strategy": "progressive_tp_sl",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 983244.29,
-      "total_realized_net_pnl": -12918.54,
+      "final_equity": 987003.4,
+      "total_realized_net_pnl": -12996.6,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -16755.71,
-      "total_return_pct": -1.6756,
+      "total_net_equity_change": -12996.6,
+      "total_return_pct": -1.2997,
       "n_signals": 17,
       "n_executed": 17,
       "n_skipped": 0,
@@ -365,68 +365,68 @@
       "n_open_at_end": 0,
       "max_concurrent_positions": 4,
       "max_gross_exposure": 398224.61,
-      "total_costs": 7682.37,
-      "total_commission": 5121.58,
-      "total_slippage": 2560.79,
-      "total_cgt": 8812.98,
-      "sharpe": 0.2119,
-      "sortino": 0.0663,
-      "max_drawdown_pct": 0.3005,
-      "max_drawdown_pkr": null,
+      "total_costs": 7693.51,
+      "total_commission": 5129,
+      "total_slippage": 2564.5,
+      "total_cgt": 8822.55,
+      "sharpe": 0.1773,
+      "sortino": 0.0526,
+      "max_drawdown_pct": 0.3208,
+      "max_drawdown_pkr": 461152.25,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "PAEL": {
           "n_trades": 1,
-          "realized_pnl": 100826.12059
+          "realized_pnl": 101051.05698250001
         },
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 197777.28312785714
+          "realized_pnl": 198411.4984170536
         },
         "PRL": {
           "n_trades": 1,
-          "realized_pnl": 100537.85912499999
+          "realized_pnl": 100762.00412499999
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 107199.95261749999
+          "realized_pnl": 107422.10328499999
         },
         "LUCK": {
           "n_trades": 2,
-          "realized_pnl": 209832.03363571427
+          "realized_pnl": 210287.64063571428
         },
         "BOP": {
           "n_trades": 3,
-          "realized_pnl": 299295.05213375
+          "realized_pnl": 300533.28508178575
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 94884.09399
+          "realized_pnl": 95264.61126
         },
         "PIBTL": {
           "n_trades": 1,
-          "realized_pnl": 101635.301595
+          "realized_pnl": 102023.3795275
         },
         "PPL": {
           "n_trades": 1,
-          "realized_pnl": 98731.73047499999
+          "realized_pnl": 99159.69755249999
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 90419.5559525
+          "realized_pnl": 90899.93393
         },
         "HASCOL": {
           "n_trades": 1,
-          "realized_pnl": 88984.18747892858
+          "realized_pnl": 89452.71180857145
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 101690.75147
+          "realized_pnl": 102255.62
         },
         "CNERGY": {
           "n_trades": 1,
-          "realized_pnl": 100672.63282999999
+          "realized_pnl": 101231.08292999999
         }
       },
       "open_positions_at_end": [],
@@ -502,11 +502,11 @@
           "exit_date": "2025-05-07",
           "entry_price": 9.85,
           "exit_price": 8.990714285714285,
-          "shares": 10391,
+          "shares": 10402,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -8928.84,
-          "net_pnl": -9369.33,
+          "gross_pnl": -8938.29,
+          "net_pnl": -9379.25,
           "is_win": false
         },
         {
@@ -528,11 +528,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8106,
+          "shares": 8119,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -5998.44,
-          "net_pnl": -6440.91,
+          "gross_pnl": -6008.06,
+          "net_pnl": -6451.24,
           "is_win": false
         },
         {
@@ -541,11 +541,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 9.95,
           "exit_price": 10.03,
-          "shares": 10191,
+          "shares": 10207,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 815.28,
-          "net_pnl": 234.85,
+          "gross_pnl": 816.56,
+          "net_pnl": 235.22,
           "is_win": true
         },
         {
@@ -554,11 +554,11 @@
           "exit_date": "2025-10-02",
           "entry_price": 26.85,
           "exit_price": 31.35,
-          "shares": 3749,
+          "shares": 3756,
           "exit_reason": "TP3_HIT",
           "best_target_reached": "TP3",
-          "gross_pnl": 16870.5,
-          "net_pnl": 13848.99,
+          "gross_pnl": 16902,
+          "net_pnl": 13874.85,
           "is_win": true
         },
         {
@@ -567,11 +567,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 205,
           "exit_price": 202.41,
-          "shares": 490,
+          "shares": 491,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": -1269.1,
-          "net_pnl": -1718.27,
+          "gross_pnl": -1271.69,
+          "net_pnl": -1721.78,
           "is_win": false
         },
         {
@@ -580,11 +580,11 @@
           "exit_date": "2025-10-01",
           "entry_price": 1.85,
           "exit_price": 1.6860714285714287,
-          "shares": 54312,
+          "shares": 54421,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -8903.29,
-          "net_pnl": -9335.4,
+          "gross_pnl": -8921.16,
+          "net_pnl": -9354.14,
           "is_win": false
         },
         {
@@ -593,11 +593,11 @@
           "exit_date": "2026-02-23",
           "entry_price": 23.5,
           "exit_price": 21.1675,
-          "shares": 4292,
+          "shares": 4304,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -10011.09,
-          "net_pnl": -10442.44,
+          "gross_pnl": -10039.08,
+          "net_pnl": -10471.64,
           "is_win": false
         },
         {
@@ -606,11 +606,11 @@
           "exit_date": "2026-02-20",
           "entry_price": 21.01,
           "exit_price": 18.631428571428575,
-          "shares": 4799,
+          "shares": 4812,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -11414.76,
-          "net_pnl": -11842.8,
+          "gross_pnl": -11445.69,
+          "net_pnl": -11874.88,
           "is_win": false
         },
         {
@@ -619,11 +619,11 @@
           "exit_date": "2026-02-20",
           "entry_price": 33.1,
           "exit_price": 30.261785714285715,
-          "shares": 3048,
+          "shares": 3056,
           "exit_reason": "SL_AFTER_TP1",
           "best_target_reached": "TP1",
-          "gross_pnl": -8650.88,
-          "net_pnl": -9085.41,
+          "gross_pnl": -8673.58,
+          "net_pnl": -9109.26,
           "is_win": false
         },
         {
@@ -632,11 +632,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 7973,
+          "shares": 8000,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 5262.18,
-          "net_pnl": 4021.5,
+          "gross_pnl": 5280,
+          "net_pnl": 4035.12,
           "is_win": true
         },
         {
@@ -645,11 +645,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 8.2,
           "exit_price": 8.53,
-          "shares": 11924,
+          "shares": 11964,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 3934.92,
-          "net_pnl": 2895.83,
+          "gross_pnl": 3948.12,
+          "net_pnl": 2905.55,
           "is_win": true
         }
       ]
@@ -660,11 +660,11 @@
       "strategy": "fixed_horizon",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 996050.1,
-      "total_realized_net_pnl": -2368.96,
+      "final_equity": 997616.56,
+      "total_realized_net_pnl": -2383.44,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -3949.9,
-      "total_return_pct": -0.395,
+      "total_net_equity_change": -2383.44,
+      "total_return_pct": -0.2383,
       "n_signals": 7,
       "n_executed": 7,
       "n_skipped": 0,
@@ -673,40 +673,40 @@
       "n_open_at_end": 0,
       "max_concurrent_positions": 2,
       "max_gross_exposure": 199730.55,
-      "total_costs": 3171.97,
-      "total_commission": 2114.65,
-      "total_slippage": 1057.32,
-      "total_cgt": 3683.73,
-      "sharpe": 0.1081,
-      "sortino": 0.0263,
-      "max_drawdown_pct": 0.1801,
-      "max_drawdown_pkr": null,
+      "total_costs": 3173.77,
+      "total_commission": 2115.85,
+      "total_slippage": 1057.92,
+      "total_cgt": 3684.82,
+      "sharpe": 0.1057,
+      "sortino": 0.0281,
+      "max_drawdown_pct": 0.1972,
+      "max_drawdown_pkr": 243338.96,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 202155.4278425
+          "realized_pnl": 202693.175815
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 108282.4662125
+          "realized_pnl": 108506.860175
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 100972.09724999999
+          "realized_pnl": 101200.09874999999
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 94977.73731
+          "realized_pnl": 95264.61126
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 90584.86001250001
+          "realized_pnl": 90916.77595
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 103297.80460999999
+          "realized_pnl": 103661.63477500001
         }
       },
       "open_positions_at_end": [],
@@ -756,11 +756,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8114,
+          "shares": 8119,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -6004.36,
-          "net_pnl": -6447.26,
+          "gross_pnl": -6008.06,
+          "net_pnl": -6451.24,
           "is_win": false
         },
         {
@@ -769,11 +769,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 1.85,
           "exit_price": 1.76,
-          "shares": 54463,
+          "shares": 54512,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -4901.67,
-          "net_pnl": -5344.05,
+          "gross_pnl": -4906.08,
+          "net_pnl": -5348.85,
           "is_win": false
         },
         {
@@ -782,11 +782,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 23.5,
           "exit_price": 21.35,
-          "shares": 4263,
+          "shares": 4268,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -9165.45,
-          "net_pnl": -9595.64,
+          "gross_pnl": -9176.2,
+          "net_pnl": -9606.89,
           "is_win": false
         },
         {
@@ -795,11 +795,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8099,
+          "shares": 8110,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 5345.34,
-          "net_pnl": 4085.05,
+          "gross_pnl": 5352.6,
+          "net_pnl": 4090.6,
           "is_win": true
         }
       ]
@@ -810,11 +810,11 @@
       "strategy": "progressive_tp_sl",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 991280.21,
-      "total_realized_net_pnl": -7140.83,
+      "final_equity": 992840.16,
+      "total_realized_net_pnl": -7159.84,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -8719.79,
-      "total_return_pct": -0.872,
+      "total_net_equity_change": -7159.84,
+      "total_return_pct": -0.716,
       "n_signals": 7,
       "n_executed": 7,
       "n_skipped": 0,
@@ -823,40 +823,40 @@
       "n_open_at_end": 0,
       "max_concurrent_positions": 2,
       "max_gross_exposure": 199730.55,
-      "total_costs": 3157.25,
-      "total_commission": 2104.83,
-      "total_slippage": 1052.42,
-      "total_cgt": 3679.87,
-      "sharpe": 0.1082,
-      "sortino": 0.0258,
-      "max_drawdown_pct": 0.1808,
-      "max_drawdown_pkr": null,
+      "total_costs": 3159.03,
+      "total_commission": 2106.02,
+      "total_slippage": 1053.01,
+      "total_cgt": 3680.96,
+      "sharpe": 0.0984,
+      "sortino": 0.025,
+      "max_drawdown_pct": 0.201,
+      "max_drawdown_pkr": 248082.52,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 198138.11539330357
+          "realized_pnl": 198672.24901642857
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 108282.4662125
+          "realized_pnl": 108506.860175
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 100972.09724999999
+          "realized_pnl": 101200.09874999999
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 94977.73731
+          "realized_pnl": 95264.61126
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 89450.47403875
+          "realized_pnl": 89780.580654375
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 102800.3834
+          "realized_pnl": 103163.1386275
         }
       },
       "open_positions_at_end": [],
@@ -906,11 +906,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8114,
+          "shares": 8119,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -6004.36,
-          "net_pnl": -6447.26,
+          "gross_pnl": -6008.06,
+          "net_pnl": -6451.24,
           "is_win": false
         },
         {
@@ -919,11 +919,11 @@
           "exit_date": "2025-10-01",
           "entry_price": 1.85,
           "exit_price": 1.6860714285714287,
-          "shares": 54463,
+          "shares": 54512,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -8928.04,
-          "net_pnl": -9361.36,
+          "gross_pnl": -8936.07,
+          "net_pnl": -9369.78,
           "is_win": false
         },
         {
@@ -932,11 +932,11 @@
           "exit_date": "2026-02-23",
           "entry_price": 23.5,
           "exit_price": 21.1675,
-          "shares": 4246,
+          "shares": 4251,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -9903.79,
-          "net_pnl": -10330.53,
+          "gross_pnl": -9915.46,
+          "net_pnl": -10342.69,
           "is_win": false
         },
         {
@@ -945,11 +945,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8060,
+          "shares": 8071,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 5319.6,
-          "net_pnl": 4065.38,
+          "gross_pnl": 5326.86,
+          "net_pnl": 4070.93,
           "is_win": true
         }
       ]
@@ -960,11 +960,11 @@
       "strategy": "fixed_horizon",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 1006131.88,
-      "total_realized_net_pnl": 8397.07,
+      "final_equity": 1008374.12,
+      "total_realized_net_pnl": 8374.12,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": 6131.88,
-      "total_return_pct": 0.6132,
+      "total_net_equity_change": 8374.12,
+      "total_return_pct": 0.8374,
       "n_signals": 10,
       "n_executed": 10,
       "n_skipped": 0,
@@ -972,49 +972,49 @@
       "n_completed_positions": 10,
       "n_open_at_end": 0,
       "max_concurrent_positions": 4,
-      "max_gross_exposure": 398789.59,
-      "total_costs": 4581.35,
-      "total_commission": 3054.23,
-      "total_slippage": 1527.12,
-      "total_cgt": 9672.14,
-      "sharpe": 0.1437,
-      "sortino": 0.0376,
-      "max_drawdown_pct": 0.3062,
-      "max_drawdown_pkr": null,
+      "max_gross_exposure": 399004.24,
+      "total_costs": 4586.41,
+      "total_commission": 3057.61,
+      "total_slippage": 1528.8,
+      "total_cgt": 9678.92,
+      "sharpe": 0.1563,
+      "sortino": 0.0437,
+      "max_drawdown_pct": 0.2727,
+      "max_drawdown_pkr": 375488.24,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 201291.75223500002
+          "realized_pnl": 201804.619575
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 99962.37627749999
+          "realized_pnl": 100525.431425
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 94193.474505
+          "realized_pnl": 94466.73053999999
         },
         "BOP": {
           "n_trades": 1,
-          "realized_pnl": 120436.5372125
+          "realized_pnl": 120758.6135
         },
         "HASCOL": {
           "n_trades": 2,
-          "realized_pnl": 198145.42128
+          "realized_pnl": 198813.7601125
         },
         "SYS": {
           "n_trades": 1,
-          "realized_pnl": 103237.47447
+          "realized_pnl": 103461.80676
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 93538.48317500002
+          "realized_pnl": 93920.35266250001
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 104343.66459
+          "realized_pnl": 104773.6646425
         }
       },
       "open_positions_at_end": [],
@@ -1038,11 +1038,11 @@
           "exit_date": "2025-05-19",
           "entry_price": 337.78,
           "exit_price": 338.15,
-          "shares": 297,
+          "shares": 298,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 109.89,
-          "net_pnl": -358.28,
+          "gross_pnl": 110.26,
+          "net_pnl": -359.49,
           "is_win": false
         },
         {
@@ -1051,11 +1051,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8047,
+          "shares": 8051,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -5954.78,
-          "net_pnl": -6394.03,
+          "gross_pnl": -5957.74,
+          "net_pnl": -6397.2,
           "is_win": false
         },
         {
@@ -1064,11 +1064,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 26.85,
           "exit_price": 33.5,
-          "shares": 3721,
+          "shares": 3724,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 24744.65,
-          "net_pnl": 20527.69,
+          "gross_pnl": 24764.6,
+          "net_pnl": 20544.24,
           "is_win": true
         },
         {
@@ -1077,11 +1077,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 1.85,
           "exit_price": 1.76,
-          "shares": 53970,
+          "shares": 54006,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -4857.3,
-          "net_pnl": -5295.67,
+          "gross_pnl": -4860.54,
+          "net_pnl": -5299.2,
           "is_win": false
         },
         {
@@ -1090,11 +1090,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 13.5,
           "exit_price": 16.36,
-          "shares": 7358,
+          "shares": 7363,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 21043.88,
-          "net_pnl": 17392.95,
+          "gross_pnl": 21058.18,
+          "net_pnl": 17404.77,
           "is_win": true
         },
         {
@@ -1116,11 +1116,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 23.5,
           "exit_price": 21.35,
-          "shares": 4402,
+          "shares": 4409,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -9464.3,
-          "net_pnl": -9908.52,
+          "gross_pnl": -9479.35,
+          "net_pnl": -9924.27,
           "is_win": false
         },
         {
@@ -1129,11 +1129,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 21.01,
           "exit_price": 16.63,
-          "shares": 4921,
+          "shares": 4929,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -21553.98,
-          "net_pnl": -21970.74,
+          "gross_pnl": -21589.02,
+          "net_pnl": -22006.46,
           "is_win": false
         },
         {
@@ -1142,11 +1142,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8181,
+          "shares": 8197,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 5399.46,
-          "net_pnl": 4126.41,
+          "gross_pnl": 5410.02,
+          "net_pnl": 4134.48,
           "is_win": true
         }
       ]
@@ -1157,11 +1157,11 @@
       "strategy": "progressive_tp_sl",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 995792.41,
-      "total_realized_net_pnl": -1951.94,
+      "final_equity": 998025.55,
+      "total_realized_net_pnl": -1974.45,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -4207.59,
-      "total_return_pct": -0.4208,
+      "total_net_equity_change": -1974.45,
+      "total_return_pct": -0.1974,
       "n_signals": 10,
       "n_executed": 10,
       "n_skipped": 0,
@@ -1169,49 +1169,49 @@
       "n_completed_positions": 10,
       "n_open_at_end": 0,
       "max_concurrent_positions": 3,
-      "max_gross_exposure": 300194.04,
-      "total_costs": 4532.57,
-      "total_commission": 3021.71,
-      "total_slippage": 1510.86,
-      "total_cgt": 6871.01,
-      "sharpe": 0.1235,
-      "sortino": 0.038,
-      "max_drawdown_pct": 0.2352,
-      "max_drawdown_pkr": null,
+      "max_gross_exposure": 300341.19,
+      "total_costs": 4537.63,
+      "total_commission": 3025.09,
+      "total_slippage": 1512.54,
+      "total_cgt": 6875.74,
+      "sharpe": 0.1021,
+      "sortino": 0.0256,
+      "max_drawdown_pct": 0.1282,
+      "max_drawdown_pkr": 145794.77,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 197310.80456625
+          "realized_pnl": 197821.01646589284
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 99962.37627749999
+          "realized_pnl": 100525.431425
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 94193.474505
+          "realized_pnl": 94466.73053999999
         },
         "HASCOL": {
           "n_trades": 2,
-          "realized_pnl": 197197.95790928573
+          "realized_pnl": 197871.6914251786
         },
         "BOP": {
           "n_trades": 1,
-          "realized_pnl": 113654.41005
+          "realized_pnl": 113971.01835000001
         },
         "SYS": {
           "n_trades": 1,
-          "realized_pnl": 104001.0652575
+          "realized_pnl": 104227.05681
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 90967.29790375
+          "realized_pnl": 91343.451265625
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 103272.29583
+          "realized_pnl": 103699.9806325
         }
       },
       "open_positions_at_end": [],
@@ -1235,11 +1235,11 @@
           "exit_date": "2025-05-19",
           "entry_price": 337.78,
           "exit_price": 338.15,
-          "shares": 297,
+          "shares": 298,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 109.89,
-          "net_pnl": -358.28,
+          "gross_pnl": 110.26,
+          "net_pnl": -359.49,
           "is_win": false
         },
         {
@@ -1248,11 +1248,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8047,
+          "shares": 8051,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -5954.78,
-          "net_pnl": -6394.03,
+          "gross_pnl": -5957.74,
+          "net_pnl": -6397.2,
           "is_win": false
         },
         {
@@ -1261,11 +1261,11 @@
           "exit_date": "2025-09-29",
           "entry_price": 13.5,
           "exit_price": 14.912142857142857,
-          "shares": 7358,
+          "shares": 7363,
           "exit_reason": "TP3_HIT",
           "best_target_reached": "TP3",
-          "gross_pnl": 10390.55,
-          "net_pnl": 8361.59,
+          "gross_pnl": 10397.61,
+          "net_pnl": 8367.27,
           "is_win": true
         },
         {
@@ -1274,11 +1274,11 @@
           "exit_date": "2025-10-02",
           "entry_price": 26.85,
           "exit_price": 31.35,
-          "shares": 3721,
+          "shares": 3724,
           "exit_reason": "TP3_HIT",
           "best_target_reached": "TP3",
-          "gross_pnl": 16744.5,
-          "net_pnl": 13745.56,
+          "gross_pnl": 16758,
+          "net_pnl": 13756.64,
           "is_win": true
         },
         {
@@ -1287,11 +1287,11 @@
           "exit_date": "2025-10-01",
           "entry_price": 1.85,
           "exit_price": 1.6860714285714287,
-          "shares": 53970,
+          "shares": 54006,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -8847.22,
-          "net_pnl": -9276.62,
+          "gross_pnl": -8853.13,
+          "net_pnl": -9282.81,
           "is_win": false
         },
         {
@@ -1313,11 +1313,11 @@
           "exit_date": "2026-02-23",
           "entry_price": 23.5,
           "exit_price": 21.1675,
-          "shares": 4318,
+          "shares": 4325,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -10071.73,
-          "net_pnl": -10505.7,
+          "gross_pnl": -10088.06,
+          "net_pnl": -10522.73,
           "is_win": false
         },
         {
@@ -1326,11 +1326,11 @@
           "exit_date": "2026-02-20",
           "entry_price": 21.01,
           "exit_price": 18.631428571428575,
-          "shares": 4827,
+          "shares": 4835,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -11481.36,
-          "net_pnl": -11911.9,
+          "gross_pnl": -11500.39,
+          "net_pnl": -11931.64,
           "is_win": false
         },
         {
@@ -1339,11 +1339,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8097,
+          "shares": 8113,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 5344.02,
-          "net_pnl": 4084.05,
+          "gross_pnl": 5354.58,
+          "net_pnl": 4092.12,
           "is_win": true
         }
       ]
@@ -1354,11 +1354,11 @@
       "strategy": "fixed_horizon",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 996505.35,
-      "total_realized_net_pnl": -1696.85,
+      "final_equity": 998297.4,
+      "total_realized_net_pnl": -1702.6,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -3494.65,
-      "total_return_pct": -0.3495,
+      "total_net_equity_change": -1702.6,
+      "total_return_pct": -0.1703,
       "n_signals": 8,
       "n_executed": 8,
       "n_skipped": 0,
@@ -1366,45 +1366,45 @@
       "n_completed_positions": 8,
       "n_open_at_end": 0,
       "max_concurrent_positions": 2,
-      "max_gross_exposure": 200755.8,
-      "total_costs": 3607.27,
-      "total_commission": 2404.85,
-      "total_slippage": 1202.42,
-      "total_cgt": 3271.18,
-      "sharpe": 0.1218,
-      "sortino": 0.0288,
-      "max_drawdown_pct": 0.1747,
-      "max_drawdown_pkr": null,
+      "max_gross_exposure": 200897.25,
+      "total_costs": 3611.17,
+      "total_commission": 2407.45,
+      "total_slippage": 1203.72,
+      "total_cgt": 3273.68,
+      "sharpe": 0.1203,
+      "sortino": 0.0299,
+      "max_drawdown_pct": 0.1737,
+      "max_drawdown_pkr": 209807.2,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 202041.555805
+          "realized_pnl": 202557.960735
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 99962.37627749999
+          "realized_pnl": 100525.431425
         },
         "SYS": {
           "n_trades": 1,
-          "realized_pnl": 101251.955565
+          "realized_pnl": 101478.26146499999
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 97068.9754125
+          "realized_pnl": 97365.1843125
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 90181.12735000001
+          "realized_pnl": 90512.03866250001
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 102838.64657
+          "realized_pnl": 103201.484485
         },
         "BOP": {
           "n_trades": 1,
-          "realized_pnl": 103982.86434500001
+          "realized_pnl": 104348.148315
         }
       },
       "open_positions_at_end": [],
@@ -1428,11 +1428,11 @@
           "exit_date": "2025-05-19",
           "entry_price": 337.78,
           "exit_price": 338.15,
-          "shares": 297,
+          "shares": 298,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 109.89,
-          "net_pnl": -358.28,
+          "gross_pnl": 110.26,
+          "net_pnl": -359.49,
           "is_win": false
         },
         {
@@ -1454,11 +1454,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 1.85,
           "exit_price": 1.76,
-          "shares": 54398,
+          "shares": 54435,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -4895.82,
-          "net_pnl": -5337.67,
+          "gross_pnl": -4899.15,
+          "net_pnl": -5341.3,
           "is_win": false
         },
         {
@@ -1467,11 +1467,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 7.3,
           "exit_price": 7.11,
-          "shares": 13715,
+          "shares": 13725,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -2605.85,
-          "net_pnl": -3050.52,
+          "gross_pnl": -2607.75,
+          "net_pnl": -3052.75,
           "is_win": false
         },
         {
@@ -1480,11 +1480,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 23.5,
           "exit_price": 21.35,
-          "shares": 4244,
+          "shares": 4249,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -9124.6,
-          "net_pnl": -9552.87,
+          "gross_pnl": -9135.35,
+          "net_pnl": -9564.13,
           "is_win": false
         },
         {
@@ -1493,11 +1493,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8063,
+          "shares": 8074,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 5321.58,
-          "net_pnl": 4066.9,
+          "gross_pnl": 5328.84,
+          "net_pnl": 4072.44,
           "is_win": true
         },
         {
@@ -1506,11 +1506,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 33.88,
           "exit_price": 36.13,
-          "shares": 2918,
+          "shares": 2922,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 6565.5,
-          "net_pnl": 5121.02,
+          "gross_pnl": 6574.5,
+          "net_pnl": 5128.04,
           "is_win": true
         }
       ]
@@ -1521,11 +1521,11 @@
       "strategy": "progressive_tp_sl",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 991720.2,
-      "total_realized_net_pnl": -6485.03,
+      "final_equity": 993505.58,
+      "total_realized_net_pnl": -6494.42,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -8279.8,
-      "total_return_pct": -0.828,
+      "total_net_equity_change": -6494.42,
+      "total_return_pct": -0.6494,
       "n_signals": 8,
       "n_executed": 8,
       "n_skipped": 0,
@@ -1533,45 +1533,45 @@
       "n_completed_positions": 8,
       "n_open_at_end": 0,
       "max_concurrent_positions": 2,
-      "max_gross_exposure": 200755.8,
-      "total_costs": 3590.36,
-      "total_commission": 2393.57,
-      "total_slippage": 1196.79,
-      "total_cgt": 3262.59,
-      "sharpe": 0.1169,
-      "sortino": 0.0295,
-      "max_drawdown_pct": 0.1746,
-      "max_drawdown_pkr": null,
+      "max_gross_exposure": 200897.25,
+      "total_costs": 3594.25,
+      "total_commission": 2396.17,
+      "total_slippage": 1198.08,
+      "total_cgt": 3265.09,
+      "sharpe": 0.1052,
+      "sortino": 0.0259,
+      "max_drawdown_pct": 0.1737,
+      "max_drawdown_pkr": 208797.89,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 2,
-          "realized_pnl": 198029.03790089287
+          "realized_pnl": 198542.71362830358
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 99962.37627749999
+          "realized_pnl": 100525.431425
         },
         "SYS": {
           "n_trades": 1,
-          "realized_pnl": 101251.955565
+          "realized_pnl": 101478.26146499999
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 97068.9754125
+          "realized_pnl": 97365.1843125
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 89050.20107437501
+          "realized_pnl": 89379.303065
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 102341.22536
+          "realized_pnl": 102702.9883375
         },
         "BOP": {
           "n_trades": 1,
-          "realized_pnl": 103483.97466
+          "realized_pnl": 103848.19141000001
         }
       },
       "open_positions_at_end": [],
@@ -1595,11 +1595,11 @@
           "exit_date": "2025-05-19",
           "entry_price": 337.78,
           "exit_price": 338.15,
-          "shares": 297,
+          "shares": 298,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 109.89,
-          "net_pnl": -358.28,
+          "gross_pnl": 110.26,
+          "net_pnl": -359.49,
           "is_win": false
         },
         {
@@ -1621,11 +1621,11 @@
           "exit_date": "2025-10-01",
           "entry_price": 1.85,
           "exit_price": 1.6860714285714287,
-          "shares": 54398,
+          "shares": 54435,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -8917.39,
-          "net_pnl": -9350.19,
+          "gross_pnl": -8923.45,
+          "net_pnl": -9356.55,
           "is_win": false
         },
         {
@@ -1634,11 +1634,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 7.3,
           "exit_price": 7.11,
-          "shares": 13715,
+          "shares": 13725,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -2605.85,
-          "net_pnl": -3050.52,
+          "gross_pnl": -2607.75,
+          "net_pnl": -3052.75,
           "is_win": false
         },
         {
@@ -1647,11 +1647,11 @@
           "exit_date": "2026-02-23",
           "entry_price": 23.5,
           "exit_price": 21.1675,
-          "shares": 4227,
+          "shares": 4232,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -9859.48,
-          "net_pnl": -10284.3,
+          "gross_pnl": -9871.14,
+          "net_pnl": -10296.46,
           "is_win": false
         },
         {
@@ -1660,11 +1660,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8024,
+          "shares": 8035,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 5295.84,
-          "net_pnl": 4047.23,
+          "gross_pnl": 5303.1,
+          "net_pnl": 4052.77,
           "is_win": true
         },
         {
@@ -1673,11 +1673,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 33.88,
           "exit_price": 36.13,
-          "shares": 2904,
+          "shares": 2908,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 6534,
-          "net_pnl": 5096.45,
+          "gross_pnl": 6543,
+          "net_pnl": 5103.47,
           "is_win": true
         }
       ]
@@ -1688,11 +1688,11 @@
       "strategy": "fixed_horizon",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 1006950.1,
-      "total_realized_net_pnl": 11940.46,
+      "final_equity": 1011912.72,
+      "total_realized_net_pnl": 11912.72,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": 6950.1,
-      "total_return_pct": 0.695,
+      "total_net_equity_change": 11912.72,
+      "total_return_pct": 1.1913,
       "n_signals": 22,
       "n_executed": 22,
       "n_skipped": 0,
@@ -1700,69 +1700,69 @@
       "n_completed_positions": 22,
       "n_open_at_end": 0,
       "max_concurrent_positions": 5,
-      "max_gross_exposure": 499435.43,
-      "total_costs": 10064.77,
-      "total_commission": 6709.85,
-      "total_slippage": 3354.92,
-      "total_cgt": 15352.93,
-      "sharpe": 0.2728,
-      "sortino": 0.0832,
-      "max_drawdown_pct": 0.3486,
-      "max_drawdown_pkr": null,
+      "max_gross_exposure": 500597.35,
+      "total_costs": 10085.25,
+      "total_commission": 6723.5,
+      "total_slippage": 3361.75,
+      "total_cgt": 15382.4,
+      "sharpe": 0.2805,
+      "sortino": 0.0887,
+      "max_drawdown_pct": 0.3735,
+      "max_drawdown_pkr": 589455.24,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 3,
-          "realized_pnl": 301317.921845
+          "realized_pnl": 302609.3474625
         },
         "PIBTL": {
           "n_trades": 2,
-          "realized_pnl": 210227.04567000002
+          "realized_pnl": 210859.2417375
         },
         "PAEL": {
           "n_trades": 2,
-          "realized_pnl": 205316.51049000002
+          "realized_pnl": 206169.95354000002
         },
         "PRL": {
           "n_trades": 2,
-          "realized_pnl": 197004.36440000002
+          "realized_pnl": 197641.10450000002
         },
         "BOP": {
           "n_trades": 3,
-          "realized_pnl": 338236.104455
+          "realized_pnl": 339710.01938
         },
         "HASCOL": {
           "n_trades": 3,
-          "realized_pnl": 295353.1000075
+          "realized_pnl": 296700.5500225
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 98952.655305
+          "realized_pnl": 99176.096775
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 94778.745255
+          "realized_pnl": 95170.74294000001
         },
         "HUBC": {
           "n_trades": 1,
-          "realized_pnl": 100608.92745
+          "realized_pnl": 101067.93303749998
         },
         "TRG": {
           "n_trades": 1,
-          "realized_pnl": 95043.23430499999
+          "realized_pnl": 95490.26239999999
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 93517.23408750001
+          "realized_pnl": 94069.4664
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 96007.11554500001
+          "realized_pnl": 96564.6894875
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 103514.62924
+          "realized_pnl": 104160.13092249999
         }
       },
       "open_positions_at_end": [],
@@ -1812,11 +1812,11 @@
           "exit_date": "2025-02-24",
           "entry_price": 34.94,
           "exit_price": 35.24,
-          "shares": 2907,
+          "shares": 2909,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 872.1,
-          "net_pnl": 282.26,
+          "gross_pnl": 872.7,
+          "net_pnl": 282.45,
           "is_win": true
         },
         {
@@ -1825,11 +1825,11 @@
           "exit_date": "2025-02-24",
           "entry_price": 11.24,
           "exit_price": 12.7,
-          "shares": 9030,
+          "shares": 9036,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 13183.8,
-          "net_pnl": 10719.83,
+          "gross_pnl": 13192.56,
+          "net_pnl": 10726.95,
           "is_win": true
         },
         {
@@ -1838,11 +1838,11 @@
           "exit_date": "2025-05-12",
           "entry_price": 10.3,
           "exit_price": 9.73,
-          "shares": 9965,
+          "shares": 9976,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -5680.05,
-          "net_pnl": -6129.15,
+          "gross_pnl": -5686.32,
+          "net_pnl": -6135.91,
           "is_win": false
         },
         {
@@ -1851,11 +1851,11 @@
           "exit_date": "2025-05-12",
           "entry_price": 28.91,
           "exit_price": 27.02,
-          "shares": 3538,
+          "shares": 3542,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -6686.82,
-          "net_pnl": -7132.05,
+          "gross_pnl": -6694.38,
+          "net_pnl": -7140.11,
           "is_win": false
         },
         {
@@ -1877,11 +1877,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8097,
+          "shares": 8111,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -5991.78,
-          "net_pnl": -6433.75,
+          "gross_pnl": -6002.14,
+          "net_pnl": -6444.88,
           "is_win": false
         },
         {
@@ -1890,11 +1890,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 9.95,
           "exit_price": 10.03,
-          "shares": 10179,
+          "shares": 10197,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 814.32,
-          "net_pnl": 234.58,
+          "gross_pnl": 815.76,
+          "net_pnl": 234.99,
           "is_win": true
         },
         {
@@ -1903,11 +1903,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 26.85,
           "exit_price": 33.5,
-          "shares": 3744,
+          "shares": 3753,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 24897.6,
-          "net_pnl": 20654.57,
+          "gross_pnl": 24957.45,
+          "net_pnl": 20704.22,
           "is_win": true
         },
         {
@@ -1916,11 +1916,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 1.85,
           "exit_price": 1.76,
-          "shares": 54304,
+          "shares": 54426,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -4887.36,
-          "net_pnl": -5328.44,
+          "gross_pnl": -4898.34,
+          "net_pnl": -5340.42,
           "is_win": false
         },
         {
@@ -1929,11 +1929,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 13.5,
           "exit_price": 16.36,
-          "shares": 7403,
+          "shares": 7420,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 21172.58,
-          "net_pnl": 17499.32,
+          "gross_pnl": 21221.2,
+          "net_pnl": 17539.51,
           "is_win": true
         },
         {
@@ -1942,11 +1942,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 232,
           "exit_price": 236.85,
-          "shares": 428,
+          "shares": 429,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 2075.8,
-          "net_pnl": 1312.93,
+          "gross_pnl": 2080.65,
+          "net_pnl": 1316,
           "is_win": true
         },
         {
@@ -1955,11 +1955,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 77.69,
           "exit_price": 74.77,
-          "shares": 1277,
+          "shares": 1280,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -3728.84,
-          "net_pnl": -4166.9,
+          "gross_pnl": -3737.6,
+          "net_pnl": -4176.68,
           "is_win": false
         },
         {
@@ -1968,11 +1968,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 23.5,
           "exit_price": 21.35,
-          "shares": 4401,
+          "shares": 4416,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -9462.15,
-          "net_pnl": -9906.27,
+          "gross_pnl": -9494.4,
+          "net_pnl": -9940.03,
           "is_win": false
         },
         {
@@ -1981,11 +1981,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 21.01,
           "exit_price": 16.63,
-          "shares": 4920,
+          "shares": 4937,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -21549.6,
-          "net_pnl": -21966.27,
+          "gross_pnl": -21624.06,
+          "net_pnl": -22042.17,
           "is_win": false
         },
         {
@@ -1994,11 +1994,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 8.12,
           "exit_price": 7.57,
-          "shares": 12742,
+          "shares": 12785,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -7008.1,
-          "net_pnl": -7457.92,
+          "gross_pnl": -7031.75,
+          "net_pnl": -7483.09,
           "is_win": false
         },
         {
@@ -2007,11 +2007,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8116,
+          "shares": 8149,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 5356.56,
-          "net_pnl": 4093.63,
+          "gross_pnl": 5378.34,
+          "net_pnl": 4110.27,
           "is_win": true
         },
         {
@@ -2020,11 +2020,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 38.49,
           "exit_price": 40.85,
-          "shares": 2586,
+          "shares": 2596,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 6102.96,
-          "net_pnl": 4725.88,
+          "gross_pnl": 6126.56,
+          "net_pnl": 4744.15,
           "is_win": true
         },
         {
@@ -2033,11 +2033,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 33.88,
           "exit_price": 36.13,
-          "shares": 2942,
+          "shares": 2954,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 6619.5,
-          "net_pnl": 5163.14,
+          "gross_pnl": 6646.5,
+          "net_pnl": 5184.2,
           "is_win": true
         },
         {
@@ -2046,11 +2046,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 1.35,
           "exit_price": 1.35,
-          "shares": 73993,
+          "shares": 74291,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
           "gross_pnl": 0,
-          "net_pnl": -449.51,
+          "net_pnl": -451.32,
           "is_win": false
         }
       ]
@@ -2061,11 +2061,11 @@
       "strategy": "progressive_tp_sl",
       "cost_profile_id": "standard_psx",
       "initial_capital": 1000000,
-      "final_equity": 993404.08,
-      "total_realized_net_pnl": -1633.89,
+      "final_equity": 998316.89,
+      "total_realized_net_pnl": -1683.11,
       "total_unrealized_pnl": 0,
-      "total_net_equity_change": -6595.92,
-      "total_return_pct": -0.6596,
+      "total_net_equity_change": -1683.11,
+      "total_return_pct": -0.1683,
       "n_signals": 22,
       "n_executed": 22,
       "n_skipped": 0,
@@ -2073,69 +2073,69 @@
       "n_completed_positions": 22,
       "n_open_at_end": 0,
       "max_concurrent_positions": 5,
-      "max_gross_exposure": 497972.32,
-      "total_costs": 9971.88,
-      "total_commission": 6647.92,
-      "total_slippage": 3323.96,
-      "total_cgt": 12913.55,
-      "sharpe": 0.247,
-      "sortino": 0.0844,
-      "max_drawdown_pct": 0.3345,
-      "max_drawdown_pkr": null,
+      "max_gross_exposure": 499105.54,
+      "total_costs": 9993.55,
+      "total_commission": 6662.37,
+      "total_slippage": 3331.18,
+      "total_cgt": 12936.09,
+      "sharpe": 0.2142,
+      "sortino": 0.0592,
+      "max_drawdown_pct": 0.2925,
+      "max_drawdown_pkr": 412641.62,
       "n_trading_days": 868,
       "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
       "per_stock_contribution": {
         "WTL": {
           "n_trades": 3,
-          "realized_pnl": 295688.50869517855
+          "realized_pnl": 296962.8261425893
         },
         "PIBTL": {
           "n_trades": 2,
-          "realized_pnl": 209907.90823
+          "realized_pnl": 210539.3878975
         },
         "PAEL": {
           "n_trades": 2,
-          "realized_pnl": 203905.398515
+          "realized_pnl": 204755.81047750002
         },
         "PRL": {
           "n_trades": 2,
-          "realized_pnl": 196465.16093303572
+          "realized_pnl": 197101.57047482143
         },
         "BOP": {
           "n_trades": 3,
-          "realized_pnl": 332056.58690500003
+          "realized_pnl": 333481.37828178576
         },
         "HASCOL": {
           "n_trades": 3,
-          "realized_pnl": 289154.3934285714
+          "realized_pnl": 290504.2913244643
         },
         "LUCK": {
           "n_trades": 1,
-          "realized_pnl": 100298.949935
+          "realized_pnl": 100862.76508749998
         },
         "ANL": {
           "n_trades": 1,
-          "realized_pnl": 94474.40446499999
+          "realized_pnl": 94877.40444
         },
         "HUBC": {
           "n_trades": 1,
-          "realized_pnl": 100373.8598625
+          "realized_pnl": 100832.34345
         },
         "TRG": {
           "n_trades": 1,
-          "realized_pnl": 94745.526445
+          "realized_pnl": 95191.85532999999
         },
         "LOTCHEM": {
           "n_trades": 1,
-          "realized_pnl": 90651.29293187501
+          "realized_pnl": 91174.49228062501
         },
         "KEL": {
           "n_trades": 1,
-          "realized_pnl": 93867.261455
+          "realized_pnl": 94404.5407825
         },
         "UNITY": {
           "n_trades": 1,
-          "realized_pnl": 102124.40073
+          "realized_pnl": 102766.89809999999
         }
       },
       "open_positions_at_end": [],
@@ -2185,11 +2185,11 @@
           "exit_date": "2025-02-24",
           "entry_price": 34.94,
           "exit_price": 35.24,
-          "shares": 2907,
+          "shares": 2909,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 872.1,
-          "net_pnl": 282.26,
+          "gross_pnl": 872.7,
+          "net_pnl": 282.45,
           "is_win": true
         },
         {
@@ -2198,11 +2198,11 @@
           "exit_date": "2025-02-18",
           "entry_price": 11.24,
           "exit_price": 13.014285714285714,
-          "shares": 9030,
+          "shares": 9036,
           "exit_reason": "TP3_HIT",
           "best_target_reached": "TP3",
-          "gross_pnl": 16021.8,
-          "net_pnl": 13125.74,
+          "gross_pnl": 16032.45,
+          "net_pnl": 13134.46,
           "is_win": true
         },
         {
@@ -2211,11 +2211,11 @@
           "exit_date": "2025-05-07",
           "entry_price": 10.3,
           "exit_price": 9.25,
-          "shares": 9988,
+          "shares": 9999,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -10487.4,
-          "net_pnl": -10926.75,
+          "gross_pnl": -10498.95,
+          "net_pnl": -10938.78,
           "is_win": false
         },
         {
@@ -2224,11 +2224,11 @@
           "exit_date": "2025-05-07",
           "entry_price": 28.91,
           "exit_price": 26.806785714285716,
-          "shares": 3546,
+          "shares": 3550,
           "exit_reason": "SL_AFTER_TP1",
           "best_target_reached": "TP1",
-          "gross_pnl": -7458,
-          "net_pnl": -7902.53,
+          "gross_pnl": -7466.41,
+          "net_pnl": -7911.45,
           "is_win": false
         },
         {
@@ -2237,11 +2237,11 @@
           "exit_date": "2025-05-19",
           "entry_price": 337.78,
           "exit_price": 338.15,
-          "shares": 298,
+          "shares": 299,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": 110.26,
-          "net_pnl": -359.49,
+          "gross_pnl": 110.63,
+          "net_pnl": -360.7,
           "is_win": false
         },
         {
@@ -2250,11 +2250,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 12.5,
           "exit_price": 11.76,
-          "shares": 8071,
+          "shares": 8086,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -5972.54,
-          "net_pnl": -6413.1,
+          "gross_pnl": -5983.64,
+          "net_pnl": -6425.01,
           "is_win": false
         },
         {
@@ -2263,11 +2263,11 @@
           "exit_date": "2025-07-24",
           "entry_price": 9.95,
           "exit_price": 10.03,
-          "shares": 10147,
+          "shares": 10165,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 811.76,
-          "net_pnl": 233.84,
+          "gross_pnl": 813.2,
+          "net_pnl": 234.25,
           "is_win": true
         },
         {
@@ -2276,11 +2276,11 @@
           "exit_date": "2025-10-02",
           "entry_price": 26.85,
           "exit_price": 31.35,
-          "shares": 3733,
+          "shares": 3741,
           "exit_reason": "TP3_HIT",
           "best_target_reached": "TP3",
-          "gross_pnl": 16798.5,
-          "net_pnl": 13789.89,
+          "gross_pnl": 16834.5,
+          "net_pnl": 13819.44,
           "is_win": true
         },
         {
@@ -2289,11 +2289,11 @@
           "exit_date": "2025-10-01",
           "entry_price": 1.85,
           "exit_price": 1.6860714285714287,
-          "shares": 54134,
+          "shares": 54255,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -8874.11,
-          "net_pnl": -9304.81,
+          "gross_pnl": -8893.94,
+          "net_pnl": -9325.61,
           "is_win": false
         },
         {
@@ -2302,11 +2302,11 @@
           "exit_date": "2025-09-29",
           "entry_price": 13.5,
           "exit_price": 14.912142857142857,
-          "shares": 7380,
+          "shares": 7397,
           "exit_reason": "TP3_HIT",
           "best_target_reached": "TP3",
-          "gross_pnl": 10421.61,
-          "net_pnl": 8386.59,
+          "gross_pnl": 10445.62,
+          "net_pnl": 8405.91,
           "is_win": true
         },
         {
@@ -2315,11 +2315,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 232,
           "exit_price": 236.85,
-          "shares": 427,
+          "shares": 428,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 2070.95,
-          "net_pnl": 1309.86,
+          "gross_pnl": 2075.8,
+          "net_pnl": 1312.93,
           "is_win": true
         },
         {
@@ -2328,11 +2328,11 @@
           "exit_date": "2025-10-03",
           "entry_price": 77.69,
           "exit_price": 74.77,
-          "shares": 1273,
+          "shares": 1276,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -3717.16,
-          "net_pnl": -4153.84,
+          "gross_pnl": -3725.92,
+          "net_pnl": -4163.63,
           "is_win": false
         },
         {
@@ -2341,11 +2341,11 @@
           "exit_date": "2026-02-23",
           "entry_price": 23.5,
           "exit_price": 21.1675,
-          "shares": 4303,
+          "shares": 4317,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -10036.75,
-          "net_pnl": -10469.21,
+          "gross_pnl": -10069.4,
+          "net_pnl": -10503.27,
           "is_win": false
         },
         {
@@ -2354,11 +2354,11 @@
           "exit_date": "2026-02-20",
           "entry_price": 21.01,
           "exit_price": 18.631428571428575,
-          "shares": 4810,
+          "shares": 4827,
           "exit_reason": "SL_HIT",
           "best_target_reached": "—",
-          "gross_pnl": -11440.93,
-          "net_pnl": -11869.95,
+          "gross_pnl": -11481.36,
+          "net_pnl": -11911.9,
           "is_win": false
         },
         {
@@ -2367,11 +2367,11 @@
           "exit_date": "2026-02-24",
           "entry_price": 8.12,
           "exit_price": 7.57,
-          "shares": 12458,
+          "shares": 12499,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
-          "gross_pnl": -6851.9,
-          "net_pnl": -7291.7,
+          "gross_pnl": -6874.45,
+          "net_pnl": -7315.7,
           "is_win": false
         },
         {
@@ -2380,11 +2380,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 12.25,
           "exit_price": 12.91,
-          "shares": 8007,
+          "shares": 8040,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 5284.62,
-          "net_pnl": 4038.65,
+          "gross_pnl": 5306.4,
+          "net_pnl": 4055.3,
           "is_win": true
         },
         {
@@ -2393,11 +2393,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 38.49,
           "exit_price": 40.85,
-          "shares": 2551,
+          "shares": 2561,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 6020.36,
-          "net_pnl": 4661.91,
+          "gross_pnl": 6043.96,
+          "net_pnl": 4680.19,
           "is_win": true
         },
         {
@@ -2406,11 +2406,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 33.88,
           "exit_price": 36.13,
-          "shares": 2902,
+          "shares": 2914,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "TP1",
-          "gross_pnl": 6529.5,
-          "net_pnl": 5092.94,
+          "gross_pnl": 6556.5,
+          "net_pnl": 5114,
           "is_win": true
         },
         {
@@ -2419,11 +2419,11 @@
           "exit_date": "2026-05-08",
           "entry_price": 1.35,
           "exit_price": 1.35,
-          "shares": 72997,
+          "shares": 73293,
           "exit_reason": "HORIZON_EXIT",
           "best_target_reached": "—",
           "gross_pnl": 0,
-          "net_pnl": -443.46,
+          "net_pnl": -445.25,
           "is_win": false
         }
       ]
