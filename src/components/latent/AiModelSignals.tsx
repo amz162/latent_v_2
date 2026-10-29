@@ -128,6 +128,14 @@ export function AiModelSignals(){
  const[graphChart,setGraphChart]=useState<{dates:string[];actual:(number|null)[];models:any[]}|null>(null);
  const[graphLoading,setGraphLoading]=useState(false);
  const[graphMeta,setGraphMeta]=useState<{points?:number;dataSourceDate?:string|null}|null>(null);
+ // Task 72: genuine trained-ML out-of-sample graph
+ const[mlGraphMode,setMlGraphMode]=useState<"ml"|"rule">("ml"); // ml = trained-ML, rule = strategySignal
+ const[mlGraphData,setMlGraphData]=useState<any>(null);
+ const[mlGraphLoading,setMlGraphLoading]=useState(false);
+ const[mlGraphModel,setMlGraphModel]=useState("XGBoost");
+ const[mlGraphHorizon,setMlGraphHorizon]=useState("5");
+ const[mlGraphPeriod,setMlGraphPeriod]=useState<"final-test"|"validation">("final-test");
+ const ML_GRAPH_MODELS=["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression"];
  // KSE-100 constituents (fetched once) — used to restrict the StockSearch picker.
  useEffect(()=>{fetch("/api/psx/indices/KSE100").then(r=>r.ok?r.json():null).then(j=>{if(j?.constituents)setKse100Syms(j.constituents.map((c:any)=>c.symbol));}).catch(()=>{});},[]);
  const GRAPH_MODEL_OPTIONS=["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression","ARIMA","Holt-Winters","GARCH","Prophet","Kalman Filter","GRU","LSTM","CNN-LSTM","Transformer-LSTM","PatchTST","N-BEATS","TimesNet","Informer","XGBoost (CL)","LightGBM (CL)","Random Forest (CL)","LightGBM-A (CL-2)","Logistic (CL-2)","Linear Regression (PI)","Pattern Matcher KNN (PI)","LightGBM (CG)","XGBoost (CG)","Trend Multi-TF (X)","Gian-Ensemble (GIAN)","M-Ensemble (M)","majority_vote","probability_weighted","tier_weighted","cl_ensemble","cl2_ensemble","pi_ensemble","gm_model","cg_ensemble","x_ensemble","gian_ensemble","m_ensemble"];
@@ -1190,6 +1198,83 @@ export function AiModelSignals(){
       <div className="flex items-center gap-2 flex-wrap text-[10px] text-[#64748B]">
        <Badge variant="outline" className={`h-4 py-0 ${data?.backtestSource==="db-extended-universe"?"border-[#00E676]/40 text-[#00E676]":"border-[#FBBF24]/40 text-[#FBBF24]"}`} title="Backtest was recomputed over the full extended universe (original ML-trained + fallback-covered stocks)">{data?.backtestSource==="db-extended-universe"?"FRESH · full-universe":"FILE · subset"}</Badge>
        <span>{data?.backtestSource==="db-extended-universe"?"Backtest freshly recomputed across all DB stocks (ModelBacktestCache populated).":"Backtest from the file subset — run the precompute for full-universe coverage."}</span>
+      </div>
+
+      {/* Task 72: Genuine Trained-ML Out-of-Sample Actual vs Predicted Graph */}
+      <div className="rounded-lg bg-[#0A0E1A] border border-[#22D3EE]/20 p-3 mb-3">
+       <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <h3 className="text-sm font-semibold text-[#22D3EE] flex items-center gap-1.5"><TrendingUp className="h-4 w-4"/>Actual vs Predicted — Graph Mode</h3>
+        <button onClick={()=>setMlGraphMode("ml")} className={`px-2 py-1 rounded text-[10px] font-mono ${mlGraphMode==="ml"?"bg-[#22D3EE]/15 text-[#22D3EE]":"text-[#64748B]"}`}>Trained-ML (OOS)</button>
+        <button onClick={()=>setMlGraphMode("rule")} className={`px-2 py-1 rounded text-[10px] font-mono ${mlGraphMode==="rule"?"bg-[#FBBF24]/15 text-[#FBBF24]":"text-[#64748B]"}`}>Rule-Based Preview</button>
+       </div>
+       {mlGraphMode==="ml"&&(
+        <div>
+         <p className="text-[10px] text-[#94A3B8] mb-2">Genuine historical out-of-sample trained-ML predictions from the pilot25 walk-forward evaluation. predictedPrice = decisionClose × (1 + predictedForwardReturn). Target = decision_date + horizon trading sessions (from OHLCV DB, NOT calendar days). <span className="text-[#FBBF24]">NOT live forecasts. NOT prospective. NOT strategySignal.</span></p>
+         <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <select value={mlGraphModel} onChange={e=>setMlGraphModel(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+           {ML_GRAPH_MODELS.map(m=><option key={m} value={m}>{m}</option>)}
+          </select>
+          <select value={mlGraphHorizon} onChange={e=>setMlGraphHorizon(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+            <option value="5">5 sessions</option><option value="10">10 sessions</option><option value="21">21 sessions</option>
+          </select>
+          <select value={mlGraphPeriod} onChange={e=>setMlGraphPeriod(e.target.value as any)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+            <option value="final-test">Final-Test</option><option value="validation">Validation</option>
+          </select>
+          <Button size="sm" variant="outline" onClick={async()=>{
+            const sym=(graphSymbol||data?.symbol||"LUCK").trim().toUpperCase();
+            setMlGraphLoading(true);
+            try{
+              const r=await fetch(`/api/backtest/model-graph/ml?symbol=${encodeURIComponent(sym)}&model=${encodeURIComponent(mlGraphModel)}&horizon=${encodeURIComponent(mlGraphHorizon)}&period=${encodeURIComponent(mlGraphPeriod)}`);
+              const d=await r.json();
+              if(!d.available){toast.error(d.error||"No ML graph data");setMlGraphData(null);}
+              else setMlGraphData(d);
+            }catch(e:any){toast.error(e?.message||"Failed");setMlGraphData(null);}
+            finally{setMlGraphLoading(false);}
+          }} disabled={mlGraphLoading} className="border-[#22D3EE]/30 text-[#22D3EE] hover:bg-[#22D3EE]/10 h-7 text-[11px]">
+            {mlGraphLoading?"Loading…":"Generate ML Graph"}
+          </Button>
+         </div>
+         {mlGraphData&&mlGraphData.available&&(
+          <div>
+           <div className="text-[10px] text-[#64748B] mb-2">
+             Source: {mlGraphData.source_run_id} · {mlGraphData.n_points} valid points · {mlGraphData.n_omitted} omitted · {mlGraphData.model} {mlGraphData.horizon}d · {mlGraphData.period}
+           </div>
+           {/* Simple chart: actual vs predicted price points */}
+           <div className="overflow-x-auto max-h-72 overflow-y-auto">
+            <table className="w-full text-[9px] border-collapse">
+             <thead className="sticky top-0 bg-[#0A0E1A]">
+              <tr className="text-[#64748B] border-b border-white/[0.06]">
+               <th className="text-left py-1 px-2">Decision Date</th>
+               <th className="text-left py-1 px-1">Target Date</th>
+               <th className="text-right py-1 px-1">Decision Close</th>
+               <th className="text-right py-1 px-1">Predicted Price</th>
+               <th className="text-right py-1 px-1">Actual Price</th>
+               <th className="text-right py-1 px-1">Error</th>
+               <th className="text-center py-1 px-1">Verified</th>
+              </tr>
+             </thead>
+             <tbody>
+              {mlGraphData.points.map((p:any,i:number)=>(
+               <tr key={i} className="border-b border-white/[0.04]">
+                <td className="py-0.5 px-2 font-mono text-[#94A3B8]">{p.decision_date}</td>
+                <td className="py-0.5 px-1 font-mono text-[#64748B]">{p.target_date||"—"}</td>
+                <td className="text-right px-1 font-mono text-[#94A3B8]">{p.decision_close.toFixed(2)}</td>
+                <td className="text-right px-1 font-mono text-[#22D3EE]">{p.predicted_price.toFixed(2)}</td>
+                <td className="text-right px-1 font-mono text-[#00E676]">{p.actual_price.toFixed(2)}</td>
+                <td className={"text-right px-1 font-mono "+(p.predicted_price>p.actual_price?"text-[#FF5C5C]":"text-[#00E676]")}>{(p.predicted_price-p.actual_price).toFixed(2)}</td>
+                <td className="text-center px-1 text-[8px]">{p.verification==="verified"?"✓":p.verification==="mismatch"?"✗":"?"}</td>
+               </tr>
+              ))}
+             </tbody>
+            </table>
+           </div>
+           <div className="text-[8px] text-[#64748B] mt-1">{mlGraphData.methodology}</div>
+          </div>
+         )}
+         {mlGraphData&&!mlGraphData.available&&<div className="text-[#FBBF24] text-[10px]">{mlGraphData.error||"No data available"}</div>}
+         {!mlGraphData&&!mlGraphLoading&&<div className="text-[#64748B] text-[10px]">Select model/horizon/period + click Generate</div>}
+        </div>
+       )}
       </div>
 
       {/* Phase 3: per-model Actual vs Predicted graph view (enhanced) */}
