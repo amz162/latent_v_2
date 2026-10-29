@@ -10,6 +10,7 @@ import{useLatentStore}from"@/lib/latent/store";
 import{Brain,Sparkles,Layers,Cpu,BarChart3,DollarSign,Play,Loader2,Eye,ChevronLeft,TrendingUp,TrendingDown}from"lucide-react";
 import{toast}from"sonner";
 import{LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend}from"recharts";
+import{rankAndFilter as rankAndFilterEnsembles,computeBacktestScore}from"@/lib/latent/simulator-ranking";
 
 interface MP{name:string;tier:string;tierLabel:string;category:string;trained:boolean;untrainedReason?:string;direction?:"LONG"|"SHORT";signal?:"BUY"|"SELL"|"HOLD";confidence?:number;currentPrice?:number;entry?:number;sl?:number;tp1?:number;tp2?:number;tp3?:number;avgReturn?:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;metrics?:any;backtest?:{totalTrades:number;buySignals:number;sellSignals:number;correctBuys:number;correctSells:number;winRate:number;avgReturnPct:number;maxReturnPct:number;minReturnPct:number;stars:number;coveredSymbols?:number;};extended?:boolean;}
 interface ER{method:string;methodLabel:string;signal:"BUY"|"SELL"|"HOLD";direction:"LONG"|"SHORT";confidence:number;predictedPrice:number;entry:number;sl:number;tp1:number;tp2:number;tp3:number;modelCount:number;buyCount:number;sellCount:number;holdCount:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;total_score?:number;pillars?:any;expected_return?:number;r_pct?:number;strategy_signals?:any;}
@@ -107,9 +108,18 @@ export function AiModelSignals(){
  const[simDays,setSimDays]=useState("10");
  const[simTrades,setSimTrades]=useState("20");
  const[simSymbol,setSimSymbol]=useState(""); // optional stock filter (default "" = ALL stocks)
- const[simRankBy,setSimRankBy]=useState<"winRate"|"netPnl"|"prediction">("winRate"); // ranking metric
- const[predictScores,setPredictScores]=useState<Record<string,number>>({}); // streak: consecutive 100% win-rate simulations per ensemble
- const[simTargetScore,setSimTargetScore]=useState("1"); // target prediction score for automate
+ // Task 75: ranking is now "winRate" | "netPnl" | "backtestScore" — the old
+ // ambiguous "prediction" option (which sent rankBy=winRate to the API but then
+ // re-sorted the displayed results by the streak counter predictScores) is
+ // replaced by "backtestScore". Backtest Score = empirical winRate/100 from the
+ // completed trades returned by the simulator — NOT a streak count, NOT a
+ // calibrated probability. winRate and backtestScore produce the same order
+ // (monotonic transform of winRate) but carry accurate labels. The streak
+ // automation (predictScores + simTargetScore + Automate button + Streak badge)
+ // is preserved as a SEPARATE control and is no longer used for ranking.
+ const[simRankBy,setSimRankBy]=useState<"winRate"|"netPnl"|"backtestScore">("winRate"); // ranking metric
+ const[predictScores,setPredictScores]=useState<Record<string,number>>({}); // streak automation: consecutive simulations meeting the min-win-rate threshold per ensemble (NOT used for ranking)
+ const[simTargetScore,setSimTargetScore]=useState("1"); // target streak count for the Automate loop
  const[simWinRateThreshold,setSimWinRateThreshold]=useState("100"); // min win rate % to count as a prediction score
  const[automateRunning,setAutomateRunning]=useState(false);
  const[automateCount,setAutomateCount]=useState(0);
@@ -365,7 +375,7 @@ export function AiModelSignals(){
         <div className="flex bg-[#0A0E1A] border border-white/[0.12] rounded p-0.5">
          <button onClick={()=>setSimRankBy("winRate")} className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-semibold transition-colors ${simRankBy==="winRate"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>Win Rate</button>
          <button onClick={()=>setSimRankBy("netPnl")} className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-semibold transition-colors ${simRankBy==="netPnl"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>Net P&L</button>
-         <button onClick={()=>setSimRankBy("prediction")} className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-semibold transition-colors ${simRankBy==="prediction"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>Prediction</button>
+         <button onClick={()=>setSimRankBy("backtestScore")} title="Backtest Score = empirical winRate/100 from completed trades (NOT a streak count)" className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-semibold transition-colors ${simRankBy==="backtestScore"?"bg-[#00E676]/15 text-[#00E676]":"text-[#64748B] hover:text-[#F4F7FB]"}`}>Backtest Score</button>
         </div>
        </div>
        <div>
@@ -380,7 +390,10 @@ export function AiModelSignals(){
          setSimLoading(true); setSimDrilldown(null);
          try{
           const symParam = simSymbol ? `&symbol=${encodeURIComponent(simSymbol)}` : "";
-          const r=await fetch(`/api/backtest/ensembles?capital=${encodeURIComponent(simAmount)}&numTrades=${encodeURIComponent(simTrades)}&numDays=${encodeURIComponent(simDays)}${symParam}&rankBy=${simRankBy === "prediction" ? "winRate" : simRankBy}`);
+          // backtestScore ranking === winRate ranking (monotonic: score=winRate/100),
+          // so the API sorts by winRate in both cases; only the label differs.
+          const apiRankBy = simRankBy === "backtestScore" ? "winRate" : simRankBy;
+          const r=await fetch(`/api/backtest/ensembles?capital=${encodeURIComponent(simAmount)}&numTrades=${encodeURIComponent(simTrades)}&numDays=${encodeURIComponent(simDays)}${symParam}&rankBy=${apiRankBy}`);
           const d=await r.json();
           if(d.error){toast.error(d.error);return;}
           setSimData(d);
@@ -530,21 +543,13 @@ export function AiModelSignals(){
          {/* ALL ensemble models — ranked by win rate, full metrics each (per user spec) */}
          <div>
           <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5">
-           <TrendingUp className="h-4 w-4"/>All ensemble models — ranked by {simRankBy === "winRate" ? "win rate" : simRankBy === "netPnl" ? "net P&L" : "streak count"}
+           <TrendingUp className="h-4 w-4"/>All ensemble models — ranked by {simRankBy === "winRate" ? "win rate" : simRankBy === "netPnl" ? "net P&L" : "backtest score (winRate/100)"}
            <span className="text-[10px] text-[#64748B] ml-2">
-             Showing {[...simData.top5, ...simData.rest].filter((r:any) => r.metrics && r.metrics.totalTrades > 0 && r.metrics.winRate >= (parseInt(simWinRateThreshold) || 0)).length} of {[...simData.top5, ...simData.rest].length} (min win rate: {simWinRateThreshold}%)
+             Showing {rankAndFilterEnsembles([...simData.top5, ...simData.rest], simRankBy, parseInt(simWinRateThreshold) || 0).showingX} of {rankAndFilterEnsembles([...simData.top5, ...simData.rest], simRankBy, parseInt(simWinRateThreshold) || 0).totalY} (min win rate: {simWinRateThreshold}%)
            </span>
           </h3>
           <div className="space-y-2">
-           {((simRankBy === "prediction"
-             ? [...simData.top5, ...simData.rest].sort((a:any,b:any) => (predictScores[b.ensembleName]||0) - (predictScores[a.ensembleName]||0))
-             : [...simData.top5, ...simData.rest]
-           ).filter((r:any) => {
-             // Phase 5: slider actually FILTERS results — only show results meeting the threshold
-             // Results with 0 completed trades are excluded from win-rate-qualified results
-             const threshold = parseInt(simWinRateThreshold) || 0;
-             return r.metrics && r.metrics.totalTrades > 0 && r.metrics.winRate >= threshold;
-           })).map((r:any,idx:number)=>(
+           {(rankAndFilterEnsembles([...simData.top5, ...simData.rest], simRankBy, parseInt(simWinRateThreshold) || 0).filtered).map((r:any,idx:number)=>(
             <div key={r.ensembleName} className="rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-3">
              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
               <div className="flex items-center gap-2">
@@ -553,7 +558,7 @@ export function AiModelSignals(){
                {predictScores[r.ensembleName] > 0 && <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#FBBF24]/40 text-[#FBBF24] bg-[#FBBF24]/10 ml-1">Streak: {predictScores[r.ensembleName]}</Badge>}
                {r.metrics && r.metrics.totalTrades > 0 ? (
                  <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10 ml-1" title={`Empirical win rate from ${r.metrics.totalTrades} completed trades`}>
-                   Backtest Score: {(r.metrics.winRate / 100).toFixed(2)} <span className="text-[#64748B]">({r.metrics.totalTrades} trades)</span>
+                   Backtest Score: {(computeBacktestScore(r.metrics) ?? 0).toFixed(2)} <span className="text-[#64748B]">({r.metrics.totalTrades} trades)</span>
                  </Badge>
                ) : (
                  <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-white/[0.12] text-[#64748B] ml-1">Backtest Score: unavailable</Badge>

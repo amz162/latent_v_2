@@ -3921,3 +3921,79 @@ Remaining limitations:
 - No live/forward inference is claimed; these are Task 55 historical walk-forward samples only.
 - Tests for the HTTP layer (400 responses) and UI rendering are covered by curl smoke + agent-browser respectively, NOT by the unit suite (reported honestly in the test script output).
 - Tasks 71/72/73 were not previously appended to this worklog; this Task 74 entry is self-contained.
+
+---
+Task ID: 75 (COMPLETE)
+Agent: main
+Task: Final AI Model tab integration audit + simulator ranking correction. Replace the ambiguous "Prediction" ranking option (which sent rankBy=winRate to the API but re-sorted displayed results by the streak counter predictScores — inconsistent with the Backtest Score card) with an empirical "Backtest Score" = winRate/100. Preserve streak as a separate automation. Audit all AI Model tab sections for source/metric consistency. Add deterministic integration tests + browser verification.
+Initial Git state: main, clean, synced with origin/main (HEAD = a3df4818, 0/0).
+
+Critical defect corrected:
+- OLD: simRankBy="prediction" → API called with rankBy=winRate, but the displayed list was re-sorted by predictScores[b.ensembleName] (a streak counter incremented on each Simulate/Automate click when winRate >= threshold). This did NOT represent the empirical Backtest Score shown on the cards (winRate/100).
+- NEW: simRankBy="backtestScore" → API called with rankBy=winRate (same order — backtestScore=winRate/100 is monotonic); displayed list sorted by empirical winRate descending via the pure rankAndFilter helper. The streak counter (predictScores) is NEVER used for ranking. The streak automation (Automate button, simTargetScore, Streak badge) is preserved as a separate control.
+
+Phase 1 — Audit:
+- Git: main, clean, synced (a3df4818).
+- AI Model tab source map: (1) Historical ensemble simulator → /api/backtest/ensembles (reads ml_predictions_multi.json, runs runBacktest engine, 13 ensembles, with-replacement sampling). (2) Walk-forward report → /api/backtest/walk-forward (reads walk_forward_latest.json). (3) Trading → /api/backtest/walk-forward/trading (walk_forward_trading_latest.json). (4) Trading-robustness → .../trading-robustness (walk_forward_trading_robustness.json). (5) Portfolio → .../portfolio (walk_forward_portfolio_latest.json). (6) Prospective → .../prospective (prospective_paper_trading_latest.json). (7) ML graph → /api/backtest/model-graph/ml (Task 74, reads pilot25 samples + DB OHLCV). (8) Rule-Based Preview → strategySignal indicator engine (NOT trained-ML).
+- Section labels are clear and distinct: "ML-integrity note" (technical-rule-strategy, NOT trained-ML), "ML Forecast Evaluation — Walk-Forward", "Prospective Paper Trading — genuinely prospective, NOT historical backtest", "NOT strategySignal", "Rule-Based Preview — NOT trained-ML forecasts".
+
+Phase 2 — Ranking correction (src/lib/latent/simulator-ranking.ts NEW + AiModelSignals.tsx):
+- computeBacktestScore(metrics) = metrics.winRate/100 (null if totalTrades<=0 → "unavailable").
+- rankEnsembles(results, rankBy): sorts by winRate (winRate & backtestScore — monotonic) or netPnL; no-metrics sink to bottom; NEVER by streak.
+- filterByWinRate(results, minWinRatePct): requires totalTrades>0 (zero-trade excluded even at 0%); at 100% only winRate==100 with >=1 trade.
+- rankAndFilter returns {ranked, filtered, showingX, totalY} — counts always agree with visible set.
+- reconcileMetricsWithTrades(metrics, trades): verifies totalTrades=trades.length, winTrades=count(netPnl>0), lossTrades=count(netPnl<=0), netPnL=sum(trades.netPnl), winRate=wins/totalTrades*100.
+- requestedVsActualTrades(requested, metrics): requested (numTrades) vs actual (totalTrades) reported separately.
+- UI: replaced "Prediction" button with "Backtest Score" (title="empirical winRate/100 from completed trades, NOT a streak count"); simRankBy type "winRate"|"netPnl"|"backtestScore"; API sends rankBy=winRate for backtestScore; heading "ranked by backtest score (winRate/100)"; display sort + Showing X of Y + Backtest Score badge all delegate to the pure module. Streak badge + Automate + simTargetScore preserved as separate automation.
+
+Phase 3 — Metric audit (engine src/lib/latent/backtest.ts):
+- totalTrades = trades.length (ACTUAL executed, with-replacement → equals numTrades when signals exist).
+- winRate = wins/totalTrades*100 (wins = netPnl>0 after costs).
+- netPnL = grossBeforeCosts - totalCosts (AFTER costs, once — no UI double-subtraction).
+- Card labels: Gross Profit/Loss (gross), Total Costs (comm+slip+CGT), Gross Before Costs, Net P&L (net). All distinct, no mislabelling.
+- Drilldown trade-by-trade reconciles with card aggregates (verified deterministically in Test 8 + browser drilldown).
+
+Phase 4 — Backtest report audit: walk_forward_latest.json has schema_version, generated_at, data_cutoff, models[] (5: XGBoost/LightGBM/CatBoost/Random Forest/Ridge Regression), forecast_horizons, per-model per-horizon mae/rmse/r2/directional_accuracy/n_observations + baselines. API serves the file as-is (no fabrication). Missing values shown as unavailable.
+
+Phase 5 — Task 74 graph protections preserved: ml-graph-points.ts + /api/backtest/model-graph/ml unchanged; 85 regression checks still pass; verified-only series, observed OHLCV close as actual, stale-clear, Rule-Based gating all intact.
+
+Phase 6 — Prospective audit: report (prospective_paper_trading_latest.json) prediction_counts {total:375, pending:375, matured:0} EXACTLY matches PredictionHistory DB (375 rows, all outcomeStatus=pending, 25 symbols × 5 models × 3 horizons). Data fresh 2026-10-29. inference_availability.available=true (Task 67). status=ACTIVE. 0 matured → sharpe/sortino/max_drawdown null (unavailable, NOT fabricated zeroes). UI shows "0 matured" explicitly (line 1099) so zero realized P&L is not misleading. Report NOT stale (generated today, matches DB).
+
+Phase 7 — Tests (scripts/task75_integration_check.ts, 71 checks, all PASS):
+1. Backtest Score = winRate/100 (100→1.00, 75→0.75, 50→0.50, 25→0.25, 0→0.00).
+2. No completed trades → null (unavailable).
+3. Backtest Score ranking uses empirical winRate, NOT streak (verified with a fake streak map that would mis-rank — ranking unaffected).
+4. Repeated ranking idempotent (score/sample stable across 3 calls — no inflation).
+5. Min-win-rate slider 0% (5 results)/50% (3)/100% (1) — correct filtering.
+6. Zero-trade results excluded even at 0%.
+7. Showing X of Y agrees with filtered set at 0/25/50/75/100%.
+8. Card metrics reconcile with drilldown (self-consistent fixtures + negative case fails).
+9. Requested vs actual trade counts distinct (requested 20/actual 20 with signals; requested 40/actual 0 without).
+10. walk_forward_latest.json has schema/models/forecast_horizons (source artifact matches API).
+11. Task 74 suite exists (run separately — 85 checks).
+12. Prospective report ↔ DB: total/pending/matured all match (375/375/0); 0 matured → risk metrics null.
+13. Missing/stale → unavailable (null), not zeroes.
+14. Historical & prospective never combined (separate endpoints/files; ensembles route reads ml_predictions_multi NOT prospective; prospective route reads prospective report NOT ml_predictions_multi; simulator-ranking module has NO PredictionHistory reference).
+- Tests NOT run in unit suite (reported honestly): Test 11 detail (graph counts) covered by Task 74 suite; Test 15 (browser stale-clear) covered by Phase 7 browser; HTTP-layer covered by curl smoke.
+
+Phase 7 — Browser verification (agent-browser, 7 screenshots in data/task75_evidence/):
+- "Prediction" button GONE; "Backtest Score" button present.
+- Heading: "ranked by backtest score (winRate/100)".
+- Backtest Score badges = winRate/100 exactly: scores [0.40,0.40,0.35,0.35,0.35,0.30,0.25,0.20…] = winRates [40,40,35,35,35,30,25,20…]/100, sorted descending by empirical winRate (NOT streak).
+- Filter: 100%→0 of 13 (none hit 100%); 0%→13 of 13; 20%→13 of 13 (all >= 20%).
+- Streak badges "Streak: 1" appear SEPARATELY (automation preserved, not used for ranking).
+- All 13 ensembles have 20 trades (requested = actual, with-replacement).
+- Drilldown "A. Majority Vote — Trade by trade" opens with ~20 trade rows + Back button.
+- Console errors throughout: NONE.
+
+Phase 8 — Artifact protection: ALL 9 protected artifacts + 400 samples match git HEAD exactly (ml_predictions_multi.json, walk_forward_latest.json, pilot25_robustness.json, walk_forward_trading_latest.json, walk_forward_trading_robustness.json, walk_forward_portfolio_latest.json, prospective latest.json + run manifest, pilot25 manifest; 400 samples aggregate 5e45fd29…). No protected artifact modified.
+
+Files changed: src/lib/latent/simulator-ranking.ts (NEW, pure module), src/components/latent/AiModelSignals.tsx (ranking fix + delegate to pure module), scripts/task75_integration_check.ts (NEW, 71 tests), data/task75_evidence/ (NEW, 7 screenshots), worklog.md (this entry), .next/dev/logs/next-development.log (build artifact).
+
+Remaining limitations:
+- Backtest Score = winRate/100 is a transformation of historical win rate — NOT a calibrated probability of a future trade winning, NOT evidence of statistical significance (pilot25 robustness showed all 95% CIs include 0).
+- The streak automation's threshold uses `parseInt(simWinRateThreshold) || 100` (pre-existing) — when the slider is 0, the streak threshold defaults to 100 (0 is falsy). This is a pre-existing quirk in the SEPARATE streak automation (not the ranking, which uses `|| 0` via rankAndFilter). Documented; not changed (streak is defined as "consecutive simulations meeting the threshold" and the quirk only affects the slider=0 edge).
+- Historical ensemble simulator is a technical-rule-strategy evaluation (strategySignal engine) — NOT trained-ML. Kept separate from the walk-forward trained-ML report and prospective paper-trading.
+- Prospective has 0 matured outcomes (data cutoff 2026-10-29; horizons 5/10/21d not yet matured) → all risk metrics null/unavailable. ACTIVE is an operational status, NOT proof of model skill.
+- Browser test 15 (stale-clear on filter change in the simulator) verified visually (ranking/filter updates immediately on slider change without re-fetch) but not captured as a dedicated screenshot.
+- Do NOT claim predictive skill, statistical significance, or future profitability.
