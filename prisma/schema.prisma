@@ -179,6 +179,96 @@ model PredictionHistory {
   @@index([outcomeStatus])
 }
 
+// Task 76 — Forecast-outcome maturity (SEPARATE from trade outcomes).
+// Immutable: once a verified outcome is recorded (target close observed), it is
+// never overwritten. Repeated workflow runs find the existing outcome and skip.
+// One-to-one with PredictionHistory via predictionId (unique). The forecast
+// outcome (prediction quality) is independent of whether a paper trade closed.
+model PredictionOutcome {
+  id              String   @id @default(cuid())
+  predictionId    String   @unique // → PredictionHistory.id (1:1)
+  targetDate      String?  // YYYY-MM-DD of the target trading session
+  observedClose   Float?   // actual OHLCV close at the target session
+  actualReturn    Float?   // (observedClose − decisionRef) / decisionRef
+  maturityTs      String?  // epoch ms when the outcome was recorded
+  outcomeStatus   String   @default("pending") // pending | matured | unavailable
+  retryCount      Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([outcomeStatus])
+  @@index([targetDate])
+}
+
+// Task 76 — Prospective paper-trade ledger. Each trade traces back to ONE
+// PredictionHistory record + a strategy policy. Uniqueness: one entry per
+// (sourcePredictionId, strategyId, bookId) — the same prediction cannot create
+// duplicate entries for the same strategy/book. The three strategies CAN each
+// have their own trade for the same prediction (paired comparison). Seed/demo
+// rows are explicitly marked (isDemo) and excluded from genuine metrics.
+model ProspectivePaperTrade {
+  id                   String   @id @default(cuid())
+  sourcePredictionId   String   // → PredictionHistory.id
+  strategyId           String   // fixed_first_hit | max_tp_step_trailing | scale_out_50_25_25
+  policyVersion        String   // task76-v1 (bump if exit rules change)
+  bookId               String   // shadow portfolio identity (e.g. "book_standard_psx_5d")
+  modelId              String
+  horizon              Int?
+  symbol               String
+  direction            String   // BUY | SELL
+  state                String   @default("pending_entry") // pending_entry | open | closed | skipped
+  entryDate            String?  // actual entry session date
+  entryPrice           Float?   // observed next-session open
+  quantity             Int?     // integer shares
+  allocatedCash        Float?
+  sl                   Float?
+  tp1                  Float?
+  tp2                  Float?
+  tp3                  Float?
+  activeStopFinal      Float?   // for trailing strategy (last stepped stop)
+  exitReason           String?  // SL | TP3 | TRAILING_SL | SCALE_TP1_TP2_TP3 | TIME_UP | skipped:reason
+  grossPnl             Float?   @default(0)
+  totalCosts           Float?   @default(0)
+  netPnl               Float?   @default(0)
+  isWin                Boolean?
+  isDemo               Boolean  @default(false) // seed/demo rows explicitly marked + excluded from real metrics
+  skipReason           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  legs                 PaperTradeLeg[]
+
+  @@unique([sourcePredictionId, strategyId, bookId])
+  @@index([strategyId, bookId])
+  @@index([symbol])
+  @@index([state])
+}
+
+// Task 76 — Exit legs for scale-out trades (and any multi-leg strategy).
+// One leg per actual exit event (quantity, fill, costs, P&L). For single-exit
+// strategies (fixed/trailing), one leg. For scale-out, 1-3 legs. Idempotent:
+// unique on (tradeId, legIdx) — no duplicate legs on rerun.
+model PaperTradeLeg {
+  id              String   @id @default(cuid())
+  tradeId         String   // → ProspectivePaperTrade.id
+  trade           ProspectivePaperTrade @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  legIdx          Int      // 0-based leg order within the trade
+  exitDate        String?
+  exitPrice       Float?
+  exitReason      String?
+  quantity        Int?
+  grossPnl        Float?   @default(0)
+  commission      Float?   @default(0)
+  slippage        Float?   @default(0)
+  cgt             Float?   @default(0)
+  totalCost       Float?   @default(0)
+  netPnl          Float?   @default(0)
+  createdAt       DateTime @default(now())
+
+  @@unique([tradeId, legIdx])
+  @@index([tradeId])
+}
+
 // DB-first store for the LEGACY Price Pattern pipeline (price-patterns-service
 // + price-pattern-llm behind /api/price-patterns/precompute): reports are
 // computed once (statistical engine + one LLM explanation pass), stored here,

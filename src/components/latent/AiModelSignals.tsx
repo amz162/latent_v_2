@@ -397,7 +397,7 @@ export function AiModelSignals(){
           const d=await r.json();
           if(d.error){toast.error(d.error);return;}
           setSimData(d);
-          const threshold = parseInt(simWinRateThreshold) || 100;
+          const threshold = (() => { const n = parseInt(simWinRateThreshold); return Number.isFinite(n) ? n : 100; })(); // Task 76: preserve 0% (old `|| 100` made 0→100)
           const currentScores = { ...predictScoresRef.current };
           for (const r of [...(d.top5||[]), ...(d.rest||[])]) {
             if (r.metrics && r.metrics.winRate >= threshold) {
@@ -427,7 +427,7 @@ export function AiModelSignals(){
            const d=await r.json();
            if(d.error){toast.error(d.error);break;}
            setSimData(d);
-           const threshold = parseInt(simWinRateThreshold) || 100;
+           const threshold = (() => { const n = parseInt(simWinRateThreshold); return Number.isFinite(n) ? n : 100; })(); // Task 76: preserve 0% (old `|| 100` made 0→100)
            const currentScores = { ...predictScoresRef.current };
            reached = false;
            for (const r of [...(d.top5||[]), ...(d.rest||[])]) {

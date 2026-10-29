@@ -1,10 +1,49 @@
-▲ Next.js 16.1.3 (Turbopack)
+▲ Next.js 16.1.3 (webpack)
 - Local:         http://localhost:3000
 - Network:       http://21.0.14.70:3000
 
 ✓ Starting...
-✓ Ready in 705ms
+✓ Ready in 1173ms
 ○ Compiling / ...
- GET / 200 in 4.9s (compile: 4.7s, render: 255ms)
- GET / 200 in 62ms (compile: 4ms, render: 58ms)
- GET / 200 in 58ms (compile: 3ms, render: 55ms)
+ GET / 200 in 11.3s (compile: 11.0s, render: 368ms)
+ GET / 200 in 52ms (compile: 8ms, render: 44ms)
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+ GET /api/backtest/model-graph/ml?symbol=LUCK&model=XGBoost&horizon=5&period=final-test 200 in 1508ms (compile: 1392ms, render: 117ms)
+error: script "dev" was terminated by signal SIGKILL (Forced quit)
+▲ Next.js 16.1.3 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.14.70:3000
+
+✓ Starting...
+✓ Ready in 1300ms
+○ Compiling / ...
+ GET / 200 in 12.8s (compile: 12.5s, render: 376ms)
+ GET / 200 in 57ms (compile: 10ms, render: 47ms)
+ GET / 200 in 46ms (compile: 4ms, render: 42ms)
+ GET / 200 in 52ms (compile: 4ms, render: 48ms)
+ GET / 200 in 49ms (compile: 3ms, render: 45ms)
+ GET / 200 in 43ms (compile: 4ms, render: 39ms)
+ GET / 200 in 37ms (compile: 1878µs, render: 35ms)
+ GET / 200 in 36ms (compile: 1836µs, render: 34ms)
+⚠ Blocked cross-origin request from preview-chat-205f391c-1dac-41d3-95bd-d232a3e7ba0b.space-z.ai to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+ GET / 200 in 80ms (compile: 52ms, render: 28ms)
+ GET /api/backtest/model-graph/ml?symbol=LUCK&model=XGBoost&horizon=5&period=final-test 200 in 1802ms (compile: 1567ms, render: 235ms)
+ GET / 200 in 389ms (compile: 8ms, render: 380ms)
+ GET / 200 in 52ms (compile: 3ms, render: 49ms)
+ GET / 200 in 65ms (compile: 3ms, render: 62ms)
+ GET / 200 in 48ms (compile: 3ms, render: 45ms)
+ GET / 200 in 48ms (compile: 3ms, render: 45ms)
+ GET / 200 in 20ms (compile: 3ms, render: 17ms)
+ GET / 200 in 44ms (compile: 3ms, render: 40ms)
+ GET / 200 in 17ms (compile: 4ms, render: 14ms)
+ GET / 200 in 42ms (compile: 3ms, render: 40ms)
+ GET / 200 in 17ms (compile: 4ms, render: 13ms)
+ GET / 200 in 43ms (compile: 3ms, render: 40ms)
+ GET / 200 in 44ms (compile: 24ms, render: 20ms)
+ GET / 200 in 15ms (compile: 3ms, render: 12ms)
+ GET / 200 in 187ms (compile: 161ms, render: 26ms)
+ GET / 200 in 22ms (compile: 4ms, render: 19ms)
+ GET / 200 in 83ms (compile: 9ms, render: 73ms)
+ GET / 200 in 21ms (compile: 7ms, render: 14ms)
