@@ -11,7 +11,7 @@ Reuses the EXACT feature computation, model configurations, and leakage-
 prevention utilities from scripts/walk_forward_backtesting.py + ml_integrity.py.
 
 Records predictions idempotently in PredictionHistory (SQLite) with a
-horizon-aware dedupKey: symbol|modelId|horizon|predictionTs.
+horizon-aware dedupKey: symbol|modelId|horizon|dataCutoff (NOT predictionTs).
 
 Does NOT modify ml_predictions_multi.json. Does NOT use future prices.
 Target labels are used only for training (from already-matured examples);
@@ -91,7 +91,9 @@ def record_prediction(db_path, symbol, model_id, horizon, prediction_ts,
                       predicted_return, signal, reference_price, data_cutoff,
                       model_version="v1_prospective"):
     """Record a prediction in PredictionHistory (idempotent, horizon-aware dedupKey)."""
-    dedup_key = f"{symbol}|{model_id}|{horizon}d|{prediction_ts}"
+    # Task 68 FIX: dedupKey uses dataCutoff (not wall-clock predictionTs) so re-running
+    # on the same data cutoff is idempotent. A genuinely new data cutoff creates new records.
+    dedup_key = f"{symbol}|{model_id}|{horizon}d|{data_cutoff}"
     conn = sqlite3.connect(str(db_path))
     try:
         # Check if already exists (idempotent)
