@@ -121,3 +121,7 @@ prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`
  GET / 200 in 40ms (compile: 3ms, render: 37ms)
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
  GET /api/backtest/strategy-comparison?symbol=AASM&horizon=5 200 in 1645ms (compile: 1505ms, render: 140ms)
+ GET / 200 in 337ms (compile: 59ms, render: 278ms)
+ GET / 200 in 51ms (compile: 3ms, render: 48ms)
+ GET / 200 in 42ms (compile: 3ms, render: 39ms)
+ GET / 200 in 86ms (compile: 8ms, render: 78ms)
