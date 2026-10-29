@@ -70,6 +70,21 @@ export function AiModelSignals(){
    setRobError(e?.message||"Failed to load trading-robustness artifact.");
   }finally{setRobLoading(false);}
  };
+ // Task 61: portfolio simulation (genuine cash/position/equity-curve metrics)
+ const[prtData,setPrtData]=useState<any|null>(null);
+ const[prtLoading,setPrtLoading]=useState(false);
+ const[prtError,setPrtError]=useState<string|null>(null);
+ const loadPrt=async()=>{
+  if(prtData||prtLoading) return;
+  setPrtLoading(true);setPrtError(null);
+  try{
+   const r=await fetch("/api/backtest/walk-forward/portfolio?_="+Date.now(),{cache:"no-store"});
+   const j=await r.json();
+   setPrtData(j);
+  }catch(e:any){
+   setPrtError(e?.message||"Failed to load portfolio artifact.");
+  }finally{setPrtLoading(false);}
+ };
  const[simOpen,setSimOpen]=useState(false);
  const[simAmount,setSimAmount]=useState("100000");
  // Issue 5 — Portfolio Simulation redesign: removed "Position Size" input.
@@ -946,6 +961,60 @@ export function AiModelSignals(){
           )}
           {robData&&robData.available===false&&(
            <div className="mt-1 text-[#FBBF24] text-[9px]">{robData.note||"Trading-robustness artifact not available."}</div>
+          )}
+         </details>
+
+         {/* Task 61: Portfolio Simulation (genuine cash/position/equity-curve metrics) */}
+         <details className="text-[10px] text-[#94A3B8]" onToggle={(e)=>{const o=(e.target as HTMLDetailsElement).open; if(o) loadPrt();}}>
+          <summary className="cursor-pointer text-[#00E676] font-semibold">
+            Portfolio Simulation (Task 61) — genuine cash accounting, position sizing, daily equity curve, Sharpe/Sortino/maxDD
+          </summary>
+          {prtLoading&&<div className="mt-1 text-[#94A3B8]">Loading portfolio artifact…</div>}
+          {prtError&&<div className="mt-1 text-[#FF5C5C]">{prtError}</div>}
+          {prtData&&prtData.available===true&&(
+           <div className="mt-1 space-y-2">
+             <div className="rounded-md border border-[#00E676]/20 bg-[#00E676]/[0.04] p-2 text-[9px]">
+               <div className="text-[#00E676] font-semibold mb-0.5">Genuine portfolio simulation — cash, concurrent positions, capital constraints, daily mark-to-market</div>
+               <div className="text-[#94A3B8]">Initial capital: PKR {(prtData.config?.initial_capital ?? 0).toLocaleString()}. Max {prtData.config?.max_concurrent_positions} positions, max {(prtData.config?.max_position_size_fraction*100)}%/position, no leverage. Long-only. Historical simulation, NOT live brokerage. {prtData.config_note ?? ""}</div>
+             </div>
+             {/* Per-portfolio results table */}
+             <div className="overflow-x-auto max-h-80 overflow-y-auto">
+               <table className="w-full text-[9px] border-collapse">
+                 <thead className="sticky top-0 bg-[#0A0E1A]">
+                   <tr className="text-[#64748B] border-b border-white/[0.06]">
+                     <th className="text-left py-1 pr-2 font-medium">Model</th>
+                     <th className="text-left py-1 px-1 font-medium">Strategy</th>
+                     <th className="text-right py-1 px-1 font-medium">Trades</th>
+                     <th className="text-right py-1 px-1 font-medium">Final Equity</th>
+                     <th className="text-right py-1 px-1 font-medium">Return %</th>
+                     <th className="text-right py-1 px-1 font-medium">Sharpe</th>
+                     <th className="text-right py-1 px-1 font-medium">Max DD %</th>
+                     <th className="text-right py-1 px-1 font-medium">Costs</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {Array.isArray(prtData.portfolios)&&prtData.portfolios.map((p:any,i:number)=>(
+                     <tr key={i} className="border-b border-white/[0.04]">
+                       <td className="py-0.5 pr-2 font-mono text-[#F4F7FB]">{p.model}</td>
+                       <td className="py-0.5 px-1 text-[#94A3B8]">{p.strategy==="fixed_horizon"?"Fixed":"Prog TP/SL"}</td>
+                       <td className="text-right px-1 text-[#94A3B8]">{p.n_completed_positions}+{p.n_open_at_end}o</td>
+                       <td className="text-right px-1 font-mono text-[#F4F7FB]">{Math.round(p.final_equity).toLocaleString()}</td>
+                       <td className={"text-right px-1 font-mono "+(p.total_return_pct>=0?"text-[#00E676]":"text-[#FF5C5C]")}>{p.total_return_pct.toFixed(3)}%</td>
+                       <td className="text-right px-1 font-mono text-[#94A3B8]">{p.sharpe!=null?p.sharpe.toFixed(3):"—"}</td>
+                       <td className="text-right px-1 font-mono text-[#FF5C5C]">{p.max_drawdown_pct!=null?(p.max_drawdown_pct*100).toFixed(1)+"%":"—"}</td>
+                       <td className="text-right px-1 font-mono text-[#64748B]">{Math.round(p.total_costs).toLocaleString()}</td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+             </div>
+             <div className="text-[8px] text-[#64748B]">
+               {prtData.exploratory_warning ?? "EXPLORATORY final-test analysis."} Each combo is a SEPARATE portfolio — P&L is NOT aggregated. Portfolio metrics (Sharpe/Sortino/maxDD) from the daily mark-to-market equity curve, NOT from trade returns. {prtData.unsupported_in_this_run ?? ""}
+             </div>
+           </div>
+          )}
+          {prtData&&prtData.available===false&&(
+           <div className="mt-1 text-[#FBBF24] text-[9px]">{prtData.note||"Portfolio artifact not available."}</div>
           )}
          </details>
 

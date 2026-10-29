@@ -3148,3 +3148,93 @@ Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9
 Confirmation that Task 55 (walk_forward_latest.json), Task 56 (pilot25_robustness.json), Task 59 (walk_forward_trading_latest.json) artifacts were preserved unchanged.
 Confirmation that no model training or pilot25/full-universe evaluation was rerun.
 Confirmation that no GitHub push occurred.
+
+---
+Task ID: 61 (COMPLETE)
+Agent: main (interactive session 2026-10-29)
+Task: Implement a coherent portfolio-level simulator using the genuine walk-forward predictions. Model real cash, concurrent positions, capital constraints, position sizing, daily equity curve, + portfolio metrics (Sharpe/Sortino/maxDD). No GitHub push. ml_predictions_multi.json + Task 55/56/59/60 artifacts unchanged. No model retraining/pilot25 rerun.
+
+Portfolio architecture + configuration (Phase 2):
+- NEW: src/lib/latent/portfolio-config.ts — explicit config: initial_capital PKR 1,000,000 (hypothetical), max 10 concurrent positions, max 10% equity per position, max gross exposure = 100% (no leverage), one position per stock (no pyramiding), long-only, +1% signal threshold, integer shares, ATR 14-period (1.5/1/2/3 multipliers), mark-to-market end-of-test. All assumptions documented as research assumptions, not claims of optimality.
+
+Model/horizon alternatives kept separate (Phase 3):
+- Each model/horizon/strategy/cost combination runs as a SEPARATE portfolio with its own cash, positions, equity curve. P&L is NOT aggregated across combos.
+- In this run: 10 combos (5 models × 5d horizon × 2 strategies × standard_psx). The full 60-combo run (5 models × 3 horizons × 2 strategies × 2 cost profiles) deferred for runtime efficiency — the artifact records this.
+- No model/config selected by final-test P&L. The default config is FIXED + documented.
+
+Position-sizing + cash constraints (Phase 4):
+- Signals sorted by decision_date (then descending predicted return, then alphabetical stock for ties — deterministic, NO future-outcome prioritization).
+- Entry at next session OPEN. Position size = min(max_position_size_fraction × current_equity, max_gross_exposure - current_gross, max_stock_exposure, available_cash). Integer shares (floor).
+- Constraints enforced: max 10 positions, one-per-stock, max 10%/position, no leverage (gross ≤ equity).
+- Skipped signals recorded with reasons: no_decision_bar, no_next_bar, below_threshold, max_positions_reached, already_holding_stock, insufficient_cash, position_too_small.
+- Exits processed chronologically (horizon-end for fixed; SL/TP3/horizon-end for progressive via simulateProgressiveTpSl).
+- Daily equity curve: cash + sum(market_value of open positions) for each trading day.
+
+Cost + P&L reconciliation (Phase 6):
+- Uses trading-costs.ts (standard_psx primary). Costs based on ACTUAL position value (not fixed 100K). commission = entry_value × rate + exit_value × rate (both sides). slippage = (entry_value + exit_value)/2 × rate (round-trip). CGT = gross × 0.15 if gross > 0.
+- net = gross - commission - slippage - cgt. Verified per-trade.
+
+Portfolio-level results (10 combos, 5d horizon, standard_psx):
+
+| Model | Strategy | Final Equity | Return % | Sharpe | Max DD % | Trades |
+|---|---|---|---|---|---|---|
+| XGBoost | fixed | 991,163 | -0.88% | 0.225 | 29.9% | 17 |
+| XGBoost | prog TP/SL | 983,244 | -1.68% | 0.212 | 30.1% | 17 |
+| LightGBM | fixed | 996,050 | -0.40% | 0.108 | 18.0% | 7 |
+| LightGBM | prog TP/SL | 991,280 | -0.87% | 0.108 | 18.1% | 7 |
+| CatBoost | fixed | 1,006,132 | +0.61% | 0.144 | 30.6% | 10 |
+| CatBoost | prog TP/SL | 995,792 | -0.42% | 0.124 | 23.5% | 10 |
+| Random Forest | fixed | 996,505 | -0.35% | 0.122 | 17.5% | 8 |
+| Random Forest | prog TP/SL | 991,720 | -0.83% | 0.117 | 17.5% | 8 |
+| Ridge | fixed | 1,006,950 | +0.70% | 0.273 | 34.9% | 22 |
+| Ridge | prog TP/SL | 993,404 | -0.66% | 0.247 | 33.5% | 22 |
+
+KEY FINDING: When real cash constraints + position limits are modeled, the positive Task 59 fixed-notional result (+1.27M) DISAPPEARS. Most portfolios LOST money. Only 2 combos are marginally positive (CatBoost fixed +0.61%, Ridge fixed +0.70%). The progressive TP/SL strategy is worse than fixed-horizon for ALL 5 models. Sharpe ratios are low (0.1-0.27). Max drawdowns are significant (17-35%). This is the HONEST portfolio result.
+
+Portfolio metrics (Phase 7):
+- Sharpe = mean(daily_returns) / std(daily_returns) × sqrt(252). Annualization: 252 trading days.
+- Sortino = mean(daily_returns) / downside_std × sqrt(252). Downside = negative daily returns only.
+- Max drawdown = max(peak - equity) / peak from the daily equity curve (NOT from trade returns).
+- All computed from the daily mark-to-market equity series.
+
+Test integrity (Phase 8):
+- Final-test portion from manifest (idx >= val_end_idx=200, 200 samples).
+- Config frozen before evaluation. No parameters tuned on final-test.
+- EXPLORATORY — prior tasks (59/60) inspected these final-test results. NOT confirmatory. No significance claimed from positive P&L (Task 60 CIs included 0).
+
+Files changed:
+1. src/lib/latent/portfolio-config.ts (NEW) — explicit portfolio configuration.
+2. scripts/walk_forward_portfolio_simulator.ts (NEW) — event-driven chronological portfolio simulator. Cash, positions, equity curve, Sharpe/Sortino/maxDD.
+3. src/app/api/backtest/walk-forward/portfolio/route.ts (NEW) — read-only API.
+4. src/components/latent/AiModelSignals.tsx — added Task 61 state hook (prtData/loadPrt) + "Portfolio Simulation" UI section.
+5. data/backtest_reports/walk_forward_portfolio_latest.json (NEW) — the portfolio report artifact.
+6. data/backtest_reports/walk_forward_portfolio_candidate.json (NEW) — validated candidate.
+7. worklog.md — this entry.
+
+Tests + commands executed:
+1. bun run lint → clean.
+2. python3 scripts/ml_integrity.py → 11/11 PASSED.
+3. bun scripts/simulator_regression_check.ts → 82/82 PASSED.
+4. bun scripts/walk_forward_portfolio_simulator.ts → produced the portfolio artifact (10 combos, all with valid final_equity > 0).
+5. API smoke: GET / → 200; /api/backtest/walk-forward/portfolio → 200.
+6. Agent Browser: Portfolio Simulation section renders (initial capital, per-portfolio table with equity/return/Sharpe/maxDD, "Historical simulation, NOT live brokerage", exploratory warning).
+7. ml_predictions_multi.json UNCHANGED: 41442cd7.
+8. walk_forward_latest.json UNCHANGED: 544192bd (Task 55).
+9. pilot25_robustness.json UNCHANGED: 2ca441fc (Task 56).
+10. walk_forward_trading_latest.json UNCHANGED: 0ae5b02b (Task 59).
+11. walk_forward_trading_robustness.json UNCHANGED: 6cfd9375 (Task 60).
+12. No GitHub push: 1 local autosave commit ahead (NOT pushed).
+
+Remaining limitations + exploratory-test caveats:
+- Hypothetical PKR 1,000,000 initial capital — NOT the user's actual capital.
+- Only 5d horizon × standard_psx run (10 combos). Full 60-combo run (5 models × 3 horizons × 2 strategies × 2 cost profiles) deferred for runtime.
+- EXPLORATORY final-test (prior tasks inspected results). No confirmatory claim without prospective paper-trading or untouched future evaluation.
+- The positive Task 59 fixed-notional result (+1.27M) DISAPPEARS under real cash constraints — most portfolio combos lost money. This is the honest result.
+- Sharpe ratios are low (0.1-0.27) + max drawdowns are significant (17-35%).
+- No partial exits or trailing stops (active stop FIXED = sl).
+- Each combo is a SEPARATE portfolio — P&L is NOT summed across combos.
+- No winner badge — positive P&L (CatBoost/Ridge fixed +0.6%) is marginal + exploratory.
+
+Confirmation that Task 55/56/59/60 artifacts + data/ml_predictions_multi.json were preserved unchanged.
+Confirmation that no model training or pilot25/full-universe evaluation was rerun.
+Confirmation that no GitHub push occurred.
