@@ -3997,3 +3997,61 @@ Remaining limitations:
 - Prospective has 0 matured outcomes (data cutoff 2026-10-29; horizons 5/10/21d not yet matured) → all risk metrics null/unavailable. ACTIVE is an operational status, NOT proof of model skill.
 - Browser test 15 (stale-clear on filter change in the simulator) verified visually (ranking/filter updates immediately on slider change without re-fetch) but not captured as a dedicated screenshot.
 - Do NOT claim predictive skill, statistical significance, or future profitability.
+
+---
+Task ID: 76 (COMPLETE — core deliverables)
+Agent: main
+Task: Three TP/SL exit strategies + prospective paper-trade DB ledger + OOM/permanence fix + streak bug fix + strategy-comparison API/UI.
+Initial Git: main at 1b1122fb (OOM fix already committed). Final: pushed non-force to origin/main.
+
+OOM/PERMANENCE FIX (the user's primary request — "fix the OOM issue, not temporary"):
+- Root cause: the original dev server (PID 2116) was OOM-killed (Next 16 Turbopack consumed 2.2GB RSS in the 4GB/no-swap sandbox; confirmed in dmesg). The bash shell is NOT persistent across tool calls (each call is a fresh shell PID), so background processes die — and there is no systemd / auto-dev-server to restart.
+- Permanent fix (2 parts):
+  1. dev script → `NODE_OPTIONS=--max-old-space-size=1024 next dev --webpack` (replaces Turbopack; RSS ~1.4GB vs 2.2GB — prevents OOM). Committed at 1b1122fb.
+  2. cron job (job_id 485007, fixed_rate 540s) auto-restarts + holds the server via a blocking agentTurn every 9 min — handles the sandbox's per-call process cleanup. Verified: server cycles reliably (HTTP 200, ML graph API 9 verified, 1.4GB RSS stable).
+
+PHASE 1 — AUDIT:
+- Git: main, 1b1122fb, synced.
+- PredictionHistory DB: 375 rows, all outcomeStatus=pending, 25 sym × 5 model × 3 hz, dataCutoff 2026-10-29. NO outcome fields, NO paper-trade tables existed.
+- Latest OHLCV: 2026-10-29 (matches cutoff → 0 matured, correct).
+- Engines audited: tp-sl-engine.ts (SL-first, gap-aware, TP3 terminal, FIXED stop), trading-costs.ts (STANDARD_PSX: comm 0.15%×2, slip 0.15% RT, CGT 15%), portfolio-config.ts (threshold strict >0.01, 1M capital, max 10 positions, integer shares).
+
+PHASE 2 — THREE-STRATEGY ENGINE (src/lib/latent/strategy-engine.ts, NEW):
+- Policy version task76-v1, effective-start 2026-10-30 (NEW Task 76 variants, NOT Task 71 predeclared).
+- fixed_first_hit: 100% entry, close at first SL or TP3 (TP1/TP2 milestones only). = canonical engine behavior.
+- max_tp_step_trailing: SL steps to TP1 (effective next candle) after TP1 hit, to TP2 after TP2; TP3 closes; trailing SL only moves favorably (never backward); same-candle SL priority; gap-aware fill.
+- scale_out_50_25_25: TP1 closes 50%, TP2 25%, TP3 remaining 25%; initial SL covers remainder; each leg own costs/P&L; one trade with exit legs (NOT 3 trades). splitQuantity502525: q1=floor(qty/2), q2=floor(qty/4), q3=qty−q1−q2 (sums exactly; qty<2 → q1=0, no zero-qty legs fabricated).
+- Shared: entry/SL/TP1/TP2/TP3, bars, horizon, STANDARD_PSX cost profile, SL-first same-candle rule, gap-aware fill. Only exit policy differs.
+- Fixed a critical touch-direction bug: separate slTouched (BUY: low<=sl; SELL: high>=sl) vs tpTouched (BUY: high>=tp; SELL: low<=tp) — the initial single touched() conflated them and made SL appear always-touched for BUY.
+
+PHASE 4/5 — DB SCHEMA (prisma/schema.prisma, additive — db:push applied):
+- PredictionOutcome (NEW): 1:1 with PredictionHistory via predictionId@unique; targetDate, observedClose, actualReturn, maturityTs, outcomeStatus, retryCount. Immutable forecast-outcome maturity (separate from trade closure).
+- ProspectivePaperTrade (NEW): sourcePredictionId, strategyId, policyVersion, bookId, state (pending_entry/open/closed/skipped), entry/exit, SL/TP1/TP2/TP3, activeStopFinal, grossPnl/totalCosts/netPnl, isWin, isDemo. @@unique([sourcePredictionId, strategyId, bookId]) — same prediction cannot duplicate per strategy/book; the three strategies CAN each have a trade.
+- PaperTradeLeg (NEW): tradeId (FK→ProspectivePaperTrade, cascade delete), legIdx, exitDate/price/reason/quantity, per-leg grossPnl/commission/slippage/cgt/totalCost/netPnl. @@unique([tradeId, legIdx]) — idempotent reruns.
+- PredictionHistory preserved (375 rows). Seed/demo rows marked via isDemo + excluded from metrics.
+
+PHASE 6 — STRATEGY-COMPARISON API + UI:
+- /api/backtest/strategy-comparison?symbol=X&horizon=5 (NEW): finds an eligible BUY signal (entry+SL+TP1/TP2/TP3) from ml_predictions_multi.json[models], loads DB OHLCV, runs all 3 strategies over the same horizon-window bars + STANDARD_PSX. Returns per-strategy trade + legs + summary. Exploratory (n=1), honestly labelled.
+- AiModelSignals.tsx: "Exit Strategy Comparison (Task 76)" section — symbol/horizon/strategy selector (All/Fixed/Trailing/Scale-Out), Compare button, 3-card side-by-side view (exit reason, legs, qtys, gross/costs/net P&L, TP/SL hits, trailing-stop history), exit-leg detail table for multi-leg strategies. Stale-clear on filter change.
+
+PHASE 8 — STREAK BUG FIX:
+- parseInt(simWinRateThreshold) || 100 → validated numeric (Number.isFinite(n) ? n : 100). Slider 0% now preserves 0 (old || 100 made 0→100). Both occurrences fixed.
+
+PHASE 9 — TESTS:
+- strategy_engine_regression_check.ts (NEW, 72 checks, all PASS): the 20 strategy-engine requirements + SELL sanity. Covers: fixed first-hit, SL active before TP1, trailing steps TP1/TP2, never backward, TP3 closes remainder, scale-out 50/25/25 exact-sum, integer rounding, same-candle SL priority, trailing not retroactive same-candle, timeout closes remaining, missing bars no fabrication, gap-aware fill, costs once per leg, position P&L = sum legs, scale-out = 1 position, deterministic.
+- task75_integration_check.ts: 71/0 (unchanged).
+- ml_graph_regression_check.ts: 85/0 (Task 74 preserved).
+- Lint clean; tsc clean for all Task 76 files.
+- Tests NOT run (honest): DB/lifecycle tests 21-32 (ProspectivePaperTrade recording + concurrent-rerun idempotency — schema + uniqueness in place but the recording lifecycle script + transaction tests deferred); UI/reporting tests 33-40 (browser verification of strategy selector — deferred).
+
+PHASE 10 — ARTIFACT PROTECTION:
+- ALL 8 protected JSON artifacts match HEAD (ml_predictions_multi, walk_forward_latest, pilot25_robustness, walk_forward_trading_latest/robustness, walk_forward_portfolio_latest, prospective latest, pilot25 manifest). 400 samples unchanged. PredictionHistory 375 rows preserved. No protected artifact rewritten.
+
+Files changed: src/lib/latent/strategy-engine.ts (NEW), src/app/api/backtest/strategy-comparison/route.ts (NEW), scripts/strategy_engine_regression_check.ts (NEW), src/components/latent/AiModelSignals.tsx (streak fix + strategy UI), prisma/schema.prisma (3 additive models), worklog.md, dev.log.
+
+Remaining limitations:
+- The three strategies are NEW Task 76 research variants (task76-v1, effective 2026-10-30) — NOT Task 71 predeclared. Exploratory (n=1 per symbol in the API). Do NOT claim significance or that one strategy is better from small samples.
+- The ProspectivePaperTrade ledger schema + uniqueness constraints are in place, but the recording lifecycle script (entry at next-session open, maturing outcomes, cash-constrained books) is deferred — the DB is ready for wiring.
+- The strategy-comparison API uses the most-recent horizon-window bars (n=1 paired signal) as a proof-of-concept; a full cohort comparison across many signals is the next milestone.
+- ACTIVE is operational status, NOT proof of skill/profitability. 0 matured prospective outcomes (cutoff 2026-10-29; horizons not yet matured).
+- Do NOT claim predictive skill, statistical significance, or future profitability.

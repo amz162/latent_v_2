@@ -146,6 +146,14 @@ export function AiModelSignals(){
  const[mlGraphHorizon,setMlGraphHorizon]=useState("5");
  const[mlGraphPeriod,setMlGraphPeriod]=useState<"final-test"|"validation">("final-test");
  const ML_GRAPH_MODELS=["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression"];
+ // Task 76: three-strategy exit-policy comparison state.
+ const[stratData,setStratData]=useState<any>(null);
+ const[stratLoading,setStratLoading]=useState(false);
+ const[stratSymbol,setStratSymbol]=useState("");
+ const[stratHorizon,setStratHorizon]=useState("5");
+ const STRATEGY_OPTIONS=[{id:"all",label:"All Strategies — Compare"},{id:"fixed_first_hit",label:"Fixed TP/SL — First Hit"},{id:"max_tp_step_trailing",label:"Max TP + Step-Trailing SL"},{id:"scale_out_50_25_25",label:"Scale-Out 50/25/25"}];
+ const[stratSel,setStratSel]=useState("all");
+ useEffect(()=>{ setStratData(null); },[stratSymbol,stratHorizon,data?.symbol]); // stale-clear on filter change
  // Task 74: invalidate the cached ML graph whenever any filter changes so a
  // previous response is NEVER shown under newly-selected model/horizon/period/
  // symbol labels. Fetch is manual (Generate button) — selection does NOT auto-
@@ -1405,6 +1413,102 @@ export function AiModelSignals(){
          {!mlGraphData&&!mlGraphLoading&&<div className="text-[#64748B] text-[10px]">Select model/horizon/period/symbol, then click <span className="text-[#22D3EE]">Generate ML Graph</span>. Changing any filter clears the previous graph (no stale data shown under new labels).</div>}
         </div>
        )}
+      </div>
+
+      {/* Task 76: Three-Strategy Exit-Policy Comparison */}
+      <div className="rounded-lg bg-[#0A0E1A] border border-[#FBBF24]/20 p-3 mb-3">
+       <h3 className="text-sm font-semibold text-[#FBBF24] mb-2 flex items-center gap-1.5"><TrendingUp className="h-4 w-4"/>Exit Strategy Comparison (Task 76)</h3>
+       <p className="text-[10px] text-[#94A3B8] mb-2">Three exit policies — <span className="text-[#F4F7FB]">Fixed TP/SL · Max TP + Step-Trailing SL · Scale-Out 50/25/25</span> — over the SAME eligible BUY signal + OHLCV bars + standard_psx costs. Only the exit policy differs. <span className="text-[#FBBF24]">EXPLORATORY (n=1 per symbol) — NOT significant. Historical ensemble-signal source, NOT trained-ML walk-forward.</span></p>
+       <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <div className="flex flex-col">
+         <label className="text-[8px] uppercase text-[#64748B] leading-none mb-0.5">Symbol</label>
+         <input value={stratSymbol} onChange={e=>setStratSymbol(e.target.value.toUpperCase())} placeholder={data?.symbol||"AASM"} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs w-[100px] font-mono" />
+        </div>
+        <div className="flex flex-col">
+         <label className="text-[8px] uppercase text-[#64748B] leading-none mb-0.5">Horizon</label>
+         <select value={stratHorizon} onChange={e=>setStratHorizon(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+          <option value="5">5 sessions</option><option value="10">10 sessions</option><option value="21">21 sessions</option>
+         </select>
+        </div>
+        <div className="flex flex-col">
+         <label className="text-[8px] uppercase text-[#64748B] leading-none mb-0.5">Strategy</label>
+         <select value={stratSel} onChange={e=>setStratSel(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+          {STRATEGY_OPTIONS.map(o=><option key={o.id} value={o.id}>{o.label}</option>)}
+         </select>
+        </div>
+        <Button size="sm" variant="outline" onClick={async()=>{
+          const sym=(stratSymbol||data?.symbol||"AASM").trim().toUpperCase();
+          setStratLoading(true);
+          try{
+            const r=await fetch(`/api/backtest/strategy-comparison?symbol=${encodeURIComponent(sym)}&horizon=${encodeURIComponent(stratHorizon)}`);
+            const d=await r.json();
+            if(!d.available){toast.error(d.error||"No strategy data");setStratData(null);}
+            else setStratData(d);
+          }catch(e:any){toast.error(e?.message||"Failed");setStratData(null);}
+          finally{setStratLoading(false);}
+        }} disabled={stratLoading} className="border-[#FBBF24]/30 text-[#FBBF24] hover:bg-[#FBBF24]/10 h-7 text-[11px]">
+          {stratLoading?"Running…":"Compare Strategies"}
+        </Button>
+       </div>
+       {stratData&&stratData.available&&(stratData.status==="ok")&&(
+        <div>
+         <div className="text-[10px] text-[#64748B] mb-2 flex flex-wrap gap-x-3 font-mono">
+          <span>Symbol: <span className="text-[#F4F7FB]">{stratData.symbol}</span></span>
+          <span>Entry: <span className="text-[#F4F7FB]">{stratData.entryPrice?.toFixed(2)}</span> ({stratData.entryDate})</span>
+          <span>Qty: <span className="text-[#F4F7FB]">{stratData.quantity}</span></span>
+          <span>Scan: <span className="text-[#F4F7FB]">{stratData.scanWindow?.nBars}</span> bars ({stratData.scanWindow?.start}→{stratData.scanWindow?.end})</span>
+          <span>Policy: <span className="text-[#FBBF24]">{stratData.policyVersion}</span></span>
+         </div>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+          {stratData.strategies.filter((s:any)=>stratSel==="all"||s.id===stratSel).map((s:any)=>{
+            const t=s.trade||{}; const sm=s.summary||{};
+            const netColor=t.netPnl>=0?"text-[#00E676]":"text-[#FF5C5C]";
+            return (
+             <div key={s.id} className="rounded border border-white/[0.08] bg-[#0A0E1A] p-2">
+              <div className="text-[10px] font-semibold text-[#FBBF24] mb-1">{s.label}</div>
+              <div className="text-[9px] text-[#64748B] mb-1">{s.description?.slice(0,90)}…</div>
+              <div className="text-[9px] font-mono space-y-0.5">
+                <div className="text-[#64748B]">Exit: <span className="text-[#F4F7FB]">{t.exitReason}</span> | Best: <span className="text-[#F4F7FB]">{t.bestTargetReached}</span></div>
+                <div className="text-[#64748B]">Legs: <span className="text-[#F4F7FB]">{t.legs?.length}</span> | Qtys: <span className="text-[#F4F7FB]">{(t.legs||[]).map((l:any)=>l.quantity).join("/")}</span></div>
+                <div className="text-[#64748B]">Gross: <span className="text-[#F4F7FB]">{t.grossPnl?.toFixed(2)}</span> | Costs: <span className="text-[#F4F7FB]">{t.totalCost?.toFixed(2)}</span></div>
+                <div className={netColor+" font-bold"}>Net P&L: {t.netPnl>=0?"+":""}{t.netPnl?.toFixed(2)} PKR</div>
+                <div className="text-[#64748B]">TP1/TP2/TP3/SL hits: <span className="text-[#F4F7FB]">{t.tp1Hits}/{t.tp2Hits}/{t.tp3Hits}/{t.slHits}</span></div>
+                {t.trailingStopHistory?.length>0&&<div className="text-[#22D3EE]">Trail stops: {t.trailingStopHistory.map((h:any)=>h.afterTarget+"→"+h.newStop.toFixed(2)).join(", ")}</div>}
+              </div>
+             </div>
+            );
+          })}
+         </div>
+         {/* Exit-leg detail table (for scale-out / multi-leg) */}
+         {stratSel!=="all"&&stratData.strategies.find((s:any)=>s.id===stratSel)?.trade?.legs?.length>1&&(
+          <div className="overflow-x-auto max-h-48 overflow-y-auto">
+           <table className="w-full text-[9px] border-collapse">
+            <thead className="sticky top-0 bg-[#0A0E1A]"><tr className="text-[#64748B] border-b border-white/[0.06]">
+             <th className="text-left py-1 px-2">Leg</th><th className="text-left px-1">Exit Date</th><th className="text-right px-1">Price</th><th className="text-right px-1">Qty</th><th className="text-right px-1">Gross</th><th className="text-right px-1">Costs</th><th className="text-right px-1">Net</th><th className="text-left px-1">Reason</th>
+            </tr></thead>
+            <tbody>
+             {stratData.strategies.find((s:any)=>s.id===stratSel).trade.legs.map((l:any,i:number)=>(
+              <tr key={i} className="border-b border-white/[0.04]">
+               <td className="py-0.5 px-2 font-mono text-[#94A3B8]">{i+1}</td>
+               <td className="px-1 font-mono text-[#64748B]">{l.exitDate}</td>
+               <td className="text-right px-1 font-mono text-[#F4F7FB]">{l.exitPrice?.toFixed(2)}</td>
+               <td className="text-right px-1 font-mono text-[#22D3EE]">{l.quantity}</td>
+               <td className="text-right px-1 font-mono text-[#94A3B8]">{l.grossPnl?.toFixed(2)}</td>
+               <td className="text-right px-1 font-mono text-[#94A3B8]">{l.totalCost?.toFixed(2)}</td>
+               <td className={"text-right px-1 font-mono "+(l.netPnl>=0?"text-[#00E676]":"text-[#FF5C5C]")}>{l.netPnl?.toFixed(2)}</td>
+               <td className="px-1 text-[#64748B]">{l.exitReason}</td>
+              </tr>
+             ))}
+            </tbody>
+           </table>
+          </div>
+         )}
+         <div className="text-[8px] text-[#64748B] mt-1">{stratData.methodology}</div>
+        </div>
+       )}
+       {stratData&&stratData.available&&stratData.status!=="ok"&&<div className="text-[#FBBF24] text-[10px]">{stratData.message||"No eligible signal for this symbol."}</div>}
+       {stratData&&!stratData.available&&<div className="text-[#FBBF24] text-[10px]">{stratData.error||"Strategy comparison unavailable."}</div>}
+       {!stratData&&!stratLoading&&<div className="text-[#64748B] text-[10px]">Enter a symbol + horizon, then click <span className="text-[#FBBF24]">Compare Strategies</span>.</div>}
       </div>
 
       {/* Rule-Based Preview (Task 74): strategySignal indicator engine — NOT trained-ML.
