@@ -1,9 +1,8 @@
-[00:00:01.194] Server  LOG     ✓ Ready in 831ms
-[00:00:21.584] Server  LOG     ○ Compiling / ...
-[00:00:26.752] Server  LOG     prisma:query "SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
-[00:00:52.027] Server  LOG     prisma:query "SELECT 1"
-[00:00:52.030] Server  LOG     prisma:query "UPDATE `main`.`PricePatternCache` SET `summaryJson` = ? WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`"
-[00:00:52.031] Server  LOG     [price-patterns] self-healed LLM summary for ENGRO
-[00:14:19.699] Server  WARN    ⚠ Blocked cross-origin request from preview-chat-205f391c-1dac-41d3-95bd-d232a3e7ba0b.space-z.ai to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
-Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[00:14:49.254] Server  LOG     ✓ Compiled in 831ms
+[00:00:01.359] Server  LOG     ✓ Ready in 867ms
+[00:00:13.879] Server  LOG     ○ Compiling / ...
+[00:00:19.561] Server  LOG     prisma:query "SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
+[00:00:39.758] Server  LOG     prisma:query "SELECT 1"
+[00:00:39.761] Server  LOG     prisma:query "UPDATE `main`.`PricePatternCache` SET `summaryJson` = ? WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `patternsJson` AS `patternsJson`, `summaryJson` AS `summaryJson`, `computedAt` AS `computedAt`, `dataSourceDate` AS `dataSourceDate`"
+[00:00:39.762] Server  LOG     [price-patterns] self-healed LLM summary for ENGRO
+[00:02:11.599] Server  LOG     prisma:query "SELECT 1"
+[00:02:11.605] Server  LOG     prisma:query "SELECT `main`.`PricePatternCache`.`symbol`, `main`.`PricePatternCache`.`patternsJson`, `main`.`PricePatternCache`.`summaryJson`, `main`.`PricePatternCache`.`computedAt`, `main`.`PricePatternCache`.`dataSourceDate` FROM `main`.`PricePatternCache` WHERE (`main`.`PricePatternCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
