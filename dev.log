@@ -88,3 +88,36 @@ prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`
  GET / 200 in 49ms (compile: 9ms, render: 41ms)
  GET / 200 in 84ms (compile: 2ms, render: 81ms)
  GET / 200 in 42ms (compile: 4ms, render: 37ms)
+▲ Next.js 16.1.3 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.14.70:3000
+
+✓ Starting...
+✓ Ready in 1287ms
+○ Compiling / ...
+ GET / 200 in 12.4s (compile: 12.0s, render: 378ms)
+ GET / 200 in 46ms (compile: 6ms, render: 40ms)
+▲ Next.js 16.1.3 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.14.70:3000
+
+✓ Starting...
+✓ Ready in 1159ms
+○ Compiling / ...
+ GET / 200 in 11.9s (compile: 11.5s, render: 396ms)
+ GET / 200 in 62ms (compile: 6ms, render: 55ms)
+ GET / 200 in 93ms (compile: 64ms, render: 29ms)
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+ GET /api/backtest/strategy-comparison?symbol=LUCK&horizon=5 200 in 2.3s (compile: 2.0s, render: 212ms)
+▲ Next.js 16.1.3 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.14.70:3000
+
+✓ Starting...
+✓ Ready in 1240ms
+○ Compiling / ...
+ GET / 200 in 12.7s (compile: 12.3s, render: 394ms)
+ GET / 200 in 53ms (compile: 6ms, render: 47ms)
+ GET / 200 in 40ms (compile: 3ms, render: 37ms)
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+ GET /api/backtest/strategy-comparison?symbol=AASM&horizon=5 200 in 1645ms (compile: 1505ms, render: 140ms)
