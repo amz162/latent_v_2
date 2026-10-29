@@ -139,7 +139,9 @@ export interface Bar {
   close: number;
 }
 
-function atr(highs: number[], lows: number[], closes: number[], period = 14): number {
+// Exported for reuse by the Task 77 risk-level overlay (src/lib/latent/risk-levels.ts)
+// so the prospective system uses the EXACT canonical ATR formula, not a duplicate.
+export function atr(highs: number[], lows: number[], closes: number[], period = 14): number {
   if (closes.length < period + 1) {
     const ranges = highs.map((h, i) => h - lows[i]).filter((x) => x >= 0);
     return ranges.length ? ranges.reduce((s, v) => s + v, 0) / ranges.length : 0;

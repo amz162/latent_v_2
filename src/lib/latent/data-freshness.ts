@@ -1,9 +1,11 @@
 /**
- * Task 66 — Data freshness check for prospective paper-trading.
+ * Latent.pk — Task 66 — Data freshness check for prospective paper-trading.
  * Verifies the latest OHLCV date + data provider status before allowing
  * new prediction snapshots or paper-trade entries.
  */
 import { db } from "@/lib/db";
+import fs from "fs";
+import path from "path";
 
 export interface FreshnessResult {
   fresh: boolean;
@@ -57,28 +59,68 @@ export async function checkDataFreshness(maxStaleDays = 3): Promise<FreshnessRes
 
 /**
  * Check if a genuine trained-ML inference path is available for live data.
- * Returns the availability status + reason.
+ *
+ * Task 77 FIX: this previously returned a hard-coded `available: true` even
+ * while its own details admitted `isStatic: true` + `usesMock: true`. That was
+ * dishonest — it caused the prospective workflow to report status=ACTIVE with
+ * zero trades. Now it actually verifies:
+ *   1. The inference script (scripts/generate_live_predictions.py) exists.
+ *   2. Genuine prospective predictions are recorded in PredictionHistory.
+ *   3. OHLCV data is available in the database.
+ * Returns `available: false` with a real reason when any check fails (fail closed).
  */
 export interface InferenceAvailability {
   available: boolean;
   reason: string;
   details: {
-    mlPredictionsFile: { exists: boolean; trainedAt: string | null; isStatic: boolean };
+    inferenceScript: { exists: boolean; path: string };
+    recordedPredictions: { genuineCount: number; latestCutoff: string | null; latestCreatedAt: string | null };
+    ohlcvLatest: string | null;
+    mlPredictionsFile: { exists: boolean; isStatic: boolean };
     signalsApi: { usesMock: boolean };
     fallbackEngine: { available: boolean; kind: "technical-rule" };
   };
 }
 
-export function checkInferenceAvailability(): InferenceAvailability {
-  // Task 67: check if genuine trained-ML predictions have been recorded
-  // in PredictionHistory. If records exist, inference is available.
-  // The generate_live_predictions.py script trains the 5 classical models
-  // × 3 horizons on the latest eligible data + records predictions.
+export async function checkInferenceAvailability(): Promise<InferenceAvailability> {
+  // Check 1: inference script exists
+  const scriptPath = path.join(process.cwd(), "scripts", "generate_live_predictions.py");
+  const scriptExists = fs.existsSync(scriptPath);
+
+  // Check 2: genuine prospective predictions recorded in PredictionHistory
+  const genuineCount = await db.predictionHistory.count({ where: { kind: "prospective" } });
+  const latestPred = await db.predictionHistory.findFirst({
+    where: { kind: "prospective" },
+    orderBy: { createdAt: "desc" },
+  });
+
+  // Check 3: OHLCV availability
+  const latestBar = await db.ohlcvBar.findFirst({ orderBy: { date: "desc" } });
+
+  const blockers: string[] = [];
+  if (!scriptExists) blockers.push("inference script (generate_live_predictions.py) not found");
+  if (genuineCount === 0) blockers.push("no genuine prospective predictions recorded in PredictionHistory");
+  if (!latestBar) blockers.push("no OHLCV data in database");
+
+  const available = blockers.length === 0;
+  const reason = available
+    ? `Inference path available: ${genuineCount} genuine prospective predictions recorded (latest cutoff ${latestPred?.dataCutoff ?? "?"}, OHLCV latest ${latestBar?.date}).`
+    : `Unavailable — ${blockers.join("; ")}.`;
+
   return {
-    available: true,
-    reason: "Trained-ML inference available. Run scripts/generate_live_predictions.py to generate predictions. 5 models × 3 horizons = 15 combinations. Predictions recorded in PredictionHistory with horizon-aware dedupKey.",
+    available,
+    reason,
     details: {
-      mlPredictionsFile: { exists: true, trainedAt: "2026-10-23", isStatic: true },
+      inferenceScript: { exists: scriptExists, path: "scripts/generate_live_predictions.py" },
+      recordedPredictions: {
+        genuineCount,
+        latestCutoff: latestPred?.dataCutoff ?? null,
+        latestCreatedAt: latestPred?.createdAt?.toISOString() ?? null,
+      },
+      ohlcvLatest: latestBar?.date ?? null,
+      // The static ml_predictions_multi.json file still exists but is NOT live
+      // inference — honestly noted (it is a pre-computed snapshot, not a live run).
+      mlPredictionsFile: { exists: true, isStatic: true },
       signalsApi: { usesMock: true },
       fallbackEngine: { available: true, kind: "technical-rule" },
     },

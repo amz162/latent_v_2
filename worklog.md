@@ -4055,3 +4055,68 @@ Remaining limitations:
 - The strategy-comparison API uses the most-recent horizon-window bars (n=1 paired signal) as a proof-of-concept; a full cohort comparison across many signals is the next milestone.
 - ACTIVE is operational status, NOT proof of skill/profitability. 0 matured prospective outcomes (cutoff 2026-10-29; horizons not yet matured).
 - Do NOT claim predictive skill, statistical significance, or future profitability.
+
+---
+
+## Task 77 — Wire the Three Exit Strategies into a Real Prospective Ledger + Multi-Sample Comparison
+
+**Objective:** Wire the Task 76 Prisma models into a real DB-backed prospective lifecycle, add a point-in-time risk-level overlay, mature forecast outcomes, make the prospective API database-backed, fix checkInferenceAvailability (hard-coded true), validate horizons, and preserve honest source attribution throughout.
+
+### Phase 1 — Audit (reported before editing)
+- Git: HEAD=4c616537, origin/main=699fd428 (1 unpushed autosave). Clean tree.
+- DB: PredictionHistory=375 (all prospective, pending, cutoff 2026-10-29; 25 symbols × 5 models × 3 horizons; 38 BUY / 337 HOLD). PredictionOutcome=0, ProspectivePaperTrade=0, PaperTradeLeg=0. OhlcvBar=1,042,821 (909 symbols, latest 2026-10-29; pilot25 fresh).
+- All 6 spec concerns confirmed: (1) prospective_paper_trading.ts static zeros; (2) checkInferenceAvailability hard-coded true; (3) prospective route reads stale JSON; (4) strategy-comparison applies current ml_predictions_multi levels to historical bars; (5) horizon ?? 5 silently defaults; (6) PredictionHistory has no SL/TP fields.
+
+### Phase 2 — Immutable risk-level overlay
+- NEW Prisma model `PredictionRiskLevels` (1:1 with PredictionHistory, unique on predictionId, immutable).
+- NEW `src/lib/latent/risk-levels.ts`: canonical ATR(14)-based formula reused from investment-simulator.ts (exported `atr`): slDist=ATR×1.5, tp1Dist=ATR×1, tp2Dist=ATR×2, tp3Dist=ATR×3. Levels relative to entryReference (cutoff close) — point-in-time valid (bars ≤ cutoff). Levels are PRESET at cutoff, used as-is at entry (not recomputed).
+- `scripts/compute_risk_levels.ts`: populated 38 records (one per BUY prediction). 5 stale symbols (PRL, BYCO, ENGRO, WTL, ANL) used their actual latest bar as the cutoff (generate_live_predictions.py set dataCutoff to the GLOBAL latest, not per-symbol — pre-existing data issue, honestly handled).
+- Policy: `atr14-1.5-1-2-3` / `task77-v1`.
+
+### Phase 3 — Persistent paper-trade lifecycle
+- NEW `src/lib/latent/prospective-lifecycle.ts`: `runLifecycle()` performs the full daily workflow — freshness+inference check → load BUY predictions+risk levels → create idempotent trades (3 strategies × each eligible prediction) → enter at next-session open → advance through OHLCV bars via the Task 76 strategy engine (UNCHANGED) → close on SL/TP3/scale-out/horizon-timeout → record exit legs → reconcile.
+- Rewrote `scripts/prospective_paper_trading.ts` to call the lifecycle (was static zeros).
+- Created **114 trades** (38 BUY × 3 strategies), all `pending_entry` (no next-session bar exists — 2026-10-29 is the latest OHLCV). 39 books (each model×horizon×strategy = separate PKR 1M shadow book, no leverage, 10% max per position, one position per stock).
+- Idempotency: DB unique constraints (sourcePredictionId+strategyId+bookId; tradeId+legIdx). Re-run creates 0 new records (verified).
+- Partial-window trades stay open (TIME_UP only closes when the full horizon is examined).
+
+### Phase 4 — Forecast-outcome maturity
+- `PredictionOutcome` records created for ALL 375 predictions (BUY + HOLD — forecast quality is independent of trade outcome). All `pending` (horizons not reached — no future bars exist yet).
+- Outcome = (observedClose − decisionRef) / decisionRef at the horizon-th target session. HOLD forecasts mature too. Target session = symbol-specific session sequence (not calendar days). Missing target bars → pending (no fabricated outcomes).
+- Syncs PredictionHistory.outcomeStatus (pending→matured) — the only designed mutation.
+
+### Phase 5 — Strategy comparison validation + labeling
+- `/api/backtest/strategy-comparison`: invalid horizons (7, 99, etc.) now return HTTP 400 (was `?? 5` silent default).
+- Labelled the existing single-signal endpoint as `mode: "single-signal-preview"` with explicit limitations: NOT a multi-sample historical backtest; signal is from the current static ml_predictions_multi.json snapshot, not a point-in-time signal.
+- Full multi-sample historical comparison: DEFERRED (documented below). The ATR overlay CAN support it, but building the point-in-time historical pipeline (walk-forward signals + per-date ATR levels + cohort scan) is a separate milestone.
+
+### Phase 6 — DB-backed prospective API
+- `/api/backtest/walk-forward/prospective` rewritten: derives ALL counts from the DB via `reconcileCounts()` + `reconcileBooks()` (was reading stale JSON that claimed ACTIVE with 0 trades + a generated_at predating the predictions).
+- Truthful status: BLOCKED/READY/ACTIVE/EVALUATING/COMPLETED. Currently ACTIVE (ledger running, managing 114 pending_entry positions).
+
+### Phase 7 — checkInferenceAvailability fix
+- Was hard-coded `available: true` (with contradictory `isStatic: true` + `usesMock: true` in its own details). Now async + actually checks: (1) inference script exists, (2) genuine predictions in PredictionHistory, (3) OHLCV available. Fails closed with a real reason when any check fails.
+
+### Phase 8 — Streak 0% threshold (verified)
+- Task 76 fix preserved: `Number.isFinite(n) ? n : 100` at AiModelSignals.tsx lines 408 + 438. The `|| 0` at lines 556/560 is a DIFFERENT feature (ranking filter where 0 = "show all" — correct). No change needed.
+
+### Phase 9 — Tests
+- NEW `scripts/task77_lifecycle_check.ts`: 60 checks (risk levels valid + 1:1, trades 114/38-per-strategy/all pending_entry/no demo, outcomes 375/all pending, idempotency re-run 0 new). All PASS.
+- Existing suites preserved: strategy_engine 72/0, task75 71/0 (4 stale assertions updated to match the new DB-backed report shape), ml_graph 85/0. **Total: 288 checks pass.**
+- DEFERRED: DB lifecycle concurrency tests (transaction-based concurrent-rerun) + UI/reporting browser tests (require a running dev server).
+
+### Phase 10 — Artifact integrity
+- Protected artifacts UNCHANGED (md5 verified): ml_predictions_multi.json (41442cd7...), walk_forward_latest.json (544192bd...), pilot25_robustness.json (2ca441fc...), walk_forward_trading_latest.json (0ae5b02b...), walk_forward_trading_robustness.json (6cfd9375...), walk_forward_portfolio_latest.json (442cd92c...), prospective_runs/latest.json (485de9b9...).
+- DB backup `db/custom.db.gz` regenerated to include Task 77 records (38 risk levels + 114 trades + 375 outcomes) so they persist across sandbox reboots.
+- No secrets, .env, or protected artifact rewrite staged.
+
+### Honest limitations + deferred
+- ALL 114 trades are `pending_entry` + ALL 375 outcomes are `pending` — this is CORRECT: the predictions were made on 2026-10-29 (the latest OHLCV), and the next trading session hasn't occurred yet. The prospective period just began; nothing has matured. This is not a defect — it's the honest state of a prospective system at inception.
+- 5 stale symbols (PRL, BYCO, ENGRO, WTL, ANL) have deeply old latest bars (BYCO=2021, ENGRO=2025) — their trades will stay pending_entry honestly (no next-session bar). Pre-existing data quality issue in generate_live_predictions.py (uses global latest cutoff, not per-symbol).
+- Full multi-sample historical comparison DEFERRED: the walk-forward records have dated OOS return predictions but NO SL/TP levels. The ATR overlay (Phase 2) could compute point-in-time levels for each historical signal, but building the full cohort pipeline is the next milestone.
+- DB lifecycle concurrency tests (transaction-based) + UI browser tests deferred.
+- ACTIVE is operational status, NOT proof of skill/profitability. 0 matured outcomes. Do NOT claim significance or future profitability.
+
+### Files changed
+- NEW: src/lib/latent/risk-levels.ts, src/lib/latent/prospective-lifecycle.ts, scripts/compute_risk_levels.ts, scripts/task77_phase1_audit.ts, scripts/task77_lifecycle_check.ts
+- MODIFIED: prisma/schema.prisma (PredictionRiskLevels model), src/lib/latent/investment-simulator.ts (export atr), src/lib/latent/data-freshness.ts (checkInferenceAvailability async+real), scripts/prospective_paper_trading.ts (lifecycle wrapper), src/app/api/backtest/walk-forward/prospective/route.ts (DB-backed), src/app/api/backtest/strategy-comparison/route.ts (horizon 400 + preview labeling), scripts/task75_integration_check.ts (4 assertions updated), data/backtest_reports/prospective_paper_trading_latest.json (regenerated), db/custom.db.gz (regenerated with Task 77 records), worklog.md.

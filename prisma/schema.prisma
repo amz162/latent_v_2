@@ -269,6 +269,43 @@ model PaperTradeLeg {
   @@index([tradeId])
 }
 
+// Task 77 — Immutable risk-level overlay for prospective predictions.
+// PredictionHistory stores the forecast (signal/return) but NOT SL/TP levels
+// (adding them would violate original-forecast immutability). This linked 1:1
+// record stores point-in-time risk-management levels computed solely from
+// OHLCV available at or before the prediction's dataCutoff, using the canonical
+// ATR(14)-based formula from investment-simulator.ts (slDist=ATR×1.5,
+// tp1Dist=ATR×1, tp2Dist=ATR×2, tp3Dist=ATR×3). Levels are relative to the
+// entryReference (cutoff close) — the decision reference known at cutoff. The
+// trade enters at the next-session open and uses these PRESET levels (not
+// recomputed at entry) so the plan decided at cutoff is honoured exactly.
+// Immutable: once created, never overwritten. Repeated runs find the existing
+// record (unique on predictionId) and skip.
+model PredictionRiskLevels {
+  id                String   @id @default(cuid())
+  predictionId      String   @unique // → PredictionHistory.id (1:1 immutable)
+  riskPolicyId      String   // "atr14-1.5-1-2-3"
+  riskPolicyVersion String   // "task77-v1"
+  effectiveCutoff   String   // dataCutoff the levels were computed on (must match prediction)
+  entryReference    Float    // close at cutoff (decision reference)
+  atr14             Float    // ATR(14) from bars ≤ cutoff
+  slDistance        Float    // atr × 1.5
+  tp1Distance       Float    // atr × 1.0
+  tp2Distance       Float    // atr × 2.0
+  tp3Distance       Float    // atr × 3.0
+  sl                Float    // planned SL price (entryReference ∓ slDistance)
+  tp1               Float    // planned TP1 (entryReference ± tp1Distance)
+  tp2               Float    // planned TP2 (entryReference ± tp2Distance)
+  tp3               Float    // planned TP3 (entryReference ± tp3Distance)
+  direction         String   // BUY | SELL (sign of level offsets)
+  barsUsed          Int      // number of bars used for ATR (audit)
+  computedAt        DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@index([riskPolicyId])
+  @@index([effectiveCutoff])
+}
+
 // DB-first store for the LEGACY Price Pattern pipeline (price-patterns-service
 // + price-pattern-llm behind /api/price-patterns/precompute): reports are
 // computed once (statistical engine + one LLM explanation pass), stored here,

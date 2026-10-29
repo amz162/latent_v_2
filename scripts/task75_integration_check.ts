@@ -314,17 +314,17 @@ console.log("\n── 12. Prospective report ↔ PredictionHistory DB ───�
   }
   if (rep) {
     check("prospective report readable", true);
-    const rc = rep.prediction_counts || {};
+    const rc = rep.counts || rep.prediction_counts || {};
     const dbTotal = await db.predictionHistory.count();
     const dbPending = await db.predictionHistory.count({ where: { outcomeStatus: "pending" } });
     const dbMatured = await db.predictionHistory.count({ where: { outcomeStatus: "matured" } });
-    console.log(`     report: total=${rc.total} pending=${rc.pending} matured=${rc.matured}`);
+    console.log(`     report: predictionsTotal=${rc.predictionsTotal ?? rc.total} outcomesMatured=${rc.outcomesByStatus?.matured ?? rc.matured}`);
     console.log(`     DB:     total=${dbTotal} pending=${dbPending} matured=${dbMatured}`);
-    check("report total === DB total", rc.total === dbTotal, `${rc.total} vs ${dbTotal}`);
-    check("report pending === DB pending", rc.pending === dbPending, `${rc.pending} vs ${dbPending}`);
-    check("report matured === DB matured", rc.matured === dbMatured, `${rc.matured} vs ${dbMatured}`);
+    check("report total === DB total", (rc.predictionsTotal ?? rc.total) === dbTotal, `${rc.predictionsTotal ?? rc.total} vs ${dbTotal}`);
+    check("report pending === DB pending", (rc.outcomesByStatus?.pending ?? rc.pending) === dbPending, `${rc.outcomesByStatus?.pending ?? rc.pending} vs ${dbPending}`);
+    check("report matured === DB matured", (rc.outcomesByStatus?.matured ?? rc.matured) === dbMatured, `${rc.outcomesByStatus?.matured ?? rc.matured} vs ${dbMatured}`);
     // With 0 matured, risk metrics must be null/unavailable, NOT fabricated.
-    if ((rc.matured ?? 0) === 0) {
+    if (((rc.outcomesByStatus?.matured ?? rc.matured) ?? 0) === 0) {
       const m = rep.metrics || {};
       check("0 matured → sharpe null/unavailable", m.sharpe === null || m.sharze === undefined, `sharpe=${m.sharpe}`);
       check("0 matured → sortino null/unavailable", m.sortino === null || m.sortino === undefined, `sortino=${m.sortino}`);
@@ -360,7 +360,9 @@ console.log("\n── 14. Historical & prospective datasets never combined ─�
   const ensSrc = await fs.readFile(ensRoute, "utf-8");
   const pstSrc = await fs.readFile(pstRoute, "utf-8");
   check("ensembles route reads ml_predictions_multi.json (NOT prospective)", ensSrc.includes("ml_predictions_multi.json") && !ensSrc.includes("prospective_paper_trading"));
-  check("prospective route reads prospective_paper_trading_latest.json (NOT ml_predictions_multi)", pstSrc.includes("prospective_paper_trading_latest.json") && !pstSrc.includes("ml_predictions_multi.json"));
+  // Task 77: prospective route is now DB-backed (reconcileCounts + reconcileBooks),
+  // NOT reading the stale JSON file. It must NOT reference ml_predictions_multi.
+  check("prospective route is DB-backed (reconcileCounts, NOT ml_predictions_multi)", pstSrc.includes("reconcileCounts") && !pstSrc.includes("ml_predictions_multi.json"));
   check("ensembles route does NOT import PredictionHistory", !ensSrc.includes("PredictionHistory") && !ensSrc.includes("predictionHistory"));
   check("prospective route does NOT run the backtest engine", !pstSrc.includes("runBacktest"));
   // The pure simulator-ranking module never touches prospective data.

@@ -19,24 +19,38 @@ export const maxDuration = 30;
 
 // GET /api/backtest/strategy-comparison?symbol=LUCK&horizon=5
 //
-// Task 76 — Run the THREE exit strategies (fixed_first_hit, max_tp_step_trailing,
-// scale_out_50_25_25) over the SAME eligible entry signal + OHLCV bars for a
-// paired trade-level comparison. The signal (entry/SL/TP1/TP2/TP3) comes from
-// ml_predictions_multi.json (the same source the ensemble simulator uses). The
-// bars come from the OHLCV DB. All three strategies share identical inputs;
-// only the exit policy differs.
+// Task 76/77 — SINGLE-SIGNAL STRATEGY ENGINE PREVIEW (n=1).
 //
-// This is an EXPLORATORY historical comparison (small sample per symbol) — NOT
-// a claim of statistical significance or future profitability.
+// Runs the THREE exit strategies over ONE eligible entry signal + its OHLCV
+// horizon window for a paired trade-level comparison. This is an EXPLORATORY
+// PREVIEW, NOT a multi-sample historical backtest:
+//   - The signal (entry/SL/TP1/TP2/TP3) comes from the current static
+//     ml_predictions_multi.json snapshot — it is NOT a point-in-time signal
+//     that was genuinely knowable at the historical entry date.
+//   - n=1 per symbol — do NOT claim statistical significance or that one
+//     strategy is better from this single small-sample result.
+//
+// For a valid multi-sample historical comparison, use the prospective ledger
+// (/api/backtest/walk-forward/prospective) or a dedicated point-in-time
+// historical comparison source. This endpoint is retained as a labelled
+// preview of the strategy engine's behaviour on a concrete signal.
 
 const HORIZON_MAP: Record<string, number> = { "5": 5, "10": 10, "21": 21 };
+const SUPPORTED_HORIZONS = Object.keys(HORIZON_MAP);
 
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const symbol = (url.searchParams.get("symbol") || "").toUpperCase();
     const horizonStr = url.searchParams.get("horizon") || "5";
-    const horizon = HORIZON_MAP[horizonStr] ?? 5;
+    // Task 77: reject unsupported horizons with 400 (previously silently defaulted to 5).
+    const horizon = HORIZON_MAP[horizonStr];
+    if (!horizon) {
+      return NextResponse.json(
+        { available: false, error: `Invalid horizon '${horizonStr}'. Supported values: ${SUPPORTED_HORIZONS.join(", ")}.` },
+        { status: 400 }
+      );
+    }
     if (!symbol) {
       return NextResponse.json({ available: false, error: "Missing symbol" }, { status: 400 });
     }
@@ -150,6 +164,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       available: true, status: "ok",
+      mode: "single-signal-preview",
       policyVersion: STRATEGY_POLICY_VERSION, effectiveStart: STRATEGY_EFFECTIVE_START,
       symbol, horizon,
       signalSource: `ml_predictions_multi.json [${chosen.source}]`,
@@ -159,15 +174,19 @@ export async function GET(req: Request) {
       exploratory: true, nTrades: 1,
       strategies: out,
       methodology:
-        "One eligible BUY signal (entry/SL/TP1/TP2/TP3 from ml_predictions_multi.json) " +
-        "evaluated by all three exit policies over the SAME horizon-window OHLCV bars + " +
-        "standard_psx costs. Only the exit/position-management policy differs. " +
-        "n=1 per symbol — EXPLORATORY, not a statistical claim.",
+        "SINGLE-SIGNAL STRATEGY ENGINE PREVIEW (n=1). One eligible BUY signal (entry/SL/TP1/TP2/TP3 " +
+        "from the current ml_predictions_multi.json static snapshot) evaluated by all three exit policies " +
+        "over the SAME horizon-window OHLCV bars + standard_psx costs. Only the exit/position-management " +
+        "policy differs. This is NOT a multi-sample historical backtest — the signal is from a current " +
+        "static file, not a point-in-time signal known at the historical entry date.",
       limitations: [
-        "Single paired signal per symbol (n=1) — exploratory comparison, NOT significant.",
+        "MODE: single-signal preview (n=1) — NOT a multi-sample historical backtest.",
+        "The signal source is the current static ml_predictions_multi.json snapshot — NOT a point-in-time signal known at the entry date.",
+        "Single paired signal per symbol (n=1) — exploratory comparison, NOT statistically significant.",
         "Historical ensemble-signal source (strategySignal/indicator engine) — NOT trained-ML walk-forward.",
         "Do NOT claim one strategy is better from a single small-sample result.",
         "The three strategies are NEW Task 76 research variants (policyVersion " + STRATEGY_POLICY_VERSION + "), NOT Task 71 predeclared.",
+        "For a valid multi-sample comparison, use the prospective ledger (/api/backtest/walk-forward/prospective) or a dedicated point-in-time historical source.",
       ],
     });
   } catch (e: any) {
