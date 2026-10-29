@@ -3046,3 +3046,105 @@ Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9
 Confirmation that Task 55 (walk_forward_latest.json) + Task 56 (pilot25_robustness.json) artifacts were preserved unchanged.
 Confirmation that no model training or walk-forward/pilot25 evaluation was rerun.
 Confirmation that no GitHub push occurred.
+
+---
+Task ID: 60 (COMPLETE)
+Agent: main (interactive session 2026-10-29)
+Task: Establish the robustness of Task 59's trade-level results + make the per-model/per-horizon evidence auditable. Add a trade-ledger artifact, per-model/horizon/strategy/cost breakdown, date-block bootstrap uncertainty CIs, cost reconciliation, selection-bias warnings. No GitHub push. ml_predictions_multi.json + Task 55/56/59 artifacts unchanged (until new candidate validated). No model retraining / pilot25 rerun.
+
+Phase 1 — Audit Task 59 aggregation:
+- The Task 59 trading report (walk_forward_trading_latest.json) saved ONLY aggregate metrics — NO individual trade records. The evaluator computed TradeResult[] in memory but only wrote aggregated StrategyMetrics to the output.
+- Trade duplication confirmed: the evaluator loops through 5 models × 3 horizons for each final-test sample. The same stock/date generates trades across model/horizon combos → the 696 trades are NOT independent (share price paths).
+- per_model_horizon was limited (only n_trades/wins/total_net_pnl/avg_net_pct).
+- FIX: created a TRADE-LEDGER artifact (data/backtest_reports/walk_forward_trading_ledger.json, 2.7MB, 2784 entries) with individual trade records reconstructed from the immutable pilot25 predictions + verified OHLCV bars. Each entry records: sample_idx, stock, decision_date, model, horizon, strategy, cost_profile, signal, entry/exit dates+prices, exit_reason, best_target_reached, gross_pnl, commission, slippage, cgt, total_cost, net_pnl, is_win, n_bars_examined, holding_sessions, skipped+reason.
+
+Phase 2 — Per-model/horizon/strategy/cost breakdown:
+- For each (model × horizon × strategy × cost_profile) combination, computed: eligible, BUY signals, executed, skipped+reasons, wins/losses, avg gross/net return, total gross/costs/net, profit factor, exit-reason counts, TP milestone counts (TP1/TP2/TP3), tp_then_sl count, per-stock (n_trades/wins/net_pnl).
+- Extended the high-slippage sensitivity to the FIXED-HORIZON strategy (Task 59 only had it for progressive). Both strategies now have both cost profiles.
+- The aggregate across all models/horizons is clearly marked as a RESEARCH SUMMARY, not an executable portfolio result.
+
+Phase 3 — Date-block bootstrap uncertainty:
+- Method: date-block bootstrap. Each block = all trades sharing a decision date (preserves same-date market dependence — NOT naive iid). 17 unique decision-date clusters in the final-test set. Resample 17 clusters with replacement, 1000 reps, deterministic seed (20261030).
+- 95% CIs computed for: avg net return per trade, net win rate, mean net P&L per fixed-notional trade.
+- Paired diffs: fixed-horizon vs progressive (standard), standard vs high-slippage (progressive + fixed).
+- KEY HONEST FINDING: ALL 4 strategy/cost combos have 95% CIs that INCLUDE 0 → NO strategy has statistically significant positive net return. The positive point estimates (especially fixed-horizon +1.27M) do NOT survive the date-block bootstrap.
+  - fixed_horizon/standard_psx: CI [-3.511%, 6.332%] (point +1.818%)
+  - fixed_horizon/high_slippage_psx: CI [-3.861%, 5.982%] (point +1.468%)
+  - progressive_tp_sl/standard_psx: CI [-2.947%, 2.869%] (point +0.295%)
+  - progressive_tp_sl/high_slippage_psx: CI [-3.297%, 2.519%] (point -0.055%)
+- Did NOT use naive iid bootstrap (would manufacture artificially narrow CIs by ignoring cross-stock same-date dependence).
+- Did NOT claim significance from positive point estimates.
+
+Phase 4 — Cost reconciliation:
+- Independently validated: gross_pnl - commission - slippage - cgt = net_pnl for EVERY trade.
+- Result: 2784 ok / 0 fail — perfect reconciliation.
+- Verified: net wins = netPnl > 0 (NOT based on TP hit). TP milestones NOT counted as separate profitable trades. TP2-then-SL trades preserve bestTargetReached=TP2 but use the actual SL-exit P&L. Higher slippage does NOT change signal/entry/exit/target decisions — only the cost calculation.
+
+Phase 5 — Selection-bias prevention:
+- Report is labeled as EXPLORATORY final-test analysis (the final-test results have already been inspected).
+- No signal threshold or ATR multiplier tuning. The +1% threshold + 1.5/1/2/3 ATR distances are FIXED documented conventions.
+- No winner declared from pooled P&L.
+- Multiple-comparison risk explicitly noted (5 models × 3 horizons × 2 strategies × 2 cost profiles = 60 combinations compared).
+- Documented that strategy development + model selection should use a historical VALIDATION period or prospective PAPER-TRADING, followed by untouched future evaluation.
+
+Phase 6 — Portfolio metrics honest:
+- Portfolio ROI/Sharpe/Sortino/maxDD remain UNAVAILABLE — no portfolio-level capital-allocation model.
+- Each trade = fixed PKR 100,000 notional; multiple alternatives can trade the same stock/date.
+- Did NOT divide total P&L by an arbitrary capital amount to fake a portfolio ROI.
+
+Phase 7 — Artifacts + API + UI:
+- NEW artifact: data/backtest_reports/walk_forward_trading_robustness.json (210KB) — versioned schema (task60_trading_robustness, v1.0) with source run + fingerprints, per-model/horizon breakdown, both strategies, both cost profiles, date-block bootstrap CIs, sample counts + clusters, cost reconciliation, selection-bias warnings, limitations.
+- NEW trade-ledger: data/backtest_reports/walk_forward_trading_ledger.json (2.7MB, 2784 entries) — the individual trade records.
+- NEW API: GET /api/backtest/walk-forward/trading-robustness (read-only).
+- NEW UI section: collapsible "Trading Robustness (Task 60)" in the Backtesting modal — shows the strategy × cost table with 95% CIs + significance indicator, the cluster count, cost reconciliation, selection-bias warnings, + portfolio-unavailable note. Agent Browser verified it renders.
+- The existing Task 59 trading report (walk_forward_trading_latest.json) is PRESERVED — the robustness artifact is SEPARATE.
+- The UI now distinguishes: forecast-quality (R²/MAE), gross directional-return proxies, individual trade simulation (Task 59), trading robustness + uncertainty (Task 60), and portfolio metrics (unavailable).
+
+Files changed:
+1. scripts/walk_forward_trading_robustness.ts (NEW) — the robustness analysis script. Reconstructs individual trades from immutable predictions + verified OHLCV, computes per-model/horizon/strategy/cost breakdown, runs date-block bootstrap, verifies cost reconciliation.
+2. src/app/api/backtest/walk-forward/trading-robustness/route.ts (NEW) — read-only API.
+3. src/components/latent/AiModelSignals.tsx — added Task 60 state hook (robData/loadRob) + the collapsible "Trading Robustness (Task 60)" UI section.
+4. data/backtest_reports/walk_forward_trading_robustness.json (NEW) — the robustness artifact.
+5. data/backtest_reports/walk_forward_trading_ledger.json (NEW) — the trade ledger.
+6. worklog.md — this entry.
+
+Actual trade counts + metrics:
+- 3000 eligible samples (200 final-test × 5 models × 3 horizons).
+- 888 negative forecasts not traded (long-only).
+- 696 executed trades per strategy/cost combo (4 combos = 2784 total ledger entries).
+- 17 unique decision-date clusters.
+- Cost reconciliation: 2784/2784 ok.
+- ALL 95% CIs include 0 → no significant positive net return.
+
+Uncertainty methodology:
+- Date-block bootstrap: cluster by decision date (all model/horizon trades on the same date = one cluster). Resample 17 clusters with replacement, 1000 reps, deterministic seed 20261030.
+- NOT naive iid (would ignore cross-stock same-date dependence + manufacture narrow CIs).
+- 95% CI = 2.5th + 97.5th percentiles of the bootstrap distribution.
+- Paired diffs: resample clusters, compute per-cluster metric for both arms, take the difference, bootstrap the differences.
+
+Tests executed:
+1. bun run lint → clean.
+2. python3 scripts/ml_integrity.py → 11/11 PASSED.
+3. bun scripts/simulator_regression_check.ts → 82/82 PASSED.
+4. bun scripts/walk_forward_trading_robustness.ts → produced the robustness artifact + trade ledger; cost reconciliation 2784/2784 ok.
+5. API smoke: GET / → 200; /api/backtest/walk-forward/trading-robustness → 200 (returns the artifact with CIs + reconciliation); /api/backtest/walk-forward/trading → 200 (Task 59 preserved); /api/backtest/walk-forward → 200 (Task 55 preserved).
+6. Agent Browser: Backtesting modal → "Trading Robustness (Task 60)" section renders (17 clusters, 2784 trades, cost reconciliation, "ns = not significant", selection-bias warnings). Screenshot saved.
+7. ml_predictions_multi.json UNCHANGED: 41442cd7.
+8. walk_forward_latest.json UNCHANGED: 544192bd (Task 55).
+9. pilot25_robustness.json UNCHANGED: 2ca441fc (Task 56).
+10. walk_forward_trading_latest.json UNCHANGED: 0ae5b02b (Task 59 — preserved, NOT replaced).
+11. No GitHub push occurred.
+
+Remaining limitations:
+- 17 unique decision-date clusters — adequate for directional inference but narrow CIs should not be over-interpreted. The small cluster count limits the bootstrap's power to detect significance.
+- Each trade = fixed PKR 100,000 notional; no portfolio capital-allocation model. Portfolio metrics (ROI/Sharpe/Sortino/maxDD) UNAVAILABLE. The next task should implement a defined capital-allocation policy + coherent portfolio simulation.
+- Long-only strategy; 888 negative forecasts not traded.
+- The aggregate across models/horizons is a research summary, not an executable portfolio.
+- EXPLORATORY final-test analysis — no significance should be claimed without a prospective untouched evaluation. Multiple-comparison risk applies (60 combinations).
+- The positive point estimates (fixed-horizon +1.27M) do NOT survive the date-block bootstrap (CI includes 0). This is the honest finding.
+- The high-slippage sensitivity uses identical signal/entry/exit/target decisions — only the cost calculation differs.
+
+Confirmation that data/ml_predictions_multi.json was untouched: md5 41442cd7ece9d137ec19310e2d771f55.
+Confirmation that Task 55 (walk_forward_latest.json), Task 56 (pilot25_robustness.json), Task 59 (walk_forward_trading_latest.json) artifacts were preserved unchanged.
+Confirmation that no model training or pilot25/full-universe evaluation was rerun.
+Confirmation that no GitHub push occurred.

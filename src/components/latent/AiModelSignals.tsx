@@ -55,6 +55,21 @@ export function AiModelSignals(){
    setTrdError(e?.message||"Failed to load trading artifact.");
   }finally{setTrdLoading(false);}
  };
+ // Task 60: trading-robustness artifact (per-model/horizon breakdown + date-block bootstrap CIs)
+ const[robData,setRobData]=useState<any|null>(null);
+ const[robLoading,setRobLoading]=useState(false);
+ const[robError,setRobError]=useState<string|null>(null);
+ const loadRob=async()=>{
+  if(robData||robLoading) return;
+  setRobLoading(true);setRobError(null);
+  try{
+   const r=await fetch("/api/backtest/walk-forward/trading-robustness?_="+Date.now(),{cache:"no-store"});
+   const j=await r.json();
+   setRobData(j);
+  }catch(e:any){
+   setRobError(e?.message||"Failed to load trading-robustness artifact.");
+  }finally{setRobLoading(false);}
+ };
  const[simOpen,setSimOpen]=useState(false);
  const[simAmount,setSimAmount]=useState("100000");
  // Issue 5 — Portfolio Simulation redesign: removed "Position Size" input.
@@ -864,6 +879,73 @@ export function AiModelSignals(){
           )}
           {trdData&&trdData.available===false&&(
            <div className="mt-1 text-[#FBBF24] text-[9px]">{trdData.note||"Trading artifact not available."}</div>
+          )}
+         </details>
+
+         {/* Task 60: Trading Robustness (per-model/horizon + date-block bootstrap CIs) */}
+         <details className="text-[10px] text-[#94A3B8]" onToggle={(e)=>{const o=(e.target as HTMLDetailsElement).open; if(o) loadRob();}}>
+          <summary className="cursor-pointer text-[#FBBF24] font-semibold">
+            Trading Robustness (Task 60) — per-model/horizon breakdown, date-block bootstrap 95% CIs, cost reconciliation
+          </summary>
+          {robLoading&&<div className="mt-1 text-[#94A3B8]">Loading trading-robustness artifact…</div>}
+          {robError&&<div className="mt-1 text-[#FF5C5C]">{robError}</div>}
+          {robData&&robData.available===true&&(
+           <div className="mt-1 space-y-2">
+             <div className="rounded-md border border-[#FBBF24]/20 bg-[#FBBF24]/[0.04] p-2 text-[9px]">
+               <div className="text-[#FBBF24] font-semibold mb-0.5">Date-block bootstrap uncertainty — {robData.n_unique_decision_date_clusters} decision-date clusters, 1000 reps, deterministic</div>
+               <div className="text-[#94A3B8]">{robData.n_executed_trades} executed trades (ledger: {robData.n_ledger_entries} entries). Cost reconciliation: {robData.cost_reconciliation?.ok} ok / {robData.cost_reconciliation?.fail} fail. Negative forecasts not traded: {robData.n_negative_forecasts_not_traded} (long-only).</div>
+             </div>
+             {/* Strategy × cost-profile summary with CIs */}
+             <div className="overflow-x-auto">
+               <table className="w-full text-[9px] border-collapse">
+                 <thead className="bg-[#0A0E1A]">
+                   <tr className="text-[#64748B] border-b border-white/[0.06]">
+                     <th className="text-left py-1 pr-2 font-medium">Strategy / Cost</th>
+                     <th className="text-right py-1 px-1 font-medium">Trades</th>
+                     <th className="text-right py-1 px-1 font-medium">Net P&L</th>
+                     <th className="text-right py-1 px-1 font-medium">PF</th>
+                     <th className="text-right py-1 px-1 font-medium">Avg Net %</th>
+                     <th className="text-right py-1 px-1 font-medium">95% CI (net %)</th>
+                     <th className="text-right py-1 px-1 font-medium">Sig?</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {robData.breakdown&&Object.entries(robData.breakdown).filter(([k]:[string,any])=>!k.endsWith("__per_model_horizon")).map(([k,c]:[string,any])=>{
+                     const parts=k.split("__");
+                     const ci=robData.bootstrap?.[k]?.avg_net_return_pct_ci;
+                     const sig=ci?(ci.ci_low>0?"✓ sig>0":ci.ci_high<0?"✗ sig<0":"~ ns"):"?";
+                     return (
+                       <tr key={k} className="border-b border-white/[0.04]">
+                         <td className="py-0.5 pr-2 font-mono text-[#F4F7FB]">{parts[0]} / {parts[1]}</td>
+                         <td className="text-right px-1 text-[#94A3B8]">{c.executed}</td>
+                         <td className={"text-right px-1 font-mono "+(c.total_net_pnl>=0?"text-[#00E676]":"text-[#FF5C5C]")}>{Math.round(c.total_net_pnl).toLocaleString()}</td>
+                         <td className="text-right px-1 font-mono text-[#94A3B8]">{c.profit_factor!=null?c.profit_factor.toFixed(3):"—"}</td>
+                         <td className="text-right px-1 font-mono text-[#94A3B8]">{(c.avg_net_return_pct??0).toFixed(3)}%</td>
+                         <td className="text-right px-1 font-mono text-[#64748B]">{ci?`[${ci.ci_low.toFixed(3)}, ${ci.ci_high.toFixed(3)}]`:"—"}</td>
+                         <td className={"text-right px-1 "+(sig.includes("✓")?"text-[#00E676]":sig.includes("✗")?"text-[#FF5C5C]":"text-[#64748B]")}>{sig}</td>
+                       </tr>
+                     );
+                   })}
+                 </tbody>
+               </table>
+             </div>
+             <div className="text-[8px] text-[#64748B]">
+               "ns" = not significant (CI includes 0). All 4 combos include 0 → no strategy has statistically significant positive net return. Date-block bootstrap preserves same-date market dependence (NOT naive iid). Paired diffs + per-model/horizon detail in the artifact JSON.
+             </div>
+             {/* Selection-bias warnings */}
+             <div className="rounded border border-[#FF5C5C]/20 bg-[#FF5C5C]/[0.04] p-1.5 text-[8px] text-[#94A3B8]">
+               <div className="text-[#FF5C5C] font-semibold mb-0.5">Selection-bias warnings:</div>
+               <ul className="ml-3 space-y-0.5 list-disc">
+                 {(robData.selection_bias_warnings||[]).slice(0,3).map((w:string,i:number)=><li key={i}>{w}</li>)}
+               </ul>
+             </div>
+             <div className="text-[8px] text-[#64748B]">
+               Portfolio metrics (ROI/Sharpe/Sortino/maxDD) UNAVAILABLE — {robData.unsupported_metrics?.portfolio_roi ?? "no portfolio model"}. Trade ledger: data/backtest_reports/walk_forward_trading_ledger.json ({robData.n_ledger_entries} entries).
+             </div>
+           </div>
+          )}
+          {robData&&robData.available===false&&(
+           <div className="mt-1 text-[#FBBF24] text-[9px]">{robData.note||"Trading-robustness artifact not available."}</div>
           )}
          </details>
 
