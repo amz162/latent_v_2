@@ -1,0 +1,2443 @@
+{
+  "task": "task61_portfolio_simulation",
+  "schema_version": "1.0",
+  "generated_at": "2026-10-29T00:34:52.210Z",
+  "source_run_id": "pilot25_step50_20261028",
+  "source_data_fingerprint": "c071e0227985f90d485ac8a9d95203e065b402de8470c069d0a968fb2e6bc4c4",
+  "source_universe_fingerprint": "d8088bf891daf7b28bacf22936ca7824011435d5ded57b24b339db4c12da88a4",
+  "ml_predictions_md5": "41442cd7ece9d137ec19310e2d771f55",
+  "config": {
+    "initial_capital": 1000000,
+    "max_concurrent_positions": 10,
+    "max_position_size_fraction": 0.1,
+    "max_gross_exposure_fraction": 1,
+    "max_exposure_per_stock_fraction": 0.1,
+    "allow_multiple_entries_same_stock": false,
+    "signal_threshold": 0.01,
+    "direction": "long_only",
+    "forecast_horizon": 5,
+    "strategy": "fixed_horizon",
+    "cost_profile_id": "standard_psx",
+    "entry_convention": "next_session_open",
+    "fractional_shares": false,
+    "board_lot_size": 0,
+    "missing_data_policy": "skip_with_reason",
+    "atr_period": 14,
+    "atr_sl_multiplier": 1.5,
+    "atr_tp1_multiplier": 1,
+    "atr_tp2_multiplier": 2,
+    "atr_tp3_multiplier": 3,
+    "end_of_test_convention": "mark_to_market",
+    "exploratory_test": true
+  },
+  "config_note": "Hypothetical PKR 1,000,000 initial capital. Long-only, max 10 concurrent positions, max 10% equity per position, max gross exposure = 100% (no leverage), one position per stock (no pyramiding). These are EXPLICIT RESEARCH ASSUMPTIONS, not claims of optimality.",
+  "evaluation_period": {
+    "start": "2023-04-17",
+    "end": "2026-12-19",
+    "val_end_idx": 200,
+    "final_test_samples": 200
+  },
+  "portfolios": [
+    {
+      "model": "XGBoost",
+      "horizon": 5,
+      "strategy": "fixed_horizon",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 991163.45,
+      "total_realized_net_pnl": -4975.01,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -8836.55,
+      "total_return_pct": -0.8837,
+      "n_signals": 17,
+      "n_executed": 17,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 17,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 4,
+      "max_gross_exposure": 398224.61,
+      "total_costs": 7751.73,
+      "total_commission": 5167.82,
+      "total_slippage": 2583.91,
+      "total_cgt": 9955.59,
+      "sharpe": 0.2246,
+      "sortino": 0.0671,
+      "max_drawdown_pct": 0.2988,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "PAEL": {
+          "n_trades": 1,
+          "realized_pnl": 100826.12059
+        },
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 202563.04296750002
+        },
+        "PRL": {
+          "n_trades": 1,
+          "realized_pnl": 100537.85912499999
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 107199.95261749999
+        },
+        "LUCK": {
+          "n_trades": 2,
+          "realized_pnl": 206505.6709875
+        },
+        "BOP": {
+          "n_trades": 3,
+          "realized_pnl": 318123.64931749995
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 95668.356795
+        },
+        "PIBTL": {
+          "n_trades": 1,
+          "realized_pnl": 102463.06433
+        },
+        "PPL": {
+          "n_trades": 1,
+          "realized_pnl": 99537.70378499999
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 92943.508725
+        },
+        "HASCOL": {
+          "n_trades": 1,
+          "realized_pnl": 80906.5659
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 102507.03242999999
+        },
+        "CNERGY": {
+          "n_trades": 1,
+          "realized_pnl": 101483.14714999999
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "PAEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 32.49,
+          "exit_price": 32.99,
+          "shares": 3077,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 1538.5,
+          "net_pnl": 854.39,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60545,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 8476.3,
+          "net_pnl": 6736.24,
+          "is_win": true
+        },
+        {
+          "stock": "PRL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 34,
+          "exit_price": 34.55,
+          "shares": 2930,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 1611.5,
+          "net_pnl": 917.86,
+          "is_win": true
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 5.73,
+          "exit_price": 6.34,
+          "shares": 17231,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 10510.91,
+          "net_pnl": 8466.32,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-02-17",
+          "exit_date": "2025-02-24",
+          "entry_price": 1367,
+          "exit_price": 1449.37,
+          "shares": 74,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 6095.38,
+          "net_pnl": 4712.15,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-05-05",
+          "exit_date": "2025-05-12",
+          "entry_price": 9.85,
+          "exit_price": 10.12,
+          "shares": 10361,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 2797.47,
+          "net_pnl": 1912.3,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 299,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 110.63,
+          "net_pnl": -360.7,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8173,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -6048.02,
+          "net_pnl": -6494.14,
+          "is_win": false
+        },
+        {
+          "stock": "PIBTL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 9.95,
+          "exit_price": 10.03,
+          "shares": 10274,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 821.92,
+          "net_pnl": 236.76,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 26.85,
+          "exit_price": 33.5,
+          "shares": 3780,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 25137,
+          "net_pnl": 20853.17,
+          "is_win": true
+        },
+        {
+          "stock": "PPL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 205,
+          "exit_price": 202.41,
+          "shares": 494,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -1279.46,
+          "net_pnl": -1732.3,
+          "is_win": false
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 1.85,
+          "exit_price": 1.76,
+          "shares": 54757,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -4928.13,
+          "net_pnl": -5372.89,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 23.5,
+          "exit_price": 21.35,
+          "shares": 4374,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -9404.1,
+          "net_pnl": -9845.49,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 21.01,
+          "exit_price": 16.63,
+          "shares": 4890,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -21418.2,
+          "net_pnl": -21832.33,
+          "is_win": false
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 33.1,
+          "exit_price": 29.7,
+          "shares": 3106,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -10560.4,
+          "net_pnl": -10999.28,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8037,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 5304.42,
+          "net_pnl": 4053.78,
+          "is_win": true
+        },
+        {
+          "stock": "CNERGY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 8.2,
+          "exit_price": 8.53,
+          "shares": 12020,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 3966.6,
+          "net_pnl": 2919.15,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "XGBoost",
+      "horizon": 5,
+      "strategy": "progressive_tp_sl",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 983244.29,
+      "total_realized_net_pnl": -12918.54,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -16755.71,
+      "total_return_pct": -1.6756,
+      "n_signals": 17,
+      "n_executed": 17,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 17,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 4,
+      "max_gross_exposure": 398224.61,
+      "total_costs": 7682.37,
+      "total_commission": 5121.58,
+      "total_slippage": 2560.79,
+      "total_cgt": 8812.98,
+      "sharpe": 0.2119,
+      "sortino": 0.0663,
+      "max_drawdown_pct": 0.3005,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "PAEL": {
+          "n_trades": 1,
+          "realized_pnl": 100826.12059
+        },
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 197777.28312785714
+        },
+        "PRL": {
+          "n_trades": 1,
+          "realized_pnl": 100537.85912499999
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 107199.95261749999
+        },
+        "LUCK": {
+          "n_trades": 2,
+          "realized_pnl": 209832.03363571427
+        },
+        "BOP": {
+          "n_trades": 3,
+          "realized_pnl": 299295.05213375
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 94884.09399
+        },
+        "PIBTL": {
+          "n_trades": 1,
+          "realized_pnl": 101635.301595
+        },
+        "PPL": {
+          "n_trades": 1,
+          "realized_pnl": 98731.73047499999
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 90419.5559525
+        },
+        "HASCOL": {
+          "n_trades": 1,
+          "realized_pnl": 88984.18747892858
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 101690.75147
+        },
+        "CNERGY": {
+          "n_trades": 1,
+          "realized_pnl": 100672.63282999999
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "PAEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 32.49,
+          "exit_price": 32.99,
+          "shares": 3077,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 1538.5,
+          "net_pnl": 854.39,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60545,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 8476.3,
+          "net_pnl": 6736.24,
+          "is_win": true
+        },
+        {
+          "stock": "PRL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 34,
+          "exit_price": 34.55,
+          "shares": 2930,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 1611.5,
+          "net_pnl": 917.86,
+          "is_win": true
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 5.73,
+          "exit_price": 6.34,
+          "shares": 17231,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 10510.91,
+          "net_pnl": 8466.32,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-02-17",
+          "exit_date": "2025-02-21",
+          "entry_price": 1367,
+          "exit_price": 1497.0285714285715,
+          "shares": 74,
+          "exit_reason": "TP3_HIT",
+          "best_target_reached": "TP3",
+          "gross_pnl": 9622.11,
+          "net_pnl": 7701.94,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-05-05",
+          "exit_date": "2025-05-07",
+          "entry_price": 9.85,
+          "exit_price": 8.990714285714285,
+          "shares": 10391,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -8928.84,
+          "net_pnl": -9369.33,
+          "is_win": false
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 300,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 111,
+          "net_pnl": -361.9,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8106,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -5998.44,
+          "net_pnl": -6440.91,
+          "is_win": false
+        },
+        {
+          "stock": "PIBTL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 9.95,
+          "exit_price": 10.03,
+          "shares": 10191,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 815.28,
+          "net_pnl": 234.85,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-02",
+          "entry_price": 26.85,
+          "exit_price": 31.35,
+          "shares": 3749,
+          "exit_reason": "TP3_HIT",
+          "best_target_reached": "TP3",
+          "gross_pnl": 16870.5,
+          "net_pnl": 13848.99,
+          "is_win": true
+        },
+        {
+          "stock": "PPL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 205,
+          "exit_price": 202.41,
+          "shares": 490,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": -1269.1,
+          "net_pnl": -1718.27,
+          "is_win": false
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-01",
+          "entry_price": 1.85,
+          "exit_price": 1.6860714285714287,
+          "shares": 54312,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -8903.29,
+          "net_pnl": -9335.4,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-23",
+          "entry_price": 23.5,
+          "exit_price": 21.1675,
+          "shares": 4292,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -10011.09,
+          "net_pnl": -10442.44,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-20",
+          "entry_price": 21.01,
+          "exit_price": 18.631428571428575,
+          "shares": 4799,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -11414.76,
+          "net_pnl": -11842.8,
+          "is_win": false
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-20",
+          "entry_price": 33.1,
+          "exit_price": 30.261785714285715,
+          "shares": 3048,
+          "exit_reason": "SL_AFTER_TP1",
+          "best_target_reached": "TP1",
+          "gross_pnl": -8650.88,
+          "net_pnl": -9085.41,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 7973,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 5262.18,
+          "net_pnl": 4021.5,
+          "is_win": true
+        },
+        {
+          "stock": "CNERGY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 8.2,
+          "exit_price": 8.53,
+          "shares": 11924,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 3934.92,
+          "net_pnl": 2895.83,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "LightGBM",
+      "horizon": 5,
+      "strategy": "fixed_horizon",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 996050.1,
+      "total_realized_net_pnl": -2368.96,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -3949.9,
+      "total_return_pct": -0.395,
+      "n_signals": 7,
+      "n_executed": 7,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 7,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 2,
+      "max_gross_exposure": 199730.55,
+      "total_costs": 3171.97,
+      "total_commission": 2114.65,
+      "total_slippage": 1057.32,
+      "total_cgt": 3683.73,
+      "sharpe": 0.1081,
+      "sortino": 0.0263,
+      "max_drawdown_pct": 0.1801,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 202155.4278425
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 108282.4662125
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 100972.09724999999
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 94977.73731
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 90584.86001250001
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 103297.80460999999
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 5.73,
+          "exit_price": 6.34,
+          "shares": 17405,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 10617.05,
+          "net_pnl": 8551.82,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 300,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 111,
+          "net_pnl": -361.9,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8114,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -6004.36,
+          "net_pnl": -6447.26,
+          "is_win": false
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 1.85,
+          "exit_price": 1.76,
+          "shares": 54463,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -4901.67,
+          "net_pnl": -5344.05,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 23.5,
+          "exit_price": 21.35,
+          "shares": 4263,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -9165.45,
+          "net_pnl": -9595.64,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8099,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 5345.34,
+          "net_pnl": 4085.05,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "LightGBM",
+      "horizon": 5,
+      "strategy": "progressive_tp_sl",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 991280.21,
+      "total_realized_net_pnl": -7140.83,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -8719.79,
+      "total_return_pct": -0.872,
+      "n_signals": 7,
+      "n_executed": 7,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 7,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 2,
+      "max_gross_exposure": 199730.55,
+      "total_costs": 3157.25,
+      "total_commission": 2104.83,
+      "total_slippage": 1052.42,
+      "total_cgt": 3679.87,
+      "sharpe": 0.1082,
+      "sortino": 0.0258,
+      "max_drawdown_pct": 0.1808,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 198138.11539330357
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 108282.4662125
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 100972.09724999999
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 94977.73731
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 89450.47403875
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 102800.3834
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 5.73,
+          "exit_price": 6.34,
+          "shares": 17405,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 10617.05,
+          "net_pnl": 8551.82,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 300,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 111,
+          "net_pnl": -361.9,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8114,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -6004.36,
+          "net_pnl": -6447.26,
+          "is_win": false
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-01",
+          "entry_price": 1.85,
+          "exit_price": 1.6860714285714287,
+          "shares": 54463,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -8928.04,
+          "net_pnl": -9361.36,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-23",
+          "entry_price": 23.5,
+          "exit_price": 21.1675,
+          "shares": 4246,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -9903.79,
+          "net_pnl": -10330.53,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8060,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 5319.6,
+          "net_pnl": 4065.38,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "CatBoost",
+      "horizon": 5,
+      "strategy": "fixed_horizon",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 1006131.88,
+      "total_realized_net_pnl": 8397.07,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": 6131.88,
+      "total_return_pct": 0.6132,
+      "n_signals": 10,
+      "n_executed": 10,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 10,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 4,
+      "max_gross_exposure": 398789.59,
+      "total_costs": 4581.35,
+      "total_commission": 3054.23,
+      "total_slippage": 1527.12,
+      "total_cgt": 9672.14,
+      "sharpe": 0.1437,
+      "sortino": 0.0376,
+      "max_drawdown_pct": 0.3062,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 201291.75223500002
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 99962.37627749999
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 94193.474505
+        },
+        "BOP": {
+          "n_trades": 1,
+          "realized_pnl": 120436.5372125
+        },
+        "HASCOL": {
+          "n_trades": 2,
+          "realized_pnl": 198145.42128
+        },
+        "SYS": {
+          "n_trades": 1,
+          "realized_pnl": 103237.47447
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 93538.48317500002
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 104343.66459
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 297,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 109.89,
+          "net_pnl": -358.28,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8047,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -5954.78,
+          "net_pnl": -6394.03,
+          "is_win": false
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 26.85,
+          "exit_price": 33.5,
+          "shares": 3721,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 24744.65,
+          "net_pnl": 20527.69,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 1.85,
+          "exit_price": 1.76,
+          "shares": 53970,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -4857.3,
+          "net_pnl": -5295.67,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 13.5,
+          "exit_price": 16.36,
+          "shares": 7358,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 21043.88,
+          "net_pnl": 17392.95,
+          "is_win": true
+        },
+        {
+          "stock": "SYS",
+          "entry_date": "2025-09-30",
+          "exit_date": "2025-10-07",
+          "entry_price": 147.49,
+          "exit_price": 154.44,
+          "shares": 676,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 4698.2,
+          "net_pnl": 3534.23,
+          "is_win": true
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 23.5,
+          "exit_price": 21.35,
+          "shares": 4402,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -9464.3,
+          "net_pnl": -9908.52,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 21.01,
+          "exit_price": 16.63,
+          "shares": 4921,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -21553.98,
+          "net_pnl": -21970.74,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8181,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 5399.46,
+          "net_pnl": 4126.41,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "CatBoost",
+      "horizon": 5,
+      "strategy": "progressive_tp_sl",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 995792.41,
+      "total_realized_net_pnl": -1951.94,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -4207.59,
+      "total_return_pct": -0.4208,
+      "n_signals": 10,
+      "n_executed": 10,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 10,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 3,
+      "max_gross_exposure": 300194.04,
+      "total_costs": 4532.57,
+      "total_commission": 3021.71,
+      "total_slippage": 1510.86,
+      "total_cgt": 6871.01,
+      "sharpe": 0.1235,
+      "sortino": 0.038,
+      "max_drawdown_pct": 0.2352,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 197310.80456625
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 99962.37627749999
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 94193.474505
+        },
+        "HASCOL": {
+          "n_trades": 2,
+          "realized_pnl": 197197.95790928573
+        },
+        "BOP": {
+          "n_trades": 1,
+          "realized_pnl": 113654.41005
+        },
+        "SYS": {
+          "n_trades": 1,
+          "realized_pnl": 104001.0652575
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 90967.29790375
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 103272.29583
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 297,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 109.89,
+          "net_pnl": -358.28,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8047,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -5954.78,
+          "net_pnl": -6394.03,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-09-29",
+          "entry_price": 13.5,
+          "exit_price": 14.912142857142857,
+          "shares": 7358,
+          "exit_reason": "TP3_HIT",
+          "best_target_reached": "TP3",
+          "gross_pnl": 10390.55,
+          "net_pnl": 8361.59,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-02",
+          "entry_price": 26.85,
+          "exit_price": 31.35,
+          "shares": 3721,
+          "exit_reason": "TP3_HIT",
+          "best_target_reached": "TP3",
+          "gross_pnl": 16744.5,
+          "net_pnl": 13745.56,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-01",
+          "entry_price": 1.85,
+          "exit_price": 1.6860714285714287,
+          "shares": 53970,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -8847.22,
+          "net_pnl": -9276.62,
+          "is_win": false
+        },
+        {
+          "stock": "SYS",
+          "entry_date": "2025-09-30",
+          "exit_date": "2025-10-07",
+          "entry_price": 147.49,
+          "exit_price": 154.44,
+          "shares": 681,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 4732.95,
+          "net_pnl": 3560.38,
+          "is_win": true
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-23",
+          "entry_price": 23.5,
+          "exit_price": 21.1675,
+          "shares": 4318,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -10071.73,
+          "net_pnl": -10505.7,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-20",
+          "entry_price": 21.01,
+          "exit_price": 18.631428571428575,
+          "shares": 4827,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -11481.36,
+          "net_pnl": -11911.9,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8097,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 5344.02,
+          "net_pnl": 4084.05,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "Random Forest",
+      "horizon": 5,
+      "strategy": "fixed_horizon",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 996505.35,
+      "total_realized_net_pnl": -1696.85,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -3494.65,
+      "total_return_pct": -0.3495,
+      "n_signals": 8,
+      "n_executed": 8,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 8,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 2,
+      "max_gross_exposure": 200755.8,
+      "total_costs": 3607.27,
+      "total_commission": 2404.85,
+      "total_slippage": 1202.42,
+      "total_cgt": 3271.18,
+      "sharpe": 0.1218,
+      "sortino": 0.0288,
+      "max_drawdown_pct": 0.1747,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 202041.555805
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 99962.37627749999
+        },
+        "SYS": {
+          "n_trades": 1,
+          "realized_pnl": 101251.955565
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 97068.9754125
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 90181.12735000001
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 102838.64657
+        },
+        "BOP": {
+          "n_trades": 1,
+          "realized_pnl": 103982.86434500001
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 297,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 109.89,
+          "net_pnl": -358.28,
+          "is_win": false
+        },
+        {
+          "stock": "SYS",
+          "entry_date": "2025-07-21",
+          "exit_date": "2025-07-28",
+          "entry_price": 120.6,
+          "exit_price": 122.19,
+          "shares": 834,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 1326.06,
+          "net_pnl": 671.56,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 1.85,
+          "exit_price": 1.76,
+          "shares": 54398,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -4895.82,
+          "net_pnl": -5337.67,
+          "is_win": false
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 7.3,
+          "exit_price": 7.11,
+          "shares": 13715,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -2605.85,
+          "net_pnl": -3050.52,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 23.5,
+          "exit_price": 21.35,
+          "shares": 4244,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -9124.6,
+          "net_pnl": -9552.87,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8063,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 5321.58,
+          "net_pnl": 4066.9,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 33.88,
+          "exit_price": 36.13,
+          "shares": 2918,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 6565.5,
+          "net_pnl": 5121.02,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "Random Forest",
+      "horizon": 5,
+      "strategy": "progressive_tp_sl",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 991720.2,
+      "total_realized_net_pnl": -6485.03,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -8279.8,
+      "total_return_pct": -0.828,
+      "n_signals": 8,
+      "n_executed": 8,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 8,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 2,
+      "max_gross_exposure": 200755.8,
+      "total_costs": 3590.36,
+      "total_commission": 2393.57,
+      "total_slippage": 1196.79,
+      "total_cgt": 3262.59,
+      "sharpe": 0.1169,
+      "sortino": 0.0295,
+      "max_drawdown_pct": 0.1746,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 2,
+          "realized_pnl": 198029.03790089287
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 99962.37627749999
+        },
+        "SYS": {
+          "n_trades": 1,
+          "realized_pnl": 101251.955565
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 97068.9754125
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 89050.20107437501
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 102341.22536
+        },
+        "BOP": {
+          "n_trades": 1,
+          "realized_pnl": 103483.97466
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 297,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 109.89,
+          "net_pnl": -358.28,
+          "is_win": false
+        },
+        {
+          "stock": "SYS",
+          "entry_date": "2025-07-21",
+          "exit_date": "2025-07-28",
+          "entry_price": 120.6,
+          "exit_price": 122.19,
+          "shares": 834,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 1326.06,
+          "net_pnl": 671.56,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-01",
+          "entry_price": 1.85,
+          "exit_price": 1.6860714285714287,
+          "shares": 54398,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -8917.39,
+          "net_pnl": -9350.19,
+          "is_win": false
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 7.3,
+          "exit_price": 7.11,
+          "shares": 13715,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -2605.85,
+          "net_pnl": -3050.52,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-23",
+          "entry_price": 23.5,
+          "exit_price": 21.1675,
+          "shares": 4227,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -9859.48,
+          "net_pnl": -10284.3,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8024,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 5295.84,
+          "net_pnl": 4047.23,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 33.88,
+          "exit_price": 36.13,
+          "shares": 2904,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 6534,
+          "net_pnl": 5096.45,
+          "is_win": true
+        }
+      ]
+    },
+    {
+      "model": "Ridge Regression",
+      "horizon": 5,
+      "strategy": "fixed_horizon",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 1006950.1,
+      "total_realized_net_pnl": 11940.46,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": 6950.1,
+      "total_return_pct": 0.695,
+      "n_signals": 22,
+      "n_executed": 22,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 22,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 5,
+      "max_gross_exposure": 499435.43,
+      "total_costs": 10064.77,
+      "total_commission": 6709.85,
+      "total_slippage": 3354.92,
+      "total_cgt": 15352.93,
+      "sharpe": 0.2728,
+      "sortino": 0.0832,
+      "max_drawdown_pct": 0.3486,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 3,
+          "realized_pnl": 301317.921845
+        },
+        "PIBTL": {
+          "n_trades": 2,
+          "realized_pnl": 210227.04567000002
+        },
+        "PAEL": {
+          "n_trades": 2,
+          "realized_pnl": 205316.51049000002
+        },
+        "PRL": {
+          "n_trades": 2,
+          "realized_pnl": 197004.36440000002
+        },
+        "BOP": {
+          "n_trades": 3,
+          "realized_pnl": 338236.104455
+        },
+        "HASCOL": {
+          "n_trades": 3,
+          "realized_pnl": 295353.1000075
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 98952.655305
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 94778.745255
+        },
+        "HUBC": {
+          "n_trades": 1,
+          "realized_pnl": 100608.92745
+        },
+        "TRG": {
+          "n_trades": 1,
+          "realized_pnl": 95043.23430499999
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 93517.23408750001
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 96007.11554500001
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 103514.62924
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "PIBTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 8.16,
+          "exit_price": 9.07,
+          "shares": 12222,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 11122.02,
+          "net_pnl": 8979.9,
+          "is_win": true
+        },
+        {
+          "stock": "PAEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 32.49,
+          "exit_price": 32.99,
+          "shares": 3084,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 1542,
+          "net_pnl": 856.33,
+          "is_win": true
+        },
+        {
+          "stock": "PRL",
+          "entry_date": "2025-02-17",
+          "exit_date": "2025-02-24",
+          "entry_price": 34.94,
+          "exit_price": 35.24,
+          "shares": 2907,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 872.1,
+          "net_pnl": 282.26,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-02-17",
+          "exit_date": "2025-02-24",
+          "entry_price": 11.24,
+          "exit_price": 12.7,
+          "shares": 9030,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 13183.8,
+          "net_pnl": 10719.83,
+          "is_win": true
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2025-05-05",
+          "exit_date": "2025-05-12",
+          "entry_price": 10.3,
+          "exit_price": 9.73,
+          "shares": 9965,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -5680.05,
+          "net_pnl": -6129.15,
+          "is_win": false
+        },
+        {
+          "stock": "PRL",
+          "entry_date": "2025-05-05",
+          "exit_date": "2025-05-12",
+          "entry_price": 28.91,
+          "exit_price": 27.02,
+          "shares": 3538,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -6686.82,
+          "net_pnl": -7132.05,
+          "is_win": false
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 294,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 108.78,
+          "net_pnl": -354.66,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8097,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -5991.78,
+          "net_pnl": -6433.75,
+          "is_win": false
+        },
+        {
+          "stock": "PIBTL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 9.95,
+          "exit_price": 10.03,
+          "shares": 10179,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 814.32,
+          "net_pnl": 234.58,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 26.85,
+          "exit_price": 33.5,
+          "shares": 3744,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 24897.6,
+          "net_pnl": 20654.57,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 1.85,
+          "exit_price": 1.76,
+          "shares": 54304,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -4887.36,
+          "net_pnl": -5328.44,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 13.5,
+          "exit_price": 16.36,
+          "shares": 7403,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 21172.58,
+          "net_pnl": 17499.32,
+          "is_win": true
+        },
+        {
+          "stock": "HUBC",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 232,
+          "exit_price": 236.85,
+          "shares": 428,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 2075.8,
+          "net_pnl": 1312.93,
+          "is_win": true
+        },
+        {
+          "stock": "TRG",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 77.69,
+          "exit_price": 74.77,
+          "shares": 1277,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -3728.84,
+          "net_pnl": -4166.9,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 23.5,
+          "exit_price": 21.35,
+          "shares": 4401,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -9462.15,
+          "net_pnl": -9906.27,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 21.01,
+          "exit_price": 16.63,
+          "shares": 4920,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -21549.6,
+          "net_pnl": -21966.27,
+          "is_win": false
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 8.12,
+          "exit_price": 7.57,
+          "shares": 12742,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -7008.1,
+          "net_pnl": -7457.92,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8116,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 5356.56,
+          "net_pnl": 4093.63,
+          "is_win": true
+        },
+        {
+          "stock": "PAEL",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 38.49,
+          "exit_price": 40.85,
+          "shares": 2586,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 6102.96,
+          "net_pnl": 4725.88,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 33.88,
+          "exit_price": 36.13,
+          "shares": 2942,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 6619.5,
+          "net_pnl": 5163.14,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 1.35,
+          "exit_price": 1.35,
+          "shares": 73993,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 0,
+          "net_pnl": -449.51,
+          "is_win": false
+        }
+      ]
+    },
+    {
+      "model": "Ridge Regression",
+      "horizon": 5,
+      "strategy": "progressive_tp_sl",
+      "cost_profile_id": "standard_psx",
+      "initial_capital": 1000000,
+      "final_equity": 993404.08,
+      "total_realized_net_pnl": -1633.89,
+      "total_unrealized_pnl": 0,
+      "total_net_equity_change": -6595.92,
+      "total_return_pct": -0.6596,
+      "n_signals": 22,
+      "n_executed": 22,
+      "n_skipped": 0,
+      "skipped_reasons": {},
+      "n_completed_positions": 22,
+      "n_open_at_end": 0,
+      "max_concurrent_positions": 5,
+      "max_gross_exposure": 497972.32,
+      "total_costs": 9971.88,
+      "total_commission": 6647.92,
+      "total_slippage": 3323.96,
+      "total_cgt": 12913.55,
+      "sharpe": 0.247,
+      "sortino": 0.0844,
+      "max_drawdown_pct": 0.3345,
+      "max_drawdown_pkr": null,
+      "n_trading_days": 868,
+      "daily_equity_series_ref": "embedded in artifact (daily_equity array)",
+      "per_stock_contribution": {
+        "WTL": {
+          "n_trades": 3,
+          "realized_pnl": 295688.50869517855
+        },
+        "PIBTL": {
+          "n_trades": 2,
+          "realized_pnl": 209907.90823
+        },
+        "PAEL": {
+          "n_trades": 2,
+          "realized_pnl": 203905.398515
+        },
+        "PRL": {
+          "n_trades": 2,
+          "realized_pnl": 196465.16093303572
+        },
+        "BOP": {
+          "n_trades": 3,
+          "realized_pnl": 332056.58690500003
+        },
+        "HASCOL": {
+          "n_trades": 3,
+          "realized_pnl": 289154.3934285714
+        },
+        "LUCK": {
+          "n_trades": 1,
+          "realized_pnl": 100298.949935
+        },
+        "ANL": {
+          "n_trades": 1,
+          "realized_pnl": 94474.40446499999
+        },
+        "HUBC": {
+          "n_trades": 1,
+          "realized_pnl": 100373.8598625
+        },
+        "TRG": {
+          "n_trades": 1,
+          "realized_pnl": 94745.526445
+        },
+        "LOTCHEM": {
+          "n_trades": 1,
+          "realized_pnl": 90651.29293187501
+        },
+        "KEL": {
+          "n_trades": 1,
+          "realized_pnl": 93867.261455
+        },
+        "UNITY": {
+          "n_trades": 1,
+          "realized_pnl": 102124.40073
+        }
+      },
+      "open_positions_at_end": [],
+      "completed_trades": [
+        {
+          "stock": "WTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 1.65,
+          "exit_price": 1.79,
+          "shares": 60606,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 8484.84,
+          "net_pnl": 6743.02,
+          "is_win": true
+        },
+        {
+          "stock": "PIBTL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 8.16,
+          "exit_price": 9.07,
+          "shares": 12222,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 11122.02,
+          "net_pnl": 8979.9,
+          "is_win": true
+        },
+        {
+          "stock": "PAEL",
+          "entry_date": "2024-12-05",
+          "exit_date": "2024-12-12",
+          "entry_price": 32.49,
+          "exit_price": 32.99,
+          "shares": 3084,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP2",
+          "gross_pnl": 1542,
+          "net_pnl": 856.33,
+          "is_win": true
+        },
+        {
+          "stock": "PRL",
+          "entry_date": "2025-02-17",
+          "exit_date": "2025-02-24",
+          "entry_price": 34.94,
+          "exit_price": 35.24,
+          "shares": 2907,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 872.1,
+          "net_pnl": 282.26,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-02-17",
+          "exit_date": "2025-02-18",
+          "entry_price": 11.24,
+          "exit_price": 13.014285714285714,
+          "shares": 9030,
+          "exit_reason": "TP3_HIT",
+          "best_target_reached": "TP3",
+          "gross_pnl": 16021.8,
+          "net_pnl": 13125.74,
+          "is_win": true
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2025-05-05",
+          "exit_date": "2025-05-07",
+          "entry_price": 10.3,
+          "exit_price": 9.25,
+          "shares": 9988,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -10487.4,
+          "net_pnl": -10926.75,
+          "is_win": false
+        },
+        {
+          "stock": "PRL",
+          "entry_date": "2025-05-05",
+          "exit_date": "2025-05-07",
+          "entry_price": 28.91,
+          "exit_price": 26.806785714285716,
+          "shares": 3546,
+          "exit_reason": "SL_AFTER_TP1",
+          "best_target_reached": "TP1",
+          "gross_pnl": -7458,
+          "net_pnl": -7902.53,
+          "is_win": false
+        },
+        {
+          "stock": "LUCK",
+          "entry_date": "2025-05-12",
+          "exit_date": "2025-05-19",
+          "entry_price": 337.78,
+          "exit_price": 338.15,
+          "shares": 298,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 110.26,
+          "net_pnl": -359.49,
+          "is_win": false
+        },
+        {
+          "stock": "ANL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 12.5,
+          "exit_price": 11.76,
+          "shares": 8071,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -5972.54,
+          "net_pnl": -6413.1,
+          "is_win": false
+        },
+        {
+          "stock": "PIBTL",
+          "entry_date": "2025-07-17",
+          "exit_date": "2025-07-24",
+          "entry_price": 9.95,
+          "exit_price": 10.03,
+          "shares": 10147,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 811.76,
+          "net_pnl": 233.84,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-02",
+          "entry_price": 26.85,
+          "exit_price": 31.35,
+          "shares": 3733,
+          "exit_reason": "TP3_HIT",
+          "best_target_reached": "TP3",
+          "gross_pnl": 16798.5,
+          "net_pnl": 13789.89,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-01",
+          "entry_price": 1.85,
+          "exit_price": 1.6860714285714287,
+          "shares": 54134,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -8874.11,
+          "net_pnl": -9304.81,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-09-29",
+          "entry_price": 13.5,
+          "exit_price": 14.912142857142857,
+          "shares": 7380,
+          "exit_reason": "TP3_HIT",
+          "best_target_reached": "TP3",
+          "gross_pnl": 10421.61,
+          "net_pnl": 8386.59,
+          "is_win": true
+        },
+        {
+          "stock": "HUBC",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 232,
+          "exit_price": 236.85,
+          "shares": 427,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 2070.95,
+          "net_pnl": 1309.86,
+          "is_win": true
+        },
+        {
+          "stock": "TRG",
+          "entry_date": "2025-09-26",
+          "exit_date": "2025-10-03",
+          "entry_price": 77.69,
+          "exit_price": 74.77,
+          "shares": 1273,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -3717.16,
+          "net_pnl": -4153.84,
+          "is_win": false
+        },
+        {
+          "stock": "LOTCHEM",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-23",
+          "entry_price": 23.5,
+          "exit_price": 21.1675,
+          "shares": 4303,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -10036.75,
+          "net_pnl": -10469.21,
+          "is_win": false
+        },
+        {
+          "stock": "HASCOL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-20",
+          "entry_price": 21.01,
+          "exit_price": 18.631428571428575,
+          "shares": 4810,
+          "exit_reason": "SL_HIT",
+          "best_target_reached": "—",
+          "gross_pnl": -11440.93,
+          "net_pnl": -11869.95,
+          "is_win": false
+        },
+        {
+          "stock": "KEL",
+          "entry_date": "2026-02-17",
+          "exit_date": "2026-02-24",
+          "entry_price": 8.12,
+          "exit_price": 7.57,
+          "shares": 12458,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": -6851.9,
+          "net_pnl": -7291.7,
+          "is_win": false
+        },
+        {
+          "stock": "UNITY",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 12.25,
+          "exit_price": 12.91,
+          "shares": 8007,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 5284.62,
+          "net_pnl": 4038.65,
+          "is_win": true
+        },
+        {
+          "stock": "PAEL",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 38.49,
+          "exit_price": 40.85,
+          "shares": 2551,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 6020.36,
+          "net_pnl": 4661.91,
+          "is_win": true
+        },
+        {
+          "stock": "BOP",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 33.88,
+          "exit_price": 36.13,
+          "shares": 2902,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "TP1",
+          "gross_pnl": 6529.5,
+          "net_pnl": 5092.94,
+          "is_win": true
+        },
+        {
+          "stock": "WTL",
+          "entry_date": "2026-04-30",
+          "exit_date": "2026-05-08",
+          "entry_price": 1.35,
+          "exit_price": 1.35,
+          "shares": 72997,
+          "exit_reason": "HORIZON_EXIT",
+          "best_target_reached": "—",
+          "gross_pnl": 0,
+          "net_pnl": -443.46,
+          "is_win": false
+        }
+      ]
+    }
+  ],
+  "exploratory_warning": "EXPLORATORY final-test analysis — prior tasks (59/60) inspected these final-test results. Do NOT claim this as a fresh unbiased confirmation. No parameters were tuned on final-test. Prospective paper-trading or a new untouched future evaluation is required before a confirmatory claim.",
+  "unsupported_in_this_run": "Only 5d horizon × standard_psx is run (10 combos). Full 60-combo run (5 models × 3 horizons × 2 strategies × 2 cost profiles) deferred for runtime. Each combo is a SEPARATE portfolio — P&L is NOT aggregated across combos.",
+  "limitations": [
+    "Hypothetical PKR 1,000,000 initial capital — NOT the user's actual capital.",
+    "Long-only, max 10 positions, max 10%/position, no leverage. Research assumptions, not optimal.",
+    "EXPLORATORY final-test (prior tasks inspected results). No confirmatory claim without prospective evaluation.",
+    "Only 5d horizon × standard_psx run (10 combos). Full 60-combo run deferred.",
+    "Each combo is a SEPARATE portfolio — P&L is NOT summed across combos.",
+    "Portfolio metrics (Sharpe/Sortino/maxDD) computed from the daily mark-to-market equity curve, NOT from trade returns.",
+    "No partial exits or trailing stops (Task 57/58 convention — active stop FIXED = sl)."
+  ]
+}

@@ -3238,3 +3238,116 @@ Remaining limitations + exploratory-test caveats:
 Confirmation that Task 55/56/59/60 artifacts + data/ml_predictions_multi.json were preserved unchanged.
 Confirmation that no model training or pilot25/full-universe evaluation was rerun.
 Confirmation that no GitHub push occurred.
+
+---
+Task ID: 62 (COMPLETE)
+Agent: main (interactive session 2026-10-29)
+Task: Audit + correct two accounting defects in the Task 61 portfolio simulator: (1) entry costs double-deducted at exit, (2) equity curve built from final cash instead of per-date cash. No GitHub push. Task 55/56/59/60 artifacts + ml_predictions_multi.json unchanged. Task 61 portfolio report replaced with corrected version (previous version in git history).
+
+Phase 1 — Cash-accounting issue CONFIRMED + FIXED:
+
+CONFIRMED BUG: The Task 61 `processExits` function called `onRealize(pos.entry_value + (pos.net_pnl || 0), pos.stock)`. Since `net_pnl = gross_pnl - entry_costs - exit_costs - tax`, this added `entryValue + gross_pnl - entry_costs - exit_costs - tax` to cash. But `entryValue` was already deducted at entry (`cash -= entryValue + entryCommission + entrySlippage`). The net cash change per trade was `gross_pnl - 2*entry_costs - exit_costs - tax` — entry costs were DEDUCTED TWICE.
+
+FIX: Changed `onRealize` to pass the actual SALE PROCEEDS: `exitValue - exit_commission - exit_slippage - cgt` (sale value minus exit-side costs and tax). The net cash change is now:
+  -(entryValue + entry_costs) + (exitValue - exit_costs - tax)
+  = gross_pnl - entry_costs - exit_costs - tax
+  = net_pnl ✓
+
+Both `onRealize` call sites (fixed-horizon exit at line 364 + progressive TP/SL exit at line 393) were fixed. Also stored `cgt` on the position object for per-date cash reconstruction.
+
+Phase 2 — Equity-curve chronology issue CONFIRMED + FIXED:
+
+CONFIRMED BUG: The Task 61 equity curve was built AFTER all trading was done, using the FINAL `cash` variable for every date. This meant the cash used in the equity curve for early dates reflected FUTURE trades — violating chronological integrity. A later trade's outcome influenced earlier daily equity values.
+
+FIX: Replaced the equity-curve construction with PER-DATE cash reconstruction from the trade history:
+  For each date d:
+    cash_d = initial_capital
+      - sum(entry investments for positions entered on or before d)
+      + sum(exit proceeds for positions closed on or before d)
+    openValue = sum(shares × close for positions open on d)
+    equity_d = cash_d + openValue
+
+Also moved the mark-to-market handling BEFORE the equity curve (so exit fields are filled before the curve is built). The mark-to-market positions' exit_date is the last bar's date, so for dates before the last date they remain "open" in the equity curve — correctly reflecting that their entry investment was deducted but their exit proceeds were not yet received.
+
+Phase 3 — Capital/execution constraints preserved:
+- No changes to portfolio-config.ts. All constraints retained: PKR 1M initial, max 10 positions, max 10%/position, no leverage, one-per-stock, long-only, +1% threshold, integer shares, deterministic ordering.
+- Available cash cannot become negative (entries check `maxByCash` before execution).
+- Entry costs included in the cash-availability calculation (`cash -= entryValue + entryCommission + entrySlippage`).
+- Multiple same-date entries cannot double-spend (each entry checks current cash AFTER prior entries on the same date).
+- Exited positions free up proceeds (exit proceeds added to cash via onRealize).
+
+Phase 4 — All portfolio metrics recomputed from the corrected equity curve:
+- Sharpe = mean(daily_returns) / std(daily_returns) × √252 (from the corrected chronological daily equity series).
+- Sortino = mean(daily_returns) / downside_std × √252 (downside = negative daily returns).
+- Max drawdown = max(peak - equity) / peak from the corrected daily equity curve (NOT from trade returns). Also fixed `max_drawdown_pkr` (was declared but never assigned — now set from `maxDDAbs`).
+
+Phase 5 — Numerical reconciliation checks:
+
+CASH RECONCILIATION (final_equity = initial_capital + realized_pnl + unrealized_pnl):
+All 10 portfolios (fully closed, n_open_at_end=0):
+  XGBoost 5d fixed: final=994,948 expected=994,948 diff=0.00 ✓
+  XGBoost 5d prog: final=987,003 expected=987,003 diff=0.00 ✓
+  LightGBM 5d fixed: final=997,617 expected=997,617 diff=0.00 ✓
+  LightGBM 5d prog: final=992,840 expected=992,840 diff=0.00 ✓
+  CatBoost 5d fixed: final=1,008,374 expected=1,008,374 diff=0.00 ✓
+  CatBoost 5d prog: final=998,026 expected=998,026 diff=0.00 ✓
+  Random Forest 5d fixed: final=998,297 expected=998,297 diff=0.00 ✓
+  Random Forest 5d prog: final=993,506 expected=993,506 diff=0.00 ✓
+  Ridge 5d fixed: final=1,011,913 expected=1,011,913 diff=0.00 ✓
+  Ridge 5d prog: final=998,317 expected=998,317 diff=0.00 ✓
+
+PERFECT reconciliation — entry costs are NOT double-deducted; exit proceeds are correct; the cash identity holds for every portfolio.
+
+Phase 6 — Re-run with corrected implementation:
+Ran the same 10 combinations (5 models × 5d × 2 strategies × standard_psx) with the corrected code. Results:
+
+| Model | Strategy | Final Equity | Return % | Sharpe | Max DD % | Max DD PKR |
+|---|---|---|---|---|---|---|
+| XGBoost | fixed | 994,948 | -0.51% | 0.219 | 31.5% | 315,400 |
+| XGBoost | prog | 987,003 | -1.30% | 0.177 | 32.1% | 320,800 |
+| LightGBM | fixed | 997,617 | -0.24% | 0.106 | 19.7% | 197,200 |
+| LightGBM | prog | 992,840 | -0.72% | 0.098 | 20.1% | 201,000 |
+| CatBoost | fixed | 1,008,374 | +0.84% | 0.156 | 27.3% | 272,700 |
+| CatBoost | prog | 998,026 | -0.20% | 0.102 | 12.8% | 128,200 |
+| Random Forest | fixed | 998,297 | -0.17% | 0.120 | 17.4% | 173,700 |
+| Random Forest | prog | 993,506 | -0.65% | 0.105 | 17.4% | 173,700 |
+| Ridge | fixed | 1,011,913 | +1.19% | 0.281 | 37.4% | 373,500 |
+| Ridge | prog | 998,317 | -0.17% | 0.214 | 29.3% | 292,500 |
+
+Comparison with Task 61 (buggy) results:
+- The corrected results are SLIGHTLY BETTER than the buggy version (the double-deduction was making results look worse).
+- E.g., Ridge fixed: Task 61 +0.70% → Task 62 +1.19%. CatBoost fixed: Task 61 +0.61% → Task 62 +0.84%.
+- The OVERALL CONCLUSION is the SAME: most portfolios lost money; only CatBoost fixed (+0.84%) and Ridge fixed (+1.19%) are positive.
+- This is NOT an improvement claim — the methodology fix corrected an accounting error, not the strategy. The corrected results are the ACCURATE ones.
+
+Files changed:
+1. scripts/walk_forward_portfolio_simulator.ts — fixed onRealize callbacks (exit proceeds, not entryValue + net_pnl); added cgt field to OpenPosition; moved mark-to-market before equity curve; replaced equity-curve construction with per-date cash reconstruction; fixed max_drawdown_pkr assignment.
+2. data/backtest_reports/walk_forward_portfolio_latest.json — re-generated with corrected accounting.
+3. data/backtest_reports/walk_forward_portfolio_candidate.json — validated candidate.
+4. worklog.md — this entry.
+
+Tests + commands executed:
+1. bun run lint → clean.
+2. python3 scripts/ml_integrity.py → 11/11 PASSED.
+3. bun scripts/simulator_regression_check.ts → 82/82 PASSED.
+4. bun scripts/walk_forward_portfolio_simulator.ts → produced corrected artifact; cash reconciliation 10/10 perfect (diff=0.00 for all).
+5. API smoke: GET / → 200; /api/backtest/walk-forward/portfolio → 200.
+6. Agent Browser: Portfolio Simulation section renders with corrected metrics.
+7. ml_predictions_multi.json UNCHANGED: 41442cd7.
+8. walk_forward_latest.json UNCHANGED: 544192bd (Task 55).
+9. pilot25_robustness.json UNCHANGED: 2ca441fc (Task 56).
+10. walk_forward_trading_latest.json UNCHANGED: 0ae5b02b (Task 59).
+11. walk_forward_trading_robustness.json UNCHANGED: 6cfd9375 (Task 60).
+12. No GitHub push: 1 local commit ahead (NOT pushed).
+
+Remaining limitations:
+- The corrected results are SLIGHTLY better than the buggy Task 61 version (the double-deduction was overstating losses). This is NOT an improvement — it's an accounting correction. The overall conclusion (most portfolios lost money) is unchanged.
+- EXPLORATORY final-test (prior tasks inspected results). No confirmatory claim without prospective paper-trading.
+- Only 5d horizon × standard_psx run (10 combos). Full 60-combo run deferred.
+- Each combo is a SEPARATE portfolio — P&L is NOT summed across combos.
+- No partial exits or trailing stops.
+- The previous (buggy) Task 61 portfolio report is in git history for auditability. The corrected report replaces it as the latest. A visible note should be added to the UI indicating the Task 61 metrics were superseded by the Task 62 accounting correction.
+
+Confirmation that Task 55/56/59/60 forecast + robustness + trading artifacts + data/ml_predictions_multi.json were preserved unchanged.
+Confirmation that no model training or pilot25/full-universe evaluation was rerun.
+Confirmation that no GitHub push occurred.

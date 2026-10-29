@@ -88,6 +88,7 @@ interface OpenPosition {
   exit_date: string | null; exit_price: number | null; exit_reason: string | null;
   exit_value: number | null; exit_commission: number; exit_slippage: number;
   gross_pnl: number | null; net_pnl: number | null; is_win: boolean;
+  cgt: number; // capital-gains tax on this trade (stored for per-date cash reconstruction)
 }
 
 interface SkippedEntry {
@@ -187,6 +188,7 @@ function runPortfolio(
       sl: null, tp1: null, tp2: null, tp3: null, best_target_reached: "—",
       exit_date: null, exit_price: null, exit_reason: null, exit_value: null,
       exit_commission: 0, exit_slippage: 0, gross_pnl: null, net_pnl: null, is_win: false,
+      cgt: 0,
     };
 
     // For progressive TP/SL: compute ATR + SL/TP levels
@@ -211,21 +213,8 @@ function runPortfolio(
     if (stock) { if (!perStock[stock]) perStock[stock] = { n_trades: 0, realized_pnl: 0 }; perStock[stock].n_trades++; perStock[stock].realized_pnl += pnl; }
   });
 
-  // Build daily equity curve
-  for (const date of allDates) {
-    let openValue = 0;
-    for (const p of [...openPositions, ...completed]) {
-      // Check if the position was open on this date
-      if (p.entry_date <= date && (p.exit_date === null || p.exit_date >= date)) {
-        const bars = barsBySymbol.get(p.stock) || [];
-        const bar = bars.find(b => b.date === date);
-        if (bar) openValue += p.shares * bar.close;
-      }
-    }
-    dailyEquity.push({ date, equity: cash + openValue, cash, open_value: openValue });
-  }
-
-  // Mark remaining open positions to market at the last available close
+  // Task 62 FIX: Mark remaining open positions to market FIRST (fills exit
+  // fields so the equity curve can reconstruct per-date cash correctly).
   const openAtEnd = openPositions.filter(p => !p.exit_date);
   let totalUnrealized = 0;
   for (const p of openAtEnd) {
@@ -233,24 +222,50 @@ function runPortfolio(
     const lastBar = bars[bars.length - 1];
     const marketPrice = lastBar ? lastBar.close : p.entry_price;
     const marketValue = p.shares * marketPrice;
-    const unrealized = marketValue - p.entry_value - p.entry_commission - p.entry_slippage;
     p.exit_price = marketPrice;
     p.exit_date = lastBar ? lastBar.date : null;
     p.exit_reason = "MARK_TO_MARKET_END";
+    p.exit_value = marketValue;
     p.gross_pnl = marketValue - p.entry_value;
-    // Exit costs for mark-to-market
     p.exit_commission = marketValue * profile.commissionRate;
     p.exit_slippage = marketValue * profile.slippageRate * 0.5;
     const totalCost = p.entry_commission + p.entry_slippage + p.exit_commission + p.exit_slippage;
     const cgt = p.gross_pnl > 0 ? p.gross_pnl * profile.cgtRate : 0;
+    p.cgt = cgt;
     p.net_pnl = p.gross_pnl - totalCost - cgt;
     p.is_win = p.net_pnl > 0;
     totalUnrealized += p.net_pnl;
-    // Add back the entry value (cash was already deducted at entry)
-    cash += marketValue - p.exit_commission - p.exit_slippage - (p.gross_pnl > 0 ? p.gross_pnl * profile.cgtRate : 0);
     if (!perStock[p.stock]) perStock[p.stock] = { n_trades: 0, realized_pnl: 0 };
     perStock[p.stock].n_trades++;
     perStock[p.stock].realized_pnl += p.net_pnl;
+  }
+
+  // Task 62 FIX: Build daily equity curve CHRONOLOGICALLY — compute cash
+  // PER-DATE from the trade history (NOT from the final cash variable).
+  // For each date d: cash_d = initial_capital - sum(entry investments for
+  // positions entered on or before d) + sum(exit proceeds for positions
+  // closed on or before d). This ensures future trades don't affect past equity.
+  const allPositions = [...completed, ...openAtEnd];
+  for (const date of allDates) {
+    let cash_d = config.initial_capital;
+    let openValue = 0;
+    for (const p of allPositions) {
+      // Entry investment deducted when position is entered
+      if (p.entry_date <= date) {
+        cash_d -= (p.entry_value + p.entry_commission + p.entry_slippage);
+      }
+      // Exit proceeds added when position is closed (sale proceeds - exit costs - tax)
+      if (p.exit_date && p.exit_date <= date) {
+        cash_d += ((p.exit_value || 0) - (p.exit_commission || 0) - (p.exit_slippage || 0) - (p.cgt || 0));
+      }
+      // Open position market value (mark to market at this date's close)
+      if (p.entry_date <= date && (!p.exit_date || p.exit_date >= date)) {
+        const bars = barsBySymbol.get(p.stock) || [];
+        const bar = bars.find(b => b.date === date);
+        if (bar) openValue += p.shares * bar.close;
+      }
+    }
+    dailyEquity.push({ date, equity: cash_d + openValue, cash: cash_d, open_value: openValue });
   }
 
   // Compute portfolio metrics from daily equity curve
@@ -289,6 +304,7 @@ function runPortfolio(
       const dd = peak - e;
       if (dd > maxDDAbs) { maxDDAbs = dd; maxDDpct = peak > 0 ? dd / peak : 0; }
     }
+    maxDDpkr = maxDDAbs; // Task 62 fix: assign the max drawdown in PKR
   }
 
   const skippedReasons: Record<string, number> = {};
@@ -351,11 +367,15 @@ function processExits(
         pos.gross_pnl = exitValue - pos.entry_value;
         const totalCost = pos.entry_commission + pos.entry_slippage + pos.exit_commission + pos.exit_slippage;
         const cgt = pos.gross_pnl > 0 ? pos.gross_pnl * profile.cgtRate : 0;
+        pos.cgt = cgt;
         pos.net_pnl = pos.gross_pnl - totalCost - cgt;
         pos.is_win = pos.net_pnl > 0;
         completed.push(pos);
-        // Return entry value + net P&L to cash
-        onRealize(pos.entry_value + (pos.net_pnl || 0), pos.stock);
+        // Task 62 FIX: add the actual SALE PROCEEDS (exitValue - exitCosts - tax),
+        // NOT entryValue + net_pnl (which double-deducted entry costs).
+        // Net cash change per trade = -(entryValue+entryCosts) + (exitValue-exitCosts-tax)
+        //   = gross_pnl - entry_costs - exit_costs - tax = net_pnl ✓
+        onRealize(exitValue - pos.exit_commission - pos.exit_slippage - cgt, pos.stock);
       } else {
         stillOpen.push(pos);
       }
@@ -379,10 +399,12 @@ function processExits(
         pos.gross_pnl = exitValue - pos.entry_value;
         const totalCost = pos.entry_commission + pos.entry_slippage + pos.exit_commission + pos.exit_slippage;
         const cgt = pos.gross_pnl > 0 ? pos.gross_pnl * profile.cgtRate : 0;
+        pos.cgt = cgt;
         pos.net_pnl = pos.gross_pnl - totalCost - cgt;
         pos.is_win = pos.net_pnl > 0;
         completed.push(pos);
-        onRealize(pos.entry_value + (pos.net_pnl || 0), pos.stock);
+        // Task 62 FIX: add SALE PROCEEDS, not entryValue + net_pnl.
+        onRealize(exitValue - pos.exit_commission - pos.exit_slippage - cgt, pos.stock);
       } else {
         stillOpen.push(pos);
       }
