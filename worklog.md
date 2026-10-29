@@ -3635,3 +3635,95 @@ Remaining limitations:
 Confirmation that data/ml_predictions_multi.json was unchanged: md5 41442cd7ece9d137ec19310e2d771f55.
 Confirmation that Task 55/56/59/60 forecast + robustness + trading artifacts were preserved unchanged.
 Confirmation that no GitHub push occurred.
+
+---
+Task ID: 66 (COMPLETE — INFRASTRUCTURE BUILT, BLOCKED STATE HONEST)
+Agent: main (interactive session 2026-10-29)
+Task: Build prospective paper-trading infrastructure that records genuinely prospective predictions + tracks their outcomes as the market moves forward. No GitHub push. ml_predictions_multi.json + Task 55/56/59/60/65 artifacts unchanged.
+
+Phase 1 — Prediction infrastructure inspection:
+- PredictionHistory Prisma model EXISTS: dedupKey (unique), symbol, modelId, modelVersion, predictionTs, signal, predictedReturn, predictedProb, confidenceType, entryPrice, horizon, dataCutoff, kind, outcomeStatus (default "pending"). Table pushed to DB ✓.
+- /api/predictions/record route: DID NOT EXIST → CREATED (Phase 3).
+- Signal generation: the /api/signals/ API uses mock-signals.ts (NOT genuine predictions). The fallback-predictions.ts engine CAN generate technical-rule signals from current OHLCV data — but per policy, these are NOT labeled as trained-ML.
+- ml_predictions_multi.json: a STATIC pre-computed file from Oct 23 (NOT live inference). Contains trained_at="2026-10-23T01:48:34".
+- No live trained-ML inference script exists (no script that runs Python ML models on current data).
+
+Phase 2 — Data freshness:
+- Latest OHLCV date in DB: 2026-10-28 (updated via backfill_ohlcv.ts in this session).
+- Current date: 2026-10-29. Days stale: 1 (fresh — yesterday's close).
+- Weekend handling: allows weekends (market closed).
+- Freshness check implemented in src/lib/latent/data-freshness.ts (checkDataFreshness + checkInferenceAvailability).
+
+Phase 3 — Prediction recording API:
+- CREATED: src/app/api/predictions/record/route.ts — POST endpoint that records immutable prediction snapshots.
+- Uses dedupKey (symbol|modelId|predictionTs) for idempotency — repeated requests return the existing record, no duplicates.
+- Never overwrites the original prediction (immutable).
+- Fields: symbol, modelId, modelVersion, predictionTs, signal, predictedReturn, predictedProb, confidenceType, entryPrice, horizon, dataCutoff, kind.
+
+Phase 4 — Paper-trading policy (predeclared, fixed):
+- Long-only, fixed-horizon 5d, +1% threshold, entry at next session open, exit at horizon-end close, standard_psx cost profile, PKR 1,000,000 initial capital, max 10 positions, max 10%/position, no leverage, one-per-stock. NOT tuned on final-test.
+
+Phase 5-7 — Paper-trading workflow:
+- CREATED: scripts/prospective_paper_trading.ts — daily workflow that:
+  1. Validates data freshness (checkDataFreshness)
+  2. Checks inference availability (checkInferenceAvailability)
+  3. If inference available: generates predictions, records them, enters paper positions, matures outcomes
+  4. If inference unavailable: shows BLOCKED state with honest reason
+  5. Outputs report artifact
+
+Phase 8 — Report + API + UI:
+- CREATED: data/backtest_reports/prospective_paper_trading_latest.json — the prospective report (status=BLOCKED, block_reason="No live trained-ML inference path available")
+- CREATED: src/app/api/backtest/walk-forward/prospective/route.ts — read-only API
+- CREATED: UI section "Prospective Paper Trading (Task 66)" in AiModelSignals.tsx — shows status (BLOCKED), data freshness, inference availability, paper-trading policy, honest disclosure, daily workflow commands
+
+CURRENT STATE (honest):
+- Status: BLOCKED
+- Block reason: "No live trained-ML inference path available. ml_predictions_multi.json is a static file (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute."
+- PredictionHistory: 0 total, 0 pending, 0 matured (nothing fabricated)
+- Data freshness: fresh (2026-10-28, daysStale=1)
+- The infrastructure is READY — to unblock, implement a Python live-inference script that runs the ML models on current OHLCV data + records predictions via /api/predictions/record.
+
+Files changed:
+1. src/lib/latent/data-freshness.ts (NEW) — freshness check + inference availability check
+2. src/app/api/predictions/record/route.ts (NEW) — immutable prediction recording API
+3. scripts/prospective_paper_trading.ts (NEW) — daily paper-trading workflow
+4. src/app/api/backtest/walk-forward/prospective/route.ts (NEW) — read-only report API
+5. src/components/latent/AiModelSignals.tsx — added Task 66 state hook (pstData/loadPst) + "Prospective Paper Trading" UI section
+6. data/backtest_reports/prospective_paper_trading_latest.json (NEW) — the report artifact
+7. worklog.md — this entry
+
+Tests + commands executed:
+1. bun run lint → clean ✓
+2. python3 scripts/ml_integrity.py → 11/11 PASSED ✓
+3. bun scripts/simulator_regression_check.ts → 82/82 PASSED ✓
+4. bun scripts/prospective_paper_trading.ts → produced report; status=BLOCKED; PredictionHistory 0 records; data fresh ✓
+5. API smoke: GET / → 200; /api/backtest/walk-forward/prospective → 200; /api/backtest/walk-forward/portfolio → 200 ✓
+6. ml_predictions_multi.json UNCHANGED: 41442cd7 ✓
+7. walk_forward_latest.json UNCHANGED: 544192bd (Task 55) ✓
+8. pilot25_robustness.json UNCHANGED: 2ca441fc (Task 56) ✓
+9. walk_forward_trading_latest.json UNCHANGED: 0ae5b02b (Task 59) ✓
+10. walk_forward_trading_robustness.json UNCHANGED: 6cfd9375 (Task 60) ✓
+11. No GitHub push: 2 local commits ahead (NOT pushed) ✓
+
+Remaining limitations + current blockers:
+- BLOCKED: no live trained-ML inference path. The ml_predictions_multi.json is a static file from Oct 23 (not live inference). The signals API uses mock-signals. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, NOT used as a substitute.
+- To UNBLOCK: implement a Python live-inference script (e.g., scripts/generate_live_predictions.py) that:
+  1. Reads the latest OHLCV bars from the DB
+  2. Runs the trained ML models (XGBoost, LightGBM, CatBoost, Random Forest, Ridge) on the current data
+  3. Records the predictions via /api/predictions/record
+  4. Then runs scripts/prospective_paper_trading.ts to enter paper positions + mature outcomes
+- Technical-rule signals from the fallback engine are available but are NOT labeled as trained-ML. They could be tracked as a SEPARATE experiment if desired.
+- Historical walk-forward results (Tasks 55-65) are EXPLORATORY — the prospective period is the next independent evaluation. No significance should be claimed without sufficient prospective observations.
+- Do NOT interpret any future positive paper-trading result as proof of model skill without a statistical significance test.
+
+Daily workflow commands (documented for manual execution):
+  step1: bun run scripts/backfill_ohlcv.ts                    # update OHLCV data
+  step2: python3 scripts/generate_live_predictions.py          # NOT YET IMPLEMENTED — the blocker
+  step3: curl -X POST http://127.0.0.1:3000/api/predictions/record -H 'Content-Type: application/json' -d '{...}'
+  step4: bun scripts/prospective_paper_trading.ts              # enter paper positions + mature outcomes
+  step5: curl -s http://127.0.0.1:3000/api/backtest/walk-forward/prospective  # check report
+
+Confirmation that data/ml_predictions_multi.json was unchanged: md5 41442cd7ece9d137ec19310e2d771f55.
+Confirmation that Task 55/56/59/60/65 forecast + robustness + trading + portfolio artifacts were preserved unchanged.
+Confirmation that no model training or pilot25/full-universe evaluation was rerun.
+Confirmation that no GitHub push occurred.

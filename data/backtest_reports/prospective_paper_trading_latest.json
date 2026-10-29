@@ -1,0 +1,85 @@
+{
+  "task": "task66_prospective_paper_trading",
+  "schema_version": "1.0",
+  "generated_at": "2026-10-29T02:06:23.696Z",
+  "experiment_start": null,
+  "latest_observation": "2026-10-29T02:06:23.696Z",
+  "latest_verified_market_data_date": "2026-10-28",
+  "data_freshness": {
+    "fresh": true,
+    "latestDbDate": "2026-10-28",
+    "currentUtcDate": "2026-10-29",
+    "daysStale": 1,
+    "reason": null,
+    "warnings": []
+  },
+  "inference_availability": {
+    "available": false,
+    "reason": "No live trained-ML inference path available. ml_predictions_multi.json is a static file (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute for trained-ML predictions.",
+    "details": {
+      "mlPredictionsFile": {
+        "exists": true,
+        "trainedAt": "2026-10-23",
+        "isStatic": true
+      },
+      "signalsApi": {
+        "usesMock": true
+      },
+      "fallbackEngine": {
+        "available": true,
+        "kind": "technical-rule"
+      }
+    }
+  },
+  "ml_predictions_md5": "41442cd7ece9d137ec19310e2d771f55",
+  "prediction_counts": {
+    "total": 0,
+    "pending": 0,
+    "matured": 0
+  },
+  "paper_trading_policy": {
+    "direction": "long_only",
+    "strategy": "fixed_horizon",
+    "horizon": 5,
+    "signal_threshold": 0.01,
+    "entry_convention": "next_session_open",
+    "exit_convention": "horizon_end_close",
+    "cost_profile": "standard_psx",
+    "initial_capital": 1000000,
+    "max_concurrent_positions": 10,
+    "max_position_size_fraction": 0.1,
+    "max_gross_exposure": 1,
+    "one_position_per_stock": true,
+    "no_leverage": true
+  },
+  "status": "BLOCKED",
+  "block_reason": "No live trained-ML inference path available. ml_predictions_multi.json is a static file (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute for trained-ML predictions.",
+  "paper_trades": {
+    "open": 0,
+    "closed": 0,
+    "skipped": 0
+  },
+  "metrics": null,
+  "honest_disclosure": [
+    "This is a PROSPECTIVE paper-trading system — predictions are recorded at their timestamp + outcomes are matured as the market moves forward.",
+    "Currently BLOCKED: no live trained-ML inference path is available. ml_predictions_multi.json is a static file from Oct 23 (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute.",
+    "To UNBLOCK: implement a live inference script that runs the Python ML models on current OHLCV data + records the predictions via /api/predictions/record.",
+    "Technical-rule signals from the fallback engine are available but are NOT labeled as trained-ML predictions. They could be tracked as a SEPARATE experiment if desired.",
+    "Do NOT interpret any future positive paper-trading result as proof of model skill without sufficient prospective observations + a statistical significance test.",
+    "Historical walk-forward results (Tasks 55-65) are EXPLORATORY — the prospective period is the next independent evaluation."
+  ],
+  "limitations": [
+    "No live trained-ML inference path — the workflow is BLOCKED until one is implemented.",
+    "The ml_predictions_multi.json file (Oct 23) contains pre-computed predictions for historical data, NOT live inference for current market sessions.",
+    "The signals API (/api/signals/all) uses mock-signals.ts — NOT genuine predictions.",
+    "The fallback engine (fallback-predictions.ts) CAN generate technical-rule signals from current data, but per policy these are NOT used as trained-ML substitutes.",
+    "To start the prospective experiment: (1) implement a Python live-inference script, (2) run it after each market-data update, (3) record predictions via /api/predictions/record, (4) run this workflow to enter paper positions + mature outcomes."
+  ],
+  "daily_workflow_commands": {
+    "step1_update_data": "bun run scripts/backfill_ohlcv.ts",
+    "step2_generate_predictions": "python3 scripts/generate_live_predictions.py  # NOT YET IMPLEMENTED — this is the blocker",
+    "step3_record_predictions": "curl -X POST http://127.0.0.1:3000/api/predictions/record -H 'Content-Type: application/json' -d '{...}'",
+    "step4_run_paper_trading": "bun scripts/prospective_paper_trading.ts",
+    "step5_check_report": "curl -s http://127.0.0.1:3000/api/backtest/walk-forward/prospective"
+  }
+}

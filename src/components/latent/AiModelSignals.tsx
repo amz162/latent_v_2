@@ -85,6 +85,21 @@ export function AiModelSignals(){
    setPrtError(e?.message||"Failed to load portfolio artifact.");
   }finally{setPrtLoading(false);}
  };
+ // Task 66: prospective paper-trading
+ const[pstData,setPstData]=useState<any|null>(null);
+ const[pstLoading,setPstLoading]=useState(false);
+ const[pstError,setPstError]=useState<string|null>(null);
+ const loadPst=async()=>{
+  if(pstData||pstLoading) return;
+  setPstLoading(true);setPstError(null);
+  try{
+   const r=await fetch("/api/backtest/walk-forward/prospective?_="+Date.now(),{cache:"no-store"});
+   const j=await r.json();
+   setPstData(j);
+  }catch(e:any){
+   setPstError(e?.message||"Failed to load prospective artifact.");
+  }finally{setPstLoading(false);}
+ };
  const[simOpen,setSimOpen]=useState(false);
  const[simAmount,setSimAmount]=useState("100000");
  // Issue 5 — Portfolio Simulation redesign: removed "Position Size" input.
@@ -1015,6 +1030,39 @@ export function AiModelSignals(){
           )}
           {prtData&&prtData.available===false&&(
            <div className="mt-1 text-[#FBBF24] text-[9px]">{prtData.note||"Portfolio artifact not available."}</div>
+          )}
+         </details>
+
+         {/* Task 66: Prospective Paper Trading */}
+         <details className="text-[10px] text-[#94A3B8]" onToggle={(e)=>{const o=(e.target as HTMLDetailsElement).open; if(o) loadPst();}}>
+          <summary className="cursor-pointer text-[#FBBF24] font-semibold">
+            Prospective Paper Trading (Task 66) — genuinely prospective, NOT historical backtest
+          </summary>
+          {pstLoading&&<div className="mt-1 text-[#94A3B8]">Loading prospective artifact…</div>}
+          {pstError&&<div className="mt-1 text-[#FF5C5C]">{pstError}</div>}
+          {pstData&&pstData.available===true&&(
+           <div className="mt-1 space-y-2">
+             <div className={"rounded-md border p-2 text-[9px] "+(pstData.status==="BLOCKED"?"border-[#FF5C5C]/20 bg-[#FF5C5C]/[0.04]":"border-[#00E676]/20 bg-[#00E676]/[0.04]")}>
+               <div className={"font-semibold mb-0.5 "+(pstData.status==="BLOCKED"?"text-[#FF5C5C]":"text-[#00E676]")}>
+                 Status: {pstData.status}{pstData.block_reason ? " — " + pstData.block_reason.slice(0, 100) + "..." : ""}
+               </div>
+               <div className="text-[#94A3B8]">Latest market data: {pstData.latest_verified_market_data_date}. Fresh: {String(pstData.data_freshness?.fresh)}. Days stale: {pstData.data_freshness?.daysStale}.</div>
+               <div className="text-[#94A3B8]">Inference available: {String(pstData.inference_availability?.available)}. Predictions: {pstData.prediction_counts?.total ?? 0} total, {pstData.prediction_counts?.pending ?? 0} pending, {pstData.prediction_counts?.matured ?? 0} matured.</div>
+             </div>
+             {pstData.paper_trading_policy&&(
+               <div className="rounded border border-white/[0.06] p-1.5 text-[8px] text-[#94A3B8]">
+                 <div className="text-[#64748B] uppercase text-[7px] mb-0.5">Paper-trading policy (predeclared, not tuned on final-test)</div>
+                 {pstData.paper_trading_policy.direction} · {pstData.paper_trading_policy.strategy} · {pstData.paper_trading_policy.horizon}d · +{(pstData.paper_trading_policy.signal_threshold*100)}% threshold · {pstData.paper_trading_policy.cost_profile} · PKR {pstData.paper_trading_policy.initial_capital?.toLocaleString()} · max {pstData.paper_trading_policy.max_concurrent_positions} positions
+               </div>
+             )}
+             {pstData.honest_disclosure&&(pstData.honest_disclosure as string[]).slice(0,3).map((h,i)=>(
+               <div key={i} className="text-[8px] text-[#64748B]">• {h}</div>
+             ))}
+             <div className="text-[8px] text-[#64748B]">Daily workflow: {pstData.daily_workflow_commands?.step1_update_data} → {pstData.daily_workflow_commands?.step2_generate_predictions} → {pstData.daily_workflow_commands?.step4_run_paper_trading}</div>
+           </div>
+          )}
+          {pstData&&pstData.available===false&&(
+           <div className="mt-1 text-[#FBBF24] text-[9px]">{pstData.note||"Prospective artifact not available."}</div>
           )}
          </details>
 
