@@ -3443,3 +3443,101 @@ Confirmation that data/ml_predictions_multi.json was unchanged: md5 41442cd7ece9
 Confirmation that Task 55/56/59/60 forecast + robustness + trading artifacts were preserved unchanged.
 Confirmation that no model training or pilot25/full-universe evaluation was rerun.
 Confirmation that no GitHub push occurred.
+
+---
+Task ID: 64 (COMPLETE)
+Agent: main (interactive session 2026-10-29)
+Task: Fix the equity-curve edge case where a position exiting on date D has its market value double-counted (both in cash as exit proceeds AND in openValue). Also distinguish actual exits from mark-to-market positions (no hypothetical liquidation costs/proceeds). Regenerate the portfolio report from corrected code. No GitHub push. ml_predictions_multi.json + Task 55/56/59/60/63 artifacts unchanged.
+
+Phase 1 — Exit-date equity treatment (CONFIRMED + FIXED):
+
+CONFIRMED BUG: The per-date cash reconstruction (line 262) used `p.exit_date >= date` (greater or equal) for the openValue condition. For a position exiting on date D:
+- `p.exit_date <= D` (line 258) → true → exit proceeds added to cash_d ✓
+- `p.exit_date >= D` (line 262) → true → position market value ALSO in openValue ✗ DOUBLE-COUNT
+
+The equity for date D was: cash_d (with exit proceeds) + openValue (with position's market value) — the position's value was counted TWICE.
+
+FIX 1: Changed `>=` to `>` (strictly greater) in the openValue condition (line 268). A position that exits ON date D is NOT in openValue for D (its exit proceeds are already in cash).
+
+Phase 1 — Mark-to-market vs actual exits (CONFIRMED + FIXED):
+
+CONFIRMED BUG: The mark-to-market handler (lines 230-240) computed hypothetical exit_commission, exit_slippage, and CGT as if an actual sale happened. The per-date cash reconstruction then added hypothetical proceeds to cash. But mark-to-market is NOT a sale — the position remains open, valued at the last close.
+
+FIX 2: Mark-to-market handler now:
+- Sets exit_commission = 0, exit_slippage = 0, cgt = 0 (no actual sale → no exit costs/tax)
+- Computes net_pnl = gross_pnl - entry_costs (entry costs only, no exit costs — UNREALIZED)
+- Does NOT add to perStock.realized_pnl (it's unrealized)
+- Exit proceeds are NOT added to cash in the per-date reconstruction (excluded via `&& p.exit_reason !== "MARK_TO_MARKET_END"`)
+
+FIX 3: OpenValue condition includes mark-to-market positions (via `|| p.exit_reason === "MARK_TO_MARKET_END"`) — they remain in openValue for ALL dates (they never "exit" in the cash-flow sense).
+
+Phase 2 — Event + equity calculations verified:
+For every reporting date D:
+- Cash: only cash flows on or before D (entry investments + actual exit proceeds, NOT mark-to-market)
+- OpenValue: only genuinely-open positions (entered on/before D, not yet actually exited; mark-to-market positions remain)
+- Equity: cash_d + openValue ✓
+- Future trades do NOT influence past equity (per-date reconstruction) ✓
+- An exit on date D is processed consistently (exit proceeds in cash, position NOT in openValue) ✓
+
+Phase 3 — Report dates verified:
+- evaluation_period.end derived from manifest.test_window.end_epoch = "2026-10-21" (NOT the old hardcoded "2026-12-19")
+- Global max OHLCV date = 2026-10-21 (verified via SQL)
+- Latest pilot25 sample decision date = 2026-07-23 (before current date 2026-10-29)
+- No future-dated bars
+
+Phase 4 — Cash + equity reconciliation:
+Cash reconciliation (final_equity = initial_capital + realized_pnl + unrealized_pnl):
+All 10 portfolios: diff=0.00 ✓
+
+Phase 5 — Corrected portfolio metrics (10 combos):
+
+| Model | Strategy | Final Equity | Return % | Sharpe | Max DD % |
+|---|---|---|---|---|---|
+| XGBoost | fixed | 994,948 | -0.51% | -0.031 | 5.75% |
+| XGBoost | prog | 987,003 | -1.30% | -0.125 | 4.87% |
+| LightGBM | fixed | 997,617 | -0.24% | -0.037 | 2.78% |
+| LightGBM | prog | 992,840 | -0.72% | -0.132 | 3.24% |
+| CatBoost | fixed | 1,008,374 | +0.84% | 0.114 | 3.84% |
+| CatBoost | prog | 998,026 | -0.20% | -0.031 | 2.97% |
+| Random Forest | fixed | 998,297 | -0.17% | -0.029 | 2.45% |
+| Random Forest | prog | 993,506 | -0.65% | -0.139 | 2.92% |
+| Ridge | fixed | 1,011,913 | +1.19% | 0.108 | 5.52% |
+| Ridge | prog | 998,317 | -0.17% | -0.001 | 5.73% |
+
+KEY CHANGE from Task 63: Sharpe ratios + max drawdowns CHANGED significantly:
+- Sharpe dropped (e.g., XGBoost fixed: 0.219 → -0.031) — the old double-counting inflated daily returns on exit dates, making Sharpe look better
+- Max DD dropped dramatically (e.g., XGBoost fixed: 31.5% → 5.75%) — the old double-counting created artificial equity peaks, inflating drawdowns
+- Final equity UNCHANGED (the last date has no open positions, so final cash is the same)
+
+These are the CORRECTED values. The old metrics were inflated by the double-counting bug.
+
+Files changed:
+1. scripts/walk_forward_portfolio_simulator.ts — fixed openValue condition (`>` not `>=`); mark-to-market handler (no hypothetical exit costs/proceeds; unrealized P&L); exit-proceeds exclusion for mark-to-market; openValue includes mark-to-market.
+2. data/backtest_reports/walk_forward_portfolio_latest.json — re-generated with corrected metrics + correct evaluation period.
+3. data/backtest_reports/walk_forward_portfolio_candidate.json — validated candidate.
+4. worklog.md — this entry.
+
+Tests + commands executed:
+1. bun run lint → clean.
+2. python3 scripts/ml_integrity.py → 11/11 PASSED.
+3. bun scripts/simulator_regression_check.ts → 82/82 PASSED.
+4. bun scripts/walk_forward_portfolio_simulator.ts → produced corrected artifact; cash reconciliation 10/10 perfect (diff=0.00); evaluation_period.end = "2026-10-21".
+5. API smoke: GET / → 200; /api/backtest/walk-forward/portfolio → 200 (corrected Sharpe/maxDD metrics; correct evaluation period).
+6. ml_predictions_multi.json UNCHANGED: 41442cd7.
+7. walk_forward_latest.json UNCHANGED: 544192bd (Task 55).
+8. pilot25_robustness.json UNCHANGED: 2ca441fc (Task 56).
+9. walk_forward_trading_latest.json UNCHANGED: 0ae5b02b (Task 59).
+10. walk_forward_trading_robustness.json UNCHANGED: 6cfd9375 (Task 60).
+11. No GitHub push: 1 local commit ahead (NOT pushed).
+
+Remaining limitations:
+- The Sharpe + maxDD values changed from Task 63 because the old code double-counted exiting positions' market value on the exit date. The corrected values are the ACCURATE ones.
+- EXPLORATORY final-test (prior tasks inspected results). No confirmatory claim without prospective paper-trading.
+- Only 5d horizon × standard_psx run (10 combos). Full 60-combo run deferred.
+- Each combo is a SEPARATE portfolio — P&L is NOT summed across combos.
+- Mark-to-market positions are correctly tracked as UNREALIZED (no hypothetical exit costs/proceeds). If a future task implements an actual end-of-test sale policy, the exit costs would be applied at that point.
+
+Confirmation that data/ml_predictions_multi.json was unchanged: md5 41442cd7ece9d137ec19310e2d771f55.
+Confirmation that Task 55/56/59/60 forecast + robustness + trading artifacts were preserved unchanged.
+Confirmation that no model training or pilot25/full-universe evaluation was rerun.
+Confirmation that no GitHub push occurred.

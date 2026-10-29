@@ -227,17 +227,19 @@ function runPortfolio(
     p.exit_reason = "MARK_TO_MARKET_END";
     p.exit_value = marketValue;
     p.gross_pnl = marketValue - p.entry_value;
-    p.exit_commission = marketValue * profile.commissionRate;
-    p.exit_slippage = marketValue * profile.slippageRate * 0.5;
-    const totalCost = p.entry_commission + p.entry_slippage + p.exit_commission + p.exit_slippage;
-    const cgt = p.gross_pnl > 0 ? p.gross_pnl * profile.cgtRate : 0;
-    p.cgt = cgt;
-    p.net_pnl = p.gross_pnl - totalCost - cgt;
+    // Task 64 FIX: mark-to-market is NOT an actual sale — do NOT compute
+    // hypothetical exit costs or CGT. The position remains open; its P&L is
+    // UNREALIZED (entry costs only, no exit costs, no tax).
+    p.exit_commission = 0;
+    p.exit_slippage = 0;
+    p.cgt = 0;
+    p.net_pnl = p.gross_pnl - p.entry_commission - p.entry_slippage;
     p.is_win = p.net_pnl > 0;
     totalUnrealized += p.net_pnl;
+    // Track as unrealized (not realized) in perStock
     if (!perStock[p.stock]) perStock[p.stock] = { n_trades: 0, realized_pnl: 0 };
     perStock[p.stock].n_trades++;
-    perStock[p.stock].realized_pnl += p.net_pnl;
+    // Do NOT add to realized_pnl — it's unrealized (no actual liquidation)
   }
 
   // Task 62 FIX: Build daily equity curve CHRONOLOGICALLY — compute cash
@@ -255,11 +257,15 @@ function runPortfolio(
         cash_d -= (p.entry_value + p.entry_commission + p.entry_slippage);
       }
       // Exit proceeds added when position is closed (sale proceeds - exit costs - tax)
-      if (p.exit_date && p.exit_date <= date) {
+      // Task 64 FIX: exclude MARK_TO_MARKET_END — no actual sale, no proceeds to cash
+      if (p.exit_date && p.exit_date <= date && p.exit_reason !== "MARK_TO_MARKET_END") {
         cash_d += ((p.exit_value || 0) - (p.exit_commission || 0) - (p.exit_slippage || 0) - (p.cgt || 0));
       }
       // Open position market value (mark to market at this date's close)
-      if (p.entry_date <= date && (!p.exit_date || p.exit_date >= date)) {
+      // Task 64 FIX: use > (strictly greater) so a position exiting ON date D
+      // is NOT in openValue for D (its exit proceeds are already in cash).
+      // Mark-to-market positions REMAIN in openValue (no actual sale).
+      if (p.entry_date <= date && (!p.exit_date || p.exit_date > date || p.exit_reason === "MARK_TO_MARKET_END")) {
         const bars = barsBySymbol.get(p.stock) || [];
         const bar = bars.find(b => b.date === date);
         if (bar) openValue += p.shares * bar.close;
