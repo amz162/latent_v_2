@@ -517,13 +517,21 @@ export function AiModelSignals(){
          {/* ALL ensemble models — ranked by win rate, full metrics each (per user spec) */}
          <div>
           <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5">
-           <TrendingUp className="h-4 w-4"/>All ensemble models ({[...simData.top5, ...simData.rest].length}) — ranked by {simRankBy === "winRate" ? "win rate" : simRankBy === "netPnl" ? "net P&L" : "streak count"}
+           <TrendingUp className="h-4 w-4"/>All ensemble models — ranked by {simRankBy === "winRate" ? "win rate" : simRankBy === "netPnl" ? "net P&L" : "streak count"}
+           <span className="text-[10px] text-[#64748B] ml-2">
+             Showing {[...simData.top5, ...simData.rest].filter((r:any) => r.metrics && r.metrics.totalTrades > 0 && r.metrics.winRate >= (parseInt(simWinRateThreshold) || 0)).length} of {[...simData.top5, ...simData.rest].length} (min win rate: {simWinRateThreshold}%)
+           </span>
           </h3>
           <div className="space-y-2">
-           {(simRankBy === "prediction"
+           {((simRankBy === "prediction"
              ? [...simData.top5, ...simData.rest].sort((a:any,b:any) => (predictScores[b.ensembleName]||0) - (predictScores[a.ensembleName]||0))
              : [...simData.top5, ...simData.rest]
-           ).map((r:any,idx:number)=>(
+           ).filter((r:any) => {
+             // Phase 5: slider actually FILTERS results — only show results meeting the threshold
+             // Results with 0 completed trades are excluded from win-rate-qualified results
+             const threshold = parseInt(simWinRateThreshold) || 0;
+             return r.metrics && r.metrics.totalTrades > 0 && r.metrics.winRate >= threshold;
+           })).map((r:any,idx:number)=>(
             <div key={r.ensembleName} className="rounded-lg bg-[#0A0E1A] border border-[#00E676]/20 p-3">
              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
               <div className="flex items-center gap-2">
