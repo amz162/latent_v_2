@@ -3858,3 +3858,66 @@ Remaining limitations:
 - No provenance manifest was added (run ID, git commit, library versions — deferred).
 - No automated tests were added for the recording API or UI (deferred).
 - Do NOT claim statistical significance or predictive skill without matured prospective evidence.
+
+---
+Task ID: 74 (COMPLETE)
+Agent: main
+Task: Harden the Task 73 Trained-ML OOS actual-vs-predicted graph — only VERIFIED points enter the comparison series (observed OHLCV close as the actual price, calculated price as a validation check), reconciling counts, no decision-date fallback, dedup, deterministic regression tests, browser-verified rendering.
+Context: Task 73 added /api/backtest/model-graph/ml + a Recharts chart + table, but (a) the main actual_price was the CALCULATED price (decisionClose×(1+actualReturn)), not the observed OHLCV close; (b) ALL points (verified + mismatch + unverified) were pushed into `points[]` and plotted; (c) a missing target_date fell back to the decision date in the UI; (d) no finite-value validation, no dedup, no deterministic tests, no browser verification.
+
+Phase 1 — Inspection:
+- Git: main, clean, synced with origin/main (0/0). HEAD = 66650259.
+- route.ts (Task 73): classified verified/mismatch/unverified but included ALL in `points`; actual_price = calculated; tolerance 0.01; no period validation (added in 73 but counts lumped).
+- AiModelSignals.tsx: chart mapped `date: p.target_date||p.decision_date` (decision-date fallback), `actual: p.actual_price` (calculated); Rule-Based Preview button existed but selecting it rendered NOTHING (no `{mlGraphMode==="rule"&&...}` block).
+- Manifest: pilot25_step50_20261028, 400 samples, val_end_idx=200, universe 25 stocks incl. LUCK/BYCO. Python source-of-truth uses `ste.iloc[i+horizon]` (session-indexed) — matches the API's `barDates[decisionBarIdx+horizon]`.
+- Tooling: tsc + bun available; NO jest/vitest (only `lint` script + standalone TS test scripts). agent-browser CLI available. No Playwright.
+
+Phase 2 — Pure-function module + API rewrite:
+- NEW src/lib/latent/ml-graph-points.ts: pure, deterministic core (no DB/FS). Exports computePredictedPrice, computeCalculatedActualPrice, isValidPrice, isValidReturn, resolveTargetSession (session-indexed), classifyValidPoint, periodRangeFor, buildGraphPoints. VERIFY_TOLERANCE=0.01 PKR.
+- A point enters `points` (verified series) ONLY when: status=evaluated, model+horizon exist & not eval_skipped, decisionClose finite & >0, predictedReturn/actualReturn finite, predicted/calculated prices finite & >0, decision bar exists, future bar at decisionIdx+horizon exists, |calculated − observed| ≤ tolerance.
+- actual_price = OBSERVED OHLCV close (verifiedActualClose). calculated_actual_price kept as a VALIDATION field only.
+- Reconciling counts: n_candidates == n_valid_points + n_omitted + n_duplicates; n_valid_points == n_verified + n_mismatch + n_unavailable_target. Mismatch + unavailable_target go to a separate `diagnostics` array, NEVER `points`.
+- Dedup by (decision_date, model, horizon). Missing target_date stays NULL (no decision-date fallback).
+- Rewrote route.ts as a thin wrapper: reads manifest + DB bars + sample files (fail-safe per file → n_corrupt_files), delegates ALL logic to buildGraphPoints, returns reconcile invariants + tolerance + status (ok / no-verified-points / no-candidates).
+
+Phase 3 — UI:
+- Chart `points` = verified only; `date: p.target_date` (NO fallback); `actual: p.actual_price` (observed OHLCV close); `predicted: p.predicted_price`. connectNulls={false} (gaps visible, no interpolation).
+- Added reconciling counts line (candidates/verified/mismatch/unavailable/valid/omitted/duplicates + [reconcile OK]).
+- Separate diagnostics table (mismatch + unavailable_target) below the verified-observations table — never charted.
+- Truthful no-verified-points / no-candidates states (amber banner, no fabricated chart).
+- Stale-clear: useEffect clears mlGraphData on any filter change (model/horizon/period/symbol) — old graph NEVER shown under new labels. Fetch is manual (Generate button); a note makes this explicit. No auto-fetch claimed.
+- Added a compact symbol input to the ML filter row (ML mode is now self-contained).
+- Gated the existing Phase 3 per-model graph behind `{mlGraphMode==="rule"&&...}` with a clear "Rule-Based Preview — Model Graph View" heading + "NOT trained-ML forecasts" disclaimer. Independent + backward-compatible (same controls/endpoint).
+
+Phase 4 — Deterministic tests (scripts/ml_graph_regression_check.ts, 85 checks, all PASS):
+- Price calc: predicted/calculated exact values; actual_price = observed OHLCV close (not recomputed); NaN/Inf/zero/negative price rejected; non-finite returns rejected.
+- Target-session alignment: 5/10/21-session targets correct; session-indexed (Friday→Monday, not calendar-day); missing decision bar / out-of-range target → null; periodRangeFor split membership.
+- Verification + counts: match→verified, mismatch→never verified, unavailable→never valid; missing target_date stays NULL; full reconciliation (6 candidates == 3 valid + 2 omitted + 1 duplicate; 3 valid == 1+1+1); duplicates don't create dup observations; corrupt/missing records fail safely.
+- API/UI pure-logic subset: supported sets exclude invalid; model/horizon selection changes the series; verified points sorted by target_date; tolerance constant.
+- Tests NOT run in unit suite (reported honestly in script output): browser rendering/tooltip, HTTP 400 validation, UI stale-clearing, no-points state, Rule-Based independence, network endpoint — all covered by Phase 5.
+
+Phase 5 — Browser verification (agent-browser, 8 screenshots in data/task74_evidence/):
+- LUCK XGBoost 5d final-test → chart rendered (18 dots = 9 actual + 9 predicted), legend "Actual (OHLCV close)" + "Predicted (trained-ML)". Counts: candidates 9, verified 9, reconcile [9==9 (OK); 9==9 (OK)].
+- Tooltip (hovered first point): Target date 2024-12-11, Decision date 2024-12-04, Decision close 1067.02 PKR, Actual (OHLCV close) 1218.53 PKR, Predicted 1073.36 PKR, Error -145.17, Actual return 14.20%/Pred 0.59%, Calc actual (validation) 1218.53, Verified: verified. Matches the API exactly.
+- Model change (XGBoost→LightGBM) → stale-clear (counts gone, prompt shown) → regenerate → LightGBM 9 verified.
+- Horizon change (5→21) → stale-clear → regenerate → 21d 9 verified.
+- Period switch (final-test→validation) → stale-clear → regenerate → 8 candidates (dataset changed).
+- BYCO → truthful no-candidates state ("No sample records for BYCO", candidates 0, verified 0, NO chart rendered).
+- Symbol change (BYCO→LUCK) → stale-clear → regenerate → fresh LUCK 9 verified.
+- Rule-Based Preview → ML section hidden, "Rule-Based Preview — Model Graph View" + "NOT trained-ML forecasts" disclaimer shown.
+- Console errors throughout: NONE.
+
+Phase 6 — Checks + artifact protection:
+- bun run lint → clean.
+- tsc --noEmit → no errors in any Task 74 file (ml-graph-points.ts, route.ts, AiModelSignals.tsx). Pre-existing errors in unrelated files (examples/, skills/, other API routes, page-original.tsx, CgtCalculator.tsx) are NOT touched.
+- Unit tests: 85/85 pass.
+- API smoke: LUCK XGBoost 5d final-test → 200 (9 verified); CatBoost 10d → 200; Ridge Regression 21d validation → 200 (8 verified); bogus period → 400; horizon 7 → 400.
+- Protected artifacts (working tree vs git HEAD — authoritative): ALL 9 match HEAD exactly — ml_predictions_multi.json, walk_forward_latest.json, pilot25_robustness.json, walk_forward_trading_latest.json, walk_forward_trading_robustness.json, walk_forward_portfolio_latest.json, prospective latest.json + prospective_2026-10-29_*.json, pilot25 manifest.json. 400 sample files aggregate UNCHANGED (5e45fd29…). (An earlier before/after diff flagged walk_forward_trading_latest.json as "changed" — this was a one-character typo in the before-hash capture; the working-tree SHA == git HEAD SHA, confirming the file is unchanged.)
+
+Files changed: src/lib/latent/ml-graph-points.ts (NEW), src/app/api/backtest/model-graph/ml/route.ts (rewrite), src/components/latent/AiModelSignals.tsx (verified-only chart + diagnostics + stale-clear + Rule-Based gating + symbol input), scripts/ml_graph_regression_check.ts (NEW, 85 tests), data/task74_evidence/ (NEW, 8 browser screenshots), worklog.md (this entry), .next/dev/logs/next-development.log (build artifact).
+
+Remaining limitations:
+- The graph is a VISUALIZATION of historical OOS results — NOT evidence of statistical significance or predictive skill. (pilot25 robustness already showed all 95% CIs include 0.)
+- No live/forward inference is claimed; these are Task 55 historical walk-forward samples only.
+- Tests for the HTTP layer (400 responses) and UI rendering are covered by curl smoke + agent-browser respectively, NOT by the unit suite (reported honestly in the test script output).
+- Tasks 71/72/73 were not previously appended to this worklog; this Task 74 entry is self-contained.

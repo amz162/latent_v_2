@@ -136,6 +136,11 @@ export function AiModelSignals(){
  const[mlGraphHorizon,setMlGraphHorizon]=useState("5");
  const[mlGraphPeriod,setMlGraphPeriod]=useState<"final-test"|"validation">("final-test");
  const ML_GRAPH_MODELS=["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression"];
+ // Task 74: invalidate the cached ML graph whenever any filter changes so a
+ // previous response is NEVER shown under newly-selected model/horizon/period/
+ // symbol labels. Fetch is manual (Generate button) — selection does NOT auto-
+ // fetch. This effect only clears stale data; it never fetches.
+ useEffect(()=>{ setMlGraphData(null); },[mlGraphModel,mlGraphHorizon,mlGraphPeriod,graphSymbol,data?.symbol]);
  // KSE-100 constituents (fetched once) — used to restrict the StockSearch picker.
  useEffect(()=>{fetch("/api/psx/indices/KSE100").then(r=>r.ok?r.json():null).then(j=>{if(j?.constituents)setKse100Syms(j.constituents.map((c:any)=>c.symbol));}).catch(()=>{});},[]);
  const GRAPH_MODEL_OPTIONS=["XGBoost","LightGBM","CatBoost","Random Forest","Ridge Regression","ARIMA","Holt-Winters","GARCH","Prophet","Kalman Filter","GRU","LSTM","CNN-LSTM","Transformer-LSTM","PatchTST","N-BEATS","TimesNet","Informer","XGBoost (CL)","LightGBM (CL)","Random Forest (CL)","LightGBM-A (CL-2)","Logistic (CL-2)","Linear Regression (PI)","Pattern Matcher KNN (PI)","LightGBM (CG)","XGBoost (CG)","Trend Multi-TF (X)","Gian-Ensemble (GIAN)","M-Ensemble (M)","majority_vote","probability_weighted","tier_weighted","cl_ensemble","cl2_ensemble","pi_ensemble","gm_model","cg_ensemble","x_ensemble","gian_ensemble","m_ensemble"];
@@ -1211,15 +1216,28 @@ export function AiModelSignals(){
         <div>
          <p className="text-[10px] text-[#94A3B8] mb-2">Genuine historical out-of-sample trained-ML predictions from the pilot25 walk-forward evaluation. predictedPrice = decisionClose × (1 + predictedForwardReturn). Target = decision_date + horizon trading sessions (from OHLCV DB, NOT calendar days). <span className="text-[#FBBF24]">NOT live forecasts. NOT prospective. NOT strategySignal.</span></p>
          <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <select value={mlGraphModel} onChange={e=>setMlGraphModel(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+          <div className="flex flex-col">
+           <label className="text-[8px] uppercase text-[#64748B] leading-none mb-0.5">Symbol</label>
+           <input value={graphSymbol} onChange={e=>setGraphSymbol(e.target.value.toUpperCase())} placeholder={data?.symbol||"LUCK"} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs w-[100px] font-mono" />
+          </div>
+          <div className="flex flex-col">
+           <label className="text-[8px] uppercase text-[#64748B] leading-none mb-0.5">Model</label>
+           <select value={mlGraphModel} onChange={e=>setMlGraphModel(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
            {ML_GRAPH_MODELS.map(m=><option key={m} value={m}>{m}</option>)}
-          </select>
-          <select value={mlGraphHorizon} onChange={e=>setMlGraphHorizon(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+           </select>
+          </div>
+          <div className="flex flex-col">
+           <label className="text-[8px] uppercase text-[#64748B] leading-none mb-0.5">Horizon</label>
+           <select value={mlGraphHorizon} onChange={e=>setMlGraphHorizon(e.target.value)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
             <option value="5">5 sessions</option><option value="10">10 sessions</option><option value="21">21 sessions</option>
-          </select>
-          <select value={mlGraphPeriod} onChange={e=>setMlGraphPeriod(e.target.value as any)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
+           </select>
+          </div>
+          <div className="flex flex-col">
+           <label className="text-[8px] uppercase text-[#64748B] leading-none mb-0.5">Period</label>
+           <select value={mlGraphPeriod} onChange={e=>setMlGraphPeriod(e.target.value as any)} className="bg-[#0A0E1A] border border-white/[0.12] rounded px-2 py-1 text-[#F4F7FB] text-xs">
             <option value="final-test">Final-Test</option><option value="validation">Validation</option>
-          </select>
+           </select>
+          </div>
           <Button size="sm" variant="outline" onClick={async()=>{
             const sym=(graphSymbol||data?.symbol||"LUCK").trim().toUpperCase();
             setMlGraphLoading(true);
@@ -1236,85 +1254,161 @@ export function AiModelSignals(){
          </div>
          {mlGraphData&&mlGraphData.available&&(
           <div>
-           <div className="text-[10px] text-[#64748B] mb-2">
-             Source: {mlGraphData.source_run_id} · {mlGraphData.n_points} valid points · {mlGraphData.n_omitted} omitted · {mlGraphData.model} {mlGraphData.horizon}d · {mlGraphData.period}
+           <div className="text-[10px] text-[#64748B] mb-2 flex flex-wrap gap-x-3 gap-y-0.5">
+             <span>Source: <span className="text-[#94A3B8] font-mono">{mlGraphData.source_run_id}</span></span>
+             <span>Symbol: <span className="text-[#F4F7FB] font-mono">{mlGraphData.symbol}</span></span>
+             <span>Model: <span className="text-[#22D3EE] font-mono">{mlGraphData.model}</span></span>
+             <span>Horizon: <span className="text-[#22D3EE] font-mono">{mlGraphData.horizon}d</span></span>
+             <span>Period: <span className="text-[#22D3EE] font-mono">{mlGraphData.period}</span></span>
            </div>
-           {/* Task 73: Visual line chart using Recharts */}
-           {(() => {
-             const mlChartData = mlGraphData.points.map((p:any)=>({
-               date: p.target_date||p.decision_date,
-               actual: p.actual_price,
-               predicted: p.predicted_price,
+           {/* Reconciling counts: candidates == valid + omitted + duplicates; valid == verified + mismatch + unavailable */}
+           <div className="text-[10px] text-[#64748B] mb-2 flex flex-wrap gap-x-3 gap-y-0.5 font-mono">
+             <span className="text-[#94A3B8]">candidates: {mlGraphData.n_candidates}</span>
+             <span className="text-[#00E676]">verified: {mlGraphData.n_verified}</span>
+             <span className="text-[#FF5C5C]">mismatch: {mlGraphData.n_mismatch}</span>
+             <span className="text-[#FBBF24]">unavailable_target: {mlGraphData.n_unavailable_target}</span>
+             <span className="text-[#94A3B8]">valid: {mlGraphData.n_valid_points}</span>
+             <span className="text-[#94A3B8]">omitted: {mlGraphData.n_omitted}</span>
+             <span className="text-[#94A3B8]">duplicates: {mlGraphData.n_duplicates}</span>
+             {mlGraphData.n_corrupt_files>0&&<span className="text-[#FF5C5C]">corrupt_files: {mlGraphData.n_corrupt_files}</span>}
+             <span className="text-[#64748B]">[{mlGraphData.reconcile?.candidates}; {mlGraphData.reconcile?.valid}]</span>
+           </div>
+           {/* VERIFIED series only — actual = observed OHLCV close, predicted = trained-ML forecast. */}
+           {mlGraphData.n_verified>0?(
+            <>
+             <div className="text-[10px] text-[#64748B] mb-1">Chart plots <span className="text-[#00E676]">verified</span> points only — actual = observed OHLCV target-session close, predicted = historical trained-ML forecast. Gaps are real (50-session cadence); no interpolation.</div>
+             {(() => {
+              const mlChartData = mlGraphData.points.map((p:any)=>({
+               date: p.target_date,            // target trading-session date (NO decision-date fallback)
+               actual: p.actual_price,          // OBSERVED OHLCV close
+               predicted: p.predicted_price,    // trained-ML forecast
                decisionDate: p.decision_date,
                decisionClose: p.decision_close,
-               error: p.predicted_price - p.actual_price,
+                actualReturn: p.actual_return,
+               predictedReturn: p.predicted_return,
+               calculatedActual: p.calculated_actual_price,
+               error: p.error,
                verification: p.verification,
-             }));
-             return (
-              <ResponsiveContainer width="100%" height={250} className="mb-2">
-                <LineChart data={mlChartData} margin={{top:8,right:16,left:0,bottom:8}}>
+              }));
+              return (
+              <ResponsiveContainer width="100%" height={260} className="mb-2">
+                <LineChart data={mlChartData} margin={{top:8,right:16,left:8,bottom:8}}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1a1a2e" />
-                  <XAxis dataKey="date" tick={{fontSize:9,fill:"#64748B"}} angle={-25} textAnchor="end" height={50} />
-                  <YAxis tick={{fontSize:9,fill:"#64748B"}} />
+                  <XAxis dataKey="date" tick={{fontSize:9,fill:"#64748B"}} angle={-25} textAnchor="end" height={54} />
+                  <YAxis tick={{fontSize:9,fill:"#64748B"}} width={56} tickFormatter={(v:number)=>v.toFixed(0)} />
                   <Tooltip content={({active,payload}:any)=>active&&payload?.length?(
                     <div className="bg-[#0A0E1A] border border-white/20 rounded p-2 text-[10px]">
-                      <div className="text-[#64748B]">Target: {payload[0]?.payload?.date}</div>
-                      <div className="text-[#64748B]">Decision: {payload[0]?.payload?.decisionDate}</div>
-                      <div className="text-[#64748B]">Close: {payload[0]?.payload?.decisionClose?.toFixed(2)}</div>
-                      <div className="text-[#00E676] font-mono">Actual: {payload[0]?.payload?.actual?.toFixed(2)} PKR</div>
+                      <div className="text-[#64748B]">Target date: <span className="font-mono text-[#F4F7FB]">{payload[0]?.payload?.date}</span></div>
+                      <div className="text-[#64748B]">Decision date: <span className="font-mono text-[#94A3B8]">{payload[0]?.payload?.decisionDate}</span></div>
+                      <div className="text-[#64748B]">Decision close: <span className="font-mono">{payload[0]?.payload?.decisionClose?.toFixed(2)}</span> PKR</div>
+                      <div className="text-[#00E676] font-mono">Actual (OHLCV close): {payload[0]?.payload?.actual?.toFixed(2)} PKR</div>
                       <div className="text-[#22D3EE] font-mono">Predicted: {payload[0]?.payload?.predicted?.toFixed(2)} PKR</div>
                       <div className="text-[#FBBF24]">Error: {payload[0]?.payload?.error?.toFixed(2)}</div>
-                      <div className="text-[#64748B]">Verified: {payload[0]?.payload?.verification}</div>
+                      <div className="text-[#64748B]">Actual return: {((payload[0]?.payload?.actualReturn)*100).toFixed(2)}% · Pred return: {((payload[0]?.payload?.predictedReturn)*100).toFixed(2)}%</div>
+                      <div className="text-[#64748B]">Calc actual (validation): {payload[0]?.payload?.calculatedActual?.toFixed(2)}</div>
+                      <div className="text-[#00E676]">Verified: {payload[0]?.payload?.verification}</div>
                     </div>
                   ):null} />
                   <Legend wrapperStyle={{fontSize:"10px"}} />
-                  <Line type="monotone" dataKey="actual" stroke="#00E676" name="Actual Target Price" dot={{r:3,fill:"#00E676"}} strokeWidth={2} connectNulls={false} />
-                  <Line type="monotone" dataKey="predicted" stroke="#22D3EE" name="Predicted Target Price" dot={{r:3,fill:"#22D3EE"}} strokeWidth={2} connectNulls={false} />
+                  <Line type="monotone" dataKey="actual" stroke="#00E676" name="Actual (OHLCV close)" dot={{r:3,fill:"#00E676"}} strokeWidth={2} connectNulls={false} />
+                  <Line type="monotone" dataKey="predicted" stroke="#22D3EE" name="Predicted (trained-ML)" dot={{r:3,fill:"#22D3EE"}} strokeWidth={2} connectNulls={false} />
                 </LineChart>
               </ResponsiveContainer>
-             );
-           })()}
-           {/* Table view (below chart) */}
-           <div className="overflow-x-auto max-h-72 overflow-y-auto">
-            <table className="w-full text-[9px] border-collapse">
-             <thead className="sticky top-0 bg-[#0A0E1A]">
-              <tr className="text-[#64748B] border-b border-white/[0.06]">
-               <th className="text-left py-1 px-2">Decision Date</th>
-               <th className="text-left py-1 px-1">Target Date</th>
-               <th className="text-right py-1 px-1">Decision Close</th>
-               <th className="text-right py-1 px-1">Predicted Price</th>
-               <th className="text-right py-1 px-1">Actual Price</th>
-               <th className="text-right py-1 px-1">Error</th>
-               <th className="text-center py-1 px-1">Verified</th>
-              </tr>
-             </thead>
-             <tbody>
-              {mlGraphData.points.map((p:any,i:number)=>(
-               <tr key={i} className="border-b border-white/[0.04]">
-                <td className="py-0.5 px-2 font-mono text-[#94A3B8]">{p.decision_date}</td>
-                <td className="py-0.5 px-1 font-mono text-[#64748B]">{p.target_date||"—"}</td>
-                <td className="text-right px-1 font-mono text-[#94A3B8]">{p.decision_close.toFixed(2)}</td>
-                <td className="text-right px-1 font-mono text-[#22D3EE]">{p.predicted_price.toFixed(2)}</td>
-                <td className="text-right px-1 font-mono text-[#00E676]">{p.actual_price.toFixed(2)}</td>
-                <td className={"text-right px-1 font-mono "+(p.predicted_price>p.actual_price?"text-[#FF5C5C]":"text-[#00E676]")}>{(p.predicted_price-p.actual_price).toFixed(2)}</td>
-                <td className="text-center px-1 text-[8px]">{p.verification==="verified"?"✓":p.verification==="mismatch"?"✗":"?"}</td>
-               </tr>
-              ))}
-             </tbody>
-            </table>
-           </div>
+              );
+             })()}
+             {/* Verified-points table */}
+             <div className="text-[10px] text-[#64748B] mb-1">Verified observations ({mlGraphData.n_verified}):</div>
+             <div className="overflow-x-auto max-h-72 overflow-y-auto">
+              <table className="w-full text-[9px] border-collapse">
+               <thead className="sticky top-0 bg-[#0A0E1A]">
+                <tr className="text-[#64748B] border-b border-white/[0.06]">
+                 <th className="text-left py-1 px-2">Decision Date</th>
+                 <th className="text-left py-1 px-1">Target Date</th>
+                 <th className="text-right py-1 px-1">Decision Close</th>
+                 <th className="text-right py-1 px-1">Predicted Price</th>
+                 <th className="text-right py-1 px-1">Actual (OHLCV)</th>
+                 <th className="text-right py-1 px-1">Error</th>
+                 <th className="text-center py-1 px-1">Verified</th>
+                </tr>
+               </thead>
+               <tbody>
+                {mlGraphData.points.map((p:any,i:number)=>(
+                 <tr key={i} className="border-b border-white/[0.04]">
+                  <td className="py-0.5 px-2 font-mono text-[#94A3B8]">{p.decision_date}</td>
+                  <td className="py-0.5 px-1 font-mono text-[#64748B]">{p.target_date}</td>
+                  <td className="text-right px-1 font-mono text-[#94A3B8]">{p.decision_close.toFixed(2)}</td>
+                  <td className="text-right px-1 font-mono text-[#22D3EE]">{p.predicted_price.toFixed(2)}</td>
+                  <td className="text-right px-1 font-mono text-[#00E676]">{p.actual_price.toFixed(2)}</td>
+                  <td className={"text-right px-1 font-mono "+(p.error>0?"text-[#FF5C5C]":"text-[#00E676]")}>{p.error.toFixed(2)}</td>
+                  <td className="text-center px-1 text-[8px] text-[#00E676]">✓</td>
+                 </tr>
+                ))}
+               </tbody>
+              </table>
+             </div>
+            </>
+           ):(
+            /* Truthful no-verified-points state */
+            <div className="rounded border border-[#FBBF24]/30 bg-[#FBBF24]/[0.06] p-3 mb-2">
+              <div className="text-[11px] text-[#FBBF24] font-semibold">
+                {mlGraphData.status==="no-candidates"
+                  ?`No sample records for ${mlGraphData.symbol} in the ${mlGraphData.period} period.`
+                  :`No verified observations for ${mlGraphData.symbol} ${mlGraphData.model} ${mlGraphData.horizon}d (${mlGraphData.period}).`}
+              </div>
+              <div className="text-[10px] text-[#64748B] mt-1">
+                candidates: {mlGraphData.n_candidates} · valid: {mlGraphData.n_valid_points} · verified: {mlGraphData.n_verified} · mismatch: {mlGraphData.n_mismatch} · unavailable_target: {mlGraphData.n_unavailable_target} · omitted: {mlGraphData.n_omitted}
+              </div>
+              <div className="text-[10px] text-[#64748B] mt-1">No actual-vs-predicted comparison is shown — unverifiable observations are never plotted as verified data.</div>
+            </div>
+           )}
+           {/* Diagnostics: mismatch + unavailable_target (never charted) */}
+           {mlGraphData.diagnostics&&mlGraphData.diagnostics.length>0&&(
+            <div className="mt-2">
+              <div className="text-[10px] text-[#FF5C5C] mb-1">Diagnostics — mismatch / unavailable_target ({mlGraphData.diagnostics.length}, NOT plotted):</div>
+              <div className="overflow-x-auto max-h-48 overflow-y-auto">
+               <table className="w-full text-[9px] border-collapse">
+                <thead className="sticky top-0 bg-[#0A0E1A]">
+                 <tr className="text-[#64748B] border-b border-white/[0.06]">
+                  <th className="text-left py-1 px-2">Decision Date</th>
+                  <th className="text-left py-1 px-1">Target Date</th>
+                  <th className="text-right py-1 px-1">Pred Price</th>
+                  <th className="text-right py-1 px-1">Calc Actual</th>
+                  <th className="text-left py-1 px-1">Status</th>
+                  <th className="text-left py-1 px-1">Reason</th>
+                 </tr>
+                </thead>
+                <tbody>
+                 {mlGraphData.diagnostics.map((d:any,i:number)=>(
+                  <tr key={i} className="border-b border-white/[0.04]">
+                   <td className="py-0.5 px-2 font-mono text-[#94A3B8]">{d.decision_date}</td>
+                   <td className="py-0.5 px-1 font-mono text-[#64748B]">{d.target_date||"—"}</td>
+                   <td className="text-right px-1 font-mono text-[#22D3EE]">{d.predicted_price!=null?d.predicted_price.toFixed(2):"—"}</td>
+                   <td className="text-right px-1 font-mono text-[#94A3B8]">{d.calculated_actual_price!=null?d.calculated_actual_price.toFixed(2):"—"}</td>
+                   <td className={"px-1 "+(d.status==="mismatch"?"text-[#FF5C5C]":"text-[#FBBF24]")}>{d.status}</td>
+                   <td className="py-0.5 px-1 text-[#64748B]">{d.reason}</td>
+                  </tr>
+                 ))}
+                </tbody>
+               </table>
+              </div>
+            </div>
+           )}
            <div className="text-[8px] text-[#64748B] mt-1">{mlGraphData.methodology}</div>
           </div>
          )}
          {mlGraphData&&!mlGraphData.available&&<div className="text-[#FBBF24] text-[10px]">{mlGraphData.error||"No data available"}</div>}
-         {!mlGraphData&&!mlGraphLoading&&<div className="text-[#64748B] text-[10px]">Select model/horizon/period + click Generate</div>}
+         {!mlGraphData&&!mlGraphLoading&&<div className="text-[#64748B] text-[10px]">Select model/horizon/period/symbol, then click <span className="text-[#22D3EE]">Generate ML Graph</span>. Changing any filter clears the previous graph (no stale data shown under new labels).</div>}
         </div>
        )}
       </div>
 
-      {/* Phase 3: per-model Actual vs Predicted graph view (enhanced) */}
+      {/* Rule-Based Preview (Task 74): strategySignal indicator engine — NOT trained-ML.
+          Gated to mlGraphMode==="rule" so it is shown ONLY when the user selects the
+          Rule-Based Preview tab, independent of the Trained-ML (OOS) graph above. */}
+      {mlGraphMode==="rule"&&(
       <div>
-       <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5"><TrendingUp className="h-4 w-4"/>Model Graph View — Actual vs Predicted</h3>
+       <h3 className="text-sm font-semibold text-[#FBBF24] mb-2 flex items-center gap-1.5"><TrendingUp className="h-4 w-4"/>Rule-Based Preview — Model Graph View</h3>
+       <p className="text-[10px] text-[#FBBF24] mb-2"><span className="font-semibold">Rule-Based Preview:</span> a technical-rule indicator-strategy evaluation via the shared <code className="text-[#00E676]">strategySignal()</code> engine — <span className="font-semibold">NOT trained-ML forecasts</span>. Independent of the Trained-ML (OOS) graph; uses its own symbol/step/horizon/model controls below.</p>
        <p className="text-[10px] text-[#94A3B8] mb-2">At each decision point (every <span className="text-[#F4F7FB]">{graphStep}</span> bars), each selected model&apos;s predicted target price (entry × (1+predictedReturn)) vs the actual realized close {graphHorizon} bars later. Only actionable (BUY/SELL) points are plotted.</p>
        <div className="flex gap-2 flex-wrap items-end mb-3">
         <div className="min-w-[200px] flex-1">
@@ -1379,6 +1473,7 @@ export function AiModelSignals(){
         );
        })()}
       </div>
+      )}
      </div>
     </DialogContent>
    </Dialog>

@@ -26,3 +26,66 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
 [01:20:14.018] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
 [01:20:14.264] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
 [01:20:14.391] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:35:27.133] Server  LOG     prisma:query "SELECT 1"
+[01:35:27.135] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:35:38.043] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:35:38.184] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:35:38.434] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:35:38.593] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:36:47.406] Server  LOG     ✓ Compiled in 402ms
+[01:37:35.229] Server  LOG     ✓ Compiled in 392ms
+[01:38:06.502] Server  LOG     ✓ Compiled in 391ms
+[01:38:06.846] Browser ERROR   ./src/components/latent/AiModelSignals.tsx:1463:7
+Parsing ecmascript source code failed
+  1461 |        })()}
+  1462 |       </div>
+> 1463 |      </div>
+       |       ^^^^^
+  1464 |     </DialogContent>
+  1465 |    </Dialog>
+  1466 |   </>)}
+
+Unterminated regexp literal
+
+Import traces:
+  Client Component Browser:
+    ./src/components/latent/AiModelSignals.tsx [Client Component Browser]
+    ./src/components/latent/AppShell.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/latent/AiModelSignals.tsx [Client Component SSR]
+    ./src/components/latent/AppShell.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[01:38:09.574] Server  LOG     ✓ Compiled in 349ms
+[01:39:23.163] Server  LOG     prisma:query "SELECT 1"
+[01:39:23.166] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:44:17.512] Server  LOG     ✓ Compiled in 349ms
+[01:44:48.755] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:45:03.650] Server  INFO    [cache] Using in-memory cache (set REDIS_URL env var for production Redis)
+[01:45:03.795] Server  LOG     prisma:query "SELECT 1"
+[01:45:03.795] Server  LOG     prisma:query "SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?"
+[01:45:03.942] Server  LOG     prisma:query "SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?"
+[01:45:13.693] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[01:45:29.693] Server  LOG     prisma:query "SELECT 1"
+[01:45:29.693] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:45:30.857] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
+[01:45:30.862] Server  LOG     prisma:query "BEGIN IMMEDIATE"
+[01:45:30.865] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
+[01:45:30.865] Server  LOG     prisma:query "COMMIT"
+[01:46:47.199] Server  LOG     prisma:query "SELECT 1"
+[01:46:47.202] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:47:09.757] Server  LOG     prisma:query "SELECT 1"
+[01:47:09.757] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:47:22.906] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:47:41.918] Server  LOG     prisma:query "SELECT 1"
+[01:47:41.918] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:48:25.633] Server  LOG     prisma:query "SELECT 1"
+[01:48:25.639] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:49:11.177] Server  LOG     prisma:query "SELECT 1"
+[01:49:11.180] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:49:11.303] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:49:20.030] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
+[01:49:20.157] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
