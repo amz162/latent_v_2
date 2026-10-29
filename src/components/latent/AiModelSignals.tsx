@@ -356,12 +356,12 @@ export function AiModelSignals(){
         </div>
        </div>
        <div>
-        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Prediction Score (target)</label>
+        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Streak Target (repeats)</label>
         <input type="number" value={simTargetScore} onChange={e=>setSimTargetScore(e.target.value)} placeholder="1" min="1" max="999" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-sm w-[100px]" />
        </div>
        <div>
-        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Win Rate (min %)</label>
-        <input type="number" value={simWinRateThreshold} onChange={e=>setSimWinRateThreshold(e.target.value)} placeholder="100" min="0" max="100" className="bg-[#0A0E1A] border border-white/[0.12] rounded px-3 py-2 text-[#F4F7FB] font-mono text-sm w-[100px]" />
+        <label className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-1">Min Win Rate: <span className="text-[#00E676] font-mono">{simWinRateThreshold}%</span></label>
+        <input type="range" value={simWinRateThreshold} onChange={e=>setSimWinRateThreshold(e.target.value)} min="0" max="100" step="1" className="w-[140px] accent-[#00E676]" />
        </div>
        <Button onClick={async()=>{
          setSimLoading(true); setSimDrilldown(null);
@@ -517,7 +517,7 @@ export function AiModelSignals(){
          {/* ALL ensemble models — ranked by win rate, full metrics each (per user spec) */}
          <div>
           <h3 className="text-sm font-semibold text-[#00E676] mb-2 flex items-center gap-1.5">
-           <TrendingUp className="h-4 w-4"/>All ensemble models ({[...simData.top5, ...simData.rest].length}) — ranked by {simRankBy === "winRate" ? "win rate" : simRankBy === "netPnl" ? "net P&L" : "prediction score"}
+           <TrendingUp className="h-4 w-4"/>All ensemble models ({[...simData.top5, ...simData.rest].length}) — ranked by {simRankBy === "winRate" ? "win rate" : simRankBy === "netPnl" ? "net P&L" : "streak count"}
           </h3>
           <div className="space-y-2">
            {(simRankBy === "prediction"
@@ -529,7 +529,14 @@ export function AiModelSignals(){
               <div className="flex items-center gap-2">
                <span className="h-6 w-6 rounded-full bg-[#00E676] text-[#0A0E1A] font-bold text-xs flex items-center justify-center">{idx+1}</span>
                <span className="text-sm font-semibold text-[#00E676]">{r.ensembleLabel}</span>
-               {predictScores[r.ensembleName] > 0 && <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10 ml-1">Score: {predictScores[r.ensembleName]}</Badge>}
+               {predictScores[r.ensembleName] > 0 && <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#FBBF24]/40 text-[#FBBF24] bg-[#FBBF24]/10 ml-1">Streak: {predictScores[r.ensembleName]}</Badge>}
+               {r.metrics && r.metrics.totalTrades > 0 ? (
+                 <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#00E676]/40 text-[#00E676] bg-[#00E676]/10 ml-1" title={`Empirical win rate from ${r.metrics.totalTrades} completed trades`}>
+                   Backtest Score: {(r.metrics.winRate / 100).toFixed(2)} <span className="text-[#64748B]">({r.metrics.totalTrades} trades)</span>
+                 </Badge>
+               ) : (
+                 <Badge variant="outline" className="text-[8px] py-0 h-3.5 border-white/[0.12] text-[#64748B] ml-1">Backtest Score: unavailable</Badge>
+               )}
               </div>
               <Button onClick={()=>setSimDrilldown(r.ensembleName)} size="sm" variant="outline" className="border-[#00E676]/30 text-[#00E676] hover:bg-[#00E676]/10 h-7 text-[11px]">
                <Eye className="h-3 w-3 mr-1"/>View in depth — Trade by trade
