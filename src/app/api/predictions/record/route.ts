@@ -19,8 +19,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields: symbol, modelId, predictionTs, signal" }, { status: 400 });
     }
 
-    // Dedup key: symbol + modelId + predictionTs (idempotent — repeated requests don't duplicate)
-    const dedupKey = `${symbol}|${modelId}|${predictionTs}`;
+    // Dedup key: symbol + modelId + horizon + predictionTs (horizon-aware idempotency — Task 67 Phase 2)
+    const horizon = body.horizon ? `${body.horizon}d` : "unknown";
+    const dedupKey = `${symbol}|${modelId}|${horizon}|${predictionTs}`;
 
     // Try to create — if dedupKey exists, return the existing record (idempotent)
     const existing = await db.predictionHistory.findUnique({ where: { dedupKey } });

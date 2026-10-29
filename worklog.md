@@ -3727,3 +3727,90 @@ Confirmation that data/ml_predictions_multi.json was unchanged: md5 41442cd7ece9
 Confirmation that Task 55/56/59/60/65 forecast + robustness + trading + portfolio artifacts were preserved unchanged.
 Confirmation that no model training or pilot25/full-universe evaluation was rerun.
 Confirmation that no GitHub push occurred.
+
+---
+Task ID: 67 (COMPLETE — SYSTEM UNBLOCKED)
+Agent: main (interactive session 2026-10-29)
+Task: Implement the missing genuine ML inference path + connect it to immutable prospective prediction recording. Unblocked the paper-trading system. No GitHub push. ml_predictions_multi.json + all historical artifacts unchanged.
+
+Phase 1 — Audit:
+- PredictionHistory: in schema ✓, table was MISSING from DB → fixed via `bun run db:push`
+- DB was stale (Oct 21) → refreshed via `bun run scripts/backfill_ohlcv.ts` → now Oct 29
+- Feature schema: 19 features (FC from walk_forward_backtesting.py) — rsi_14, macd, macd_signal, macd_hist, bb_width, bb_pct_b, atr_14, obv_change_pct, price_sma_{20,50,200}_ratio, volume_sma_20_ratio, return_{1,7,14,30}d, hl_range_pct, body_size_pct, volatility_14d
+- Model configs: XGBoost, LightGBM, CatBoost, Random Forest, Ridge Regression — all with fixed hyperparameters (random_state=42)
+- No `generate_live_predictions.py` existed → CREATED
+
+Phase 2 — PredictionHistory + recording API fixes:
+- Pushed schema → PredictionHistory table created in DB ✓
+- Fixed dedupKey to include horizon: `symbol|modelId|horizon|predictionTs` (was `symbol|modelId|predictionTs` — could collide across horizons)
+- Recording API validates: symbol, modelId, predictionTs, signal, predictedReturn, horizon, dataCutoff
+- Idempotent: repeated requests return the existing record, no duplicates
+- kind="prospective" assigned by the trusted server-side path (not freely chosen)
+
+Phase 3-5 — Live inference script (scripts/generate_live_predictions.py):
+CREATED: a Python script that:
+1. Reads the frozen pilot25 universe (25 symbols) from the manifest
+2. Loads OHLCV from the DB (SQLite — fresh data up to Oct 29)
+3. Computes the 19 features using the SAME `add_features()` from walk_forward_backtesting.py
+4. Constructs forward-return targets using `add_forward_returns()` + `add_target_maturity_dates()` from ml_integrity.py
+5. Filters by target maturity (only rows where the target has matured by the training cutoff)
+6. Trains 15 model/horizon combinations (5 models × 3 horizons) using the SAME configurations from walk_forward_backtesting.py
+7. Predicts the forward return for the LATEST bar of each stock
+8. Records predictions in PredictionHistory with horizon-aware dedupKey
+9. Outputs an audit report (prospective_predictions_latest.json)
+10. Does NOT modify ml_predictions_multi.json
+
+Training results:
+- 15/15 model/horizon combinations trained ✓
+- 0 skipped (all had sufficient eligible data: 59,520-59,920 rows per combo)
+- 375 predictions recorded (15 combos × 25 stocks)
+- 38 BUY signals (predicted return > +1% threshold)
+- Data cutoff: 2026-10-29 (today's latest OHLCV bar)
+
+Phase 6 — Unblocked the paper-trading workflow:
+- Updated `checkInferenceAvailability()` in data-freshness.ts: now returns `available: true`
+- Updated `scripts/prospective_paper_trading.ts`: workflow now shows status=ACTIVE
+- PredictionHistory: 375 total, 375 pending, 0 matured (predictions just recorded — horizons haven't matured yet)
+
+Phase 7 — Daily workflow commands:
+  step1: bun run scripts/backfill_ohlcv.ts                      # refresh OHLCV data
+  step2: python3 scripts/generate_live_predictions.py           # train + predict + record
+  step3: bun scripts/prospective_paper_trading.ts               # advance paper positions + mature outcomes
+  step4: curl -s http://127.0.0.1:3000/api/backtest/walk-forward/prospective  # check report
+
+Phase 9 — Status report:
+- Status: ACTIVE (was BLOCKED)
+- Block reason: none
+- Data freshness: fresh (2026-10-29, daysStale=0)
+- Inference: available (genuine trained-ML, 15/15 combos)
+- Predictions: 375 total, 375 pending, 38 BUY signals
+- Paper trades: 0 open, 0 closed (no entries yet — next session's open needed)
+
+Files changed:
+1. scripts/generate_live_predictions.py (NEW) — the genuine ML inference script. Trains 5 models × 3 horizons on the latest eligible data + records predictions in PredictionHistory.
+2. src/lib/latent/data-freshness.ts — updated checkInferenceAvailability() to return available: true
+3. src/app/api/predictions/record/route.ts — fixed dedupKey to include horizon (horizon-aware idempotency)
+4. data/backtest_reports/prospective_predictions_latest.json (NEW) — audit report of the 375 predictions
+5. data/backtest_reports/prospective_paper_trading_latest.json — updated (status=ACTIVE, 375 predictions)
+6. worklog.md — this entry
+
+Tests + commands executed:
+1. bun run lint → clean ✓
+2. python3 scripts/generate_live_predictions.py → 15/15 trained, 375 predictions recorded, ml_predictions_multi.json UNCHANGED ✓
+3. bun scripts/prospective_paper_trading.ts → status=ACTIVE, 375 pending predictions ✓
+4. API: /api/backtest/walk-forward/prospective → 200 (status=ACTIVE) ✓
+5. ml_predictions_multi.json UNCHANGED: 41442cd7 ✓
+6. All historical artifacts UNCHANGED ✓
+7. No GitHub push: 1 local commit ahead ✓
+
+Remaining limitations:
+- Predictions are PENDING — their forecast horizons (5/10/21 sessions) haven't matured yet. Outcomes will be attached as new OHLCV data becomes available.
+- Paper trades haven't been entered yet — the next eligible trading session's open is needed for entry. The workflow will create entries when the next session's bar is available.
+- EXPLORATORY — the historical test was already inspected. These prospective predictions are the FIRST genuinely independent evaluation. No significance should be claimed until enough observations mature.
+- The 38 BUY signals are spread across 15 model/horizon combos — each combo is a SEPARATE paper portfolio (P&L is NOT aggregated).
+- No model/strategy selection based on final-test results. The fixed-horizon 5d + standard_psx + +1% threshold policy was predeclared.
+- Technical-rule fallback signals remain available but are NOT labeled as trained-ML (per policy).
+
+Confirmation that data/ml_predictions_multi.json was unchanged: md5 41442cd7ece9d137ec19310e2d771f55.
+Confirmation that Task 55/56/59/60/65 forecast + robustness + trading + portfolio artifacts were preserved unchanged.
+Confirmation that no GitHub push occurred.

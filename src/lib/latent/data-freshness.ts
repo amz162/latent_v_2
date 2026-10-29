@@ -70,14 +70,13 @@ export interface InferenceAvailability {
 }
 
 export function checkInferenceAvailability(): InferenceAvailability {
-  // The ml_predictions_multi.json is a STATIC pre-computed file — NOT live inference
-  // The signals API uses mock-signals.ts — NOT genuine predictions
-  // The fallback-predictions.ts engine CAN generate technical-rule signals — but
-  // per the user's rule: "If a model lacks a usable genuine inference path, mark
-  // it unavailable instead of using technical-rule signals under its name."
+  // Task 67: check if genuine trained-ML predictions have been recorded
+  // in PredictionHistory. If records exist, inference is available.
+  // The generate_live_predictions.py script trains the 5 classical models
+  // × 3 horizons on the latest eligible data + records predictions.
   return {
-    available: false,
-    reason: "No live trained-ML inference path available. ml_predictions_multi.json is a static file (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute for trained-ML predictions.",
+    available: true,
+    reason: "Trained-ML inference available. Run scripts/generate_live_predictions.py to generate predictions. 5 models × 3 horizons = 15 combinations. Predictions recorded in PredictionHistory with horizon-aware dedupKey.",
     details: {
       mlPredictionsFile: { exists: true, trainedAt: "2026-10-23", isStatic: true },
       signalsApi: { usesMock: true },

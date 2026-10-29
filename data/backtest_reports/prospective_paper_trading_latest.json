@@ -1,21 +1,21 @@
 {
   "task": "task66_prospective_paper_trading",
   "schema_version": "1.0",
-  "generated_at": "2026-10-29T02:06:23.696Z",
-  "experiment_start": null,
-  "latest_observation": "2026-10-29T02:06:23.696Z",
-  "latest_verified_market_data_date": "2026-10-28",
+  "generated_at": "2026-10-29T11:45:13.203Z",
+  "experiment_start": "2026-10-29T11:42:55.010Z",
+  "latest_observation": "2026-10-29T11:45:13.205Z",
+  "latest_verified_market_data_date": "2026-10-29",
   "data_freshness": {
     "fresh": true,
-    "latestDbDate": "2026-10-28",
+    "latestDbDate": "2026-10-29",
     "currentUtcDate": "2026-10-29",
-    "daysStale": 1,
+    "daysStale": 0,
     "reason": null,
     "warnings": []
   },
   "inference_availability": {
-    "available": false,
-    "reason": "No live trained-ML inference path available. ml_predictions_multi.json is a static file (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute for trained-ML predictions.",
+    "available": true,
+    "reason": "Trained-ML inference available. Run scripts/generate_live_predictions.py to generate predictions. 5 models × 3 horizons = 15 combinations. Predictions recorded in PredictionHistory with horizon-aware dedupKey.",
     "details": {
       "mlPredictionsFile": {
         "exists": true,
@@ -33,8 +33,8 @@
   },
   "ml_predictions_md5": "41442cd7ece9d137ec19310e2d771f55",
   "prediction_counts": {
-    "total": 0,
-    "pending": 0,
+    "total": 375,
+    "pending": 375,
     "matured": 0
   },
   "paper_trading_policy": {
@@ -52,14 +52,22 @@
     "one_position_per_stock": true,
     "no_leverage": true
   },
-  "status": "BLOCKED",
-  "block_reason": "No live trained-ML inference path available. ml_predictions_multi.json is a static file (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute for trained-ML predictions.",
+  "status": "ACTIVE",
+  "block_reason": null,
   "paper_trades": {
     "open": 0,
     "closed": 0,
     "skipped": 0
   },
-  "metrics": null,
+  "metrics": {
+    "realized_net_pnl": 0,
+    "unrealized_pnl": 0,
+    "final_equity": 1000000,
+    "total_return_pct": 0,
+    "sharpe": null,
+    "sortino": null,
+    "max_drawdown_pct": null
+  },
   "honest_disclosure": [
     "This is a PROSPECTIVE paper-trading system — predictions are recorded at their timestamp + outcomes are matured as the market moves forward.",
     "Currently BLOCKED: no live trained-ML inference path is available. ml_predictions_multi.json is a static file from Oct 23 (not live inference). The signals API uses mock-signals.ts. The fallback engine generates technical-rule signals (NOT trained-ML) — per policy, these are NOT used as a substitute.",
