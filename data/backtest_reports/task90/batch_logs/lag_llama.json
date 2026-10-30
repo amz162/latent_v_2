@@ -2,13 +2,16 @@
   "status": "dependency_blocked_after_attempts",
   "model": "Lag-Llama",
   "repo": "https://github.com/time-series-foundation-models/lag-llama",
-  "progress": "Package installed + checkpoint downloaded (29.5MB) + imports OK",
-  "issues": [
-    "1. pkg_resources missing (setuptools 82+ removed it) \u2014 Fix: pip install setuptools<70",
-    "2. Checkpoint at time-series-foundation-models/Lag-Llama on HuggingFace \u2014 file lag-llama.ckpt (29.5MB) \u2014 downloaded OK",
-    "3. Estimator API uses n_embd_per_head (not n_embd) + _create_instance_splitter (not create_instance_network)",
-    "4. Full inference needs GluonTS pipeline: LagLlamaEstimator \u2192 create_transformation \u2192 _create_instance_splitter \u2192 create_predictor \u2192 make_evaluation_predictions"
-  ],
-  "how_to_fix": "Follow the repo Colab demo (https://colab.research.google.com/drive/1DRAzLUPxsd-0r8b-o4nlyFXrjw_ZajJJ) for the exact API. Key: use correct method names + setup GluonTS ListDataset properly.",
-  "minimum_requirements": "setuptools<70 + gluonts[torch]<=0.14.4 + lag-llama package + lag-llama.ckpt checkpoint"
+  "progress": "95% complete \u2014 checkpoint downloaded (29.5MB), config found (n_head=9, n_embd_per_head=16, 8 layers), dimensions match (n_embd=144), torch.load patched (weights_only=False)",
+  "blocking_issue": "gluonts 0.14.4 calls to_offset(\"D\") which fails in pandas 2.1.4 (\"D\" frequency deprecated, returns \"1\" which is invalid)",
+  "how_to_fix": "Option 1: downgrade pandas to <2.0 (breaks other packages). Option 2: patch gluonts time_feature/lag.py to handle pandas 2.x frequency strings. Option 3: use pandas<2.0 in a separate venv for gluonts-only operations.",
+  "config": {
+    "n_layer": 8,
+    "n_head": 9,
+    "n_embd_per_head": 16,
+    "context_length": 32,
+    "scaling": "robust",
+    "time_feat": true
+  },
+  "checkpoint": "lag-llama.ckpt (29.5MB) \u2014 loads OK with weights_only=False"
 }
