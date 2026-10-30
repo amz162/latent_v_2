@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -37,16 +38,24 @@ export function ModelRegistryDashboard() {
   const [taxProfile, setTaxProfile] = useState("ATL_15");
   const [riskVariant, setRiskVariant] = useState("baseline");
   const [strategy, setStrategy] = useState("fixed_first_hit");
+  const [selectedModel, setSelectedModel] = useState<any>(null);
+  const [walkForward, setWalkForward] = useState<any>(null);
+  const [prospective, setProspective] = useState<any>(null);
+  const [wfUniverse, setWfUniverse] = useState("pilot25");
 
   useEffect(() => {
     (async () => {
       try {
-        const [r1, r2] = await Promise.all([
+        const [r1, r2, r3, r4] = await Promise.all([
           fetch("/api/models/registry").then((r) => r.json()),
           fetch("/api/backtest/task81-results").then((r) => r.json()),
+          fetch("/api/backtest/walk-forward").then((r) => r.json()),
+          fetch("/api/backtest/walk-forward/prospective").then((r) => r.json()),
         ]);
         setRegistry(r1);
         setT81(r2);
+        setWalkForward(r3);
+        setProspective(r4);
       } catch (e: any) { setError(e.message); }
       finally { setLoading(false); }
     })();
@@ -121,7 +130,7 @@ export function ModelRegistryDashboard() {
               </thead>
               <tbody>
                 {filtered.map((m: any) => (
-                  <tr key={m.name} className="border-b hover:bg-muted/50">
+                  <tr key={m.name} className="border-b hover:bg-muted/50 cursor-pointer" onClick={() => setSelectedModel(m)}>
                     <td className="p-2 font-medium">{m.name}{m.supplemental && <span className="text-muted-foreground ml-1">(supp)</span>}</td>
                     <td className="p-2 text-muted-foreground">{m.tierLabel || m.category || "—"}</td>
                     <td className="p-2">{statusBadge(m.verifiedStatus)}</td>
@@ -225,6 +234,128 @@ export function ModelRegistryDashboard() {
               Do NOT claim significance or profitability.
             </AlertDescription>
           </Alert>
+        </CardContent>
+      </Card>
+
+      {/* ─── Model Detail View ─── */}
+      {selectedModel && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">{selectedModel.name} — Detail</CardTitle>
+            <Button variant="outline" size="sm" onClick={() => setSelectedModel(null)}>Close</Button>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+              <div><span className="text-muted-foreground">Family:</span> {selectedModel.tierLabel || selectedModel.category || "—"}</div>
+              <div><span className="text-muted-foreground">Status:</span> {statusBadge(selectedModel.verifiedStatus)}</div>
+              <div><span className="text-muted-foreground">UI trained flag:</span> {String(selectedModel.uiTrainedFlag)} (NOT used as proof)</div>
+              <div><span className="text-muted-foreground">Alias parent:</span> {selectedModel.aliasParent || "—"}</div>
+              <div><span className="text-muted-foreground">Dir Acc (5d):</span> {selectedModel.dirAcc5d != null ? selectedModel.dirAcc5d.toFixed(4) : "Not available"}</div>
+              <div><span className="text-muted-foreground">MAE (5d):</span> {selectedModel.mae5d != null ? selectedModel.mae5d.toFixed(6) : "Not available"}</div>
+              <div><span className="text-muted-foreground">RMSE (5d):</span> {selectedModel.rmse5d != null ? selectedModel.rmse5d.toFixed(6) : "Not available"}</div>
+              <div><span className="text-muted-foreground">R² (5d):</span> {selectedModel.r2_5d != null ? selectedModel.r2_5d.toFixed(4) : "Not available"}</div>
+              <div><span className="text-muted-foreground">AUC:</span> {selectedModel.rocAuc != null ? selectedModel.rocAuc.toFixed(4) : "Not available"}</div>
+              <div><span className="text-muted-foreground">Test samples (5d):</span> {selectedModel.n5d ?? "Not available"}</div>
+              <div><span className="text-muted-foreground">Training duration:</span> {selectedModel.elapsed ? `${selectedModel.elapsed}s` : "Not available"}</div>
+              <div><span className="text-muted-foreground">Blocker reason:</span> {selectedModel.blockerReason || "—"}</div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              Status verified from Task 84 unified metrics. Metrics shown only where genuinely available.
+              The static UI &quot;trained&quot; flag is displayed for transparency but is NOT used as proof of training.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ─── Walk-Forward Report ─── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Walk-Forward Report</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {walkForward?.available ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs mb-4">
+                <div><span className="text-muted-foreground">Universe:</span> {walkForward.universe || walkForward.universeMode || "—"}</div>
+                <div><span className="text-muted-foreground">Samples:</span> {walkForward.n_samples ?? walkForward.totalSamples ?? "—"}</div>
+                <div><span className="text-muted-foreground">Models:</span> {walkForward.models?.length ?? walkForward.modelCount ?? "—"}</div>
+                <div><span className="text-muted-foreground">Horizons:</span> {(walkForward.horizons || [5,10,21]).join(", ")}</div>
+              </div>
+              {walkForward.perModel && (
+                <div className="overflow-x-auto max-h-64">
+                  <table className="w-full text-xs">
+                    <thead className="sticky top-0 bg-background">
+                      <tr className="text-left border-b">
+                        <th className="p-2">Model</th><th className="p-2 text-right">MAE</th><th className="p-2 text-right">RMSE</th>
+                        <th className="p-2 text-right">R²</th><th className="p-2 text-right">Dir.Acc</th><th className="p-2 text-right">N</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {walkForward.perModel.map((m: any, i: number) => (
+                        <tr key={i} className="border-b hover:bg-muted/50">
+                          <td className="p-2">{m.model || m.name}</td>
+                          <td className="p-2 text-right">{m.mae?.toFixed(6) ?? "—"}</td>
+                          <td className="p-2 text-right">{m.rmse?.toFixed(6) ?? "—"}</td>
+                          <td className="p-2 text-right">{m.r2 != null ? m.r2.toFixed(4) : "—"}</td>
+                          <td className="p-2 text-right">{m.directional_accuracy != null ? m.directional_accuracy.toFixed(4) : "—"}</td>
+                          <td className="p-2 text-right">{m.n ?? "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-2">
+                Historical walk-forward OOS evaluation. Retrospective — NOT live predictions.
+                Negative R² values are preserved (not hidden). Missing results shown as &quot;—&quot;.
+              </p>
+            </>
+          ) : (
+            <p className="text-xs text-muted-foreground">{walkForward?.error || "Walk-forward report not available. Run: bun scripts/walk_forward_backtesting.py"}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ─── Prospective Paper-Trade Status ─── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Prospective Paper-Trade Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {prospective?.available ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs mb-4">
+                <div><span className="text-muted-foreground">Status:</span> <Badge className={prospective.status === "ACTIVE" ? "bg-green-100 text-green-800" : prospective.status === "READY" ? "bg-cyan-100 text-cyan-800" : "bg-orange-100 text-orange-800"}>{prospective.status}</Badge></div>
+                <div><span className="text-muted-foreground">Latest OHLCV:</span> {prospective.latest_ohlcv_session || "—"}</div>
+                <div><span className="text-muted-foreground">Predictions:</span> {prospective.counts?.predictionsTotal ?? "—"}</div>
+                <div><span className="text-muted-foreground">Trades:</span> {prospective.counts?.tradesTotal ?? "—"}</div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs mb-4">
+                <div><span className="text-muted-foreground">Pending entry:</span> {prospective.counts?.tradesByState?.pending_entry ?? "—"}</div>
+                <div><span className="text-muted-foreground">Open:</span> {prospective.counts?.tradesByState?.open ?? "—"}</div>
+                <div><span className="text-muted-foreground">Closed:</span> {prospective.counts?.tradesByState?.closed ?? "—"}</div>
+                <div><span className="text-muted-foreground">Skipped:</span> {prospective.counts?.tradesByState?.skipped ?? "—"}</div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                <div><span className="text-muted-foreground">Outcomes pending:</span> {prospective.counts?.outcomesByStatus?.pending ?? "—"}</div>
+                <div><span className="text-muted-foreground">Matured:</span> {prospective.counts?.outcomesByStatus?.matured ?? "—"}</div>
+                <div><span className="text-muted-foreground">Risk levels:</span> {prospective.counts?.buyPredictionsWithRiskLevels ?? "—"}</div>
+                <div><span className="text-muted-foreground">Legs:</span> {prospective.counts?.legsTotal ?? "—"}</div>
+              </div>
+              <Alert className="mt-3">
+                <AlertDescription className="text-xs">
+                  {prospective.status === "READY"
+                    ? "Valid setup — no positions are currently open. All trades are pending entry (waiting for the next trading session after the data cutoff). This is NOT a defect."
+                    : prospective.status === "ACTIVE"
+                    ? "The ledger is running and managing eligible positions. ACTIVE is an operational status, NOT proof of skill or profitability."
+                    : "Status reflects actual persisted records. No fabricated entries or outcomes."}
+                  Do NOT interpret pending positions as filled or matured outcomes as proof of profitability.
+                </AlertDescription>
+              </Alert>
+            </>
+          ) : (
+            <p className="text-xs text-muted-foreground">{prospective?.error || "Prospective data not available. Run: bun scripts/prospective_paper_trading.ts"}</p>
+          )}
         </CardContent>
       </Card>
     </div>
