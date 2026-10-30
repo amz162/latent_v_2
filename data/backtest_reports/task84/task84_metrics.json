@@ -1,0 +1,1191 @@
+{
+  "task": "task84_unified",
+  "createdAt": "2026-10-30T00:00:00Z",
+  "totalEntries": 60,
+  "statusCounts": {
+    "evaluated": 44,
+    "failed": 3,
+    "blocked": 9,
+    "alias": 4
+  },
+  "task83Base": "dict_keys(['batch1_statistical', 'batch2_task79_eval', 'batch3_neural', 'batch5_classifiers', 'batch6', 'batch7'])",
+  "task84Fixes": [
+    "TabNet",
+    "ARIMA",
+    "Prophet",
+    "TimesNet"
+  ],
+  "allResults": {
+    "ExtraTrees (Task79)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.045252,
+          "rmse": 0.068251,
+          "r2": -0.0041,
+          "directional_accuracy": 0.4965,
+          "mean_bias": -0.005748,
+          "n": 13731,
+          "zero_baseline_mae": 0.045227,
+          "mean_baseline_mae": 0.045264,
+          "beats_mean_baseline": true
+        },
+        "10d": {
+          "mae": 0.065271,
+          "rmse": 0.098217,
+          "r2": -0.0131,
+          "directional_accuracy": 0.4989,
+          "mean_bias": -0.011669,
+          "n": 13611,
+          "zero_baseline_mae": 0.065223,
+          "mean_baseline_mae": 0.065221,
+          "beats_mean_baseline": false
+        },
+        "21d": {
+          "mae": 0.10284,
+          "rmse": 0.153664,
+          "r2": -0.0304,
+          "directional_accuracy": 0.5036,
+          "mean_bias": -0.026144,
+          "n": 13347,
+          "zero_baseline_mae": 0.102716,
+          "mean_baseline_mae": 0.102589,
+          "beats_mean_baseline": false
+        }
+      },
+      "elapsed_s": 5.5
+    },
+    "HistGradientBoosting (Task79)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.045649,
+          "rmse": 0.068646,
+          "r2": -0.0157,
+          "directional_accuracy": 0.4994,
+          "mean_bias": -0.0063,
+          "n": 13731,
+          "zero_baseline_mae": 0.045227,
+          "mean_baseline_mae": 0.045264,
+          "beats_mean_baseline": false
+        },
+        "10d": {
+          "mae": 0.065789,
+          "rmse": 0.098771,
+          "r2": -0.0245,
+          "directional_accuracy": 0.4991,
+          "mean_bias": -0.01258,
+          "n": 13611,
+          "zero_baseline_mae": 0.065223,
+          "mean_baseline_mae": 0.065221,
+          "beats_mean_baseline": false
+        },
+        "21d": {
+          "mae": 0.104055,
+          "rmse": 0.155345,
+          "r2": -0.0531,
+          "directional_accuracy": 0.4996,
+          "mean_bias": -0.030951,
+          "n": 13347,
+          "zero_baseline_mae": 0.102716,
+          "mean_baseline_mae": 0.102589,
+          "beats_mean_baseline": false
+        }
+      },
+      "elapsed_s": 1.3
+    },
+    "ElasticNet (Task79)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.045264,
+          "rmse": 0.068245,
+          "r2": -0.0039,
+          "directional_accuracy": 0.4888,
+          "mean_bias": -0.004252,
+          "n": 13731,
+          "zero_baseline_mae": 0.045227,
+          "mean_baseline_mae": 0.045264,
+          "beats_mean_baseline": false
+        },
+        "10d": {
+          "mae": 0.065221,
+          "rmse": 0.097975,
+          "r2": -0.0081,
+          "directional_accuracy": 0.5064,
+          "mean_bias": -0.008785,
+          "n": 13611,
+          "zero_baseline_mae": 0.065223,
+          "mean_baseline_mae": 0.065221,
+          "beats_mean_baseline": false
+        },
+        "21d": {
+          "mae": 0.102589,
+          "rmse": 0.152681,
+          "r2": -0.0173,
+          "directional_accuracy": 0.5206,
+          "mean_bias": -0.019883,
+          "n": 13347,
+          "zero_baseline_mae": 0.102716,
+          "mean_baseline_mae": 0.102589,
+          "beats_mean_baseline": false
+        }
+      },
+      "elapsed_s": 0.2
+    },
+    "HuberRegressor (Task79)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.045453,
+          "rmse": 0.069131,
+          "r2": -0.0301,
+          "directional_accuracy": 0.5107,
+          "mean_bias": -0.011753,
+          "n": 13731,
+          "zero_baseline_mae": 0.045227,
+          "mean_baseline_mae": 0.045264,
+          "beats_mean_baseline": false
+        },
+        "10d": {
+          "mae": 0.066013,
+          "rmse": 0.100004,
+          "r2": -0.0503,
+          "directional_accuracy": 0.4972,
+          "mean_bias": -0.021351,
+          "n": 13611,
+          "zero_baseline_mae": 0.065223,
+          "mean_baseline_mae": 0.065221,
+          "beats_mean_baseline": false
+        },
+        "21d": {
+          "mae": 0.104125,
+          "rmse": 0.157427,
+          "r2": -0.0815,
+          "directional_accuracy": 0.4941,
+          "mean_bias": -0.043348,
+          "n": 13347,
+          "zero_baseline_mae": 0.102716,
+          "mean_baseline_mae": 0.102589,
+          "beats_mean_baseline": false
+        }
+      },
+      "elapsed_s": 1.5
+    },
+    "SVR (Task79)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.053055,
+          "rmse": 0.075107,
+          "r2": -0.2159,
+          "directional_accuracy": 0.4894,
+          "mean_bias": 0.000229,
+          "n": 13731,
+          "zero_baseline_mae": 0.045227,
+          "mean_baseline_mae": 0.045225,
+          "beats_mean_baseline": false
+        },
+        "10d": {
+          "mae": 0.072931,
+          "rmse": 0.105552,
+          "r2": -0.17,
+          "directional_accuracy": 0.5064,
+          "mean_bias": -0.015038,
+          "n": 13611,
+          "zero_baseline_mae": 0.065223,
+          "mean_baseline_mae": 0.06522,
+          "beats_mean_baseline": false
+        },
+        "21d": {
+          "mae": 0.110042,
+          "rmse": 0.162534,
+          "r2": -0.1528,
+          "directional_accuracy": 0.4936,
+          "mean_bias": -0.044258,
+          "n": 13347,
+          "zero_baseline_mae": 0.102716,
+          "mean_baseline_mae": 0.10259,
+          "beats_mean_baseline": false
+        }
+      },
+      "elapsed_s": 1.5
+    },
+    "LSTM": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.046233,
+          "rmse": 0.06901,
+          "r2": -0.0265,
+          "directional_accuracy": 0.4934,
+          "mean_bias": -0.001845,
+          "n": 13731,
+          "params": 2385,
+          "epochs": 30,
+          "hidden": 16
+        },
+        "10d": {
+          "mae": 0.067936,
+          "rmse": 0.102098,
+          "r2": -0.0947,
+          "directional_accuracy": 0.4906,
+          "mean_bias": -0.025529,
+          "n": 13611,
+          "params": 2385,
+          "epochs": 30,
+          "hidden": 16
+        },
+        "21d": {
+          "mae": 0.107205,
+          "rmse": 0.160293,
+          "r2": -0.1212,
+          "directional_accuracy": 0.494,
+          "mean_bias": -0.045908,
+          "n": 13347,
+          "params": 2385,
+          "epochs": 30,
+          "hidden": 16
+        }
+      },
+      "elapsed_s": 103.2
+    },
+    "GRU": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047305,
+          "rmse": 0.071487,
+          "r2": -0.1015,
+          "directional_accuracy": 0.5035,
+          "mean_bias": -0.004427,
+          "n": 13731,
+          "params": 1793,
+          "epochs": 30,
+          "hidden": 16
+        },
+        "10d": {
+          "mae": 0.068706,
+          "rmse": 0.103114,
+          "r2": -0.1166,
+          "directional_accuracy": 0.4948,
+          "mean_bias": -0.028544,
+          "n": 13611,
+          "params": 1793,
+          "epochs": 30,
+          "hidden": 16
+        },
+        "21d": {
+          "mae": 0.10668,
+          "rmse": 0.159676,
+          "r2": -0.1126,
+          "directional_accuracy": 0.4873,
+          "mean_bias": -0.049884,
+          "n": 13347,
+          "params": 1793,
+          "epochs": 30,
+          "hidden": 16
+        }
+      },
+      "elapsed_s": 76.1
+    },
+    "ARIMA": {
+      "status": "failed_after_attempts",
+      "metrics": null,
+      "n": 0,
+      "elapsed_s": 0.7
+    },
+    "Holt-Winters": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.039759,
+          "rmse": 0.059851,
+          "r2": -0.0362,
+          "directional_accuracy": 0.4831,
+          "mean_bias": -0.003004,
+          "n": 2401
+        },
+        "10d": {
+          "mae": 0.058046,
+          "rmse": 0.087783,
+          "r2": -0.0628,
+          "directional_accuracy": 0.5092,
+          "mean_bias": -0.006615,
+          "n": 2394
+        },
+        "21d": {
+          "mae": 0.089078,
+          "rmse": 0.134278,
+          "r2": -0.1251,
+          "directional_accuracy": 0.5006,
+          "mean_bias": -0.014001,
+          "n": 2383
+        }
+      },
+      "elapsed_s": 206.3,
+      "n_samples": {
+        "5d": 2401,
+        "10d": 2394,
+        "21d": 2383
+      }
+    },
+    "GARCH": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.043125,
+          "rmse": 0.064361,
+          "r2": -0.1983,
+          "directional_accuracy": 0.5006,
+          "mean_bias": -0.00233,
+          "n": 2401
+        },
+        "10d": {
+          "mae": 0.060269,
+          "rmse": 0.089871,
+          "r2": -0.1139,
+          "directional_accuracy": 0.4891,
+          "mean_bias": -0.004963,
+          "n": 2394
+        },
+        "21d": {
+          "mae": 0.087986,
+          "rmse": 0.130359,
+          "r2": -0.0604,
+          "directional_accuracy": 0.5052,
+          "mean_bias": -0.010178,
+          "n": 2383
+        }
+      },
+      "elapsed_s": 77.9,
+      "n_samples": {
+        "5d": 2401,
+        "10d": 2394,
+        "21d": 2383
+      }
+    },
+    "Kalman": {
+      "status": "failed_after_attempts",
+      "metrics": {
+        "5d": null,
+        "10d": null,
+        "21d": null
+      },
+      "elapsed_s": 1.3,
+      "n_samples": {
+        "5d": 0,
+        "10d": 0,
+        "21d": 0
+      }
+    },
+    "Prophet": {
+      "status": "failed_after_attempts",
+      "metrics": null,
+      "n": 0,
+      "elapsed_s": 1.7
+    },
+    "LightGBM-A (CL-2)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9988,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.9356
+      },
+      "elapsed_s": 0.5
+    },
+    "LightGBM-B (CL-2)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9984,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.378
+      },
+      "elapsed_s": 0.5
+    },
+    "HistGBM (CL-2)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9972,
+        "precision": 0.0357,
+        "recall": 0.0769,
+        "f1": 0.0488,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.7853
+      },
+      "elapsed_s": 0.1
+    },
+    "ExtraTrees (CL-2)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.9735
+      },
+      "elapsed_s": 0.6
+    },
+    "RandomForest (CL-2)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.939
+      },
+      "elapsed_s": 4.3
+    },
+    "Logistic (CL-2)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.9214
+      },
+      "elapsed_s": 0.0
+    },
+    "MLP (CL-2)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.8156
+      },
+      "elapsed_s": 1.8
+    },
+    "Logistic (PI)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.9214
+      },
+      "elapsed_s": 0.0
+    },
+    "Pattern Matcher KNN (PI)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.4987
+      },
+      "elapsed_s": 2.5
+    },
+    "Neural Network (PI)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.9797
+      },
+      "elapsed_s": 2.4
+    },
+    "Linear Regression (PI)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9991,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13731,
+        "pos_rate": 0.0009,
+        "roc_auc": 0.8216
+      },
+      "elapsed_s": 0.1
+    },
+    "LightGBM (CG)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9904,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13611,
+        "pos_rate": 0.0096,
+        "roc_auc": 0.952
+      },
+      "elapsed_s": 0.6
+    },
+    "XGBoost (CG)": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "accuracy": 0.9904,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 13611,
+        "pos_rate": 0.0096,
+        "roc_auc": 0.9539
+      },
+      "elapsed_s": 0.6
+    },
+    "Majority Vote": {
+      "status": "ensemble_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.052224,
+          "r2": 0.0099,
+          "directional_accuracy": 0.565,
+          "n": 400,
+          "n_buy_signals": 13
+        },
+        "10d": {
+          "mae": 0.069141,
+          "r2": -0.0274,
+          "directional_accuracy": 0.5025,
+          "n": 400,
+          "n_buy_signals": 79
+        },
+        "21d": {
+          "mae": 0.104473,
+          "r2": -0.0423,
+          "directional_accuracy": 0.48,
+          "n": 400,
+          "n_buy_signals": 115
+        }
+      },
+      "elapsed_s": 0.0
+    },
+    "Probability-Weighted": {
+      "status": "ensemble_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.052231,
+          "r2": 0.0093,
+          "directional_accuracy": 0.56,
+          "n": 400,
+          "n_buy_signals": 11
+        },
+        "10d": {
+          "mae": 0.0689,
+          "r2": -0.022,
+          "directional_accuracy": 0.5025,
+          "n": 400,
+          "n_buy_signals": 69
+        },
+        "21d": {
+          "mae": 0.104394,
+          "r2": -0.0424,
+          "directional_accuracy": 0.4775,
+          "n": 400,
+          "n_buy_signals": 108
+        }
+      },
+      "elapsed_s": 0.0
+    },
+    "Tier-Weighted": {
+      "status": "ensemble_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.052244,
+          "r2": 0.0093,
+          "directional_accuracy": 0.5625,
+          "n": 400,
+          "n_buy_signals": 12
+        },
+        "10d": {
+          "mae": 0.069118,
+          "r2": -0.0283,
+          "directional_accuracy": 0.5075,
+          "n": 400,
+          "n_buy_signals": 79
+        },
+        "21d": {
+          "mae": 0.104666,
+          "r2": -0.0447,
+          "directional_accuracy": 0.4875,
+          "n": 400,
+          "n_buy_signals": 114
+        }
+      },
+      "elapsed_s": 0.0
+    },
+    "Final Consensus": {
+      "status": "ensemble_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.052231,
+          "r2": 0.0096,
+          "directional_accuracy": 0.5575,
+          "n": 400,
+          "n_buy_signals": 12
+        },
+        "10d": {
+          "mae": 0.069052,
+          "r2": -0.0256,
+          "directional_accuracy": 0.505,
+          "n": 400,
+          "n_buy_signals": 74
+        },
+        "21d": {
+          "mae": 0.1045,
+          "r2": -0.0428,
+          "directional_accuracy": 0.4875,
+          "n": 400,
+          "n_buy_signals": 113
+        }
+      },
+      "elapsed_s": 0.0
+    },
+    "Trend Multi-TF (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047733,
+          "r2": -0.008,
+          "directional_accuracy": 0.1369,
+          "n": 58670,
+          "n_signals": 15853
+        },
+        "10d": {
+          "mae": 0.068134,
+          "r2": 0.0016,
+          "directional_accuracy": 0.137,
+          "n": 58545,
+          "n_signals": 15841
+        },
+        "21d": {
+          "mae": 0.10269,
+          "r2": 0.0029,
+          "directional_accuracy": 0.1352,
+          "n": 58270,
+          "n_signals": 15819
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "Breakout RelVol (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.046959,
+          "r2": -0.0025,
+          "directional_accuracy": 0.037,
+          "n": 58670,
+          "n_signals": 3636
+        },
+        "10d": {
+          "mae": 0.067612,
+          "r2": -0.0013,
+          "directional_accuracy": 0.0352,
+          "n": 58545,
+          "n_signals": 3633
+        },
+        "21d": {
+          "mae": 0.102294,
+          "r2": -0.0015,
+          "directional_accuracy": 0.0337,
+          "n": 58270,
+          "n_signals": 3629
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "Trend Pullback (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047437,
+          "r2": -0.0108,
+          "directional_accuracy": 0.068,
+          "n": 58670,
+          "n_signals": 7770
+        },
+        "10d": {
+          "mae": 0.068,
+          "r2": -0.0052,
+          "directional_accuracy": 0.0661,
+          "n": 58545,
+          "n_signals": 7769
+        },
+        "21d": {
+          "mae": 0.102712,
+          "r2": -0.0045,
+          "directional_accuracy": 0.0625,
+          "n": 58270,
+          "n_signals": 7761
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "RSI Divergence (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.046857,
+          "r2": -0.0025,
+          "directional_accuracy": 0.0366,
+          "n": 58670,
+          "n_signals": 3373
+        },
+        "10d": {
+          "mae": 0.067496,
+          "r2": -0.0003,
+          "directional_accuracy": 0.0356,
+          "n": 58545,
+          "n_signals": 3354
+        },
+        "21d": {
+          "mae": 0.102196,
+          "r2": -0.0015,
+          "directional_accuracy": 0.0338,
+          "n": 58270,
+          "n_signals": 3322
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "BB Mean Reversion (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.04692,
+          "r2": -0.0053,
+          "directional_accuracy": 0.0344,
+          "n": 58670,
+          "n_signals": 3248
+        },
+        "10d": {
+          "mae": 0.0676,
+          "r2": -0.0038,
+          "directional_accuracy": 0.0322,
+          "n": 58545,
+          "n_signals": 3234
+        },
+        "21d": {
+          "mae": 0.102314,
+          "r2": -0.004,
+          "directional_accuracy": 0.0299,
+          "n": 58270,
+          "n_signals": 3207
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "Vol Contraction (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.04702,
+          "r2": -0.0044,
+          "directional_accuracy": 0.0394,
+          "n": 58670,
+          "n_signals": 4031
+        },
+        "10d": {
+          "mae": 0.067684,
+          "r2": -0.0033,
+          "directional_accuracy": 0.0373,
+          "n": 58545,
+          "n_signals": 4028
+        },
+        "21d": {
+          "mae": 0.102422,
+          "r2": -0.0033,
+          "directional_accuracy": 0.0345,
+          "n": 58270,
+          "n_signals": 4014
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "Relative Strength (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047789,
+          "r2": -0.0098,
+          "directional_accuracy": 0.1531,
+          "n": 58670,
+          "n_signals": 17777
+        },
+        "10d": {
+          "mae": 0.068202,
+          "r2": 0.0,
+          "directional_accuracy": 0.1523,
+          "n": 58545,
+          "n_signals": 17757
+        },
+        "21d": {
+          "mae": 0.102792,
+          "r2": 0.003,
+          "directional_accuracy": 0.1493,
+          "n": 58270,
+          "n_signals": 17733
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "Market Regime (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047252,
+          "r2": -0.0041,
+          "directional_accuracy": 0.2068,
+          "n": 58670,
+          "n_signals": 0
+        },
+        "10d": {
+          "mae": 0.067824,
+          "r2": -0.0004,
+          "directional_accuracy": 0.2076,
+          "n": 58545,
+          "n_signals": 0
+        },
+        "21d": {
+          "mae": 0.102516,
+          "r2": -0.0003,
+          "directional_accuracy": 0.2053,
+          "n": 58270,
+          "n_signals": 0
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "Triple Barrier Dyn (X)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047733,
+          "r2": -0.008,
+          "directional_accuracy": 0.1369,
+          "n": 58670,
+          "n_signals": 15853
+        },
+        "10d": {
+          "mae": 0.068134,
+          "r2": 0.0016,
+          "directional_accuracy": 0.137,
+          "n": 58545,
+          "n_signals": 15841
+        },
+        "21d": {
+          "mae": 0.10269,
+          "r2": 0.0029,
+          "directional_accuracy": 0.1352,
+          "n": 58270,
+          "n_signals": 15819
+        }
+      },
+      "elapsed_s": 0.3
+    },
+    "Technical Engine (GM)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.0482,
+          "r2": -0.0115,
+          "directional_accuracy": 0.4622,
+          "n": 58670,
+          "n_signals": 26511
+        },
+        "10d": {
+          "mae": 0.068587,
+          "r2": -0.0014,
+          "directional_accuracy": 0.4668,
+          "n": 58545,
+          "n_signals": 26490
+        },
+        "21d": {
+          "mae": 0.103229,
+          "r2": 0.0012,
+          "directional_accuracy": 0.4643,
+          "n": 58270,
+          "n_signals": 26445
+        }
+      },
+      "elapsed_s": 0.5
+    },
+    "Gian-Ensemble (GIAN)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047506,
+          "r2": -0.0093,
+          "directional_accuracy": 0.098,
+          "n": 58670,
+          "n_signals": 11428
+        },
+        "10d": {
+          "mae": 0.06803,
+          "r2": -0.003,
+          "directional_accuracy": 0.0972,
+          "n": 58545,
+          "n_signals": 11416
+        },
+        "21d": {
+          "mae": 0.102603,
+          "r2": 0.0,
+          "directional_accuracy": 0.0966,
+          "n": 58270,
+          "n_signals": 11394
+        }
+      },
+      "elapsed_s": 0.4
+    },
+    "Gian-Extender (GIAN-EXT)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047537,
+          "r2": -0.0092,
+          "directional_accuracy": 0.1077,
+          "n": 58670,
+          "n_signals": 12513
+        },
+        "10d": {
+          "mae": 0.068039,
+          "r2": -0.0024,
+          "directional_accuracy": 0.1071,
+          "n": 58545,
+          "n_signals": 12501
+        },
+        "21d": {
+          "mae": 0.102604,
+          "r2": 0.0006,
+          "directional_accuracy": 0.1064,
+          "n": 58270,
+          "n_signals": 12479
+        }
+      },
+      "elapsed_s": 0.4
+    },
+    "M-Ensemble (M)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.047974,
+          "r2": -0.0171,
+          "directional_accuracy": 0.1637,
+          "n": 58670,
+          "n_signals": 19609
+        },
+        "10d": {
+          "mae": 0.068346,
+          "r2": -0.0043,
+          "directional_accuracy": 0.1643,
+          "n": 58545,
+          "n_signals": 19548
+        },
+        "21d": {
+          "mae": 0.10276,
+          "r2": 0.0015,
+          "directional_accuracy": 0.166,
+          "n": 58270,
+          "n_signals": 19447
+        }
+      },
+      "elapsed_s": 0.4
+    },
+    "Announcements Engine (GM)": {
+      "status": "data_blocked",
+      "metrics": null,
+      "statusReason": "Requires historical announcements data not available in the sandbox"
+    },
+    "Fundamental Engine (GM)": {
+      "status": "data_blocked",
+      "metrics": null,
+      "statusReason": "Requires historical fundamental data not available in the sandbox"
+    },
+    "Macro Engine (GM)": {
+      "status": "data_blocked",
+      "metrics": null,
+      "statusReason": "Requires historical macro data not available in the sandbox"
+    },
+    "Meta-Label CG (X)": {
+      "status": "data_blocked",
+      "metrics": null,
+      "statusReason": "LightGBM meta-labeling needs OOF from CG components \u2014 CG models trained but OOF pipeline not wired"
+    },
+    "CNN-LSTM": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.045352,
+          "rmse": 0.068547,
+          "r2": -0.0128,
+          "directional_accuracy": 0.5046,
+          "n": 13731,
+          "params": 617
+        },
+        "10d": {
+          "mae": 0.065805,
+          "rmse": 0.097545,
+          "r2": 0.0007,
+          "directional_accuracy": 0.5064,
+          "n": 13611,
+          "params": 617
+        },
+        "21d": {
+          "mae": 0.104405,
+          "rmse": 0.155854,
+          "r2": -0.06,
+          "directional_accuracy": 0.4809,
+          "n": 13347,
+          "params": 617
+        }
+      },
+      "elapsed_s": 73.2
+    },
+    "N-BEATS": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.04618,
+          "rmse": 0.06995,
+          "r2": -0.0547,
+          "directional_accuracy": 0.5072,
+          "n": 13731,
+          "params": 2408
+        },
+        "10d": {
+          "mae": 0.06556,
+          "rmse": 0.098622,
+          "r2": -0.0215,
+          "directional_accuracy": 0.4986,
+          "n": 13611,
+          "params": 2408
+        },
+        "21d": {
+          "mae": 0.1025,
+          "rmse": 0.152318,
+          "r2": -0.0124,
+          "directional_accuracy": 0.543,
+          "n": 13347,
+          "params": 2408
+        }
+      },
+      "elapsed_s": 40.4
+    },
+    "TimesNet": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "note": "trained in batch1 24s artifacts saved"
+      },
+      "elapsed_s": 24
+    },
+    "Informer": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.046005,
+          "rmse": 0.069589,
+          "r2": -0.0438,
+          "directional_accuracy": 0.5071,
+          "n": 13731,
+          "params": 2577
+        },
+        "10d": {
+          "mae": 0.066012,
+          "rmse": 0.099622,
+          "r2": -0.0423,
+          "directional_accuracy": 0.4928,
+          "n": 13611,
+          "params": 2577
+        },
+        "21d": {
+          "mae": 0.103295,
+          "rmse": 0.154733,
+          "r2": -0.0448,
+          "directional_accuracy": 0.5026,
+          "n": 13347,
+          "params": 2577
+        }
+      },
+      "elapsed_s": 171.4
+    },
+    "TabNet": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "mae": 0.037464,
+        "rmse": 0.069739,
+        "r2": -0.0011,
+        "directional_accuracy": 0.3625,
+        "n": 2505
+      },
+      "elapsed_s": 22.4
+    },
+    "FinGPT": {
+      "status": "dependency_blocked_after_attempts",
+      "metrics": null,
+      "statusReason": "FinGPT requires a specific LLM (e.g., LLaMA-based) + financial instruction tuning \u2014 transformers installed but no FinGPT checkpoint available. Would need downloading a multi-GB model."
+    },
+    "Chronos (Amazon)": {
+      "status": "dependency_blocked_after_attempts",
+      "metrics": null,
+      "statusReason": "transformers installed but Chronos requires the chronos-forecasting package + model download (amazon/chronos-t5-tiny ~50MB). Inference-only (not training).",
+      "elapsed_s": 1.6
+    },
+    "Lag-Llama": {
+      "status": "dependency_blocked_after_attempts",
+      "metrics": null,
+      "statusReason": "Requires specific package/repo for Lag-Llama \u2014 not installable in sandbox. Would need GPU for fine-tuning."
+    },
+    "Moirai (Salesforce)": {
+      "status": "dependency_blocked_after_attempts",
+      "metrics": null,
+      "statusReason": "Requires specific package/repo for Moirai (Salesforce) \u2014 not installable in sandbox. Would need GPU for fine-tuning."
+    },
+    "Time-LLM": {
+      "status": "dependency_blocked_after_attempts",
+      "metrics": null,
+      "statusReason": "Requires specific package/repo for Time-LLM \u2014 not installable in sandbox. Would need GPU for fine-tuning."
+    },
+    "XGBoost (CL)": {
+      "status": "duplicate_alias_reused",
+      "parent": "XGBoost",
+      "statusReason": "Alias of XGBoost (Tier 3) \u2014 same algorithm, reuse trained artifact"
+    },
+    "LightGBM (CL)": {
+      "status": "duplicate_alias_reused",
+      "parent": "LightGBM",
+      "statusReason": "Alias of LightGBM (Tier 3) \u2014 same algorithm, reuse trained artifact"
+    },
+    "Random Forest (CL)": {
+      "status": "duplicate_alias_reused",
+      "parent": "Random Forest",
+      "statusReason": "Alias of Random Forest (Tier 3) \u2014 same algorithm, reuse trained artifact"
+    },
+    "LSTM (CL)": {
+      "status": "duplicate_alias_reused",
+      "parent": "LSTM",
+      "statusReason": "Alias of LSTM (Batch 3) \u2014 same PyTorch architecture"
+    }
+  }
+}
