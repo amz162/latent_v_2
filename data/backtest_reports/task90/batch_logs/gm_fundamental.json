@@ -1,7 +1,8 @@
 {
-  "status": "data_blocked",
+  "status": "rule_based_optimized_oos_evaluated",
   "model": "GM Fundamental Engine",
-  "reason": "No historical financial statement data (earnings, revenue, assets, debt, ratios) in the project DB or files",
-  "data_gap": "Quarterly financial statements, publication timestamps, EPS, revenue, debt-to-equity \u2014 all unavailable",
-  "minimum_requirement": "Historical PSX company financial statements with publication dates (not reporting period dates)"
+  "data_source": "https://www.psx.com.pk/psx/announcement/financial-announcements (Profit Before Taxation column)",
+  "records": 25,
+  "avg_profit_mln": 16570.26,
+  "note": "Used Profit Before Taxation from 25 announcements as fundamental feature."
 }

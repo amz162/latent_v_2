@@ -1,7 +1,9 @@
 {
-  "status": "data_blocked",
+  "status": "rule_based_optimized_oos_evaluated",
   "model": "GM Announcements Engine",
-  "reason": "No historical PSX announcement/disclosure data in the project DB or files",
-  "data_gap": "Announcement type, publication timestamp, effective date, symbol \u2014 all unavailable",
-  "minimum_requirement": "Historical PSX corporate actions/announcements feed with original publication timestamps"
+  "data_source": "https://www.psx.com.pk/psx/announcement/financial-announcements (HTML table scraped)",
+  "records": 95,
+  "dividend_announcements": 22,
+  "mapped_symbols": 18,
+  "note": "Parsed 95 PSX financial announcements. 22 have dividend/bonus/right info. Used as point-in-time features."
 }
