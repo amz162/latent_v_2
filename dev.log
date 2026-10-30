@@ -12064,3 +12064,17 @@ prisma:query SELECT `main`.`PredictionHistory`.`id`, `main`.`PredictionHistory`.
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume`, `main`.`OhlcvBar`.`source`, `main`.`OhlcvBar`.`updatedAt` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
  GET /api/backtest/walk-forward/prospective 200 in 474ms (compile: 419ms, render: 55ms)
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
+▲ Next.js 16.1.3 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.18.68:3000
+
+✓ Starting...
+✓ Ready in 1213ms
+○ Compiling / ...
+ GET / 200 in 12.2s (compile: 11.8s, render: 386ms)
+ GET / 200 in 55ms (compile: 6ms, render: 49ms)
+⚠ Blocked cross-origin request from preview-chat-205f391c-1dac-41d3-95bd-d232a3e7ba0b.space-z.ai to /_next/* resource. To allow this, configure "allowedDevOrigins" in next.config
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET /api/backtest/per-stock-walk-forward 200 in 1371ms (compile: 1344ms, render: 27ms)
+ GET /api/models/registry 200 in 679ms (compile: 635ms, render: 43ms)
+ GET / 200 in 583ms (compile: 534ms, render: 50ms)
