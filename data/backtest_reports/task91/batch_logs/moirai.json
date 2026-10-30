@@ -1,0 +1,13 @@
+{
+  "status": "dependency_blocked_after_attempts",
+  "model": "Moirai",
+  "checkpoint": "Salesforce/moirai-1.1-R-small (55.3MB, 14M params, loaded)",
+  "root_cause": "Version incompatibility cascade: uni2ts 2.0.0 requires torch<2.5 (have 2.15.0) + specific pytorch_lightning (have 2.1.4) + GluonTS predictor has pydantic v1 batch_size validation error + MoiraiModule not recognized as LightningModule + forward() needs pre-patched inputs from the broken transform pipeline.",
+  "model_loaded": true,
+  "state_dict_loaded": true,
+  "predictor_blocked": "GluonTS PyTorchPredictor pydantic v1 batch_size validation error",
+  "trainer_blocked": "MoiraiModule not recognized as LightningModule by pytorch_lightning 2.1.4",
+  "forward_blocked": "Needs pre-patched inputs (multi-resolution patching from transform pipeline)",
+  "how_to_fix": "Use exact uni2ts-compatible versions: torch>=2.1,<2.5 + pytorch_lightning compatible version + pydantic v1 compatible gluonts. Requires separate venv with ~10GB disk.",
+  "minimum_requirements": "Separate venv with torch<2.5 + compatible pytorch_lightning + gluonts + uni2ts"
+}

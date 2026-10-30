@@ -1,0 +1,36 @@
+{
+  "all_models_count": 58,
+  "readme_claims": {
+    "models": 65,
+    "ensembles": 13
+  },
+  "discrepancy": 7,
+  "explanation": "README counts supplemental models (ExtraTrees, HistGBR, ElasticNet, Huber, SVR = 5) + ensemble methods not in ALL_MODELS (Majority Vote, Probability-Weighted, Tier-Weighted, Final Consensus = 4) + possibly CL-Ensemble/CL-Extender as separate entries. 58 + 5 + 4 - 2 (already in registry) = 65.",
+  "canonical_all_models": 58,
+  "supplemental_models": [
+    "ExtraTrees",
+    "HistGradientBoosting",
+    "ElasticNet",
+    "HuberRegressor",
+    "SVR"
+  ],
+  "ensemble_methods_not_in_all_models": [
+    "Majority Vote",
+    "Probability-Weighted",
+    "Tier-Weighted",
+    "Final Consensus"
+  ],
+  "by_tier": {
+    "TIER_1": 4,
+    "TIER_2": 4,
+    "TIER_3": 5,
+    "TIER_4": 4,
+    "TIER_CL": 11,
+    "TIER_CL_2": 7,
+    "TIER_PI": 4,
+    "TIER_GM": 4,
+    "TIER_CG": 2,
+    "TIER_X": 10,
+    "TIER_GIAN": 3
+  }
+}
