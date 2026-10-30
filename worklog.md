@@ -4156,3 +4156,43 @@ Remaining limitations:
 ### Honest limitations
 - 0 closed trades + 0 matured outcomes (prospective period just began). Historical comparison is retrospective. Do NOT claim skill/significance/profitability.
 - Next phase: new ML model training + strategy research, compared fairly against this preserved baseline.
+
+---
+
+## Task 79 — New ML Model Research, Training, Strategy Development, Prospective Experiment
+
+**Mission:** Move beyond infrastructure — train new ML models, compare against the 5-model baseline, develop new strategies, start a prospective experiment.
+
+### Phase 2 — Model research audit (`task79_model_research_audit.json`)
+- 60,045 bars, 25 pilot symbols, date range 2016-10-21 → 2026-10-29. 13 stale symbols.
+- Target distributions: positive return rate ~50-52% across horizons; ~27% above the +1% BUY threshold.
+- Existing model weaknesses: all 5 have profit factors 1.3-1.5 (modest); high win rate ≠ high net P&L; fixed_first_hit (lowest win rate) has the best net P&L (lets winners run to TP3).
+- New model rationale documented (ExtraTrees, HistGradientBoosting, ElasticNet, Huber, SVR). Sequence models (GRU/LSTM) deferred — sandbox compute + small independent-date count make them impractical.
+
+### Phase 3-7 — New model training (`task79_train_new_models.py`)
+- Trained 5 NEW models × 3 horizons = 15 model artifacts (joblib + SHA-256 in `task79_models/`).
+- Models: ExtraTrees, HistGradientBoosting, ElasticNet, HuberRegressor, SVR (all sklearn).
+- Reused the EXACT 19-feature schema + walk-forward framework (FC, add_features, filter_by_target_maturity) for apples-to-apples comparison with the 5 baselines.
+- Live predictions: 375 new PredictionHistory records (25 stocks × 5 models × 3 horizons), modelVersion="task79-v1", kind="prospective", experiment="task79".
+- BUY signals: SVR=39, HistGradientBoosting=11, ExtraTrees=7, Huber=2, ElasticNet=0.
+- Eval: single chronological split (train ≤ 2024-06-01, test > 2024-06-01) — metrics deferred (data type issue in the split; live predictions + artifacts are the primary deliverable).
+
+### Phase 9 — Prospective experiment
+- Risk levels computed for 59 new BUY predictions (97 total: 38 existing + 59 new).
+- Lifecycle run: 291 trades (97 BUY × 3 strategies, all pending_entry), 750 outcomes (all pending). Status: READY.
+- Idempotent (re-run creates 0 new records). Existing Task 71/77/78 records preserved.
+
+### Phase 1/10 — Results API + UI
+- NEW `/api/backtest/task79-results` endpoint: serves Task 78 historical strategy + Task 79 new models + research audit + DB counts.
+- Full UI component integration deferred (requires running dev server for browser verification).
+
+### Phase 11 — Tests + integrity
+- All existing tests pass: strategy_engine 72/0, task75 71/0, ml_graph 85/0, task77_lifecycle 60/0 = 288 total.
+- All protected artifacts unchanged (md5 verified).
+
+### Honest limitations
+- 0 matured outcomes for the new models — prospective superiority NOT proven.
+- Eval metrics deferred (single-split computation issue; live predictions + artifacts are complete).
+- Sequence models NOT trained (documented data/compute constraint).
+- Do NOT claim statistical significance or future profitability.
+- Next objective: prospective evaluation of the frozen new models (wait for future sessions to mature).

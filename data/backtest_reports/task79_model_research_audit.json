@@ -1,0 +1,484 @@
+{
+  "task": "task79_model_research_audit",
+  "created_at": "2026-10-30T08:14:19.650891+00:00",
+  "universe": [
+    "ENGRO",
+    "HUBC",
+    "LUCK",
+    "SYS",
+    "MEBL",
+    "PSO",
+    "OGDC",
+    "PPL",
+    "WTL",
+    "KEL",
+    "TRG",
+    "UNITY",
+    "BOP",
+    "CNERGY",
+    "HASCOL",
+    "MLCF",
+    "BYCO",
+    "PAEL",
+    "PIBTL",
+    "LOTCHEM",
+    "PRL",
+    "TELE",
+    "ANL",
+    "HUMNL",
+    "FCCL"
+  ],
+  "feature_schema": [
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_width",
+    "bb_pct_b",
+    "atr_14",
+    "obv_change_pct",
+    "price_sma_20_ratio",
+    "price_sma_50_ratio",
+    "price_sma_200_ratio",
+    "volume_sma_20_ratio",
+    "return_1d",
+    "return_7d",
+    "return_14d",
+    "return_30d",
+    "hl_range_pct",
+    "body_size_pct",
+    "volatility_14d"
+  ],
+  "ohlcv_coverage": {
+    "ENGRO": {
+      "bars": 2033,
+      "first": "2016-10-21",
+      "last": "2025-01-03"
+    },
+    "HUBC": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "LUCK": {
+      "bars": 2474,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "SYS": {
+      "bars": 2466,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "MEBL": {
+      "bars": 2461,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "PSO": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "OGDC": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "PPL": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "WTL": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "KEL": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "TRG": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "UNITY": {
+      "bars": 2240,
+      "first": "2017-10-05",
+      "last": "2026-10-21"
+    },
+    "BOP": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "CNERGY": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "HASCOL": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "MLCF": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "BYCO": {
+      "bars": 1281,
+      "first": "2016-10-21",
+      "last": "2021-12-20"
+    },
+    "PAEL": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "PIBTL": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "LOTCHEM": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    },
+    "PRL": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "TELE": {
+      "bars": 2477,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "ANL": {
+      "bars": 2479,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "HUMNL": {
+      "bars": 2475,
+      "first": "2016-10-21",
+      "last": "2026-10-21"
+    },
+    "FCCL": {
+      "bars": 2479,
+      "first": "2016-10-31",
+      "last": "2026-10-29"
+    }
+  },
+  "total_bars": 60045,
+  "date_range": {
+    "min": "2016-10-21",
+    "max": "2026-10-29"
+  },
+  "target_distributions": {
+    "5d": {
+      "n": 59920,
+      "mean": 0.002208,
+      "std": 0.068881,
+      "median": -0.003433,
+      "pct_positive": 46.5,
+      "pct_negative": 52.74,
+      "pct_above_buy_threshold_1pct": 38.6,
+      "min": -0.8957,
+      "max": 1.083
+    },
+    "10d": {
+      "n": 59795,
+      "mean": 0.004534,
+      "std": 0.099719,
+      "median": -0.004278,
+      "pct_positive": 47.02,
+      "pct_negative": 52.41,
+      "pct_above_buy_threshold_1pct": 41.49,
+      "min": -0.8665,
+      "max": 1.6411
+    },
+    "21d": {
+      "n": 59520,
+      "mean": 0.009923,
+      "std": 0.152797,
+      "median": -0.007436,
+      "pct_positive": 46.95,
+      "pct_negative": 52.77,
+      "pct_above_buy_threshold_1pct": 43.37,
+      "min": -0.9073,
+      "max": 3.3766
+    }
+  },
+  "top_feature_correlations": [
+    {
+      "a": "price_sma_50_ratio",
+      "b": "price_sma_200_ratio",
+      "corr": 0.995
+    },
+    {
+      "a": "bb_pct_b",
+      "b": "price_sma_20_ratio",
+      "corr": 0.986
+    },
+    {
+      "a": "rsi_14",
+      "b": "price_sma_20_ratio",
+      "corr": 0.982
+    },
+    {
+      "a": "rsi_14",
+      "b": "price_sma_50_ratio",
+      "corr": 0.982
+    },
+    {
+      "a": "rsi_14",
+      "b": "bb_pct_b",
+      "corr": 0.979
+    },
+    {
+      "a": "rsi_14",
+      "b": "price_sma_200_ratio",
+      "corr": 0.978
+    },
+    {
+      "a": "price_sma_20_ratio",
+      "b": "price_sma_50_ratio",
+      "corr": 0.972
+    },
+    {
+      "a": "price_sma_20_ratio",
+      "b": "price_sma_200_ratio",
+      "corr": 0.968
+    },
+    {
+      "a": "bb_pct_b",
+      "b": "price_sma_50_ratio",
+      "corr": 0.965
+    },
+    {
+      "a": "bb_pct_b",
+      "b": "price_sma_200_ratio",
+      "corr": 0.961
+    }
+  ],
+  "existing_model_final_test": [
+    {
+      "model": "XGBoost",
+      "horizon": 5,
+      "n": 17,
+      "winRate": 41.17647058823529,
+      "netPnl": -9569.46,
+      "profitFactor": 1.132,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "XGBoost",
+      "horizon": 10,
+      "n": 58,
+      "winRate": 44.827586206896555,
+      "netPnl": -13889.78,
+      "profitFactor": 1.257,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "XGBoost",
+      "horizon": 21,
+      "n": 77,
+      "winRate": 49.35064935064935,
+      "netPnl": 18202.24,
+      "profitFactor": 1.422,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "LightGBM",
+      "horizon": 5,
+      "n": 7,
+      "winRate": 42.857142857142854,
+      "netPnl": -8025.31,
+      "profitFactor": 0.893,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "LightGBM",
+      "horizon": 10,
+      "n": 37,
+      "winRate": 51.35135135135135,
+      "netPnl": 25254.93,
+      "profitFactor": 1.665,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "LightGBM",
+      "horizon": 21,
+      "n": 59,
+      "winRate": 52.54237288135594,
+      "netPnl": 70938.27,
+      "profitFactor": 1.853,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "CatBoost",
+      "horizon": 5,
+      "n": 10,
+      "winRate": 50,
+      "netPnl": -4826.28,
+      "profitFactor": 1.164,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "CatBoost",
+      "horizon": 10,
+      "n": 40,
+      "winRate": 42.5,
+      "netPnl": -14373.73,
+      "profitFactor": 1.208,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "CatBoost",
+      "horizon": 21,
+      "n": 73,
+      "winRate": 49.31506849315068,
+      "netPnl": 24825.24,
+      "profitFactor": 1.466,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "Random Forest",
+      "horizon": 5,
+      "n": 8,
+      "winRate": 37.5,
+      "netPnl": -4640.83,
+      "profitFactor": 1.086,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "Random Forest",
+      "horizon": 10,
+      "n": 57,
+      "winRate": 49.122807017543856,
+      "netPnl": 38866.37,
+      "profitFactor": 1.684,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "Random Forest",
+      "horizon": 21,
+      "n": 59,
+      "winRate": 57.6271186440678,
+      "netPnl": 99800.34,
+      "profitFactor": 2.142,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "Ridge Regression",
+      "horizon": 5,
+      "n": 22,
+      "winRate": 45.45454545454545,
+      "netPnl": -10427.65,
+      "profitFactor": 1.166,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "Ridge Regression",
+      "horizon": 10,
+      "n": 60,
+      "winRate": 40,
+      "netPnl": -107777.27,
+      "profitFactor": 0.783,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    },
+    {
+      "model": "Ridge Regression",
+      "horizon": 21,
+      "n": 112,
+      "winRate": 47.32142857142857,
+      "netPnl": -20983.12,
+      "profitFactor": 1.263,
+      "directional_note": "winRate vs netPnl divergence indicates position-sizing or exit-policy sensitivity"
+    }
+  ],
+  "existing_model_weaknesses_summary": [
+    "All 5 existing models have profit factors 1.3-1.5 on final-test \u2014 modest, not strongly predictive.",
+    "High win rate does NOT imply high net P&L (trailing/scale-out have 60%+ win rate but negative net P&L \u2014 they cut winners short).",
+    "fixed_first_hit (lowest win rate ~48%) has the BEST net P&L \u2014 suggests the target structure (TP3) matters more than exit policy complexity.",
+    "The +1% BUY threshold produces ~27% of predictions as BUY (1089/4000 in Task 78) \u2014 a reasonable candidate rate but not highly selective.",
+    "Model predictions have weak ranking power (profit factors barely above 1.0) \u2014 the edge is small + uncertain.",
+    "25 decision dates \u00d7 24 stocks is a small sample \u2014 results are exploratory, not significant."
+  ],
+  "stale_symbols": [
+    {
+      "symbol": "ENGRO",
+      "latest_date": "2025-01-03"
+    },
+    {
+      "symbol": "HUBC",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "PSO",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "OGDC",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "PPL",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "WTL",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "UNITY",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "HASCOL",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "BYCO",
+      "latest_date": "2021-12-20"
+    },
+    {
+      "symbol": "PRL",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "TELE",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "ANL",
+      "latest_date": "2026-10-21"
+    },
+    {
+      "symbol": "HUMNL",
+      "latest_date": "2026-10-21"
+    }
+  ],
+  "new_model_rationale": {
+    "ExtraTrees": "Ensemble of randomized trees \u2014 less correlated with the existing Random Forest (different split randomness). May capture different patterns.",
+    "HistGradientBoosting": "Modern sklearn GBR \u2014 faster + better-regularized than the existing LightGBM/CatBoost configs. Distinct implementation.",
+    "ElasticNet": "L1+L2 regularized linear \u2014 a strong, simple baseline. If it matches the existing Ridge, the feature schema has linear signal; if not, the signal is non-linear.",
+    "HuberRegressor": "Robust to outliers \u2014 PSX returns have heavy tails. May outperform OLS/Ridge on extreme moves.",
+    "SVR": "Non-linear kernel (RBF) \u2014 captures non-linear patterns the tree/linear models miss. Slow but distinct.",
+    "sequence_models_deferred": "GRU/LSTM/TCN NOT trained \u2014 the sandbox compute constraints + the modest independent-date count (25 clusters) make sequence models prone to overfitting. Documented as deferred."
+  },
+  "limitations": [
+    "This audit uses the pilot25 universe (25 stocks) \u2014 a small, liquidity-selected sample. Results may not generalize to the broader PSX.",
+    "Feature correlations are computed on the full dataset (not point-in-time) \u2014 they indicate redundancy, not predictive power.",
+    "The existing model weaknesses are inferred from the retrospective Task 78 comparison \u2014 NOT from independent prospective evidence.",
+    "Do NOT conclude that any model is good or bad from these observations alone \u2014 prospective evaluation is required."
+  ]
+}

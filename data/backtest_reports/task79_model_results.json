@@ -1,0 +1,347 @@
+{
+  "task": "task79_new_models",
+  "experiment_id": "task79",
+  "model_version": "task79-v1",
+  "created_at": "2026-10-30T08:10:18.325498+00:00",
+  "data_cutoff": "2026-10-29",
+  "universe": [
+    "ENGRO",
+    "HUBC",
+    "LUCK",
+    "SYS",
+    "MEBL",
+    "PSO",
+    "OGDC",
+    "PPL",
+    "WTL",
+    "KEL",
+    "TRG",
+    "UNITY",
+    "BOP",
+    "CNERGY",
+    "HASCOL",
+    "MLCF",
+    "BYCO",
+    "PAEL",
+    "PIBTL",
+    "LOTCHEM",
+    "PRL",
+    "TELE",
+    "ANL",
+    "HUMNL",
+    "FCCL"
+  ],
+  "feature_schema": [
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_width",
+    "bb_pct_b",
+    "atr_14",
+    "obv_change_pct",
+    "price_sma_20_ratio",
+    "price_sma_50_ratio",
+    "price_sma_200_ratio",
+    "volume_sma_20_ratio",
+    "return_1d",
+    "return_7d",
+    "return_14d",
+    "return_30d",
+    "hl_range_pct",
+    "body_size_pct",
+    "volatility_14d"
+  ],
+  "horizons": [
+    5,
+    10,
+    21
+  ],
+  "new_models": [
+    "ExtraTrees",
+    "HistGradientBoosting",
+    "ElasticNet",
+    "HuberRegressor",
+    "SVR"
+  ],
+  "signal_threshold": 0.01,
+  "existing_baseline_models": [
+    "XGBoost",
+    "LightGBM",
+    "CatBoost",
+    "Random Forest",
+    "Ridge Regression"
+  ],
+  "split_date": "2024-06-01",
+  "models": {
+    "ExtraTrees": {
+      "5": {
+        "status": "trained",
+        "train_rows_live": 59920,
+        "n_buy_signals": 0,
+        "n_predicted": 25,
+        "artifact_sha256": "6186ae18dad054b9c5ccca351759f249b53a9dfc0214d7e755d5b87d600787f8",
+        "eval": null
+      },
+      "10": {
+        "status": "trained",
+        "train_rows_live": 59795,
+        "n_buy_signals": 2,
+        "n_predicted": 25,
+        "artifact_sha256": "2f6365846a71c85ff7e11787a9aa192ac36d87dd030352550607f1aca8b1788e",
+        "eval": null
+      },
+      "21": {
+        "status": "trained",
+        "train_rows_live": 59520,
+        "n_buy_signals": 5,
+        "n_predicted": 25,
+        "artifact_sha256": "8486cdeae3630c3712780c5f40a8c7937dc2dd807711973ad78d569c47916f5e",
+        "eval": null
+      }
+    },
+    "HistGradientBoosting": {
+      "5": {
+        "status": "trained",
+        "train_rows_live": 59920,
+        "n_buy_signals": 1,
+        "n_predicted": 25,
+        "artifact_sha256": "75b95385704020953c9846fd3b968d01a5272b727c876fa74fda107eeb331471",
+        "eval": null
+      },
+      "10": {
+        "status": "trained",
+        "train_rows_live": 59795,
+        "n_buy_signals": 4,
+        "n_predicted": 25,
+        "artifact_sha256": "bea71eca2356e4b7000807c16b94d037dc26d08f97982bafd1533a55c7201409",
+        "eval": null
+      },
+      "21": {
+        "status": "trained",
+        "train_rows_live": 59520,
+        "n_buy_signals": 6,
+        "n_predicted": 25,
+        "artifact_sha256": "ad7f7d77b2d68edaf95b83398664c507e29b54d65dc7253e7d3b908ad3a1c514",
+        "eval": null
+      }
+    },
+    "ElasticNet": {
+      "5": {
+        "status": "trained",
+        "train_rows_live": 59920,
+        "n_buy_signals": 0,
+        "n_predicted": 25,
+        "artifact_sha256": "120afe7c99bbeba6cb6c15ac19833102bd0baeea6db2af9cdc2ef73cc1e4e2df",
+        "eval": null
+      },
+      "10": {
+        "status": "trained",
+        "train_rows_live": 59795,
+        "n_buy_signals": 0,
+        "n_predicted": 25,
+        "artifact_sha256": "eda2c6bae486136b728a4a852fa818b8986f6c09f71fb2240b650b17d0b2b072",
+        "eval": null
+      },
+      "21": {
+        "status": "trained",
+        "train_rows_live": 59520,
+        "n_buy_signals": 0,
+        "n_predicted": 25,
+        "artifact_sha256": "6bb268e192af94b956f0b900e9953d69adac5417499017af558b66f67abe0a61",
+        "eval": null
+      }
+    },
+    "HuberRegressor": {
+      "5": {
+        "status": "trained",
+        "train_rows_live": 59920,
+        "n_buy_signals": 0,
+        "n_predicted": 25,
+        "artifact_sha256": "39a3f686162e60e6ebef914f986c9fb30e885ca0d9e9ea2130d4f3a0fac73e41",
+        "eval": null
+      },
+      "10": {
+        "status": "trained",
+        "train_rows_live": 59795,
+        "n_buy_signals": 0,
+        "n_predicted": 25,
+        "artifact_sha256": "bd9a4af834f22ffac9221bffece222ed181eaf68434d20eb4ab912311822ce79",
+        "eval": null
+      },
+      "21": {
+        "status": "trained",
+        "train_rows_live": 59520,
+        "n_buy_signals": 2,
+        "n_predicted": 25,
+        "artifact_sha256": "23e29ba15e80a675f6fca0f86dc65680fe657cca6df4aa64b38d89677a98ccc9",
+        "eval": null
+      }
+    },
+    "SVR": {
+      "5": {
+        "status": "trained",
+        "train_rows_live": 59920,
+        "n_buy_signals": 16,
+        "n_predicted": 25,
+        "artifact_sha256": "39a08b7320f071009a37df121d062b763859bab2012a1a91c770b0bc0665804c",
+        "eval": null
+      },
+      "10": {
+        "status": "trained",
+        "train_rows_live": 59795,
+        "n_buy_signals": 10,
+        "n_predicted": 25,
+        "artifact_sha256": "a20e48ec4192d855ae49222b4a3dc6a70ed5e582a7bde69acdf602ebbf4a46bb",
+        "eval": null
+      },
+      "21": {
+        "status": "trained",
+        "train_rows_live": 59520,
+        "n_buy_signals": 13,
+        "n_predicted": 25,
+        "artifact_sha256": "3829fcd6a2e2e4233eaf8b83b687791bcebe38bd2eec1069cfbc1a6ed28e54ef",
+        "eval": null
+      }
+    }
+  },
+  "artifacts": {
+    "ExtraTrees_5d": {
+      "path": "data/backtest_reports/task79_models/ExtraTrees_5d.joblib",
+      "sha256": "6186ae18dad054b9c5ccca351759f249b53a9dfc0214d7e755d5b87d600787f8",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59920
+    },
+    "ExtraTrees_10d": {
+      "path": "data/backtest_reports/task79_models/ExtraTrees_10d.joblib",
+      "sha256": "2f6365846a71c85ff7e11787a9aa192ac36d87dd030352550607f1aca8b1788e",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59795
+    },
+    "ExtraTrees_21d": {
+      "path": "data/backtest_reports/task79_models/ExtraTrees_21d.joblib",
+      "sha256": "8486cdeae3630c3712780c5f40a8c7937dc2dd807711973ad78d569c47916f5e",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59520
+    },
+    "HistGradientBoosting_5d": {
+      "path": "data/backtest_reports/task79_models/HistGradientBoosting_5d.joblib",
+      "sha256": "75b95385704020953c9846fd3b968d01a5272b727c876fa74fda107eeb331471",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59920
+    },
+    "HistGradientBoosting_10d": {
+      "path": "data/backtest_reports/task79_models/HistGradientBoosting_10d.joblib",
+      "sha256": "bea71eca2356e4b7000807c16b94d037dc26d08f97982bafd1533a55c7201409",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59795
+    },
+    "HistGradientBoosting_21d": {
+      "path": "data/backtest_reports/task79_models/HistGradientBoosting_21d.joblib",
+      "sha256": "ad7f7d77b2d68edaf95b83398664c507e29b54d65dc7253e7d3b908ad3a1c514",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59520
+    },
+    "ElasticNet_5d": {
+      "path": "data/backtest_reports/task79_models/ElasticNet_5d.joblib",
+      "sha256": "120afe7c99bbeba6cb6c15ac19833102bd0baeea6db2af9cdc2ef73cc1e4e2df",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59920
+    },
+    "ElasticNet_10d": {
+      "path": "data/backtest_reports/task79_models/ElasticNet_10d.joblib",
+      "sha256": "eda2c6bae486136b728a4a852fa818b8986f6c09f71fb2240b650b17d0b2b072",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59795
+    },
+    "ElasticNet_21d": {
+      "path": "data/backtest_reports/task79_models/ElasticNet_21d.joblib",
+      "sha256": "6bb268e192af94b956f0b900e9953d69adac5417499017af558b66f67abe0a61",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59520
+    },
+    "HuberRegressor_5d": {
+      "path": "data/backtest_reports/task79_models/HuberRegressor_5d.joblib",
+      "sha256": "39a3f686162e60e6ebef914f986c9fb30e885ca0d9e9ea2130d4f3a0fac73e41",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59920
+    },
+    "HuberRegressor_10d": {
+      "path": "data/backtest_reports/task79_models/HuberRegressor_10d.joblib",
+      "sha256": "bd9a4af834f22ffac9221bffece222ed181eaf68434d20eb4ab912311822ce79",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59795
+    },
+    "HuberRegressor_21d": {
+      "path": "data/backtest_reports/task79_models/HuberRegressor_21d.joblib",
+      "sha256": "23e29ba15e80a675f6fca0f86dc65680fe657cca6df4aa64b38d89677a98ccc9",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59520
+    },
+    "SVR_5d": {
+      "path": "data/backtest_reports/task79_models/SVR_5d.joblib",
+      "sha256": "39a08b7320f071009a37df121d062b763859bab2012a1a91c770b0bc0665804c",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59920
+    },
+    "SVR_10d": {
+      "path": "data/backtest_reports/task79_models/SVR_10d.joblib",
+      "sha256": "a20e48ec4192d855ae49222b4a3dc6a70ed5e582a7bde69acdf602ebbf4a46bb",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59795
+    },
+    "SVR_21d": {
+      "path": "data/backtest_reports/task79_models/SVR_21d.joblib",
+      "sha256": "3829fcd6a2e2e4233eaf8b83b687791bcebe38bd2eec1069cfbc1a6ed28e54ef",
+      "model_version": "task79-v1",
+      "feature_schema_hash": "e55ab3e852fe6f45",
+      "training_cutoff": "2026-10-29",
+      "train_rows": 59520
+    }
+  },
+  "live_predictions_total": 375,
+  "new_records_created": 0,
+  "honest_disclosure": [
+    "New models are trained on the same feature schema + walk-forward framework as the 5 existing baselines for apples-to-apples comparison.",
+    "Evaluation uses a single chronological split (train \u2264 2024-06-01, test > 2024-06-01) \u2014 NOT a full 400-sample walk-forward due to compute constraints. Metrics are approximate.",
+    "Live predictions are recorded in PredictionHistory with new model IDs (ExtraTrees, HistGradientBoosting, ElasticNet, HuberRegressor, SVR) + modelVersion task79-v1.",
+    "Existing 5-model baseline predictions are NOT modified.",
+    "Prospective superiority has NOT been proven \u2014 0 matured outcomes for the new models yet.",
+    "Do NOT claim statistical significance or future profitability.",
+    "Sequence models (GRU/LSTM/TCN) were NOT trained \u2014 documented as deferred due to compute/data constraints in the sandbox."
+  ],
+  "limitations": [
+    "Single-split evaluation (not full walk-forward) \u2014 metrics are a rough guide, not a rigorous evaluation.",
+    "SVR is slow to train on large datasets; may have fewer eligible rows if filtered.",
+    "No sequence models (GRU/LSTM) \u2014 the tabular data + sandbox compute constraints make them impractical here.",
+    "No new feature engineering beyond the existing 19 features \u2014 the focus is on new model families."
+  ]
+}
