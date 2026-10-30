@@ -62,6 +62,9 @@ export interface BookSummary {
   realizedNetPnl: number;
   unrealizedPnl: number;
   allocatedCash: number;
+  openMarketValue: number; // Phase 2B: sum(open quantity × latest close)
+  markedEquity: number;   // Phase 2B: cash + openMarketValue
+  netAssetChange: number; // Phase 2B: markedEquity − INITIAL_CAPITAL
 }
 
 export interface LifecycleCounts {
@@ -216,6 +219,25 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
         }
         const entryPrice = entryBar.open;
         const quantity = Math.max(1, Math.floor(ALLOCATION / entryPrice));
+        const allocatedCash = quantity * entryPrice;
+        // Phase 2A: enforce book constraints at entry (not just policy metadata).
+        const openInBook = await db.prospectivePaperTrade.findMany({
+          where: { bookId, state: "open" },
+          select: { symbol: true, allocatedCash: true },
+        });
+        if (openInBook.length >= MAX_CONCURRENT_POSITIONS) {
+          await db.prospectivePaperTrade.update({ where: { id: trade.id }, data: { state: "skipped", skipReason: "max-concurrent-positions-reached" }});
+          continue;
+        }
+        if (openInBook.some((t) => t.symbol === pred.symbol)) {
+          await db.prospectivePaperTrade.update({ where: { id: trade.id }, data: { state: "skipped", skipReason: "one-position-per-stock-per-book" }});
+          continue;
+        }
+        const cashUsed = openInBook.reduce((s, t) => s + (t.allocatedCash ?? 0), 0);
+        if (INITIAL_CAPITAL - cashUsed < allocatedCash) {
+          await db.prospectivePaperTrade.update({ where: { id: trade.id }, data: { state: "skipped", skipReason: "insufficient-cash" }});
+          continue;
+        }
         trade = await db.prospectivePaperTrade.update({
           where: { id: trade.id },
           data: {
@@ -235,9 +257,12 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
         const entryBarIdx = bars.findIndex((b) => b.date === trade.entryDate);
         if (entryBarIdx < 0) continue;
         const h = pred.horizon;
-        const scanEnd = Math.min(bars.length, entryBarIdx + 1 + h);
+        // Phase 2C: scan window = entry session through t+horizon (inclusive, h bars).
+        // The entry bar IS the first strategy bar (SL/TP can be hit on the entry
+        // session itself via a gap). Target = t+h matches the forecast outcome.
+        const scanEnd = Math.min(bars.length, entryBarIdx + h);
         const scanBars: StrategyBar[] = bars
-          .slice(entryBarIdx + 1, scanEnd)
+          .slice(entryBarIdx, scanEnd)
           .map((b) => ({ date: b.date, open: b.open, high: b.high, low: b.low, close: b.close }));
 
         const signal: StrategySignal = {
@@ -345,15 +370,19 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
   const counts = await reconcileCounts();
   const books = await reconcileBooks();
 
-  // Determine truthful status
+  // Determine truthful status (Phase 2D/2E):
+  //   BLOCKED    — required data/inference unavailable
+  //   ACTIVE     — OPEN positions are actually being managed (not just pending_entry)
+  //   EVALUATING — mature forecast outcomes exist but skill evidence insufficient
+  //   READY      — valid setup, no eligible next-session entry yet (or only pending_entry)
+  // Do NOT mark ACTIVE solely because pending_entry > 0 — pending entries waiting for
+  // future sessions (especially stale symbols) are not an active managed lifecycle.
   const status: LifecycleStatus = blocked
     ? "BLOCKED"
-    : counts.tradesByState.open > 0 || counts.tradesByState.pending_entry > 0
+    : counts.tradesByState.open > 0
     ? "ACTIVE"
     : counts.outcomesByStatus.matured > 0
     ? "EVALUATING"
-    : counts.tradesTotal > 0
-    ? "READY"
     : "READY";
 
   const latestBar = await db.ohlcvBar.findFirst({ orderBy: { date: "desc" }, select: { date: true } });
@@ -416,6 +445,13 @@ export async function reconcileCounts(): Promise<LifecycleCounts> {
 
 export async function reconcileBooks(): Promise<BookSummary[]> {
   const trades = await db.prospectivePaperTrade.findMany();
+  // Phase 2B: load the latest OHLCV close per symbol for unrealized mark-to-market.
+  const openSymbols = [...new Set(trades.filter((t) => t.state === "open" && t.symbol).map((t) => t.symbol))];
+  const latestCloseBySymbol = new Map<string, number>();
+  for (const sym of openSymbols) {
+    const lb = await db.ohlcvBar.findFirst({ where: { symbol: sym }, orderBy: { date: "desc" }, select: { close: true } });
+    if (lb) latestCloseBySymbol.set(sym, lb.close);
+  }
   const byBook = new Map<string, typeof trades>();
   for (const t of trades) {
     if (!byBook.has(t.bookId)) byBook.set(t.bookId, []);
@@ -428,14 +464,29 @@ export async function reconcileBooks(): Promise<BookSummary[]> {
     const closed = ts.filter((t) => t.state === "closed");
     const allocatedCash = open.reduce((s, t) => s + (t.allocatedCash ?? 0), 0);
     const realizedNetPnl = closed.reduce((s, t) => s + (t.netPnl ?? 0), 0);
-    // Unrealized: mark-to-market would need the latest close per symbol; compute lazily.
-    // For now, sum the activeStopFinal vs entryPrice difference × quantity (approximate).
-    // The API can compute precise unrealized from latest OHLCV.
-    const unrealizedPnl = 0; // computed on-demand by the API (needs latest close)
+    // Phase 2B: unrealized P&L from the latest observed OHLCV close (NOT the active
+    // stop or zero). For BUY: (latestClose − entryPrice) × quantity. Uses null/
+    // unavailable when the mark is absent.
+    let unrealizedPnl = 0;
+    let openMarketValue = 0;
+    for (const t of open) {
+      const mark = latestCloseBySymbol.get(t.symbol);
+      if (mark != null && t.entryPrice != null && t.quantity != null) {
+        unrealizedPnl += (mark - t.entryPrice) * t.quantity;
+        openMarketValue += mark * t.quantity;
+      }
+    }
+    // Cash: starting capital − open allocated principal + realized net (closed trades
+    // already net of all entry+exit costs + CGT). Entry costs on open positions are
+    // captured when the trade closes (in the legs' totalCost); while open, the
+    // principal is the main cash deduction.
+    const cash = INITIAL_CAPITAL - allocatedCash + realizedNetPnl;
+    const markedEquity = cash + openMarketValue;
+    const netAssetChange = markedEquity - INITIAL_CAPITAL;
     books.push({
       bookId, strategyId: first.strategyId, modelId: first.modelId, horizon: first.horizon ?? 0,
       positions: open.length, closed: closed.length,
-      cash: INITIAL_CAPITAL - allocatedCash, realizedNetPnl, unrealizedPnl, allocatedCash,
+      cash, realizedNetPnl, unrealizedPnl, allocatedCash, openMarketValue, markedEquity, netAssetChange,
     });
   }
   return books;

@@ -4120,3 +4120,39 @@ Remaining limitations:
 ### Files changed
 - NEW: src/lib/latent/risk-levels.ts, src/lib/latent/prospective-lifecycle.ts, scripts/compute_risk_levels.ts, scripts/task77_phase1_audit.ts, scripts/task77_lifecycle_check.ts
 - MODIFIED: prisma/schema.prisma (PredictionRiskLevels model), src/lib/latent/investment-simulator.ts (export atr), src/lib/latent/data-freshness.ts (checkInferenceAvailability async+real), scripts/prospective_paper_trading.ts (lifecycle wrapper), src/app/api/backtest/walk-forward/prospective/route.ts (DB-backed), src/app/api/backtest/strategy-comparison/route.ts (horizon 400 + preview labeling), scripts/task75_integration_check.ts (4 assertions updated), data/backtest_reports/prospective_paper_trading_latest.json (regenerated), db/custom.db.gz (regenerated with Task 77 records), worklog.md.
+
+---
+
+## Task 78 — Final Consolidation: Multi-Sample Strategy Results, Lifecycle Fixes, Research Readiness
+
+**Recovery:** Sandbox reboot restored from a pre-Task-77 repo.tar. Recovered via `.zscripts/restore-from-github.sh` (git reset --hard origin/main → 8a61c0b3). DB restored from custom.db.gz (Task 77 records intact: 375 predictions, 38 risk levels, 114 trades, 375 outcomes).
+
+### Phase 2 — Lifecycle corrections
+- **2A Book constraints:** enforced at entry (max 10 open positions/book, one position per stock/book, 10% allocation cap, sufficient cash). Rejected entries get honest skip reasons.
+- **2B Cash/P&L:** `reconcileBooks` now computes unrealized P&L from the latest OHLCV close per open position (was 0). Added `openMarketValue`, `markedEquity`, `netAssetChange`. `markedEquity = cash + openMarketValue`.
+- **2C Horizon alignment:** fixed off-by-one. Scan window = entry session through t+horizon (inclusive, h bars) — includes the entry bar (SL/TP can be hit on the entry session via a gap). Target = t+h matches the forecast outcome.
+- **2D/2E Status:** ACTIVE only when open positions exist (not just pending_entry). Current state: READY (0 open, 114 pending_entry).
+
+### Phase 3 — Multi-sample historical strategy comparison (REAL RESULTS)
+- 400 walk-forward samples × 5 models × 3 horizons = 6000 candidates. 1089 BUY signals (predicted > +1%).
+- 3267 result rows (1089 × 3 strategies), 0 omitted. ATR(14) overlay applied point-in-time at each decision date.
+- Validation (n=393/strategy): fixed_first_hit netPnl=+178K winRate=49% pf=1.50; trailing winRate=60% netPnl=+15K pf=1.44; scale_out winRate=60% netPnl=−7K pf=1.43.
+- Final-test (n=696/strategy): fixed_first_hit netPnl=+83K winRate=48% pf=1.39; trailing winRate=62% netPnl=−42K pf=1.38; scale_out winRate=55% netPnl=−161K pf=1.31.
+- RETROSPECTIVE EXPLORATORY — do NOT claim significance. fixed_first_hit has the best net P&L (lets winners run to TP3) despite the lowest win rate; trailing/scale-out cut winners short (higher win rate, worse net P&L).
+
+### Phase 5 — Results package
+- `task78_strategy_results_v1.json` — full per-cell metrics (90 cells: 2 periods × 5 models × 3 horizons × 3 strategies).
+- `task78_final_audit.json` — protected artifact hashes, DB counts, status, limitations, readiness.
+
+### Phase 8 — Advance workflow
+- Ran the corrected lifecycle. No new OHLCV (still 2026-10-29). All 114 trades remain pending_entry (no next-session bar). 375 outcomes pending. Idempotent (0 new on re-run). Status: READY.
+
+### Phase 7 — Tests
+- strategy_engine 72/0, task75 71/0, ml_graph 85/0, task77_lifecycle 60/0. All pass.
+
+### Phase 10 — Integrity
+- All 8 protected artifacts unchanged (md5 verified). New files: task78_strategy_results_v1.json, task78_final_audit.json, task78_historical_comparison.ts, task78_final_audit.ts. Modified: prospective-lifecycle.ts (Phase 2 fixes), prospective_paper_trading_latest.json (regenerated).
+
+### Honest limitations
+- 0 closed trades + 0 matured outcomes (prospective period just began). Historical comparison is retrospective. Do NOT claim skill/significance/profitability.
+- Next phase: new ML model training + strategy research, compared fairly against this preserved baseline.

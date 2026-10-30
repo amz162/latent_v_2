@@ -1,0 +1,196 @@
+{
+  "task": "task78_final_audit",
+  "runId": "task78_audit_1793345057794",
+  "createdAt": "2026-10-30T07:24:17.794Z",
+  "gitHead": "8a61c0b3",
+  "status": "READY",
+  "statusReason": "0 open positions (all 114 trades pending_entry — next trading session after 2026-10-29 cutoff has not occurred). ACTIVE requires open positions being managed.",
+  "latestOhlcvSession": "2026-10-29",
+  "dbCounts": {
+    "predictionHistory": 375,
+    "predictionRiskLevels": 38,
+    "prospectivePaperTrade": 114,
+    "paperTradeLeg": 0,
+    "predictionOutcome": 375,
+    "tradesByState": {
+      "pending_entry": 114,
+      "open": 0,
+      "closed": 0,
+      "skipped": 0
+    }
+  },
+  "strategyResults": {
+    "file": "data/backtest_reports/task78_strategy_results_v1.json",
+    "runId": "task78_hist_1793344825932",
+    "buyCandidates": 1089,
+    "resultRows": 3267,
+    "overallByStrategy": [
+      {
+        "period": "validation",
+        "strategyId": "fixed_first_hit",
+        "nEligible": 393,
+        "nCompleted": 393,
+        "nOmitted": 0,
+        "nWinning": 191,
+        "nLosing": 202,
+        "winRate": 48.60050890585242,
+        "grossPnl": 643421.95,
+        "totalCosts": 465681.41,
+        "netPnl": 177740.42,
+        "avgNetPerTrade": 452.27,
+        "profitFactor": 1.502,
+        "exitReasons": {
+          "SL": 120,
+          "TIME_UP": 93,
+          "TP3": 143,
+          "SL_AFTER_TP1": 25,
+          "SL_AFTER_TP2": 12
+        },
+        "partialLegs": 393,
+        "nUnresolved": 93
+      },
+      {
+        "period": "validation",
+        "strategyId": "max_tp_step_trailing",
+        "nEligible": 393,
+        "nCompleted": 393,
+        "nOmitted": 0,
+        "nWinning": 235,
+        "nLosing": 158,
+        "winRate": 59.796437659033074,
+        "grossPnl": 376235.76,
+        "totalCosts": 360996.87,
+        "netPnl": 15238.97,
+        "avgNetPerTrade": 38.78,
+        "profitFactor": 1.442,
+        "exitReasons": {
+          "SL": 120,
+          "TRAILING_SL_AT_TP2": 58,
+          "TIME_UP": 8,
+          "TRAILING_SL_AT_TP1": 177,
+          "TP3": 30
+        },
+        "partialLegs": 393,
+        "nUnresolved": 8
+      },
+      {
+        "period": "validation",
+        "strategyId": "scale_out_50_25_25",
+        "nEligible": 393,
+        "nCompleted": 393,
+        "nOmitted": 0,
+        "nWinning": 237,
+        "nLosing": 156,
+        "winRate": 60.30534351145038,
+        "grossPnl": 379272.34,
+        "totalCosts": 385961.84,
+        "netPnl": -6689.67,
+        "avgNetPerTrade": -17.02,
+        "profitFactor": 1.426,
+        "exitReasons": {
+          "SL": 120,
+          "TIME_UP_AFTER_PARTIALS": 88,
+          "TIME_UP": 5,
+          "SCALE_TP1_TP2_TP3": 143,
+          "SL_AFTER_PARTIALS": 37
+        },
+        "partialLegs": 869,
+        "nUnresolved": 93
+      },
+      {
+        "period": "final-test",
+        "strategyId": "fixed_first_hit",
+        "nEligible": 696,
+        "nCompleted": 696,
+        "nOmitted": 0,
+        "nWinning": 334,
+        "nLosing": 362,
+        "winRate": 47.98850574712644,
+        "grossPnl": 853531.1,
+        "totalCosts": 770157.35,
+        "netPnl": 83373.96,
+        "avgNetPerTrade": 119.79,
+        "profitFactor": 1.389,
+        "exitReasons": {
+          "TIME_UP": 201,
+          "SL_AFTER_TP2": 33,
+          "TP3": 238,
+          "SL": 156,
+          "SL_AFTER_TP1": 68
+        },
+        "partialLegs": 696,
+        "nUnresolved": 201
+      },
+      {
+        "period": "final-test",
+        "strategyId": "max_tp_step_trailing",
+        "nEligible": 696,
+        "nCompleted": 696,
+        "nOmitted": 0,
+        "nWinning": 433,
+        "nLosing": 263,
+        "winRate": 62.212643678160916,
+        "grossPnl": 596026.02,
+        "totalCosts": 637882.49,
+        "netPnl": -41856.29,
+        "avgNetPerTrade": -60.14,
+        "profitFactor": 1.38,
+        "exitReasons": {
+          "TRAILING_SL_AT_TP1": 286,
+          "TRAILING_SL_AT_TP2": 127,
+          "SL": 156,
+          "TP3": 33,
+          "TIME_UP": 94
+        },
+        "partialLegs": 696,
+        "nUnresolved": 94
+      },
+      {
+        "period": "final-test",
+        "strategyId": "scale_out_50_25_25",
+        "nEligible": 696,
+        "nCompleted": 696,
+        "nOmitted": 0,
+        "nWinning": 383,
+        "nLosing": 313,
+        "winRate": 55.02873563218391,
+        "grossPnl": 497478.73,
+        "totalCosts": 658438.44,
+        "netPnl": -160959.63,
+        "avgNetPerTrade": -231.26,
+        "profitFactor": 1.309,
+        "exitReasons": {
+          "TIME_UP_AFTER_PARTIALS": 109,
+          "SL_AFTER_PARTIALS": 101,
+          "SCALE_TP1_TP2_TP3": 238,
+          "SL": 156,
+          "TIME_UP": 92
+        },
+        "partialLegs": 1478,
+        "nUnresolved": 201
+      }
+    ]
+  },
+  "protectedArtifacts": {
+    "data/ml_predictions_multi.json": "41442cd7ece9d137ec19310e2d771f55",
+    "data/backtest_reports/walk_forward_latest.json": "544192bd40e32caf093e07e3d1f1cece",
+    "data/backtest_reports/pilot25_robustness.json": "2ca441fcd5627b688975a315daebf139",
+    "data/backtest_reports/walk_forward_trading_latest.json": "0ae5b02bb00801bc9877921c7645f049",
+    "data/backtest_reports/walk_forward_trading_robustness.json": "6cfd937548efdff027b644ec1b543c80",
+    "data/backtest_reports/walk_forward_portfolio_latest.json": "442cd92c95c8e592999de1bc8e601f8c",
+    "data/backtest_reports/prospective_runs/latest.json": "485de9b98969765561096a9a3e15b78f",
+    "data/backtest_reports/runs/pilot25_step50_20261028/manifest.json": "0be22d420d620e1a9772aec8bf2e5305"
+  },
+  "limitations": [
+    "ALL 114 trades pending_entry + ALL 375 outcomes pending — prospective period just began (cutoff 2026-10-29); no future sessions exist yet.",
+    "Historical strategy comparison is RETROSPECTIVE + EXPLORATORY — Task 76 exit policies + ATR overlay introduced after historical results were inspected. Do NOT claim significance.",
+    "5 stale symbols (BYCO=2021, ENGRO=2025, PRL/WTL/ANL=2026-10-21) — trades stay pending_entry honestly until new data arrives.",
+    "Trade-level results (fixed PKR 100K notional) — NOT a funded portfolio. Cash-constrained portfolio metrics marked unavailable (no open positions to reconcile).",
+    "Do NOT claim predictive skill, statistical significance, or future profitability."
+  ],
+  "readiness": {
+    "nextPhase": "New ML model research + training, then separate strategy development/validation.",
+    "baseline": "Existing 5-model × 3-horizon walk-forward baseline preserved for fair comparison.",
+    "criteria": "New models must beat the existing baseline on genuinely matured prospective outcomes (not retrospective)."
+  }
+}
