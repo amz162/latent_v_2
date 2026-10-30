@@ -1,5 +1,6 @@
 "use client";
 import{useEffect,useState,useRef,Fragment}from"react";
+import{ModelRegistryDashboard}from"./ModelRegistryDashboard";
 import{Card,CardContent,CardHeader,CardTitle}from"@/components/ui/card";
 import{Button}from"@/components/ui/button";
 import{Badge}from"@/components/ui/badge";
@@ -223,6 +224,10 @@ export function AiModelSignals(){
  const ensBt=data?Object.entries(data.ensembleBacktesting||{}).map(([name,b]:[string,any])=>({name,...b})):[];
 
  return(<div className="min-h-screen bg-[#0A0E1A]">
+  {/* Task 85: Model Registry + Strategy Results Dashboard */}
+  <div className="p-4 max-w-7xl mx-auto">
+    <ModelRegistryDashboard/>
+  </div>
  <main className="px-3 md:px-6 py-4 md:py-6 max-w-5xl mx-auto">
   <div className="mb-4 md:mb-6">
    <h1 className="text-xl md:text-2xl font-bold text-[#F4F7FB] flex items-center gap-2"><Brain className="h-5 w-5 md:h-6 md:w-6 text-[#00E676]"/>AI Model Signals</h1>
