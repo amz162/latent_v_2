@@ -2,15 +2,14 @@
   "status": "dependency_blocked_after_attempts",
   "model": "Moirai",
   "repo": "https://github.com/redoules/moirai",
-  "progress": "uni2ts installed + jaxtyping/hydra/jax installed but version conflicts remain",
-  "issues": [
-    "1. uni2ts requires torch<2.5 but installed torch is 2.15.0+cpu \u2014 VERSION CONFLICT",
-    "2. uni2ts requires scipy~=1.11.3 but installed scipy is 1.14.1 \u2014 VERSION CONFLICT",
-    "3. uni2ts requires einops==0.7.* but installed einops is 0.8.1 \u2014 VERSION CONFLICT",
-    "4. Missing dep chain: jaxtyping \u2192 hydra \u2192 jax \u2014 each needs separate install",
-    "5. JAX installation breaks numpy/scipy binary compatibility"
+  "checkpoint": "Salesforce/moirai-1.1-R-small (available on HuggingFace)",
+  "blocking_issue": "JAX compiled against NumPy 2.0 C-API but installed NumPy is 1.26.4 (C-API 0x11). Binary incompatibility cannot be fixed without upgrading NumPy to 2.x (which breaks pandas 2.1.4).",
+  "version_conflicts": [
+    "uni2ts requires torch<2.5 (have 2.15.0+cpu)",
+    "uni2ts requires scipy~=1.11.3 (have 1.14.1)",
+    "uni2ts requires einops==0.7.* (have 0.8.1)",
+    "JAX requires numpy>=2.0 (have 1.26.4)"
   ],
-  "how_to_fix": "Create a SEPARATE virtual environment with torch>=2.1,<2.5 (CPU) + scipy~=1.11.3 + einops==0.7.* + jaxtyping + hydra + jax + uni2ts. This separate env can coexist with the main env (which has torch 2.15.0+cpu for Chronos/Time-LLM).",
-  "checkpoint": "Salesforce/moirai-1.1-R-small on HuggingFace \u2014 IS available, just the loader (uni2ts) has strict version requirements",
-  "minimum_requirements": "Separate venv with torch<2.5 + scipy~=1.11.3 + einops==0.7.* + jax + hydra + jaxtyping + uni2ts"
+  "how_to_fix": "Create a SEPARATE virtual environment with: torch>=2.1,<2.5 (CPU) + numpy>=2.0 + scipy~=1.11.3 + einops==0.7.* + jax + jaxtyping + hydra + uni2ts. Run Moirai inference in this separate env, save results to the shared project directory.",
+  "minimum_requirements": "Separate venv (~2GB disk) with compatible versions for all uni2ts dependencies"
 }
