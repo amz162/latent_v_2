@@ -11915,3 +11915,15 @@ prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `m
  GET /api/backtest/task81-results 200 in 395ms (compile: 369ms, render: 26ms)
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
  GET /api/backtest/strategy-comparison?symbol=LUCK&horizon=5 200 in 430ms (compile: 324ms, render: 106ms)
+▲ Next.js 16.1.3 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.15.153:3000
+
+✓ Starting...
+✓ Ready in 1294ms
+○ Compiling / ...
+ GET / 200 in 13.4s (compile: 13.0s, render: 376ms)
+ GET / 200 in 57ms (compile: 9ms, render: 48ms)
+ GET /api/models/registry 200 in 3.0s (compile: 3.0s, render: 37ms)
+ GET /api/backtest/task81-results 200 in 776ms (compile: 724ms, render: 52ms)
+ GET / 200 in 677ms (compile: 620ms, render: 57ms)
