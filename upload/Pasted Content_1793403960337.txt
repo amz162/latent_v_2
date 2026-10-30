@@ -1,0 +1,1077 @@
+# TASK 91 — COMPLETE MODEL IDENTITY VERIFICATION, FOUNDATION MODEL INTEGRATION, FULL OOS TRAINING & PRODUCTION VALIDATION
+
+## PRIMARY MISSION
+
+Continue from the latest actual GitHub `origin/main` HEAD.
+
+Task 90 reported commit:
+`574dbd42`
+
+Task 90 achieved substantial progress:
+- Chronos official small-checkpoint inference.
+- Lag-Llama official checkpoint inference.
+- Time-LLM GPT-2-based experimental implementation.
+- FinGPT GPT-2-based sentiment experiment.
+- Moirai checkpoint loaded, but forecasting inference was not completed.
+- GM announcements and fundamentals data acquisition.
+- GM market proxy.
+- Browser interaction testing through `agent-browser`.
+- Existing model and dashboard integrations.
+
+However, important model identity, sample-size and registry-count issues remain.
+
+The current public repository README describes **65 models and 13 ensemble methods**, while earlier Task 82–90 reports used 58 canonical entries and 11 supplemental entries.
+
+The actual current source code must determine the definitive registry and ensemble counts.
+
+**Do not use old task summaries as a substitute for inspecting the latest code.**
+
+The objective is to complete all actual model families, all base models, all 13-or-current ensemble methods, all statistical/classification/deep-learning systems, all foundation models where executable, all rule-based systems, genuine OOS evaluation, cost-aware strategy testing and final full-stack verification.
+
+This is one comprehensive task. Do not split its objectives into future small tasks.
+
+---
+
+# 1. SANDBOX EXECUTION LIMIT — 150 SECONDS MAXIMUM
+
+Every individual sandbox command, script execution, dependency operation, training operation, build or test execution must finish within **150 seconds**.
+
+Create or reuse:
+
+`scripts/task91_runner.py`
+
+The runner must support:
+
+- `--budget-seconds 150`
+- Resumable jobs.
+- Checkpoints.
+- Model-by-model execution.
+- Small batches of lightweight models.
+- Separate heavy-model jobs.
+- Resumable downloads.
+- Resumable training.
+- Optimizer-state checkpoints where applicable.
+- Prediction-generation jobs.
+- Evaluation jobs.
+- Ensemble fitting.
+- Data ingestion.
+- API tests.
+- Browser tests.
+- Build verification.
+
+### Execution rules
+
+1. Benchmark each job before scheduling.
+2. Group 5–10 lightweight models only when the estimated combined duration fits.
+3. Run heavy models individually.
+4. Split long training into resumable epochs/steps.
+5. Split large inference datasets into chunks.
+6. Save each completed artifact immediately.
+7. Save metrics and predictions after each completed job.
+8. Skip previously completed valid jobs.
+9. Retry a failed job only after changing its implementation, configuration or input.
+10. Continue to the next job whenever an individual model fails.
+11. Never launch multiple memory-intensive models simultaneously.
+12. Never launch duplicate builds or training processes.
+13. Update progress after every completed execution.
+14. Continue through successive executions until all feasible work is complete.
+
+Create:
+
+`data/backtest_reports/task91/task91_progress.json`
+
+`data/backtest_reports/task91/task91_execution_plan.json`
+
+`data/backtest_reports/task91/batch_logs/`
+
+`data/backtest_reports/task91/checkpoints/`
+
+**Do not finish after creating the runner or plan. Execute actual work.**
+
+---
+
+# 2. RECONCILE THE REAL CURRENT GITHUB MODEL REGISTRY
+
+First inspect:
+- Latest `git status`.
+- Latest `origin/main` SHA.
+- `src/lib/latent/ensemble.ts`.
+- `ALL_MODELS`.
+- All ensemble builder functions.
+- All 10 model tiers.
+- All training scripts.
+- Task 82–90 audit and evidence artifacts.
+- Latest Task 85/86/89/90 APIs and UI.
+
+### Important count discrepancy
+
+Previous reports referenced:
+- 58 canonical models.
+- 11 supplemental entries.
+
+The current public README instead reports:
+- 65 models.
+- 13 ensemble methods.
+
+Resolve this from actual source code.
+
+Do not blindly force the old 58+11 accounting.
+
+Generate a complete inventory from the current `ALL_MODELS`, every actual model family, supplemental implementations and ensemble builder methods.
+
+Maintain distinct counts for:
+
+1. Canonical base-model registry entries.
+2. Supplemental models.
+3. Ensemble methods.
+4. Rule-based components.
+5. Duplicate aliases.
+6. Unique executable implementations.
+
+Every unique implementation must be mapped to one or more clearly identified registry entries.
+
+Do not double-count aliases.
+
+Do not omit a model because it was introduced after Task 82.
+
+Do not count individual horizons, symbols, prediction records or trading legs as separate models.
+
+Create:
+
+`data/backtest_reports/task91/task91_registry_reconciliation.json`
+
+`data/backtest_reports/task91/task91_registry_final.json`
+
+---
+
+# 3. CORRECT FOUNDATION MODEL IDENTITY — CRITICAL
+
+Task 90 produced results under some family names using local GPT-2 substitutes.
+
+These implementations must be accurately classified.
+
+## A. Chronos
+
+Task 90 reports:
+- Official Amazon `chronos-t5-tiny`.
+- 8 MB checkpoint.
+- 172 predictions.
+- Directional accuracy 0.4767.
+
+Actions:
+1. Verify actual checkpoint identity and loadability.
+2. Verify the inference pipeline against the official implementation.
+3. Generate OOS forecasts on the common PSX evaluation cohort.
+4. Extend beyond the original 172 predictions where practical.
+5. Evaluate all supported horizons.
+6. Compare with zero-return and training-only baselines.
+7. Save reproducible predictions and metrics.
+
+Status must remain pretrained inference unless actual PSX fine-tuning/adaptation was performed.
+
+## B. Lag-Llama
+
+Task 90 reports:
+- Official checkpoint.
+- 29.5 MB weights.
+- Five predictions.
+- Directional accuracy 0.60.
+
+Five observations are insufficient evidence for a dependable model-performance claim.
+
+Actions:
+1. Verify official checkpoint identity and configuration.
+2. Verify the patched GluonTS pipeline.
+3. Verify reproducibility.
+4. Expand evaluation over a meaningful number of symbols and historical timestamps.
+5. Run supported 5d, 10d and 21d forecasts.
+6. Evaluate against appropriate baselines.
+7. Calculate confidence intervals.
+8. Save per-symbol predictions and metrics.
+
+Do not report 0.60 as a reliable predictive advantage with n=5.
+
+## C. Moirai — COMPLETE THE ACTUAL INFERENCE PIPELINE
+
+Task 90 loaded:
+- `Salesforce/moirai-1.1-R-small`.
+- Approximately 55.3 MB checkpoint.
+- 14M parameters.
+- State dictionary loaded.
+- Forward forecasting pipeline still incomplete.
+
+This remains a major outstanding item.
+
+Actions:
+1. Inspect the actual `uni2ts` implementation and configuration.
+2. Use the official supported `MoiraiForecast` and predictor pipeline.
+3. Resolve the previous package/API compatibility issues without replacing the architecture.
+4. Build a single-series forecast smoke test.
+5. Verify actual model output shape and distribution.
+6. Generate chronological PSX predictions.
+7. Expand to multiple symbols.
+8. Evaluate supported horizons.
+9. Save a real checkpoint/inference configuration and OOS predictions.
+
+Do not count a loaded checkpoint as an evaluated model.
+
+Do not mark Moirai complete until it generates and evaluates real predictions.
+
+## D. Time-LLM — DISTINGUISH THE OFFICIAL MODEL FROM THE GPT-2 EXPERIMENT
+
+Task 90 used GPT-2 small with price information converted into text prompts:
+- Four predictions.
+- Directional accuracy 0.50.
+
+This is not sufficient evidence of Time-LLM forecasting.
+
+Actions:
+1. Inspect the official Time-LLM architecture and repository.
+2. Verify whether its actual time-series reprogramming and forecasting pipeline can run with a supported small/frozen LLM backbone.
+3. Check CPU feasibility.
+4. Implement a faithful lightweight Time-LLM configuration if practical.
+5. Run genuine time-series forecasting, not merely free-form language generation.
+6. Generate proper numerical forecast values.
+7. Produce OOS metrics on the common PSX cohort.
+
+Keep the earlier GPT-2 prompt experiment as an experimental baseline, not as official Time-LLM.
+
+Use accurate statuses:
+- Official Time-LLM adapted/trained and evaluated.
+- Faithful local Time-LLM implementation evaluated.
+- Experimental GPT-2 prompt baseline only.
+- Blocked after genuine attempts.
+
+## E. FinGPT — DISTINGUISH OFFICIAL FinGPT FROM GPT-2 SENTIMENT PROXY
+
+Task 90 changed the original failed numerical GPT-2 approach to generated financial commentary and word-count-based sentiment.
+
+Reported:
+- GPT-2 small.
+- 21 predictions.
+- 16/21 correct.
+- Directional accuracy 0.7619.
+- This is explicitly not the official FinGPT.
+
+This result must not be presented as an official FinGPT model or as a production-grade trading edge.
+
+Actions:
+1. Inspect the official FinGPT implementation and checkpoint options.
+2. Verify model identity, weights and package requirements.
+3. Check the supported financial sentiment/classification task.
+4. Use genuine dated financial texts where available.
+5. Use real labels derived from a valid historical target or human/source-provided sentiment labels.
+6. Prevent text publication timestamps from leaking future information.
+7. Evaluate the official implementation where feasible.
+8. Compare it with the existing GPT-2 sentiment proxy.
+9. Preserve the proxy result under an honest experimental name.
+
+The GPT-2 sentiment proxy must not retain an official `FinGPT` identity.
+
+### Foundation model status rules
+
+Use separate statuses:
+
+- `official_pretrained_inference_oos_evaluated`
+- `official_finetuned_oos_evaluated`
+- `official_adapted_oos_evaluated`
+- `faithful_local_architecture_trained_oos_evaluated`
+- `experimental_proxy_evaluated`
+- `dependency_blocked_after_attempts`
+- `resource_blocked_after_attempts`
+
+Do not claim inference-only as training.
+
+Do not claim an unrelated GPT-2 experiment as an official foundation model.
+
+---
+
+# 4. MODEL TRAINING AND EVALUATION — ALL CURRENT MODELS
+
+After reconciliation, explicitly process every current model entry.
+
+No model family may be omitted.
+
+## Classical ML
+
+Inspect and validate:
+- XGBoost.
+- LightGBM.
+- CatBoost.
+- Random Forest.
+- Ridge Regression.
+- ExtraTrees.
+- HistGradientBoosting.
+- ElasticNet.
+- HuberRegressor.
+- SVR.
+- All registered CL copies and variants.
+- Any additional model discovered in the latest source.
+
+Verify actual artifact identity and OOS evidence.
+
+Do not retrain valid models unnecessarily.
+
+## Deep learning
+
+Inspect:
+- PatchTST.
+- N-BEATS.
+- TimesNet.
+- Informer.
+- LSTM.
+- GRU.
+- CNN-LSTM.
+- Transformer-LSTM.
+- TabNet.
+- Any additional registered architecture.
+
+Verify:
+- Real architecture.
+- Model parameters.
+- Checkpoint loadability.
+- Training configuration.
+- Feature schema.
+- Target.
+- Training sample range.
+- OOS prediction provenance.
+- Baseline comparison.
+
+Recover any model whose status and evidence disagree.
+
+## Statistical models
+
+Complete/verify:
+- ARIMA.
+- Kalman Filter.
+- Prophet.
+- Holt-Winters.
+- GARCH.
+- All other registered statistical models.
+
+Preserve previous fixes:
+- ARIMA numpy forecast indexing.
+- Kalman state-space implementation.
+- Prophet timezone-naive `ds` handling.
+
+Do not regress recovered models.
+
+Each model needs an actual fitted state and genuine OOS predictions.
+
+## Classifiers
+
+Complete every registered:
+- CL-2 classifier.
+- PI model.
+- CG classifier.
+- Classification-based X/meta-label model.
+- Additional registered classifiers.
+
+For each:
+- Verify target and label generation.
+- Check class balance.
+- Use leakage-safe chronological splits.
+- Use training-only preprocessing and imbalance handling.
+- Produce OOF predictions where meta-models need them.
+- Evaluate untouched final-test samples.
+
+Metrics:
+- ROC-AUC.
+- PR-AUC.
+- Precision.
+- Recall.
+- F1.
+- Balanced accuracy.
+- Log loss.
+- Confusion matrix.
+- Class prevalence.
+- Calibration where meaningful.
+
+Do not use high ROC-AUC with extreme imbalance as sufficient evidence of quality.
+
+---
+
+# 5. ALL ENSEMBLES — COMPLETE THE CURRENT IMPLEMENTATIONS
+
+Read the actual latest ensemble builder code.
+
+The public README reports 13 blending methods. Verify and process every actual implementation, including:
+
+- Majority Vote.
+- Probability-Weighted.
+- Tier-Weighted.
+- CL-Ensemble.
+- CL-Extender.
+- CL-2 Ensemble.
+- PI-Ensemble.
+- GM-Model.
+- CG-Ensemble.
+- X-Ensemble.
+- Gian-Ensemble.
+- Gian-Extender.
+- M-Ensemble.
+- Final Consensus logic.
+
+The exact current source code determines the implementation count.
+
+### Learned/meta ensembles
+
+For each ensemble with trainable weights or a meta-model:
+
+1. Generate chronological OOF predictions.
+2. Align predictions by model, symbol, timestamp, horizon and sample ID.
+3. Use only base predictions available at that historical point.
+4. Fit the meta-model on OOF training data.
+5. Tune weights on validation data only.
+6. Freeze weights before final-test.
+7. Evaluate on untouched final-test.
+8. Save fitted weights and component artifact references.
+
+### Fixed aggregators
+
+For deterministic aggregators:
+- Evaluate aligned OOS predictions.
+- Optimize weights only if that is part of the actual implementation.
+- Fit any optimizable weights using OOF/validation only.
+- Never fit on final-test.
+
+### Ensemble evidence
+
+Every ensemble must report:
+- Components.
+- Component sample coverage.
+- OOF sample count.
+- Validation sample count.
+- Final-test sample count.
+- Metrics.
+- Baseline comparison.
+- Confidence interval where supported.
+- Artifact path.
+- Fitting status.
+
+Do not mark an ensemble evaluated merely because its base models are evaluated.
+
+---
+
+# 6. GM FOUR-PILLAR SYSTEM — VERIFY REAL DATA AND CORRECT SEMANTICS
+
+Task 90 reports:
+- Announcements: PSX scrape plus AskAnalyst filing records.
+- Fundamental: AskAnalyst ratios/income statements.
+- Macro: cross-sectional average of 10 pilot25 stocks used as a proxy because KSE-100 data was unavailable.
+
+### A. Announcements
+
+Reported data:
+- 1,410 PSX announcement rows.
+- 3,319 AskAnalyst filing records.
+- 24 symbols.
+
+Verify:
+- Actual source provenance.
+- Original publication timestamps.
+- Symbol mapping.
+- Filing/report types.
+- Duplicate records.
+- Document links.
+- Data coverage by symbol and year.
+- Point-in-time availability.
+
+Only use an announcement in features after its real publication timestamp.
+
+### B. Fundamental data
+
+Reported:
+- 12,622 financial-ratio records.
+- 24 stocks.
+- Annual and quarterly financial statements.
+
+Verify:
+- Reporting period.
+- Actual publication date.
+- Revision date/version where available.
+- Units and scaling.
+- Ratio formulas.
+- Duplicate and revised records.
+- Missing periods.
+- Symbol coverage.
+
+A quarter's financial data must not enter features before it was actually published.
+
+### C. AskAnalyst API and external data governance
+
+Inspect the actual API integration.
+
+Verify:
+- Authentication method.
+- Data provenance.
+- Terms/license and authorized usage.
+- Rate limits.
+- Caching.
+- Whether historical data may be stored and used for model training.
+- Whether derived-data redistribution is allowed.
+
+Do not commit API tokens, secrets or private responses containing credentials.
+
+Do not assume public accessibility means unlimited redistribution rights.
+
+### D. Macro model — correct the market proxy identity
+
+Task 90 generated 2,479 dates by averaging 10 pilot25 stocks.
+
+This is an internal cross-sectional stock-market proxy, not a genuine external macroeconomic dataset.
+
+Do not present it as KIBOR, inflation, Brent, currency or official macro data.
+
+Rename/describe the proxy accurately as a market-internal indicator or cross-sectional market proxy.
+
+Investigate legitimate historical sources for:
+- KIBOR/policy rates.
+- Inflation.
+- Exchange rates.
+- Brent/oil.
+- Foreign reserves.
+- GDP.
+- Official macroeconomic indicators.
+
+Capture original dates, publication times and revisions.
+
+If real macro history is available and authorized, build point-in-time features.
+
+If not, keep the genuine macro pillar unavailable, but retain the separately named market proxy.
+
+### E. GM training/evaluation
+
+Train/optimize each valid pillar on genuine data:
+- Technical.
+- Announcements.
+- Fundamental.
+- Macro, only with genuine macro data.
+
+Evaluate each component separately and the combined GM ensemble.
+
+Use OOF predictions for any learned weight fitting.
+
+Do not claim that a market-proxy substitution is equivalent to a real macro pillar.
+
+---
+
+# 7. POINT-IN-TIME DATA AND WALK-FORWARD EVALUATION
+
+Use the existing integrity framework:
+
+`scripts/ml_integrity.py`
+
+Mandatory:
+- Per-symbol forward targets.
+- Immature target removal.
+- Chronological train/validation/test splits.
+- Horizon-specific maturity purge.
+- Training-only preprocessing.
+- Point-in-time universe selection.
+- No future-volume leakage.
+- No full-history replay.
+- No final-test tuning.
+- Correct source timestamp for announcement/fundamental/macro records.
+
+Supported horizons:
+- 5d.
+- 10d.
+- 21d.
+
+Where appropriate use:
+- canonical8.
+- pilot25.
+- pilot50.
+- full_db.
+
+Do not claim a full_db result unless the evaluation actually covers the eligible database universe.
+
+### Common evaluation cohorts
+
+Create standardized evaluation cohorts so models can be fairly compared.
+
+For each model, report:
+- Training samples.
+- Validation samples.
+- Final-test samples.
+- Date range.
+- Symbols.
+- Horizon.
+- Feature schema.
+- Baselines.
+- Missing sample reasons.
+
+For regression:
+- MAE.
+- RMSE.
+- R².
+- Directional accuracy.
+
+For classification:
+- ROC-AUC.
+- PR-AUC.
+- Precision.
+- Recall.
+- F1.
+- Balanced accuracy.
+- Log loss.
+- Calibration.
+
+Where possible calculate:
+- 95% confidence intervals.
+- Temporal block bootstrap.
+- Symbol/date-aware uncertainty.
+- Multiple comparison correction.
+
+Do not rank models across incompatible cohorts without explicitly showing coverage differences.
+
+---
+
+# 8. EXPAND FOUNDATION MODEL SAMPLE SIZES
+
+The previous foundation model results have very small sample counts:
+
+| Model | Task 90 sample count |
+|---|---:|
+| Chronos | 172 |
+| Time-LLM GPT-2 proxy | 4 |
+| Lag-Llama | 5 |
+| FinGPT GPT-2 sentiment proxy | 21 |
+| Moirai | 0 predictions |
+
+Do not use these values as production evidence.
+
+Once the genuine pipelines are verified, expand all eligible foundation-model evaluations using the same historical sample definition wherever possible.
+
+Use resumable per-symbol and per-date jobs.
+
+For every model produce:
+- OOS MAE.
+- OOS RMSE.
+- R² where meaningful.
+- Directional accuracy.
+- Sample count.
+- Coverage.
+- Baselines.
+- Confidence intervals.
+- Inference-only versus adapted status.
+
+A model with n=4 or n=5 cannot be treated as a dependable winner.
+
+Keep the GPT-2 experimental proxy separate from official foundation model comparisons.
+
+---
+
+# 9. MAJORITY VOTE AND ENSEMBLE ROBUSTNESS
+
+Task 87 reported Majority Vote h=5d directional accuracy 0.565 from 400 samples, while other horizons were not significant.
+
+Reproduce all results from saved sample-level predictions.
+
+Use:
+- Same sample IDs.
+- Same symbols and dates.
+- Same horizons.
+- Same final-test period.
+- Temporal and cross-sectional dependence-aware bootstrap.
+- Confidence intervals.
+- Multiple comparison adjustments.
+- Component-level comparison.
+
+Investigate validation/final-test differences.
+
+Do not fit weights using final-test samples.
+
+Do not promote Majority Vote based solely on a 0.565 directional accuracy.
+
+If dependence-aware confidence intervals include 0.50, state that the original significance claim is not robust.
+
+---
+
+# 10. COST-AWARE TRADING PERFORMANCE — ALL ELIGIBLE MODELS
+
+Use real simulator behavior and preserve:
+- Task 57 chronological execution.
+- SL-first same-candle priority.
+- TP1/TP2 milestone handling.
+- TP3 final target.
+- Task 76 strategy definitions.
+- Task 80 PSX User Schedule V2.
+
+Cost profile:
+
+`psx_user_schedule_v2`
+
+Tax scenarios:
+- ATL 15%.
+- NON-ATL 30%.
+
+Strategies:
+- Fixed First Hit.
+- Max TP Step Trailing.
+- Scale Out 50/25/25.
+
+Risk variants:
+- Baseline.
+- `atr_tp1_rr_1_1_v1`.
+- `atr_min_net_rr_2_v1`.
+
+For all eligible model/ensemble predictions where sample coverage permits, calculate:
+- Gross P&L.
+- Net P&L.
+- Win rate.
+- Profit factor.
+- Maximum drawdown.
+- Average gain/loss.
+- Eligible signal count.
+- Skipped count.
+- Trade count.
+- Exposure.
+- Evaluation period.
+- Sample count.
+
+Keep validation and final-test separate.
+
+Do not count scale-out legs as independent forecast positions.
+
+Do not call a prediction model profitable unless its actual net strategy result supports that claim.
+
+---
+
+# 11. PROSPECTIVE PAPER-TRADE LIFECYCLE
+
+Inspect current Task 77 lifecycle records, processor and endpoint:
+
+`/api/backtest/walk-forward/prospective`
+
+Complete/verify an incremental idempotent processor.
+
+It must:
+- Use real persisted prediction IDs.
+- Process newly available OHLCV sessions.
+- Avoid duplicate entries.
+- Persist actual fills only.
+- Preserve pending/open/closed/skipped states.
+- Follow chronological SL-first execution.
+- Track best target reached separately from realized outcome.
+- Update matured outcomes only when data is available.
+- Apply PSX V2 costs.
+- Keep stale symbols pending.
+- Resume safely after interruption.
+
+Test:
+- Duplicate invocation.
+- Interrupted execution.
+- Missing OHLCV.
+- Stale prices.
+- Pending entry.
+- Open/closed transitions.
+- Same-candle SL/TP.
+- TP1/TP2/TP3 tracking.
+- Realized net P&L.
+
+Do not invent fills, outcomes or future market prices.
+
+---
+
+# 12. BACKEND API, UI AND DOCUMENTATION
+
+Inspect and preserve current APIs:
+- `/api/models/registry`
+- `/api/backtest/task81-results`
+- `/api/backtest/walk-forward`
+- `/api/backtest/per-stock-walk-forward`
+- `/api/backtest/walk-forward/prospective`
+
+Update them using the definitive latest registry and verified artifact evidence.
+
+### AI Model dashboard
+
+Display:
+- Every current base model.
+- All supplemental models.
+- All ensemble methods.
+- Official foundation versus local proxy distinction.
+- Training/fitting/inference status.
+- OOS sample count.
+- Metrics and baselines.
+- Artifact identity.
+- Exact blockers.
+- Data provenance.
+
+### GM dashboard
+
+Show distinct pillars:
+- Technical.
+- Announcements.
+- Fundamental.
+- Actual Macro, if available.
+- Market Proxy, clearly distinguished from external Macro.
+
+### Foundation models
+
+Clearly display:
+- Official model.
+- Local implementation.
+- Experimental proxy.
+- Inference-only.
+- Fine-tuned/adapted.
+
+Do not allow the UI to label GPT-2 sentiment proxy as official FinGPT.
+
+### README / project documentation
+
+Update model and ensemble counts only after reconciliation with actual code.
+
+Do not leave README claiming outdated model counts or overstated official-model support.
+
+Document the true data and inference limitations.
+
+---
+
+# 13. BROWSER TESTING AND CI
+
+Task 90 used `agent-browser` and created a GitHub Actions workflow.
+
+Verify actual current workflow and execution results.
+
+Do not assume workflow creation means a successful run.
+
+Run local `agent-browser` where available.
+
+Verify:
+- Application load.
+- AI Models tab.
+- Complete model count.
+- Foundation model identity/status.
+- Ensemble section.
+- Model detail view.
+- Task 81 strategy selectors.
+- Walk-forward selectors.
+- Per-stock matrix.
+- GM pillar presentation.
+- Prospective status.
+- Desktop layout.
+- Mobile layout.
+- Network failures.
+- Console errors.
+
+If the current GitHub Actions workflow is supported:
+- Ensure browser binaries are installed in CI.
+- Ensure test server starts correctly.
+- Run actual interaction tests.
+- Save screenshots and test reports.
+- Fix failures.
+- Verify the latest run result.
+
+Curl-only verification must not be called browser interaction testing.
+
+---
+
+# 14. PERFORMANCE AND RESOURCE PROTECTION
+
+Environment is approximately 4 GB RAM and CPU-only.
+
+Preserve:
+- OOM-safe webpack configuration.
+- 1 GB Node heap cap.
+- Existing valid PyTorch CPU installation.
+- Chronos CPU environment.
+- Lag-Llama compatibility patches.
+- Moirai dependencies where compatible.
+- Existing model artifacts.
+
+Do not remove installed packages merely to simplify requirements.
+
+Do not run simultaneous heavy models.
+
+Avoid unnecessary CUDA packages.
+
+Use small, faithful configurations and checkpointing.
+
+Do not delete existing valid model artifacts or historical datasets.
+
+---
+
+# 15. TESTS AND QUALITY CONTROL
+
+Add/update tests for:
+
+- Definitive registry counts.
+- All current model IDs covered.
+- All current ensemble builders covered.
+- Foundation model identity.
+- No false FinGPT/Time-LLM classification.
+- Moirai prediction reproducibility.
+- Chronos/Lag-Llama sample alignment.
+- Time-series chronology.
+- Target maturity purge.
+- OOF ensemble leakage.
+- Majority Vote uncertainty.
+- GM data provenance.
+- Publication-time feature availability.
+- AskAnalyst data governance.
+- Macro versus market proxy distinction.
+- PSX cost model.
+- Prospective idempotency.
+- API schemas.
+- UI status accuracy.
+- Browser workflow execution.
+
+Run:
+- Unit tests.
+- Integration tests.
+- Lint.
+- TypeScript checks.
+- API tests.
+- Production build.
+- Browser interaction tests.
+
+Each execution must remain under 150 seconds. Split into independent bounded operations.
+
+Do not disable tests to force success.
+
+---
+
+# 16. VERSIONED OUTPUTS
+
+Save all new outputs under:
+
+`data/backtest_reports/task91/`
+
+Required:
+
+- `task91_summary.json`
+- `task91_execution_plan.json`
+- `task91_progress.json`
+- `task91_registry_reconciliation.json`
+- `task91_registry_final.json`
+- `task91_metrics.json`
+- `task91_metrics.csv`
+- `task91_foundation_model_identity.json`
+- `task91_foundation_model_evaluation.json`
+- `task91_moirai_results.json`
+- `task91_time_llm_results.json`
+- `task91_fingpt_results.json`
+- `task91_gm_data_provenance.json`
+- `task91_gm_pillar_results.json`
+- `task91_ensemble_validation.json`
+- `task91_net_strategy_results.json`
+- `task91_per_stock_walk_forward.json`
+- `task91_prospective_integrity.json`
+- `task91_browser_test_results.json`
+- `task91_dependency_report.json`
+- `task91_remaining_blockers.json`
+- `batch_logs/`
+- `checkpoints/`
+- `models/`
+- `predictions/`
+- `ensembles/`
+- `raw_external_data/` only where licensing and source terms permit.
+
+Every artifact path must exist.
+
+Do not overwrite Task 81–90 historical results.
+
+---
+
+# 17. GIT SAFETY
+
+Before editing:
+- Fetch and inspect the actual current `origin/main` SHA.
+- Verify the expected repository.
+- Inspect `git status`.
+- Preserve uncommitted user changes.
+- Never stage `.env`, API keys, credentials or private response data.
+- Never rewrite Git history.
+- Never use destructive reset/clean commands.
+- Never force-push.
+
+Commit coherent completed work.
+
+Final commit message:
+
+`Task 91: complete foundation models and validate all model evidence`
+
+Push only to the verified expected `origin/main`.
+
+Report:
+- Starting HEAD.
+- Final HEAD.
+- Commit hashes.
+- GitHub sync status.
+
+---
+
+# 18. FINAL REPORT — NO OVERSTATEMENT
+
+Provide exact counts from the final source-code inventory.
+
+### Model coverage
+- Canonical base models.
+- Supplemental models.
+- Ensemble methods.
+- Duplicate aliases.
+- Unique executable implementations.
+- Trained and OOS evaluated.
+- Foundation inference-only.
+- Foundation adapted/fine-tuned.
+- Local architecture implementation.
+- Experimental proxies.
+- Rule-based optimized/evaluated.
+- Failed or blocked.
+
+### Foundation models
+For each:
+- Official or local implementation.
+- Actual checkpoint.
+- Inference/training method.
+- OOS sample count.
+- Metrics.
+- Confidence intervals.
+- Exact status.
+
+### GM data
+- Announcement coverage.
+- Fundamental coverage.
+- Genuine external macro coverage.
+- Internal market proxy coverage.
+- Point-in-time timestamp quality.
+- Data source/license status.
+
+### Ensemble results
+- OOF coverage.
+- Final-test metrics.
+- Dependence-aware confidence intervals.
+- Robustness conclusion.
+- Cost-aware strategy outcomes.
+
+### Production
+- API status.
+- Dashboard status.
+- Browser test evidence.
+- Prospective lifecycle integrity.
+- Build/test results.
+- GitHub commits.
+
+---
+
+# FINAL NON-NEGOTIABLE REQUIREMENTS
+
+1. Process every model in the actual current repository registry, not just the old 58-entry snapshot.
+2. Process every actual ensemble builder.
+3. Complete Moirai inference.
+4. Investigate official Time-LLM and FinGPT implementations.
+5. Reclassify GPT-2 proxies honestly.
+6. Expand the tiny foundation-model evaluation samples.
+7. Verify announcement and fundamental point-in-time provenance.
+8. Never present a stock-market proxy as genuine external macro data.
+9. Complete genuine OOS evaluation for all feasible implementations.
+10. Use PSX V2 costs for strategy evaluation.
+11. Complete API, dashboard and browser validation.
+12. Use resumable executions no longer than 150 seconds.
+13. Do not stop after an audit, plan or first successful batch.
+14. Do not fabricate training, model identity, history, predictions, sample sizes or profitability.
+
+**This must be a complete end-to-end execution task, covering every current model and every ensemble in one task. Continue through all feasible jobs and deliver the maximum technically valid completion before declaring Task 91 finished.**
