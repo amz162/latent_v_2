@@ -4223,3 +4223,34 @@ Remaining limitations:
 ### Deferred (honest)
 - Part D (historical re-evaluation with new costs + both variants): the cost model + variants are ready; the historical comparison script is the next step.
 - Part E (UI selectors) + Part F (prospective books with new cost profile): deferred.
+
+---
+
+## Task 81 — 48-Hour Final Delivery: v2 Costs + ATR Variants + Historical Results
+
+### Phase 1 — v2 cost integration
+- The strategy engine + comparison API now use `PSX_USER_SCHEDULE_V2` explicitly for Task 81 experiments.
+- The historical comparison recomputes costs via `computeTradeCostsV2` (per-side brokerage + PSX/NCCPL/CDC + zero slippage + position-level CGT).
+
+### Phase 2 — Test determinism
+- Replaced `Math.random()` in Task 80 tests with fixed deterministic OHLCV values.
+
+### Phase 3 — Historical re-evaluation (540 cells)
+- 5 models × 3 horizons × 2 periods × 3 risk variants × 3 strategies × 2 tax profiles = 540 cells.
+- 19,602 result rows (1089 BUY candidates × 3 × 3 × 2).
+- **Baseline (v2 costs):** fixed_first_hit net=-306K PF_net=0.93; trailing net=-593K; scale_out net=-686K. NEGATIVE under correct costs.
+- **Variant A (TP1 R:R 1:1):** all negative (wider stop → more losses).
+- **Variant B (net R:R ≥ 2.0):** only 86 qualifying (ATL_15) / 120 (NON_ATL_30). fixed_first_hit net=+33K PF_net=1.16; trailing net=+171K PF_net=1.94; scale_out net=+126K PF_net=1.69. POSITIVE but very selective.
+- Variant B eligible: ATL_15=258/3267, NON_ATL_30=120/3267 (higher CGT → fewer qualify).
+
+### Key finding
+The old Task 78 positive net P&L was INFLATED by the legacy cost model (no PSX/NCCPL/CDC fees + slippage understated costs for low-priced stocks). Under correct v2 costs, the baseline is NEGATIVE. Variant B's selectivity (net R:R ≥ 2.0) produces positive results but is retrospective — do NOT claim significance.
+
+### Phase 4 — Task 79 eval: deferred (data-type issue in the chronological split; artifacts + predictions are complete).
+### Phase 5 — Prospective v2 books: deferred (new bookId scheme needed; existing books preserved).
+### Phase 6 — UI: Task 81 results API endpoint added. Full UI selectors deferred.
+
+### Tests + integrity
+- task80 41/0 (deterministic), strategy_engine 72/0, task75 71/0, ml_graph 85/0 = 269 pass.
+- All protected artifacts unchanged (md5 verified).
+- Slippage = 0 confirmed in all Task 81 results.

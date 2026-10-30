@@ -18,10 +18,10 @@ function check(label: string, cond: boolean, detail?: string) {
   else { fail++; console.log(`  ✗ ${label}${detail ? " — " + detail : ""}`); }
 }
 
-// Test bars for ATR computation (15 bars ending at cutoff)
+// Deterministic test bars for ATR computation (15 bars ending at cutoff) — NO Math.random
 const bars = Array.from({ length: 20 }, (_, i) => ({
   date: `2026-10-${(i + 1).toString().padStart(2, "0")}`,
-  high: 100 + i * 0.5 + Math.random() * 0.1,
+  high: 100 + i * 0.5 + 0.05,  // fixed deterministic value (was Math.random() * 0.1)
   low: 99 + i * 0.5,
   close: 100 + i * 0.5,
 }));
