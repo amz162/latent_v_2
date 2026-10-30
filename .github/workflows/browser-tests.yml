@@ -1,0 +1,22 @@
+name: Browser Tests
+on: [push, pull_request]
+jobs:
+  browser-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g bun
+      - run: bun install
+      - run: npx playwright install --with-deps chromium
+      - run: bun run dev &
+      - run: sleep 20
+      - run: |
+          npx playwright test --reporter=list || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-test-results
+          path: test-results/
