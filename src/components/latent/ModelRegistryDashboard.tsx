@@ -42,20 +42,24 @@ export function ModelRegistryDashboard() {
   const [walkForward, setWalkForward] = useState<any>(null);
   const [prospective, setProspective] = useState<any>(null);
   const [wfUniverse, setWfUniverse] = useState("pilot25");
+  const [perStock, setPerStock] = useState<any>(null);
+  const [stockFilter, setStockFilter] = useState("all");
 
   useEffect(() => {
     (async () => {
       try {
-        const [r1, r2, r3, r4] = await Promise.all([
+        const [r1, r2, r3, r4, r5] = await Promise.all([
           fetch("/api/models/registry").then((r) => r.json()),
           fetch("/api/backtest/task81-results").then((r) => r.json()),
           fetch("/api/backtest/walk-forward").then((r) => r.json()),
           fetch("/api/backtest/walk-forward/prospective").then((r) => r.json()),
+          fetch("/api/backtest/per-stock-walk-forward").then((r) => r.json()),
         ]);
         setRegistry(r1);
         setT81(r2);
         setWalkForward(r3);
         setProspective(r4);
+        setPerStock(r5);
       } catch (e: any) { setError(e.message); }
       finally { setLoading(false); }
     })();
@@ -315,6 +319,52 @@ export function ModelRegistryDashboard() {
           )}
         </CardContent>
       </Card>
+
+      {/* ─── Per-Stock Walk-Forward Matrix ─── */}
+      {perStock?.available && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Per-Stock Walk-Forward Matrix</CardTitle>
+            <p className="text-xs text-muted-foreground">{perStock.count || 0} cells — per-symbol per-model OOS metrics</p>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2 mb-3">
+              <Select value={stockFilter} onValueChange={setStockFilter}>
+                <SelectTrigger className="w-32"><SelectValue placeholder="Symbol" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Symbols</SelectItem>
+                  {[...new Set((perStock.cells || []).map((c: any) => c.symbol))].map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="overflow-x-auto max-h-72">
+              <table className="w-full text-xs">
+                <thead className="sticky top-0 bg-background">
+                  <tr className="text-left border-b">
+                    <th className="p-2">Symbol</th><th className="p-2">Model</th><th className="p-2">H</th>
+                    <th className="p-2 text-right">N</th><th className="p-2 text-right">MAE</th>
+                    <th className="p-2 text-right">R²</th><th className="p-2 text-right">Dir.Acc</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(perStock.cells || []).filter((c: any) => stockFilter === "all" || c.symbol === stockFilter).map((c: any, i: number) => (
+                    <tr key={i} className="border-b hover:bg-muted/50">
+                      <td className="p-2 font-medium">{c.symbol}</td>
+                      <td className="p-2">{c.model}</td>
+                      <td className="p-2">{c.horizon}d</td>
+                      <td className="p-2 text-right">{c.n}</td>
+                      <td className="p-2 text-right">{c.mae?.toFixed(6) ?? "—"}</td>
+                      <td className="p-2 text-right">{c.r2 != null ? c.r2.toFixed(4) : "—"}</td>
+                      <td className="p-2 text-right">{c.dir_acc?.toFixed(4) ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Per-symbol OOS evaluation from the 400 walk-forward samples. Negative R² preserved. Cells with insufficient data (&lt;3 samples) excluded.</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* ─── Prospective Paper-Trade Status ─── */}
       <Card>
