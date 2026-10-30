@@ -32,6 +32,7 @@
  */
 
 import { atr } from "./investment-simulator";
+import { computeSideCosts, TAX_RATES, type CostProfile, type TaxProfile } from "./trading-costs";
 
 // ─── Policy identity ─────────────────────────────────────────────────────────
 
@@ -137,5 +138,113 @@ export function computeRiskLevels(
     tp2,
     tp3,
     barsUsed: slice.length,
+  };
+}
+
+// ─── Task 80 — Variant A: TP1 Risk/Reward 1:1 (entry-anchored) ────────────────
+
+export const VARIANT_A_POLICY_ID = "atr_tp1_rr_1_1_v1";
+export const VARIANT_A_POLICY_VERSION = "task80-v1";
+// Variant A multipliers: SL = 1×ATR, TP1 = 1×ATR, TP2 = 2×ATR, TP3 = 3×ATR
+// → TP1 gross R:R = 1:1, TP2 = 1:2, TP3 = 1:3
+const VA_SL_MULT = 1.0;
+const VA_TP1_MULT = 1.0;
+const VA_TP2_MULT = 2.0;
+const VA_TP3_MULT = 3.0;
+
+/**
+ * Variant A — compute risk levels anchored to the ACTUAL next-session entry open
+ * (not the cutoff close). ATR(14) is still computed from bars ≤ cutoff (point-in-time).
+ * Levels: SL = entryOpen − ATR, TP1 = entryOpen + ATR, TP2 = entryOpen + 2×ATR,
+ * TP3 = entryOpen + 3×ATR. Produces TP1 gross R:R = 1:1.
+ *
+ * This is a NEW risk policy — the original Task 77 baseline (task77-v1) is unchanged.
+ */
+export function computeRiskLevelsVariantA(
+  bars: RiskLevelBar[],
+  cutoffDate: string,
+  entryOpen: number,
+  direction: "BUY" | "SELL" = "BUY"
+): RiskLevelResult | null {
+  const cutoffIdx = bars.findIndex((b) => b.date === cutoffDate);
+  if (cutoffIdx < 0) return null;
+  const sliceStart = Math.max(0, cutoffIdx - ATR_PERIOD);
+  const slice = bars.slice(sliceStart, cutoffIdx + 1);
+  if (slice.length === 0) return null;
+  const atr14 = atr(slice.map((b) => b.high), slice.map((b) => b.low), slice.map((b) => b.close), ATR_PERIOD);
+  const entryReference = entryOpen;
+  const slDistance = atr14 * VA_SL_MULT;
+  const tp1Distance = atr14 * VA_TP1_MULT;
+  const tp2Distance = atr14 * VA_TP2_MULT;
+  const tp3Distance = atr14 * VA_TP3_MULT;
+  const sign = direction === "BUY" ? 1 : -1;
+  return {
+    riskPolicyId: VARIANT_A_POLICY_ID,
+    riskPolicyVersion: VARIANT_A_POLICY_VERSION,
+    effectiveCutoff: cutoffDate,
+    direction,
+    entryReference,
+    atr14,
+    slDistance, tp1Distance, tp2Distance, tp3Distance,
+    sl: entryReference - sign * slDistance,
+    tp1: entryReference + sign * tp1Distance,
+    tp2: entryReference + sign * tp2Distance,
+    tp3: entryReference + sign * tp3Distance,
+    barsUsed: slice.length,
+  };
+}
+
+// ─── Task 80 — Variant B: Minimum net Risk/Reward 1:2 filter ──────────────────
+
+export const VARIANT_B_POLICY_ID = "atr_min_net_rr_2_v1";
+export const VARIANT_B_POLICY_VERSION = "task80-v1";
+
+export interface VariantBEligibility {
+  eligible: boolean;
+  netRR: number;
+  netPotentialLossAtSL: number;
+  netPotentialRewardAtTP3: number;
+  buyCosts: number;
+  sellCostsAtSL: number;
+  sellCostsAtTP3: number;
+  cgtAtTP3: number;
+  reason: string;
+}
+
+/**
+ * Variant B — uses the existing Task 77 baseline risk levels (unchanged), but
+ * filters entries whose net R:R (after costs + CGT) is below 2.0.
+ *
+ * At the actual entry open:
+ *   risk = |entryOpen − SL| × quantity + buyCosts + sellCostsAtSL
+ *   reward = (TP3 − entryOpen) × quantity − buyCosts − sellCostsAtTP3 − CGT
+ *   netRR = reward / risk
+ * Qualifies only when netRR >= 2.0. Never changes levels or threshold.
+ */
+export function computeVariantBEligibility(
+  entryOpen: number,
+  sl: number,
+  tp3: number,
+  quantity: number,
+  profile: CostProfile,
+  taxProfile: TaxProfile,
+  direction: "BUY" | "SELL" = "BUY"
+): VariantBEligibility {
+  const sign = direction === "BUY" ? 1 : -1;
+  const buyCosts = computeSideCosts(quantity, entryOpen, profile).sideTotal;
+  const sellCostsAtSL = computeSideCosts(quantity, sl, profile).sideTotal;
+  const sellCostsAtTP3 = computeSideCosts(quantity, tp3, profile).sideTotal;
+  const grossLossAtSL = sign * (sl - entryOpen) * quantity; // negative for a loss
+  const grossRewardAtTP3 = sign * (tp3 - entryOpen) * quantity; // positive for a win
+  const netPotentialLossAtSL = Math.abs(grossLossAtSL) + buyCosts + sellCostsAtSL;
+  const cgtRate = TAX_RATES[taxProfile] ?? profile.cgtRate;
+  const cgtAtTP3 = grossRewardAtTP3 > 0 ? grossRewardAtTP3 * cgtRate : 0;
+  const netPotentialRewardAtTP3 = grossRewardAtTP3 - buyCosts - sellCostsAtTP3 - cgtAtTP3;
+  const netRR = netPotentialLossAtSL > 0 ? netPotentialRewardAtTP3 / netPotentialLossAtSL : 0;
+  const eligible = netRR >= 2.0;
+  return {
+    eligible, netRR, netPotentialLossAtSL, netPotentialRewardAtTP3,
+    buyCosts, sellCostsAtSL, sellCostsAtTP3, cgtAtTP3,
+    reason: eligible ? "qualified" : "skipped_rr_below_minimum",
   };
 }

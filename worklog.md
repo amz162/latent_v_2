@@ -4196,3 +4196,30 @@ Remaining limitations:
 - Sequence models NOT trained (documented data/compute constraint).
 - Do NOT claim statistical significance or future profitability.
 - Next objective: prospective evaluation of the frozen new models (wait for future sessions to mature).
+
+---
+
+## Task 80 — Correct PSX Transaction Costs + Two ATR Risk/Reward Variants
+
+### Part A/B — New canonical cost model (`psx_user_schedule_v2`)
+- **Broker commission:** PKR 0.03/share (fixed) if price ≤ 20, else 0.15% of transaction value. Per-side (buy + each sell leg separately).
+- **PSX fee:** 0.00035% (0.0000035) | **NCCPL:** 0.00081% (0.0000081) | **CDC:** 0.0036% (0.000036) per side on transaction value. Combined 0.00476%.
+- **Slippage:** ZERO (user-specified — no synthetic penalty; real gap-aware fills only).
+- **CGT:** 15% (ATL_15 filer) or 30% (NON_ATL_30 non-filer) on positive realized gains, applied once per completed position.
+- **Legacy preserved:** `legacy_standard_psx_v1` (old 0.15% commission + 0.15% slippage + 15% CGT, no PSX/NCCPL/CDC) for historical reproducibility.
+- Canonical functions: `computeSideCosts(quantity, fillPrice, profile)` + `computeTradeCostsV2(buyQty, buyPrice, exitLegs[], grossPnl, profile, taxProfile)`.
+
+### Part C — Two ATR variants (risk-levels.ts)
+- **Variant A (`atr_tp1_rr_1_1_v1`):** SL = entryOpen − ATR, TP1 = entryOpen + ATR, TP2 = 2×ATR, TP3 = 3×ATR. Anchored to the ACTUAL next-session entry open (not cutoff close). TP1 gross R:R = 1:1. ATR(14) from bars ≤ cutoff (point-in-time).
+- **Variant B (`atr_min_net_rr_2_v1`):** Uses the existing Task 77 baseline levels (unchanged) but filters entries whose net R:R (after buy+sell costs + CGT) < 2.0. `netRR = netPotentialRewardAtTP3 / abs(netPotentialLossAtSL)`. Rejects below 2.0 with `skipped_rr_below_minimum`. Never changes levels or threshold.
+
+### Part G — Regression tests (`task80_cost_regression_check.ts`)
+- 41 checks: brokerage (price <20/=20/>20/partial/per-side), fees (PSX/NCCPL/CDC/combined/no-slippage/legacy-separate), CGT (ATL_15/NON_ATL_30/losing=0/scale-out-aggregate/no-double-tax/selector/fallback), ATR variants (baseline-unchanged/Variant-A-point-in-time/entry-anchored/TP1-1:1/TP2-1:2/TP3-1:3/Variant-B-net-RR/costs+CGT/qualify≥2/reject<2/no-level-change/ATL-vs-NON_ATL), integration (reconciliation/no-double/leg-sums/entry-price-RR). All PASS.
+
+### Tests + integrity
+- strategy_engine 72/0, task75 71/0, ml_graph 85/0, task80 41/0 = 269 total pass.
+- All protected artifacts unchanged (md5 verified).
+
+### Deferred (honest)
+- Part D (historical re-evaluation with new costs + both variants): the cost model + variants are ready; the historical comparison script is the next step.
+- Part E (UI selectors) + Part F (prospective books with new cost profile): deferred.
