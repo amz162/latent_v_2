@@ -1,8 +1,21 @@
 {
   "status": "rule_based_optimized_oos_evaluated",
   "model": "GM Fundamental Engine",
-  "data_source": "https://www.psx.com.pk/psx/announcement/financial-announcements (Profit Before Taxation column)",
-  "records": 25,
-  "avg_profit_mln": 16570.26,
-  "note": "Used Profit Before Taxation from 25 announcements as fundamental feature."
+  "data_source": "AskAnalyst API (api.askanalyst.com.pk) \u2014 ratios + income statements",
+  "symbols_covered": 24,
+  "fundamental_features": 12622,
+  "ratio_labels": [
+    "ADR(Net)",
+    "BVPS",
+    "Cash + ST Inv/Share",
+    "Cash as a % Mkt Cap",
+    "Cost to Income",
+    "Current Ratio",
+    "DPS",
+    "Days In Inventory",
+    "Days In Payables",
+    "Debt To Asset"
+  ],
+  "income_statements": 24,
+  "note": "Full financial ratios (EPS, P/E, ROE, D/E, BVPS) from 24 stocks via AskAnalyst API. Income statements (annual + quarterly) for 24 stocks."
 }
