@@ -28,3 +28,164 @@
 [00:00:22.975] Server  LOG     prisma:query "SELECT `main`.`PredictionHistory`.`id`, `main`.`PredictionHistory`.`dedupKey`, `main`.`PredictionHistory`.`symbol`, `main`.`PredictionHistory`.`modelId`, `main`.`PredictionHistory`.`modelVersion`, `main`.`PredictionHistory`.`predictionTs`, `main`.`PredictionHistory`.`signal`, `main`.`PredictionHistory`.`predictedReturn`, `main`.`PredictionHistory`.`predictedProb`, `main`.`PredictionHistory`.`confidenceType`, `main`.`PredictionHistory`.`entryPrice`, `main`.`PredictionHistory`.`horizon`, `main`.`PredictionHistory`.`dataCutoff`, `main`.`PredictionHistory`.`kind`, `main`.`PredictionHistory`.`outcomeStatus`, `main`.`PredictionHistory`.`createdAt`, `main`.`PredictionHistory`.`updatedAt` FROM `main`.`PredictionHistory` WHERE `main`.`PredictionHistory`.`kind` = ? ORDER BY `main`.`PredictionHistory`.`createdAt` DESC LIMIT ? OFFSET ?"
 [00:00:22.979] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume`, `main`.`OhlcvBar`.`source`, `main`.`OhlcvBar`.`updatedAt` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?"
 [00:00:22.979] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?"
+[02:28:58.833] Server  LOG     ✓ Compiled in 3.7s
+[02:29:11.094] Browser ERROR   uncaughtError: Error: ./src/lib/latent/price-patterns-service.ts:10:1
+Export PATTERN_DISCLAIMER doesn't exist in target module
+   8 | import { db } from "@/lib/db";
+   9 | import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+> 10 | import {
+     | ^^^^^^^^
+> 11 |   detectPricePatterns,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   PATTERN_DISCLAIMER,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   type DetectionResult,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   type PriceBar,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   type PricePatternReportResponse,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from "@/lib/latent/price-patterns";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { explainPricePatterns, type LlmExplanations } from "@/lib/latent/price-pattern-llm";
+  18 |
+  19 | /** A report is "fresh" for 20 hours — the nightly pass refreshes everything. */
+
+The export PATTERN_DISCLAIMER was not found in module [project]/src/lib/latent/price-patterns.ts [app-route] (ecmascript).
+Did you mean to import LIQUID_SUGGESTIONS?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./src/lib/latent/price-patterns-service.ts
+    ./src/app/api/price-patterns/precompute/route.ts
+
+
+[02:29:11.530] Browser ERROR   ./src/lib/latent/price-patterns-service.ts:10:1
+Export PATTERN_DISCLAIMER doesn't exist in target module
+   8 | import { db } from "@/lib/db";
+   9 | import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+> 10 | import {
+     | ^^^^^^^^
+> 11 |   detectPricePatterns,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   PATTERN_DISCLAIMER,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   type DetectionResult,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   type PriceBar,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   type PricePatternReportResponse,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from "@/lib/latent/price-patterns";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { explainPricePatterns, type LlmExplanations } from "@/lib/latent/price-pattern-llm";
+  18 |
+  19 | /** A report is "fresh" for 20 hours — the nightly pass refreshes everything. */
+
+The export PATTERN_DISCLAIMER was not found in module [project]/src/lib/latent/price-patterns.ts [app-route] (ecmascript).
+Did you mean to import LIQUID_SUGGESTIONS?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./src/lib/latent/price-patterns-service.ts
+    ./src/app/api/price-patterns/precompute/route.ts
+[02:29:11.530] Browser ERROR   ./src/lib/latent/price-patterns-service.ts:10:1
+Export detectPricePatterns doesn't exist in target module
+   8 | import { db } from "@/lib/db";
+   9 | import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+> 10 | import {
+     | ^^^^^^^^
+> 11 |   detectPricePatterns,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   PATTERN_DISCLAIMER,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   type DetectionResult,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   type PriceBar,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   type PricePatternReportResponse,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from "@/lib/latent/price-patterns";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { explainPricePatterns, type LlmExplanations } from "@/lib/latent/price-pattern-llm";
+  18 |
+  19 | /** A report is "fresh" for 20 hours — the nightly pass refreshes everything. */
+
+The export detectPricePatterns was not found in module [project]/src/lib/latent/price-patterns.ts [app-route] (ecmascript).
+Did you mean to import analyzePricePatterns?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./src/lib/latent/price-patterns-service.ts
+    ./src/app/api/price-patterns/precompute/route.ts
+[02:29:11.673] Browser ERROR   ./src/lib/latent/price-patterns-service.ts:10:1
+Export PATTERN_DISCLAIMER doesn't exist in target module
+   8 | import { db } from "@/lib/db";
+   9 | import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+> 10 | import {
+     | ^^^^^^^^
+> 11 |   detectPricePatterns,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   PATTERN_DISCLAIMER,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   type DetectionResult,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   type PriceBar,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   type PricePatternReportResponse,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from "@/lib/latent/price-patterns";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { explainPricePatterns, type LlmExplanations } from "@/lib/latent/price-pattern-llm";
+  18 |
+  19 | /** A report is "fresh" for 20 hours — the nightly pass refreshes everything. */
+
+The export PATTERN_DISCLAIMER was not found in module [project]/src/lib/latent/price-patterns.ts [app-route] (ecmascript).
+Did you mean to import LIQUID_SUGGESTIONS?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./src/lib/latent/price-patterns-service.ts
+    ./src/app/api/price-patterns/precompute/route.ts
+[02:29:11.673] Browser ERROR   ./src/lib/latent/price-patterns-service.ts:10:1
+Export detectPricePatterns doesn't exist in target module
+   8 | import { db } from "@/lib/db";
+   9 | import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+> 10 | import {
+     | ^^^^^^^^
+> 11 |   detectPricePatterns,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   PATTERN_DISCLAIMER,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   type DetectionResult,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   type PriceBar,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   type PricePatternReportResponse,
+     | ^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from "@/lib/latent/price-patterns";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { explainPricePatterns, type LlmExplanations } from "@/lib/latent/price-pattern-llm";
+  18 |
+  19 | /** A report is "fresh" for 20 hours — the nightly pass refreshes everything. */
+
+The export detectPricePatterns was not found in module [project]/src/lib/latent/price-patterns.ts [app-route] (ecmascript).
+Did you mean to import analyzePricePatterns?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./src/lib/latent/price-patterns-service.ts
+    ./src/app/api/price-patterns/precompute/route.ts
+[02:29:19.715] Browser WARN    Error restoring session {"cause":{},"name":"i"}
+[02:29:19.715] Browser WARN    Error restoring session {"cause":{},"name":"i"}
+[02:29:19.715] Browser ERROR   unhandledRejection: i: Failed to connect to MetaMask
+[02:29:19.715] Browser ERROR   unhandledRejection: i: Failed to connect to MetaMask
+[02:29:38.033] Server  LOG     prisma:query "SELECT DISTINCT symbol FROM OhlcvBar"
+[02:29:38.033] Server  LOG     prisma:query "SELECT DISTINCT symbol FROM OhlcvBar"
+[02:29:38.290] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
+[02:29:38.360] Server  ERROR   ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
