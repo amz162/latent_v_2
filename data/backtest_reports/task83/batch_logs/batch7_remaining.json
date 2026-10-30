@@ -1,0 +1,160 @@
+{
+  "CNN-LSTM": {
+    "status": "trained_oos_evaluated",
+    "metrics": {
+      "5d": {
+        "mae": 0.045352,
+        "rmse": 0.068547,
+        "r2": -0.0128,
+        "directional_accuracy": 0.5046,
+        "n": 13731,
+        "params": 617
+      },
+      "10d": {
+        "mae": 0.065805,
+        "rmse": 0.097545,
+        "r2": 0.0007,
+        "directional_accuracy": 0.5064,
+        "n": 13611,
+        "params": 617
+      },
+      "21d": {
+        "mae": 0.104405,
+        "rmse": 0.155854,
+        "r2": -0.06,
+        "directional_accuracy": 0.4809,
+        "n": 13347,
+        "params": 617
+      }
+    },
+    "elapsed_s": 73.2
+  },
+  "N-BEATS": {
+    "status": "trained_oos_evaluated",
+    "metrics": {
+      "5d": {
+        "mae": 0.04618,
+        "rmse": 0.06995,
+        "r2": -0.0547,
+        "directional_accuracy": 0.5072,
+        "n": 13731,
+        "params": 2408
+      },
+      "10d": {
+        "mae": 0.06556,
+        "rmse": 0.098622,
+        "r2": -0.0215,
+        "directional_accuracy": 0.4986,
+        "n": 13611,
+        "params": 2408
+      },
+      "21d": {
+        "mae": 0.1025,
+        "rmse": 0.152318,
+        "r2": -0.0124,
+        "directional_accuracy": 0.543,
+        "n": 13347,
+        "params": 2408
+      }
+    },
+    "elapsed_s": 40.4
+  },
+  "TimesNet": {
+    "status": "failed_after_attempts",
+    "metrics": {
+      "5d": {
+        "error": "The expanded size of the tensor (5) must match the existing size (19) at non-sin"
+      },
+      "10d": {
+        "error": "The expanded size of the tensor (5) must match the existing size (19) at non-sin"
+      },
+      "21d": {
+        "error": "The expanded size of the tensor (5) must match the existing size (19) at non-sin"
+      }
+    },
+    "elapsed_s": 0.5
+  },
+  "Informer": {
+    "status": "trained_oos_evaluated",
+    "metrics": {
+      "5d": {
+        "mae": 0.046005,
+        "rmse": 0.069589,
+        "r2": -0.0438,
+        "directional_accuracy": 0.5071,
+        "n": 13731,
+        "params": 2577
+      },
+      "10d": {
+        "mae": 0.066012,
+        "rmse": 0.099622,
+        "r2": -0.0423,
+        "directional_accuracy": 0.4928,
+        "n": 13611,
+        "params": 2577
+      },
+      "21d": {
+        "mae": 0.103295,
+        "rmse": 0.154733,
+        "r2": -0.0448,
+        "directional_accuracy": 0.5026,
+        "n": 13347,
+        "params": 2577
+      }
+    },
+    "elapsed_s": 171.4
+  },
+  "TabNet": {
+    "status": "failed_after_attempts",
+    "metrics": {
+      "error": "TabModel.__init__() got an unexpected keyword argument 'max_epochs'"
+    },
+    "elapsed_s": 0.0
+  },
+  "FinGPT": {
+    "status": "dependency_blocked_after_attempts",
+    "metrics": null,
+    "statusReason": "FinGPT requires a specific LLM (e.g., LLaMA-based) + financial instruction tuning \u2014 transformers installed but no FinGPT checkpoint available. Would need downloading a multi-GB model."
+  },
+  "Chronos (Amazon)": {
+    "status": "dependency_blocked_after_attempts",
+    "metrics": null,
+    "statusReason": "transformers installed but Chronos requires the chronos-forecasting package + model download (amazon/chronos-t5-tiny ~50MB). Inference-only (not training).",
+    "elapsed_s": 1.6
+  },
+  "Lag-Llama": {
+    "status": "dependency_blocked_after_attempts",
+    "metrics": null,
+    "statusReason": "Requires specific package/repo for Lag-Llama \u2014 not installable in sandbox. Would need GPU for fine-tuning."
+  },
+  "Moirai (Salesforce)": {
+    "status": "dependency_blocked_after_attempts",
+    "metrics": null,
+    "statusReason": "Requires specific package/repo for Moirai (Salesforce) \u2014 not installable in sandbox. Would need GPU for fine-tuning."
+  },
+  "Time-LLM": {
+    "status": "dependency_blocked_after_attempts",
+    "metrics": null,
+    "statusReason": "Requires specific package/repo for Time-LLM \u2014 not installable in sandbox. Would need GPU for fine-tuning."
+  },
+  "XGBoost (CL)": {
+    "status": "duplicate_alias_reused",
+    "parent": "XGBoost",
+    "statusReason": "Alias of XGBoost (Tier 3) \u2014 same algorithm, reuse trained artifact"
+  },
+  "LightGBM (CL)": {
+    "status": "duplicate_alias_reused",
+    "parent": "LightGBM",
+    "statusReason": "Alias of LightGBM (Tier 3) \u2014 same algorithm, reuse trained artifact"
+  },
+  "Random Forest (CL)": {
+    "status": "duplicate_alias_reused",
+    "parent": "Random Forest",
+    "statusReason": "Alias of Random Forest (Tier 3) \u2014 same algorithm, reuse trained artifact"
+  },
+  "LSTM (CL)": {
+    "status": "duplicate_alias_reused",
+    "parent": "LSTM",
+    "statusReason": "Alias of LSTM (Batch 3) \u2014 same PyTorch architecture"
+  }
+}
