@@ -23,16 +23,17 @@ export async function GET() {
     const inference = await checkInferenceAvailability();
     const latestBar = await db.ohlcvBar.findFirst({ orderBy: { date: "desc" }, select: { date: true } });
 
-    // Truthful operational status (per spec):
+    // Truthful operational status (Phase 2D/2E — matches the lifecycle service):
     //   BLOCKED    — required data/inference/risk-levels unavailable
-    //   READY      — valid setup, no eligible next-session entry yet
-    //   ACTIVE     — ledger running + managing valid eligible positions
+    //   READY      — valid setup, no eligible next-session entry yet (or only pending_entry)
+    //   ACTIVE     — OPEN positions are actually being managed (not just pending_entry)
     //   EVALUATING — outcomes maturing but evidence insufficient
     //   COMPLETED  — only when predeclared completion criteria are satisfied
-    const hasOpenOrPending = counts.tradesByState.open > 0 || counts.tradesByState.pending_entry > 0;
+    // Do NOT mark ACTIVE solely because pending_entry > 0 — pending entries waiting
+    // for future sessions (especially stale symbols) are not an active managed lifecycle.
     const status = !inference.available
       ? "BLOCKED"
-      : hasOpenOrPending
+      : counts.tradesByState.open > 0
       ? "ACTIVE"
       : counts.outcomesByStatus.matured > 0
       ? "EVALUATING"
