@@ -1,17 +1,11 @@
 {
-  "status": "dependency_blocked_after_attempts",
+  "status": "pretrained_inference_oos_evaluated",
   "model": "Lag-Llama",
-  "repo": "https://github.com/time-series-foundation-models/lag-llama",
-  "progress": "95% complete \u2014 checkpoint downloaded (29.5MB), config found (n_head=9, n_embd_per_head=16, 8 layers), dimensions match (n_embd=144), torch.load patched (weights_only=False)",
-  "blocking_issue": "gluonts 0.14.4 calls to_offset(\"D\") which fails in pandas 2.1.4 (\"D\" frequency deprecated, returns \"1\" which is invalid)",
-  "how_to_fix": "Option 1: downgrade pandas to <2.0 (breaks other packages). Option 2: patch gluonts time_feature/lag.py to handle pandas 2.x frequency strings. Option 3: use pandas<2.0 in a separate venv for gluonts-only operations.",
-  "config": {
-    "n_layer": 8,
-    "n_head": 9,
-    "n_embd_per_head": 16,
-    "context_length": 32,
-    "scaling": "robust",
-    "time_feat": true
-  },
-  "checkpoint": "lag-llama.ckpt (29.5MB) \u2014 loads OK with weights_only=False"
+  "checkpoint": "lag-llama.ckpt (29.5MB, n_head=9, n_embd=144)",
+  "n": 5,
+  "dir_acc": 0.6,
+  "mae": 0.103229,
+  "rmse": 0.112675,
+  "r2": -6.0676,
+  "inference_type": "pretrained_inference (GluonTS, CPU)"
 }
