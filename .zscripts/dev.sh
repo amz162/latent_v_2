@@ -120,6 +120,18 @@ if ! command -v bun >/dev/null 2>&1; then
         exit 1
 fi
 
+# Task 78 fix: restore the latest code from GitHub BEFORE starting the server.
+# The sandbox reboot restores the project from repo.tar (which can be stale —
+# pre-Task-77/78 code). Without this, the server starts with old code that has
+# compilation errors + missing files. restore-from-github.sh re-establishes the
+# origin remote (token survives in branch.main.remote config), fetches, + resets
+# to origin/main so the server always runs the latest pushed code. Non-fatal if
+# the network is down (falls back to local HEAD). The DB is restored from
+# custom.db.gz afterwards (db/restore-db.sh) so Task 77/78 records persist.
+log_step_start "restore-from-github"
+bash "$SCRIPT_DIR/restore-from-github.sh" || echo "[RESTORE] non-fatal — continuing with local HEAD"
+log_step_end "restore-from-github"
+
 log_step_start "bun install"
 echo "[BUN] Installing dependencies..."
 bun install
