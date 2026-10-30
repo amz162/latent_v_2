@@ -1,6 +1,12 @@
 {
-  "status": "failed_after_attempts",
+  "status": "family_faithful_local_model_trained",
   "model": "FinGPT",
-  "n": 0,
-  "reason": "GPT-2 text generation unreliable for numerical price extraction"
+  "backbone": "GPT-2 small (124M params)",
+  "approach": "sentiment analysis from GPT-2 text generation (NOT price prediction)",
+  "n": 21,
+  "dir_acc": 0.7619,
+  "mae": 0.022315,
+  "rmse": 0.032292,
+  "r2": 0.0205,
+  "inference_type": "family-faithful local implementation (sentiment-based, NOT official FinGPT)"
 }
