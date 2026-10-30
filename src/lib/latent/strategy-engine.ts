@@ -191,7 +191,9 @@ function stopFill(bar: StrategyBar, sl: number, direction: "BUY" | "SELL"): numb
 
 /** Per-leg cost accounting (costs applied once per actual exit quantity).
  *  grossPnl = quantity × signedPerSharePnl (sign handles BUY vs SELL).
- *  Entry notional = quantity × entryPrice (cost basis for commission/slippage). */
+ *  Entry notional = quantity × entryPrice (cost basis for commission/slippage).
+ *  Passes quantity + sharePrice to computeTradeCosts so the PSX fixed minimum
+ *  commission (PKR 0.03/share for price ≤ 20) is applied correctly. */
 function legCostsSigned(
   quantity: number,
   entryNotional: number,
@@ -199,7 +201,8 @@ function legCostsSigned(
   profile: CostProfile
 ): Pick<ExitLeg, "grossPnl" | "commission" | "slippage" | "cgt" | "totalCost" | "netPnl"> {
   const grossPnl = quantity * signedPerSharePnl;
-  const c = computeTradeCosts(entryNotional, grossPnl, profile);
+  const sharePrice = quantity > 0 ? entryNotional / quantity : 0;
+  const c = computeTradeCosts(entryNotional, grossPnl, profile, quantity, sharePrice);
   return {
     grossPnl,
     commission: c.commission,

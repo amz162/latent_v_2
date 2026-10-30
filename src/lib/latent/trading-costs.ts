@@ -30,17 +30,28 @@ export interface CostProfile {
   slippageRate: number;   // per round trip (NOT per fill — matches existing simulators)
   cgtRate: number;        // on positive gross gains (Pakistan CGT)
   description: string;
+  // PSX fixed minimum commission for low-priced shares.
+  // When the share price ≤ fixedCommissionPriceThreshold, the commission is
+  // fixedCommissionPerShare × quantity × 2 (both sides), NOT the percentage rate.
+  // Real PSX rule: for shares priced ≤ PKR 20, commission = PKR 0.03/share.
+  // This is HIGHER than the 0.15% percentage for low-priced stocks (e.g., a
+  // PKR 5 share: percentage = 0.0075/share, fixed = 0.03/share — 4× higher).
+  fixedCommissionPerShare?: number;    // PKR per share (per side)
+  fixedCommissionPriceThreshold?: number; // shares priced ≤ this use the fixed commission
 }
 
-/** Standard PSX cost profile — matches 2 of 3 existing simulators (investment-simulator.ts + signal-stats). */
+/** Standard PSX cost profile — matches 2 of 3 existing simulators + the real
+ * PSX fixed minimum commission rule for low-priced shares. */
 export const STANDARD_PSX: CostProfile = {
   id: "standard_psx",
-  label: "Standard PSX (commission 0.15%×2, slippage 0.15% round-trip, CGT 15% on gains)",
+  label: "Standard PSX (commission 0.15%×2 OR PKR 0.03/share for price ≤20, slippage 0.15% RT, CGT 15%)",
   commissionRate: 0.0015,
   slippageRate: 0.0015,
   cgtRate: 0.15,
+  fixedCommissionPerShare: 0.03,   // PKR 0.03 per share (per side) — PSX rule
+  fixedCommissionPriceThreshold: 20, // shares priced ≤ PKR 20 use the fixed commission
   description:
-    "Commission 0.15% per side (×2 for entry+exit = 0.30% round-trip). Slippage 0.15% applied ONCE per round-trip (not per fill). CGT 15% on positive gross gains (Pakistan Finance Act). Matches investment-simulator.ts + signal-stats/route.ts.",
+    "Commission: 0.15% per side (×2 for entry+exit) for shares > PKR 20, OR PKR 0.03/share (×2) for shares ≤ PKR 20 (the real PSX fixed minimum commission rule). Slippage 0.15% applied ONCE per round-trip. CGT 15% on positive gross gains (Pakistan Finance Act). Matches investment-simulator.ts + signal-stats/route.ts.",
 };
 
 /** High-slippage PSX cost profile — matches backtest.ts (SLIPPAGE_RATE = 0.005). */
@@ -65,10 +76,18 @@ export const COST_PROFILES: Record<string, CostProfile> = {
  * Formula matches all 3 existing simulators (commission ×2 both sides,
  * slippage once per round-trip, CGT on positive gross).
  */
+/**
+ * Compute the per-trade costs. When quantity + sharePrice are provided and the
+ * profile has a fixedCommissionPerShare + threshold, applies the PSX fixed
+ * minimum commission for low-priced shares (price ≤ threshold). Otherwise
+ * falls back to the percentage commission (backward compatible).
+ */
 export function computeTradeCosts(
   notional: number,
   grossPnl: number,
-  profile: CostProfile
+  profile: CostProfile,
+  quantity?: number,
+  sharePrice?: number
 ): {
   commission: number;
   slippage: number;
@@ -76,7 +95,19 @@ export function computeTradeCosts(
   totalCost: number;
   netPnl: number;
 } {
-  const commission = notional * profile.commissionRate * 2; // both sides
+  let commission: number;
+  if (
+    quantity != null && sharePrice != null &&
+    profile.fixedCommissionPerShare != null &&
+    profile.fixedCommissionPriceThreshold != null &&
+    sharePrice > 0 && sharePrice <= profile.fixedCommissionPriceThreshold
+  ) {
+    // PSX fixed minimum commission: PKR 0.03/share × quantity × 2 (both sides)
+    commission = quantity * profile.fixedCommissionPerShare * 2;
+  } else {
+    // Percentage commission (both sides)
+    commission = notional * profile.commissionRate * 2;
+  }
   const slippage = notional * profile.slippageRate;           // once per round-trip
   const cgt = grossPnl > 0 ? grossPnl * profile.cgtRate : 0;  // on positive gross
   const totalCost = commission + slippage + cgt;
