@@ -1,0 +1,80 @@
+{
+  "LSTM": {
+    "status": "trained_oos_evaluated",
+    "metrics": {
+      "5d": {
+        "mae": 0.046233,
+        "rmse": 0.06901,
+        "r2": -0.0265,
+        "directional_accuracy": 0.4934,
+        "mean_bias": -0.001845,
+        "n": 13731,
+        "params": 2385,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "10d": {
+        "mae": 0.067936,
+        "rmse": 0.102098,
+        "r2": -0.0947,
+        "directional_accuracy": 0.4906,
+        "mean_bias": -0.025529,
+        "n": 13611,
+        "params": 2385,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "21d": {
+        "mae": 0.107205,
+        "rmse": 0.160293,
+        "r2": -0.1212,
+        "directional_accuracy": 0.494,
+        "mean_bias": -0.045908,
+        "n": 13347,
+        "params": 2385,
+        "epochs": 30,
+        "hidden": 16
+      }
+    },
+    "elapsed_s": 103.2
+  },
+  "GRU": {
+    "status": "trained_oos_evaluated",
+    "metrics": {
+      "5d": {
+        "mae": 0.047305,
+        "rmse": 0.071487,
+        "r2": -0.1015,
+        "directional_accuracy": 0.5035,
+        "mean_bias": -0.004427,
+        "n": 13731,
+        "params": 1793,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "10d": {
+        "mae": 0.068706,
+        "rmse": 0.103114,
+        "r2": -0.1166,
+        "directional_accuracy": 0.4948,
+        "mean_bias": -0.028544,
+        "n": 13611,
+        "params": 1793,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "21d": {
+        "mae": 0.10668,
+        "rmse": 0.159676,
+        "r2": -0.1126,
+        "directional_accuracy": 0.4873,
+        "mean_bias": -0.049884,
+        "n": 13347,
+        "params": 1793,
+        "epochs": 30,
+        "hidden": 16
+      }
+    },
+    "elapsed_s": 76.1
+  }
+}

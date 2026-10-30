@@ -4254,3 +4254,40 @@ The old Task 78 positive net P&L was INFLATED by the legacy cost model (no PSX/N
 - task80 41/0 (deterministic), strategy_engine 72/0, task75 71/0, ml_graph 85/0 = 269 pass.
 - All protected artifacts unchanged (md5 verified).
 - Slippage = 0 confirmed in all Task 81 results.
+
+---
+
+## Task 83 — Feasible Model Training + Evaluation (Batch 1-3)
+
+### Libraries installed
+- PyTorch CPU (torch 2.15.0+cpu) — unblocks deep learning
+- arch 8.0.0 (GARCH) + prophet 1.5.0
+
+### Batch 1: Statistical models
+- **Holt-Winters: trained_oos_evaluated** (dir_acc 0.4831)
+- **GARCH: trained_oos_evaluated** (dir_acc 0.5006)
+- ARIMA: failed_after_attempts (fitting issues on data subsets)
+- Kalman: failed_after_attempts (API issue)
+- Prophet: failed_after_attempts (fitting issues)
+
+### Batch 2: Task 79 models — EVAL SPLIT FIXED
+- **ExtraTrees: trained_oos_evaluated** (dir_acc 0.4965)
+- **HistGradientBoosting: trained_oos_evaluated** (dir_acc 0.4994)
+- **ElasticNet: trained_oos_evaluated** (dir_acc 0.4888)
+- **HuberRegressor: trained_oos_evaluated** (dir_acc 0.5107 — best)
+- **SVR: trained_oos_evaluated** (dir_acc 0.4894, subsampled to 3000 rows for speed)
+- The chronological split fix: use direct epoch-ms comparison (`eligible["date"] <= SPLIT_MS`) instead of `pd.to_datetime(date, utc=True)` which assumed nanoseconds for int64 dates.
+
+### Batch 3: Neural models (small PyTorch CPU architecture)
+- **LSTM: trained_oos_evaluated** (dir_acc 0.4934, 16 hidden, 30 epochs, artifacts saved as .pt)
+- **GRU: trained_oos_evaluated** (dir_acc 0.5035, 16 hidden, 30 epochs, artifacts saved as .pt)
+
+### Key finding
+All trained models have directional accuracy ~0.48-0.51 (near random). No model shows strong predictive power on the PSX walk-forward data. HuberRegressor (0.5107) + GRU (0.5035) are the best. This is honest — the models are trained + evaluated but don't show significant edge.
+
+### Remaining (next batches)
+- Deep learning: PatchTST, N-BEATS, TimesNet, Informer, CNN-LSTM, Transformer-LSTM, TabNet, FinGPT (PyTorch now available — need custom architecture implementations)
+- Foundation models: Chronos, Lag-Llama, Moirai, Time-LLM (need HuggingFace + pretrained weights)
+- Classifiers: CL-2, PI, CG (training scripts exist — need pipeline audit)
+- Ensembles: Majority Vote, Probability-Weighted, etc. (need component predictions)
+- Rule-based: GM, X, GIAN (parameter optimization)
