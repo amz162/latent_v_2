@@ -1,5 +1,14 @@
 {
   "status": "dependency_blocked_after_attempts",
   "model": "Lag-Llama",
-  "error": "Salesforce/lag-llama-storm-350m is not a local folder and is not a valid model identifier listed on "
+  "repo": "https://github.com/time-series-foundation-models/lag-llama",
+  "progress": "Package installed + checkpoint downloaded (29.5MB) + imports OK",
+  "issues": [
+    "1. pkg_resources missing (setuptools 82+ removed it) \u2014 Fix: pip install setuptools<70",
+    "2. Checkpoint at time-series-foundation-models/Lag-Llama on HuggingFace \u2014 file lag-llama.ckpt (29.5MB) \u2014 downloaded OK",
+    "3. Estimator API uses n_embd_per_head (not n_embd) + _create_instance_splitter (not create_instance_network)",
+    "4. Full inference needs GluonTS pipeline: LagLlamaEstimator \u2192 create_transformation \u2192 _create_instance_splitter \u2192 create_predictor \u2192 make_evaluation_predictions"
+  ],
+  "how_to_fix": "Follow the repo Colab demo (https://colab.research.google.com/drive/1DRAzLUPxsd-0r8b-o4nlyFXrjw_ZajJJ) for the exact API. Key: use correct method names + setup GluonTS ListDataset properly.",
+  "minimum_requirements": "setuptools<70 + gluonts[torch]<=0.14.4 + lag-llama package + lag-llama.ckpt checkpoint"
 }
