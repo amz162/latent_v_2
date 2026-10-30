@@ -1,0 +1,1110 @@
+# TASK 89 — COMPLETE LATENT.PK AI MODEL TRAINING, FULL-STACK INTEGRATION & PRODUCTION READINESS
+
+## MISSION
+
+This is a comprehensive end-to-end completion task.
+
+Do not create another small audit-only task. Do not limit work to the remaining failed models. Do not leave entire model families for a future task.
+
+The goal is to process **every existing model, classifier, statistical model, deep-learning architecture, foundation model, ensemble and rule-based system in Latent.pk**, train or fit it using the most appropriate technically valid method, evaluate it using leakage-free out-of-sample data, integrate verified results into the application, and validate the complete system.
+
+### Current known project state
+
+Latest reported commit: `83d5cf30`
+
+Previous work:
+- Task 82: complete 58-model registry audit.
+- Task 83: 42 models reported trained/OOS evaluated; Task 79 evaluation bug fixed.
+- Task 84: TimesNet and TabNet recovered; Prophet/ARIMA issues investigated.
+- Task 85: model registry dashboard and Task 81 strategy results integrated.
+- Task 86: model detail, walk-forward and prospective status UI integrated.
+- Task 87: Prophet recovered, 360-cell per-stock walk-forward matrix produced, Majority Vote results investigated.
+
+Latest reported registry/UI structure:
+- 58 canonical `ALL_MODELS` entries.
+- 11 supplemental entries.
+- Historical unified reports also contain reconciled entries from earlier model runs; do not assume historical counts and current registry counts are identical.
+
+Previously unresolved:
+- ARIMA batch execution failure.
+- Foundation models: Chronos, Lag-Llama, Moirai, Time-LLM and FinGPT.
+- GM Announcements, Fundamental and Macro historical point-in-time data.
+- Full browser interaction testing.
+- Further robust validation of ensemble profitability and prospective execution.
+
+**Use actual current files and artifacts as the source of truth. The above is starting context, not a replacement for repository inspection.**
+
+---
+
+# 1. EXECUTION LIMIT — ABSOLUTE REQUIREMENT
+
+The sandbox has an approximately 3-minute execution limit.
+
+**Every individual command, script execution, tool call or other sandbox operation must finish within 150 seconds.**
+
+Do not attempt a 10-minute or 2-hour command.
+
+Build one resumable execution framework:
+
+`scripts/task89_runner.py`
+
+It must support:
+- `--budget-seconds 150`
+- Individual model jobs.
+- Batch execution.
+- Checkpoint/resume.
+- Dependency preparation.
+- Training.
+- OOS prediction generation.
+- Evaluation.
+- Ensemble fitting.
+- Rule optimization.
+- API/data preparation.
+- Tests and build verification.
+
+### Required execution behavior
+
+1. Benchmark each operation before scheduling it.
+2. Execute lightweight jobs together only when their estimated total runtime fits within the limit.
+3. Execute heavy neural/foundation models individually.
+4. Divide long training into smaller resumable operations.
+5. Save model state, optimizer state, epoch and data position where applicable.
+6. Save completed predictions and metrics immediately.
+7. Never rerun completed valid jobs.
+8. Retry failed models only after changing the implementation, data path or configuration.
+9. Never let one model's failure terminate the entire campaign.
+10. Update the persistent progress file after every completed operation.
+11. Continue running the next eligible jobs in additional bounded executions.
+12. Do not stop after generating an execution plan or after the first batch.
+
+Create:
+
+`data/backtest_reports/task89/task89_execution_plan.json`
+
+`data/backtest_reports/task89/task89_progress.json`
+
+`data/backtest_reports/task89/batch_logs/`
+
+`data/backtest_reports/task89/checkpoints/`
+
+**The 150-second limit applies per sandbox execution, not to the overall number of resumable executions.**
+
+---
+
+# 2. COMPLETE MODEL INVENTORY — ALL MODELS MUST BE INCLUDED
+
+Read the actual current:
+- `ALL_MODELS`
+- `src/lib/latent/ensemble.ts`
+- Task 82 audit.
+- Task 84 reconciliation.
+- Task 85 registry API.
+- Task 84/87 model metrics.
+- Task 83/84/87 training logs.
+- All saved model checkpoints.
+- All ensemble artifacts.
+- Statistical and neural training scripts.
+- Database prediction records.
+
+Construct one master inventory covering:
+
+### Canonical registry
+All 58 unique canonical registry IDs.
+
+### Supplemental entries
+All 11 supplemental entries currently reported by the registry API, including Task 79 candidates and supplemental ensembles.
+
+### All implementation families
+
+Inspect and process every actual entry belonging to:
+
+**Classical ML**
+- XGBoost.
+- LightGBM.
+- CatBoost.
+- Random Forest.
+- Ridge Regression.
+- ExtraTrees.
+- HistGradientBoosting.
+- ElasticNet.
+- HuberRegressor.
+- SVR.
+- Other registered classical models.
+
+**Deep learning**
+- PatchTST.
+- N-BEATS.
+- TimesNet.
+- Informer.
+- LSTM.
+- GRU.
+- CNN-LSTM.
+- Transformer-LSTM.
+- TabNet.
+- Other registered neural architectures.
+
+**Foundation models**
+- Chronos.
+- Lag-Llama.
+- Moirai.
+- Time-LLM.
+- FinGPT.
+- Any other foundation-model entry found in the current registry.
+
+**Statistical/time-series**
+- ARIMA.
+- Holt-Winters/Exponential Smoothing.
+- GARCH.
+- Kalman Filter.
+- Prophet.
+- All additional registered statistical models.
+
+**Classifier families**
+- CL-2 entries.
+- PI entries.
+- CG entries.
+- All other actual registered classifiers.
+
+**Ensembles and meta-models**
+- CL-2 logistic meta-ensemble.
+- PI logistic meta-ensemble.
+- CG probability-average ensemble.
+- X LightGBM meta-labeling ensemble.
+- Majority Vote.
+- Probability-Weighted.
+- Tier-Weighted.
+- Final Consensus.
+- GIAN-Ensemble.
+- GIAN-Extender.
+- M-Ensemble.
+- Every other genuine ensemble implementation in the project.
+
+**Rule-based systems**
+- GM Technical.
+- GM Announcements.
+- GM Fundamental.
+- GM Macro.
+- All X strategy components.
+- GIAN rule-based components.
+- Every other registered technical/rule-based model.
+
+The above is a required family checklist. The actual registry and source code determine the final exact inventory. Never silently omit a registered entry.
+
+### Registry accounting
+
+Keep separate:
+- Canonical model count.
+- Supplemental entries.
+- Duplicate aliases.
+- Unique executable implementations.
+- Ensemble methods.
+- Rule-based components.
+
+Every unique registry ID must map to a final status and evidence record.
+
+Do not inflate counts through duplicate aliases, horizons, symbols, prediction records or repeated strategy legs.
+
+---
+
+# 3. TRAIN EVERY FEASIBLE MODEL — NOT ONLY THE EXISTING 44
+
+The central objective is actual training and fitting.
+
+Inspect existing valid artifacts first. Reuse a checkpoint only after verifying:
+- Model identity.
+- Training configuration.
+- Feature schema.
+- Training date range.
+- Target.
+- Reproducibility.
+- Valid OOS prediction evidence.
+
+Train any model that lacks valid training evidence.
+
+### Training requirements
+
+For every trainable model:
+1. Load genuine historical project data.
+2. Verify feature and target definitions.
+3. Build chronological training/validation/test splits.
+4. Apply the maturity purge.
+5. Fit preprocessing only on training data.
+6. Train or fit the actual implementation.
+7. Save trained state/artifacts.
+8. Generate genuine OOS predictions.
+9. Evaluate against appropriate baselines.
+10. Save metrics and sample-level predictions.
+
+Use resource-appropriate model configurations without replacing model identity.
+
+### CPU optimization
+
+The environment is CPU-only and has approximately 4 GB RAM.
+
+Use:
+- Compact architectures.
+- Small batch sizes.
+- Controlled CPU thread counts.
+- Memory-efficient data types.
+- Shorter valid sequence windows where supported.
+- Early stopping.
+- Bounded parameter searches.
+- Sequential execution for memory-heavy models.
+- Checkpointed training.
+- Cached feature matrices only when cutoff and schema match.
+
+Do not run several heavy models in parallel.
+
+If a model takes longer than 150 seconds, resume it over multiple operations rather than abandoning it.
+
+Do not retrain a valid model merely to produce another artifact.
+
+---
+
+# 4. FOUNDATION MODELS — EXHAUST ALL PRACTICAL TRAINING OPTIONS
+
+This is a priority. Previous tasks documented GPU and multi-GB checkpoint constraints, but do not accept those labels without additional practical attempts.
+
+For each of:
+- Chronos.
+- Lag-Llama.
+- Moirai.
+- Time-LLM.
+- FinGPT.
+
+Perform:
+
+1. Inspect current installed packages and versions.
+2. Inspect disk capacity and cached weights.
+3. Identify the smallest official supported checkpoint.
+4. Check CPU compatibility.
+5. Check quantization support.
+6. Check official fine-tuning or adaptation support.
+7. Check whether an available compact checkpoint can execute locally.
+8. Use resumable checkpoint downloads when feasible.
+9. Test one small sequence before larger runs.
+10. Implement genuine PSX adaptation or fine-tuning where supported.
+11. Save the checkpoint identity, version, configuration and resulting artifact.
+12. Generate OOS predictions using a leakage-free setup.
+
+### Acceptable outcomes
+
+- `foundation_finetuned_oos_evaluated`
+- `foundation_adapted_oos_evaluated`
+- `pretrained_inference_oos_evaluated`
+- `resource_blocked_after_attempts`
+- `dependency_blocked_after_attempts`
+
+Never label pretrained inference as fine-tuning.
+
+Do not replace a foundation architecture with Random Forest or another unrelated model.
+
+Try CPU and small official checkpoints before deciding GPU is essential.
+
+Do not use paid cloud services or incur external GPU costs without authorization.
+
+For every remaining blocker, specify:
+- Exact package/checkpoint needed.
+- Checkpoint size.
+- Actual minimum RAM/VRAM requirement.
+- Whether CPU execution was attempted.
+- Whether fine-tuning or inference is blocked.
+- Minimum additional infrastructure required.
+
+---
+
+# 5. COMPLETE ALL STATISTICAL MODELS
+
+### ARIMA — resolve the batch-only failure
+
+ARIMA reportedly works in isolation but fails in batch execution.
+
+Investigate:
+- Shared mutable DataFrames.
+- Symbol/horizon loop variables.
+- Reused estimator instances.
+- Datetime index/frequency state.
+- Prediction output aggregation.
+- NaN/Inf values.
+- Exceptions being swallowed.
+- Batch memory cleanup.
+- Serialization and result alignment.
+
+Required:
+1. Reproduce isolated success.
+2. Reproduce batch failure.
+3. Compare inputs and outputs.
+4. Isolate each fitting job where necessary.
+5. Use worker-process isolation if shared process state is the issue.
+6. Save each successful symbol/horizon result independently.
+7. Resume missing jobs.
+8. Generate genuine OOS forecasts.
+
+Do not fabricate predictions or return zero-filled fake outputs.
+
+### Kalman Filter
+
+Inspect the current implementation, observation/transition matrices, initialization, missing-data behavior and prediction indexing.
+
+Fix genuine implementation issues and evaluate it.
+
+### Prophet
+
+Preserve Task 87's successful recovery:
+- Prophet uses timezone-naive dates.
+- Do not regress the `utc=True` fix.
+- Verify saved model/predictions remain reproducible.
+
+### Other statistical models
+
+Verify and complete:
+- Holt-Winters.
+- GARCH.
+- All other registered statistical methods.
+
+Use point-in-time input data and bounded fitting configurations.
+
+Evaluate all supported forecast horizons.
+
+No model may be marked successful only because its package imported.
+
+It needs an actual fit, saved fitted state, OOS predictions and valid metrics.
+
+---
+
+# 6. CLASSIFIERS — COMPLETE CL-2, PI, CG AND ALL OTHER REGISTERED MODELS
+
+Train and evaluate every distinct classifier implementation.
+
+### CL-2
+Include:
+- LightGBM-A.
+- LightGBM-B.
+- HistGradientBoosting.
+- ExtraTrees.
+- Random Forest.
+- Logistic Regression.
+- MLP.
+- Logistic meta-ensemble.
+
+### PI
+Include:
+- Linear Regression.
+- Logistic Regression.
+- Pattern Matcher KNN.
+- Neural Network.
+- PI meta-ensemble.
+
+### CG
+Include:
+- LightGBM classifier.
+- XGBoost classifier.
+- Probability-average ensemble.
+
+Also inspect other registered classifiers, including any classification models represented in the generic registry.
+
+For every classifier:
+- Verify label definition.
+- Verify class balance.
+- Build leakage-free chronological splits.
+- Use training-fold-only class imbalance handling.
+- Generate calibrated probabilities when supported.
+- Generate OOF predictions for meta-models.
+- Evaluate on untouched final-test samples.
+
+Report:
+- ROC-AUC.
+- PR-AUC.
+- Precision.
+- Recall.
+- F1.
+- Balanced accuracy.
+- Log loss.
+- Confusion matrix.
+- Class prevalence.
+- Calibration metrics where meaningful.
+- Trading metrics where applicable.
+
+A high ROC-AUC under extreme imbalance is not sufficient evidence of a reliable model.
+
+Never fabricate classification labels.
+
+---
+
+# 7. TRAIN/FIT ALL ENSEMBLES
+
+Every ensemble and aggregator must be processed.
+
+### Learnable ensembles
+
+For:
+- CL-2 meta-ensemble.
+- PI meta-ensemble.
+- CG ensemble, if weights are learned.
+- X meta-labeling ensemble.
+- GIAN learned components.
+- Other learned ensembles found in the source code.
+
+Implement:
+1. Chronological cross-fitting for base models.
+2. Sample-level OOF prediction storage.
+3. Alignment by symbol, date, horizon and target.
+4. Meta-model fitting on OOF training predictions only.
+5. Validation-only hyperparameter selection.
+6. Frozen ensemble before final-test.
+7. Genuine final-test evaluation.
+8. Saved weights/meta-model artifacts.
+
+### Fixed aggregators
+
+For:
+- Majority Vote.
+- Probability-Weighted.
+- Tier-Weighted.
+- Final Consensus.
+
+Use aligned OOS component predictions.
+
+If weights can be learned, learn them only on OOF/validation data.
+
+Do not fit any ensemble parameter on the final-test set.
+
+Do not give an ensemble trained status merely because its components are trained.
+
+### Majority Vote research validation
+
+Task 87 reported:
+
+| Horizon | N | Directional accuracy |
+|---|---:|---:|
+| 5d | 400 | 0.565 |
+| 10d | 400 | 0.503 |
+| 21d | 400 | 0.480 |
+
+Reported 5d independent-binomial CI: `[0.516, 0.614]`.
+
+Reproduce all figures from saved sample-level predictions.
+
+Then perform dependence-aware inference:
+- Symbol/date-aware block bootstrap.
+- Temporal blocks respecting overlapping forward-return windows.
+- Market-wide dependence handling.
+- Identical sample comparison with component models.
+- Validation versus final-test analysis.
+- Confidence intervals.
+- Multiple-comparison adjustment where appropriate.
+
+Investigate the reported validation/final-test difference:
+- Validation 0.535.
+- Final-test 0.595.
+
+Do not claim robust significance if the advantage disappears under dependence-aware inference.
+
+Do not promote the ensemble automatically.
+
+---
+
+# 8. RULE-BASED MODELS — OPTIMIZE AND EVALUATE ALL OF THEM
+
+For every rule-based component:
+- Identify actual parameters and thresholds.
+- Identify its valid input features.
+- Fit or optimize parameters on training data only.
+- Use validation data for configuration selection.
+- Freeze the chosen configuration.
+- Evaluate it on untouched final-test data.
+- Save parameters and performance results.
+
+Use bounded resource-efficient optimization.
+
+Applicable families include:
+- GM.
+- X strategy components.
+- GIAN.
+- Other actual technical/rule-based registry components.
+
+Use status:
+
+`rule_based_optimized_oos_evaluated`
+
+Do not report conventional ML training for rule systems.
+
+### GM historical data
+
+Investigate whether genuine historical point-in-time data can be obtained for:
+- Announcements.
+- Fundamental.
+- Macro.
+
+Inspect existing project tables, datasets, ingestion scripts and any legally accessible historical data sources.
+
+Where external data is available:
+- Record the original source and publication timestamps.
+- Preserve point-in-time provenance.
+- Ingest only genuine dated historical records.
+- Build features using only information available at the evaluation cutoff.
+
+Never use current fundamentals or macro data to represent historical conditions.
+
+Never backdate announcements.
+
+Never fabricate a point-in-time history.
+
+If no reliable history exists after real attempts, report exact source/table/field gaps. Do not falsely train these pillars on synthetic data.
+
+---
+
+# 9. FULL WALK-FORWARD EVALUATION FOR ALL MODELS
+
+Use the project's existing integrity logic:
+
+`scripts/ml_integrity.py`
+
+Mandatory:
+- Per-symbol forward targets.
+- Mature-target filtering.
+- Chronological train/validation/test.
+- Purge forward-target overlap.
+- Training-only preprocessing.
+- Point-in-time universe membership.
+- No latest-signal replay.
+- No future-volume leakage.
+- No final-test tuning.
+
+Use supported horizons:
+- 5d.
+- 10d.
+- 21d.
+
+Keep model-specific feature schemas where needed.
+
+Use canonical8 and pilot25 where practical. Do not claim full_db coverage unless actually evaluated.
+
+For each model report:
+- Training samples.
+- Validation samples.
+- Final-test samples.
+- Date boundaries.
+- Symbol count.
+- Horizon.
+- MAE.
+- RMSE.
+- R².
+- Directional accuracy.
+- Appropriate classification metrics.
+- Zero-return baseline.
+- Training-only mean-return baseline.
+- Sample coverage.
+- Failure/unavailable reason.
+
+Where possible, align models to the same sample cohort for fair comparisons.
+
+---
+
+# 10. PER-STOCK WALK-FORWARD — COMPLETE AND INTEGRATE
+
+Task 87 produced 360 cells:
+- 25 symbols.
+- 5 models.
+- 3 horizons.
+
+Verify all existing results and their sample-level provenance.
+
+Extend the same framework to any additional models that now receive valid OOS predictions.
+
+Produce per-stock metrics for every feasible model:
+- Symbol.
+- Model.
+- Horizon.
+- Evaluation period.
+- Sample count.
+- MAE.
+- RMSE.
+- R².
+- Directional accuracy.
+- Baseline comparison.
+- Unavailable reason.
+
+Do not fabricate unavailable cells.
+
+Expose the complete matrix through the walk-forward API.
+
+Update the UI to make the matrix usable:
+- Universe selector.
+- Symbol filter.
+- Model filter.
+- Horizon filter.
+- Evaluation-period filter.
+- Metrics table.
+- Sample counts.
+- Negative R² visibility.
+- Pagination/collapsible rows.
+
+Do not overwrite the original Task 87 matrix.
+
+---
+
+# 11. COST-AWARE STRATEGY AND MODEL SIGNAL VALIDATION
+
+Use the real project trade simulator and existing strategy implementations.
+
+Preserve:
+- Task 57 chronological exit behavior.
+- SL-first same-candle handling.
+- TP1/TP2 milestone tracking.
+- TP3 final target.
+- Task 76 strategy definitions.
+- Task 80 PSX User Schedule V2.
+
+Use:
+
+`psx_user_schedule_v2`
+
+Tax profiles:
+- ATL 15%.
+- NON-ATL 30%.
+
+Strategies:
+- Fixed First Hit.
+- Max TP Step Trailing.
+- Scale Out 50/25/25.
+
+Risk variants:
+- Existing baseline.
+- `atr_tp1_rr_1_1_v1`.
+- `atr_min_net_rr_2_v1`.
+
+For every eligible trained model and ensemble, where sufficient real signals exist, evaluate:
+- Gross P&L.
+- Net P&L.
+- Win rate.
+- Profit factor.
+- Maximum drawdown.
+- Average win/loss.
+- Trade count.
+- Eligible and skipped signals.
+- Capital exposure.
+- Evaluation period.
+- Sample coverage.
+
+Keep validation and final-test results separate.
+
+Never select a production model using final-test performance.
+
+Do not call high directional accuracy profitable unless net results after the actual cost schedule support that claim.
+
+Do not use legacy cost assumptions as current profitability evidence.
+
+---
+
+# 12. PROSPECTIVE PAPER-TRADE ENGINE — COMPLETE LIFECYCLE
+
+Inspect the current prospective prediction and paper-trade infrastructure.
+
+Relevant existing areas include:
+- Task 77 prediction/outcome lifecycle.
+- `/api/backtest/walk-forward/prospective`
+- Existing database prediction records.
+- PaperTradeLeg records.
+- Task 57 simulator behavior.
+
+Implement or finalize an incremental lifecycle processor if one is missing:
+
+`scripts/update_prospective_outcomes.py`
+
+Requirements:
+1. Process only newly available OHLCV sessions.
+2. Use real persisted prediction IDs.
+3. Create no duplicate entries.
+4. Persist actual eligible fills only.
+5. Keep unavailable/stale symbols pending.
+6. Apply SL-first chronological exit semantics.
+7. Track TP1/TP2/TP3 correctly.
+8. Preserve best target reached separately from realized exit result.
+9. Use actual execution and cost logic.
+10. Update matured outcomes idempotently.
+11. Resume after interruption.
+12. Keep position counts separate from scale-out execution legs.
+
+Add robust tests for:
+- Repeated processor execution.
+- Duplicate prevention.
+- Interrupted processing.
+- Missing OHLCV.
+- Stale symbols.
+- Pending entry.
+- Open and closed positions.
+- TP milestones.
+- SL and TP on the same candle.
+- Realized net P&L.
+
+Never fabricate entries, fills, prices or completed outcomes.
+
+---
+
+# 13. COMPLETE BACKEND API INTEGRATION
+
+Inspect and preserve existing APIs.
+
+At minimum verify:
+- `/api/models/registry`
+- `/api/backtest/task81-results`
+- `/api/backtest/walk-forward`
+- `/api/backtest/walk-forward/prospective`
+
+Extend them only where required.
+
+Requirements:
+- Canonical and supplemental entries remain distinct.
+- Model evidence and metrics come from saved artifacts.
+- Aliases are not double-counted.
+- Per-stock matrix is available.
+- Prospective records reflect persisted state.
+- Missing values remain missing.
+- Stale data is clearly identified.
+- Responses have validation and stable schemas.
+- Old working API consumers remain backward compatible.
+
+Never infer trained status from a static UI `trained: true` field.
+
+---
+
+# 14. COMPLETE FULL FRONTEND AND BROWSER VERIFICATION
+
+Do not redesign the application unnecessarily. Complete and validate all current dashboard sections.
+
+### Model Registry
+- 58 canonical entries.
+- 11 supplemental entries, verified against current source artifacts.
+- All family/status filters.
+- Alias mapping.
+- Model detail expansion.
+- Verified metrics and blocker reasons.
+
+### Ensemble dashboard
+- All available learned and fixed ensembles.
+- OOS coverage.
+- Component metrics.
+- Confidence intervals.
+- Clear distinction between prediction accuracy and profitability.
+
+### Task 81 Strategy Results
+- ATL/NON-ATL.
+- Risk variant selection.
+- Strategy selection.
+- 540-cell results.
+- Correct net/gross P&L.
+- Correct eligibility/skip counts.
+
+### Walk-Forward
+- canonical8.
+- pilot25.
+- pilot50.
+- full_db where valid.
+- Per-model metrics.
+- Per-stock matrix.
+- Horizon and symbol filters.
+- Negative R² preserved.
+
+### Prospective dashboard
+- Pending entry.
+- Open.
+- Closed.
+- Skipped.
+- Pending/matured outcomes.
+- Actual entry and exit information where available.
+- Stale symbol warnings.
+
+### Browser testing
+
+Investigate and use the installed browser tools.
+
+Attempt Playwright or a compatible browser framework if possible.
+
+Verify:
+- Main application load.
+- AI Models tab.
+- Registry and supplemental entries.
+- Model detail interaction.
+- Filters and selectors.
+- Task 81 results.
+- Walk-forward universe selection.
+- Per-stock matrix.
+- Prospective status.
+- Desktop rendering.
+- Mobile rendering.
+- Browser console errors.
+- API/network failures.
+
+Save actual screenshots and logs where supported.
+
+If browser testing is genuinely impossible:
+- Record the exact missing binary/package/platform issue.
+- Complete every available API and component test.
+- Never claim browser interaction was verified using curl alone.
+
+---
+
+# 15. PERFORMANCE, RESOURCE AND PRODUCTION STABILITY
+
+Preserve the existing OOM-safe webpack configuration and 1 GB heap cap.
+
+Check:
+- Memory consumption.
+- Slow API responses.
+- Excessive UI rendering.
+- Large JSON payloads.
+- Duplicate database calls.
+- Missing indexes.
+- Long-running model jobs.
+- Server recovery after failed jobs.
+
+Use pagination or server aggregation for large tables.
+
+Do not launch concurrent memory-heavy model processes.
+
+Do not compromise backend metric correctness for faster display.
+
+---
+
+# 16. FINAL MODEL EVIDENCE AND STATUS SYSTEM
+
+Create one unified final registry that includes every current canonical and supplemental entry.
+
+For every registry entry record:
+- ID.
+- Name.
+- Canonical/supplemental classification.
+- Model family.
+- Implementation type.
+- Previous status.
+- Final status.
+- Training/fitting evidence.
+- Artifact.
+- Feature schema.
+- Target.
+- Horizon.
+- Training/validation/test date ranges.
+- Sample counts.
+- Runtime configuration.
+- Training duration.
+- OOS metrics.
+- Baseline comparison.
+- Ensemble component mapping.
+- Alias parent where applicable.
+- Exact blocker or failure reason.
+- Reproducibility command.
+
+Use distinct, truthful statuses:
+
+- `trained_oos_evaluated`
+- `foundation_finetuned_oos_evaluated`
+- `foundation_adapted_oos_evaluated`
+- `pretrained_inference_oos_evaluated`
+- `ensemble_oos_evaluated`
+- `rule_based_optimized_oos_evaluated`
+- `duplicate_alias_reused`
+- `trained_artifact_only`
+- `dependency_blocked_after_attempts`
+- `resource_blocked_after_attempts`
+- `data_blocked_after_attempts`
+- `failed_after_attempts`
+
+Every registry entry must have a final disposition.
+
+**No silent omissions. No fabricated model training. No false success statuses.**
+
+---
+
+# 17. TESTING — COMPLETE PROJECT VALIDATION
+
+Add/update focused tests for:
+
+### Model training
+- Every unique model ID processed.
+- Model/artifact mapping.
+- Checkpoint recovery.
+- Resume execution.
+- No duplicate training work.
+- Reproducible predictions.
+
+### Data integrity
+- Chronological split.
+- Maturity purge.
+- Per-stock forward targets.
+- Training-only preprocessing.
+- Point-in-time features.
+- No final-test leakage.
+
+### Ensembles
+- OOF alignment.
+- Component coverage.
+- No final-test weight fitting.
+- Confidence interval calculation.
+- Dependence-aware block bootstrap.
+
+### Strategy
+- SL-first.
+- TP milestone behavior.
+- Gap-aware fills.
+- PSX User Schedule V2.
+- ATL/NON-ATL calculations.
+- Aggregate scale-out accounting.
+
+### Prospective
+- Idempotent processor.
+- No duplicate entry/outcome.
+- Pending/open/closed state.
+- Stale OHLCV handling.
+
+### APIs and UI
+- Correct canonical/supplemental counts.
+- Correct statuses.
+- No missing-data fabrication.
+- Per-stock matrix.
+- All selectors.
+- Error states.
+- Mobile/desktop behavior.
+
+Run relevant tests, lint, type checks and production builds.
+
+**Every execution must stay below 150 seconds.** Split tests/build checks into bounded calls and resume as needed.
+
+Do not disable failing tests to make the build pass.
+
+---
+
+# 18. VERSIONED DELIVERABLES
+
+Save all Task 89 outputs under:
+
+`data/backtest_reports/task89/`
+
+Required:
+
+- `task89_summary.json`
+- `task89_execution_plan.json`
+- `task89_progress.json`
+- `task89_registry_final.json`
+- `task89_metrics.json`
+- `task89_metrics.csv`
+- `task89_ensemble_validation.json`
+- `task89_net_strategy_results.json`
+- `task89_per_stock_walk_forward.json`
+- `task89_prospective_integrity.json`
+- `task89_browser_test_results.json`
+- `task89_dependency_report.json`
+- `task89_remaining_blockers.json`
+- `batch_logs/`
+- `checkpoints/`
+- `models/`
+- `predictions/`
+- `ensembles/`
+- `rule_optimization/`
+
+Every artifact path must point to a real file.
+
+Do not overwrite Task 81–88 historical results.
+
+Keep original reports accessible and immutable.
+
+---
+
+# 19. GIT SAFETY AND DELIVERY
+
+Before editing:
+- Inspect `git status`.
+- Preserve unrelated working-tree changes.
+- Verify the configured remote.
+- Never stage `.env`, secrets, credentials or private database data.
+- Never rewrite Git history.
+- Never delete historical artifacts.
+- Never use destructive reset/clean operations.
+- Do not force-push.
+
+Commit coherent completed batches if practical, then the final integrated result.
+
+Final commit message:
+
+`Task 89: complete model training and full-stack AI platform`
+
+Push to the expected `origin/main` only when safe.
+
+Report exact commit hash and GitHub sync status.
+
+---
+
+# 20. FINAL COMPLETION REPORT
+
+The final report must show:
+
+### Model coverage
+- Canonical model count.
+- Supplemental entry count.
+- Unique model implementation count.
+- Models trained and OOS evaluated.
+- Foundation models fine-tuned/adapted.
+- Pretrained inference-only models.
+- Statistical models completed.
+- Classifiers completed.
+- Ensembles fitted/evaluated.
+- Rule-based systems optimized/evaluated.
+- Aliases reused.
+- Failed and blocked models.
+
+### Predictive performance
+- Best models by horizon.
+- Baseline comparisons.
+- Sample sizes.
+- Confidence intervals.
+- Majority Vote robustness conclusion.
+- Models that failed to beat baselines.
+- Any insignificant/inconclusive results.
+
+### Trading performance
+- Cost-aware net P&L.
+- ATL and NON-ATL comparisons.
+- Strategy comparison.
+- Validation versus final-test.
+- Prospective evidence and sample coverage.
+
+### Product completion
+- Registry API.
+- Model dashboard.
+- Ensemble dashboard.
+- Task 81 strategy matrix.
+- Walk-forward report.
+- Per-stock matrix.
+- Prospective lifecycle.
+- Browser verification.
+- Build/test results.
+
+### Remaining blockers
+For each blocked model, give:
+- Exact technical reason.
+- Attempts already performed.
+- Whether CPU alternatives were tried.
+- Required dependency/hardware/data.
+- Whether the limitation is genuinely external.
+
+---
+
+# FINAL NON-NEGOTIABLE INSTRUCTION
+
+This is the comprehensive project completion task.
+
+**All 58 canonical models and all 11 current supplemental entries must be explicitly processed. Include every model family and every ensemble.**
+
+Do not stop after training the first group.
+Do not stop after the statistical models.
+Do not leave foundation models, classifiers, meta-ensembles, GM, X or GIAN out of the execution plan.
+Do not leave frontend and browser validation for an automatically deferred future task.
+Do not replace models with unrelated algorithms.
+Do not fabricate results.
+Do not call rule optimization ML training.
+Do not claim inference-only as fine-tuning.
+Do not use final-test performance to select models.
+
+Use multiple executions, each no longer than 150 seconds, with persistent checkpoints. Continue until all feasible jobs have genuinely completed and every remaining impossible entry has documented evidence.
+
+**Deliver the maximum possible completed project in Task 89 itself: training, fitting, evaluation, ensembles, backtesting, prospective processing, APIs, UI, browser verification, tests and GitHub update.**
