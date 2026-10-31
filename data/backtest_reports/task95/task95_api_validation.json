@@ -1,0 +1,58 @@
+{
+ "task": "Task 95 Phase 10 \u2014 API validation",
+ "passed": 10,
+ "total": 10,
+ "checks": [
+  {
+   "check": "registry_counts_accurate",
+   "ok": true,
+   "detail": "58/9/2 total=69 unique=67"
+  },
+  {
+   "check": "aliases_distinct",
+   "ok": true,
+   "detail": "aliases=[{'name': 'Kalman', 'verifiedStatus': 'failed_after_attempts', 'metrics': {'5d': None, '10d': None, '21d': None}, 'dirAcc5d': None, 'mae5d': None, 'supplemental': True, 'isAlias': True, 'aliasParent': 'Kalman Filter'}, {'name': 'Logistic (PI)', 'verifiedStatus': 'trained_oos_evaluated', 'metrics': {'accuracy': 0.9991, 'precision': 0, 'recall': 0, 'f1': 0, 'n': 13731, 'pos_rate': 0.0009, 'roc_auc': 0.9214}, 'dirAcc5d': None, 'mae5d': None, 'supplemental': True, 'isAlias': True, 'aliasParent': 'Logistic (CL-2)'}]"
+  },
+  {
+   "check": "no_alias_double_count",
+   "ok": true,
+   "detail": "58 canonical rows"
+  },
+  {
+   "check": "moirai_not_shown_evaluated",
+   "ok": true,
+   "detail": "official_inference_operational_oos_evaluation_pending"
+  },
+  {
+   "check": "missing_metrics_stay_null",
+   "ok": true,
+   "detail": "Moirai has no fabricated metrics"
+  },
+  {
+   "check": "task81_results_loads",
+   "ok": true,
+   "detail": "keys: ['available', 'generated_at', 'costProfile', 'candidatesTotal', 'resultRows', 'cells', 'overall', 'perCell']"
+  },
+  {
+   "check": "walkforward_loads",
+   "ok": true,
+   "detail": "loaded"
+  },
+  {
+   "check": "perstock_loads",
+   "ok": true,
+   "detail": "loaded"
+  },
+  {
+   "check": "prospective_api_matches_db",
+   "ok": true,
+   "detail": "db={'closed': 18, 'open': 63, 'pending_entry': 33, 'skipped': 114} api={'pending_entry': 33, 'open': 63, 'closed': 18, 'skipped': 114} latest_session=2026-10-30"
+  },
+  {
+   "check": "psx_v2_costs_profile",
+   "ok": true,
+   "detail": "strategy endpoints consume legacy_standard_psx_v1 (= STANDARD_PSX) with PSX_USER_SCHEDULE_V2 documented in src/lib/latent/trading-costs.ts; verified in Phase 5"
+  }
+ ],
+ "backward_compatible": "no endpoints added/removed/renamed in Task 95; registry response gained no breaking fields (verifiedStatus/metrics semantics preserved)"
+}
