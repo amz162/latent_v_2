@@ -15,10 +15,11 @@
 import Redis from "ioredis";
 import RedisMock from "ioredis-mock";
 
-let client: Redis | RedisMock | null = null;
+type RedisMockClient = InstanceType<typeof RedisMock>;
+let client: Redis | RedisMockClient | null = null;
 let useMock = false;
 
-function getClient(): Redis | RedisMock | null {
+function getClient(): Redis | RedisMockClient | null {
   if (client) return client;
 
   const redisUrl = process.env.REDIS_URL;

@@ -108,7 +108,7 @@ export function ModelRegistryDashboard() {
               <SelectTrigger className="w-48"><SelectValue placeholder="Family" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Families</SelectItem>
-                {families.map((f: string) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                {(families as string[]).map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -332,7 +332,7 @@ export function ModelRegistryDashboard() {
                 <SelectTrigger className="w-32"><SelectValue placeholder="Symbol" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Symbols</SelectItem>
-                  {[...new Set((perStock.cells || []).map((c: any) => c.symbol))].map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  {([...new Set((perStock.cells || []).map((c: any) => c.symbol))] as string[]).map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>

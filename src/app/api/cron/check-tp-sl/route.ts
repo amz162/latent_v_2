@@ -62,8 +62,8 @@ export async function GET(req: NextRequest) {
         id: t.id,
         symbol: t.symbol,
         entryPrice: t.entryPrice,
-        targetPrice: t.targetPrice || null,
-        stopLoss: t.stopLoss || null,
+        targetPrice: null as number | null,  // TP/SL not stored on mock Trade either
+        stopLoss: null as number | null,
       })),
     ];
 
@@ -180,8 +180,8 @@ export async function GET(req: NextRequest) {
 
     // Update trade statuses in DB for hits
     const allHits = priceChecks.flatMap((p) => [
-      ...p.tpHits.map((h) => ({ tradeId: h.tradeId, type: "TP" as const, ...h })),
-      ...p.slHits.map((h) => ({ tradeId: h.tradeId, type: "SL" as const, ...h })),
+      ...p.tpHits.map((h) => ({ type: "TP" as const, ...h })),
+      ...p.slHits.map((h) => ({ type: "SL" as const, ...h })),
     ]);
 
     for (const hit of allHits) {

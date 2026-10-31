@@ -4,7 +4,7 @@ function num(v:any):number{if(v===null||v===undefined||v===""||v==="-")return 0;
 function find(items:any[],labels:string[]):any|null{for(const item of items||[]){const l=(item.label||"").toLowerCase();if(labels.some(x=>l.includes(x.toLowerCase())))return item;}return null;}
 function deriveQ(period:string):{q:number;y:number;pe:string}{
  if(/^\d{4}$/.test(period))return{q:4,y:parseInt(period),pe:`${period}-06-30`};
- if(/^\d{4}-\d{2}-\d{2}$/.test(period)){const yr=parseInt(period.slice(0,4));const mo=parseInt(period.slice(5,7));let q=mo>=1&&mo<=3?3:mo>=4&&mo<=6?4:mo>=7&&mo<=9?1:2;return{q,yr,pe:period};}
+ if(/^\d{4}-\d{2}-\d{2}$/.test(period)){const yr=parseInt(period.slice(0,4));const mo=parseInt(period.slice(5,7));let q=mo>=1&&mo<=3?3:mo>=4&&mo<=6?4:mo>=7&&mo<=9?1:2;return{q,y:yr,pe:period};}
  const m=period.match(/^([A-Za-z]{3})-(\d{2})$/);if(m){const mn=m[1];const yy=parseInt(m[2]);const yr=yy>50?1900+yy:2000+yy;const mm:Record<string,{q:number;m:number}>={Jan:{q:3,m:1},Feb:{q:3,m:2},Mar:{q:3,m:3},Apr:{q:4,m:4},May:{q:4,m:5},Jun:{q:4,m:6},Jul:{q:1,m:7},Aug:{q:1,m:8},Sep:{q:1,m:9},Oct:{q:2,m:10},Nov:{q:2,m:11},Dec:{q:2,m:12}};const info=mm[mn];if(info){let fy=yr;if(info.m>=7&&info.m<=12)fy=yr+1;return{q:info.q,y:fy,pe:`${yr}-${String(info.m).padStart(2,"0")}-30`};}}
  return{q:1,y:2020,pe:"2020-01-01"};}
 export async function GET(_req:Request,{params}:{params:Promise<{symbol:string}>}){

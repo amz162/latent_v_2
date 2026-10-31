@@ -382,7 +382,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }: { symbol: string; height
     if (data.length === 0) return [];
     if (range === "all") return data;
     const now = Date.now();
-    const ms: Record<typeof range, number> = {
+    const ms: Record<string, number> = {
       "1m": 30 * 24 * 60 * 60 * 1000,
       "6m": 182 * 24 * 60 * 60 * 1000,
       "1y": 365 * 24 * 60 * 60 * 1000,
@@ -786,8 +786,8 @@ function HistoricalOhlcvChart({ symbol, height = 360 }: { symbol: string; height
                 yAxisId="price"
                 dataKey={(d: any) =>
                   d && typeof d.low === "number" && typeof d.high === "number"
-                    ? [d.low, d.high]
-                    : [0, 0]
+                    ? ([d.low, d.high] as [number, number])
+                    : ([0, 0] as [number, number])
                 }
                 shape={renderCandle}
                 isAnimationActive={false}

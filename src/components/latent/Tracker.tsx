@@ -1181,7 +1181,6 @@ export function Tracker() {
                                             ? "border-[#FF5C5C]/40 text-[#FF5C5C]"
                                           : r.exitReason === "TP3_HIT" ? "border-[#00E676]/50 text-[#00E676]"
                                           : r.exitReason === "TIME_UP" ? "border-[#FBBF24]/40 text-[#FBBF24]"
-                                          : r.type === "SIP" ? "border-white/[0.12] text-[#64748B]"
                                           : "border-white/[0.12] text-[#64748B]"
                                         }`}
                                         title={`Exit: ${r.exitReason} · Best target reached: ${r.bestTargetReached ?? "—"} · Bars scanned: ${r.nBarsExamined ?? 0}${r.unresolved ? " · UNRESOLVED (time-up)" : ""}`}
