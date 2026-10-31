@@ -53,11 +53,12 @@ def classify(sym: str, all_symbols: set):
 
 def main():
     api = json.load(open("/tmp/companies_api.json"))["companies"]
+    all_symbols = {c["value"] for c in api}
     missing = sorted({c["value"] for c in api if not c.get("sector")})
     sectors = {}
     resolved_by = {"pattern": [], "curated": [], "unresolved": []}
     for s in missing:
-        cat = CURATED.get(s) or classify(s)
+        cat = CURATED.get(s) or classify(s, all_symbols)
         if cat:
             sectors[s] = cat
             resolved_by["curated" if s in CURATED else "pattern"].append(s)
