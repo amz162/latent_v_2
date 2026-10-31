@@ -1,0 +1,206 @@
+{
+ "task": "Task 95 Phase 4.3 \u2014 per-stock walk-forward matrix verification",
+ "provenance_policy": "task87 cells reused unchanged; new cells only from persisted OOS predictions; no fabricated cells",
+ "reused_cells": {
+  "source": "data/backtest_reports/task87/task87_per_stock_walk_forward.json",
+  "cells_total": 360,
+  "cells_valid": 360,
+  "cells_invalid": 0,
+  "unique_symbols": 24,
+  "unique_models": 5,
+  "horizons": [
+   "10",
+   "21",
+   "5"
+  ],
+  "models": [
+   "CatBoost",
+   "LightGBM",
+   "Random Forest",
+   "Ridge Regression",
+   "XGBoost"
+  ]
+ },
+ "new_cells": [
+  {
+   "symbol": "ATRL",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.041501,
+   "r2": -0.213,
+   "dir_acc": 0.52,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  },
+  {
+   "symbol": "BAFL",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.044055,
+   "r2": -0.0319,
+   "dir_acc": 0.52,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  },
+  {
+   "symbol": "HUBC",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.036137,
+   "r2": -0.2303,
+   "dir_acc": 0.38,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  },
+  {
+   "symbol": "INDU",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.029074,
+   "r2": -0.1718,
+   "dir_acc": 0.36,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  },
+  {
+   "symbol": "LUCK",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.037553,
+   "r2": -0.1648,
+   "dir_acc": 0.5,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  },
+  {
+   "symbol": "MARI",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.028643,
+   "r2": -0.3529,
+   "dir_acc": 0.46,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  },
+  {
+   "symbol": "MEBL",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.03748,
+   "r2": -0.2794,
+   "dir_acc": 0.5,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  },
+  {
+   "symbol": "SYS",
+   "model": "Chronos-T5-Tiny (official pretrained inference)",
+   "horizon": 5,
+   "n": 50,
+   "mae": 0.036964,
+   "r2": -0.1593,
+   "dir_acc": 0.58,
+   "provenance": "task94_phase3_expanded_batch_inference"
+  }
+ ],
+ "aggregate_only": [
+  {
+   "model": "PatchTST",
+   "horizon": 10,
+   "n": 40,
+   "dir_acc": 0.375,
+   "ci95": [
+    0.2422,
+    0.5297
+   ],
+   "symbols_count": 5,
+   "provenance": "task94_phase2_official_pretrained_inference_recovery",
+   "per_symbol_split_saved": false,
+   "honest_note": "checkpoint inference evaluated at aggregate level only; per-symbol cells would require re-running inference per symbol \u2014 not fabricated"
+  },
+  {
+   "model": "PatchTST",
+   "horizon": 21,
+   "n": 40,
+   "dir_acc": 0.65,
+   "ci95": [
+    0.4951,
+    0.7787
+   ],
+   "symbols_count": 5,
+   "provenance": "task94_phase2_official_pretrained_inference_recovery",
+   "per_symbol_split_saved": false,
+   "honest_note": "checkpoint inference evaluated at aggregate level only; per-symbol cells would require re-running inference per symbol \u2014 not fabricated"
+  },
+  {
+   "model": "PatchTST",
+   "horizon": 5,
+   "n": 40,
+   "dir_acc": 0.25,
+   "ci95": [
+    0.1419,
+    0.4019
+   ],
+   "symbols_count": 5,
+   "provenance": "task94_phase2_official_pretrained_inference_recovery",
+   "per_symbol_split_saved": false,
+   "honest_note": "checkpoint inference evaluated at aggregate level only; per-symbol cells would require re-running inference per symbol \u2014 not fabricated"
+  },
+  {
+   "model": "Transformer-LSTM",
+   "horizon": 10,
+   "n": 40,
+   "dir_acc": 0.375,
+   "ci95": [
+    0.2422,
+    0.5297
+   ],
+   "symbols_count": 5,
+   "provenance": "task94_phase2_official_pretrained_inference_recovery",
+   "per_symbol_split_saved": false,
+   "honest_note": "checkpoint inference evaluated at aggregate level only; per-symbol cells would require re-running inference per symbol \u2014 not fabricated"
+  },
+  {
+   "model": "Transformer-LSTM",
+   "horizon": 5,
+   "n": 40,
+   "dir_acc": 0.25,
+   "ci95": [
+    0.1419,
+    0.4019
+   ],
+   "symbols_count": 5,
+   "provenance": "task94_phase2_official_pretrained_inference_recovery",
+   "per_symbol_split_saved": false,
+   "honest_note": "checkpoint inference evaluated at aggregate level only; per-symbol cells would require re-running inference per symbol \u2014 not fabricated"
+  }
+ ],
+ "validation": {
+  "metric_range_violations": 0,
+  "notes": "dir_acc must be in [0,1], mae >= 0"
+ },
+ "summary": {
+  "chronos_expansion": {
+   "source": "batch_logs/chronos_expanded_predictions.json",
+   "n_predictions": 400,
+   "symbols": [
+    "ATRL",
+    "BAFL",
+    "HUBC",
+    "INDU",
+    "LUCK",
+    "MARI",
+    "MEBL",
+    "SYS"
+   ],
+   "aggregate_dir_acc": 0.4775,
+   "note": "per-symbol cells are thin (n~50) \u2014 indicative only, never promoted alone"
+  },
+  "unique_symbols_total": 28,
+  "reused_cells": 360,
+  "new_genuine_cells": 8,
+  "aggregate_only_rows": 5,
+  "missing_cells_policy": "cells absent from Task 87 remain absent (models/symbols without saved OOS predictions); full_db universes not fabricated; validation vs final-test kept as in source artifacts"
+ },
+ "honesty": "unavailable cells carry explicit reasons; no invented cells"
+}

@@ -1,0 +1,700 @@
+{
+ "task": "Task 95 Phase 4.1 \u2014 unified metric reproduction",
+ "method": {
+  "cross_artifact": "task93_full_metric_reproduction (58 canonical) re-validated against task94 evidence statuses; spot re-check vs task84_metrics.json (first 14 rows)",
+  "raw_recompute": "PatchTST/Transformer-LSTM 5 cells re-inferred from checkpoints (Phase 3.2); Chronos n=400 recomputed from raw prediction records",
+  "summary_only": "models whose artifacts store final metrics only (no raw arrays) keep artifact-cross-reference reproduction \u2014 raw arrays were never persisted"
+ },
+ "chronos_raw_reproduction": {
+  "file": "task94/batch_logs/chronos_expanded_predictions.json",
+  "comparison": {
+   "n": {
+    "recomputed": 400,
+    "stored": 400,
+    "match": true
+   },
+   "dir_acc": {
+    "recomputed": 0.4775,
+    "stored": 0.4775,
+    "match": true
+   },
+   "mae": {
+    "recomputed": 0.036426,
+    "stored": 0.036426,
+    "match": true
+   },
+   "rmse": {
+    "recomputed": 0.053675,
+    "stored": 0.053675,
+    "match": true
+   },
+   "r2": {
+    "recomputed": -0.1406,
+    "stored": -0.1406,
+    "match": true
+   },
+   "ci95_recomputed": [
+    0.429,
+    0.5264
+   ],
+   "ci95_stored": [
+    0.429,
+    0.5264
+   ],
+   "zero_baseline_mae": 0.033787,
+   "mean_baseline_mae": 0.033891
+  },
+  "all_match": true
+ },
+ "task84_spot_check": {
+  "rows": [
+   {
+    "model": "N-BEATS",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.04618,
+     "task93": 0.04618,
+     "match": true
+    },
+    "rmse": {
+     "task84": 0.06995,
+     "task93": 0.06995,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0547,
+     "task93": -0.0547,
+     "match": true
+    },
+    "n": {
+     "task84": 13731,
+     "task93": 13731,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "Informer",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.046005,
+     "task93": 0.046005,
+     "match": true
+    },
+    "rmse": {
+     "task84": 0.069589,
+     "task93": 0.069589,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0438,
+     "task93": -0.0438,
+     "match": true
+    },
+    "n": {
+     "task84": 13731,
+     "task93": 13731,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "LSTM",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.046233,
+     "task93": 0.046233,
+     "match": true
+    },
+    "rmse": {
+     "task84": 0.06901,
+     "task93": 0.06901,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0265,
+     "task93": -0.0265,
+     "match": true
+    },
+    "n": {
+     "task84": 13731,
+     "task93": 13731,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "CNN-LSTM",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.045352,
+     "task93": 0.045352,
+     "match": true
+    },
+    "rmse": {
+     "task84": 0.068547,
+     "task93": 0.068547,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0128,
+     "task93": -0.0128,
+     "match": true
+    },
+    "n": {
+     "task84": 13731,
+     "task93": 13731,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "Holt-Winters",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.039759,
+     "task93": 0.039759,
+     "match": true
+    },
+    "rmse": {
+     "task84": 0.059851,
+     "task93": 0.059851,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0362,
+     "task93": -0.0362,
+     "match": true
+    },
+    "n": {
+     "task84": 2401,
+     "task93": 2401,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "GARCH",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.043125,
+     "task93": 0.043125,
+     "match": true
+    },
+    "rmse": {
+     "task84": 0.064361,
+     "task93": 0.064361,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.1983,
+     "task93": -0.1983,
+     "match": true
+    },
+    "n": {
+     "task84": 2401,
+     "task93": 2401,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "GRU",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.047305,
+     "task93": 0.047305,
+     "match": true
+    },
+    "rmse": {
+     "task84": 0.071487,
+     "task93": 0.071487,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.1015,
+     "task93": -0.1015,
+     "match": true
+    },
+    "n": {
+     "task84": 13731,
+     "task93": 13731,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "Technical Engine (GM)",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.0482,
+     "task93": 0.0482,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0115,
+     "task93": -0.0115,
+     "match": true
+    },
+    "n": {
+     "task84": 58670,
+     "task93": 58670,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "Trend Multi-TF (X)",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.047733,
+     "task93": 0.047733,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.008,
+     "task93": -0.008,
+     "match": true
+    },
+    "n": {
+     "task84": 58670,
+     "task93": 58670,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "Breakout RelVol (X)",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.046959,
+     "task93": 0.046959,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0025,
+     "task93": -0.0025,
+     "match": true
+    },
+    "n": {
+     "task84": 58670,
+     "task93": 58670,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "Trend Pullback (X)",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.047437,
+     "task93": 0.047437,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0108,
+     "task93": -0.0108,
+     "match": true
+    },
+    "n": {
+     "task84": 58670,
+     "task93": 58670,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "RSI Divergence (X)",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.046857,
+     "task93": 0.046857,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0025,
+     "task93": -0.0025,
+     "match": true
+    },
+    "n": {
+     "task84": 58670,
+     "task93": 58670,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "BB Mean Reversion (X)",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.04692,
+     "task93": 0.04692,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0053,
+     "task93": -0.0053,
+     "match": true
+    },
+    "n": {
+     "task84": 58670,
+     "task93": 58670,
+     "match": true
+    },
+    "consistent": true
+   },
+   {
+    "model": "Vol Contraction (X)",
+    "in_task84": true,
+    "mae": {
+     "task84": 0.04702,
+     "task93": 0.04702,
+     "match": true
+    },
+    "r2": {
+     "task84": -0.0044,
+     "task93": -0.0044,
+     "match": true
+    },
+    "n": {
+     "task84": 58670,
+     "task93": 58670,
+     "match": true
+    },
+    "consistent": true
+   }
+  ],
+  "consistent": 20
+ },
+ "neural_caveat_resolution": {
+  "runs": [
+   {
+    "model": "PatchTST",
+    "h": 5,
+    "recomputed": {
+     "n": 40,
+     "dir_acc": 0.75,
+     "mae": 0.028029,
+     "rmse": 0.035502,
+     "r2": -0.0014,
+     "zero_baseline_mae": 0.030699,
+     "mean_baseline_mae": 0.027863,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.5981,
+      0.8581
+     ]
+    },
+    "stored": {
+     "n": 40,
+     "dir_acc": 0.25,
+     "mae": 0.066782,
+     "rmse": 0.074746,
+     "r2": -3.4389,
+     "zero_baseline_mae": 0.030699,
+     "mean_baseline_mae": 0.027863,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.1419,
+      0.4019
+     ]
+    },
+    "field_comparison": {
+     "n": {
+      "recomputed": 40,
+      "stored": 40,
+      "match": true
+     },
+     "dir_acc": {
+      "recomputed": 0.75,
+      "stored": 0.25,
+      "match": false
+     },
+     "mae": {
+      "recomputed": 0.028029,
+      "stored": 0.066782,
+      "match": false
+     },
+     "rmse": {
+      "recomputed": 0.035502,
+      "stored": 0.074746,
+      "match": false
+     },
+     "r2": {
+      "recomputed": -0.0014,
+      "stored": -3.4389,
+      "match": false
+     }
+    },
+    "final_status": "metric_mismatch",
+    "small_sample_warning": true,
+    "dir_acc_vs_random": "above"
+   },
+   {
+    "model": "PatchTST",
+    "h": 10,
+    "recomputed": {
+     "n": 40,
+     "dir_acc": 0.375,
+     "mae": 0.088195,
+     "rmse": 0.10395,
+     "r2": -1.6262,
+     "zero_baseline_mae": 0.050708,
+     "mean_baseline_mae": 0.049077,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.2422,
+      0.5297
+     ]
+    },
+    "stored": {
+     "n": 40,
+     "dir_acc": 0.375,
+     "mae": 0.081054,
+     "rmse": 0.097011,
+     "r2": -1.2873,
+     "zero_baseline_mae": 0.050708,
+     "mean_baseline_mae": 0.049077,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.2422,
+      0.5297
+     ]
+    },
+    "field_comparison": {
+     "n": {
+      "recomputed": 40,
+      "stored": 40,
+      "match": true
+     },
+     "dir_acc": {
+      "recomputed": 0.375,
+      "stored": 0.375,
+      "match": true
+     },
+     "mae": {
+      "recomputed": 0.088195,
+      "stored": 0.081054,
+      "match": false
+     },
+     "rmse": {
+      "recomputed": 0.10395,
+      "stored": 0.097011,
+      "match": false
+     },
+     "r2": {
+      "recomputed": -1.6262,
+      "stored": -1.2873,
+      "match": false
+     }
+    },
+    "final_status": "metric_mismatch",
+    "small_sample_warning": true,
+    "dir_acc_vs_random": "below"
+   },
+   {
+    "model": "PatchTST",
+    "h": 21,
+    "recomputed": {
+     "n": 40,
+     "dir_acc": 0.35,
+     "mae": 0.1692,
+     "rmse": 0.186118,
+     "r2": -4.7278,
+     "zero_baseline_mae": 0.064824,
+     "mean_baseline_mae": 0.060136,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.2213,
+      0.5049
+     ]
+    },
+    "stored": {
+     "n": 40,
+     "dir_acc": 0.65,
+     "mae": 0.062515,
+     "rmse": 0.080391,
+     "r2": -0.0686,
+     "zero_baseline_mae": 0.064824,
+     "mean_baseline_mae": 0.060136,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.4951,
+      0.7787
+     ]
+    },
+    "field_comparison": {
+     "n": {
+      "recomputed": 40,
+      "stored": 40,
+      "match": true
+     },
+     "dir_acc": {
+      "recomputed": 0.35,
+      "stored": 0.65,
+      "match": false
+     },
+     "mae": {
+      "recomputed": 0.1692,
+      "stored": 0.062515,
+      "match": false
+     },
+     "rmse": {
+      "recomputed": 0.186118,
+      "stored": 0.080391,
+      "match": false
+     },
+     "r2": {
+      "recomputed": -4.7278,
+      "stored": -0.0686,
+      "match": false
+     }
+    },
+    "final_status": "metric_mismatch",
+    "small_sample_warning": true,
+    "dir_acc_vs_random": "below"
+   },
+   {
+    "model": "Transformer-LSTM",
+    "h": 5,
+    "recomputed": {
+     "n": 40,
+     "dir_acc": 0.25,
+     "mae": 0.065048,
+     "rmse": 0.073162,
+     "r2": -3.2528,
+     "zero_baseline_mae": 0.030699,
+     "mean_baseline_mae": 0.027863,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.1419,
+      0.4019
+     ]
+    },
+    "stored": {
+     "n": 40,
+     "dir_acc": 0.25,
+     "mae": 0.089809,
+     "rmse": 0.096556,
+     "r2": -6.4074,
+     "zero_baseline_mae": 0.030699,
+     "mean_baseline_mae": 0.027863,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.1419,
+      0.4019
+     ]
+    },
+    "field_comparison": {
+     "n": {
+      "recomputed": 40,
+      "stored": 40,
+      "match": true
+     },
+     "dir_acc": {
+      "recomputed": 0.25,
+      "stored": 0.25,
+      "match": true
+     },
+     "mae": {
+      "recomputed": 0.065048,
+      "stored": 0.089809,
+      "match": false
+     },
+     "rmse": {
+      "recomputed": 0.073162,
+      "stored": 0.096556,
+      "match": false
+     },
+     "r2": {
+      "recomputed": -3.2528,
+      "stored": -6.4074,
+      "match": false
+     }
+    },
+    "final_status": "metric_mismatch",
+    "small_sample_warning": true,
+    "dir_acc_vs_random": "below"
+   },
+   {
+    "model": "Transformer-LSTM",
+    "h": 10,
+    "recomputed": {
+     "n": 40,
+     "dir_acc": 0.375,
+     "mae": 0.109371,
+     "rmse": 0.125786,
+     "r2": -2.8455,
+     "zero_baseline_mae": 0.050708,
+     "mean_baseline_mae": 0.049077,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.2422,
+      0.5297
+     ]
+    },
+    "stored": {
+     "n": 40,
+     "dir_acc": 0.375,
+     "mae": 0.341297,
+     "rmse": 0.347272,
+     "r2": -28.3105,
+     "zero_baseline_mae": 0.050708,
+     "mean_baseline_mae": 0.049077,
+     "beats_mean_baseline": false,
+     "ci95": [
+      0.2422,
+      0.5297
+     ]
+    },
+    "field_comparison": {
+     "n": {
+      "recomputed": 40,
+      "stored": 40,
+      "match": true
+     },
+     "dir_acc": {
+      "recomputed": 0.375,
+      "stored": 0.375,
+      "match": true
+     },
+     "mae": {
+      "recomputed": 0.109371,
+      "stored": 0.341297,
+      "match": false
+     },
+     "rmse": {
+      "recomputed": 0.125786,
+      "stored": 0.347272,
+      "match": false
+     },
+     "r2": {
+      "recomputed": -2.8455,
+      "stored": -28.3105,
+      "match": false
+     }
+    },
+    "final_status": "metric_mismatch",
+    "small_sample_warning": true,
+    "dir_acc_vs_random": "below"
+   }
+  ],
+  "summary": {
+   "cells_reproduced": 0,
+   "cells_mismatched": 5,
+   "mismatched_cells": [
+    "PatchTST_h5",
+    "PatchTST_h10",
+    "PatchTST_h21",
+    "Transformer-LSTM_h5",
+    "Transformer-LSTM_h10"
+   ]
+  }
+ },
+ "n_models": 58,
+ "evidence_status_counts_t94": {
+  "metric_reproduced_with_caveats": 2,
+  "metric_reproduced": 65
+ },
+ "honesty": "no missing metric displayed as zero; tiny samples (n<100) flagged"
+}

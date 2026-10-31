@@ -1,0 +1,1380 @@
+{
+ "task": "Task 95 Phase 4.2 \u2014 walk-forward reproducibility verification",
+ "evaluation_method": "walk-forward-expanding-window",
+ "data_cutoff": "2026-07-22T00:00:00",
+ "universe": {
+  "mode": "pilot25",
+  "criteria": "canonical8 (if eligible as of cutoff) + top 17 by PRE-CUTOFF total volume (liquidity proxy), >= 250 bars as of the selection cutoff \u2014 evaluation-period volume excluded",
+  "selection_method": "point_in_time_volume_ranking",
+  "selection_cutoff": "2023-04-13",
+  "candidate_count": 742,
+  "eligible_count": 541,
+  "included_count": 25,
+  "excluded_count": 201,
+  "exclusions": [
+   {
+    "symbol": "GTECH",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 237,
+    "min_required": 250
+   },
+   {
+    "symbol": "NIB",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 176,
+    "min_required": 250
+   },
+   {
+    "symbol": "UNITYR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "POWERR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "FLYNGR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "HASCOLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 18,
+    "min_required": 250
+   },
+   {
+    "symbol": "PRLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "MLCFR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "FFLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "GCIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 108,
+    "min_required": 250
+   },
+   {
+    "symbol": "JSCLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "OBOYR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "GTECHBR",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "GGLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "ASCR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "CLCPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 246,
+    "min_required": 250
+   },
+   {
+    "symbol": "HBLTETF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 116,
+    "min_required": 250
+   },
+   {
+    "symbol": "WAVESR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 11,
+    "min_required": 250
+   },
+   {
+    "symbol": "GGGLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "EPCLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "JSMFETF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 200,
+    "min_required": 250
+   },
+   {
+    "symbol": "IMAGER1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 15,
+    "min_required": 250
+   },
+   {
+    "symbol": "HADC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 246,
+    "min_required": 250
+   },
+   {
+    "symbol": "GAILR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 15,
+    "min_required": 250
+   },
+   {
+    "symbol": "MFTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 238,
+    "min_required": 250
+   },
+   {
+    "symbol": "POWERPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 241,
+    "min_required": 250
+   },
+   {
+    "symbol": "GCILB",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 78,
+    "min_required": 250
+   },
+   {
+    "symbol": "P05PIB131027",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 3,
+    "min_required": 250
+   },
+   {
+    "symbol": "ALIFE",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 205,
+    "min_required": 250
+   },
+   {
+    "symbol": "DATM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 130,
+    "min_required": 250
+   },
+   {
+    "symbol": "SHCI",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 167,
+    "min_required": 250
+   },
+   {
+    "symbol": "MERITR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "P10PIB101230",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 3,
+    "min_required": 250
+   },
+   {
+    "symbol": "JVDCR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "GEMSPNL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 143,
+    "min_required": 250
+   },
+   {
+    "symbol": "SMBLCPSB",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 23,
+    "min_required": 250
+   },
+   {
+    "symbol": "PNGRS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 95,
+    "min_required": 250
+   },
+   {
+    "symbol": "GRR",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "HSMPSR",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "ACIETF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 142,
+    "min_required": 250
+   },
+   {
+    "symbol": "MUGHALR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "NBPGETF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 214,
+    "min_required": 250
+   },
+   {
+    "symbol": "IFSL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 147,
+    "min_required": 250
+   },
+   {
+    "symbol": "P05PIB290427",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 1,
+    "min_required": 250
+   },
+   {
+    "symbol": "SEARLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 16,
+    "min_required": 250
+   },
+   {
+    "symbol": "GEMPAPL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 151,
+    "min_required": 250
+   },
+   {
+    "symbol": "THAS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 212,
+    "min_required": 250
+   },
+   {
+    "symbol": "BROT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 98,
+    "min_required": 250
+   },
+   {
+    "symbol": "HALEON",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 52,
+    "min_required": 250
+   },
+   {
+    "symbol": "TDIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 155,
+    "min_required": 250
+   },
+   {
+    "symbol": "GEMBLUEX",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 226,
+    "min_required": 250
+   },
+   {
+    "symbol": "GEMUNSL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 226,
+    "min_required": 250
+   },
+   {
+    "symbol": "EWLA",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 221,
+    "min_required": 250
+   },
+   {
+    "symbol": "FCEL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 129,
+    "min_required": 250
+   },
+   {
+    "symbol": "HSMR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 25,
+    "min_required": 250
+   },
+   {
+    "symbol": "ICLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 25,
+    "min_required": 250
+   },
+   {
+    "symbol": "GHGLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 25,
+    "min_required": 250
+   },
+   {
+    "symbol": "SMLR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 25,
+    "min_required": 250
+   },
+   {
+    "symbol": "AASM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 229,
+    "min_required": 250
+   },
+   {
+    "symbol": "SRSM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 161,
+    "min_required": 250
+   },
+   {
+    "symbol": "ANTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 205,
+    "min_required": 250
+   },
+   {
+    "symbol": "ISTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 141,
+    "min_required": 250
+   },
+   {
+    "symbol": "SNBLTFC3",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 237,
+    "min_required": 250
+   },
+   {
+    "symbol": "ASRL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "GLAT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 184,
+    "min_required": 250
+   },
+   {
+    "symbol": "ASLCPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 23,
+    "min_required": 250
+   },
+   {
+    "symbol": "NPSM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 191,
+    "min_required": 250
+   },
+   {
+    "symbol": "EWIC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 163,
+    "min_required": 250
+   },
+   {
+    "symbol": "PAKL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 131,
+    "min_required": 250
+   },
+   {
+    "symbol": "DMC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 201,
+    "min_required": 250
+   },
+   {
+    "symbol": "DMTX",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 201,
+    "min_required": 250
+   },
+   {
+    "symbol": "AHTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 195,
+    "min_required": 250
+   },
+   {
+    "symbol": "SZTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 162,
+    "min_required": 250
+   },
+   {
+    "symbol": "SUHJ",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 162,
+    "min_required": 250
+   },
+   {
+    "symbol": "SFLL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 125,
+    "min_required": 250
+   },
+   {
+    "symbol": "ELCM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 242,
+    "min_required": 250
+   },
+   {
+    "symbol": "JVDCPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 93,
+    "min_required": 250
+   },
+   {
+    "symbol": "DIIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 137,
+    "min_required": 250
+   },
+   {
+    "symbol": "BAFS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 245,
+    "min_required": 250
+   },
+   {
+    "symbol": "PCML",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "HCL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 101,
+    "min_required": 250
+   },
+   {
+    "symbol": "STL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 101,
+    "min_required": 250
+   },
+   {
+    "symbol": "HBLTFC2",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 222,
+    "min_required": 250
+   },
+   {
+    "symbol": "ALQT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 89,
+    "min_required": 250
+   },
+   {
+    "symbol": "HSMCPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 17,
+    "min_required": 250
+   },
+   {
+    "symbol": "BAHLTFC9",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 43,
+    "min_required": 250
+   },
+   {
+    "symbol": "DMIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 41,
+    "min_required": 250
+   },
+   {
+    "symbol": "SBLTFC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 194,
+    "min_required": 250
+   },
+   {
+    "symbol": "JSBLTFC2",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 207,
+    "min_required": 250
+   },
+   {
+    "symbol": "CASH",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 31,
+    "min_required": 250
+   },
+   {
+    "symbol": "HAFL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 123,
+    "min_required": 250
+   },
+   {
+    "symbol": "DOLCPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 14,
+    "min_required": 250
+   },
+   {
+    "symbol": "EWICR1",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 6,
+    "min_required": 250
+   },
+   {
+    "symbol": "PIAB",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 109,
+    "min_required": 250
+   },
+   {
+    "symbol": "PIAHCLB",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 109,
+    "min_required": 250
+   },
+   {
+    "symbol": "AWTX",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 162,
+    "min_required": 250
+   },
+   {
+    "symbol": "ASIC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 79,
+    "min_required": 250
+   },
+   {
+    "symbol": "BOPTFC2",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 11,
+    "min_required": 250
+   },
+   {
+    "symbol": "TPLSC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 27,
+    "min_required": 250
+   },
+   {
+    "symbol": "AKBLTFC6",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 103,
+    "min_required": 250
+   },
+   {
+    "symbol": "ISHT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "TPLTFC3",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 24,
+    "min_required": 250
+   },
+   {
+    "symbol": "MUGHALSC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 62,
+    "min_required": 250
+   },
+   {
+    "symbol": "AYTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "AAL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 2,
+    "min_required": 250
+   },
+   {
+    "symbol": "AATM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ABSON",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ADTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 69,
+    "min_required": 250
+   },
+   {
+    "symbol": "AGLNCPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 2,
+    "min_required": 250
+   },
+   {
+    "symbol": "AMSL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ANNT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "APOT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "AQTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "AYZT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "AZMT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "AZTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "BEEM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "BELA",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "BIIC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "COST",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "COTT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "DBCI",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "DBSL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "DCM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "DCTL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "DOMF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "DWAE",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ENGL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "EXTR",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "FAEL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "FCONM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "FDMF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "FIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "FIM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "FSWL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "FTHM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "GENP",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "GIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 87,
+    "min_required": 250
+   },
+   {
+    "symbol": "GLOT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "GOEM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "GSPM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "GUSM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "GUTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "HACC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 82,
+    "min_required": 250
+   },
+   {
+    "symbol": "HAJT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "HATM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "HKKT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "HMICL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "ICCI",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 2,
+    "min_required": 250
+   },
+   {
+    "symbol": "ICCT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 69,
+    "min_required": 250
+   },
+   {
+    "symbol": "INL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 1,
+    "min_required": 250
+   },
+   {
+    "symbol": "INMF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ITANZ",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ITSL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "JOVC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "KACM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "KAKL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "LPCL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "MDTM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "MOHE",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "MOIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "MOON",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "MSOTPS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 13,
+    "min_required": 250
+   },
+   {
+    "symbol": "MUKT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "MWMP",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "NAFL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "NATM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 93,
+    "min_required": 250
+   },
+   {
+    "symbol": "NINA",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "NMFL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "NORS",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "P10PFL180630",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 1,
+    "min_required": 250
+   },
+   {
+    "symbol": "P10PFL220829",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 1,
+    "min_required": 250
+   },
+   {
+    "symbol": "P10PIB120728",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 1,
+    "min_required": 250
+   },
+   {
+    "symbol": "P10PIB190929",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 1,
+    "min_required": 250
+   },
+   {
+    "symbol": "PAKCEM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "PASM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "PDGH",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "PGIC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 69,
+    "min_required": 250
+   },
+   {
+    "symbol": "PICL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "PRIB",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "PRIC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "PUDF",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "QUSW",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "REGAL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "SCHT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "SDIL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "SDOT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "SEPCO",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 69,
+    "min_required": 250
+   },
+   {
+    "symbol": "SGABL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 2,
+    "min_required": 250
+   },
+   {
+    "symbol": "SGFL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "SICL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "SLSO",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "SSIC",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "SUCM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "SURAJ",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "SWL",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 71,
+    "min_required": 250
+   },
+   {
+    "symbol": "TAJT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "TREI",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 70,
+    "min_required": 250
+   },
+   {
+    "symbol": "USMT",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ZELP",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   },
+   {
+    "symbol": "ZHCM",
+    "reason": "insufficient_history_asof_cutoff",
+    "bars_asof_cutoff": 72,
+    "min_required": 250
+   }
+  ],
+  "target_count": 25,
+  "min_bars_required": 250,
+  "data_source": "db/custom.db OhlcvBar table (pilot25); eligibility+ranking from records with date <= 2023-04-13 only",
+  "selected_asof": {
+   "WTL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 26209866359.0
+   },
+   "KEL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 19201012625.0
+   },
+   "TRG": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 17537453101.0
+   },
+   "UNITY": {
+    "bars_asof_cutoff": 1372,
+    "volume_asof_cutoff": 13888532537.0
+   },
+   "BOP": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 12644982500.0
+   },
+   "CNERGY": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 12195029114.0
+   },
+   "HASCOL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 10753467039.0
+   },
+   "MLCF": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 9238083557.0
+   },
+   "BYCO": {
+    "bars_asof_cutoff": 1281,
+    "volume_asof_cutoff": 8810567000.0
+   },
+   "PAEL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 8796101828.0
+   },
+   "PIBTL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 8132590000.0
+   },
+   "LOTCHEM": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 8096443158.0
+   },
+   "PRL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 7730906832.0
+   },
+   "TELE": {
+    "bars_asof_cutoff": 1609,
+    "volume_asof_cutoff": 7557284252.0
+   },
+   "ANL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 7410475687.0
+   },
+   "HUMNL": {
+    "bars_asof_cutoff": 1607,
+    "volume_asof_cutoff": 7379003917.0
+   },
+   "FCCL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 6953761000.0
+   },
+   "OGDC": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 4298294734.0
+   },
+   "PPL": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 3223347630.0
+   },
+   "HUBC": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 2986413097.0
+   },
+   "PSO": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 1776211419.0
+   },
+   "ENGRO": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 1306518563.0
+   },
+   "MEBL": {
+    "bars_asof_cutoff": 1593,
+    "volume_asof_cutoff": 1119952258.0
+   },
+   "LUCK": {
+    "bars_asof_cutoff": 1611,
+    "volume_asof_cutoff": 1009770455.0
+   },
+   "SYS": {
+    "bars_asof_cutoff": 1600,
+    "volume_asof_cutoff": 369412145.0
+   }
+  },
+  "fingerprint": "d8088bf891daf7b28bacf22936ca7824011435d5ded57b24b339db4c12da88a4",
+  "selection_iterations": 1,
+  "estimated_test_start": "2023-04-17",
+  "selection_cutoff_epoch": 1681344000000,
+  "first_evaluation_decision_date": 1681689600000,
+  "symbols": [
+   "ENGRO",
+   "HUBC",
+   "LUCK",
+   "SYS",
+   "MEBL",
+   "PSO",
+   "OGDC",
+   "PPL",
+   "WTL",
+   "KEL",
+   "TRG",
+   "UNITY",
+   "BOP",
+   "CNERGY",
+   "HASCOL",
+   "MLCF",
+   "BYCO",
+   "PAEL",
+   "PIBTL",
+   "LOTCHEM",
+   "PRL",
+   "TELE",
+   "ANL",
+   "HUMNL",
+   "FCCL"
+  ]
+ },
+ "symbols": 25,
+ "models_per_symbol": [
+  "CatBoost",
+  "LightGBM",
+  "Random Forest",
+  "Ridge Regression",
+  "XGBoost"
+ ],
+ "horizons": [
+  "10",
+  "21",
+  "5"
+ ],
+ "baseline_fields_present": [],
+ "honesty_checks": {
+  "expanding_window": true,
+  "cutoff_before_recent_data": true,
+  "universe_recorded": true
+ },
+ "note": "final metrics only (no raw arrays persisted) \u2014 raw recomputation infeasible for these models without re-running full training pipeline; documented as evidence limitation"
+}

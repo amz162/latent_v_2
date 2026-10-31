@@ -108,6 +108,30 @@
    "finished": "2026-10-31T18:27:58Z",
    "seconds": 0.0,
    "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task95_runner.py\", line 88, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 177, in p8_prospective_monitor\n    outcomes = q(\"SELECT outcomeState, COUNT(*) n FROM ProspectivePaperTrade GROUP BY outcomeState\") \\\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 30, in q\n    rows = [dict(r) for r in conn.execute(sql, args).fetchall()]\n                             ^^^^^^^^^^^^^^^^^^^^^^^\nsqlite3.OperationalError: no such column: outcomeState\n"
+  },
+  "p4_metric_reproduction": {
+   "status": "done",
+   "runs": 2,
+   "started": "2026-10-31T18:30:36Z",
+   "error": null,
+   "finished": "2026-10-31T18:30:36Z",
+   "seconds": 0.0
+  },
+  "p4_walkforward_verify": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T18:30:03Z",
+   "error": null,
+   "finished": "2026-10-31T18:30:03Z",
+   "seconds": 0.0
+  },
+  "p4_perstock_verify": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T18:30:03Z",
+   "error": null,
+   "finished": "2026-10-31T18:30:03Z",
+   "seconds": 0.0
   }
  },
  "history": []
