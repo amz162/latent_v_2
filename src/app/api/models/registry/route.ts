@@ -15,11 +15,42 @@ export async function GET() {
       try { return JSON.parse(await fs.readFile(path.join(process.cwd(), p), "utf-8")); }
       catch { return null; }
     };
-    const [t84Metrics, recon] = await Promise.all([
+    const [t84Metrics, recon, t94Repro, t94Recovery, t94Foundations] = await Promise.all([
       readJson("data/backtest_reports/task84/task84_metrics.json"),
       readJson("data/backtest_reports/task84/task84_registry_reconciliation.json"),
+      readJson("data/backtest_reports/task94/task94_model_metric_reproduction.json"),
+      readJson("data/backtest_reports/task94/task94_model_recovery.json"),
+      readJson("data/backtest_reports/task94/task94_foundation_results.json"),
     ]);
     const allResults = t84Metrics?.allResults || {};
+    // Task 94 Phase 10: overlay corrected training/evaluation statuses from the
+    // Task 94 evidence artifacts. Only models with NEW evidence since Task 84
+    // are overridden; all other statuses already reproduce from Task 84 data.
+    const statusOverrides: Record<string, { status: string; metrics?: any }> = {};
+    for (const m of ["PatchTST", "Transformer-LSTM"] as const) {
+      const h = (t94Recovery as any)?.[m]?.["5d"];
+      if (h?.status) statusOverrides[m] = { status: h.status, metrics: { "5d": { n: h.n_predictions, directional_accuracy: h.overall_dir_acc, mae: h.per_horizon?.["5"]?.mae, rmse: h.per_horizon?.["5"]?.rmse, r2: h.per_horizon?.["5"]?.r2 } } };
+    }
+    if (t94Foundations?.models) {
+      const fm: Record<string, any> = t94Foundations.models;
+      for (const [name, blk] of Object.entries(fm)) {
+        if (blk?.status && !statusOverrides[name]) {
+          const m5 = blk?.metrics?.["5d"] || blk?.final_result?.metrics?.["5d"] || null;
+          statusOverrides[name] = { status: blk.status, metrics: m5 || undefined };
+        }
+      }
+    }
+    const applyOverride = (entry: any) => {
+      const ov = statusOverrides[entry.name];
+      if (!ov) return entry;
+      return { ...entry, verifiedStatus: ov.status, metrics: ov.metrics || entry.metrics,
+        dirAcc5d: ov.metrics?.["5d"]?.directional_accuracy ?? entry.dirAcc5d,
+        mae5d: ov.metrics?.["5d"]?.mae ?? entry.mae5d,
+        rmse5d: ov.metrics?.["5d"]?.rmse ?? entry.rmse5d,
+        r2_5d: ov.metrics?.["5d"]?.r2 ?? entry.r2_5d,
+        n5d: ov.metrics?.["5d"]?.n ?? entry.n5d,
+        task94Evidence: true };
+    };
     // Build registry: one entry per ALL_MODELS item, enriched with Task 84 status + metrics
     const canonical = ALL_MODELS.map((m: any) => {
       // Find matching metrics entry (try exact name, then name without suffixes)
@@ -84,8 +115,8 @@ export async function GET() {
       totalCount: ALL_MODELS.length + supplemental.length + aliases.length,
       aliases,
       reconciliation: recon ? { registry: recon.registry_count, task83: recon.task83_count, inBoth: recon.in_both } : null,
-      canonical,
-      supplemental,
+      canonical: canonical94,
+      supplemental: supplemental.map(applyOverride),
       generatedAt: new Date().toISOString(),
     });
   } catch (e: any) {
