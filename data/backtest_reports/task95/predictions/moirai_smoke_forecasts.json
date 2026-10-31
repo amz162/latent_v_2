@@ -1,0 +1,86 @@
+{
+ "task": "Task 95 Phase 6.3 \u2014 Moirai official smoke inference",
+ "model": "Salesforce/moirai-1.1-R-small (official checkpoint)",
+ "pipeline": "uni2ts 2.0.0 MoiraiForecast.as_predictor (official transform/predictor)",
+ "symbols": [
+  "WTL",
+  "KEL",
+  "FCCL",
+  "ANL",
+  "CNERGY"
+ ],
+ "prediction_length": 5,
+ "context_bars": {
+  "WTL": 180,
+  "KEL": 180,
+  "FCCL": 180,
+  "ANL": 180,
+  "CNERGY": 180
+ },
+ "forecasts": {
+  "WTL": {
+   "last_context_close": 0.94,
+   "last_context_date": "2026-10-30",
+   "forecast_mean_next5": [
+    0.939044,
+    0.938469,
+    0.940778,
+    0.941748,
+    0.94911
+   ],
+   "sample_mean_last_step": 0.94911
+  },
+  "KEL": {
+   "last_context_close": 5.79,
+   "last_context_date": "2026-10-30",
+   "forecast_mean_next5": [
+    5.862289,
+    5.836256,
+    5.851474,
+    5.828568,
+    5.811902
+   ],
+   "sample_mean_last_step": 5.811901
+  },
+  "FCCL": {
+   "last_context_close": 52.28,
+   "last_context_date": "2026-10-30",
+   "forecast_mean_next5": [
+    52.542953,
+    52.842144,
+    52.722179,
+    52.405861,
+    53.046474
+   ],
+   "sample_mean_last_step": 53.046478
+  },
+  "ANL": {
+   "last_context_close": 8.7,
+   "last_context_date": "2026-10-30",
+   "forecast_mean_next5": [
+    8.774508,
+    8.731083,
+    8.722001,
+    8.722101,
+    8.679087
+   ],
+   "sample_mean_last_step": 8.679086
+  },
+  "CNERGY": {
+   "last_context_close": 13.64,
+   "last_context_date": "2026-10-30",
+   "forecast_mean_next5": [
+    13.921292,
+    13.94316,
+    14.090223,
+    14.052091,
+    14.188604
+   ],
+   "sample_mean_last_step": 14.188602
+  }
+ },
+ "n_forecasts": 5,
+ "status": "real_forecasts_generated",
+ "note": "zero-shot official inference OK \u2014 Moirai dependency blocker RESOLVED; full OOS cohort evaluation required before any 'evaluated' status or metric claim",
+ "seconds": 5.1
+}

@@ -23,6 +23,32 @@ def sh(cmd, t=120):
     return subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=BASE, timeout=t)
 
 
+@reg("p6_moirai_inference")
+def p6_moirai_inference(ctx):
+    """Run the official uni2ts smoke inference (idempotent — reuses existing artifact)."""
+    out = BASE / "data/backtest_reports/task95/predictions/moirai_smoke_forecasts.json"
+    if out.exists():
+        d = json.loads(out.read_text())
+        if d.get("status") == "real_forecasts_generated":
+            ctx.log("moirai smoke forecasts already present (idempotent skip)")
+            ctx.write("task95_moirai_results.json", {
+                "task": "Task 95 Phase 6.3 — Moirai status after bounded re-attempt",
+                "status": "official_inference_operational_oos_evaluation_pending",
+                "env": {"torch": "2.4.1+cpu", "uni2ts": "2.0.0", "gluonts": "0.14.4",
+                        "numpy": "1.26.4 (resolver-selected compatible set)"},
+                "recipe": "separate venv: torch==2.4.1 from cpu index, then uni2ts+lightning from pypi "
+                          "with torch==2.4.1.* constraint; MoiraiForecast.create_predictor(batch_size=1, device='cpu')",
+                "evidence": "data/backtest_reports/task95/predictions/moirai_smoke_forecasts.json "
+                            "(real zero-shot forecasts, 5 pilot symbols, official pipeline)",
+                "honesty": "NOT marked evaluated — full OOS cohort run required before metrics/evaluated status",
+            })
+            return
+    r = sh(f"{BASE / '.moirai-venv/bin/python'} scripts/task95_moirai_infer.py", t=140)
+    if r.returncode != 0:
+        raise RuntimeError(f"moirai inference failed: {(r.stderr or '').strip()[-300:]}")
+    ctx.log("moirai smoke forecasts generated")
+
+
 @reg("p6_foundation_verify")
 def p6_foundation_verify(ctx):
     f94 = json.loads((T94 / "task94_foundation_results.json").read_text())

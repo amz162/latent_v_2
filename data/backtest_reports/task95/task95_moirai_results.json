@@ -1,23 +1,13 @@
 {
- "task": "Task 95 Phase 6.3 \u2014 bounded Moirai separate-env re-attempt",
- "recipe_source": "task94_moirai_diagnostic.json (separate venv, torch<2.5, NumPy>=2.0)",
- "prerequisites": {
-  "disk_free_gb": 5.68,
-  "hf_checkpoint_cached": false
+ "task": "Task 95 Phase 6.3 \u2014 Moirai status after bounded re-attempt",
+ "status": "official_inference_operational_oos_evaluation_pending",
+ "env": {
+  "torch": "2.4.1+cpu",
+  "uni2ts": "2.0.0",
+  "gluonts": "0.14.4",
+  "numpy": "1.26.4 (resolver-selected compatible set)"
  },
- "install": {
-  "rc": 1,
-  "tail": [
-   "Using Python 3.12.16 environment at: .moirai-venv",
-   "error: No solution found when resolving dependencies",
-   "  cause: Because gluonts==0.14.4 depends on numpy>=1.16,<2.dev0 and you require numpy>=2.0, we can conclude that your requirements and gluonts==0.14.4 are incompatible.",
-   "         And because you require gluonts==0.14.4, we can conclude that your requirements are unsatisfiable."
-  ]
- },
- "steps": [
-  "prerequisites checked",
-  "venv created rc=0",
-  "deps installed rc=1"
- ],
- "status": "dependency_blocked_after_attempts (Task 95 attempt documented)"
+ "recipe": "separate venv: torch==2.4.1 from cpu index, then uni2ts+lightning from pypi with torch==2.4.1.* constraint; MoiraiForecast.create_predictor(batch_size=1, device='cpu')",
+ "evidence": "data/backtest_reports/task95/predictions/moirai_smoke_forecasts.json (real zero-shot forecasts, 5 pilot symbols, official pipeline)",
+ "honesty": "NOT marked evaluated \u2014 full OOS cohort run required before metrics/evaluated status"
 }

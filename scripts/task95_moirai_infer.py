@@ -54,7 +54,7 @@ try:
         feat_dynamic_real_dim=0, past_feat_dynamic_real_dim=0,
         context_length=CTX, patch_size="auto", num_samples=100,
     )
-    predictor = model.as_predictor(batch_size=1)
+    predictor = model.create_predictor(batch_size=1, device="cpu")
     forecasts = {}
     for f in predictor.predict(ds):
         mean = [round(float(x), 6) for x in f.mean]
