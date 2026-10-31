@@ -82,7 +82,6 @@ export function ModelRegistryDashboard() {
   const evaluated = canonical.filter((m: any) => (m.verifiedStatus || "").includes("evaluated")).length;
   const failed = canonical.filter((m: any) => (m.verifiedStatus || "").includes("failed")).length;
   const blocked = canonical.filter((m: any) => (m.verifiedStatus || "").includes("blocked")).length;
-  const aliases = canonical.filter((m: any) => (m.verifiedStatus || "").includes("alias")).length;
 
   // Task 81 results
   const t81Overall = (t81?.overall || []).filter((o: any) => o.taxProfile === taxProfile && o.variant === riskVariant && o.strategy === strategy);
@@ -101,7 +100,6 @@ export function ModelRegistryDashboard() {
             <Badge className="bg-green-100 text-green-800">{evaluated} evaluated</Badge>
             <Badge className="bg-red-100 text-red-800">{failed} failed</Badge>
             <Badge className="bg-orange-100 text-orange-800">{blocked} blocked</Badge>
-            <Badge className="bg-gray-100 text-gray-600">{aliases} aliases</Badge>
           </div>
         </CardHeader>
         <CardContent>

@@ -50,7 +50,7 @@ const TABS = [
     view: "ai_model_signals" as const,
     icon: Brain,
     title: "AI Models",
-    desc: "26-model ensemble across 5 tiers with backtesting per model. Search any of 361 PSX stocks.",
+    desc: "67 unique AI models (58 canonical + 9 supplemental) across 10 tiers with backtesting per model. Search any of 908 PSX stocks.",
     bullets: ["Per-tier model cards", "Triple-barrier backtesting", "Final ensemble consensus signal"],
   },
   {
