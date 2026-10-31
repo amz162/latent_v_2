@@ -20,6 +20,15 @@ def reg(name):
     return deco
 
 
+def FINAL_STATUS(name):
+    """Repeatable chunk job stays pending until every chunk checkpoint exists."""
+    if name != "p3_moirai_chunk_batch":
+        return "done"
+    _, chunks = chunk_plan()
+    done = {p.name for p in CKPT.glob("moirai_*.json")}
+    return "pending" if len(done) < len(chunks) else "done"
+
+
 def chunk_plan():
     wf = json.loads((BASE / "data/backtest_reports/walk_forward_latest.json").read_text())
     pilot25 = sorted(wf.get("per_stock_results", {}).keys())
