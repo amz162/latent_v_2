@@ -1,0 +1,18 @@
+{
+  "status": "experimental_gpt2_baseline",
+  "experimental_implementation": "GPT-2 prompt-based forecasting (NOT official Time-LLM)",
+  "official_architecture": "Time-LLM reprograms frozen LLMs for time-series forecasting via reprogramming layer + prompt-as-prefix",
+  "official_checkpoints": "None publicly released by authors (paper only, requires custom training)",
+  "task92_result": {
+    "n": 4,
+    "dir_acc": 0.5
+  },
+  "honesty_note": "n=4 with GPT-2 prompt experiment is NOT evidence of Time-LLM predictive skill.",
+  "official_implementation_blockers": [
+    "Time-LLM authors did not release pretrained checkpoints",
+    "Reprogramming layer requires LLaMA/GPT-NeoX base (7B+ params, ~14GB)",
+    "Training requires GPU + multi-day compute",
+    "Inference requires LLM forward pass per sample (~1s/sample on CPU for 7B)"
+  ],
+  "verdict": "experimental_proxy_only_official_implementation_not_feasible"
+}

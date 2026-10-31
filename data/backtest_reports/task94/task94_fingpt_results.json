@@ -1,0 +1,18 @@
+{
+  "status": "experimental_gpt2_baseline",
+  "experimental_implementation": "GPT-2 sentiment proxy (NOT official FinGPT)",
+  "official_architecture": "FinGPT (Yang et al.) \u2014 fine-tuned LLM for finance; BloombergGPT-style",
+  "official_checkpoints": "AI4Finance/FinGPT (Hugging Face) \u2014 requires download (~7GB for full model)",
+  "task92_result": {
+    "n": 21,
+    "dir_acc": 0.7619
+  },
+  "honesty_note": "dir_acc=0.7619 on n=21 is NOT proven \u2014 small sample, possible momentum continuation effect. CI [0.548, 0.904] is wide.",
+  "official_implementation_blockers": [
+    "FinGPT checkpoint download requires ~7GB disk (only 345MB available)",
+    "Sentiment requires timestamped PSX news corpus (not currently ingested)",
+    "Look-ahead bias risk if news publication timestamps not verified",
+    "CPU inference for 7B model is ~10s/sample"
+  ],
+  "verdict": "experimental_proxy_only_official_implementation_not_feasible_in_current_env"
+}

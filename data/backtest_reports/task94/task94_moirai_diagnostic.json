@@ -1,0 +1,39 @@
+{
+  "status": "dependency_blocked_after_attempts",
+  "checkpoint": "Salesforce/moirai-1.1-R-small (55.3MB, 14M params loaded)",
+  "cached_at": "~/.cache/huggingface/hub/models--Salesforce--moirai-1.1-R-small",
+  "inference_type": "official_pretrained_inference_attempted",
+  "task92_status": "dependency_blocked_after_attempts",
+  "task92_note": "Model loaded (14M params, state dict loaded, config correct). Inference blocked by version incompatibility cascade (gluonts pydantic, pytorch_lightning, uni2ts). Needs separate venv with torch<2.5.",
+  "current_blocker_diagnosis": {
+    "primary_error": "NumPy C-API version mismatch: uni2ts was compiled against NumPy 2.0 (C-API 0x12) but installed NumPy is 1.x (C-API 0x11)",
+    "version_cascade": [
+      "uni2ts requires NumPy >= 2.0",
+      "Project NumPy is 1.x (pinned by other deps)",
+      "GluonTS 0.14.4 requires pandas < 2.2",
+      "Lightning version incompatible with uni2ts expectations",
+      "pydantic v1 vs v2 incompatibility"
+    ],
+    "disk_space_available": "345MB (insufficient for separate venv with torch + uni2ts + lightning)",
+    "ram_available": "1.2GB free of 3.9GB total",
+    "attempted_resolution": "Tried uni2ts install in main env \u2014 breaks NumPy C-API for all other models"
+  },
+  "minimum_requirements_for_recovery": [
+    "Separate Python 3.10+ venv",
+    "NumPy >= 2.0",
+    "torch >= 2.4 (uni2ts requirement)",
+    "uni2ts >= 0.3",
+    "Lightning >= 2.2",
+    "GluonTS >= 0.15",
+    "pydantic >= 2.0",
+    "~2GB disk space for separate venv"
+  ],
+  "verdict": "genuinely_impossible_in_current_environment",
+  "next_steps_if_environment_expanded": [
+    "Create separate venv with NumPy 2.x + uni2ts + Lightning 2.2+",
+    "Reuse cached Moirai checkpoint",
+    "Run single-series smoke test",
+    "Verify numerical forecast output",
+    "Multi-symbol inference in resumable chunks"
+  ]
+}

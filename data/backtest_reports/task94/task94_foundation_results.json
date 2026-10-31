@@ -1,0 +1,255 @@
+{
+  "task": "Task 94 Phase 3 \u2014 Foundation Models Consolidation",
+  "models": {
+    "Chronos (Amazon)": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "checkpoint": "amazon/chronos-t5-tiny (8MB, official Amazon checkpoint)",
+      "package": "chronos-forecasting 2.3.2",
+      "inference_type": "pretrained_inference (zero-shot, CPU, NOT fine-tuned)",
+      "task92_result": {
+        "n": 172,
+        "dir_acc": 0.4767
+      },
+      "task93_expanded_result": {
+        "n": 232,
+        "dir_acc": 0.5172,
+        "ci95": [
+          0.4532,
+          0.5807
+        ],
+        "mae": 0.034189,
+        "rmse": 0.053736,
+        "beats_mean_baseline": false
+      },
+      "task94_expansion_attempt": {
+        "expand_attempted": true,
+        "n_predictions": 400,
+        "dir_acc": 0.4775,
+        "ci95": [
+          0.429,
+          0.5264
+        ],
+        "mae": 0.036426,
+        "rmse": 0.053675,
+        "r2": -0.1406,
+        "zero_baseline_mae": 0.033787,
+        "mean_baseline_mae": 0.033891,
+        "beats_mean_baseline": false,
+        "symbols": [
+          "HUBC",
+          "LUCK",
+          "MEBL",
+          "SYS",
+          "MARI",
+          "BAFL",
+          "INDU",
+          "ATRL"
+        ],
+        "horizon_days": 5,
+        "predictions_sample": [
+          {
+            "symbol": "HUBC",
+            "date": "2025-06-23",
+            "pred_return": 0.023525923589098552,
+            "actual_return": 0.012936420433663942,
+            "dir_correct": 1
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-07-01",
+            "pred_return": -0.007559877964056105,
+            "actual_return": 0.02982367027066246,
+            "dir_correct": 0
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-07-09",
+            "pred_return": -0.007348358429539847,
+            "actual_return": 0.02564825253664038,
+            "dir_correct": 0
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-07-17",
+            "pred_return": -0.009142291516385015,
+            "actual_return": 0.0482275350370982,
+            "dir_correct": 0
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-07-25",
+            "pred_return": -0.009768793163832168,
+            "actual_return": 0.006816096473980737,
+            "dir_correct": 0
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-08-04",
+            "pred_return": -0.013206304136220925,
+            "actual_return": 0.06795990105455019,
+            "dir_correct": 0
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-08-12",
+            "pred_return": -0.004078388039722491,
+            "actual_return": -0.023710837498476245,
+            "dir_correct": 1
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-08-21",
+            "pred_return": -0.006132964316234224,
+            "actual_return": 0.016732222014109954,
+            "dir_correct": 0
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-08-29",
+            "pred_return": -0.006433671407257369,
+            "actual_return": 0.1425852011053117,
+            "dir_correct": 0
+          },
+          {
+            "symbol": "HUBC",
+            "date": "2025-09-08",
+            "pred_return": -0.015798100780914037,
+            "actual_return": 0.04890632557639596,
+            "dir_correct": 0
+          }
+        ]
+      },
+      "final_result": {
+        "n": 400,
+        "dir_acc": 0.4775,
+        "ci95": [
+          0.429,
+          0.5264
+        ],
+        "mae": 0.036426,
+        "rmse": 0.053675,
+        "r2": -0.1406,
+        "beats_mean_baseline": false,
+        "source": "task94_expansion (latest, supersedes task93 n=232)"
+      }
+    },
+    "Lag-Llama": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "checkpoint": "lag-llama.ckpt (29.5MB, official lag-llama.ckpt)",
+      "architecture": "n_head=9, n_embd=144, 8 layers",
+      "package": "lag-llama 0.1.0 + gluonts[torch]==0.14.4",
+      "inference_type": "pretrained_inference (zero-shot, CPU)",
+      "task92_result": {
+        "n": 5,
+        "dir_acc": 0.6
+      },
+      "task93_expanded_result": {
+        "n": 60,
+        "dir_acc": 0.5667,
+        "ci95": [
+          0.4413,
+          0.6921
+        ]
+      },
+      "final_result": {
+        "n": 60,
+        "dir_acc": 0.5667,
+        "ci95": [
+          0.4413,
+          0.6921
+        ],
+        "source": "task93_expanded (n=60) \u2014 CI includes 0.50, NOT statistically significant"
+      },
+      "honesty_note": "n=60 is still insufficient for a strong claim. CI [0.441, 0.692] includes 0.50."
+    },
+    "Moirai (Salesforce)": {
+      "status": "dependency_blocked_after_attempts",
+      "checkpoint": "Salesforce/moirai-1.1-R-small (55.3MB, 14M params loaded)",
+      "cached_at": "~/.cache/huggingface/hub/models--Salesforce--moirai-1.1-R-small",
+      "inference_type": "official_pretrained_inference_attempted",
+      "task92_status": "dependency_blocked_after_attempts",
+      "task92_note": "Model loaded (14M params, state dict loaded, config correct). Inference blocked by version incompatibility cascade (gluonts pydantic, pytorch_lightning, uni2ts). Needs separate venv with torch<2.5.",
+      "current_blocker_diagnosis": {
+        "primary_error": "NumPy C-API version mismatch: uni2ts was compiled against NumPy 2.0 (C-API 0x12) but installed NumPy is 1.x (C-API 0x11)",
+        "version_cascade": [
+          "uni2ts requires NumPy >= 2.0",
+          "Project NumPy is 1.x (pinned by other deps)",
+          "GluonTS 0.14.4 requires pandas < 2.2",
+          "Lightning version incompatible with uni2ts expectations",
+          "pydantic v1 vs v2 incompatibility"
+        ],
+        "disk_space_available": "345MB (insufficient for separate venv with torch + uni2ts + lightning)",
+        "ram_available": "1.2GB free of 3.9GB total",
+        "attempted_resolution": "Tried uni2ts install in main env \u2014 breaks NumPy C-API for all other models"
+      },
+      "minimum_requirements_for_recovery": [
+        "Separate Python 3.10+ venv",
+        "NumPy >= 2.0",
+        "torch >= 2.4 (uni2ts requirement)",
+        "uni2ts >= 0.3",
+        "Lightning >= 2.2",
+        "GluonTS >= 0.15",
+        "pydantic >= 2.0",
+        "~2GB disk space for separate venv"
+      ],
+      "verdict": "genuinely_impossible_in_current_environment",
+      "next_steps_if_environment_expanded": [
+        "Create separate venv with NumPy 2.x + uni2ts + Lightning 2.2+",
+        "Reuse cached Moirai checkpoint",
+        "Run single-series smoke test",
+        "Verify numerical forecast output",
+        "Multi-symbol inference in resumable chunks"
+      ]
+    },
+    "Time-LLM": {
+      "status": "experimental_gpt2_baseline",
+      "experimental_implementation": "GPT-2 prompt-based forecasting (NOT official Time-LLM)",
+      "official_architecture": "Time-LLM reprograms frozen LLMs for time-series forecasting via reprogramming layer + prompt-as-prefix",
+      "official_checkpoints": "None publicly released by authors (paper only, requires custom training)",
+      "task92_result": {
+        "n": 4,
+        "dir_acc": 0.5
+      },
+      "honesty_note": "n=4 with GPT-2 prompt experiment is NOT evidence of Time-LLM predictive skill.",
+      "official_implementation_blockers": [
+        "Time-LLM authors did not release pretrained checkpoints",
+        "Reprogramming layer requires LLaMA/GPT-NeoX base (7B+ params, ~14GB)",
+        "Training requires GPU + multi-day compute",
+        "Inference requires LLM forward pass per sample (~1s/sample on CPU for 7B)"
+      ],
+      "verdict": "experimental_proxy_only_official_implementation_not_feasible"
+    },
+    "FinGPT": {
+      "status": "experimental_gpt2_baseline",
+      "experimental_implementation": "GPT-2 sentiment proxy (NOT official FinGPT)",
+      "official_architecture": "FinGPT (Yang et al.) \u2014 fine-tuned LLM for finance; BloombergGPT-style",
+      "official_checkpoints": "AI4Finance/FinGPT (Hugging Face) \u2014 requires download (~7GB for full model)",
+      "task92_result": {
+        "n": 21,
+        "dir_acc": 0.7619
+      },
+      "honesty_note": "dir_acc=0.7619 on n=21 is NOT proven \u2014 small sample, possible momentum continuation effect. CI [0.548, 0.904] is wide.",
+      "official_implementation_blockers": [
+        "FinGPT checkpoint download requires ~7GB disk (only 345MB available)",
+        "Sentiment requires timestamped PSX news corpus (not currently ingested)",
+        "Look-ahead bias risk if news publication timestamps not verified",
+        "CPU inference for 7B model is ~10s/sample"
+      ],
+      "verdict": "experimental_proxy_only_official_implementation_not_feasible_in_current_env"
+    }
+  },
+  "summary": {
+    "official_pretrained_inference_evaluated": [
+      "Chronos (Amazon)",
+      "Lag-Llama"
+    ],
+    "dependency_blocked_after_attempts": [
+      "Moirai (Salesforce)"
+    ],
+    "experimental_gpt2_baseline_only": [
+      "Time-LLM",
+      "FinGPT"
+    ],
+    "honest_summary": "Of 5 foundation models: 2 evaluated with official pretrained inference (Chronos n=400+, Lag-Llama n=60), 1 blocked by environment (Moirai), 2 only have experimental GPT-2 proxies (Time-LLM, FinGPT). None show statistically significant directional advantage on PSX data."
+  }
+}
