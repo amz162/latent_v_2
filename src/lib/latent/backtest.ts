@@ -138,7 +138,7 @@ function simulateOne(
   bars: { date: string; open: number; high: number; low: number; close: number }[],
   _startIdx: number,
   numDays: number,
-  levels?: { entry?: number; sl?: number; tp1?: number; tp2?: number; tp3?: number; confidence?: number }
+  levels: { entry?: number; sl?: number; tp1?: number; tp2?: number; tp3?: number; confidence?: number } = {}
 ): BacktestTrade | null {
   if (bars.length < numDays + 5) return null;
 
@@ -347,7 +347,7 @@ function simulateWindowTrade(
   bars: { date: string; open: number; high: number; low: number; close: number }[],
   entryIdx: number,
   windowEndIdx: number,
-  levels?: { entry?: number; sl?: number; tp1?: number; tp2?: number; tp3?: number; confidence?: number }
+  levels: { entry?: number; sl?: number; tp1?: number; tp2?: number; tp3?: number; confidence?: number } = {}
 ): BacktestTrade | null {
   if (entryIdx < 0 || entryIdx >= bars.length || windowEndIdx >= bars.length) return null;
   const entryBar = bars[entryIdx];
