@@ -1,0 +1,78 @@
+{
+ "task": "Task 96 Phase 3 (P0) \u2014 Moirai full OOS evaluation",
+ "model": "Salesforce/moirai-1.1-R-small (official uni2ts 2.0 pipeline, torch 2.4.1+cpu isolated venv)",
+ "status": "evaluation_in_progress (1/75 chunks)",
+ "protocol": "task93_eval_chronos.py mirror \u2014 OOS dates 2026-01-15..2026-10-15, median of 100 samples at final step, context 180 bars; every target date fully realized (idx+H < last session 2026-10-30); chronological targets, no leakage",
+ "cohort": {
+  "pilot25_symbols": [
+   "ANL",
+   "BOP",
+   "BYCO",
+   "CNERGY",
+   "ENGRO",
+   "FCCL",
+   "HASCOL",
+   "HUBC",
+   "HUMNL",
+   "KEL",
+   "LOTCHEM",
+   "LUCK",
+   "MEBL",
+   "MLCF",
+   "OGDC",
+   "PAEL",
+   "PIBTL",
+   "PPL",
+   "PRL",
+   "PSO",
+   "SYS",
+   "TELE",
+   "TRG",
+   "UNITY",
+   "WTL"
+  ],
+  "task95_smoke_symbols_extra": [
+   "WTL",
+   "KEL",
+   "FCCL",
+   "ANL",
+   "CNERGY"
+  ],
+  "horizons": [
+   5,
+   10,
+   21
+  ],
+  "n_per_symbol_horizon": 16
+ },
+ "by_horizon": {
+  "5": {
+   "n": 16,
+   "symbols": 1,
+   "dir_correct": 6,
+   "dir_acc": 0.375,
+   "dir_acc_ci95": [
+    0.1848,
+    0.6136
+   ],
+   "mae": 0.030876,
+   "rmse": 0.037957,
+   "r2": -0.118,
+   "zero_return_baseline_dir_acc": 0.75,
+   "mean_baseline_mae": 0.026969,
+   "zero_baseline_mae": 0.030105,
+   "positive_target_share": 0.25
+  }
+ },
+ "overall": {
+  "n_predictions": 16,
+  "dir_acc": 0.375
+ },
+ "skipped_symbols": [],
+ "chunks_done": 1,
+ "chunks_total": 75,
+ "prediction_files": [
+  "chunk records in checkpoints/moirai_*.json"
+ ],
+ "honesty": "OOS label only because targets are fully realized closes; n=16 per symbol-horizon is small \u2014 no fine-tuning claim; official pretrained zero-shot inference only"
+}
