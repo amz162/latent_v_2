@@ -566,3 +566,9 @@ prisma:query BEGIN IMMEDIATE
 prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
 prisma:query COMMIT
  GET /api/cron/check-tp-sl 200 in 20ms (compile: 4ms, render: 17ms)
+ GET / 200 in 67ms (compile: 4ms, render: 63ms)
+ GET /api/signals/all 200 in 23ms (compile: 3ms, render: 20ms)
+ GET /api/track-record 200 in 17ms (compile: 4ms, render: 13ms)
+ GET / 200 in 50ms (compile: 2ms, render: 48ms)
+ GET /api/track-record 200 in 22ms (compile: 6ms, render: 16ms)
+ GET /api/signals/all 200 in 4.9s (compile: 3ms, render: 4.9s)
