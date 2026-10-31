@@ -1,0 +1,124 @@
+{
+  "task": "Task 94 Phase 9 \u2014 API & registry integrity",
+  "base_url": "http://localhost:3000",
+  "checks_total": 11,
+  "checks_passed": 9,
+  "checks_failed": 2,
+  "checks": [
+    {
+      "check": "registry.http_200",
+      "ok": true,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "check": "registry.model_count_consistent",
+      "ok": false,
+      "detail": {
+        "api_count": 0,
+        "reconciliation_canonical": 58,
+        "reconciliation_supplemental": 9
+      }
+    },
+    {
+      "check": "registry.ensemble_count_consistent",
+      "ok": false,
+      "detail": {
+        "api_ensembles": 0,
+        "reconciliation_ensembles": 8
+      }
+    },
+    {
+      "check": "task81.http_200",
+      "ok": true,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "check": "task81.v2_cost_markers",
+      "ok": true,
+      "detail": {
+        "markers_found": [
+          "PSX_USER_SCHEDULE_V2",
+          "psx_user_schedule_v2"
+        ]
+      }
+    },
+    {
+      "check": "walkforward.http_200",
+      "ok": true,
+      "detail": {
+        "status": 200,
+        "keys": [
+          "available",
+          "schema_version",
+          "evaluation_status",
+          "evaluation_method",
+          "generated_at",
+          "data_cutoff"
+        ]
+      }
+    },
+    {
+      "check": "perstock.http_200_available",
+      "ok": true,
+      "detail": {
+        "count": 360,
+        "cells_len": 360
+      }
+    },
+    {
+      "check": "perstock.count_matches_task87",
+      "ok": true,
+      "detail": {
+        "api_count": 360,
+        "expected": 360
+      }
+    },
+    {
+      "check": "prospective.http_200",
+      "ok": true,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "check": "prospective.count_field_present",
+      "ok": true,
+      "detail": {
+        "totalTrades": null,
+        "keys": [
+          "available",
+          "source",
+          "status",
+          "block_reason",
+          "generated_at",
+          "latest_ohlcv_session",
+          "data_freshness",
+          "inference_availability"
+        ]
+      }
+    },
+    {
+      "check": "error_state.graceful",
+      "ok": true,
+      "detail": {
+        "status": 200,
+        "body_keys": [
+          "error",
+          "dates",
+          "actual",
+          "entry",
+          "models"
+        ]
+      }
+    }
+  ],
+  "reconciliation_reference": {
+    "canonical": 58,
+    "supplemental": 9,
+    "ensembles": 8
+  }
+}
