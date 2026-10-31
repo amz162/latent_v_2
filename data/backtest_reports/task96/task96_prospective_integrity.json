@@ -1,0 +1,32 @@
+{
+ "task": "Task 96 Phase 5 \u2014 processor run + idempotency verification",
+ "states_before": {
+  "closed": 18,
+  "open": 63,
+  "pending_entry": 33,
+  "skipped": 114
+ },
+ "states_after_run1": {
+  "closed": 18,
+  "open": 63,
+  "pending_entry": 33,
+  "skipped": 114
+ },
+ "duplicate_fills": 0,
+ "idempotency_note": "states_before == states_after_run1 means no new sessions were processed (no data \u2192 no change); duplicate check confirms unique constraint holds",
+ "processor_tail": [
+  "  book_LightGBM_10d_fixed_first_hit_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_LightGBM_10d_max_tp_step_trailing_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_LightGBM_10d_scale_out_50_25_25_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "",
+  "\u2713 Report written: data/backtest_reports/prospective_paper_trading_latest.json"
+ ],
+ "states_after_run2": {
+  "closed": 18,
+  "open": 63,
+  "pending_entry": 33,
+  "skipped": 114
+ },
+ "second_run_identical": true,
+ "second_run_note": "second execution on identical data changed nothing \u2014 no duplicate fills, no changed historical results (Phase 5.6 requirement)"
+}

@@ -5,7 +5,11 @@
   "clone_rc": 128,
   "repo_cloned": false,
   "requirements": "no requirements.txt",
-  "official_model_file": false
+  "official_model_file": false,
+  "egress_blocker": "sandbox network egress: anonymous github.com clone and codeload tarball are blocked (401/empty); only the authenticated project remote, PyPI and HuggingFace are reachable \u2014 the official Time-LLM repo cannot be fetched here",
+  "exact_requirements": "official repo (thuml/Time-LLM) + transformers GPT-2 backbone (~500MB fp32, installable) + their data-provider time-mark pipeline + prompt library; CPU-feasible in principle for GPT-2 small once the repo is obtainable",
+  "verdict": "feasibility_unresolved_repo_unavailable_in_sandbox \u2014 experimental_gpt2_baseline label preserved",
+  "transformers_install_rc": 0
  },
  "fingpt": {
   "official_repo": "AI4Finance-Foundation/FinGPT",

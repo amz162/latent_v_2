@@ -56,6 +56,55 @@
    "error": null,
    "finished": "2026-10-31T19:47:11Z",
    "seconds": 0.6
+  },
+  "p5_session_check": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:48:42Z",
+   "error": null,
+   "finished": "2026-10-31T19:48:44Z",
+   "seconds": 2.4
+  },
+  "p5_ingest_if_new": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:48:44Z",
+   "error": null,
+   "finished": "2026-10-31T19:48:46Z",
+   "seconds": 2.2
+  },
+  "p5_process_and_idempotency": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:48:46Z",
+   "error": null,
+   "finished": "2026-10-31T19:48:47Z",
+   "seconds": 1.1
+  },
+  "p5_idempotency_second_run": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:48:47Z",
+   "error": null,
+   "finished": "2026-10-31T19:48:48Z",
+   "seconds": 0.9
+  },
+  "p5_reconcile_cohort": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:48:53Z",
+   "error": null,
+   "finished": "2026-10-31T19:48:53Z",
+   "seconds": 0.0
+  },
+  "p5_performance_report": {
+   "status": "failed",
+   "runs": 1,
+   "started": "2026-10-31T19:48:53Z",
+   "error": "KeyError: 'allocatedCash'",
+   "finished": "2026-10-31T19:48:53Z",
+   "seconds": 0.0,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task96_runner.py\", line 89, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task96_jobs/phase5.py\", line 174, in p5_performance_report\n    open_exposure = sum((t[\"allocatedCash\"] or 0) for t in open_t)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z/my-project/scripts/task96_jobs/phase5.py\", line 174, in <genexpr>\n    open_exposure = sum((t[\"allocatedCash\"] or 0) for t in open_t)\n                         ~^^^^^^^^^^^^^^^^^\nKeyError: 'allocatedCash'\n"
   }
  },
  "history": []
