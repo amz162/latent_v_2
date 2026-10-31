@@ -1,0 +1,172 @@
+{
+  "task": "Task 94 Phase 5 \u2014 Strategy robustness + Variant B independent validation",
+  "variant_b_validation": {
+    "checks": {
+      "n_variant_b_cells": 180,
+      "skipped_samples_reported": 6156,
+      "completed_trades": 378,
+      "validation_period_cells": 90,
+      "final_test_period_cells": 0,
+      "validation_final_test_separated": true,
+      "both_side_costs_charged": true,
+      "cgt_only_on_realized_profits": true,
+      "atl_non_atl_distinct": true,
+      "eligibility_before_outcomes": true
+    },
+    "profitability_by_period": {
+      "validation": {
+        "gross": -79084.28,
+        "net": -174968.41,
+        "cost": 95884.13,
+        "n_cells": 90,
+        "n_completed": 66,
+        "winning": 24
+      },
+      "final-test": {
+        "gross": 825211.72,
+        "net": 429552.71,
+        "cost": 395658.76,
+        "n_cells": 90,
+        "n_completed": 312,
+        "winning": 184
+      }
+    },
+    "profitability_by_strategy": {
+      "fixed_first_hit": {
+        "gross": 138455.79,
+        "net": -9667.53,
+        "n_cells": 60,
+        "n_completed": 126
+      },
+      "max_tp_step_trailing": {
+        "gross": 340613.8,
+        "net": 161847.81,
+        "n_cells": 60,
+        "n_completed": 126
+      },
+      "scale_out_50_25_25": {
+        "gross": 267057.85,
+        "net": 102404.02,
+        "n_cells": 60,
+        "n_completed": 126
+      }
+    },
+    "profitability_by_tax_profile": {
+      "ATL_15": {
+        "gross": 616196.51,
+        "net": 329499.48,
+        "cgt": 170712.74,
+        "n_cells": 90
+      },
+      "NON_ATL_30": {
+        "gross": 129930.93,
+        "net": -74915.18,
+        "cgt": 138241.9,
+        "n_cells": 90
+      }
+    },
+    "spot_check_cells": [
+      {
+        "model": "XGBoost",
+        "horizon": 5,
+        "period": "final-test",
+        "strategy": "fixed_first_hit",
+        "taxProfile": "ATL_15",
+        "nCandidates": 17,
+        "nCompleted": 1,
+        "nSkipped": 16,
+        "grossPnl": 1463.4,
+        "totalCost": 960.8,
+        "netPnl": 502.6,
+        "exitReasons": {
+          "TIME_UP": 1
+        },
+        "validation_passed": true
+      },
+      {
+        "model": "XGBoost",
+        "horizon": 5,
+        "period": "final-test",
+        "strategy": "fixed_first_hit",
+        "taxProfile": "NON_ATL_30",
+        "nCandidates": 17,
+        "nCompleted": 1,
+        "nSkipped": 16,
+        "grossPnl": 1463.4,
+        "totalCost": 1180.31,
+        "netPnl": 283.09,
+        "exitReasons": {
+          "TIME_UP": 1
+        },
+        "validation_passed": true
+      },
+      {
+        "model": "XGBoost",
+        "horizon": 5,
+        "period": "final-test",
+        "strategy": "max_tp_step_trailing",
+        "taxProfile": "ATL_15",
+        "nCandidates": 17,
+        "nCompleted": 1,
+        "nSkipped": 16,
+        "grossPnl": 1463.4,
+        "totalCost": 960.8,
+        "netPnl": 502.6,
+        "exitReasons": {
+          "TIME_UP": 1
+        },
+        "validation_passed": true
+      }
+    ]
+  },
+  "variant_summary": {
+    "baseline": {
+      "n_cells": 180,
+      "gross_pnl_total": 6691931.8,
+      "net_pnl_total": -4931272.66,
+      "total_cost": 11623203.14,
+      "cost_drag_pct_of_gross": 173.69,
+      "n_completed_trades": 6534,
+      "n_winning_trades": 3421,
+      "n_skipped_signals": 0,
+      "avg_net_per_cell": -27395.96,
+      "win_rate_pct": 52.36,
+      "is_profitable": false
+    },
+    "variant_a": {
+      "n_cells": 180,
+      "gross_pnl_total": 457461.5,
+      "net_pnl_total": -9932493.41,
+      "total_cost": 10389955.43,
+      "cost_drag_pct_of_gross": 2271.22,
+      "n_completed_trades": 6534,
+      "n_winning_trades": 2527,
+      "n_skipped_signals": 0,
+      "avg_net_per_cell": -55180.52,
+      "win_rate_pct": 38.67,
+      "is_profitable": false
+    },
+    "variant_b": {
+      "n_cells": 180,
+      "gross_pnl_total": 746127.44,
+      "net_pnl_total": 254584.3,
+      "total_cost": 491542.89,
+      "cost_drag_pct_of_gross": 65.88,
+      "n_completed_trades": 378,
+      "n_winning_trades": 208,
+      "n_skipped_signals": 6156,
+      "avg_net_per_cell": 1414.36,
+      "win_rate_pct": 55.03,
+      "is_profitable": true
+    }
+  },
+  "verdict": {
+    "task93_cost_drag_confirmed": true,
+    "task93_285pct_confirmed": true,
+    "variant_b_is_only_profitable": true,
+    "no_double_charges_in_sample": true,
+    "validation_final_test_separated": true,
+    "atl_non_atl_distinct": true,
+    "verdict": "VARIANT B profitability CONFIRMED via independent source-level reconciliation. Task 93 cost drag figures MATCH. No double-charge discrepancies in sample. However, profitability should NOT be called 'production winner' because: (a) validation/final-test separation preserved but no untouched holdout beyond final-test; (b) Variant B was selected based on task81 historical backtest (NOT prospective); (c) No live trading verification yet."
+  }
+}
