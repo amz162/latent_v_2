@@ -1,0 +1,24 @@
+{
+ "task": "Task 95 Phase 8.2b \u2014 reconcile orphaned standard_psx trade generation",
+ "rows_marked_skipped": 0,
+ "reason": "superseded:cost-profile-generation \u2014 STANDARD_PSX == LEGACY_STANDARD_PSX_V1 since Task 93; lifecycle advances only legacy_standard_psx_v1 books; the pre-95 standard_psx rows duplicate the same predictions and can never execute",
+ "states_after": [
+  {
+   "state": "closed",
+   "n": 18
+  },
+  {
+   "state": "open",
+   "n": 63
+  },
+  {
+   "state": "pending_entry",
+   "n": 33
+  },
+  {
+   "state": "skipped",
+   "n": 114
+  }
+ ],
+ "audit": "every transition pending_entry->skipped is reproducible from bookId pattern; no fills, prices or P&L were altered; active generation (legacy_standard_psx_v1) untouched"
+}

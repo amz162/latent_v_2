@@ -1,0 +1,101 @@
+{
+ "task": "Task 95 Phase 8.3 \u2014 prospective monitoring report (active generation: legacy_standard_psx_v1 books)",
+ "state_distribution": [
+  {
+   "state": "closed",
+   "n": 18
+  },
+  {
+   "state": "open",
+   "n": 63
+  },
+  {
+   "state": "pending_entry",
+   "n": 33
+  },
+  {
+   "state": "skipped",
+   "n": 114
+  }
+ ],
+ "forecast_outcome_status": [
+  {
+   "outcomeStatus": "pending",
+   "n": 38
+  }
+ ],
+ "closed_summary": [
+  {
+   "n": 18,
+   "gross": -100088.35071428579,
+   "costs": 8099.617815,
+   "net": -108187.96852928578,
+   "wins": 0
+  }
+ ],
+ "open_by_strategy": [
+  {
+   "strategyId": "fixed_first_hit",
+   "n": 21
+  },
+  {
+   "strategyId": "max_tp_step_trailing",
+   "n": 21
+  },
+  {
+   "strategyId": "scale_out_50_25_25",
+   "n": 21
+  }
+ ],
+ "latest_ohlcv_by_symbol": [
+  {
+   "symbol": "ANL",
+   "latest": "2026-10-30"
+  },
+  {
+   "symbol": "BYCO",
+   "latest": "2021-12-20"
+  },
+  {
+   "symbol": "CNERGY",
+   "latest": "2026-10-30"
+  },
+  {
+   "symbol": "ENGRO",
+   "latest": "2025-01-03"
+  },
+  {
+   "symbol": "FCCL",
+   "latest": "2026-10-30"
+  },
+  {
+   "symbol": "KEL",
+   "latest": "2026-10-30"
+  },
+  {
+   "symbol": "LOTCHEM",
+   "latest": "2026-10-30"
+  },
+  {
+   "symbol": "PRL",
+   "latest": "2026-10-30"
+  },
+  {
+   "symbol": "WTL",
+   "latest": "2026-10-30"
+  }
+ ],
+ "pending_by_symbol": [
+  {
+   "symbol": "ENGRO",
+   "n": 21,
+   "MIN(state)": "pending_entry"
+  },
+  {
+   "symbol": "BYCO",
+   "n": 12,
+   "MIN(state)": "pending_entry"
+  }
+ ],
+ "rule": "pending entries are NEVER displayed as executed trades; profitability claims require matured closed trades"
+}
