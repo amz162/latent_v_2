@@ -1,0 +1,1762 @@
+{
+  "task": "Task 93.3 \u2014 Full metric reproduction for all canonical ALL_MODELS",
+  "canonical_count": 58,
+  "with_metrics_count": 56,
+  "resource_blocked_count": 2,
+  "missing_count": 0,
+  "coverage_pct": 96.6,
+  "blocked_pct": 3.4,
+  "sources": {
+    "task84": "data/backtest_reports/task84/task84_metrics.json (60 model entries)",
+    "walk_forward_latest": "data/backtest_reports/walk_forward_latest.json (5 trained-ML models, per-horizon OOS)",
+    "foundation_task92_93": "data/backtest_reports/task92 + task93 (Chronos, Lag-Llama, Moirai, Time-LLM, FinGPT)",
+    "task89_batch_logs": "data/backtest_reports/task89/batch_logs (Kalman Filter \u2014 added later)"
+  },
+  "models": [
+    {
+      "name": "PatchTST",
+      "alias_used": null,
+      "in_task84": false,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "resource_blocked",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task82_model_registry_audit.json \u2014 PyTorch transformer \u2014 blocked by 4GB RAM CPU-only sandbox (task82 audit)"
+    },
+    {
+      "name": "N-BEATS",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.04618,
+        "rmse": 0.06995,
+        "r2": -0.0547,
+        "directional_accuracy": 0.5072,
+        "n": 13731,
+        "params": 2408
+      },
+      "metrics_h10d": {
+        "mae": 0.06556,
+        "rmse": 0.098622,
+        "r2": -0.0215,
+        "directional_accuracy": 0.4986,
+        "n": 13611,
+        "params": 2408
+      },
+      "metrics_h21d": {
+        "mae": 0.1025,
+        "rmse": 0.152318,
+        "r2": -0.0124,
+        "directional_accuracy": 0.543,
+        "n": 13347,
+        "params": 2408
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "TimesNet",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Informer",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.046005,
+        "rmse": 0.069589,
+        "r2": -0.0438,
+        "directional_accuracy": 0.5071,
+        "n": 13731,
+        "params": 2577
+      },
+      "metrics_h10d": {
+        "mae": 0.066012,
+        "rmse": 0.099622,
+        "r2": -0.0423,
+        "directional_accuracy": 0.4928,
+        "n": 13611,
+        "params": 2577
+      },
+      "metrics_h21d": {
+        "mae": 0.103295,
+        "rmse": 0.154733,
+        "r2": -0.0448,
+        "directional_accuracy": 0.5026,
+        "n": 13347,
+        "params": 2577
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Chronos (Amazon)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": true,
+      "in_task89": false,
+      "status": "dependency_blocked_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Lag-Llama",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": true,
+      "in_task89": false,
+      "status": "dependency_blocked_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Moirai (Salesforce)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": true,
+      "in_task89": false,
+      "status": "dependency_blocked_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Time-LLM",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": true,
+      "in_task89": false,
+      "status": "dependency_blocked_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "XGBoost",
+      "alias_used": null,
+      "in_task84": false,
+      "in_walk_forward": true,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "status": "completed",
+        "mae": 0.052417,
+        "rmse": 0.071583,
+        "r2": 0.006724,
+        "directional_accuracy": 0.5675,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.052598,
+            "rmse": 0.071825,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.052597,
+            "rmse": 0.071842,
+            "r2": -0.000483,
+            "directional_accuracy": 0.0075
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.0528,
+            "rmse": 0.072021,
+            "r2": -0.005484,
+            "directional_accuracy": 0.46,
+            "avg_n_training_observations": 48963
+          }
+        }
+      },
+      "metrics_h10d": {
+        "status": "completed",
+        "mae": 0.069577,
+        "rmse": 0.100928,
+        "r2": -0.042066,
+        "directional_accuracy": 0.505,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.068817,
+            "rmse": 0.09887,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.068285,
+            "rmse": 0.099727,
+            "r2": -0.017413,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.068437,
+            "rmse": 0.09978,
+            "r2": -0.018485,
+            "directional_accuracy": 0.5225,
+            "avg_n_training_observations": 48838
+          }
+        }
+      },
+      "metrics_h21d": {
+        "status": "completed",
+        "mae": 0.105987,
+        "rmse": 0.158879,
+        "r2": -0.056884,
+        "directional_accuracy": 0.4675,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.103431,
+            "rmse": 0.154545,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.104817,
+            "rmse": 0.159003,
+            "r2": -0.058525,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.104076,
+            "rmse": 0.158182,
+            "r2": -0.047629,
+            "directional_accuracy": 0.56,
+            "avg_n_training_observations": 48563
+          }
+        }
+      },
+      "source": "walk_forward_latest.json"
+    },
+    {
+      "name": "LightGBM",
+      "alias_used": null,
+      "in_task84": false,
+      "in_walk_forward": true,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "status": "completed",
+        "mae": 0.052485,
+        "rmse": 0.071775,
+        "r2": 0.001384,
+        "directional_accuracy": 0.535,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.052598,
+            "rmse": 0.071825,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.052597,
+            "rmse": 0.071842,
+            "r2": -0.000483,
+            "directional_accuracy": 0.0075
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.0528,
+            "rmse": 0.072021,
+            "r2": -0.005484,
+            "directional_accuracy": 0.46,
+            "avg_n_training_observations": 48963
+          }
+        }
+      },
+      "metrics_h10d": {
+        "status": "completed",
+        "mae": 0.06899,
+        "rmse": 0.100349,
+        "r2": -0.030143,
+        "directional_accuracy": 0.5025,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.068817,
+            "rmse": 0.09887,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.068285,
+            "rmse": 0.099727,
+            "r2": -0.017413,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.068437,
+            "rmse": 0.09978,
+            "r2": -0.018485,
+            "directional_accuracy": 0.5225,
+            "avg_n_training_observations": 48838
+          }
+        }
+      },
+      "metrics_h21d": {
+        "status": "completed",
+        "mae": 0.104942,
+        "rmse": 0.158645,
+        "r2": -0.053772,
+        "directional_accuracy": 0.5,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.103431,
+            "rmse": 0.154545,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.104817,
+            "rmse": 0.159003,
+            "r2": -0.058525,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.104076,
+            "rmse": 0.158182,
+            "r2": -0.047629,
+            "directional_accuracy": 0.56,
+            "avg_n_training_observations": 48563
+          }
+        }
+      },
+      "source": "walk_forward_latest.json"
+    },
+    {
+      "name": "CatBoost",
+      "alias_used": null,
+      "in_task84": false,
+      "in_walk_forward": true,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "status": "completed",
+        "mae": 0.052213,
+        "rmse": 0.071456,
+        "r2": 0.010244,
+        "directional_accuracy": 0.58,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.052598,
+            "rmse": 0.071825,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.052597,
+            "rmse": 0.071842,
+            "r2": -0.000483,
+            "directional_accuracy": 0.0075
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.0528,
+            "rmse": 0.072021,
+            "r2": -0.005484,
+            "directional_accuracy": 0.46,
+            "avg_n_training_observations": 48963
+          }
+        }
+      },
+      "metrics_h10d": {
+        "status": "completed",
+        "mae": 0.069143,
+        "rmse": 0.100534,
+        "r2": -0.033933,
+        "directional_accuracy": 0.5125,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.068817,
+            "rmse": 0.09887,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.068285,
+            "rmse": 0.099727,
+            "r2": -0.017413,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.068437,
+            "rmse": 0.09978,
+            "r2": -0.018485,
+            "directional_accuracy": 0.5225,
+            "avg_n_training_observations": 48838
+          }
+        }
+      },
+      "metrics_h21d": {
+        "status": "completed",
+        "mae": 0.105542,
+        "rmse": 0.158705,
+        "r2": -0.054563,
+        "directional_accuracy": 0.485,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.103431,
+            "rmse": 0.154545,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.104817,
+            "rmse": 0.159003,
+            "r2": -0.058525,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.104076,
+            "rmse": 0.158182,
+            "r2": -0.047629,
+            "directional_accuracy": 0.56,
+            "avg_n_training_observations": 48563
+          }
+        }
+      },
+      "source": "walk_forward_latest.json"
+    },
+    {
+      "name": "Random Forest",
+      "alias_used": null,
+      "in_task84": false,
+      "in_walk_forward": true,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "status": "completed",
+        "mae": 0.052198,
+        "rmse": 0.071463,
+        "r2": 0.010038,
+        "directional_accuracy": 0.595,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.052598,
+            "rmse": 0.071825,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.052597,
+            "rmse": 0.071842,
+            "r2": -0.000483,
+            "directional_accuracy": 0.0075
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.0528,
+            "rmse": 0.072021,
+            "r2": -0.005484,
+            "directional_accuracy": 0.46,
+            "avg_n_training_observations": 48963
+          }
+        }
+      },
+      "metrics_h10d": {
+        "status": "completed",
+        "mae": 0.069089,
+        "rmse": 0.100104,
+        "r2": -0.025115,
+        "directional_accuracy": 0.4925,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.068817,
+            "rmse": 0.09887,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.068285,
+            "rmse": 0.099727,
+            "r2": -0.017413,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.068437,
+            "rmse": 0.09978,
+            "r2": -0.018485,
+            "directional_accuracy": 0.5225,
+            "avg_n_training_observations": 48838
+          }
+        }
+      },
+      "metrics_h21d": {
+        "status": "completed",
+        "mae": 0.10453,
+        "rmse": 0.157929,
+        "r2": -0.044279,
+        "directional_accuracy": 0.455,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.103431,
+            "rmse": 0.154545,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.104817,
+            "rmse": 0.159003,
+            "r2": -0.058525,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.104076,
+            "rmse": 0.158182,
+            "r2": -0.047629,
+            "directional_accuracy": 0.56,
+            "avg_n_training_observations": 48563
+          }
+        }
+      },
+      "source": "walk_forward_latest.json"
+    },
+    {
+      "name": "LSTM",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.046233,
+        "rmse": 0.06901,
+        "r2": -0.0265,
+        "directional_accuracy": 0.4934,
+        "mean_bias": -0.001845,
+        "n": 13731,
+        "params": 2385,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "metrics_h10d": {
+        "mae": 0.067936,
+        "rmse": 0.102098,
+        "r2": -0.0947,
+        "directional_accuracy": 0.4906,
+        "mean_bias": -0.025529,
+        "n": 13611,
+        "params": 2385,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "metrics_h21d": {
+        "mae": 0.107205,
+        "rmse": 0.160293,
+        "r2": -0.1212,
+        "directional_accuracy": 0.494,
+        "mean_bias": -0.045908,
+        "n": 13347,
+        "params": 2385,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "CNN-LSTM",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.045352,
+        "rmse": 0.068547,
+        "r2": -0.0128,
+        "directional_accuracy": 0.5046,
+        "n": 13731,
+        "params": 617
+      },
+      "metrics_h10d": {
+        "mae": 0.065805,
+        "rmse": 0.097545,
+        "r2": 0.0007,
+        "directional_accuracy": 0.5064,
+        "n": 13611,
+        "params": 617
+      },
+      "metrics_h21d": {
+        "mae": 0.104405,
+        "rmse": 0.155854,
+        "r2": -0.06,
+        "directional_accuracy": 0.4809,
+        "n": 13347,
+        "params": 617
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Transformer-LSTM",
+      "alias_used": null,
+      "in_task84": false,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "resource_blocked",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task82_model_registry_audit.json \u2014 PyTorch hybrid \u2014 blocked by 4GB RAM CPU-only sandbox (task82 audit)"
+    },
+    {
+      "name": "TabNet",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "FinGPT",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": true,
+      "in_task89": false,
+      "status": "dependency_blocked_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "ARIMA",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": true,
+      "status": "failed_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Holt-Winters",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.039759,
+        "rmse": 0.059851,
+        "r2": -0.0362,
+        "directional_accuracy": 0.4831,
+        "mean_bias": -0.003004,
+        "n": 2401
+      },
+      "metrics_h10d": {
+        "mae": 0.058046,
+        "rmse": 0.087783,
+        "r2": -0.0628,
+        "directional_accuracy": 0.5092,
+        "mean_bias": -0.006615,
+        "n": 2394
+      },
+      "metrics_h21d": {
+        "mae": 0.089078,
+        "rmse": 0.134278,
+        "r2": -0.1251,
+        "directional_accuracy": 0.5006,
+        "mean_bias": -0.014001,
+        "n": 2383
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "GARCH",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.043125,
+        "rmse": 0.064361,
+        "r2": -0.1983,
+        "directional_accuracy": 0.5006,
+        "mean_bias": -0.00233,
+        "n": 2401
+      },
+      "metrics_h10d": {
+        "mae": 0.060269,
+        "rmse": 0.089871,
+        "r2": -0.1139,
+        "directional_accuracy": 0.4891,
+        "mean_bias": -0.004963,
+        "n": 2394
+      },
+      "metrics_h21d": {
+        "mae": 0.087986,
+        "rmse": 0.130359,
+        "r2": -0.0604,
+        "directional_accuracy": 0.5052,
+        "mean_bias": -0.010178,
+        "n": 2383
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Ridge Regression",
+      "alias_used": null,
+      "in_task84": false,
+      "in_walk_forward": true,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "status": "completed",
+        "mae": 0.052279,
+        "rmse": 0.071476,
+        "r2": 0.00969,
+        "directional_accuracy": 0.5475,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.052598,
+            "rmse": 0.071825,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.052597,
+            "rmse": 0.071842,
+            "r2": -0.000483,
+            "directional_accuracy": 0.0075
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.0528,
+            "rmse": 0.072021,
+            "r2": -0.005484,
+            "directional_accuracy": 0.46,
+            "avg_n_training_observations": 48963
+          }
+        }
+      },
+      "metrics_h10d": {
+        "status": "completed",
+        "mae": 0.069649,
+        "rmse": 0.100739,
+        "r2": -0.03815,
+        "directional_accuracy": 0.525,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.068817,
+            "rmse": 0.09887,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.068285,
+            "rmse": 0.099727,
+            "r2": -0.017413,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.068437,
+            "rmse": 0.09978,
+            "r2": -0.018485,
+            "directional_accuracy": 0.5225,
+            "avg_n_training_observations": 48838
+          }
+        }
+      },
+      "metrics_h21d": {
+        "status": "completed",
+        "mae": 0.104316,
+        "rmse": 0.156867,
+        "r2": -0.030285,
+        "directional_accuracy": 0.5475,
+        "n_observations": 400,
+        "baselines": {
+          "constant_mean": {
+            "definition": "predict mean(actual_eval) for all samples \u2014 this is the R\u00b2 reference, NOT a deployable forecasting strategy",
+            "mae": 0.103431,
+            "rmse": 0.154545,
+            "r2": 0.0
+          },
+          "zero_return": {
+            "definition": "predict 0.0 for all samples \u2014 no-trade baseline",
+            "mae": 0.104817,
+            "rmse": 0.159003,
+            "r2": -0.058525,
+            "directional_accuracy": 0.0
+          },
+          "training_only_mean": {
+            "definition": "per-sample predict the mean of matured training targets (pooled market-wide, excludes the sample's own target)",
+            "status": "completed",
+            "reason": null,
+            "mae": 0.104076,
+            "rmse": 0.158182,
+            "r2": -0.047629,
+            "directional_accuracy": 0.56,
+            "avg_n_training_observations": 48563
+          }
+        }
+      },
+      "source": "walk_forward_latest.json"
+    },
+    {
+      "name": "Kalman Filter",
+      "alias_used": "Kalman",
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": true,
+      "status": "failed_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Prophet",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "failed_after_attempts",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "GRU",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047305,
+        "rmse": 0.071487,
+        "r2": -0.1015,
+        "directional_accuracy": 0.5035,
+        "mean_bias": -0.004427,
+        "n": 13731,
+        "params": 1793,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "metrics_h10d": {
+        "mae": 0.068706,
+        "rmse": 0.103114,
+        "r2": -0.1166,
+        "directional_accuracy": 0.4948,
+        "mean_bias": -0.028544,
+        "n": 13611,
+        "params": 1793,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "metrics_h21d": {
+        "mae": 0.10668,
+        "rmse": 0.159676,
+        "r2": -0.1126,
+        "directional_accuracy": 0.4873,
+        "mean_bias": -0.049884,
+        "n": 13347,
+        "params": 1793,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "XGBoost (CL)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "duplicate_alias_reused",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "LightGBM (CL)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "duplicate_alias_reused",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Random Forest (CL)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "duplicate_alias_reused",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "LSTM (CL)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "duplicate_alias_reused",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "LightGBM-A (CL-2)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "LightGBM-B (CL-2)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "HistGBM (CL-2)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "ExtraTrees (CL-2)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "RandomForest (CL-2)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Logistic (CL-2)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "MLP (CL-2)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Linear Regression (PI)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Logistic Regression (PI)",
+      "alias_used": "Logistic (PI)",
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Pattern Matcher KNN (PI)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Neural Network (PI)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Technical Engine (GM)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.0482,
+        "r2": -0.0115,
+        "directional_accuracy": 0.4622,
+        "n": 58670,
+        "n_signals": 26511
+      },
+      "metrics_h10d": {
+        "mae": 0.068587,
+        "r2": -0.0014,
+        "directional_accuracy": 0.4668,
+        "n": 58545,
+        "n_signals": 26490
+      },
+      "metrics_h21d": {
+        "mae": 0.103229,
+        "r2": 0.0012,
+        "directional_accuracy": 0.4643,
+        "n": 58270,
+        "n_signals": 26445
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Announcements Engine (GM)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "data_blocked",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Fundamental Engine (GM)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "data_blocked",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Macro Engine (GM)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "data_blocked",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "LightGBM (CG)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "XGBoost (CG)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "trained_oos_evaluated",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Trend Multi-TF (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047733,
+        "r2": -0.008,
+        "directional_accuracy": 0.1369,
+        "n": 58670,
+        "n_signals": 15853
+      },
+      "metrics_h10d": {
+        "mae": 0.068134,
+        "r2": 0.0016,
+        "directional_accuracy": 0.137,
+        "n": 58545,
+        "n_signals": 15841
+      },
+      "metrics_h21d": {
+        "mae": 0.10269,
+        "r2": 0.0029,
+        "directional_accuracy": 0.1352,
+        "n": 58270,
+        "n_signals": 15819
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Breakout RelVol (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.046959,
+        "r2": -0.0025,
+        "directional_accuracy": 0.037,
+        "n": 58670,
+        "n_signals": 3636
+      },
+      "metrics_h10d": {
+        "mae": 0.067612,
+        "r2": -0.0013,
+        "directional_accuracy": 0.0352,
+        "n": 58545,
+        "n_signals": 3633
+      },
+      "metrics_h21d": {
+        "mae": 0.102294,
+        "r2": -0.0015,
+        "directional_accuracy": 0.0337,
+        "n": 58270,
+        "n_signals": 3629
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Trend Pullback (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047437,
+        "r2": -0.0108,
+        "directional_accuracy": 0.068,
+        "n": 58670,
+        "n_signals": 7770
+      },
+      "metrics_h10d": {
+        "mae": 0.068,
+        "r2": -0.0052,
+        "directional_accuracy": 0.0661,
+        "n": 58545,
+        "n_signals": 7769
+      },
+      "metrics_h21d": {
+        "mae": 0.102712,
+        "r2": -0.0045,
+        "directional_accuracy": 0.0625,
+        "n": 58270,
+        "n_signals": 7761
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "RSI Divergence (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.046857,
+        "r2": -0.0025,
+        "directional_accuracy": 0.0366,
+        "n": 58670,
+        "n_signals": 3373
+      },
+      "metrics_h10d": {
+        "mae": 0.067496,
+        "r2": -0.0003,
+        "directional_accuracy": 0.0356,
+        "n": 58545,
+        "n_signals": 3354
+      },
+      "metrics_h21d": {
+        "mae": 0.102196,
+        "r2": -0.0015,
+        "directional_accuracy": 0.0338,
+        "n": 58270,
+        "n_signals": 3322
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "BB Mean Reversion (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.04692,
+        "r2": -0.0053,
+        "directional_accuracy": 0.0344,
+        "n": 58670,
+        "n_signals": 3248
+      },
+      "metrics_h10d": {
+        "mae": 0.0676,
+        "r2": -0.0038,
+        "directional_accuracy": 0.0322,
+        "n": 58545,
+        "n_signals": 3234
+      },
+      "metrics_h21d": {
+        "mae": 0.102314,
+        "r2": -0.004,
+        "directional_accuracy": 0.0299,
+        "n": 58270,
+        "n_signals": 3207
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Vol Contraction (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.04702,
+        "r2": -0.0044,
+        "directional_accuracy": 0.0394,
+        "n": 58670,
+        "n_signals": 4031
+      },
+      "metrics_h10d": {
+        "mae": 0.067684,
+        "r2": -0.0033,
+        "directional_accuracy": 0.0373,
+        "n": 58545,
+        "n_signals": 4028
+      },
+      "metrics_h21d": {
+        "mae": 0.102422,
+        "r2": -0.0033,
+        "directional_accuracy": 0.0345,
+        "n": 58270,
+        "n_signals": 4014
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Relative Strength (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047789,
+        "r2": -0.0098,
+        "directional_accuracy": 0.1531,
+        "n": 58670,
+        "n_signals": 17777
+      },
+      "metrics_h10d": {
+        "mae": 0.068202,
+        "r2": 0.0,
+        "directional_accuracy": 0.1523,
+        "n": 58545,
+        "n_signals": 17757
+      },
+      "metrics_h21d": {
+        "mae": 0.102792,
+        "r2": 0.003,
+        "directional_accuracy": 0.1493,
+        "n": 58270,
+        "n_signals": 17733
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Market Regime (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047252,
+        "r2": -0.0041,
+        "directional_accuracy": 0.2068,
+        "n": 58670,
+        "n_signals": 0
+      },
+      "metrics_h10d": {
+        "mae": 0.067824,
+        "r2": -0.0004,
+        "directional_accuracy": 0.2076,
+        "n": 58545,
+        "n_signals": 0
+      },
+      "metrics_h21d": {
+        "mae": 0.102516,
+        "r2": -0.0003,
+        "directional_accuracy": 0.2053,
+        "n": 58270,
+        "n_signals": 0
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Meta-Label CG (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "data_blocked",
+      "metrics_h5d": null,
+      "metrics_h10d": null,
+      "metrics_h21d": null,
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Triple Barrier Dyn (X)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047733,
+        "r2": -0.008,
+        "directional_accuracy": 0.1369,
+        "n": 58670,
+        "n_signals": 15853
+      },
+      "metrics_h10d": {
+        "mae": 0.068134,
+        "r2": 0.0016,
+        "directional_accuracy": 0.137,
+        "n": 58545,
+        "n_signals": 15841
+      },
+      "metrics_h21d": {
+        "mae": 0.10269,
+        "r2": 0.0029,
+        "directional_accuracy": 0.1352,
+        "n": 58270,
+        "n_signals": 15819
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Gian-Ensemble (GIAN)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047506,
+        "r2": -0.0093,
+        "directional_accuracy": 0.098,
+        "n": 58670,
+        "n_signals": 11428
+      },
+      "metrics_h10d": {
+        "mae": 0.06803,
+        "r2": -0.003,
+        "directional_accuracy": 0.0972,
+        "n": 58545,
+        "n_signals": 11416
+      },
+      "metrics_h21d": {
+        "mae": 0.102603,
+        "r2": 0.0,
+        "directional_accuracy": 0.0966,
+        "n": 58270,
+        "n_signals": 11394
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "Gian-Extender (GIAN-EXT)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047537,
+        "r2": -0.0092,
+        "directional_accuracy": 0.1077,
+        "n": 58670,
+        "n_signals": 12513
+      },
+      "metrics_h10d": {
+        "mae": 0.068039,
+        "r2": -0.0024,
+        "directional_accuracy": 0.1071,
+        "n": 58545,
+        "n_signals": 12501
+      },
+      "metrics_h21d": {
+        "mae": 0.102604,
+        "r2": 0.0006,
+        "directional_accuracy": 0.1064,
+        "n": 58270,
+        "n_signals": 12479
+      },
+      "source": "task84_metrics.json"
+    },
+    {
+      "name": "M-Ensemble (M)",
+      "alias_used": null,
+      "in_task84": true,
+      "in_walk_forward": false,
+      "in_foundation_results": false,
+      "in_task89": false,
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics_h5d": {
+        "mae": 0.047974,
+        "r2": -0.0171,
+        "directional_accuracy": 0.1637,
+        "n": 58670,
+        "n_signals": 19609
+      },
+      "metrics_h10d": {
+        "mae": 0.068346,
+        "r2": -0.0043,
+        "directional_accuracy": 0.1643,
+        "n": 58545,
+        "n_signals": 19548
+      },
+      "metrics_h21d": {
+        "mae": 0.10276,
+        "r2": 0.0015,
+        "directional_accuracy": 0.166,
+        "n": 58270,
+        "n_signals": 19447
+      },
+      "source": "task84_metrics.json"
+    }
+  ],
+  "h5d_dir_acc_leaderboard": [
+    {
+      "name": "Random Forest",
+      "dir_acc": 0.595
+    },
+    {
+      "name": "CatBoost",
+      "dir_acc": 0.58
+    },
+    {
+      "name": "XGBoost",
+      "dir_acc": 0.5675
+    },
+    {
+      "name": "Ridge Regression",
+      "dir_acc": 0.5475
+    },
+    {
+      "name": "LightGBM",
+      "dir_acc": 0.535
+    },
+    {
+      "name": "N-BEATS",
+      "dir_acc": 0.5072
+    },
+    {
+      "name": "Informer",
+      "dir_acc": 0.5071
+    },
+    {
+      "name": "CNN-LSTM",
+      "dir_acc": 0.5046
+    },
+    {
+      "name": "GRU",
+      "dir_acc": 0.5035
+    },
+    {
+      "name": "GARCH",
+      "dir_acc": 0.5006
+    },
+    {
+      "name": "LSTM",
+      "dir_acc": 0.4934
+    },
+    {
+      "name": "Holt-Winters",
+      "dir_acc": 0.4831
+    },
+    {
+      "name": "Technical Engine (GM)",
+      "dir_acc": 0.4622
+    },
+    {
+      "name": "Market Regime (X)",
+      "dir_acc": 0.2068
+    },
+    {
+      "name": "M-Ensemble (M)",
+      "dir_acc": 0.1637
+    }
+  ],
+  "h5d_dir_acc_tailboard": [
+    {
+      "name": "Relative Strength (X)",
+      "dir_acc": 0.1531
+    },
+    {
+      "name": "Trend Multi-TF (X)",
+      "dir_acc": 0.1369
+    },
+    {
+      "name": "Triple Barrier Dyn (X)",
+      "dir_acc": 0.1369
+    },
+    {
+      "name": "Gian-Extender (GIAN-EXT)",
+      "dir_acc": 0.1077
+    },
+    {
+      "name": "Gian-Ensemble (GIAN)",
+      "dir_acc": 0.098
+    },
+    {
+      "name": "Trend Pullback (X)",
+      "dir_acc": 0.068
+    },
+    {
+      "name": "Vol Contraction (X)",
+      "dir_acc": 0.0394
+    },
+    {
+      "name": "Breakout RelVol (X)",
+      "dir_acc": 0.037
+    },
+    {
+      "name": "RSI Divergence (X)",
+      "dir_acc": 0.0366
+    },
+    {
+      "name": "BB Mean Reversion (X)",
+      "dir_acc": 0.0344
+    }
+  ],
+  "notes": [
+    "task84_metrics.json is the authoritative per-model OOS metrics source.",
+    "walk_forward_latest.json adds per-horizon baselines for the 5 trained-ML models.",
+    "Foundation models (Chronos, Lag-Llama) are sourced from task92/task93 expanded evaluations.",
+    "Kalman Filter sourced from task89/batch_logs/batch1_fixes.json (added later in pipeline).",
+    "PatchTST + Transformer-LSTM remain resource_blocked (PyTorch not available in 4GB CPU sandbox).",
+    "X-Tier strategies store TP1-hit rate in the 'directional_accuracy' field \u2014 these are precision rates, NOT direction accuracy. Low values (0.03-0.07) reflect rare-trigger strategies with high precision when they fire, NOT poor directional skill."
+  ]
+}
