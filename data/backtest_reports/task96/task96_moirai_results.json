@@ -1,7 +1,7 @@
 {
  "task": "Task 96 Phase 3 (P0) \u2014 Moirai full OOS evaluation",
  "model": "Salesforce/moirai-1.1-R-small (official uni2ts 2.0 pipeline, torch 2.4.1+cpu isolated venv)",
- "status": "evaluation_in_progress (1/75 chunks)",
+ "status": "official_inference_evaluated",
  "protocol": "task93_eval_chronos.py mirror \u2014 OOS dates 2026-01-15..2026-10-15, median of 100 samples at final step, context 180 bars; every target date fully realized (idx+H < last session 2026-10-30); chronological targets, no leakage",
  "cohort": {
   "pilot25_symbols": [
@@ -47,32 +47,66 @@
  },
  "by_horizon": {
   "5": {
-   "n": 16,
-   "symbols": 1,
-   "dir_correct": 6,
-   "dir_acc": 0.375,
+   "n": 398,
+   "symbols": 25,
+   "dir_correct": 198,
+   "dir_acc": 0.4975,
    "dir_acc_ci95": [
-    0.1848,
-    0.6136
+    0.4486,
+    0.5464
    ],
-   "mae": 0.030876,
-   "rmse": 0.037957,
-   "r2": -0.118,
-   "zero_return_baseline_dir_acc": 0.75,
-   "mean_baseline_mae": 0.026969,
-   "zero_baseline_mae": 0.030105,
-   "positive_target_share": 0.25
+   "mae": 0.055814,
+   "rmse": 0.081196,
+   "r2": -0.0935,
+   "zero_return_baseline_dir_acc": 0.6558,
+   "mean_baseline_mae": 0.051166,
+   "zero_baseline_mae": 0.052997,
+   "positive_target_share": 0.3442
+  },
+  "10": {
+   "n": 398,
+   "symbols": 25,
+   "dir_correct": 188,
+   "dir_acc": 0.4724,
+   "dir_acc_ci95": [
+    0.4238,
+    0.5214
+   ],
+   "mae": 0.079722,
+   "rmse": 0.108939,
+   "r2": -0.1448,
+   "zero_return_baseline_dir_acc": 0.5829,
+   "mean_baseline_mae": 0.07111,
+   "zero_baseline_mae": 0.071977,
+   "positive_target_share": 0.4171
+  },
+  "21": {
+   "n": 398,
+   "symbols": 25,
+   "dir_correct": 201,
+   "dir_acc": 0.505,
+   "dir_acc_ci95": [
+    0.4561,
+    0.5539
+   ],
+   "mae": 0.137517,
+   "rmse": 0.188428,
+   "r2": -0.1258,
+   "zero_return_baseline_dir_acc": 0.5779,
+   "mean_baseline_mae": 0.128078,
+   "zero_baseline_mae": 0.128627,
+   "positive_target_share": 0.4221
   }
  },
  "overall": {
-  "n_predictions": 16,
-  "dir_acc": 0.375
+  "n_predictions": 1194,
+  "dir_acc": 0.4916
  },
  "skipped_symbols": [],
- "chunks_done": 1,
+ "chunks_done": 75,
  "chunks_total": 75,
  "prediction_files": [
-  "chunk records in checkpoints/moirai_*.json"
+  "moirai_oos_predictions.json"
  ],
  "honesty": "OOS label only because targets are fully realized closes; n=16 per symbol-horizon is small \u2014 no fine-tuning claim; official pretrained zero-shot inference only"
 }
