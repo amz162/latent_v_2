@@ -33,12 +33,12 @@
    "seconds": 0.0
   },
   "p3_moirai_reconciliation": {
-   "status": "running",
+   "status": "done",
    "runs": 5,
    "started": "2026-10-31T20:32:55Z",
    "error": null,
-   "finished": "2026-10-31T20:31:49Z",
-   "seconds": 14.4,
+   "finished": "2026-10-31T20:33:09Z",
+   "seconds": 13.8,
    "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task97_runner.py\", line 89, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task97_jobs/phase3.py\", line 50, in p3_moirai_reconciliation\n    idxs = list(range(sub.index[0] if hasattr(sub, \"index\") else 0 + 5, 0, 0))  # placeholder removed below\n                      ~~~~~~~~~^^^\nTypeError: 'builtin_function_or_method' object is not subscriptable\n"
   },
   "p3_foundation_status": {
