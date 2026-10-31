@@ -1,6 +1,6 @@
 {
   "task": "Task 98 \u2014 Meta-Label CG (X) proper OOF pipeline",
-  "generated_at": "2026-10-31T21:50:14.131761+00:00",
+  "generated_at": "2026-10-31T21:51:15.602189+00:00",
   "pipeline": {
     "labels": "task83 batch5 CG labels: build_labels(df, horizon=10, tp_mult=1.0) \u2014 TP1=1R before SL within 10 bars",
     "split": "time-based at 2024-06-01 (SPLIT_MS, same as batch5)",
@@ -23,7 +23,8 @@
         "n": 13636,
         "pos_rate": 0.0084,
         "roc_auc": 0.9638
-      }
+      },
+      "note": "consistent with the batch5 canonical CG setup (pos_rate ~1%: batch5 LightGBM (CG) acc=0.9904 auc=0.952 pos_rate=0.0096, n=13611); accuracy is inflated by class imbalance \u2014 roc_auc is the comparable metric. Meta AUC 0.9638 vs components 0.952/0.954"
     },
     "Meta-Label CG (X) \u2014 probs-only ablation": {
       "status": "ensemble_oos_evaluated",

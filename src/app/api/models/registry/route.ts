@@ -15,7 +15,8 @@ export async function GET() {
       try { return JSON.parse(await fs.readFile(path.join(process.cwd(), p), "utf-8")); }
       catch { return null; }
     };
-    const [t84Metrics, recon, t94Repro, t94Recovery, t94Foundations, t95Foundations, t95Caveats] = await Promise.all([
+    const [t84Metrics, recon, t94Repro, t94Recovery, t94Foundations, t95Foundations, t95Caveats,
+      t98Metrics, t98Pillars, t98Meta] = await Promise.all([
       readJson("data/backtest_reports/task84/task84_metrics.json"),
       readJson("data/backtest_reports/task84/task84_registry_reconciliation.json"),
       readJson("data/backtest_reports/task94/task94_model_metric_reproduction.json"),
@@ -23,6 +24,9 @@ export async function GET() {
       readJson("data/backtest_reports/task94/task94_foundation_results.json"),
       readJson("data/backtest_reports/task95/task95_foundation_model_results.json"),
       readJson("data/backtest_reports/task95/task95_model_metric_caveat_resolution.json"),
+      readJson("data/backtest_reports/task98/task98_metrics.json"),
+      readJson("data/backtest_reports/task98/task98_gm_pillars.json"),
+      readJson("data/backtest_reports/task98/task98_meta_label_cg.json"),
     ]);
     const allResults = t84Metrics?.allResults || {};
     // Task 94 Phase 10: overlay corrected training/evaluation statuses from the
@@ -72,16 +76,49 @@ export async function GET() {
         }
       }
     }
+    // Task 98 overlay (2026-10-31): resolves the last 6 non-evaluated canonical models.
+    // - ARIMA / Prophet: root-caused API bugs (statsmodels `disp` kwarg removed; Prophet
+    //   requires tz-naive ds), re-evaluated OOS on the task83 batch1 layout —
+    //   scripts/task98_fix_failed_models.py.
+    // - GM pillars: backtested on their production signal definitions (Track A, canonical);
+    //   AskAnalyst data-enriched variants (filings events, quarterly fundamentals, breadth
+    //   regime) recorded separately as Track B — scripts/task98_gm_pillars.py.
+    // - Meta-Label CG (X): proper OOF pipeline (TimeSeriesSplit(5) component probabilities
+    //   feeding a LightGBM meta learner) — scripts/task98_meta_label_cg.py.
+    if (t98Metrics?.allResults) {
+      for (const [name, r] of Object.entries(t98Metrics.allResults as Record<string, any>)) {
+        if (r?.status && r.status !== "failed_after_attempts") {
+          statusOverrides[name] = { status: r.status, metrics: r.metrics || undefined };
+        }
+      }
+    }
+    if (t98Pillars?.trackA_production) {
+      for (const [name, r] of Object.entries(t98Pillars.trackA_production as Record<string, any>)) {
+        if (r?.status) statusOverrides[name] = { status: r.status, metrics: r.metrics || undefined };
+      }
+    }
+    if (t98Meta?.allResults?.["Meta-Label CG (X)"]?.status) {
+      const r = t98Meta.allResults["Meta-Label CG (X)"];
+      statusOverrides["Meta-Label CG (X)"] = { status: r.status, metrics: r.metrics || undefined };
+    }
+    const task98Enriched: Record<string, any> = t98Pillars?.trackB_data_enriched || {};
     const applyOverride = (entry: any) => {
       const ov = statusOverrides[entry.name];
       if (!ov) return entry;
+      const enriched = task98Enriched[entry.name];
       return { ...entry, verifiedStatus: ov.status, metrics: ov.metrics || entry.metrics,
         dirAcc5d: ov.metrics?.["5d"]?.directional_accuracy ?? entry.dirAcc5d,
         mae5d: ov.metrics?.["5d"]?.mae ?? entry.mae5d,
         rmse5d: ov.metrics?.["5d"]?.rmse ?? entry.rmse5d,
         r2_5d: ov.metrics?.["5d"]?.r2 ?? entry.r2_5d,
         n5d: ov.metrics?.["5d"]?.n ?? entry.n5d,
-        task94Evidence: true };
+        task94Evidence: true,
+        task98Evidence: true,
+        blockerReason: null,
+        task98DataEnriched: enriched ? {
+          status: enriched.status, metrics: enriched.metrics,
+          signalSource: enriched.signal_source || null,
+        } : undefined };
     };
     // Build registry: one entry per ALL_MODELS item, enriched with Task 84 status + metrics
     const canonical = ALL_MODELS.map((m: any) => {
