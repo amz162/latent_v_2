@@ -1,0 +1,25 @@
+{
+ "task": "Task 96 \u2014 remaining blockers (honest)",
+ "blockers": [
+  {
+   "component": "Local production build",
+   "status": "memory_blocked_on_sandbox_cgroup",
+   "detail": "next build --webpack worker OOM-killed 3x (1024MB cap, 768MB cap, compile-only mode); cgroup limit 4GB; worker anon-rss peaked ~2.7GB native. CI workflow .github/workflows/production-build.yml (ubuntu-latest, 7GB) pushed with this task; it builds the exact final commit with the same 1GB heap cap and uploads the log."
+  },
+  {
+   "component": "Official Time-LLM",
+   "status": "repo_unreachable_from_sandbox",
+   "detail": "anonymous github/codeload egress blocked; transformers GPT-2 stack installable; label preserved: experimental_gpt2_baseline"
+  },
+  {
+   "component": "Official FinGPT",
+   "status": "memory_blocked",
+   "detail": "smallest official LoRA bases are 6B-13B (>=8GB RAM fp16); sandbox has ~1.4GB free; label preserved: experimental_gpt2_baseline"
+  },
+  {
+   "component": "Next prospective session",
+   "status": "waiting_for_real_data",
+   "detail": "latest session 2026-10-30; next expected 2026-11-02 (Monday). Run the OHLCV refresh, then scripts/prospective_paper_trading.ts; 63 open positions will advance through SL/TP logic on real candles only."
+  }
+ ]
+}

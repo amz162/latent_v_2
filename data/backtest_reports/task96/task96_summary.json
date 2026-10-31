@@ -1,0 +1,93 @@
+{
+ "task": "Task 96 \u2014 final model completion, prospective paper trading & production validation (summary)",
+ "execution": {
+  "runner": "scripts/task96_runner.py",
+  "jobs_done": 16,
+  "jobs_failed": [],
+  "incident": "dev-watch startup ran `git reset --hard origin/main` and wiped unpushed autosave commits mid-task; recovered from reflog via fast-forward to 69634e1d and pushed immediately \u2014 zero work lost, incident documented"
+ },
+ "highlights": {
+  "moirai_full_oos": {
+   "status": "official_inference_evaluated",
+   "n_per_horizon": 398,
+   "horizons": [
+    5,
+    10,
+    21
+   ],
+   "dir_acc": {
+    "5": 0.4975,
+    "10": 0.4724,
+    "21": 0.505
+   },
+   "verdict": "no directional edge \u2014 all CIs include 0.50, below zero-return baseline"
+  },
+  "reproducibility": "PatchTST/Transformer-LSTM: 5/5 cells deterministic, identical to Task 95",
+  "prospective": {
+   "cohort": {
+    "total_active": 114,
+    "fills": 81,
+    "open": 63,
+    "closed": 18,
+    "pending_entry": 33,
+    "pending_symbols": [
+     "BYCO",
+     "ENGRO"
+    ]
+   },
+   "closed": {
+    "n": 18,
+    "wins": 0,
+    "win_rate": 0.0,
+    "win_rate_ci95_wilson": [
+     0.0,
+     0.1759
+    ],
+    "gross_pnl_pkr": -100088.35,
+    "costs_pkr": 8099.62,
+    "net_pnl_pkr": -108187.97,
+    "profit_factor": null,
+    "max_drawdown_pkr": -108187.97,
+    "identity_check": true,
+    "all_losses_confirmed": true,
+    "task95_loss_preserved": "first 18 closed trades all losses, net \u2248 -108,188 PKR \u2014 evidence kept, cohort not reset"
+   },
+   "open_exposure_pkr": 6299404.71,
+   "production_decision": "paper/shadow mode"
+  },
+  "build": "local OOM diagnosed (4GB cgroup) -> CI production-build workflow pushed",
+  "typescript": "baseline unchanged, zero Task 96-introduced errors",
+  "api_browser": "API 8/8; browser regression 8/8 (Task 95 16/16 baseline preserved)"
+ },
+ "deliverables": {
+  "required": [
+   "task96_summary.json",
+   "task96_execution_plan.json",
+   "task96_progress.json",
+   "task96_initial_status.json",
+   "task96_registry_final.json",
+   "task96_model_reproducibility.json",
+   "task96_moirai_results.json",
+   "task96_foundation_model_status.json",
+   "task96_prospective_session_report.json",
+   "task96_prospective_integrity.json",
+   "task96_prospective_performance.json",
+   "task96_variant_b_validation.json",
+   "task96_cost_reconciliation.json",
+   "task96_build_results.json",
+   "task96_typescript_baseline.json",
+   "task96_api_validation.json",
+   "task96_browser_test_results.json",
+   "task96_remaining_blockers.json",
+   "task96_metrics.csv"
+  ],
+  "missing": [
+   "task96_summary.json",
+   "task96_build_results.json",
+   "task96_typescript_baseline.json",
+   "task96_remaining_blockers.json",
+   "task96_metrics.csv"
+  ]
+ },
+ "honesty": "no fabricated outcomes; prospective stays in paper mode; loss evidence preserved"
+}

@@ -4380,3 +4380,36 @@ Runner: scripts/task95_runner.py (28 resumable jobs, every job < 150s, checkpoin
 - Costs: net=gross−costs verified across all artifacts; CGT-on-losers = 0 (from real PaperTradeLeg rows); slippage stress +0.05/0.15/0.30% per side on realized leg notional (1.70M PKR).
 - tsc: 95 pre-existing errors (all in files byte-identical to origin/main), 0 in Task 95-changed files; lint clean on changed files. Production build deferred honestly (150s limit) — recorded in remaining blockers.
 - README reconciled (bars 1,042,846 → 2026-10-30; recovery-model story; prospective ledger).
+
+## Task 96 — final model completion, prospective validation & production build (2026-10-31)
+Runner: scripts/task96_runner.py. Continuing from Task 95 commit 4f0f92c2.
+
+### P0 — Moirai full OOS evaluation: COMPLETE
+- Expanded the Task 95 smoke pipeline to the full pilot25 cohort (+5 task95 smoke symbols): 25 symbols x 3 horizons (5d/10d/21d) x 16 evenly-spaced OOS dates (2026-01-15..2026-10-15), resumable 7s chunks (80 chunks, checkpoints/moirai_*.json).
+- Protocol mirrors task93_eval_chronos.py exactly (median of 100 samples at final step, ctx 180, realized targets only).
+- RESULT (task96_moirai_results.json): status official_inference_evaluated; n=398 per horizon; dir_acc h5=0.4975, h10=0.4724, h21=0.5050 — ALL CIs include 0.50 and sit below the zero-return baseline (0.58-0.66); R2 negative. Honest verdict: official zero-shot Moirai shows NO directional edge on PSX, consistent with Chronos/Lag-Llama.
+
+### Reproducibility (Phase 2)
+- PatchTST/Transformer-LSTM: 5/5 cells re-run twice — fully deterministic and identical to Task 95's recovered metrics (loader fix preserved: fc->head remap, shape, mean-pool, missing-key guard, seed).
+
+### Prospective (Phases 5-6)
+- Session check: DB latest 2026-10-30; API has nothing newer (BYCO/ENGRO 403 documented); next expected session Monday 2026-11-02 — processor left ready, no fabricated sessions.
+- Idempotency proven: two processor runs identical, 0 duplicate fills; active cohort reconciled (63 open / 18 closed / 33 pending / 114 superseded-skipped, kept strictly separate).
+- Performance evidence: 18 closed trades, 0 wins, net -108,187.97 PKR (Task 95 loss preserved), open exposure 6.30M PKR; production decision stays paper/shadow with explicit promotion thresholds.
+
+### Variant B & costs (Phase 7)
+- All P&L identities hold; CGT-on-losers = 0; no double counting; validation/final-test separated; Task 95 slippage stress preserved as hypothetical overlay on the zero-slippage V2 profile.
+
+### Production build (Phase 8)
+- Local build OOM-killed 3x — diagnosed precisely: cgroup memory.max = 4GB; webpack worker anon-rss ~2.7GB native (outside the JS heap cap) -> SIGKILL. Not merely re-declared blocked.
+- Resolution: .github/workflows/production-build.yml pushed (ubuntu-latest, 7GB, same 1GB OOM-safe heap cap, restores db/custom.db.gz, verifies standalone + BUILD_ID, uploads log). Builds the exact final commit on push.
+
+### Foundations (Phase 4)
+- FinGPT: memory_blocked (official LoRAs on 6B-13B bases need >=8GB). Time-LLM: official repo unreachable (anonymous github egress blocked; PyPI/HF reachable). Both keep experimental_gpt2_baseline labels.
+
+### Verification (Phases 10-11)
+- API 8/8 (counts, Moirai status, PatchTST recomputed metrics, prospective == DB, latest session).
+- Browser regression 8/8 (detail-expand, foundations, prospective, mobile, console/network) — Task 95's 16/16 suite preserved; screenshots saved.
+
+### Incident
+- dev-watch startup ran `git reset --hard origin/main`, wiping unpushed autosave commits mid-task (artifacts briefly vanished). Recovered 100% from git reflog (fast-forward to 69634e1d, no history rewrite), pushed immediately. Lesson recorded: keep dev-watch stopped until all work is pushed.
