@@ -1,0 +1,30 @@
+{
+ "task": "Task 95 \u2014 remaining blockers (honest)",
+ "blockers": [
+  {
+   "component": "Moirai full OOS evaluation",
+   "status": "official_inference_operational_oos_evaluation_pending",
+   "detail": "Task 95 recovered the official uni2ts pipeline (torch 2.4.1+cpu venv; root fix for the NumPy/pydantic cascade) and generated real zero-shot forecasts for 5 pilot symbols (task95/predictions/moirai_smoke_forecasts.json). Full-cohort OOS evaluation at Chronos-like scale (n\u2248400) is the next bounded campaign step."
+  },
+  {
+   "component": "Time-LLM official implementation",
+   "status": "experimental_gpt2_baseline",
+   "detail": "unchanged from Task 94 \u2014 official reprogramming stack + checkpoints required"
+  },
+  {
+   "component": "FinGPT official sentiment",
+   "status": "experimental_gpt2_baseline",
+   "detail": "unchanged from Task 94 \u2014 official checkpoint + timestamped PSX announcement corpus required"
+  },
+  {
+   "component": "Production build (next build --webpack)",
+   "status": "deferred_150s_limit",
+   "detail": "multi-minute build cannot fit a single bounded execution; tsc --noEmit + live dev compilation of all touched routes (API 10/10, browser 16/16) used instead"
+  },
+  {
+   "component": "Prospective outcome maturation",
+   "status": "waiting_for_real_sessions",
+   "detail": "63 open positions need future OHLCV sessions (next: 2026-11-02 Monday) to advance through SL/TP logic; run scripts/prospective_paper_trading.ts daily after the refresh-ohlcv cron; first 18 matured trades were all losses \u2014 no profitability claim"
+  }
+ ]
+}
