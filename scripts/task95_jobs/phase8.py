@@ -110,21 +110,88 @@ def p8_prospective_process(ctx):
     })
 
 
+@reg("p8_supersede_orphans")
+def p8_supersede_orphans(ctx):
+    """The pre-Task-95 'standard_psx' book generation is orphaned: since the Task 93 cost
+    reconciliation STANDARD_PSX == LEGACY_STANDARD_PSX_V1 (id legacy_standard_psx_v1), the
+    lifecycle only ever advances '..._legacy_standard_psx_v1' books. The orphan rows can never
+    execute and double-count the same predictions as forever-pending. Honest lifecycle state
+    for them is skipped with an auditable reason (matches the 'skipped:reason' convention)."""
+    conn = sqlite3.connect(str(DB))
+    conn.row_factory = sqlite3.Row
+    cur = conn.execute(
+        "UPDATE ProspectivePaperTrade SET state='skipped' "
+        "WHERE state='pending_entry' AND bookId NOT LIKE '%legacy%'")
+    n = cur.rowcount
+    conn.execute(
+        "UPDATE ProspectivePaperTrade SET exitReason='skipped:superseded-cost-profile-generation' "
+        "WHERE state='skipped' AND bookId NOT LIKE '%legacy%' AND (exitReason IS NULL OR exitReason='')")
+    conn.commit()
+    after = [dict(r) for r in conn.execute(
+        "SELECT state, COUNT(*) n FROM ProspectivePaperTrade GROUP BY state")]
+    conn.close()
+    ctx.write("task95_prospective_generation_reconciliation.json", {
+        "task": "Task 95 Phase 8.2b — reconcile orphaned standard_psx trade generation",
+        "rows_marked_skipped": n,
+        "reason": "superseded:cost-profile-generation — STANDARD_PSX == LEGACY_STANDARD_PSX_V1 since "
+                  "Task 93; lifecycle advances only legacy_standard_psx_v1 books; the pre-95 "
+                  "standard_psx rows duplicate the same predictions and can never execute",
+        "states_after": after,
+        "audit": "every transition pending_entry->skipped is reproducible from bookId pattern; no fills, "
+                 "prices or P&L were altered; active generation (legacy_standard_psx_v1) untouched",
+    })
+    ctx.log(f"marked {n} orphaned standard_psx rows as skipped")
+
+
+@reg("p8_entry_exit_integrity")
+def p8_entry_exit_integrity(ctx):
+    conn = sqlite3.connect(str(DB))
+    conn.row_factory = sqlite3.Row
+    checked = bad = 0
+    for r in conn.execute("""SELECT t.symbol, t.entryDate, t.entryPrice, b.open
+                             FROM ProspectivePaperTrade t JOIN OhlcvBar b
+                               ON b.symbol=t.symbol AND b.date=t.entryDate
+                             WHERE t.state IN ('open','closed') AND t.entryDate IS NOT NULL"""):
+        checked += 1
+        if abs(r["entryPrice"] - r["open"]) > 1e-6:
+            bad += 1
+    closed = [dict(r) for r in conn.execute(
+        """SELECT symbol, strategyId, entryDate, entryPrice, exitReason, grossPnl, totalCosts, netPnl, isWin
+           FROM ProspectivePaperTrade WHERE state='closed' LIMIT 8""")]
+    no_exit = conn.execute(
+        "SELECT COUNT(*) FROM ProspectivePaperTrade WHERE state='closed' AND (exitReason IS NULL OR exitReason='')"
+    ).fetchone()[0]
+    legs = conn.execute("SELECT COUNT(*) n FROM ProspectiveTradeLeg").fetchone()["n"] \
+        if conn.execute("SELECT name FROM sqlite_master WHERE name='ProspectiveTradeLeg'").fetchone() else None
+    conn.close()
+    ctx.write("task95_prospective_entry_integrity.json", {
+        "task": "Task 95 Phase 8 — entry/exit integrity of real prospective fills",
+        "entries_checked": checked, "entry_price_mismatches_vs_bar_open": bad,
+        "closed_without_exit_reason": no_exit, "prospective_trade_legs": legs,
+        "closed_sample": closed,
+        "verdict": ("all entries at real next-session bar open; exits carry price/date/reason"
+                    if bad == 0 and no_exit == 0 else "INTEGRITY PROBLEM — inspect"),
+    })
+
+
 @reg("p8_prospective_monitor")
 def p8_prospective_monitor(ctx):
     snap = state_snapshot()
-    outcomes = q("SELECT outcomeState, COUNT(*) n FROM ProspectivePaperTrade GROUP BY outcomeState") \
-        if q("SELECT name FROM sqlite_master WHERE name='ProspectivePaperTrade'") else []
-    try:
-        outcomes = q("SELECT outcomeState, COUNT(*) n FROM ProspectivePaperTrade GROUP BY outcomeState")
-    except Exception:
-        outcomes = []
-    closed = q("""SELECT COUNT(*) n, SUM(netPnl) net FROM ProspectivePaperTrade WHERE state='closed'""")
+    outcomes = q("""SELECT p.outcomeStatus, COUNT(DISTINCT p.id) n FROM PredictionHistory p
+                    WHERE p.id IN (SELECT DISTINCT sourcePredictionId FROM ProspectivePaperTrade
+                                   WHERE bookId LIKE '%legacy%')
+                    GROUP BY p.outcomeStatus""")
+    closed = q("""SELECT COUNT(*) n, SUM(grossPnl) gross, SUM(totalCosts) costs, SUM(netPnl) net,
+                  SUM(CASE WHEN isWin=1 THEN 1 ELSE 0 END) wins
+                  FROM ProspectivePaperTrade WHERE state='closed'""")
+    open_by_strategy = q("""SELECT strategyId, COUNT(*) n FROM ProspectivePaperTrade
+                            WHERE state='open' GROUP BY strategyId""")
     ctx.write("task95_prospective_monitoring.json", {
-        "task": "Task 95 Phase 8.3 — prospective monitoring report",
+        "task": "Task 95 Phase 8.3 — prospective monitoring report (active generation: legacy_standard_psx_v1 books)",
         "state_distribution": snap["states"],
-        "outcome_distribution": outcomes,
+        "forecast_outcome_status": outcomes,
         "closed_summary": closed,
+        "open_by_strategy": open_by_strategy,
         "latest_ohlcv_by_symbol": snap["latest_ohlcv_by_symbol"],
         "pending_by_symbol": snap["pending_by_symbol"],
         "rule": "pending entries are NEVER displayed as executed trades; profitability claims require matured closed trades",

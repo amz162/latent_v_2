@@ -81,6 +81,33 @@
    "error": null,
    "finished": "2026-10-31T18:25:20Z",
    "seconds": 1.0
+  },
+  "p8_supersede_orphans": {
+   "status": "failed",
+   "runs": 1,
+   "started": "2026-10-31T18:27:17Z",
+   "error": "ValueError: dictionary update sequence element #0 has length 6; 2 is required",
+   "finished": "2026-10-31T18:27:17Z",
+   "seconds": 0.0,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task95_runner.py\", line 88, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 129, in p8_supersede_orphans\n    after = [dict(r) for r in conn.execute(\n             ^^^^^^^\nValueError: dictionary update sequence element #0 has length 6; 2 is required\n"
+  },
+  "p8_entry_exit_integrity": {
+   "status": "failed",
+   "runs": 1,
+   "started": "2026-10-31T18:27:17Z",
+   "error": "OperationalError: no such column: exitDate",
+   "finished": "2026-10-31T18:27:17Z",
+   "seconds": 0.0,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task95_runner.py\", line 88, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 157, in p8_entry_exit_integrity\n    closed = [dict(r) for r in conn.execute(\n                               ^^^^^^^^^^^^^\nsqlite3.OperationalError: no such column: exitDate\n"
+  },
+  "p8_prospective_monitor": {
+   "status": "failed",
+   "runs": 1,
+   "started": "2026-10-31T18:27:17Z",
+   "error": "OperationalError: no such column: outcomeState",
+   "finished": "2026-10-31T18:27:17Z",
+   "seconds": 0.0,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task95_runner.py\", line 88, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 177, in p8_prospective_monitor\n    outcomes = q(\"SELECT outcomeState, COUNT(*) n FROM ProspectivePaperTrade GROUP BY outcomeState\") \\\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 30, in q\n    rows = [dict(r) for r in conn.execute(sql, args).fetchall()]\n                             ^^^^^^^^^^^^^^^^^^^^^^^\nsqlite3.OperationalError: no such column: outcomeState\n"
   }
  },
  "history": []
