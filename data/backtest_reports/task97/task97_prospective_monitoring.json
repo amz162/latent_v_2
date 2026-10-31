@@ -1,0 +1,30 @@
+{
+ "task": "Task 97 Section 7 \u2014 prospective daily monitoring mechanism",
+ "hook": {
+  "/": "runs after the real OHLCV refresh in the daily lifecycle",
+  "path": "/home/z/my-project/.zscripts/ohlcv-refresh-and-process.sh",
+  "executed_now": true,
+  "rc": 0,
+  "idempotent": "processor refuses duplicate fills; re-run on same session is a no-op"
+ },
+ "snapshot_after_hook": {
+  "generatedAt": "2026-10-31T20:36:52.758Z",
+  "states": {
+   "closed": 18,
+   "open": 63,
+   "pending_entry": 33,
+   "skipped": 114
+  },
+  "latestOhlcvSession": "2026-10-30"
+ },
+ "active_generation_states": {
+  "closed": 18,
+  "open": 63,
+  "pending_entry": 33
+ },
+ "alerts": {
+  "stale_symbols": [],
+  "ingestion_failure_alerting": "hook logs WARN lines on nonzero rc (batch_logs/monitoring-hook.log)"
+ },
+ "paper_mode": "system remains in paper/shadow mode; hook only records evidence"
+}

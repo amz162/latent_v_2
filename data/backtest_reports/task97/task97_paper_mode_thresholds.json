@@ -1,0 +1,15 @@
+{
+ "task": "Task 97 Section 7 \u2014 conservative paper-to-production promotion thresholds",
+ "current_evidence": "18 closed trades, all losses, net \u2248 -108,188 PKR \u2014 promotion NOT justified",
+ "thresholds_all_required": {
+  "min_matured_trades": 100,
+  "independent_periods": ">= 2 distinct calendar quarters with positive net expectancy in each",
+  "net_expectancy": "mean net P&L per trade > 0 after PSX V2 costs, bootstrap 95% CI excluding zero",
+  "max_drawdown": "cumulative net drawdown no worse than -15% of peak allocated capital",
+  "symbol_coverage": ">= 10 symbols with >= 3 matured trades each; no single symbol > 35% of net P&L",
+  "regime_stability": "positive expectancy in both up- and down-trending PSX sub-periods",
+  "no_single_winner": "removing the best single trade must not flip aggregate expectancy negative"
+ },
+ "monitoring_source": ".zscripts/ohlcv-refresh-and-process.sh (daily, idempotent, after real refresh)",
+ "decision_owner": "the user; the agent never promotes autonomously"
+}
