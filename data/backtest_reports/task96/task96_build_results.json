@@ -42,5 +42,12 @@
   "heap_cap": "NODE_OPTIONS --max-old-space-size=1024 (OOM-safe cap preserved)",
   "typescript_ignoreBuildErrors": "pre-existing curated config (unchanged); TS baseline tracked separately"
  },
- "local_build_status": "memory_blocked_on_sandbox_cgroup (diagnosed, not merely declared)"
+ "local_build_status": "memory_blocked_on_sandbox_cgroup (diagnosed, not merely declared)",
+ "ci_build": {
+  "workflow": ".github/workflows/production-build.yml",
+  "commit": "c9e60de1",
+  "result": "success",
+  "notes": "ubuntu-latest (7GB); bun install + explicit 'bunx prisma generate' (bun skips lifecycle scripts) + gunzip db/custom.db.gz; bun run build with the OOM-safe 1GB heap cap; verified .next/standalone + BUILD_ID; build log uploaded as workflow artifact. First CI run failed on missing prisma client (documented), fixed, second run green."
+ },
+ "final_status": "production_build_verified_on_ci_at_final_commit"
 }

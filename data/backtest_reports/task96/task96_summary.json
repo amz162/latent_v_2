@@ -55,7 +55,7 @@
    "open_exposure_pkr": 6299404.71,
    "production_decision": "paper/shadow mode"
   },
-  "build": "local OOM diagnosed (4GB cgroup) -> CI production-build workflow pushed",
+  "build": "local OOM diagnosed (4GB cgroup, 3 attempts) -> CI production-build workflow; first CI run failed on prisma client (bun skips lifecycle scripts), fixed with explicit 'bunx prisma generate'; SUCCESS at final commit c9e60de1 with standalone + BUILD_ID verification",
   "typescript": "baseline unchanged, zero Task 96-introduced errors",
   "api_browser": "API 8/8; browser regression 8/8 (Task 95 16/16 baseline preserved)"
  },

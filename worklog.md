@@ -4413,3 +4413,7 @@ Runner: scripts/task96_runner.py. Continuing from Task 95 commit 4f0f92c2.
 
 ### Incident
 - dev-watch startup ran `git reset --hard origin/main`, wiping unpushed autosave commits mid-task (artifacts briefly vanished). Recovered 100% from git reflog (fast-forward to 69634e1d, no history rewrite), pushed immediately. Lesson recorded: keep dev-watch stopped until all work is pushed.
+
+### Production build — CI verification (final)
+- First CI run failed: '.prisma/client/default' not found (bun skips lifecycle scripts) -> added explicit `bunx prisma generate` step.
+- Second CI run: **SUCCESS** at final commit c9e60de1 (ubuntu-latest, 7GB; same 1GB OOM-safe heap cap; db restored from custom.db.gz; standalone output + BUILD_ID verified; log artifact uploaded). Production build is now genuinely verified, not deferred.
