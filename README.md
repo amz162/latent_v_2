@@ -2,7 +2,7 @@
 
 > The plan-first PSX investment platform for salaried Pakistanis. Latent.pk cuts through market noise using predictive algorithms trained on PSX data — translating every signal (news, results, technicals, fundamentals) into a clear, personalized action plan in your language. No WhatsApp rumors, no TradingView overwhelm. Just here's the plan to reach your goal.
 
-**Version 0.2.1** · **909 PSX-listed stocks covered** · **1,042,821 daily OHLCV bars (2016-10-21 → 2026-10-29)** · **58 canonical + 11 supplemental = 69 AI models, 13 ensembles across 10 tiers** · **61 API routes**
+**Version 0.2.1** · **909 PSX-listed stocks covered** · **1,042,821 daily OHLCV bars (2016-10-21 → 2026-10-29)** · **58 canonical + 9 supplemental + 2 aliases = 69 registry entries (67 unique implementations), 8 ensembles across 10 tiers** (reconciled in Task 94) · **61 API routes**
 
 ---
 
@@ -28,7 +28,7 @@
 
 Latent.pk is a full-stack Next.js 16 application that turns raw Pakistan Stock Exchange (PSX) data into actionable investment intelligence. It combines:
 
-- **65 ML / statistical / rule-based models** organized into **10 tiers**, blended via **13 ensemble methods** into a single final-consensus BUY/SELL signal per stock.
+- **67 unique model implementations (58 canonical + 9 supplemental)** organized into **10 tiers**, blended via **8 ensemble aggregators** into a single final-consensus BUY/SELL signal per stock (Task 94 Phase 1 reconciliation: aliases and deterministic aggregators are not double-counted as base ML models).
 - **Real OHLCV history** for 908 PSX symbols (10 years, ~1M bars) stored locally in SQLite — no per-stock live fetch needed for backtesting.
 - **Live price overlays** + server-side TP1/TP2/TP3/SL outcome evaluation for every signal.
 - **A 10-tab platform** covering the full workflow: news interpretation → technicals → signals → AI models → tax calculators → pattern finder → portfolio → strategy → dividends → tracker.
@@ -64,7 +64,7 @@ A chronological, **realized-compounding** trade-by-trade simulator:
 
 ## AI / ML Architecture
 
-### The 10 model tiers (65 models + 13 ensembles)
+### The 10 model tiers (58 canonical + 9 supplemental models + 8 ensembles)
 
 | Tier | Models | Method |
 |---|---|---|
@@ -80,11 +80,11 @@ A chronological, **realized-compounding** trade-by-trade simulator:
 | **X — 10-Strategy Meta-Labeling** | Trend Multi-TF, Breakout RelVol, Trend Pullback, RSI Divergence, BB Mean Reversion, Vol Contraction, Relative Strength, Market Regime, Meta-Label CG, Triple Barrier Dyn + LightGBM meta | 10 complementary strategies + meta-labeling |
 | **Gian — Square-Root S/R** | Gian-Ensemble, Gian-Extender (GANN sq-of-9), M-Ensemble (price-touch S/R + ATR clustering) | Square-root support/resistance with odd-number rule |
 
-### Ensembles (13 blending methods)
-A. Majority Vote · B. Probability-Weighted · C. Tier-Weighted · D. CL-Ensemble · E. CL-Extender · F. CL-2 Ensemble · G. PI-Ensemble · H. GM-Model · I. CG-Ensemble · J. X-Ensemble · K. Gian-Ensemble · L. Gian-Extender · M. M-Ensemble → **Final Consensus** (≥2-ensemble agreement).
+### Ensembles (8 distinct registry ensembles after Task 94 reconciliation)
+**Supplemental aggregators:** Majority Vote · Probability-Weighted · Tier-Weighted · Final Consensus. **Meta/rule aggregators inside the canonical registry:** CL-2 Meta-Ensemble · PI · CG (X Meta-Labeling) · Gian-Ensemble/Gian-Extender · M-Ensemble. Final signal = **Final Consensus** (≥2-ensemble agreement). Historical references to "13 blending methods" double-counted renamed/aliased variants — reconciled in Task 94 Phase 1 (`task94_registry_reconciliation.json`).
 
 ### Backtest engine
-- **Runtime (TypeScript):** `src/lib/latent/model-backtest.ts → runAllBacktests()` backtests all 65 models + 13 ensembles over the full 908-stock universe, close-based, walk-forward (monthly decision points over the last ~3 years). Results cached in the `ModelBacktestCache` table; surfaced in the AI Models → Backtesting Report (win rate, avg return, best/worst, profit factor, Sharpe, Sortino, max drawdown, stars, stocks-covered).
+- **Runtime (TypeScript):** `src/lib/latent/model-backtest.ts → runAllBacktests()` backtests all 58 canonical + 9 supplemental models + 8 ensembles over the full 908-stock universe, close-based, walk-forward (monthly decision points over the last ~3 years). Results cached in the `ModelBacktestCache` table; surfaced in the AI Models → Backtesting Report (win rate, avg return, best/worst, profit factor, Sharpe, Sortino, max drawdown, stars, stocks-covered).
 - **Per-tier offline (Python):** each tier has a `scripts/train_*.py` that trains its models AND embeds per-model backtest stats into `data/ml_predictions_multi.json`.
 - **Per-model graph view:** on-demand `/api/backtest/model-graph` replays any model's predicted target price vs the actual realized close at each decision point (multi-model overlay, tunable step).
 
@@ -125,7 +125,7 @@ latent_v_2/
 │   │   └── ui/                       # shadcn/ui primitives
 │   └── lib/
 │       ├── latent/
-│       │   ├── ensemble.ts           # ALL_MODELS (65) + 13 ensemble builders + final consensus
+│       │   ├── ensemble.ts           # ALL_MODELS (58 canonical) + 8 ensemble aggregators + final consensus
 │       │   ├── model-backtest.ts     # runAllBacktests() — runtime backtest engine
 │       │   ├── fallback-predictions.ts # indicator-based strategy engines (per-model signals)
 │       │   ├── investment-simulator.ts # chronological realized-compounding simulator
@@ -156,7 +156,7 @@ SQLite via Prisma. Key tables:
 |---|---|
 | `OhlcvBar` | Daily OHLCV history — 909 symbols × ~1,148 bars each = **1,042,821 rows** (2016-10-21 → 2026-10-29). Composite PK `(symbol, date)`. |
 | `ModelPredictionCache` | Per-symbol predictions for stocks outside the original ML-trained universe (extended/fallback coverage). |
-| `ModelBacktestCache` | Per-model + per-ensemble backtest stats (winRate, avgReturnPct, coveredSymbols, computedAt). 78 rows (65 models + 13 ensembles). |
+| `ModelBacktestCache` | Per-model + per-ensemble backtest stats (winRate, avgReturnPct, coveredSymbols, computedAt). 78 rows (58 canonical + 9 supplemental models + 8 ensembles + legacy alias rows, reconciled in Task 94). |
 | `PricePatternCache` | Price-pattern finder output per symbol (permanent cache). |
 | `ResultPatternCache` | Quarterly-results pattern output per symbol (permanent cache). |
 | `Trade` | User trades (open/closed, P&L, time-to-close). |
