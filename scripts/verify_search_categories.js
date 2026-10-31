@@ -27,8 +27,8 @@ const { chromium } = require("playwright");
     await input.fill(sym);
     await page.waitForTimeout(1800);
     const chips = await page.locator("span[title]").allTextContents();
-    const rows = await page.locator("button:has(span.font-mono)").count();
-    console.log(sym, "→ rows:", rows, "chips:", JSON.stringify(chips.slice(0, 3)));
+    const rows = await page.locator("button:has(span.font-mono)").allTextContents();
+    console.log(sym, "→ rows:", JSON.stringify(rows.slice(0, 3)), "chips:", JSON.stringify(chips.slice(0, 3)));
   }
   // AI Models view — key-warning check
   await page.locator("aside button").nth(4).click({ timeout: 8000 }).catch(() => {});
