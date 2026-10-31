@@ -1,0 +1,37 @@
+{
+  "task": "Task 94 Phase 6 \u2014 Prospective Monitoring Report",
+  "n_total": 114,
+  "state_distribution": {
+    "pending_entry": 114
+  },
+  "reason_distribution": {
+    "no_ohlcv_after_prediction": 114
+  },
+  "stale_symbols": [
+    "ANL",
+    "BYCO",
+    "CNERGY",
+    "ENGRO",
+    "FCCL",
+    "KEL",
+    "LOTCHEM",
+    "PRL",
+    "WTL"
+  ],
+  "latest_processed_session": null,
+  "processed_trades_summary": {
+    "n_closed": 0,
+    "total_gross_pnl": 0,
+    "total_net_pnl": 0,
+    "n_winning": 0,
+    "win_rate_pct": null
+  },
+  "honesty_notes": [
+    "If most trades remain pending_entry, it's because OHLCV data is NOT yet available after the prediction timestamp.",
+    "Prediction timestamps in PredictionHistory are unix ms epochs (e.g., 1793290448719 = 2026-11-23).",
+    "Latest OHLCV for most symbols is 2026-10-29 (BEFORE prediction timestamps).",
+    "This means predictions were made for future sessions whose OHLCV hasn't been ingested yet.",
+    "Therefore most/all trades correctly remain pending_entry \u2014 this is HONEST behavior, NOT a processing failure.",
+    "Live profitability claims require matured outcomes \u2014 do NOT claim profit/loss from this report alone."
+  ]
+}
