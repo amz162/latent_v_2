@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLatentStore } from "@/lib/latent/store";
-import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { StockSearch } from "./StockSearch";
 import type { FairValueSummary, FairValueResult } from "@/lib/latent/fair-value";
 import { Calculator, TrendingUp, TrendingDown, Minus, Sparkles, Target } from "lucide-react";
 import { toast } from "sonner";
@@ -74,15 +74,9 @@ export function FairValueCalculator() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
               <div>
                 <Label className="text-[#94A3B8] text-xs">Select Stock</Label>
-                <select
-                  value={symbol}
-                  onChange={(e) => setSymbol(e.target.value)}
-                  className="w-full bg-[#0A0E1A] border border-white/[0.12] text-[#F4F7FB] text-sm rounded-md px-3 py-2 mt-1"
-                >
-                  {MOCK_STOCKS.map((s) => (
-                    <option key={s.symbol} value={s.symbol}>{s.symbol} — {s.name}</option>
-                  ))}
-                </select>
+                <div className="mt-1">
+                  <StockSearch value={symbol} onChange={(sym) => sym && setSymbol(sym)} placeholder="Search all PSX-listed stocks..." />
+                </div>
               </div>
               <div className="md:col-span-2 flex gap-2">
                 <Button

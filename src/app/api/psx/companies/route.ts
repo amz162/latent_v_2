@@ -6,6 +6,9 @@ import { NextResponse } from "next/server";
 // Used by every StockSearch component (Signals, AI Models, Pattern Finder,
 // Portfolio, Technical Analysis) so the symbol universe is the full 1000+,
 // not a 360-stock subset.
+import { readFileSync } from "fs";
+import path from "path";
+
 export const dynamic = "force-dynamic";
 
 const PYPSX_BASE = process.env.PYPSX_API_BASE || "https://paper-api.pypsx.com";
@@ -63,6 +66,24 @@ export async function GET() {
   if (cache && cache.expiresAt > Date.now()) {
     return NextResponse.json({ companies: cache.value, source: cache.value?.[0]?.sector ? "pypsx+psxdata" : "psxdata", cached: true });
   }
+  // Sector backfill sources (Task 98b — every listed instrument gets a category):
+  //   1. committed AskAnalyst snapshot (data/askanalyst/companylist.json) — real
+  //      PSX sectors for ~360 equities
+  //   2. curated sector_overrides.json — instrument families verified online
+  //      (GoP debt: T-bills / PIBs / Ijara Sukuk; corporate TFCs & Sukuk; rights
+  //      issues; delisted/suspended companies) — see scripts/task98b_sector_overrides.py
+  const loadLocalJson = (p: string): any => { try { return JSON.parse(readFileSync(path.join(process.cwd(), p), "utf-8")); } catch { return null; } };
+  const askList = loadLocalJson("data/askanalyst/companylist.json");
+  const askSectors: Record<string, string> = {};
+  if (Array.isArray(askList)) {
+    for (const c of askList) {
+      const sym = String(c?.value || c?.symbol || "").trim().toUpperCase();
+      const sec = String(c?.sector || "").trim();
+      if (sym && sec) askSectors[sym] = sec;
+    }
+  }
+  const overrides = loadLocalJson("data/askanalyst/sector_overrides.json");
+  const overrideSectors: Record<string, string> = overrides?.sectors || {};
   // Merge pypsx /symbols (506 with names+sectors) + psxdata /stocks (1048) so
   // StockSearch shows the FULL 1000+ universe — pypsx for the names, psxdata
   // to top up the rest (label = symbol where no name is available).
@@ -100,6 +121,17 @@ export async function GET() {
     // Non-fatal — sector enrichment is best-effort; the donut falls back
     // to "Others" for unlabelled stocks.
   }
+  // Task 98b backfill pass: AskAnalyst snapshot, then the curated overrides.
+  // Applied AFTER the psxdata sector map so live sources keep precedence.
+  let backfilled = 0;
+  for (const c of companies) {
+    if (!c.sector) {
+      const s = overrideSectors[c.value] || askSectors[c.value];
+      if (s) { c.sector = s; backfilled++; }
+    }
+  }
+  if (backfilled) source = `${source}+backfill`;
+  const noSector = companies.filter((c) => !c.sector).length;
   cache = { value: companies, expiresAt: Date.now() + TTL };
-  return NextResponse.json({ companies, source, count: companies.length, cached: false });
+  return NextResponse.json({ companies, source, count: companies.length, cached: false, backfilledSectors: backfilled, missingSector: noSector });
 }
