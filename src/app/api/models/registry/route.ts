@@ -53,13 +53,23 @@ export async function GET() {
       statusOverrides["Moirai (Salesforce)"] = { status: t95Foundations.models["Moirai (Salesforce)"].identity };
     }
     if (t95Caveats?.runs) {
+      // Task 95 root-cause fix: Task 94's recovery loader left the output head randomly
+      // initialized (checkpoint keys fc.* vs model head.*), invalidating ALL stored recovery
+      // metrics for these two models. The Task 95 recomputed cells (fixed loader, deterministic,
+      // fully loaded) are the authoritative metrics — override every horizon.
+      const byModel: Record<string, any> = {};
       for (const r of t95Caveats.runs as any[]) {
-        if (r.h !== 5 || r.final_status !== "metric_mismatch") continue;
-        const rec = r.recomputed || {};
-        statusOverrides[r.model] = {
-          status: "official_pretrained_inference_oos_evaluated",
-          metrics: { "5d": { n: rec.n, directional_accuracy: rec.dir_acc, mae: rec.mae, rmse: rec.rmse, r2: rec.r2 } },
-        };
+        if (r.final_status !== "metric_mismatch" || !r.recomputed) continue;
+        const rec = r.recomputed;
+        byModel[r.model] = byModel[r.model] || {};
+        byModel[r.model][`${r.h}d`] = { n: rec.n, directional_accuracy: rec.dir_acc, mae: rec.mae, rmse: rec.rmse, r2: rec.r2 };
+      }
+      for (const [name, metrics] of Object.entries(byModel)) {
+        const m5 = metrics["5d"];
+        statusOverrides[name] = { status: "official_pretrained_inference_oos_evaluated", metrics };
+        if (m5) {
+          statusOverrides[name].metrics = metrics;
+        }
       }
     }
     const applyOverride = (entry: any) => {

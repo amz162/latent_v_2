@@ -82,23 +82,35 @@ def p3_metric_caveats(ctx):
     conn.close()
     repro = sum(1 for r in runs if r.get("final_status") == "metric_reproduced")
     mism = [r for r in runs if r.get("final_status") == "metric_mismatch"]
+    dir_table = {f"{r['model']}_h{r['h']}": {"recomputed": r["recomputed"].get("dir_acc"),
+                                             "stored_t94": r["stored"].get("dir_acc")} for r in runs}
     ctx.write("task95_model_metric_caveat_resolution.json", {
-        "task": "Task 95 Phase 3.2 — resolve the 2 Task 94 metric caveats",
+        "task": "Task 95 Phase 3.2 — resolve the 2 Task 94 metric caveats (ROOT CAUSE FOUND AND FIXED)",
         "caveat_models": ["PatchTST", "Transformer-LSTM"],
-        "method": "re-ran scripts/task94_phase2_recover_neural.py inference code (same checkpoints, "
-                  "same symbols[:5] x n_per_sym=8 OOS window) and compared every metric vs stored values",
+        "root_cause": ("Task 94's recovery loader used load_state_dict(strict=False) while the "
+                       "checkpoints store the output head as fc.* and the recovery classes defined "
+                       "head.* with an incompatible shape (Linear(5*d_model,1) vs checkpoint "
+                       "fc.weight (1,d_model)) — the head stayed RANDOMLY INITIALIZED, so every "
+                       "Task 94 recovery metric for these models was a draw from a partially-random "
+                       "model. Verified: two identical back-to-back runs gave dir_acc 0.25 then 0.75 "
+                       "(nondeterministic)."),
+        "fix_applied": ("scripts/task94_phase2_recover_neural.py: fc→head key remap, missing-key guard "
+                        "(refuse to evaluate if any param unloaded), head reshaped to Linear(d_model,1) "
+                        "with mean-pooling over patches per the original task83 architecture, "
+                        "torch.manual_seed(0) — inference now deterministic (verified 2 identical runs)"),
+        "method": "re-ran the fixed recovery inference (same checkpoints, symbols[:5] x n_per_sym=8 OOS "
+                  "window) and compared vs stored Task 94 values",
         "runs": runs,
-        "summary": {"cells_reproduced": repro, "cells_mismatched": len(mism),
-                    "mismatched_cells": [f"{r['model']}_h{r['h']}" for r in mism]},
-        "verdict": (f"{repro}/{len(runs)} cells independently reproduced. "
-                    f"MISMATCH at h=5d for BOTH models (recomputed dir_acc=0.75 vs stored 0.25 — 20/40 "
-                    f"prediction flip, not numeric noise): Task 94's stored h=5 metrics could not be "
-                    f"reproduced under an identical re-run and must be treated as unreliable. "
-                    f"h=10d/21d reproduce exactly. Final statuses: h=10/21 metric_reproduced; "
-                    f"h=5 metric_mismatch. Models keep official_pretrained_inference_oos_evaluated "
-                    f"identity with n=40 small-sample warning on all horizons."),
-        "recommendation": "treat PatchTST/Transformer-LSTM h=5d metrics as unreliable pending raw "
-                          "prediction-array provenance; do not display them as evidence in UI",
+        "dir_acc_table": dir_table,
+        "summary": {"cells_reproduced_vs_stored": repro, "cells_differing_from_stored": len(mism)},
+        "verdict": ("Task 94 stored recovery metrics are INVALID (random-head artifact) and are "
+                    "superseded by the Task 95 recomputed values above, produced by the fixed, "
+                    "fully-loaded, deterministic pipeline. The recovery checkpoints themselves were "
+                    "always valid — only the Task 94 inference was broken. n=40 per cell: small-sample "
+                    "warning applies and no directional-edge claim is made."),
+        "recommendation": ("registry/UI must display the Task 95 recomputed metrics (already wired via "
+                           "task95_model_metric_caveat_resolution.json overlay); treat PatchTST h5 "
+                           "dir_acc=0.75 as a n=40 observation, not proven skill"),
         "note": "Task 94 artifact task94_model_recovery.json preserved unmodified",
     })
 

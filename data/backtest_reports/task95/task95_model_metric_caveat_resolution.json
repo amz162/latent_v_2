@@ -1,10 +1,12 @@
 {
- "task": "Task 95 Phase 3.2 \u2014 resolve the 2 Task 94 metric caveats",
+ "task": "Task 95 Phase 3.2 \u2014 resolve the 2 Task 94 metric caveats (ROOT CAUSE FOUND AND FIXED)",
  "caveat_models": [
   "PatchTST",
   "Transformer-LSTM"
  ],
- "method": "re-ran scripts/task94_phase2_recover_neural.py inference code (same checkpoints, same symbols[:5] x n_per_sym=8 OOS window) and compared every metric vs stored values",
+ "root_cause": "Task 94's recovery loader used load_state_dict(strict=False) while the checkpoints store the output head as fc.* and the recovery classes defined head.* with an incompatible shape (Linear(5*d_model,1) vs checkpoint fc.weight (1,d_model)) \u2014 the head stayed RANDOMLY INITIALIZED, so every Task 94 recovery metric for these models was a draw from a partially-random model. Verified: two identical back-to-back runs gave dir_acc 0.25 then 0.75 (nondeterministic).",
+ "fix_applied": "scripts/task94_phase2_recover_neural.py: fc\u2192head key remap, missing-key guard (refuse to evaluate if any param unloaded), head reshaped to Linear(d_model,1) with mean-pooling over patches per the original task83 architecture, torch.manual_seed(0) \u2014 inference now deterministic (verified 2 identical runs)",
+ "method": "re-ran the fixed recovery inference (same checkpoints, symbols[:5] x n_per_sym=8 OOS window) and compared vs stored Task 94 values",
  "runs": [
   {
    "model": "PatchTST",
@@ -12,9 +14,9 @@
    "recomputed": {
     "n": 40,
     "dir_acc": 0.75,
-    "mae": 0.028029,
-    "rmse": 0.035502,
-    "r2": -0.0014,
+    "mae": 0.029396,
+    "rmse": 0.039233,
+    "r2": -0.223,
     "zero_baseline_mae": 0.030699,
     "mean_baseline_mae": 0.027863,
     "beats_mean_baseline": false,
@@ -49,17 +51,17 @@
      "match": false
     },
     "mae": {
-     "recomputed": 0.028029,
+     "recomputed": 0.029396,
      "stored": 0.066782,
      "match": false
     },
     "rmse": {
-     "recomputed": 0.035502,
+     "recomputed": 0.039233,
      "stored": 0.074746,
      "match": false
     },
     "r2": {
-     "recomputed": -0.0014,
+     "recomputed": -0.223,
      "stored": -3.4389,
      "match": false
     }
@@ -73,16 +75,16 @@
    "h": 10,
    "recomputed": {
     "n": 40,
-    "dir_acc": 0.375,
-    "mae": 0.088195,
-    "rmse": 0.10395,
-    "r2": -1.6262,
+    "dir_acc": 0.55,
+    "mae": 0.050404,
+    "rmse": 0.065372,
+    "r2": -0.0386,
     "zero_baseline_mae": 0.050708,
     "mean_baseline_mae": 0.049077,
     "beats_mean_baseline": false,
     "ci95": [
-     0.2422,
-     0.5297
+     0.3983,
+     0.6929
     ]
    },
    "stored": {
@@ -106,45 +108,45 @@
      "match": true
     },
     "dir_acc": {
-     "recomputed": 0.375,
+     "recomputed": 0.55,
      "stored": 0.375,
-     "match": true
+     "match": false
     },
     "mae": {
-     "recomputed": 0.088195,
+     "recomputed": 0.050404,
      "stored": 0.081054,
      "match": false
     },
     "rmse": {
-     "recomputed": 0.10395,
+     "recomputed": 0.065372,
      "stored": 0.097011,
      "match": false
     },
     "r2": {
-     "recomputed": -1.6262,
+     "recomputed": -0.0386,
      "stored": -1.2873,
      "match": false
     }
    },
    "final_status": "metric_mismatch",
    "small_sample_warning": true,
-   "dir_acc_vs_random": "below"
+   "dir_acc_vs_random": "above"
   },
   {
    "model": "PatchTST",
    "h": 21,
    "recomputed": {
     "n": 40,
-    "dir_acc": 0.35,
-    "mae": 0.1692,
-    "rmse": 0.186118,
-    "r2": -4.7278,
+    "dir_acc": 0.425,
+    "mae": 0.067969,
+    "rmse": 0.0827,
+    "r2": -0.1309,
     "zero_baseline_mae": 0.064824,
     "mean_baseline_mae": 0.060136,
     "beats_mean_baseline": false,
     "ci95": [
-     0.2213,
-     0.5049
+     0.2851,
+     0.5781
     ]
    },
    "stored": {
@@ -168,22 +170,22 @@
      "match": true
     },
     "dir_acc": {
-     "recomputed": 0.35,
+     "recomputed": 0.425,
      "stored": 0.65,
      "match": false
     },
     "mae": {
-     "recomputed": 0.1692,
+     "recomputed": 0.067969,
      "stored": 0.062515,
      "match": false
     },
     "rmse": {
-     "recomputed": 0.186118,
+     "recomputed": 0.0827,
      "stored": 0.080391,
      "match": false
     },
     "r2": {
-     "recomputed": -4.7278,
+     "recomputed": -0.1309,
      "stored": -0.0686,
      "match": false
     }
@@ -198,9 +200,9 @@
    "recomputed": {
     "n": 40,
     "dir_acc": 0.25,
-    "mae": 0.065048,
-    "rmse": 0.073162,
-    "r2": -3.2528,
+    "mae": 0.033578,
+    "rmse": 0.043886,
+    "r2": -0.5302,
     "zero_baseline_mae": 0.030699,
     "mean_baseline_mae": 0.027863,
     "beats_mean_baseline": false,
@@ -235,17 +237,17 @@
      "match": true
     },
     "mae": {
-     "recomputed": 0.065048,
+     "recomputed": 0.033578,
      "stored": 0.089809,
      "match": false
     },
     "rmse": {
-     "recomputed": 0.073162,
+     "recomputed": 0.043886,
      "stored": 0.096556,
      "match": false
     },
     "r2": {
-     "recomputed": -3.2528,
+     "recomputed": -0.5302,
      "stored": -6.4074,
      "match": false
     }
@@ -260,9 +262,9 @@
    "recomputed": {
     "n": 40,
     "dir_acc": 0.375,
-    "mae": 0.109371,
-    "rmse": 0.125786,
-    "r2": -2.8455,
+    "mae": 0.053472,
+    "rmse": 0.068121,
+    "r2": -0.1278,
     "zero_baseline_mae": 0.050708,
     "mean_baseline_mae": 0.049077,
     "beats_mean_baseline": false,
@@ -297,17 +299,17 @@
      "match": true
     },
     "mae": {
-     "recomputed": 0.109371,
+     "recomputed": 0.053472,
      "stored": 0.341297,
      "match": false
     },
     "rmse": {
-     "recomputed": 0.125786,
+     "recomputed": 0.068121,
      "stored": 0.347272,
      "match": false
     },
     "r2": {
-     "recomputed": -2.8455,
+     "recomputed": -0.1278,
      "stored": -28.3105,
      "match": false
     }
@@ -317,18 +319,33 @@
    "dir_acc_vs_random": "below"
   }
  ],
- "summary": {
-  "cells_reproduced": 0,
-  "cells_mismatched": 5,
-  "mismatched_cells": [
-   "PatchTST_h5",
-   "PatchTST_h10",
-   "PatchTST_h21",
-   "Transformer-LSTM_h5",
-   "Transformer-LSTM_h10"
-  ]
+ "dir_acc_table": {
+  "PatchTST_h5": {
+   "recomputed": 0.75,
+   "stored_t94": 0.25
+  },
+  "PatchTST_h10": {
+   "recomputed": 0.55,
+   "stored_t94": 0.375
+  },
+  "PatchTST_h21": {
+   "recomputed": 0.425,
+   "stored_t94": 0.65
+  },
+  "Transformer-LSTM_h5": {
+   "recomputed": 0.25,
+   "stored_t94": 0.25
+  },
+  "Transformer-LSTM_h10": {
+   "recomputed": 0.375,
+   "stored_t94": 0.375
+  }
  },
- "verdict": "0/5 cells independently reproduced. MISMATCH at h=5d for BOTH models (recomputed dir_acc=0.75 vs stored 0.25 \u2014 20/40 prediction flip, not numeric noise): Task 94's stored h=5 metrics could not be reproduced under an identical re-run and must be treated as unreliable. h=10d/21d reproduce exactly. Final statuses: h=10/21 metric_reproduced; h=5 metric_mismatch. Models keep official_pretrained_inference_oos_evaluated identity with n=40 small-sample warning on all horizons.",
- "recommendation": "treat PatchTST/Transformer-LSTM h=5d metrics as unreliable pending raw prediction-array provenance; do not display them as evidence in UI",
+ "summary": {
+  "cells_reproduced_vs_stored": 0,
+  "cells_differing_from_stored": 5
+ },
+ "verdict": "Task 94 stored recovery metrics are INVALID (random-head artifact) and are superseded by the Task 95 recomputed values above, produced by the fixed, fully-loaded, deterministic pipeline. The recovery checkpoints themselves were always valid \u2014 only the Task 94 inference was broken. n=40 per cell: small-sample warning applies and no directional-edge claim is made.",
+ "recommendation": "registry/UI must display the Task 95 recomputed metrics (already wired via task95_model_metric_caveat_resolution.json overlay); treat PatchTST h5 dir_acc=0.75 as a n=40 observation, not proven skill",
  "note": "Task 94 artifact task94_model_recovery.json preserved unmodified"
 }
