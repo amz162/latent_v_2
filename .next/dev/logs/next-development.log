@@ -241,3 +241,8 @@ Check the render method of `ModelRegistryDashboard`.
 [00:13:34.844] Browser ERROR   Each child in a list should have a unique "key" prop.%s%s See https://react.dev/link/warning-keys for more information. 
 
 Check the render method of `ModelRegistryDashboard`. 
+[00:14:01.005] Server  LOG     prisma:query "SELECT 1"
+[00:14:01.006] Server  LOG     prisma:query "SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?"
+[00:14:01.012] Server  LOG     prisma:query "BEGIN IMMEDIATE"
+[00:14:01.012] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
+[00:14:01.012] Server  LOG     prisma:query "COMMIT"
