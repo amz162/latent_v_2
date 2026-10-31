@@ -104,7 +104,8 @@ def main():
                     if len(train_closes) < 30: continue
                     try:
                         if model_name == "ARIMA":
-                            m = ARIMA(train_closes, order=(1,1,1)).fit(disp=False)
+                            # statsmodels 0.14.5: fit() no longer accepts `disp` (task98 fix)
+                            m = ARIMA(train_closes, order=(1,1,1)).fit()
                             fc = m.forecast(steps=h)[0]
                             pred_ret = (fc[-1] - train_closes[-1]) / train_closes[-1]
                         elif model_name == "Holt-Winters":
@@ -124,7 +125,8 @@ def main():
                             fc = m.forecast(h)
                             pred_ret = (float(fc[0][-1]) - train_closes[-1]) / train_closes[-1]
                         elif model_name == "Prophet":
-                            pdf = pd.DataFrame({"ds": pd.to_datetime(dates[:i+1], unit="ms", utc=True), "y": train_closes})
+                            # Prophet requires tz-naive ds (task98 fix; utc=True raised ValueError)
+                            pdf = pd.DataFrame({"ds": pd.to_datetime(dates[:i+1], unit="ms"), "y": train_closes})
                             m = Prophet(yearly_seasonality=False, weekly_seasonality=False, daily_seasonality=False, n_changepoints=5)
                             m.fit(pdf)
                             future = m.make_future_dataframe(periods=h, freq="B")
