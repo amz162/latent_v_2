@@ -1,0 +1,46 @@
+{
+ "task": "Task 96 Phase 8 \u2014 production build verification",
+ "local_attempts": [
+  {
+   "attempt": "attempt 1: NODE_OPTIONS 1024MB heap",
+   "sigkill": true,
+   "tail": [
+    "  Creating an optimized production build ...",
+    "Next.js build worker exited with code: null and signal: SIGKILL",
+    "error: \"next\" exited with code 1"
+   ]
+  },
+  {
+   "attempt": "attempt 2: NODE_OPTIONS 768MB heap",
+   "sigkill": true,
+   "tail": [
+    "  Creating an optimized production build ...",
+    "Next.js build worker exited with code: null and signal: SIGKILL",
+    "error: \"next\" exited with code 1"
+   ]
+  },
+  {
+   "attempt": "attempt 3: --experimental-build-mode=compile, 1024MB heap",
+   "sigkill": true,
+   "tail": [
+    "  Creating an optimized production build ...",
+    "Next.js build worker exited with code: null and signal: SIGKILL",
+    "error: \"next\" exited with code 1"
+   ]
+  }
+ ],
+ "diagnosis": {
+  "cgroup_memory_limit_bytes": "4294967296",
+  "kernel_oom_evidence": [
+   "[16970.057445] Out of memory: Killed process 21716 (MainThread) total-vm:48341144kB, anon-rss:2803032kB, file-rss:83436kB, shmem-rss:0kB, UID:1001 pgtables:18948kB oom_score_adj:0",
+   "[17047.022467] Out of memory: Killed process 21854 (MainThread) total-vm:48362636kB, anon-rss:2823988kB, file-rss:88348kB, shmem-rss:0kB, UID:1001 pgtables:19584kB oom_score_adj:0"
+  ],
+  "root_cause": "next build --webpack worker reaches ~2.7GB anon-rss (native memory outside the JS heap cap; total-vm 40-48GB) and is OOM-killed by the sandbox's hard 4GB cgroup limit \u2014 reproduced 3x with 1024MB cap, 768MB cap and compile-only mode"
+ },
+ "resolution": "per task brief, moved to the existing CI environment: .github/workflows/production-build.yml (ubuntu-latest, 7GB) runs bun install + bun run build with the same OOM-safe 1GB heap cap, restores db/custom.db.gz first to match the dev-sandbox environment, verifies .next/standalone + BUILD_ID, and uploads the build log as an artifact; run against the exact final commit of this push",
+ "config_preserved": {
+  "heap_cap": "NODE_OPTIONS --max-old-space-size=1024 (OOM-safe cap preserved)",
+  "typescript_ignoreBuildErrors": "pre-existing curated config (unchanged); TS baseline tracked separately"
+ },
+ "local_build_status": "memory_blocked_on_sandbox_cgroup (diagnosed, not merely declared)"
+}
