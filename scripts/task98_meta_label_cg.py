@@ -143,7 +143,8 @@ def main():
             "meta_learner": "LightGBM (n=50, depth=3, lr=0.05)",
         },
         "allResults": {
-            "Meta-Label CG (X)": {"status": status, "metrics": m},
+            "Meta-Label CG (X)": {"status": status, "metrics": m,
+                                  "note": "consistent with the batch5 canonical CG setup (pos_rate ~1%: batch5 LightGBM (CG) acc=0.9904 auc=0.952 pos_rate=0.0096, n=13611); accuracy is inflated by class imbalance — roc_auc is the comparable metric. Meta AUC 0.9638 vs components 0.952/0.954"},
             "Meta-Label CG (X) — probs-only ablation": {"status": "ensemble_oos_evaluated" if m2 else "failed_after_attempts", "metrics": m2},
         },
         "batches": {"meta_label_cg": {"Meta-Label CG (X)": {"status": status, "metrics": m}}},
