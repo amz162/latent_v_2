@@ -48,13 +48,16 @@ def p5_session_check(ctx):
                 api_latest[sym] = hist[0]["date"] if hist else None
         except Exception as e:
             api_latest[sym] = f"ERR {str(e)[:40]}"
-    newer = {s: d for s, d in api_latest.items() if isinstance(d, str) and d > (latest_db["m"] or "")}
+    newer = {s: d for s, d in api_latest.items()
+             if isinstance(d, str) and len(d) == 10 and d[4] == "-" and d > (latest_db["m"] or "")}
+    errs = {s: d for s, d in api_latest.items() if isinstance(d, str) and d.startswith("ERR")}
     ctx.write("task96_prospective_session_report.json", {
         "task": "Task 96 Phase 5.1 — real session availability check",
         "db_latest_session": latest_db["m"], "db_symbols_with_bars": latest_db["s"],
         "pending_symbols": pend_syms,
         "api_latest_session_per_pending_symbol": api_latest,
         "new_sessions_available": newer,
+        "api_errors": errs,
         "today_utc": datetime.datetime.utcnow().strftime("%Y-%m-%d %A"),
         "decision": ("ingest + process new session" if newer else
                      "no new session available (next expected: Monday 2026-11-02) — processor left ready; "
@@ -145,7 +148,7 @@ def p5_reconcile_cohort(ctx):
 @reg("p5_performance_report")
 def p5_performance_report(ctx):
     trades = q("""SELECT id, symbol, strategyId, bookId, modelId, horizon, state, entryDate, entryPrice,
-                  quantity, exitReason, grossPnl, totalCosts, netPnl, isWin, skipReason
+                  quantity, allocatedCash, exitReason, grossPnl, totalCosts, netPnl, isWin, skipReason
                   FROM ProspectivePaperTrade WHERE bookId LIKE '%legacy%' ORDER BY entryDate""")
     closed = [t for t in trades if t["state"] == "closed"]
     open_t = [t for t in trades if t["state"] == "open"]
