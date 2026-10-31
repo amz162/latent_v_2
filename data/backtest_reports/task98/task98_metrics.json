@@ -1,0 +1,138 @@
+{
+  "task": "Task 98 \u2014 fix failed_after_attempts models (ARIMA, Prophet)",
+  "generated_at": "2026-10-31T22:06:44.950298+00:00",
+  "root_causes": {
+    "ARIMA": "ARIMA.fit(disp=False) \u2192 TypeError under statsmodels 0.14.5 (disp removed)",
+    "Prophet": "ds built with utc=True \u2192 ValueError (Prophet requires tz-naive)"
+  },
+  "allResults": {
+    "ARIMA": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.039384,
+          "r2": -0.0056,
+          "directional_accuracy": 0.5108,
+          "n": 2402
+        },
+        "10d": {
+          "mae": 0.057141,
+          "r2": -0.0124,
+          "directional_accuracy": 0.5065,
+          "n": 2395
+        },
+        "21d": {
+          "mae": 0.085493,
+          "r2": -0.0097,
+          "directional_accuracy": 0.5021,
+          "n": 2384
+        }
+      },
+      "elapsed_s": 328.0,
+      "n_samples": {
+        "5d": 2402,
+        "10d": 2395,
+        "21d": 2384
+      },
+      "root_cause_fixed": "disp kwarg removed (statsmodels 0.14.5)",
+      "methodology": "task83 batch1 layout (10 syms, last-50-date window, every-10th bar); fit-once-per-bar, forecast sliced per horizon"
+    },
+    "Prophet": {
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.135897,
+          "r2": -19.457,
+          "directional_accuracy": 0.4867,
+          "n": 2402
+        },
+        "10d": {
+          "mae": 0.144865,
+          "r2": -9.2339,
+          "directional_accuracy": 0.4994,
+          "n": 2395
+        },
+        "21d": {
+          "mae": 0.165244,
+          "r2": -4.2979,
+          "directional_accuracy": 0.5147,
+          "n": 2384
+        }
+      },
+      "elapsed_s": 720.1,
+      "n_samples": {
+        "5d": 2402,
+        "10d": 2395,
+        "21d": 2384
+      },
+      "root_cause_fixed": "tz-naive ds (Prophet requires naive timestamps)",
+      "methodology": "task83 batch1 layout (10 syms, last-50-date window, every-10th bar); fit-once-per-bar, forecast sliced per horizon"
+    }
+  },
+  "batches": {
+    "batch1_stats_fixed": {
+      "ARIMA": {
+        "status": "trained_oos_evaluated",
+        "metrics": {
+          "5d": {
+            "mae": 0.039384,
+            "r2": -0.0056,
+            "directional_accuracy": 0.5108,
+            "n": 2402
+          },
+          "10d": {
+            "mae": 0.057141,
+            "r2": -0.0124,
+            "directional_accuracy": 0.5065,
+            "n": 2395
+          },
+          "21d": {
+            "mae": 0.085493,
+            "r2": -0.0097,
+            "directional_accuracy": 0.5021,
+            "n": 2384
+          }
+        },
+        "elapsed_s": 328.0,
+        "n_samples": {
+          "5d": 2402,
+          "10d": 2395,
+          "21d": 2384
+        },
+        "root_cause_fixed": "disp kwarg removed (statsmodels 0.14.5)",
+        "methodology": "task83 batch1 layout (10 syms, last-50-date window, every-10th bar); fit-once-per-bar, forecast sliced per horizon"
+      },
+      "Prophet": {
+        "status": "trained_oos_evaluated",
+        "metrics": {
+          "5d": {
+            "mae": 0.135897,
+            "r2": -19.457,
+            "directional_accuracy": 0.4867,
+            "n": 2402
+          },
+          "10d": {
+            "mae": 0.144865,
+            "r2": -9.2339,
+            "directional_accuracy": 0.4994,
+            "n": 2395
+          },
+          "21d": {
+            "mae": 0.165244,
+            "r2": -4.2979,
+            "directional_accuracy": 0.5147,
+            "n": 2384
+          }
+        },
+        "elapsed_s": 720.1,
+        "n_samples": {
+          "5d": 2402,
+          "10d": 2395,
+          "21d": 2384
+        },
+        "root_cause_fixed": "tz-naive ds (Prophet requires naive timestamps)",
+        "methodology": "task83 batch1 layout (10 syms, last-50-date window, every-10th bar); fit-once-per-bar, forecast sliced per horizon"
+      }
+    }
+  }
+}
