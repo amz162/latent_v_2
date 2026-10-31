@@ -4351,3 +4351,10 @@ Date: 2026-10-31. Resumed from origin/main 8917b588 (Phases 1-7 committed by the
 
 ### Git status
 - All Phase 8-12 work committed locally. PUSH BLOCKED: sandbox has no GitHub credentials (the PAT lived only in the old sandbox's .git/config and was never committed — verified exhaustively). Owner must provide a fresh fine-grained PAT (Contents: read/write on amz162/latent_v_2); push is then one command.
+
+## Task 95 — GitHub push unblocked and completed (2026-11-01)
+- Owner supplied a fresh PAT; wired into local .git/config ONLY (remote origin URL + branch.main.remote=origin). Never printed or committed; all outputs masked.
+- Where it left (Task 94 close-out): Phases 8-12 complete, all committed locally, PUSH BLOCKED pending credentials — this entry closes exactly that.
+- Website health re-verified before push: / 200, /api/models/registry 200, /api/stocks 200, /api/backtest/investment-simulator 200 (multi-trade run OK), pattern-precompute worker alive (duplicate spawn killed; original kept).
+- Pushed all pending commits (Task 94 model recovery + autosaves): 8917b588..3cd62237 main -> main; origin/main and local main in sync.
+- Old-sandbox PAT remains unrecoverable (Task 84 finding stands); new token lives only in this sandbox's .git/config.
