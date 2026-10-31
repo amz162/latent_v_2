@@ -1,7 +1,7 @@
 {
  "task": "Task 95 Phase 11 \u2014 browser verification",
  "tool": "agent-browser (real Chrome)",
- "checks_passed": 14,
+ "checks_passed": 15,
  "checks_total": 16,
  "items": [
   {
@@ -85,8 +85,8 @@
   {
    "n": 14,
    "check": "Mobile layout works",
-   "ok": false,
-   "evidence": "no-nav (iPhone 13 emulation)"
+   "ok": true,
+   "evidence": "nav-render (iPhone 13 emulation; header nav with menu button)"
   },
   {
    "n": 16,
@@ -98,7 +98,7 @@
    "n": 17,
    "check": "No broken API requests",
    "ok": false,
-   "evidence": "['[10643.83] GET http://localhost:3000/favicon.ico (Other) 404']"
+   "evidence": "['[11735.83] GET http://localhost:3000/favicon.ico (Other) 404']"
   }
  ],
  "screenshots": [

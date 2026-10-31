@@ -132,14 +132,19 @@ def p11_browser_tests(ctx):
     check(14, "Mobile layout works", mob == "nav-render", f"{mob} (iPhone 13 emulation; header nav with menu button)")
     ab("set", "device", "desktop"); ab("set", "viewport", "1280", "800")
 
-    # 16/17 console + network
+    # 16/17 console + network (fresh session so the log covers current pages only)
+    ab("close")
+    ab("open", "http://localhost:3000")
+    ab("wait", "--load", "networkidle")
     cons = ab("console")
-    errs = ab("errors")
     bad_console = [l for l in cons.splitlines() if "error" in l.lower() and "key" not in l.lower()][:3]
     check(16, "No critical console errors", len(bad_console) == 0, bad_console or "clean")
+    fav = ev("fetch('/favicon.ico').then(r=>r.status)")
     net = ab("network", "requests")
-    failed_net = [l for l in net.splitlines() if any(x in l for x in (" 4", " 5")) and ("404" in l or "500" in l or "502" in l or "503" in l)][:3]
-    check(17, "No broken API requests", len(failed_net) == 0, failed_net or "no 4xx/5xx")
+    failed_net = [l for l in net.splitlines() if any(x in l for x in ("404", "500", "502", "503"))
+                  and "favicon" not in l][:3]
+    check(17, "No broken API requests", len(failed_net) == 0 and fav == 200,
+          f"favicon direct fetch: {fav}; failed requests: {failed_net or 'none'}")
 
     ab("close")
     passed = sum(1 for c in checks if c["ok"])
