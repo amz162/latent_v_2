@@ -1,0 +1,27 @@
+{
+ "task": "Task 97 Section 8 \u2014 permanent git-safety enforcement",
+ "policy": "project automation must never run git reset --hard / clean -fd / checkout -- / rebase / push --force; dirty working trees are preserved; sync is fast-forward-only",
+ "incident": "Task 96: dev-watch startup reset --hard wiped unpushed autosave commits (recovered via reflog; see scripts/GIT_RECOVERY.md)",
+ "scanned_lines": 37463,
+ "scan_dirs": [
+  ".zscripts",
+  ".github/workflows",
+  "scripts"
+ ],
+ "violations": [
+  {
+   "file": "scripts/task96_jobs/phase12.py",
+   "line": 70,
+   "pattern": "git\\s+reset\\s+--hard",
+   "reason": "hard reset discards committed and uncommitted work",
+   "text": "\"incident\": (\"dev-watch startup ran `git reset --hard origin/main` and wiped unpushed \""
+  }
+ ],
+ "verdict": "1 VIOLATIONS",
+ "fixed_in_task97": [
+  ".zscripts/restore-from-github.sh rewritten: dirty-tree protection + fast-forward-only merge",
+  ".zscripts/dev-watch.sh header updated to document safe sync",
+  "scripts/GIT_RECOVERY.md preserves reflog recovery instructions",
+  "this audit wired into .github/workflows/production-build.yml"
+ ]
+}

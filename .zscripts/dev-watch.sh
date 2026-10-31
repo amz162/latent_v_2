@@ -3,9 +3,11 @@
 #
 # USER RULE (standing): "never push code on my GitHub repo until I tell you to."
 # This script respects that rule: it NEVER pushes to GitHub. It only:
-#   1. Restores the working tree from origin/main on startup (read-only fetch
-#      + reset --hard). This makes the running app self-healing after sandbox
-#      resets — the latest pushed code is always what boots.
+#   1. Synchronizes safely with origin/main on startup (fetch + fast-forward-
+#      only merge when clean; NEVER reset --hard, NEVER clean, dirty trees are
+#      preserved untouched). See .zscripts/restore-from-github.sh — Task 97
+#      permanently banned destructive git automation after the Task 96
+#      incident where a startup reset discarded unpushed autosave commits.
 #   2. Restores the DB (db/custom.db) from the committed .gz backup on
 #      startup if the DB file is empty/missing (env resets wipe it to a 60KB
 #      schema-only file; the simulations need the full 197MB dataset).
@@ -17,8 +19,9 @@
 #      preview available under the 4GB memory limit).
 #
 # To make a dev-watch change itself survive env resets, the change must be
-# pushed to GitHub (so `git reset --hard origin/main` restores it). This file
-# was pushed per the user's explicit instruction "make solution of this".
+# pushed to GitHub (safe fast-forward sync then brings it back). Reflog
+# recovery instructions: scripts/GIT_RECOVERY.md. CI enforces the ban via
+# scripts/git_safety_audit.py (production-build.yml).
 
 exec 2>&1
 cd /home/z/my-project
@@ -27,10 +30,9 @@ export NODE_OPTIONS="${NODE_OPTIONS:-}"
 LOG=/home/z/my-project/dev.log
 echo "[watchdog] supervisor started $(date)" > "$LOG"
 
-# ── 1. Restore the latest code from GitHub (read-only, NO push) ──
-# Self-heal after a sandbox reset: fetch origin + reset --hard origin/main.
-# This brings back the latest pushed code (including this dev-watch.sh
-# itself, so any future edits to this file that are pushed survive resets).
+# ── 1. Safely synchronize with origin/main (NO destructive git) ──
+# Self-heal after a sandbox reset: fetch origin + fast-forward-only merge
+# when the tree is clean; dirty trees and diverged history are preserved.
 bash /home/z/my-project/.zscripts/restore-from-github.sh >> "$LOG" 2>&1 || \
   echo "[watchdog] restore-from-github failed (non-fatal) — continuing with local HEAD" >> "$LOG"
 
