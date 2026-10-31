@@ -322,7 +322,7 @@ async function main() {
         if (decisionIdx < 0) {
           // skipped — record for both strategies × both profiles
           for (const strat of ["fixed_horizon", "progressive_tp_sl"] as const) for (const prof of [STANDARD_PSX, HIGH_SLIPPAGE_PSX]) {
-            ledger.push({ sample_idx: idx, stock: rec.stock, decision_date: rec.date, decision_date_str: decisionDateStr, model: modelName, horizon: hz, strategy: strat, cost_profile: prof.id, signal: "BUY", signal_predicted_return: predicted, entry_date: "", entry_price: 0, exit_date: "", exit_price: 0, exit_reason: "SKIPPED_NO_DECISION_BAR", best_target_reached: "—", gross_pnl_pct: 0, gross_pnl: 0, commission: 0, slippage: 0, cgt: 0, total_cost: 0, net_pnl: 0, net_pnl_pct: 0, is_win: false, n_bars_examined: 0, holding_sessions: 0, skipped: true, skip_reason: "no_decision_bar" });
+            ledger.push({ sample_idx: idx, stock: rec.stock, decision_date: rec.date, decision_date_str: decisionDateStr, model: modelName, horizon: hz, strategy: strat, cost_profile: prof.id, signal: "BUY", signal_predicted_return: predicted, entry_mode: "next_session_open", entry_date: "", entry_price: 0, exit_date: "", exit_price: 0, exit_reason: "SKIPPED_NO_DECISION_BAR", best_target_reached: "—", gross_pnl_pct: 0, gross_pnl: 0, commission: 0, slippage: 0, cgt: 0, total_cost: 0, net_pnl: 0, net_pnl_pct: 0, is_win: false, n_bars_examined: 0, holding_sessions: 0, skipped: true, skip_reason: "no_decision_bar" });
           }
           continue;
         }

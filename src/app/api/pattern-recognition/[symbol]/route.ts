@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
 import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
-import { parseFinancialData, parseRatiosToQuarters, detectPattern, generatePatternSummary, type PatternRecognitionResult } from "@/lib/latent/patterns";
+import { parseFinancialData, parseRatiosToQuarters, detectPattern, generatePatternSummary, type PatternRecognitionResult, type QuarterData } from "@/lib/latent/patterns";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
 
 // GET /api/pattern-recognition/[symbol]
@@ -75,7 +75,15 @@ export async function GET(
 
   // Check cache first
   const cachedKey = cacheKey(symbolUpper);
-  const cached = await cacheGetJSON<PatternRecognitionResult & { llm: LlmPatternResponse }>(cachedKey);
+  // Actual payload shape: detection fields nested under `pattern` (not flat on the result).
+  type PatternRouteResult = {
+    symbol: string;
+    quarters: QuarterData[];
+    summary: string;
+    pattern: Omit<PatternRecognitionResult, "symbol" | "summary">;
+    llm: LlmPatternResponse;
+  };
+  const cached = await cacheGetJSON<PatternRouteResult>(cachedKey);
   if (cached) {
     return NextResponse.json({
       ...cached,
@@ -145,7 +153,7 @@ export async function GET(
     const rawContent: string = completion?.choices?.[0]?.message?.content || "";
     const parsed = parseJsonFromLlm(rawContent);
 
-    const result: PatternRecognitionResult & { llm: LlmPatternResponse } = {
+    const result: PatternRouteResult = {
       symbol: symbolUpper,
       quarters,
       pattern: patternData,

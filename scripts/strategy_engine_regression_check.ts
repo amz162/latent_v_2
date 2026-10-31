@@ -169,10 +169,10 @@ console.log("\n── 6. TP3 closes remaining quantity ────────�
   const bars = [bar("d1", 100, 104, 104, 103), bar("d2", 103, 107, 104, 106), bar("d3", 106, 111, 107, 110)];
   const all = simulateAllStrategies(buySig(100), bars);
   check("fixed: TP3 closes 100%", all.fixed_first_hit.legs[0].quantity === 100);
-  check("trailing: TP3 closes 100% (reached before any trailing SL)", all.max_tp_step_trailing.exitReason === "TP3" && all.max_tp_step_trailing.legs[0].quantity === 100, all.max_tp_step_trailing.exitReason);
+  check("trailing: TP3 closes 100% (reached before any trailing SL)", Boolean(all.max_tp_step_trailing.exitReason === "TP3" && all.max_tp_step_trailing.legs[0] && all.max_tp_step_trailing.legs[0].quantity === 100), all.max_tp_step_trailing.exitReason);
   // scale-out: TP1 50 + TP2 25 + TP3 25
   const tp3Leg = all.scale_out_50_25_25.legs.find(l => l.exitReason === "TP3_REMAINDER");
-  check("scale-out: TP3 closes remaining 25", tp3Leg && tp3Leg.quantity === 25, tp3Leg ? String(tp3Leg.quantity) : "no TP3 leg");
+  check("scale-out: TP3 closes remaining 25", Boolean(tp3Leg && tp3Leg.quantity === 25), tp3Leg ? String(tp3Leg.quantity) : "no TP3 leg");
 }
 
 // ─── Tests 7-10: Scale-out 50/25/25 + sum exactly ────────────────────────────
@@ -261,8 +261,8 @@ console.log("\n── 14. Horizon timeout → close at observed last close ─�
   const barsScale = [bar("d1", 100, 101, 99, 100), bar("d2", 100, 102, 99, 101), bar("d3", 101, 104, 100, 103)];
   const rScale = simulateStrategy("scale_out_50_25_25", buySig(100), barsScale);
   const timeoutLeg = rScale.legs.find(l => l.exitReason === "TIME_UP_REMAINDER");
-  check("scale-out: timeout closes REMAINING (not 100%) at last close", timeoutLeg && timeoutLeg.quantity === 50, timeoutLeg ? String(timeoutLeg.quantity) : "no timeout leg");
-  check("scale-out: timeout leg at last close (103)", timeoutLeg && approx(timeoutLeg.exitPrice, 103));
+  check("scale-out: timeout closes REMAINING (not 100%) at last close", Boolean(timeoutLeg && timeoutLeg.quantity === 50), timeoutLeg ? String(timeoutLeg.quantity) : "no timeout leg");
+  check("scale-out: timeout leg at last close (103)", Boolean(timeoutLeg && approx(timeoutLeg.exitPrice, 103)));
 }
 
 // ─── Test 15: Missing bars cannot fabricate a fill ───────────────────────────

@@ -789,7 +789,7 @@ function HistoricalOhlcvChart({ symbol, height = 360 }: { symbol: string; height
                     ? ([d.low, d.high] as [number, number])
                     : ([0, 0] as [number, number])
                 }
-                shape={renderCandle}
+                shape={renderCandle as never} // recharts ActiveShape union does not model custom SVG renderers
                 isAnimationActive={false}
               />
             ) : (

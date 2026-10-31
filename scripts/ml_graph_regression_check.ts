@@ -303,7 +303,7 @@ console.log("\n── 3. Verification and counts ──────────�
 }
 {
   // Unavailable target → never a valid chart point.
-  const target = { targetDate: null as string | null, verifiedActualClose: null as number | null };
+  const target = { targetDate: null, verifiedActualClose: null };
   check(
     "null target → unavailable_target (NOT verified)",
     classifyValidPoint(target, 105) === "unavailable_target"
