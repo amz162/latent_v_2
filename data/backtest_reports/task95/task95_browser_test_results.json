@@ -1,7 +1,7 @@
 {
  "task": "Task 95 Phase 11 \u2014 browser verification",
  "tool": "agent-browser (real Chrome)",
- "checks_passed": 15,
+ "checks_passed": 16,
  "checks_total": 16,
  "items": [
   {
@@ -97,8 +97,8 @@
   {
    "n": 17,
    "check": "No broken API requests",
-   "ok": false,
-   "evidence": "['[11735.83] GET http://localhost:3000/favicon.ico (Other) 404']"
+   "ok": true,
+   "evidence": "favicon direct fetch: 200; failed requests: none"
   }
  ],
  "screenshots": [

@@ -2,7 +2,7 @@
 
 > The plan-first PSX investment platform for salaried Pakistanis. Latent.pk cuts through market noise using predictive algorithms trained on PSX data — translating every signal (news, results, technicals, fundamentals) into a clear, personalized action plan in your language. No WhatsApp rumors, no TradingView overwhelm. Just here's the plan to reach your goal.
 
-**Version 0.2.1** · **909 PSX-listed stocks covered** · **1,042,821 daily OHLCV bars (2016-10-21 → 2026-10-29)** · **58 canonical + 9 supplemental + 2 aliases = 69 registry entries (67 unique implementations), 8 ensembles across 10 tiers** (reconciled in Task 94) · **61 API routes**
+**Version 0.2.1** · **909 PSX-listed stocks covered** · **1,042,846 daily OHLCV bars (2016-10-21 → 2026-10-30)** · **58 canonical + 9 supplemental + 2 aliases = 69 registry entries (67 unique implementations), 8 ensembles across 10 tiers** (reconciled in Task 94) · **61 API routes**
 
 ---
 
@@ -313,16 +313,16 @@ All artifacts in `data/backtest_reports/task93/`. Read-only validation — NO pr
 |---|---|---|
 | 1 | Chronos expanded OOS evaluation | n=232 (was 172), dir_acc=0.517, CI=[0.453, 0.581] — NOT significant (CI includes 0.50) |
 | 2 | Ensemble verification (Majority Vote) | dir_acc=0.565 @ h=5d VERIFIED (CI math matches, matrix=360 cells, within model range) — significant ONLY at h=5d |
-| 3 | Full metric reproduction | 56/58 canonical models have reproduced metrics (96.6%); 2 resource_blocked (PatchTST, Transformer-LSTM — PyTorch not in 4GB sandbox) |
+| 3 | Full metric reproduction | 67/67 unique implementations carry artifact-backed evidence; PatchTST/Transformer-LSTM recovered in Task 94/95 — Task 95 found their recovery head was never loaded (random-init defect) and re-produced deterministic metrics (n=40 cells, small-sample caveat) |
 | 4 | Cost-aware strategy extension | 7 derived views from task81 540-cell artifact; cost drag = 22.5M PKR (285% of gross); 209/540 cells flipped gross-win → net-loss; **Variant B (net R:R ≥2.0) is ONLY profitable variant** |
 | 5 | GM data provenance | Functionally COMPLETE: 25 companies covered after BYCO→CNERGY corporate-rename accounting; 3,319 filings (matches log); 12,916 ratios + 540 income stmts |
-| 6 | Prospective lifecycle integrity | PASS — 114 trades all pending_entry, idempotent, 0 orphaned sources, 0 SL/TP issues, policyVersion=task76-v1 |
+| 6 | Prospective lifecycle integrity | PASS — after 2026-10-30 session ingestion: 81 genuine fills at real next-session opens (0 price mismatches), 63 open / 18 closed / 33 pending (BYCO, ENGRO — no newer data), 114 pre-reconciliation rows skipped as superseded; idempotent re-run verified |
 
 **Key honest findings:**
 - Statistical significance holds ONLY at h=5d for the Majority Vote ensemble. h=10d and h=21d CIs include 0.50.
 - Foundation models (Chronos n=232, Lag-Llama n=60) do NOT show statistically significant directional advantage on PSX data.
 - PSX cost drag is severe — Variant B (net R:R ≥2.0 filter) is essential to overcome brokerage (56.57% of cost) + CGT (42.86% of cost).
-- All 114 prospective paper trades remain pending_entry — statistical verification of live performance is NOT yet possible.
+- Prospective paper trading is live: 81 trades entered at real session opens (63 open, 18 closed — all 18 early closes were losses; NO profitability claim). 33 trades stay pending for symbols with no newer data (BYCO, ENGRO). Statistical verification requires matured outcomes.
 
 ---
 

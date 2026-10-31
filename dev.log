@@ -1217,3 +1217,4 @@ prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
  GET /api/backtest/walk-forward/prospective 200 in 41ms (compile: 2ms, render: 39ms)
  GET / 200 in 56ms (compile: 4ms, render: 53ms)
+ GET / 200 in 406ms (compile: 3ms, render: 403ms)
