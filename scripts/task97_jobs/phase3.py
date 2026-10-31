@@ -42,14 +42,13 @@ def p3_moirai_reconciliation(ctx):
         sym, h = d["symbol"], d["horizon"]
         rows = [r[0] for r in conn.execute(
             "SELECT date FROM OhlcvBar WHERE symbol=? ORDER BY date", (sym,))]
-        import pandas as pd
-        sub = [x for x in rows if "2026-01-15" <= x <= "2026-10-15"]
-        if len(sub) < 16 + h + 5:
-            sub = rows[-(16 + h + 5):]
         # recompute the picker exactly as task96_moirai_chunk.py does, on absolute indices
-        df_idx = [i for i, x in enumerate(rows) if "2026-01-15" <= x <= "2026-10-15"]
-        if len(df_idx) < 16 + h + 5:
+        window = [i for i, x in enumerate(rows) if "2026-01-15" <= x <= "2026-10-15"]
+        fallback = not window
+        if fallback:
             df_idx = list(range(len(rows) - (16 + h + 5), len(rows)))
+        else:
+            df_idx = window
         step = (len(df_idx) - h - 5) // max(1, 16 - 1)
         idxs = list(range(df_idx[0] + 5, df_idx[-1] - h, max(1, step)))[:16]
         candidates = {rows[i] for i in idxs if i >= 180}
@@ -60,11 +59,14 @@ def p3_moirai_reconciliation(ctx):
             missing_cells.append({
                 "symbol": sym, "horizon": h, "date": missing,
                 "excluded_because": (
-                    f"target window edge: its +{h}d target would land after the last ingested "
-                    f"session ({rows[-1]}) — target immature, excluded by protocol"
+                    f"target window edge: its +{h}d target would land after the symbol's last "
+                    f"ingested session ({rows[-1]}) — target immature, excluded by protocol"
                     if missing not in eligible else
                     f"prediction-side exclusion: eligible but absent from stored records"),
                 "target_mature": missing in eligible,
+                "symbol_data_note": ("symbol has NO OHLCV in the 2026 OOS window (its data ends "
+                                     f"{rows[-1]}) — protocol fallback scored its final tradable sessions"
+                                     if fallback else None),
             })
     conn.close()
     # determinism test: with Task 97 seeding, two fresh runs must be record-identical;
