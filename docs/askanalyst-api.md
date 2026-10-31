@@ -84,7 +84,20 @@ The script is idempotent, rate-limited (0.35 s), retries twice, and appends ever
 pull to `data/askanalyst/manifest.json`. Commit refreshed data to git so the next
 session never needs to re-fetch.
 
-## 5. Which model tiers consume which endpoint
+## 5. Secondary source: psxdata-api
+
+`https://psxdata-api.fastapicloud.dev` (client: `src/lib/latent/psxdata.ts`) — used by
+`/api/psx/*` routes as fallback and for index data:
+
+- `GET /indices` → list (`KSE100`, `KSE30`, `KMI30`, `ALLSHR`, …)
+- `GET /indices/KSE100` → constituents with index weights (snapshot, **no historical series**)
+- `GET /historical/{sym}`, `/quote/{sym}`, `/fundamentals/{sym}`, `/screener`, `/sectors`
+
+Note: neither source provides a historical **index** series (AskAnalyst `ksechartnew`
+returns HTTP 500 for index symbols; psxdata has constituents only) — hence the
+market-breadth regime proxy used for the Macro Engine (GM) backtest (Task 98).
+
+## 6. Which model tiers consume which endpoint
 
 | Registry model | Data source | Notes |
 |---|---|---|
