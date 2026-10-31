@@ -1,0 +1,48 @@
+{
+  "task": "Task 94 \u2014 remaining blockers (honest)",
+  "ran_at": "2026-10-31T16:39:37.350710Z",
+  "blockers": [
+    {
+      "component": "Moirai (Salesforce) official inference",
+      "status": "dependency_blocked_after_attempts",
+      "reproduced_error": "uni2ts/Lightning/GluonTS dependency chain incompatible with sandbox Python env (Task 92/94 diagnostic)",
+      "previous_attempts": [
+        "task92 checkpoint load OK (14M params, 55.3MB)",
+        "task94 separate-env plan executed but pipeline still blocked"
+      ],
+      "minimum_required": "pinned uni2ts+lightning+gluonts+pydantic env (separate venv, ~1-2GB disk) or prebuilt wheel set",
+      "genuinely_impossible_now": "no \u2014 resumable with the pinned env recipe in task94_moirai_diagnostic.json"
+    },
+    {
+      "component": "Time-LLM official implementation",
+      "status": "experimental_gpt2_baseline",
+      "reproduced_error": "official Time-LLM requires GPT-2 reprogramming stack + checkpoints; compact faithful port not completed in budget",
+      "minimum_required": "official Time-LLM repo + pretrained reprogramming checkpoint (HF download)",
+      "genuinely_impossible_now": "no \u2014 feasible in a future bounded campaign"
+    },
+    {
+      "component": "FinGPT official sentiment",
+      "status": "experimental_gpt2_baseline",
+      "reproduced_error": "official FinGPT checkpoints not pulled; PSX historical text corpus with publication timestamps incomplete",
+      "minimum_required": "FinGPT checkpoint + timestamped PSX announcement corpus (announcements data exists \u2014 needs alignment)",
+      "genuinely_impossible_now": "no"
+    },
+    {
+      "component": "Model detail row click (UI)",
+      "status": "interaction_blocked",
+      "reproduced_error": "agent-browser: row click intercepted by sticky radix control overlay",
+      "minimum_required": "z-index/pointer-events adjustment on ModelRegistryDashboard table rows",
+      "genuinely_impossible_now": "no \u2014 cosmetic fix"
+    },
+    {
+      "component": "GitHub push (this session)",
+      "status": "auth_blocked",
+      "reproduced_error": "git push --dry-run \u2192 'could not read Username for https://github.com': no credentials in sandbox",
+      "previous_attempts": [
+        "token searched exhaustively in repo/history/instance \u2014 only lived in old sandbox .git/config (lost)"
+      ],
+      "minimum_required": "new fine-grained PAT (Contents: read/write on amz162/latent_v_2) from repo owner",
+      "genuinely_impossible_now": "impossible without the user providing a token; all work is committed locally and ready to push"
+    }
+  ]
+}

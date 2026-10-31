@@ -1,0 +1,72 @@
+{
+  "task": "Task 94 \u2014 progress (all phases)",
+  "ran_at": "2026-10-31T16:39:37.350710Z",
+  "started_from": "origin/main 8917b588 (Phases 1-7 committed by prior session)",
+  "phases": {
+    "1_registry_reconciliation": {
+      "status": "complete",
+      "artifact": "task94_registry_reconciliation.json",
+      "session": "prior (pushed)"
+    },
+    "2_model_recovery_metric_reproduction": {
+      "status": "complete",
+      "artifact": "task94_model_recovery.json + task94_model_metric_reproduction.json",
+      "session": "prior (pushed)"
+    },
+    "3_foundation_models": {
+      "status": "complete",
+      "artifact": "task94_foundation_results.json + task94_chronos_results.json",
+      "session": "prior (pushed)"
+    },
+    "4_ensemble_validation": {
+      "status": "complete",
+      "artifact": "task94_ensemble_validation.json + task94_majority_vote_robustness.json",
+      "session": "prior (pushed)"
+    },
+    "5_cost_strategy": {
+      "status": "complete",
+      "artifact": "task94_cost_reconciliation.json + task94_net_strategy_results.json + task94_strategy_robustness.json",
+      "session": "prior (pushed)"
+    },
+    "6_prospective": {
+      "status": "complete",
+      "artifact": "task94_prospective_integrity.json + task94_prospective_monitoring.json",
+      "session": "prior (pushed)"
+    },
+    "7_gm_data": {
+      "status": "complete",
+      "artifact": "task94_gm_data_provenance.json + task94_macro_data_status.json",
+      "session": "prior (pushed)"
+    },
+    "8_per_stock_walk_forward": {
+      "status": "complete",
+      "artifact": "task94_per_stock_walk_forward.json",
+      "session": "this",
+      "result": "360 task87 cells reused + 8 genuine Chronos per-symbol cells + 5 aggregate-only rows (PatchTST/TransLSTM honest: no per-symbol split saved)"
+    },
+    "9_api_validation": {
+      "status": "complete",
+      "artifact": "task94_api_validation.json",
+      "session": "this",
+      "result": "11/11 after registry alias fix (58/9/2/67)"
+    },
+    "10_dashboard_maintenance": {
+      "status": "complete",
+      "session": "this",
+      "result": "README reconciled (58+9+2=69, 67 unique, 8 ensembles); registry status overlay; landing 26-model\u219267; no redesign"
+    },
+    "11_browser_verification": {
+      "status": "complete",
+      "artifact": "task94_browser_test_results.json",
+      "session": "this",
+      "result": "16/17 (1 honest fail: detail-row click intercepted); 9 screenshots; 2 UI crashes fixed during verification"
+    },
+    "12_tests_build_git": {
+      "status": "complete",
+      "artifact": "task94_build_test_results.json + task94_summary.json",
+      "session": "this",
+      "result": "lint clean; tsc pre-existing-only; production build 45.8s PASS"
+    }
+  },
+  "execution_bound": "every operation <150s except production build (45.8s single process, well under sandbox budget)"
+}

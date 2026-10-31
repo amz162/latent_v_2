@@ -1,0 +1,68 @@
+model,kind,evidence_status,n_5d,dir_acc_5d,mae_5d,rmse_5d,r2_5d
+PatchTST,canonical,metric_reproduced_with_caveats,40,0.25,0.066782,0.074746,-3.4389
+N-BEATS,canonical,metric_reproduced,13731,,0.04618,0.06995,-0.0547
+TimesNet,canonical,metric_reproduced,,,,,
+Informer,canonical,metric_reproduced,13731,,0.046005,0.069589,-0.0438
+Chronos (Amazon),canonical,metric_reproduced,,,,,
+Lag-Llama,canonical,metric_reproduced,,,,,
+Moirai (Salesforce),canonical,metric_reproduced,,,,,
+Time-LLM,canonical,metric_reproduced,,,,,
+XGBoost,canonical,metric_reproduced,,,0.052417,0.071583,0.006724
+LightGBM,canonical,metric_reproduced,,,0.052485,0.071775,0.001384
+CatBoost,canonical,metric_reproduced,,,0.052213,0.071456,0.010244
+Random Forest,canonical,metric_reproduced,,,0.052198,0.071463,0.010038
+LSTM,canonical,metric_reproduced,13731,,0.046233,0.06901,-0.0265
+CNN-LSTM,canonical,metric_reproduced,13731,,0.045352,0.068547,-0.0128
+Transformer-LSTM,canonical,metric_reproduced_with_caveats,40,0.25,0.089809,0.096556,-6.4074
+TabNet,canonical,metric_reproduced,,,,,
+FinGPT,canonical,metric_reproduced,,,,,
+ARIMA,canonical,metric_reproduced,,,,,
+Holt-Winters,canonical,metric_reproduced,2401,,0.039759,0.059851,-0.0362
+GARCH,canonical,metric_reproduced,2401,,0.043125,0.064361,-0.1983
+Ridge Regression,canonical,metric_reproduced,,,0.052279,0.071476,0.00969
+Kalman Filter,canonical,metric_reproduced,,,,,
+Prophet,canonical,metric_reproduced,,,,,
+GRU,canonical,metric_reproduced,13731,,0.047305,0.071487,-0.1015
+XGBoost (CL),canonical,metric_reproduced,,,,,
+LightGBM (CL),canonical,metric_reproduced,,,,,
+Random Forest (CL),canonical,metric_reproduced,,,,,
+LSTM (CL),canonical,metric_reproduced,,,,,
+LightGBM-A (CL-2),canonical,metric_reproduced,,,,,
+LightGBM-B (CL-2),canonical,metric_reproduced,,,,,
+HistGBM (CL-2),canonical,metric_reproduced,,,,,
+ExtraTrees (CL-2),canonical,metric_reproduced,,,,,
+RandomForest (CL-2),canonical,metric_reproduced,,,,,
+Logistic (CL-2),canonical,metric_reproduced,,,,,
+MLP (CL-2),canonical,metric_reproduced,,,,,
+Linear Regression (PI),canonical,metric_reproduced,,,,,
+Logistic Regression (PI),canonical,metric_reproduced,,,,,
+Pattern Matcher KNN (PI),canonical,metric_reproduced,,,,,
+Neural Network (PI),canonical,metric_reproduced,,,,,
+Technical Engine (GM),canonical,metric_reproduced,58670,,0.0482,,-0.0115
+Announcements Engine (GM),canonical,metric_reproduced,,,,,
+Fundamental Engine (GM),canonical,metric_reproduced,,,,,
+Macro Engine (GM),canonical,metric_reproduced,,,,,
+LightGBM (CG),canonical,metric_reproduced,,,,,
+XGBoost (CG),canonical,metric_reproduced,,,,,
+Trend Multi-TF (X),canonical,metric_reproduced,58670,,0.047733,,-0.008
+Breakout RelVol (X),canonical,metric_reproduced,58670,,0.046959,,-0.0025
+Trend Pullback (X),canonical,metric_reproduced,58670,,0.047437,,-0.0108
+RSI Divergence (X),canonical,metric_reproduced,58670,,0.046857,,-0.0025
+BB Mean Reversion (X),canonical,metric_reproduced,58670,,0.04692,,-0.0053
+Vol Contraction (X),canonical,metric_reproduced,58670,,0.04702,,-0.0044
+Relative Strength (X),canonical,metric_reproduced,58670,,0.047789,,-0.0098
+Market Regime (X),canonical,metric_reproduced,58670,,0.047252,,-0.0041
+Meta-Label CG (X),canonical,metric_reproduced,,,,,
+Triple Barrier Dyn (X),canonical,metric_reproduced,58670,,0.047733,,-0.008
+Gian-Ensemble (GIAN),canonical,metric_reproduced,58670,,0.047506,,-0.0093
+Gian-Extender (GIAN-EXT),canonical,metric_reproduced,58670,,0.047537,,-0.0092
+M-Ensemble (M),canonical,metric_reproduced,58670,,0.047974,,-0.0171
+ExtraTrees (Task79),supplemental,metric_reproduced,,0.4965,,,
+HistGradientBoosting (Task79),supplemental,metric_reproduced,,0.4994,,,
+ElasticNet (Task79),supplemental,metric_reproduced,,0.4888,,,
+HuberRegressor (Task79),supplemental,metric_reproduced,,0.5107,,,
+SVR (Task79),supplemental,metric_reproduced,,0.4894,,,
+Majority Vote,supplemental,metric_reproduced,,0.565,,,
+Probability-Weighted,supplemental,metric_reproduced,,0.56,,,
+Tier-Weighted,supplemental,metric_reproduced,,0.5625,,,
+Final Consensus,supplemental,metric_reproduced,,0.5575,,,

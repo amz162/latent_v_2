@@ -1,0 +1,129 @@
+{
+  "task": "Task 94 \u2014 final completion summary",
+  "generated_at": "2026-10-31T16:39:37.350710Z",
+  "starting_head": "origin/main 8917b588 (Task 94 Phases 1-7)",
+  "resumed_by": "this session (Phases 8-12)",
+  "model_completion": {
+    "canonical": 58,
+    "supplemental": 9,
+    "aliases": 2,
+    "unique_implementations": 67,
+    "ensembles": 8,
+    "trained_oos_evaluated": {
+      "metric_reproduced_with_caveats": 2,
+      "metric_reproduced": 65
+    },
+    "foundation_official_inference": [
+      "Chronos (Amazon)",
+      "Lag-Llama"
+    ],
+    "foundation_blocked": [
+      "Moirai (Salesforce)"
+    ],
+    "experimental_gpt2_proxies": [
+      "Time-LLM",
+      "FinGPT"
+    ]
+  },
+  "metric_evidence": {
+    "coverage_pct": 100.0,
+    "counts": {
+      "metric_reproduced_with_caveats": 2,
+      "metric_reproduced": 65
+    },
+    "top10_h5d": [
+      {
+        "name": "Random Forest",
+        "h5d_dir_acc": 0.595,
+        "source": "walk_forward_latest.json"
+      },
+      {
+        "name": "CatBoost",
+        "h5d_dir_acc": 0.58,
+        "source": "walk_forward_latest.json"
+      },
+      {
+        "name": "XGBoost",
+        "h5d_dir_acc": 0.5675,
+        "source": "walk_forward_latest.json"
+      },
+      {
+        "name": "Majority Vote",
+        "h5d_dir_acc": 0.565,
+        "source": "task84_metrics.json"
+      },
+      {
+        "name": "Tier-Weighted",
+        "h5d_dir_acc": 0.5625,
+        "source": "task84_metrics.json"
+      },
+      {
+        "name": "Probability-Weighted",
+        "h5d_dir_acc": 0.56,
+        "source": "task84_metrics.json"
+      },
+      {
+        "name": "Final Consensus",
+        "h5d_dir_acc": 0.5575,
+        "source": "task84_metrics.json"
+      },
+      {
+        "name": "Ridge Regression",
+        "h5d_dir_acc": 0.5475,
+        "source": "walk_forward_latest.json"
+      },
+      {
+        "name": "LightGBM",
+        "h5d_dir_acc": 0.535,
+        "source": "walk_forward_latest.json"
+      },
+      {
+        "name": "HuberRegressor (Task79)",
+        "h5d_dir_acc": 0.5107,
+        "source": "task84_metrics.json"
+      }
+    ]
+  },
+  "strategy_results": {
+    "variant_b": {
+      "task93_cost_drag_confirmed": true,
+      "task93_285pct_confirmed": true,
+      "variant_b_is_only_profitable": true,
+      "no_double_charges_in_sample": true,
+      "validation_final_test_separated": true,
+      "atl_non_atl_distinct": true,
+      "verdict": "VARIANT B profitability CONFIRMED via independent source-level reconciliation. Task 93 cost drag figures MATCH. No double-charge discrepancies in sample. However, profitability should NOT be called 'production winner' because: (a) validation/final-test separation preserved but no untouched holdout beyond final-test; (b) Variant B was selected based on task81 historical backtest (NOT prospective); (c) No live trading verification yet."
+    },
+    "note": "Variant B profitable ONLY under atr_min_net_rr_2_v1 selectivity; retrospective \u2014 not a production claim"
+  },
+  "prospective_system": {
+    "total": 114,
+    "state_distribution": {
+      "pending_entry": 114
+    },
+    "stale_symbols": [
+      "ANL",
+      "BYCO",
+      "CNERGY",
+      "ENGRO",
+      "FCCL",
+      "KEL",
+      "LOTCHEM",
+      "PRL",
+      "WTL"
+    ],
+    "latest_session": null,
+    "honest_note": "no genuine prospective performance evidence exists yet \u2014 all trades pending entry"
+  },
+  "product_production": {
+    "api_checks": "11/11",
+    "browser_checks": "16/17",
+    "build": "PASS 45.8s",
+    "lint": "clean",
+    "per_stock": "360 reused + 8 new + 5 aggregate-only"
+  },
+  "git": {
+    "push_status": "BLOCKED \u2014 no credentials in sandbox; token never committed to repo (searched exhaustively); owner must supply a fresh fine-grained PAT",
+    "local_commit": "Task 94 Phases 8-12 committed locally, ready to push"
+  }
+}

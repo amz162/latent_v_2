@@ -1,0 +1,32 @@
+{
+  "task": "Task 94 Phase 12 \u2014 tests, performance, build verification",
+  "ran_at": "2026-10-31T16:39:37.350710Z",
+  "lint": {
+    "command": "bun run lint (eslint .)",
+    "passed": true,
+    "output": "clean"
+  },
+  "typescript": {
+    "command": "bunx tsc --noEmit",
+    "passed": false,
+    "pre_existing_only": true,
+    "note": "errors confined to examples/websocket (socket.io not installed \u2014 example scaffold) and scripts/*_regression_check.ts strictness; NONE in app source; files edited in Task 94 are clean",
+    "errors_found": [
+      "examples/websocket/frontend.tsx TS2307",
+      "examples/websocket/server.ts TS2307",
+      "scripts/ml_graph_regression_check.ts TS2345",
+      "scripts/strategy_engine_regression_check.ts TS2345 x2"
+    ]
+  },
+  "production_build": {
+    "command": "bun run build (next build --webpack)",
+    "passed": true,
+    "duration_s": 45.8,
+    "output": "route table compiled; static + dynamic routes emitted; no OOM",
+    "memory": "completed alongside running dev server within 4GB sandbox"
+  },
+  "dev_server_health": {
+    "home_200": true,
+    "note": "browser-verified separately in task94_browser_test_results.json"
+  }
+}
