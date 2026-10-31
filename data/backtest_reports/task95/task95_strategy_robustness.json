@@ -1,0 +1,37 @@
+{
+ "task": "Task 95 Phase 5.5 \u2014 robustness coverage and slippage stress",
+ "variant_b_by_strategy": {
+  "fixed_first_hit": {
+   "gross": 138455.79,
+   "net": -9667.53,
+   "n_cells": 60,
+   "n_completed": 126
+  },
+  "max_tp_step_trailing": {
+   "gross": 340613.8,
+   "net": 161847.81,
+   "n_cells": 60,
+   "n_completed": 126
+  },
+  "scale_out_50_25_25": {
+   "gross": 267057.85,
+   "net": 102404.02,
+   "n_cells": 60,
+   "n_completed": 126
+  }
+ },
+ "coverage_from_task94": {
+  "periods": [
+   "validation",
+   "final-test"
+  ],
+  "n_cells": 180,
+  "tax_profiles": [
+   "ATL 15%",
+   "NON-ATL 30%"
+  ],
+  "separated": true
+ },
+ "slippage_stress": "legs not available \u2014 analytic stress documented from schedule constants only",
+ "honesty": "stress applied to REALIZED prospective legs only; no final-test optimization; historical Task 81/94 reports preserved"
+}

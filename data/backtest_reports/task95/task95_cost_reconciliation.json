@@ -1,0 +1,63 @@
+{
+ "task": "Task 95 Phase 5.1 \u2014 PSX V2 cost reconciliation (independent)",
+ "schedule_source": "src/lib/latent/trading-costs.ts",
+ "schedule_fields_found": {
+  "slippage_pct": 0.0,
+  "cgt_atl_pct": 15.0,
+  "cgt_non_atl_pct": 30.0
+ },
+ "cgt_logic": "verify manually",
+ "arithmetic_checks": [
+  {
+   "artifact": "strategy_robustness",
+   "cell": "variant_b/validation",
+   "gross_minus_cost": -174968.41,
+   "net_stored": -174968.41,
+   "match": true
+  },
+  {
+   "artifact": "strategy_robustness",
+   "cell": "variant_b/final-test",
+   "gross_minus_cost": 429552.96,
+   "net_stored": 429552.71,
+   "match": true
+  },
+  {
+   "artifact": "net_strategy_results",
+   "cell": "baseline",
+   "gross_minus_cost": -4931271.34,
+   "net_stored": -4931272.66,
+   "match": false,
+   "win_rate_recomputed": 52.36,
+   "win_rate_stored": 52.36,
+   "cost_drag_recomputed_pct": 173.69,
+   "cost_drag_stored_pct": 173.69
+  },
+  {
+   "artifact": "net_strategy_results",
+   "cell": "variant_a",
+   "gross_minus_cost": -9932493.93,
+   "net_stored": -9932493.41,
+   "match": true,
+   "win_rate_recomputed": 38.67,
+   "win_rate_stored": 38.67,
+   "cost_drag_recomputed_pct": 2271.22,
+   "cost_drag_stored_pct": 2271.22
+  },
+  {
+   "artifact": "net_strategy_results",
+   "cell": "variant_b",
+   "gross_minus_cost": 254584.55,
+   "net_stored": 254584.3,
+   "match": true,
+   "win_rate_recomputed": 55.03,
+   "win_rate_stored": 55.03,
+   "cost_drag_recomputed_pct": 65.88,
+   "cost_drag_stored_pct": 65.88
+  }
+ ],
+ "prospective_closed_trades_checked": 18,
+ "prospective_gross_minus_costs_violations": 0,
+ "task93_cost_drag_claim_pct": 285.03,
+ "verdict": "MISMATCH \u2014 inspect checks"
+}

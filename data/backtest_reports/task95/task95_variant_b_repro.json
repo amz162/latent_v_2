@@ -1,0 +1,24 @@
+{
+ "task": "Task 95 Phase 5.3 \u2014 Variant B (atr_min_net_rr_2_v1) historical repro verification",
+ "stored_checks": {
+  "n_variant_b_cells": 180,
+  "skipped_samples_reported": 6156,
+  "completed_trades": 378,
+  "validation_period_cells": 90,
+  "final_test_period_cells": 0,
+  "validation_final_test_separated": true,
+  "both_side_costs_charged": true,
+  "cgt_only_on_realized_profits": true,
+  "atl_non_atl_distinct": true,
+  "eligibility_before_outcomes": true
+ },
+ "identity": "Variant B = atr_min_net_rr_2_v1 risk variant; historical-only profitability confirmed by Task 93 (285% cost drag finding) and Task 94 independent reconciliation",
+ "prospective_status": {
+  "open": 63,
+  "closed": 18,
+  "closed_all_losses": true,
+  "statement": "prospective paper trades are NOT evidence of production profitability; first 18 matured paper trades were all losses (net \u2212108,188 PKR across 81 fills entered at the real 2026-10-30 and earlier sessions)"
+ },
+ "eligibility": "entry eligibility decided from signal + risk levels before outcome observation (Task 94 check: eligibility_before_outcomes=true)",
+ "verdict": "historical Variant B profitability verified from artifacts; production claim explicitly NOT made"
+}
