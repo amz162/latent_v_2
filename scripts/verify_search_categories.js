@@ -14,13 +14,13 @@ const { chromium } = require("playwright");
   // enter the platform from the landing page
   const enter = page.locator("button:has-text('Enter'), a:has-text('Enter')").first();
   if (await enter.count()) { await enter.click({ timeout: 8000 }); await page.waitForTimeout(2500); }
-  // open a view that renders StockSearch (portfolio → add-stock flow uses it prominently)
-  const navBtn = page.locator("aside button").nth(7); // portfolio item in NAV_ITEMS order
+  // open a view that renders StockSearch inline (Pattern Finder)
+  const navBtn = page.locator("aside button").nth(6); // pattern_finder in NAV_ITEMS order
   await navBtn.click({ timeout: 8000 }).catch(async () => {
-    await page.locator("text=Portfolio").first().click({ timeout: 8000 });
+    await page.locator("text=Pattern").first().click({ timeout: 8000 });
   });
   await page.waitForTimeout(3000);
-  const input = page.locator('input[placeholder*="Search stock" i]').first();
+  const input = page.locator('input[placeholder*="PSX" i], input[placeholder*="Search stock" i], input[placeholder*="Search any" i]').first();
   await input.waitFor({ timeout: 12000 });
   await input.click();
   for (const sym of ["KASBM", "12TB5", "MUGHALSC", "PIAA"]) {
