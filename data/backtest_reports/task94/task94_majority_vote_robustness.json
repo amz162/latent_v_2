@@ -1,0 +1,22 @@
+{
+  "task": "Task 94 Phase 4 \u2014 Majority Vote Robustness",
+  "block_bootstrap": {
+    "method": "symbol-aware block bootstrap (resample symbols with replacement, n=1000)",
+    "n_bootstrap_iterations": 1000,
+    "n_symbols_in_cohort": 24,
+    "bootstrap_mean_dir_acc": 0.565,
+    "bootstrap_std": 0.0235,
+    "bootstrap_95ci": [
+      0.5195,
+      0.6117
+    ],
+    "bootstrap_p_value_vs_050": 0.998,
+    "interpretation": "Block bootstrap mean dir_acc = 0.5650 (95% CI: [0.5195, 0.6117]). P(>0.50) = 0.9980. Majority Vote 5d advantage APPEARS ROBUST to symbol-block resampling."
+  },
+  "multiple_testing_adjustment": {
+    "n_tests_ensemble_family": 33,
+    "bonferroni_alpha": 0.0015,
+    "interpretation": "With 33 ensemble-horizon tests, Bonferroni-adjusted alpha = 0.0015. Original h=5d Majority Vote CI [0.516, 0.614] still excludes 0.50, but Bonferroni-adjusted significance requires p < 0.0015 (much stricter). The h=5d finding is robust under standard alpha=0.05 but may be marginal under Bonferroni correction."
+  },
+  "honest_conclusion": "Under standard alpha=0.05: Majority Vote h=5d dir_acc=0.565 (CI=[0.516, 0.614]) is statistically significant. Block bootstrap confirms robustness to symbol resampling. Under Bonferroni alpha=0.0015 (correcting for 33 ensemble-horizon tests), significance is marginal. Other ensembles (Probability-Weighted, Tier-Weighted) have similar dir_acc but no formal CI computed. h=10d and h=21d Majority Vote CIs include 0.50 \u2014 NOT significant."
+}
