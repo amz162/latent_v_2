@@ -1,0 +1,137 @@
+{
+  "task": "Task 94 Phase 1 \u2014 Execution Plan",
+  "git_head_at_start": "78ad08bbcaffb875b659cbaaf4d929fe5f64a4e3",
+  "budget_seconds_per_call": 150,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Git/registry reconciliation + execution plan + runner scaffold",
+      "status": "in_progress",
+      "jobs": [
+        "registry_initial",
+        "registry_reconciliation",
+        "execution_plan"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "PatchTST + Transformer-LSTM recovery + all-model metric reproduction",
+      "status": "pending",
+      "jobs": [
+        "patchtst_recovery",
+        "transformer_lstm_recovery",
+        "metric_reproduction_all"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Foundation models: Moirai, Lag-Llama, Chronos, Time-LLM, FinGPT",
+      "status": "pending",
+      "jobs": [
+        "moirai_official_inference",
+        "lag_llama_expand",
+        "chronos_expand",
+        "time_llm_official",
+        "fingpt_official"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Ensemble verification + Majority Vote robustness",
+      "status": "pending",
+      "jobs": [
+        "ensemble_validation_all",
+        "majority_vote_robustness"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Cost-aware strategy profitability + Variant B validation",
+      "status": "pending",
+      "jobs": [
+        "cost_reconciliation",
+        "variant_b_independent_validation"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Prospective paper-trade engine + 114 pending records",
+      "status": "pending",
+      "jobs": [
+        "prospective_processor",
+        "prospective_monitoring"
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "GM data/announcements/fundamentals/macro provenance",
+      "status": "pending",
+      "jobs": [
+        "gm_data_provenance",
+        "macro_data_status"
+      ]
+    },
+    {
+      "phase": 8,
+      "name": "Full walk-forward + per-stock evaluation",
+      "status": "pending",
+      "jobs": [
+        "walk_forward_expansion",
+        "per_stock_evaluation"
+      ]
+    },
+    {
+      "phase": 9,
+      "name": "Backend API + registry integrity",
+      "status": "pending",
+      "jobs": [
+        "api_validation",
+        "registry_route_check"
+      ]
+    },
+    {
+      "phase": 10,
+      "name": "Dashboard maintenance + evidence updates",
+      "status": "pending",
+      "jobs": [
+        "dashboard_status_update"
+      ]
+    },
+    {
+      "phase": 11,
+      "name": "Browser/API/production verification",
+      "status": "pending",
+      "jobs": [
+        "browser_tests",
+        "github_actions_check"
+      ]
+    },
+    {
+      "phase": 12,
+      "name": "Tests/performance/build/final validation + push",
+      "status": "pending",
+      "jobs": [
+        "lint",
+        "typecheck",
+        "build_smoke",
+        "final_push"
+      ]
+    }
+  ],
+  "checkpoint_resume_strategy": [
+    "Each phase saves progress.json with completed jobs",
+    "Failed jobs recorded with cause + retry plan",
+    "Resumable jobs use incremental processing",
+    "Heavy models split into per-symbol/per-date chunks \u2264150s each",
+    "One failed model never stops remaining jobs"
+  ],
+  "iron_rules_preserved": [
+    "No fabrication of predictions/signals/fills/prices",
+    "No modification of protected Task 81-93 artifacts",
+    "No force-push or reset/rebase",
+    "No mislabeling of experimental vs official foundation models",
+    "No claims of statistical significance without sufficient matured evidence",
+    "ACTIVE is operational status, NOT proof of skill",
+    "Preserve webpack/OOM fix (NODE_OPTIONS=--max-old-space-size=1024)"
+  ]
+}
