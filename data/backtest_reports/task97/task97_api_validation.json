@@ -1,0 +1,42 @@
+{
+ "task": "Task 97 Section 11 \u2014 API final verification",
+ "passed": 7,
+ "total": 7,
+ "checks": [
+  {
+   "check": "registry_counts",
+   "ok": true,
+   "detail": "58/9/2 unique=67"
+  },
+  {
+   "check": "/api/backtest/task81-results",
+   "ok": true,
+   "detail": "loads"
+  },
+  {
+   "check": "/api/backtest/walk-forward",
+   "ok": true,
+   "detail": "loads"
+  },
+  {
+   "check": "/api/backtest/per-stock-walk-forward",
+   "ok": true,
+   "detail": "loads"
+  },
+  {
+   "check": "/api/backtest/walk-forward/prospective",
+   "ok": true,
+   "detail": "loads"
+  },
+  {
+   "check": "prospective_matches_db",
+   "ok": true,
+   "detail": "{'closed': 18, 'open': 63, 'pending_entry': 33, 'skipped': 114}"
+  },
+  {
+   "check": "latest_session",
+   "ok": true,
+   "detail": "2026-10-30"
+  }
+ ]
+}
