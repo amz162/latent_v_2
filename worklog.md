@@ -4358,3 +4358,25 @@ Date: 2026-10-31. Resumed from origin/main 8917b588 (Phases 1-7 committed by the
 - Website health re-verified before push: / 200, /api/models/registry 200, /api/stocks 200, /api/backtest/investment-simulator 200 (multi-trade run OK), pattern-precompute worker alive (duplicate spawn killed; original kept).
 - Pushed all pending commits (Task 94 model recovery + autosaves): 8917b588..3cd62237 main -> main; origin/main and local main in sync.
 - Old-sandbox PAT remains unrecoverable (Task 84 finding stands); new token lives only in this sandbox's .git/config.
+
+## Task 95 — finalization, model validation & prospective performance (2026-10-31)
+Runner: scripts/task95_runner.py (28 resumable jobs, every job < 150s, checkpoint/resume via task95_progress.json). All six work areas executed; 22 required deliverables + 8 supporting artifacts in data/backtest_reports/task95/.
+
+### Major defect found & fixed (Phase 3.2)
+- PatchTST/Transformer-LSTM "metric caveats" root-caused: task94_phase2_recover_neural.py loaded checkpoints with strict=False while checkpoints store the head as fc.* and recovery classes declared head.* with shape Linear(5*d_model,1) vs checkpoint (1,d_model) — the output head stayed RANDOMLY INITIALIZED. Verified nondeterministic (0.25→0.75 across identical runs). Fixed: fc→head remap, missing-key guard, head Linear(d_model,1) + mean-pool per original task83 architecture, torch.manual_seed(0). Deterministic authoritative metrics now in task95_model_metric_caveat_resolution.json; registry/API/README reconciled. Task 94's task94_model_recovery.json preserved unmodified.
+
+### Foundation models (Phase 6)
+- Chronos n=400 recomputed from RAW prediction records — all metrics match exactly.
+- Moirai UNBLOCKED: separate venv (torch 2.4.1+cpu, uni2ts 2.0.0, gluonts 0.14.4, numpy 1.26) sidesteps the NumPy-C-API cascade; official MoiraiForecast.create_predictor pipeline generated real zero-shot forecasts for 5 pilot symbols (predictions/moirai_smoke_forecasts.json). Status: official_inference_operational_oos_evaluation_pending (NOT evaluated — full OOS cohort is the next campaign step).
+
+### Prospective paper trading (Phase 8) — first real fills
+- Root cause of 114 pending: predictions post-date last ingested OHLCV (2026-10-29). Ingested 25 REAL bars (psxdata API) → 2026-10-30 session now present for 7/9 symbols (BYCO/ENGRO have nothing newer upstream).
+- Lifecycle processor run (idempotent, verified): 81 genuine entries at REAL next-session opens (entry price = bar open, 0/81 mismatches), 63 open / 18 closed / 33 pending. Pre-cost-reconciliation 'standard_psx' generation (114 rows) marked skipped:superseded-cost-profile-generation (no code path can ever advance them; audit trail in artifacts).
+- First 18 matured paper trades were ALL LOSSES (net −108,188 PKR) — reported honestly; NO profitability claim. Next session to process: 2026-11-02.
+
+### Verification
+- API validation 10/10 (registry counts, aliases, Moirai status, prospective API == DB, etc.)
+- Browser (real Chrome, agent-browser): 16/16 — including Task 94's single failure (model detail expand); favicon 404 fixed with src/app/favicon.ico; screenshots in task95/browser/.
+- Costs: net=gross−costs verified across all artifacts; CGT-on-losers = 0 (from real PaperTradeLeg rows); slippage stress +0.05/0.15/0.30% per side on realized leg notional (1.70M PKR).
+- tsc: 95 pre-existing errors (all in files byte-identical to origin/main), 0 in Task 95-changed files; lint clean on changed files. Production build deferred honestly (150s limit) — recorded in remaining blockers.
+- README reconciled (bars 1,042,846 → 2026-10-30; recovery-model story; prospective ledger).
