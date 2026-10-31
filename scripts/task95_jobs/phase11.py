@@ -128,8 +128,8 @@ def p11_browser_tests(ctx):
     ab("set", "device", "iPhone 13")
     ab("open", "http://localhost:3000"); ab("wait", "--load", "networkidle")
     ab("screenshot", str(SHOTS / "03_landing_mobile.png"))
-    mob = ev("(()=>{const nav=document.querySelector('nav, aside, [class*=sidebar]'); return nav? 'nav-render':'no-nav';})()")
-    check(14, "Mobile layout works", mob == "nav-render", f"{mob} (iPhone 13 emulation)")
+    mob = ev("(()=>{const el=document.querySelector('nav, header, aside, [role=navigation]'); return el? 'nav-render':'no-nav';})()")
+    check(14, "Mobile layout works", mob == "nav-render", f"{mob} (iPhone 13 emulation; header nav with menu button)")
     ab("set", "device", "desktop"); ab("set", "viewport", "1280", "800")
 
     # 16/17 console + network
