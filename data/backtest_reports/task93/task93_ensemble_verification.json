@@ -1,0 +1,85 @@
+{
+  "verification_target": "Majority Vote ensemble (task87_ensemble_validation.json)",
+  "claims_verified": {
+    "h5d": {
+      "claimed_dir_acc": 0.565,
+      "claimed_ci95": [
+        0.5164,
+        0.6136
+      ],
+      "claimed_n": 400,
+      "stored_dir_acc": 0.565,
+      "stored_ci95": [
+        0.5164,
+        0.6136
+      ],
+      "recomputed_ci95": [
+        0.516,
+        0.6127
+      ],
+      "ci_math_match": true,
+      "beats_050_stored": true,
+      "individual_model_dir_acc_h5": {
+        "XGBoost": {
+          "n": 400,
+          "dir_acc": 0.5675
+        },
+        "LightGBM": {
+          "n": 400,
+          "dir_acc": 0.535
+        },
+        "CatBoost": {
+          "n": 400,
+          "dir_acc": 0.58
+        },
+        "Random Forest": {
+          "n": 400,
+          "dir_acc": 0.595
+        },
+        "Ridge Regression": {
+          "n": 400,
+          "dir_acc": 0.5475
+        }
+      },
+      "individual_min": 0.535,
+      "individual_max": 0.595,
+      "ensemble_within_individual_range": true
+    },
+    "h10d": {
+      "claimed_dir_acc": 0.5025,
+      "stored_dir_acc": 0.5025,
+      "ci_math_match": true,
+      "beats_050_stored": true
+    },
+    "h21d": {
+      "claimed_dir_acc": 0.48,
+      "stored_dir_acc": 0.48,
+      "ci_math_match": true,
+      "beats_050_stored": false
+    }
+  },
+  "per_stock_matrix": {
+    "n_cells": 360,
+    "n_symbols": 24,
+    "n_models": 5,
+    "n_horizons": 3,
+    "expected_cells": 360,
+    "consistent_360_cells": true
+  },
+  "overall_verdict": {
+    "ci_math_correct": true,
+    "matrix_consistent": true,
+    "ensemble_within_individual_range": true,
+    "h5d_beats_050": true,
+    "h10d_beats_050": true,
+    "h21d_beats_050": false,
+    "claim_verified": true
+  },
+  "honesty_notes": [
+    "The dir_acc=0.565 @ h=5d with CI=[0.5164, 0.6136] is statistically defensible: CI excludes 0.50.",
+    "At h=10d, dir_acc=0.5025 with CI=[0.4535, 0.5515] \u2014 CI includes 0.50, NOT significant.",
+    "At h=21d, dir_acc=0.48 with CI=[0.431, 0.529] \u2014 CI includes 0.50, NOT significant.",
+    "Statistical significance holds ONLY at h=5d.",
+    "This is OOS directional accuracy on a hold-out final-test split, not trading P&L."
+  ]
+}
