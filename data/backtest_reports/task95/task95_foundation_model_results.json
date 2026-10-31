@@ -18,8 +18,8 @@
    "limitations": "n=60 below reliability threshold; no directional edge may be claimed"
   },
   "Moirai (Salesforce)": {
-   "identity": "dependency_blocked_after_attempts",
-   "task95_action": "see task95_moirai_results.json for the bounded re-attempt"
+   "identity": "official_inference_operational_oos_evaluation_pending",
+   "task95_action": "see task95_moirai_results.json \u2014 official_inference_operational_oos_evaluation_pending"
   },
   "Time-LLM": {
    "identity": "experimental_gpt2_baseline",
@@ -29,6 +29,19 @@
    "identity": "experimental_gpt2_baseline",
    "note": "21-sample proxy NOT promoted; official checkpoint + timestamped corpus required"
   }
+ },
+ "moirai_status_detail": {
+  "task": "Task 95 Phase 6.3 \u2014 Moirai status after bounded re-attempt",
+  "status": "official_inference_operational_oos_evaluation_pending",
+  "env": {
+   "torch": "2.4.1+cpu",
+   "uni2ts": "2.0.0",
+   "gluonts": "0.14.4",
+   "numpy": "1.26.4 (resolver-selected compatible set)"
+  },
+  "recipe": "separate venv: torch==2.4.1 from cpu index, then uni2ts+lightning from pypi with torch==2.4.1.* constraint; MoiraiForecast.create_predictor(batch_size=1, device='cpu')",
+  "evidence": "data/backtest_reports/task95/predictions/moirai_smoke_forecasts.json (real zero-shot forecasts, 5 pilot symbols, official pipeline)",
+  "honesty": "NOT marked evaluated \u2014 full OOS cohort run required before metrics/evaluated status"
  },
  "chronos_raw_reproduction_match": true,
  "reporting_rule": "official vs experimental identity preserved; no fabricated training claims; sample counts and CIs displayed; unavailable metrics stay unavailable"

@@ -55,6 +55,8 @@ def p6_foundation_verify(ctx):
     repro = json.loads((REPORTS / "task95_model_metric_reproduction.json").read_text())
     chron_ok = repro["chronos_raw_reproduction"]["all_match"]
     chron_cmp = repro["chronos_raw_reproduction"]["comparison"]
+    moirai = json.loads((REPORTS / "task95_moirai_results.json").read_text()) \
+        if (REPORTS / "task95_moirai_results.json").exists() else {"status": "dependency_blocked_after_attempts"}
     models = {
         "Chronos (Amazon)": {
             "identity": "official_pretrained_inference_oos_evaluated",
@@ -70,8 +72,8 @@ def p6_foundation_verify(ctx):
             "task95_verification": "summary-only artifact (no raw prediction arrays persisted) — raw recompute infeasible",
             "limitations": "n=60 below reliability threshold; no directional edge may be claimed",
         },
-        "Moirai (Salesforce)": {"identity": "dependency_blocked_after_attempts",
-                                "task95_action": "see task95_moirai_results.json for the bounded re-attempt"},
+        "Moirai (Salesforce)": {"identity": moirai.get("status"),
+                                "task95_action": f"see task95_moirai_results.json — {moirai.get('status')}"},
         "Time-LLM": {"identity": "experimental_gpt2_baseline",
                      "note": "kept experimental unless a faithful official implementation is executed"},
         "FinGPT": {"identity": "experimental_gpt2_baseline",
@@ -80,6 +82,7 @@ def p6_foundation_verify(ctx):
     ctx.write("task95_foundation_model_results.json", {
         "task": "Task 95 Phase 6 — foundation model completeness",
         "models": models,
+        "moirai_status_detail": moirai,
         "chronos_raw_reproduction_match": chron_ok,
         "reporting_rule": "official vs experimental identity preserved; no fabricated training claims; "
                           "sample counts and CIs displayed; unavailable metrics stay unavailable",
