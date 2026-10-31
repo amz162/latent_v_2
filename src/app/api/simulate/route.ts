@@ -23,7 +23,14 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Predictions file not found" }, { status: 503 });
   }
 
-  const ensBt = multi?.ensemble_backtesting || {};
+  // Python-produced JSON payload: index signature with the known optional fields
+  // (both camelCase and snake_case variants are produced by different eras).
+  const ensBt: Record<string, {
+    totalTrades?: number; trade_count?: number; winTrades?: number; lossTrades?: number;
+    winRate?: number; avgReturnPct?: number; net_expectancy_pct?: number;
+    profitFactor?: number; profit_factor?: number; sharpe?: number; sortino?: number;
+    maxDrawdownPct?: number; max_drawdown_pct?: number; costBps?: number; stars?: number;
+  }> = multi?.ensemble_backtesting || {};
   const positionSize = amount * (positionPct / 100);
 
   const results: any[] = [];
@@ -35,7 +42,7 @@ export async function GET(req: Request) {
     const totalTrades = bt.totalTrades || bt.trade_count || 0;
     if (totalTrades === 0) continue;
 
-    const winTrades = bt.winTrades || Math.round((bt.winRate / 100) * totalTrades) || 0;
+    const winTrades = bt.winTrades || Math.round(((bt.winRate ?? 0) / 100) * totalTrades) || 0;
     const lossTrades = bt.lossTrades || (totalTrades - winTrades) || 0;
     const winRate = bt.winRate || (winTrades / totalTrades * 100) || 0;
     const avgReturnPct = bt.avgReturnPct || bt.net_expectancy_pct || 0;

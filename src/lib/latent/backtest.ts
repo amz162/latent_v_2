@@ -36,7 +36,8 @@ export interface BacktestTrade {
   exitPrice: number | null;
   exitReason: "TP3" | "TP2" | "TP1" | "SL" | "TIME" | "NO_DATA"; // backward-compat (old priority values). For the full chronological detail, see exitReasonDetailed.
   // Task 58: canonical chronological exit reason (distinguishes SL_AFTER_TP1/TP2 from plain SL_HIT).
-  exitReasonDetailed: "TP3_HIT" | "SL_HIT" | "SL_AFTER_TP1" | "SL_AFTER_TP2" | "TIME_UP" | "NO_DATA";
+  exitReasonDetailed: "TP3_HIT" | "SL_HIT" | "SL_AFTER_TP1" | "SL_AFTER_TP2" | "TIME_UP" | "NO_DATA"
+    | "TP1_HIT" | "TP2_HIT"; // Task 97: legacy first-hit window sim can terminate at TP1/TP2
   bestTp: "TP3" | "TP2" | "TP1" | null; // highest TP reached (TP3>TP2>TP1), per the rule (backward-compat alias of bestTargetReached)
   bestTargetReached: "TP3" | "TP2" | "TP1" | "—"; // Task 58: canonical (matches investment-simulator + signal-stats)
   sl: number;
@@ -402,6 +403,17 @@ function simulateWindowTrade(
   return {
     symbol, direction, entryDate: entryBar.date, entryPrice,
     exitDate, exitPrice, exitReason, bestTp,
+    exitReasonDetailed:
+      exitReason === "TP3" ? "TP3_HIT"
+      : exitReason === "TP2" ? "TP2_HIT"
+      : exitReason === "TP1" ? "TP1_HIT"
+      : exitReason === "SL" ? (bestTp === "TP2" ? "SL_AFTER_TP2" : bestTp === "TP1" ? "SL_AFTER_TP1" : "SL_HIT")
+      : "TIME_UP",
+    bestTargetReached: bestTp ?? "—",
+    activeStop: sl,
+    unresolved: exitReason === "TIME" || exitReason === "TP1" || exitReason === "TP2",
+    nBarsExamined: Math.max(0, exitIdx - entryIdx),
+    entryMode: "random_fallback",
     sl, tp1, tp2, tp3, holdingDays, grossPnlPct,
     netPnlPkr: 0, costPkr: 0, invested: 0, portfolio: 0, confidence: levels?.confidence ?? 0,
   };
