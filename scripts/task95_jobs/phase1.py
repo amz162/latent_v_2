@@ -84,12 +84,17 @@ def p1_initial_status(ctx):
 
 @reg("p1_registry_reconciliation")
 def p1_registry_reconciliation(ctx):
-    src = (BASE / "src/lib/latent/model-backtest.ts").read_text()
-    m = re.search(r"export const ALL_MODELS[^=]*=\s*\[(.*?)\n\] as", src, re.S)
-    ids = re.findall(r"id:\s*['\"]([^'\"]+)['\"]", m.group(1)) if m else []
+    src = (BASE / "src/lib/latent/ensemble.ts").read_text()
+    m = re.search(r"export const ALL_MODELS: ModelMeta\[\] = \[(.*?)\n\];", src, re.S)
+    ids = re.findall(r"\{\s*name:\s*['\"]([^'\"]+)['\"]", m.group(1)) if m else []
     live = api("/api/models/registry")
     t94_rec = json.loads((T94 / "task94_registry_reconciliation.json").read_text())
-    counts_94 = t94_rec.get("counts") or {k: t94_rec.get(k) for k in ("canonical", "supplemental", "aliases", "unique_implementations", "ensembles")}
+    counts_94 = {
+        "canonical": t94_rec.get("canonical_count"), "supplemental": t94_rec.get("supplemental_count"),
+        "unique_implementations": t94_rec.get("total_unique_implementations"),
+        "ensembles": t94_rec.get("ensemble_total_in_registry_and_supplemental"),
+        "base_ml_unique": t94_rec.get("base_ml_unique_count"),
+    }
     live_counts = {
         "canonical": live.get("canonicalCount"), "supplemental": live.get("supplementalCount"),
         "aliases": live.get("aliasCount"), "total_registry_entries": live.get("totalCount"),
@@ -108,7 +113,7 @@ def p1_registry_reconciliation(ctx):
     ctx.write("task95_registry_reconciliation.json", {
         "task": "Task 95 Phase 1 — registry reconciliation",
         "source_of_truth": {
-            "all_models_source_file": "src/lib/latent/model-backtest.ts",
+            "all_models_source_file": "src/lib/latent/ensemble.ts",
             "all_models_entries_parsed": len(ids),
             "all_models_ids_sample": ids[:10],
             "parse_note": "count of id: fields inside export const ALL_MODELS" if m else "ARRAY PARSE FAILED — inspect manually",
