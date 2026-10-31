@@ -71,3 +71,9 @@ prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCach
  GET /api/ai-model-signals/ENGRO 200 in 916ms (compile: 702ms, render: 215ms)
  GET /api/psx/indices/KSE100 200 in 2.2s (compile: 645ms, render: 1561ms)
  GET /api/psx/companies 200 in 3.2s (compile: 69ms, render: 3.2s)
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Trade`.`id`, `main`.`Trade`.`userId`, `main`.`Trade`.`signalId`, `main`.`Trade`.`symbol`, `main`.`Trade`.`direction`, `main`.`Trade`.`horizon`, `main`.`Trade`.`entryPrice`, `main`.`Trade`.`exitPrice`, `main`.`Trade`.`entryDate`, `main`.`Trade`.`exitDate`, `main`.`Trade`.`status`, `main`.`Trade`.`pnlPct`, `main`.`Trade`.`pnlPkr`, `main`.`Trade`.`timeToCloseDays` FROM `main`.`Trade` WHERE `main`.`Trade`.`status` = ? LIMIT ? OFFSET ?
+prisma:query BEGIN IMMEDIATE
+prisma:query UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)
+prisma:query COMMIT
+ GET /api/cron/check-tp-sl 200 in 13ms (compile: 3ms, render: 10ms)
