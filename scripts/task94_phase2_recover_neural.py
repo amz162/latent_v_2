@@ -157,11 +157,21 @@ def evaluate_model(model_name, model, ckpt_path, conn, horizons=HORIZONS, symbol
         in_dim_actual, d_model_actual = in_dim, 16
 
     # Load state dict into model
+    # Task 95 fix: checkpoints saved the output head as fc.* while the models define
+    # head.* — with strict=False the head stayed RANDOMLY INITIALIZED, making every
+    # recovery metric a draw from a random model (dir_acc flipped 0.25<->0.75 across
+    # identical runs). Remap the keys and refuse to evaluate if anything is missing.
+    if isinstance(sd, dict) and any(k.startswith("fc.") for k in sd):
+        sd = {(("head." + k[len("fc."):]) if k.startswith("fc.") else k): v for k, v in sd.items()}
     try:
-        model.load_state_dict(sd, strict=False)
+        res = model.load_state_dict(sd, strict=False)
+        if getattr(res, "missing_keys", None):
+            return {"status": "load_failed",
+                    "error": f"checkpoint missing keys after remap: {res.missing_keys}"}
     except Exception as e:
         return {"status": "load_failed", "error": str(e)[:300]}
 
+    torch.manual_seed(0)
     model.eval()
     all_preds = []
     import pandas as pd
