@@ -4315,3 +4315,39 @@ Date: 2026-10-31 (PKT). Previous chat sandbox became unresponsive; user pointed 
 - Wire new PAT into git remote + branch.main.remote when the user provides it (never print/commit it).
 - GitHub Actions browser-tests.yml exists (added by Task 90 in the other chat) — uses implicit GITHUB_TOKEN, no secret needed.
 - worklog.md in repo covers Tasks 1-83; pasted instruction files (Tasks 88-90 briefs) recovered in git history under upload/.
+
+---
+
+## Task 94 — Phases 8-12 Completion (resume after Phase 7; new sandbox instance)
+
+Date: 2026-10-31. Resumed from origin/main 8917b588 (Phases 1-7 committed by the prior chat's session).
+
+### Where it left / what resumed
+- Fetched origin: Phases 1-7 were already committed + pushed. Local sandbox fast-forwarded (preserving this session's Task 84 restore entry), dev server restarted via dev-watch-local.sh.
+- This session executed Phases 8-12 end-to-end (bounded, resumable, no recompute of valid prior work).
+
+### Phase 8 — per-stock walk-forward (task94_per_stock_walk_forward.json)
+- 360 Task 87 cells validated + reused unchanged (24 symbols × 5 models).
+- NEW genuine evidence: 8 Chronos per-symbol cells (n≈50 each, from the 400-prediction expanded batch file) + 5 aggregate-only rows for PatchTST/Transformer-LSTM (per-symbol split not saved — stated honestly, not fabricated).
+
+### Phase 9 — API validation 11/11 (task94_api_validation.json)
+- FIX: /api/models/registry double-listed aliases (Kalman, Logistic (PI)) as supplemental → excluded from supplementalCount, exposed under aliases[] with aliasParent; counts now 58 canonical / 9 supplemental / 2 aliases / 67 unique = matches Phase 1 reconciliation.
+- Verified: task81 V2-cost markers, walk-forward, per-stock (360 cells), prospective (block-reason integrity), graceful error states.
+
+### Phase 10 — dashboard/README evidence updates (no redesign)
+- README reconciled: "65 models + 13 ensembles" → 58 canonical + 9 supplemental + 2 aliases (67 unique), 8 ensembles; ensembles section rewritten per reconciliation.
+- Registry route overlays Task 94 statuses: PatchTST/Transformer-LSTM/Chronos/Lag-Llama → official_pretrained_inference_oos_evaluated; Moirai → dependency_blocked_after_attempts; Time-LLM/FinGPT → experimental_gpt2_baseline.
+- Landing card: stale "26-model ensemble" → reconciled counts; registry badge now uses API aliasCount.
+
+### Phase 11 — browser verification 16/17 (task94_browser_test_results.json + 9 screenshots)
+- FIXED client-side exception: walkForward.universe became an object — React cannot render objects (AI Models tab crashed); UI now renders universe.mode.
+- Verified in real Chrome (agent-browser): registry counts, foundation identities, family filter (6 foundation rows), Task 81 selectors, walk-forward + per-stock sections, prospective 114 pending (matches DB), GM pillar statuses, mobile (iPhone 13), 0 failed requests, 0 non-key console errors.
+- Honest fail: model-detail row click intercepted by sticky control (cosmetic; logged in blockers).
+
+### Phase 12 — tests, build, git (task94_build_test_results.json)
+- lint clean; tsc: pre-existing errors only (examples/ + scripts/ strictness — none in app source or Task 94 edits).
+- Production build PASS in 45.8s (no OOM, alongside running dev server).
+- Deliverables written: task94_summary.json, task94_progress.json, task94_registry_final.json, task94_metrics.csv (67 rows), task94_remaining_blockers.json.
+
+### Git status
+- All Phase 8-12 work committed locally. PUSH BLOCKED: sandbox has no GitHub credentials (the PAT lived only in the old sandbox's .git/config and was never committed — verified exhaustively). Owner must provide a fresh fine-grained PAT (Contents: read/write on amz162/latent_v_2); push is then one command.
