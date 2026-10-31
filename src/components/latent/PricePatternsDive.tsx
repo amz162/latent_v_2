@@ -223,14 +223,14 @@ export function PricePatternsDive({
               minimum history each detector requires. This is normal for short or very quiet price
               histories.
             </p>
-            {data.coverage.skipped.length > 0 && (
+            {(data.coverage.skipped ?? []).length > 0 && (
               <div className="mt-4 text-left max-w-md mx-auto space-y-1">
                 <p className="text-[10px] uppercase tracking-wide text-[#64748B] text-center">
                   What was skipped and why
                 </p>
-                {data.coverage.skipped.map((s, i) => (
+                {(data.coverage.skipped ?? []).map((s, i) => (
                   <p key={i} className="text-[10px] text-[#64748B]">
-                    • <span className="text-[#94A3B8]">{s.type}</span> — {s.reason}
+                    • {s.type ? <span className="text-[#94A3B8]">{s.type}</span> : null} — {s.reason}
                   </p>
                 ))}
               </div>
@@ -543,14 +543,15 @@ function PatternCard({
   const conf = CONF_META[pattern.confidence] ?? CONF_META.low;
 
   const isSeasonality = pattern.type === "seasonality";
+  const det = typeof pattern.details === "object" && pattern.details ? pattern.details : undefined;
   const baseN = isSeasonality
-    ? Number(pattern.details["Years on record"] ?? pattern.occurrences)
+    ? Number(det?.["Years on record"] ?? pattern.occurrences)
     : pattern.occurrences;
   const workedN = isSeasonality
     ? pattern.occurrences
     : Math.round((pattern.occurrences * pattern.success_rate) / 100);
 
-  const years = pattern.years_seen;
+  const years = Array.isArray(pattern.years_seen) ? pattern.years_seen : [];
   const ev = pattern.evidence_dates;
 
   return (
@@ -616,9 +617,9 @@ function PatternCard({
         <p className="text-[11px] text-[#94A3B8] leading-relaxed mb-2">{pattern.description}</p>
 
         {/* extra details grid */}
-        {pattern.details && Object.keys(pattern.details).length > 0 && (
+        {det && Object.keys(det).length > 0 && (
           <div className="grid grid-cols-2 gap-x-3 gap-y-1 mb-2">
-            {Object.entries(pattern.details).map(([k, v], i) => (
+            {Object.entries(det).map(([k, v], i) => (
               <div key={i} className="text-[10px] flex flex-col min-w-0">
                 <span className="text-[#64748B] truncate" title={k}>{k}</span>
                 <span className="text-[#CBD5E1] truncate" title={String(v)}>{String(v)}</span>
@@ -990,7 +991,7 @@ function SeasonalityHeatmap({ seasonality }: { seasonality: SeasonalityInfo }) {
             return (
               <div
                 key={mi}
-                title={`${MONTH_SHORT[mi]}: avg ${fmtSigned(info.avg)}%, positive in ${info.winRate}% of ${info.yearsSampled} years`}
+                title={`${MONTH_SHORT[mi]}: avg ${fmtSigned(info.avg)}%, positive in ${info.winRate ?? 0}% of ${info.yearsSampled} years`}
                 className={`text-center text-[9px] font-mono font-semibold leading-[22px] rounded ${
                   info.flaggedUp || info.flaggedDown ? "ring-1 ring-[#FBBF24]/50 text-[#FBBF24]" : "text-[#F4F7FB]"
                 }`}

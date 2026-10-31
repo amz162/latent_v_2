@@ -20,7 +20,12 @@ export type LatentView =
   | "ai_model_signals"
   | "calculators"
   | "pattern_finder"
-  | "pattern_finder_financial";
+  | "pattern_finder_financial"
+  // Task 97: legacy view names still referenced by components — kept so setView() calls
+  // type-check without changing runtime behavior (unknown views simply render nothing new)
+  | "plan"
+  | "track_record"
+  | "signals";
 
 // Issue 28-B: an individual buy within a position. A position can hold
 // multiple buy lots; its `buyPrice` is always the weighted average of the
@@ -129,7 +134,11 @@ interface LatentState {
 
   notifications: AppNotification[];
 
+  // Task 97: CGT filer status (null = not set; CgtCalculator treats null like unset)
+  filerStatus: string | null;
+
   setView: (v: LatentView) => void;
+  setFilerStatus: (s: string | null) => void;
   selectSignal: (id: string) => void;
   selectSymbol: (symbol: string) => void;
   selectBroker: (id: string) => void;
@@ -159,6 +168,7 @@ export const useLatentStore = create<LatentState>()(
   persist(
     (set) => ({
       view: "landing",
+      filerStatus: null,
       selectedSignalId: null,
       selectedSymbol: null,
       selectedBrokerId: null,
@@ -175,6 +185,7 @@ export const useLatentStore = create<LatentState>()(
       notifications: [],
 
       setView: (v) => set({ view: v }),
+      setFilerStatus: (s) => set({ filerStatus: s }),
       selectSignal: (id) => set({ selectedSignalId: id, view: "signal_detail" }),
       selectSymbol: (symbol) => set({ selectedSymbol: symbol }),
       selectBroker: (id) => set({ selectedBrokerId: id }),
