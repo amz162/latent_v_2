@@ -1,0 +1,47 @@
+{
+ "task": "Task 96 Phase 10 \u2014 API validation (regression, no endpoint changes)",
+ "passed": 8,
+ "total": 8,
+ "checks": [
+  {
+   "check": "registry_counts",
+   "ok": true,
+   "detail": "58/9/2 unique=67"
+  },
+  {
+   "check": "moirai_status",
+   "ok": true,
+   "detail": "official_inference_operational_oos_evaluation_pending"
+  },
+  {
+   "check": "patchtst_recomputed_metrics",
+   "ok": true,
+   "detail": "dirAcc5d=0.75 n=40"
+  },
+  {
+   "check": "task81_loads",
+   "ok": true,
+   "detail": "loaded"
+  },
+  {
+   "check": "walkforward_loads",
+   "ok": true,
+   "detail": "loaded"
+  },
+  {
+   "check": "perstock_loads",
+   "ok": true,
+   "detail": "loaded"
+  },
+  {
+   "check": "prospective_matches_db",
+   "ok": true,
+   "detail": "db={'closed': 18, 'open': 63, 'pending_entry': 33, 'skipped': 114} api={'pending_entry': 33, 'open': 63, 'closed': 18, 'skipped': 114}"
+  },
+  {
+   "check": "latest_session_reported",
+   "ok": true,
+   "detail": "2026-10-30"
+  }
+ ]
+}
