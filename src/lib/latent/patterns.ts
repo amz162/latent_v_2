@@ -58,6 +58,7 @@ export interface PatternRecognitionResult {
   worstQuarter: QuarterData | null;
   avgYoYGrowth: number | null;   // average YoY EPS growth %
   avgQoQGrowth: number | null;   // average QoQ growth %
+  pattern?: Omit<PatternRecognitionResult, "symbol" | "summary">; // nested detection payload (route response)
   totalRevenueGrowth: number | null; // first to last quarter revenue growth %
   epsVolatility: number;         // std of EPS / mean of EPS
   quarterlySeasonality: { quarter: string; avgGrowth: number }[]; // e.g. "Q1 avg 12% growth"

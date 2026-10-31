@@ -145,7 +145,7 @@ export async function GET(
     const rawContent: string = completion?.choices?.[0]?.message?.content || "";
     const parsed = parseJsonFromLlm(rawContent);
 
-    const result: PatternRecognitionResult & { llm: LlmPatternResponse; pattern: typeof patternData } = {
+    const result: PatternRecognitionResult & { llm: LlmPatternResponse } = {
       symbol: symbolUpper,
       quarters,
       pattern: patternData,
