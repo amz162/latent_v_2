@@ -1,0 +1,18 @@
+{
+ "task": "Task 97 Section 4 \u2014 final disposition of the 2 historical metric caveats",
+ "caveat_model_ids": [
+  "PatchTST",
+  "Transformer-LSTM"
+ ],
+ "id_source": "data/backtest_reports/task95/task95_model_metric_caveat_resolution.json (task96_remaining_blockers.json does not list metric caveats \u2014 they were already resolved in Task 95; documented here explicitly)",
+ "original_cause": "Task 94's recovery loader used load_state_dict(strict=False) while the checkpoints store the output head as fc.* and the recovery classes defined head.* with an incompatible shape (Linear(5*d_model,1) vs checkpoint fc.weight (1,d_model)) \u2014 the head stayed RANDOMLY INITIALIZED, so every Task 94 recovery metric for these models was a draw from a partially-random model. Verified: two identical back-to-back runs gave dir_acc 0.25 then 0.75 (nondeterministic).",
+ "fix": "scripts/task94_phase2_recover_neural.py: fc\u2192head key remap, missing-key guard (refuse to evaluate if any param unloaded), head reshaped to Linear(d_model,1) with mean-pooling over patches per the original task83 architecture, torch.manual_seed(0) \u2014 inference now deterministic (verified 2 identical runs)",
+ "resolution_chain": [
+  "Task 94: metrics caveated (recovery loader silently kept a random output head)",
+  "Task 95: root cause found, fc.*->head remap + missing-key guard + mean-pool head + seed 0; metrics recomputed and replaced",
+  "Task 96: 5/5 cells re-run twice \u2014 fully deterministic and identical to Task 95 values",
+  "Task 97: closure \u2014 caveats CLOSED as resolved_reproducible (no open caveat remains)"
+ ],
+ "final_status": "resolved_reproducible",
+ "open_caveat_count": 0
+}

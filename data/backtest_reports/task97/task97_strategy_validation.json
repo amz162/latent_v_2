@@ -1,0 +1,43 @@
+{
+ "task": "Task 97 Section 5 \u2014 Variant B + strategy/cost final validation (no full recomputation)",
+ "strategy_set_preserved": [
+  "Fixed First Hit",
+  "Max TP Step Trailing",
+  "Scale Out 50/25/25"
+ ],
+ "variant_set_preserved": [
+  "baseline",
+  "atr_tp1_rr_1_1_v1",
+  "atr_min_net_rr_2_v1"
+ ],
+ "cost_profile": "psx_user_schedule_v2 \u2014 brokerage + PSX + NCCPL + CDC, two-sided, ATL 15% / NON-ATL 30%",
+ "identity_checks": [
+  {
+   "cell": "variant_b/validation",
+   "identity_gross-costs=net": true
+  },
+  {
+   "cell": "variant_b/final-test",
+   "identity_gross-costs=net": true
+  },
+  {
+   "cell": "baseline",
+   "identity_gross-costs=net": true
+  },
+  {
+   "cell": "variant_a",
+   "identity_gross-costs=net": true
+  },
+  {
+   "cell": "variant_b",
+   "identity_gross-costs=net": true
+  }
+ ],
+ "all_identities_hold": true,
+ "cgt_on_losing_trades": 0,
+ "eligibility_before_outcomes": true,
+ "validation_final_test_separated": true,
+ "slippage_stress": "Task 95 overlay preserved separately; user profile stays zero-slippage V2",
+ "variant_b_status": "historically profitable only \u2014 NOT a proven live strategy; prospective evidence (18 losses) remains the governing live record",
+ "disclaimer": "historical performance does not guarantee future returns; final-test never used for parameter selection"
+}

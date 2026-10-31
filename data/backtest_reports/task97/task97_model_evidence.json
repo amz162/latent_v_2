@@ -1,0 +1,51 @@
+{
+ "task": "Task 97 Section 4 \u2014 all-model evidence closure table",
+ "registry_counts_confirmed": {
+  "canonical_api": 58,
+  "supplemental_api": 9,
+  "aliases_api": 2,
+  "unique_api": 67,
+  "all_models_source_list": 58,
+  "canonical_plus_supplemental_entries": 67
+ },
+ "families": {
+  "statistical_classical": {
+   "count": "within 58 canonical (ARIMA/ETS-class entries)",
+   "metrics_state": "reproduced in task93/94 artifacts; OOS windows fixed"
+  },
+  "gradient_boosting": {
+   "count": "within 58 canonical (LightGBM/XGBoost entries)",
+   "metrics_state": "reproduced; ROC-AUC/PR-AUC/calibration stored in task81/94 evidence"
+  },
+  "recovered_neural": {
+   "count": "2 (PatchTST, Transformer-LSTM)",
+   "metrics_state": "deterministic after Task 95 fix; re-verified Task 96/97; negative R2 preserved honestly"
+  },
+  "ensembles": {
+   "count": 8,
+   "metrics_state": "OOF/OOS component-based; Majority Vote 5d 0.565 horizon-specific finding preserved (10d/21d n.s.)"
+  },
+  "rule_based": {
+   "count": "strategy variants (Fixed First Hit, Max TP Step Trailing, Scale Out 50/25/25)",
+   "metrics_state": "task94 robustness + cost reconciliation verified"
+  },
+  "foundation_official": {
+   "count": 3,
+   "metrics_state": "Chronos n=400/0.5175 n.s.; Lag-Llama n=60 insufficient; Moirai n=1194 no edge (CI includes 0.50)"
+  },
+  "foundation_proxy": {
+   "count": 2,
+   "metrics_state": "experimental_gpt2_baseline \u2014 labelled, never claimed official"
+  }
+ },
+ "checkpoint_inventory_count": 2,
+ "metric_states_used": [
+  "reproduced",
+  "reproduced_deterministic",
+  "evaluated_official",
+  "evaluated_proxy",
+  "historical_verified",
+  "caveat_closed"
+ ],
+ "no_fabricated_predictions": "every evidence row traces to stored OOS predictions or DB records"
+}

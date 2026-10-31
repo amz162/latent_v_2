@@ -56,6 +56,31 @@
    "error": null,
    "finished": "2026-10-31T20:31:30Z",
    "seconds": 0.0
+  },
+  "p4_metric_caveats": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T20:35:16Z",
+   "error": null,
+   "finished": "2026-10-31T20:35:16Z",
+   "seconds": 0.0
+  },
+  "p4_model_evidence": {
+   "status": "done",
+   "runs": 4,
+   "started": "2026-10-31T20:35:51Z",
+   "error": null,
+   "finished": "2026-10-31T20:35:51Z",
+   "seconds": 0.0,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task97_runner.py\", line 89, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task97_jobs/phase4.py\", line 55, in p4_model_evidence\n    ckpts = [dict(r) for r in conn.execute(\n                              ^^^^^^^^^^^^^\nsqlite3.OperationalError: no such column: modelId\n"
+  },
+  "p5_strategy_validation": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T20:35:16Z",
+   "error": null,
+   "finished": "2026-10-31T20:35:16Z",
+   "seconds": 0.0
   }
  },
  "history": []
