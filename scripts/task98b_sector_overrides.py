@@ -98,7 +98,7 @@ CURATED = {
 
 # ── instrument-family patterns (verified online, see docstring) ───────────────
 FAMILIES = [
-    (re.compile(r"^\d+TB\d*$|^\d*TB$"), "Government Securities — Treasury Bills"),
+    (re.compile(r"^(PK)?\d+TB\d*$"), "Government Securities — Treasury Bills"),
     (re.compile(r"^P\d+GIS\d*$"), "Government Securities — Ijara Sukuk"),
     (re.compile(r"^P\d+PIB\d*$"), "Government Securities — Pakistan Investment Bonds"),
     (re.compile(r"^P\d+(PFL|FRR|VRR|GHS|PFA|FRZ|GVR)\d*$|^C\d+$"), S_GDS),
