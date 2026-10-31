@@ -1,0 +1,30 @@
+{
+ "task": "Task 95 Phase 8.2 \u2014 run authoritative lifecycle processor (scripts/prospective_paper_trading.ts)",
+ "seconds": 1.8,
+ "states_before": {
+  "pending_entry": 114
+ },
+ "states_after": {
+  "closed": 18,
+  "open": 63,
+  "pending_entry": 147
+ },
+ "changes": {
+  "closed": 18,
+  "pending_entry": 33,
+  "open": 63
+ },
+ "processor_output_tail": [
+  "  book_XGBoost_10d_max_tp_step_trailing_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_XGBoost_10d_scale_out_50_25_25_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_XGBoost_21d_fixed_first_hit_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_XGBoost_21d_max_tp_step_trailing_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_XGBoost_21d_scale_out_50_25_25_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_LightGBM_10d_fixed_first_hit_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_LightGBM_10d_max_tp_step_trailing_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "  book_LightGBM_10d_scale_out_50_25_25_standard_psx: open=0 closed=0 cash=1000000 realized=0",
+  "",
+  "\u2713 Report written: data/backtest_reports/prospective_paper_trading_latest.json"
+ ],
+ "honesty": "entries created only where a real next-session open exists in ingested OHLCV"
+}

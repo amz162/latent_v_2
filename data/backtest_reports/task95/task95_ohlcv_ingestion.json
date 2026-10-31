@@ -1,0 +1,13 @@
+{
+ "task": "Task 95 Phase 8 \u2014 incremental OHLCV ingestion for pending-trade symbols",
+ "method": "scripts/task95_ingest_ohlcv.ts (psxdata API, new bars only, idempotent upsert)",
+ "output_tail": [
+  "FCCL: latest_db=2026-10-29 api_latest=2026-10-30 new_bars=1",
+  "KEL: latest_db=2026-10-29 api_latest=2026-10-30 new_bars=1",
+  "LOTCHEM: latest_db=2026-10-29 api_latest=2026-10-30 new_bars=1",
+  "PRL: latest_db=2026-10-21 api_latest=2026-10-30 new_bars=7",
+  "WTL: latest_db=2026-10-21 api_latest=2026-10-30 new_bars=7",
+  "TOTAL_NEW_BARS 25"
+ ],
+ "note": "only real API sessions ingested; no simulated bars"
+}

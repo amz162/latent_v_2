@@ -56,6 +56,31 @@
    "error": null,
    "finished": "2026-10-31T18:20:48Z",
    "seconds": 0.0
+  },
+  "p8_prospective_diagnose": {
+   "status": "done",
+   "runs": 2,
+   "started": "2026-10-31T18:23:15Z",
+   "error": null,
+   "finished": "2026-10-31T18:23:15Z",
+   "seconds": 0.0,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task95_runner.py\", line 88, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 50, in p8_prospective_diagnose\n    snap = state_snapshot()\n           ^^^^^^^^^^^^^^^^\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 42, in state_snapshot\n    earliest_pred = q(\"\"\"SELECT MIN(p.predictedAt) earliest FROM ProspectivePaperTrade t\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/z/my-project/scripts/task95_jobs/phase8.py\", line 30, in q\n    rows = [dict(r) for r in conn.execute(sql, args).fetchall()]\n                             ^^^^^^^^^^^^^^^^^^^^^^^\nsqlite3.OperationalError: no such column: p.predictedAt\n"
+  },
+  "p8_ingest_recent_ohlcv": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T18:23:20Z",
+   "error": null,
+   "finished": "2026-10-31T18:23:26Z",
+   "seconds": 5.5
+  },
+  "p8_prospective_process": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T18:23:34Z",
+   "error": null,
+   "finished": "2026-10-31T18:23:35Z",
+   "seconds": 1.8
   }
  },
  "history": []

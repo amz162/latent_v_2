@@ -1,0 +1,87 @@
+{
+ "task": "Task 95 Phase 8.1 \u2014 prospective pending-entry diagnosis (fresh DB state)",
+ "state_distribution": [
+  {
+   "state": "pending_entry",
+   "n": 114
+  }
+ ],
+ "per_symbol_diagnosis": [
+  {
+   "symbol": "CNERGY",
+   "pending_trades": 36,
+   "latest_ohlcv": "2026-10-29",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "ENGRO",
+   "pending_trades": 21,
+   "latest_ohlcv": "2025-01-03",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "PRL",
+   "pending_trades": 18,
+   "latest_ohlcv": "2026-10-21",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "WTL",
+   "pending_trades": 12,
+   "latest_ohlcv": "2026-10-21",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "BYCO",
+   "pending_trades": 12,
+   "latest_ohlcv": "2021-12-20",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "KEL",
+   "pending_trades": 6,
+   "latest_ohlcv": "2026-10-29",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "LOTCHEM",
+   "pending_trades": 3,
+   "latest_ohlcv": "2026-10-29",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "FCCL",
+   "pending_trades": 3,
+   "latest_ohlcv": "2026-10-29",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  },
+  {
+   "symbol": "ANL",
+   "pending_trades": 3,
+   "latest_ohlcv": "2026-10-21",
+   "earliest_pending_prediction_date": "2026-10-29",
+   "ohlcv_covers_entry_window": false
+  }
+ ],
+ "symbols_blocked_by_stale_ohlcv": [
+  "CNERGY",
+  "ENGRO",
+  "PRL",
+  "WTL",
+  "BYCO",
+  "KEL",
+  "LOTCHEM",
+  "FCCL",
+  "ANL"
+ ],
+ "cause": "pending_entry is correct behavior: predictions post-date the last ingested OHLCV session for these symbols; entries can only be created when a newer real session is ingested \u2014 no fabrication",
+ "fix_attempted": "p8_ingest_recent_ohlcv fetches newer sessions from the psxdata API (bounded, idempotent)"
+}
