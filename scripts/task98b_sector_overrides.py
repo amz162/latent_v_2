@@ -93,6 +93,20 @@ CURATED = {
     "PRIB": S_INV,                # "Prudential Investment Bank Ltd.(Defaulter)"
     "EXTR": "OIL & GAS EXPLORATION COMPANIES",  # "EXTR Extraction" (PSX listed-companies index; name-derived)
     "EWICR1": S_RIGHTS,           # "East West (R)" (dps.psx quote)
+    # batch-4 + well-established classifications (search rate-limited after batch 4;
+    # these names are unambiguous in PSX listings)
+    "EFOODS": "FOOD & PERSONAL CARE PRODUCTS",  # "Engro Foods Limited (EFOODS)" (batch-4 search)
+    "JSCL": S_INV,                # "JSCL [Link]. Co." (PSX listed-companies index) — Jahangir Siddiqui & Co.
+    "JSGCL": S_INV,               # JS Global Capital Limited (brokerage)
+    "JPGL": "POWER GENERATION & DISTRIBUTION",  # "JPGL Japan Power" (PSX listed-companies index)
+    "AKDSL": S_INV,               # AKD Securities Limited
+    "AKDCL": S_INV,               # AKD Capital Limited
+    "SPAC2": S_INV,               # "Public LSE SPAC-II Limited ... symbol SPAC2" (press release)
+    "SPAC1": S_INV,               # SPAC-I vehicle (inferred from SPAC2 press release)
+    "786R": S_RIGHTS,             # 786 Investments right issue (base 786 verified)
+    "LSECLR": S_RIGHTS,           # LSE Capital right issue
+    "LSEFSLR": S_RIGHTS,          # LSE Financial Services right issue
+    "LSEVLR": S_RIGHTS,           # LSE Ventures right issue
 }
 # populated by CURATED.update({...}) blocks appended during curation
 
