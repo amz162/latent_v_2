@@ -50,20 +50,39 @@ export async function GET() {
         blockerReason: r?.statusReason || r?.error || null,
       };
     });
-    // Supplemental entries (in Task 84 but not in ALL_MODELS)
+    // Supplemental entries (in Task 84 but not in ALL_MODELS).
+    // Task 94 Phase 9: alias entries of canonical models (resolved in
+    // task94_registry_reconciliation.json: 'Kalman Filter'→'Kalman',
+    // 'Logistic Regression (PI)'→'Logistic (PI)') must NOT double-count as
+    // supplemental implementations. They stay visible under `aliases`
+    // (nothing silently omitted) but are excluded from supplementalCount.
     const canonicalNames = new Set(ALL_MODELS.map((m: any) => m.name));
-    const supplemental = Object.entries(allResults)
-      .filter(([name]) => !canonicalNames.has(name))
-      .map(([name, r]: any) => ({
-        name, verifiedStatus: r.status || "evaluated",
-        metrics: r.metrics, dirAcc5d: r.metrics?.["5d"]?.directional_accuracy ?? null,
-        mae5d: r.metrics?.["5d"]?.mae ?? null, supplemental: true,
-      }));
+    const stripTags = (s: string) =>
+      s.replace(/\s*\((CL|CL-2|PI|CG|GM|X)\)\s*$/i, "").replace(/\s+filter$/i, "").trim().toLowerCase();
+    const canonicalByNorm = new Map<string, string>();
+    for (const m of ALL_MODELS as any[]) canonicalByNorm.set(stripTags(m.name), m.name);
+    const supplemental: any[] = [];
+    const aliases: any[] = [];
+    for (const [name, r] of Object.entries(allResults)) {
+      if (canonicalNames.has(name)) continue;
+      const parent = canonicalByNorm.get(stripTags(name)) || null;
+      const entry: any = {
+        name, verifiedStatus: (r as any).status || "evaluated",
+        metrics: (r as any).metrics,
+        dirAcc5d: (r as any).metrics?.["5d"]?.directional_accuracy ?? null,
+        mae5d: (r as any).metrics?.["5d"]?.mae ?? null, supplemental: true,
+      };
+      if (parent) { entry.isAlias = true; entry.aliasParent = parent; aliases.push(entry); }
+      else supplemental.push(entry);
+    }
     return NextResponse.json({
       available: true,
       canonicalCount: ALL_MODELS.length,
       supplementalCount: supplemental.length,
-      totalCount: ALL_MODELS.length + supplemental.length,
+      aliasCount: aliases.length,
+      uniqueImplementationCount: ALL_MODELS.length + supplemental.length,
+      totalCount: ALL_MODELS.length + supplemental.length + aliases.length,
+      aliases,
       reconciliation: recon ? { registry: recon.registry_count, task83: recon.task83_count, inBoth: recon.in_both } : null,
       canonical,
       supplemental,
