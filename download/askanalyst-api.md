@@ -84,7 +84,31 @@ The script is idempotent, rate-limited (0.35 s), retries twice, and appends ever
 pull to `data/askanalyst/manifest.json`. Commit refreshed data to git so the next
 session never needs to re-fetch.
 
-## 5. Secondary source: psxdata-api
+## 5. Stock categories (sector) resolution chain
+
+`/api/psx/companies` returns a `sector` for **every** listed instrument (verified 0
+missing across 1,054 symbols, 2026-10-31). Resolution precedence:
+
+1. **Live sources** — pypsx `/symbols` (if API keys configured) and the psxdata
+   38-sector map (`getSymbolSectorMap()`), 6h-cached
+2. **AskAnalyst snapshot** — `data/askanalyst/companylist.json` (real PSX sectors, ~360 equities)
+3. **Curated overrides** — `data/askanalyst/sector_overrides.json` (390 instruments the
+   live sources don't cover), built by `scripts/task98b_sector_overrides.py`:
+   - Government debt auctioned/traded on PSX, verified via news/PSX press releases:
+     Treasury Bills (`*TB*`), PIBs (`P*PIB`), GoP Ijara Sukuk (`P*GIS`), other GoP
+     fixed-income series (`P*PFL/FRR/VRR/GHS/PFA/FRZ/GVR`, `C#`)
+   - Corporate debt: TFCs (`*TFC`) and corporate Sukuk / subscription certificates
+     (`*SC`/`*TSC` — verified: FABLSC "Rated, Unsecured, Subordinated Sukuk",
+     MUGHALSC "Mughal Steel Sukuk" via PSX eligible-scrips page)
+   - Rights issues (`base+R<digits>` convention — verified via dps.psx "(R)" quotes)
+   - ~70 named companies/funds resolved by per-symbol web search
+     (`scripts/search_symbol_categories{,2,3}.py`, results in /tmp/symbol_search*.json)
+   - 11 symbols with no authoritative online category → "Others" (UI convention)
+
+The StockSearch component shows the category as a chip against every result row and
+groups results by sector. Every stock-picker in the app uses this component.
+
+## 6. Secondary source: psxdata-api
 
 `https://psxdata-api.fastapicloud.dev` (client: `src/lib/latent/psxdata.ts`) — used by
 `/api/psx/*` routes as fallback and for index data:
@@ -97,7 +121,7 @@ Note: neither source provides a historical **index** series (AskAnalyst `ksechar
 returns HTTP 500 for index symbols; psxdata has constituents only) — hence the
 market-breadth regime proxy used for the Macro Engine (GM) backtest (Task 98).
 
-## 6. Which model tiers consume which endpoint
+## 7. Which model tiers consume which endpoint
 
 | Registry model | Data source | Notes |
 |---|---|---|
