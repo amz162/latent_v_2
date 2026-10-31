@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Git safety audit (reject destructive git automation)
+        run: python3 scripts/git_safety_audit.py --fail-on-violation
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest

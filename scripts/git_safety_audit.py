@@ -57,8 +57,11 @@ def scan():
                     continue
                 for pat, why in DESTRUCTIVE:
                     if re.search(pat, line):
+                        rel = str(f.relative_to(BASE))
+                        if any(rel == af and pat == ap for af, ap in ALLOWLIST):
+                            continue
                         violations.append({
-                            "file": str(f.relative_to(BASE)), "line": i,
+                            "file": rel, "line": i,
                             "pattern": pat, "reason": why, "text": line.strip()[:160],
                         })
                 checked += 1
