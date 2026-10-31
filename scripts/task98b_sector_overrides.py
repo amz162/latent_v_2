@@ -22,7 +22,24 @@ from pathlib import Path
 OUT = Path("data/askanalyst/sector_overrides.json")
 
 # ── hand-curated from per-symbol web search results (2026-10-31) ─────────────
-CURATED = {}
+S_INV = "INV. BANKS / INV. COS. / SECURITIES COS."
+S_FUND = "CLOSE - END MUTUAL FUND"
+S_MOD = "MODARABAS"
+CURATED = {
+    # confirmed by batch-1 searches (company names resolved in snippets):
+    "MCBIM": S_INV,      # "MCB Investment Management Limited — NBFC" (search 1)
+    "AHL": S_INV,        # "Arif Habib Limited" (dps.psx quote)
+    "FNEL": S_INV,       # "First National Equities Limited" (dps.psx quote)
+    "OLPL": S_MOD,       # "OLP Financial Services Pakistan Limited" (dps.psx quote)
+    "LSECL": S_INV,      # "LSE Capital Limited — Modaraba Management Company" (dps.psx quote)
+    "LSEFSL": S_INV,     # "LSE Financial Services Limited / LSE SPAC-II" (press)
+    "CYAN": S_INV,       # Cyan Limited — stockanalysis sector "Financials" (Lakson group investment co)
+    "JSIL": S_FUND,      # "JSIL. JS Investments" (PSX closing rates)
+    "ENGROH": S_INV,     # "Engro Holdings ... traded under ENGROH" (engro holdings site)
+    "DHPL": S_INV,       # "DH Partners Limited (PSX: DHPL) debut" (Business Recorder)
+    "786": S_INV,        # "786 Investments Limited — NBFC" (fund snapshot)
+    "ARM": S_INV,        # "listed under Investment Banks / Investment Companies / Securities Companies sector"
+}
 # populated by CURATED.update({...}) blocks appended during curation
 
 # ── instrument-family patterns (verified online, see docstring) ───────────────
