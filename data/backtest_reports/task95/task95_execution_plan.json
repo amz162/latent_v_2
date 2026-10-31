@@ -1,0 +1,55 @@
+{
+ "task": "Task 95 \u2014 execution plan (resumable, 150s bounded jobs)",
+ "runner": "scripts/task95_runner.py",
+ "phases": {
+  "P1": [
+   "p1_initial_status",
+   "p1_registry_reconciliation"
+  ],
+  "P3_P9": [
+   "p3_metric_caveats",
+   "p3_training_infra",
+   "p3_recovered_regressions",
+   "p9_registry_final"
+  ],
+  "P4": [
+   "p4_metric_reproduction",
+   "p4_walkforward_verify",
+   "p4_perstock_verify"
+  ],
+  "P5": [
+   "p5_cost_reconciliation",
+   "p5_variant_b_repro",
+   "p5_robustness",
+   "p5_ensembles"
+  ],
+  "P6": [
+   "p6_foundation_verify",
+   "p6_moirai_attempt"
+  ],
+  "P7": [
+   "p7_gm_provenance"
+  ],
+  "P8": [
+   "p8_prospective_diagnose",
+   "p8_prospective_process",
+   "p8_prospective_monitor"
+  ],
+  "P10": [
+   "p10_api_validation"
+  ],
+  "P11": [
+   "p11_browser_tests"
+  ],
+  "P12": [
+   "p12_build_tests",
+   "p12_summary_blockers"
+  ]
+ },
+ "budget_rule": "each job < 150s; runner auto-resumes; no memory-heavy concurrency",
+ "progress_snapshot": {
+  "p1_initial_status": "done",
+  "p1_registry_reconciliation": "done",
+  "p1_execution_plan": "running"
+ }
+}
