@@ -215,7 +215,7 @@ export function ModelRegistryDashboard() {
               </thead>
               <tbody>
                 {t81PerCell.map((c: any, i: number) => (
-                  <tr key={i} className="border-b hover:bg-muted/50">
+                  <tr key={`${c.model}-${c.horizon}d-${c.period}-${i}`} className="border-b hover:bg-muted/50">
                     <td className="p-2">{c.model}</td>
                     <td className="p-2">{c.horizon}d</td>
                     <td className="p-2">{c.period}</td>
@@ -295,7 +295,7 @@ export function ModelRegistryDashboard() {
                     </thead>
                     <tbody>
                       {walkForward.perModel.map((m: any, i: number) => (
-                        <tr key={i} className="border-b hover:bg-muted/50">
+                        <tr key={`${m.model || m.name || "model"}-${i}`} className="border-b hover:bg-muted/50">
                           <td className="p-2">{m.model || m.name}</td>
                           <td className="p-2 text-right">{m.mae?.toFixed(6) ?? "—"}</td>
                           <td className="p-2 text-right">{m.rmse?.toFixed(6) ?? "—"}</td>
@@ -347,7 +347,7 @@ export function ModelRegistryDashboard() {
                 </thead>
                 <tbody>
                   {(perStock.cells || []).filter((c: any) => stockFilter === "all" || c.symbol === stockFilter).map((c: any, i: number) => (
-                    <tr key={i} className="border-b hover:bg-muted/50">
+                    <tr key={`${c.symbol}-${c.model}-${c.horizon}-${i}`} className="border-b hover:bg-muted/50">
                       <td className="p-2 font-medium">{c.symbol}</td>
                       <td className="p-2">{c.model}</td>
                       <td className="p-2">{c.horizon}d</td>
