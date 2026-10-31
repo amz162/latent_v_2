@@ -35,8 +35,9 @@ export async function GET() {
       const fm: Record<string, any> = t94Foundations.models;
       for (const [name, blk] of Object.entries(fm)) {
         if (blk?.status && !statusOverrides[name]) {
-          const m5 = blk?.metrics?.["5d"] || blk?.final_result?.metrics?.["5d"] || null;
-          statusOverrides[name] = { status: blk.status, metrics: m5 || undefined };
+          const fr = blk?.final_result || {};
+          const m5 = blk?.metrics?.["5d"] || (fr?.dir_acc != null ? { n: fr.n, directional_accuracy: fr.dir_acc, mae: fr.mae, rmse: fr.rmse, r2: fr.r2, ci95: fr.ci95 } : null);
+          statusOverrides[name] = { status: blk.status, metrics: m5 ? { "5d": m5 } : undefined };
         }
       }
     }
@@ -81,6 +82,7 @@ export async function GET() {
         blockerReason: r?.statusReason || r?.error || null,
       };
     });
+    const canonical94 = canonical.map(applyOverride);
     // Supplemental entries (in Task 84 but not in ALL_MODELS).
     // Task 94 Phase 9: alias entries of canonical models (resolved in
     // task94_registry_reconciliation.json: 'Kalman Filter'→'Kalman',

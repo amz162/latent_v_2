@@ -97,6 +97,7 @@ export function ModelRegistryDashboard() {
           <div className="flex flex-wrap gap-2 text-xs">
             <Badge variant="outline">{registry?.canonicalCount || 0} canonical</Badge>
             <Badge variant="outline">{registry?.supplementalCount || 0} supplemental</Badge>
+            {registry?.aliasCount ? <Badge variant="outline">{registry.aliasCount} aliases</Badge> : null}
             <Badge className="bg-green-100 text-green-800">{evaluated} evaluated</Badge>
             <Badge className="bg-red-100 text-red-800">{failed} failed</Badge>
             <Badge className="bg-orange-100 text-orange-800">{blocked} blocked</Badge>
