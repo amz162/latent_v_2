@@ -34,7 +34,8 @@ def load_jobs():
         for name, fn in getattr(mod, "JOBS", {}).items():
             if name in jobs:
                 raise SystemExit(f"duplicate job name {name}")
-            jobs[name] = {"fn": fn, "priority": getattr(mod, "PRIORITY", 100), "module": f.stem}
+            jobs[name] = {"fn": fn, "priority": getattr(mod, "PRIORITY", 100), "module": f.stem,
+                          "module_obj": mod}
     return jobs
 
 
@@ -86,8 +87,13 @@ def run_job(name, jobs, progress):
     t0 = time.time()
     try:
         ent["fn"](ctx)
-        p.update(status="done", finished=time.strftime("%Y-%m-%dT%H:%M:%SZ"), seconds=round(time.time() - t0, 1))
-        res = "done"
+        # repeatable jobs may override their final status (e.g. stay pending while chunks remain)
+        mod = ent.get("module_obj")
+        final = "done"
+        if mod is not None and hasattr(mod, "FINAL_STATUS"):
+            final = mod.FINAL_STATUS(name)
+        p.update(status=final, finished=time.strftime("%Y-%m-%dT%H:%M:%SZ"), seconds=round(time.time() - t0, 1))
+        res = final
     except Exception as e:
         p.update(
             status="failed",
