@@ -1,0 +1,65 @@
+{
+ "task": "Task 96 Phase 4 \u2014 official Time-LLM / FinGPT feasibility",
+ "time_llm": {
+  "official_repo": "thuml/Time-LLM",
+  "clone_rc": 128,
+  "repo_cloned": false,
+  "requirements": "no requirements.txt",
+  "official_model_file": false
+ },
+ "fingpt": {
+  "official_repo": "AI4Finance-Foundation/FinGPT",
+  "hf_checkpoints": [
+   {
+    "id": "FinGPT/fingpt-forecaster_dow30_llama2-7b_lora",
+    "downloads": 240
+   },
+   {
+    "id": "FinGPT/fingpt-mt_llama2-7b_lora",
+    "downloads": 0
+   },
+   {
+    "id": "FinGPT/fingpt-mt_bloom-7b1_lora",
+    "downloads": 0
+   },
+   {
+    "id": "FinGPT/fingpt-mt_falcon-7b_lora",
+    "downloads": 0
+   },
+   {
+    "id": "FinGPT/fingpt-mt_mpt-7b_lora",
+    "downloads": 7
+   },
+   {
+    "id": "FinGPT/fingpt-mt_chatglm2-6b_lora",
+    "downloads": 0
+   },
+   {
+    "id": "FinGPT/fingpt-mt_qwen-7b_lora",
+    "downloads": 41
+   },
+   {
+    "id": "FinGPT/fingpt-sentiment_llama2-13b_lora",
+    "downloads": 0
+   },
+   {
+    "id": "FinGPT/fingpt-sentiment_internlm-20b_lora",
+    "downloads": 0
+   },
+   {
+    "id": "FinGPT/fingpt-forecaster_sz50_llama2-7B_lora",
+    "downloads": 0
+   },
+   {
+    "id": "FinGPT/fingpt-mt_llama3-8b_lora",
+    "downloads": 0
+   }
+  ],
+  "checkpoint_count": 11,
+  "smallest_base": "official FinGPT LoRA adapters sit on 6B-13B bases (ChatGLM2-6B, Falcon-7B, LLaMA2-7B/13B, MPT-7B) \u2014 fp16 inference needs >= 8GB RAM, fp32 >= 13GB",
+  "sandbox_ram_available_gb": 1.4,
+  "verdict": "memory_blocked: no official FinGPT checkpoint runs in this sandbox; exact requirement = >= 8GB RAM (7B fp16) or a CPU-quantized official release, neither available upstream",
+  "sentiment_protocol": "dated PSX announcements (Announcement table, publish-timestamp verified) would be the feature source; predictions only after publication ts"
+ },
+ "labelling_rule": "both models stay experimental_gpt2_baseline; no relabeling without a faithful official-architecture run producing real forecasts/scores"
+}
