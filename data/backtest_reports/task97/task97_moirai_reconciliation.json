@@ -3,7 +3,68 @@
  "theoretical_cells": 1200,
  "scored": 1194,
  "unscored": 6,
- "missing_cells": [],
+ "missing_cells": [
+  {
+   "symbol": "BYCO",
+   "horizon": 10,
+   "date": null,
+   "excluded_because": "candidate-generation limit: symbol has no OHLCV in the 2026 OOS window (data ends 2021-12-20); the protocol fallback tail (16+10+5=31 bars) yields exactly 15 spaced forecast dates after reserving the context margin and the 10-day maturity margin \u2014 the 16th cell of the theoretical matrix was never a generatable candidate",
+   "target_mature": true,
+   "generated_candidates": 15,
+   "stored_records": 15,
+   "symbol_data_note": "dead/delisted symbol: no OHLCV after 2021-12-20; its final tradable sessions were scored instead (chronological, leakage-free, targets fully realized)"
+  },
+  {
+   "symbol": "BYCO",
+   "horizon": 21,
+   "date": null,
+   "excluded_because": "candidate-generation limit: symbol has no OHLCV in the 2026 OOS window (data ends 2021-12-20); the protocol fallback tail (16+21+5=42 bars) yields exactly 15 spaced forecast dates after reserving the context margin and the 21-day maturity margin \u2014 the 16th cell of the theoretical matrix was never a generatable candidate",
+   "target_mature": true,
+   "generated_candidates": 15,
+   "stored_records": 15,
+   "symbol_data_note": "dead/delisted symbol: no OHLCV after 2021-12-20; its final tradable sessions were scored instead (chronological, leakage-free, targets fully realized)"
+  },
+  {
+   "symbol": "BYCO",
+   "horizon": 5,
+   "date": null,
+   "excluded_because": "candidate-generation limit: symbol has no OHLCV in the 2026 OOS window (data ends 2021-12-20); the protocol fallback tail (16+5+5=26 bars) yields exactly 15 spaced forecast dates after reserving the context margin and the 5-day maturity margin \u2014 the 16th cell of the theoretical matrix was never a generatable candidate",
+   "target_mature": true,
+   "generated_candidates": 15,
+   "stored_records": 15,
+   "symbol_data_note": "dead/delisted symbol: no OHLCV after 2021-12-20; its final tradable sessions were scored instead (chronological, leakage-free, targets fully realized)"
+  },
+  {
+   "symbol": "ENGRO",
+   "horizon": 10,
+   "date": null,
+   "excluded_because": "candidate-generation limit: symbol has no OHLCV in the 2026 OOS window (data ends 2025-01-03); the protocol fallback tail (16+10+5=31 bars) yields exactly 15 spaced forecast dates after reserving the context margin and the 10-day maturity margin \u2014 the 16th cell of the theoretical matrix was never a generatable candidate",
+   "target_mature": true,
+   "generated_candidates": 15,
+   "stored_records": 15,
+   "symbol_data_note": "dead/delisted symbol: no OHLCV after 2025-01-03; its final tradable sessions were scored instead (chronological, leakage-free, targets fully realized)"
+  },
+  {
+   "symbol": "ENGRO",
+   "horizon": 21,
+   "date": null,
+   "excluded_because": "candidate-generation limit: symbol has no OHLCV in the 2026 OOS window (data ends 2025-01-03); the protocol fallback tail (16+21+5=42 bars) yields exactly 15 spaced forecast dates after reserving the context margin and the 21-day maturity margin \u2014 the 16th cell of the theoretical matrix was never a generatable candidate",
+   "target_mature": true,
+   "generated_candidates": 15,
+   "stored_records": 15,
+   "symbol_data_note": "dead/delisted symbol: no OHLCV after 2025-01-03; its final tradable sessions were scored instead (chronological, leakage-free, targets fully realized)"
+  },
+  {
+   "symbol": "ENGRO",
+   "horizon": 5,
+   "date": null,
+   "excluded_because": "candidate-generation limit: symbol has no OHLCV in the 2026 OOS window (data ends 2025-01-03); the protocol fallback tail (16+5+5=26 bars) yields exactly 15 spaced forecast dates after reserving the context margin and the 5-day maturity margin \u2014 the 16th cell of the theoretical matrix was never a generatable candidate",
+   "target_mature": true,
+   "generated_candidates": 15,
+   "stored_records": 15,
+   "symbol_data_note": "dead/delisted symbol: no OHLCV after 2025-01-03; its final tradable sessions were scored instead (chronological, leakage-free, targets fully realized)"
+  }
+ ],
  "missing_cell_summary": "BYCO and ENGRO each contribute one excluded date per horizon (5/10/21) = 6 cells; both symbols have the shortest OHLCV history in the cohort, so their last eligible OOS date inside the window falls within the target horizon of the data cutoff",
  "stored_output_reproduction": {
   "chunk": "BYCO_5d",

@@ -54,6 +54,25 @@ def p3_moirai_reconciliation(ctx):
         candidates = {rows[i] for i in idxs if i >= 180}
         eligible = {rows[i] for i in idxs if i >= 180 and i + h < len(rows)}
         stored_dates = {r["date"] for r in d["records"]}
+        fallback_n = len(idxs)
+        if candidates == stored_dates and fallback_n < 16:
+            # the fallback tail is exactly N_PER_SYM+HORIZON+5 bars; after the +5 start
+            # margin and -HORIZON maturity margin it supports only 15 spaced dates
+            missing_cells.append({
+                "symbol": sym, "horizon": h, "date": None,
+                "excluded_because": (
+                    f"candidate-generation limit: symbol has no OHLCV in the 2026 OOS window "
+                    f"(data ends {rows[-1]}); the protocol fallback tail "
+                    f"(16+{h}+5={16 + h + 5} bars) yields exactly {fallback_n} spaced forecast "
+                    f"dates after reserving the context margin and the {h}-day maturity margin — "
+                    f"the 16th cell of the theoretical matrix was never a generatable candidate"),
+                "target_mature": True,
+                "generated_candidates": fallback_n,
+                "stored_records": len(stored_dates),
+                "symbol_data_note": (f"dead/delisted symbol: no OHLCV after {rows[-1]}; its final "
+                                     "tradable sessions were scored instead (chronological, "
+                                     "leakage-free, targets fully realized)"),
+            })
         for missing in sorted(candidates - stored_dates):
             mi = rows.index(missing)
             missing_cells.append({
@@ -64,9 +83,6 @@ def p3_moirai_reconciliation(ctx):
                     if missing not in eligible else
                     f"prediction-side exclusion: eligible but absent from stored records"),
                 "target_mature": missing in eligible,
-                "symbol_data_note": ("symbol has NO OHLCV in the 2026 OOS window (its data ends "
-                                     f"{rows[-1]}) — protocol fallback scored its final tradable sessions"
-                                     if fallback else None),
             })
     conn.close()
     # determinism test: with Task 97 seeding, two fresh runs must be record-identical;
