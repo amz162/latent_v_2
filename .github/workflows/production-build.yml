@@ -18,6 +18,9 @@ jobs:
       - name: Install dependencies (incl. prisma generate)
         run: bun install
 
+      - name: Generate Prisma client (bun skips lifecycle scripts)
+        run: bunx prisma generate
+
       - name: Restore SQLite database (same env as the dev sandbox)
         run: gunzip -kc db/custom.db.gz > db/custom.db
 
