@@ -1,0 +1,31 @@
+{
+  "status": "official_pretrained_inference_oos_evaluated",
+  "model": "Chronos (Amazon)",
+  "checkpoint": "amazon/chronos-t5-tiny (8MB, official Amazon checkpoint)",
+  "n": 232,
+  "dir_acc": 0.5172,
+  "mae": 0.034189,
+  "rmse": 0.053736,
+  "r2": -0.1153,
+  "zero_baseline_mae": 0.032965,
+  "mean_baseline_mae": 0.032507,
+  "beats_mean_baseline": false,
+  "ci95": [
+    0.4532,
+    0.5807
+  ],
+  "horizon_days": 5,
+  "context_len": 60,
+  "symbols": [
+    "HUBC",
+    "LUCK",
+    "MEBL",
+    "SYS",
+    "MARI",
+    "BAFL",
+    "INDU",
+    "ATRL"
+  ],
+  "note": "Official pretrained inference (zero-shot, CPU). NOT fine-tuned. Expanded from task92 n=172.",
+  "inference_type": "pretrained_inference (not fine-tuned)"
+}

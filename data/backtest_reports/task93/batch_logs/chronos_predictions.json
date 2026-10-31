@@ -1,0 +1,2355 @@
+{
+  "result": {
+    "status": "official_pretrained_inference_oos_evaluated",
+    "model": "Chronos (Amazon)",
+    "checkpoint": "amazon/chronos-t5-tiny (8MB, official Amazon checkpoint)",
+    "n": 232,
+    "dir_acc": 0.5172,
+    "mae": 0.034189,
+    "rmse": 0.053736,
+    "r2": -0.1153,
+    "zero_baseline_mae": 0.032965,
+    "mean_baseline_mae": 0.032507,
+    "beats_mean_baseline": false,
+    "ci95": [
+      0.4532,
+      0.5807
+    ],
+    "horizon_days": 5,
+    "context_len": 60,
+    "symbols": [
+      "HUBC",
+      "LUCK",
+      "MEBL",
+      "SYS",
+      "MARI",
+      "BAFL",
+      "INDU",
+      "ATRL"
+    ],
+    "note": "Official pretrained inference (zero-shot, CPU). NOT fine-tuned. Expanded from task92 n=172.",
+    "inference_type": "pretrained_inference (not fine-tuned)"
+  },
+  "predictions": [
+    {
+      "symbol": "HUBC",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 236.09,
+      "pred_median": 237.4410858154297,
+      "pred_return": 0.00572275748837181,
+      "actual_return": -0.03223347028675516,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 228.48,
+      "pred_median": 226.6649932861328,
+      "pred_return": -0.007943831905931287,
+      "actual_return": -0.015362394957983194,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 224.97,
+      "pred_median": 228.4373779296875,
+      "pred_return": 0.015412623592867991,
+      "actual_return": -0.037071609547939754,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 216.63,
+      "pred_median": 214.35105895996094,
+      "pred_return": -0.010519969718132516,
+      "actual_return": -0.02991275446614039,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 210.15,
+      "pred_median": 210.77066040039062,
+      "pred_return": 0.0029534161331934428,
+      "actual_return": 0.041589340946942555,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 218.89,
+      "pred_median": 219.50120544433594,
+      "pred_return": 0.002792294962474129,
+      "actual_return": -0.09552743387089402,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 197.98,
+      "pred_median": 199.3732452392578,
+      "pred_return": 0.00703730295614613,
+      "actual_return": 0.037023941812304395,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 205.31,
+      "pred_median": 203.67135620117188,
+      "pred_return": -0.007981315078798512,
+      "actual_return": -0.046855973893137226,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 195.69,
+      "pred_median": 194.84999084472656,
+      "pred_return": -0.004292550233907844,
+      "actual_return": 0.0943328734222495,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 214.15,
+      "pred_median": 216.13690185546875,
+      "pred_return": 0.009278084779214213,
+      "actual_return": 0.050618725192622005,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 224.99,
+      "pred_median": 229.0830078125,
+      "pred_return": 0.018191954364638496,
+      "actual_return": -0.002177874572203198,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 224.5,
+      "pred_median": 221.5958251953125,
+      "pred_return": -0.01293619066675944,
+      "actual_return": -0.030645879732739356,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 217.62,
+      "pred_median": 211.1049346923828,
+      "pred_return": -0.029937805843291976,
+      "actual_return": -0.03584229390681004,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 209.82,
+      "pred_median": 204.0137176513672,
+      "pred_return": -0.027672683007495924,
+      "actual_return": 0.0461347821942617,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 219.5,
+      "pred_median": 217.42015075683594,
+      "pred_return": -0.00947539518525764,
+      "actual_return": -0.02451025056947609,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 214.12,
+      "pred_median": 214.78829956054688,
+      "pred_return": 0.003121144967993983,
+      "actual_return": 0.06837287502335143,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 228.76,
+      "pred_median": 231.97447204589844,
+      "pred_return": 0.014051722529718758,
+      "actual_return": 0.013332750480853361,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 231.81,
+      "pred_median": 229.44517517089844,
+      "pred_return": -0.010201565200386398,
+      "actual_return": 0.0077649799404684305,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 233.61,
+      "pred_median": 233.14881896972656,
+      "pred_return": -0.001974149352653831,
+      "actual_return": -0.04635931681006811,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 222.78,
+      "pred_median": 219.28904724121094,
+      "pred_return": -0.01566995582542896,
+      "actual_return": -0.01526169315019299,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 219.38,
+      "pred_median": 217.49359130859375,
+      "pred_return": -0.008598817993464514,
+      "actual_return": -0.00022791503327557194,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 219.33,
+      "pred_median": 218.3859100341797,
+      "pred_return": -0.004304426963116392,
+      "actual_return": 0.019377194182282453,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 223.58,
+      "pred_median": 224.83944702148438,
+      "pred_return": 0.005633093396029798,
+      "actual_return": -0.05246444225780489,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 211.85,
+      "pred_median": 212.07240295410156,
+      "pred_return": 0.001049813330665783,
+      "actual_return": -0.021571866886948232,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 207.28,
+      "pred_median": 211.5845489501953,
+      "pred_return": 0.020766832063852325,
+      "actual_return": -0.0027499035121574256,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 206.71,
+      "pred_median": 206.0923614501953,
+      "pred_return": -0.002987947123045287,
+      "actual_return": -0.014271201199748562,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 203.76,
+      "pred_median": 200.20298767089844,
+      "pred_return": -0.01745687244356864,
+      "actual_return": -0.0011778563015311105,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 203.52,
+      "pred_median": 200.7948455810547,
+      "pred_return": -0.013390106225163678,
+      "actual_return": -0.003979952830188704,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "HUBC",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 202.71,
+      "pred_median": 201.255126953125,
+      "pred_return": -0.007177115321765126,
+      "actual_return": -0.010951605742193227,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 492.35,
+      "pred_median": 496.71331787109375,
+      "pred_return": 0.008862227827955094,
+      "actual_return": -0.05467655123387838,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 465.43,
+      "pred_median": 465.3192443847656,
+      "pred_return": -0.00023796406599141395,
+      "actual_return": -0.017059493371720746,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 457.49,
+      "pred_median": 454.84625244140625,
+      "pred_return": -0.005778809500959103,
+      "actual_return": -0.025880347111412294,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 445.65,
+      "pred_median": 447.1487731933594,
+      "pred_return": 0.003363117229573387,
+      "actual_return": -0.06971838887018955,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 414.58,
+      "pred_median": 403.5195007324219,
+      "pred_return": -0.026678805701138786,
+      "actual_return": -0.037990255198031786,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 398.83,
+      "pred_median": 373.1329040527344,
+      "pred_return": -0.0644312011314736,
+      "actual_return": -0.10024321139332537,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 358.85,
+      "pred_median": 336.7558898925781,
+      "pred_return": -0.06156920748898398,
+      "actual_return": 0.0728438066044308,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 384.99,
+      "pred_median": 375.5792541503906,
+      "pred_return": -0.0244441306257549,
+      "actual_return": -0.016208213200342936,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 378.75,
+      "pred_median": 375.31842041015625,
+      "pred_return": -0.009060276144801982,
+      "actual_return": 0.1505214521452145,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 435.76,
+      "pred_median": 438.1407470703125,
+      "pred_return": 0.005463436456564441,
+      "actual_return": 0.011703690104644782,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 440.86,
+      "pred_median": 450.4195556640625,
+      "pred_return": 0.02168388074232741,
+      "actual_return": -0.05040148800072597,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 418.64,
+      "pred_median": 423.421630859375,
+      "pred_return": 0.011421820321457554,
+      "actual_return": 0.07395375501624324,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 449.6,
+      "pred_median": 442.17376708984375,
+      "pred_return": -0.01651742195319461,
+      "actual_return": -0.07084074733096091,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 417.75,
+      "pred_median": 411.9072570800781,
+      "pred_return": -0.013986218838831554,
+      "actual_return": 0.045529622980251316,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 436.77,
+      "pred_median": 431.5761413574219,
+      "pred_return": -0.011891518745742902,
+      "actual_return": -0.012065847013302156,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 431.5,
+      "pred_median": 426.3158874511719,
+      "pred_return": -0.012014165814201894,
+      "actual_return": 0.08774044032444972,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 469.36,
+      "pred_median": 451.9912414550781,
+      "pred_return": -0.03700519546813086,
+      "actual_return": -0.025332367479120488,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 457.47,
+      "pred_median": 454.3120422363281,
+      "pred_return": -0.006903092582402959,
+      "actual_return": 0.049511443373335906,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 480.12,
+      "pred_median": 475.1627197265625,
+      "pred_return": -0.010325085964836944,
+      "actual_return": -0.043030908939431844,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 459.46,
+      "pred_median": 472.92889404296875,
+      "pred_return": 0.02931461725279405,
+      "actual_return": -0.020589387541896986,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 450.0,
+      "pred_median": 444.9217224121094,
+      "pred_return": -0.011285061306423594,
+      "actual_return": -0.00942222222222222,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 445.76,
+      "pred_median": 443.3382263183594,
+      "pred_return": -0.005432909371950401,
+      "actual_return": 0.028872038765254793,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 458.63,
+      "pred_median": 452.3199462890625,
+      "pred_return": -0.013758484423037065,
+      "actual_return": -0.03327300874343153,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 443.37,
+      "pred_median": 441.2002258300781,
+      "pred_return": -0.0048938226986983135,
+      "actual_return": -0.0015337077384577347,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 442.69,
+      "pred_median": 446.5595397949219,
+      "pred_return": 0.008740969515737662,
+      "actual_return": -0.02568388714450298,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 431.32,
+      "pred_median": 429.87872314453125,
+      "pred_return": -0.0033415488627208667,
+      "actual_return": -0.033942316609477885,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 416.68,
+      "pred_median": 414.8319091796875,
+      "pred_return": -0.00443527603991678,
+      "actual_return": 0.012095612940385969,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 421.72,
+      "pred_median": 419.6984558105469,
+      "pred_return": -0.0047935696420685625,
+      "actual_return": -0.023664990989281987,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "LUCK",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 411.74,
+      "pred_median": 408.1148681640625,
+      "pred_return": -0.00880441986675451,
+      "actual_return": -0.008500510030601816,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 478.8,
+      "pred_median": 478.5036926269531,
+      "pred_return": -0.0006188541625874455,
+      "actual_return": -0.00342522974101922,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 477.16,
+      "pred_median": 480.2048034667969,
+      "pred_return": 0.0063810953700997874,
+      "actual_return": 0.025127839718333433,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 489.15,
+      "pred_median": 494.86383056640625,
+      "pred_return": 0.011681141912309734,
+      "actual_return": -0.041030358785648535,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 469.08,
+      "pred_median": 470.9664611816406,
+      "pred_return": 0.004021619300845547,
+      "actual_return": -0.033768227168073595,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 453.24,
+      "pred_median": 444.5769348144531,
+      "pred_return": -0.019113637775895476,
+      "actual_return": 0.009531374106433566,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 457.56,
+      "pred_median": 459.0015869140625,
+      "pred_return": 0.0031505964552462906,
+      "actual_return": -0.02806189352216093,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 444.72,
+      "pred_median": 457.1105041503906,
+      "pred_return": 0.027861360294995974,
+      "actual_return": 0.04355549559273242,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 464.09,
+      "pred_median": 460.4855041503906,
+      "pred_return": -0.007766803528646116,
+      "actual_return": 0.0166993471093968,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 471.84,
+      "pred_median": 474.88287353515625,
+      "pred_return": 0.006448952049754819,
+      "actual_return": 0.06171583587656837,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 500.96,
+      "pred_median": 500.034912109375,
+      "pred_return": -0.0018466302511677135,
+      "actual_return": -0.021438837432130264,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 490.22,
+      "pred_median": 496.9652404785156,
+      "pred_return": 0.01375961910675949,
+      "actual_return": 0.01154583656317576,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 495.88,
+      "pred_median": 484.2155456542969,
+      "pred_return": -0.023522736036345693,
+      "actual_return": -0.0018754537388078196,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 494.95,
+      "pred_median": 490.4241638183594,
+      "pred_return": -0.009144027036348312,
+      "actual_return": -0.031033437720981993,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 479.59,
+      "pred_median": 469.67047119140625,
+      "pred_return": -0.020683352047777714,
+      "actual_return": 0.022123063450030234,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 490.2,
+      "pred_median": 487.3185119628906,
+      "pred_return": -0.005878188570194509,
+      "actual_return": -0.0018155854753161282,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 489.31,
+      "pred_median": 485.3320007324219,
+      "pred_return": -0.008129813957569065,
+      "actual_return": 0.04526782612249902,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 511.46,
+      "pred_median": 518.817138671875,
+      "pred_return": 0.01438458270808085,
+      "actual_return": -0.0004301411645093456,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 511.24,
+      "pred_median": 512.5917358398438,
+      "pred_return": 0.002644033799866552,
+      "actual_return": 0.08743447304592755,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 555.94,
+      "pred_median": 553.21533203125,
+      "pred_return": -0.004901010844245879,
+      "actual_return": -0.015936971615642004,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 547.08,
+      "pred_median": 560.0791015625,
+      "pred_return": 0.02376087877915478,
+      "actual_return": -0.00860934415441994,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 542.37,
+      "pred_median": 546.9619750976562,
+      "pred_return": 0.008466499064579969,
+      "actual_return": 0.024798569242399093,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 555.82,
+      "pred_median": 553.2344970703125,
+      "pred_return": -0.00465169106848895,
+      "actual_return": 0.05777050124140892,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 587.93,
+      "pred_median": 589.0029296875,
+      "pred_return": 0.0018249276061776953,
+      "actual_return": -0.0011055737927984088,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 587.28,
+      "pred_median": 585.6477661132812,
+      "pred_return": -0.0027793112088249083,
+      "actual_return": -0.0263077237433591,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 571.83,
+      "pred_median": 571.8865966796875,
+      "pred_return": 9.897465975461373e-05,
+      "actual_return": -0.01893919521536125,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 561.0,
+      "pred_median": 563.948974609375,
+      "pred_return": 0.0052566392323976086,
+      "actual_return": -0.01231729055258457,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 554.09,
+      "pred_median": 557.5996704101562,
+      "pred_return": 0.006334116136649692,
+      "actual_return": -0.00561280658376806,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 550.98,
+      "pred_median": 548.6837158203125,
+      "pred_return": -0.0041676361749746205,
+      "actual_return": -0.00190569530654483,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MEBL",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 549.93,
+      "pred_median": 554.4453125,
+      "pred_return": 0.008210704089611554,
+      "actual_return": 0.00030913025294143637,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 156.65,
+      "pred_median": 154.16021728515625,
+      "pred_return": -0.015893920937400274,
+      "actual_return": -0.016406000638365725,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 154.08,
+      "pred_median": 152.44998168945312,
+      "pred_return": -0.010579038879457991,
+      "actual_return": 0.0012331256490134557,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 154.27,
+      "pred_median": 153.3239288330078,
+      "pred_return": -0.006132567362366004,
+      "actual_return": -0.08258248525312772,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 141.53,
+      "pred_median": 142.8477783203125,
+      "pred_return": 0.009310946939253162,
+      "actual_return": -0.07835794531194806,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 130.44,
+      "pred_median": 122.982666015625,
+      "pred_return": -0.057170607055926026,
+      "actual_return": -0.04860472247776759,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 124.1,
+      "pred_median": 119.48856353759766,
+      "pred_return": -0.03715903676391896,
+      "actual_return": -0.013779210314262658,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 122.39,
+      "pred_median": 116.88999938964844,
+      "pred_return": -0.04493831694053074,
+      "actual_return": 0.1540975569899501,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 141.25,
+      "pred_median": 140.97369384765625,
+      "pred_return": -0.00195614975110614,
+      "actual_return": -0.009982300884955775,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 139.84,
+      "pred_median": 142.2606964111328,
+      "pred_return": 0.01731047204757452,
+      "actual_return": 0.09310640732265463,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 152.86,
+      "pred_median": 155.7300262451172,
+      "pred_return": 0.01877552168727714,
+      "actual_return": 0.0018971608007325447,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 153.15,
+      "pred_median": 154.9653778076172,
+      "pred_return": 0.011853593259008699,
+      "actual_return": -0.006398955272608697,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 152.17,
+      "pred_median": 148.2079315185547,
+      "pred_return": -0.0260371195468575,
+      "actual_return": 0.021291976079385044,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 155.41,
+      "pred_median": 153.49908447265625,
+      "pred_return": -0.01229596246923459,
+      "actual_return": -0.03789974905089755,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 149.52,
+      "pred_median": 150.84922790527344,
+      "pred_return": 0.008889967263733478,
+      "actual_return": 0.01511503477795606,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 151.78,
+      "pred_median": 151.2791290283203,
+      "pred_return": -0.003299980047962059,
+      "actual_return": -0.0251021214916326,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 147.97,
+      "pred_median": 147.44732666015625,
+      "pred_return": -0.003532292625827882,
+      "actual_return": 0.03858890315604513,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 153.68,
+      "pred_median": 152.79782104492188,
+      "pred_return": -0.0057403627998317,
+      "actual_return": -0.027654867256637128,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 149.43,
+      "pred_median": 151.95668029785156,
+      "pred_return": 0.016908788716131662,
+      "actual_return": -0.00013384193267762523,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 149.41,
+      "pred_median": 150.71539306640625,
+      "pred_return": 0.008736985920662965,
+      "actual_return": -0.05053209289873495,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 141.86,
+      "pred_median": 142.9764862060547,
+      "pred_return": 0.007870338404445842,
+      "actual_return": -0.028408289863245506,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 137.83,
+      "pred_median": 137.27149963378906,
+      "pred_return": -0.004052095815214041,
+      "actual_return": -0.038453166944787176,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 132.53,
+      "pred_median": 132.39439392089844,
+      "pred_return": -0.00102321043613951,
+      "actual_return": 0.03048366407605818,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 136.57,
+      "pred_median": 136.1881561279297,
+      "pred_return": -0.002795957179983155,
+      "actual_return": -0.046056967123087045,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 130.28,
+      "pred_median": 131.29795837402344,
+      "pred_return": 0.007813619696219298,
+      "actual_return": -0.04098863985262513,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 124.94,
+      "pred_median": 123.05667114257812,
+      "pred_return": -0.015073866315206241,
+      "actual_return": 0.01616776052505209,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 126.96,
+      "pred_median": 125.21623229980469,
+      "pred_return": -0.013734780247285028,
+      "actual_return": -0.026937618147447884,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 123.54,
+      "pred_median": 122.1328353881836,
+      "pred_return": -0.0113903562555967,
+      "actual_return": -0.019588797150720372,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 121.12,
+      "pred_median": 121.32137298583984,
+      "pred_return": 0.0016625907021123876,
+      "actual_return": -0.02328269484808465,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "SYS",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 118.3,
+      "pred_median": 118.68878936767578,
+      "pred_return": 0.003286469718307483,
+      "actual_return": -0.0028740490278952313,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 737.75,
+      "pred_median": 744.3465576171875,
+      "pred_return": 0.008941453903337893,
+      "actual_return": -0.05055913249745847,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 700.45,
+      "pred_median": 705.1619873046875,
+      "pred_return": 0.006727085880059214,
+      "actual_return": -0.01194946106074668,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 692.08,
+      "pred_median": 690.6761474609375,
+      "pred_return": -0.0020284541368953413,
+      "actual_return": -0.02320540977921637,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 676.02,
+      "pred_median": 668.2774658203125,
+      "pred_return": -0.011453114079002846,
+      "actual_return": -0.10444957249785514,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 605.41,
+      "pred_median": 564.251220703125,
+      "pred_return": -0.06798496770267248,
+      "actual_return": 0.020217703704927148,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 617.65,
+      "pred_median": 590.757080078125,
+      "pred_return": -0.043540710632032686,
+      "actual_return": -0.006524730834615022,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 613.62,
+      "pred_median": 603.3617553710938,
+      "pred_return": -0.01671758519752653,
+      "actual_return": 0.046478276457742496,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 642.14,
+      "pred_median": 655.1800537109375,
+      "pred_return": 0.02030718178424884,
+      "actual_return": -0.015635219734014383,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 632.1,
+      "pred_median": 636.209228515625,
+      "pred_return": 0.006500915228009774,
+      "actual_return": 0.0571270368612562,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 668.21,
+      "pred_median": 667.0167236328125,
+      "pred_return": -0.0017857804689955792,
+      "actual_return": 0.0022148725700004146,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 669.69,
+      "pred_median": 674.155029296875,
+      "pred_return": 0.006667307704870895,
+      "actual_return": -0.03423972285684429,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 646.76,
+      "pred_median": 634.314697265625,
+      "pred_return": -0.01924253623349459,
+      "actual_return": 0.024537695590327147,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 662.63,
+      "pred_median": 670.4479370117188,
+      "pred_return": 0.011798344493486157,
+      "actual_return": -0.029941294538430197,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 642.79,
+      "pred_median": 643.2203369140625,
+      "pred_return": 0.0006694829012003911,
+      "actual_return": 0.024471444795345354,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 658.52,
+      "pred_median": 661.6629028320312,
+      "pred_return": 0.00477267635308154,
+      "actual_return": -0.013439227358318706,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 649.67,
+      "pred_median": 649.5341186523438,
+      "pred_return": -0.00020915441325009,
+      "actual_return": 0.026474979605030313,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 666.87,
+      "pred_median": 667.5973510742188,
+      "pred_return": 0.001090693949673538,
+      "actual_return": -0.015220357790873718,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 656.72,
+      "pred_median": 658.1381225585938,
+      "pred_return": 0.0021594021174833333,
+      "actual_return": 0.05031063466926544,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 689.76,
+      "pred_median": 682.0082397460938,
+      "pred_return": -0.011238344139854806,
+      "actual_return": -0.028778125724889803,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 669.91,
+      "pred_median": 675.547607421875,
+      "pred_return": 0.008415469871885906,
+      "actual_return": -0.029317370990132985,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 650.27,
+      "pred_median": 650.5912475585938,
+      "pred_return": 0.0004940218041640243,
+      "actual_return": 1.5378227505413733e-05,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 650.28,
+      "pred_median": 644.5968627929688,
+      "pred_return": -0.008739523293091023,
+      "actual_return": 0.04127452789567565,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 677.12,
+      "pred_median": 669.89306640625,
+      "pred_return": -0.010673047013454062,
+      "actual_return": 0.003603497164461178,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 679.56,
+      "pred_median": 672.9546508789062,
+      "pred_return": -0.009720038143936849,
+      "actual_return": -0.016922714697745644,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 668.06,
+      "pred_median": 656.3119506835938,
+      "pred_return": -0.017585320654441516,
+      "actual_return": -0.013441906415591287,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 659.08,
+      "pred_median": 656.8234252929688,
+      "pred_return": -0.0034238251912230844,
+      "actual_return": -0.014383686350670666,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 649.6,
+      "pred_median": 656.8009033203125,
+      "pred_return": 0.011085134421663367,
+      "actual_return": -0.021012931034482762,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 635.95,
+      "pred_median": 635.5001220703125,
+      "pred_return": -0.0007074108494182774,
+      "actual_return": -0.008884346253636433,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "MARI",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 630.3,
+      "pred_median": 641.9650268554688,
+      "pred_return": 0.018507102737535863,
+      "actual_return": 0.019228938600666323,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 124.72,
+      "pred_median": 126.91651916503906,
+      "pred_return": 0.01761160331173084,
+      "actual_return": 0.008098139833226492,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 125.73,
+      "pred_median": 126.77633666992188,
+      "pred_return": 0.008322092340108833,
+      "actual_return": 0.013600572655690701,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 127.44,
+      "pred_median": 129.0103302001953,
+      "pred_return": 0.012322113937502488,
+      "actual_return": -0.05398618957940993,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 120.56,
+      "pred_median": 126.3702392578125,
+      "pred_return": 0.048193756285770606,
+      "actual_return": 0.03541804910418045,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 124.83,
+      "pred_median": 126.85719299316406,
+      "pred_return": 0.01623962984189742,
+      "actual_return": -0.03220379716414323,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 120.81,
+      "pred_median": 119.95950317382812,
+      "pred_return": -0.0070399538628580505,
+      "actual_return": -0.05876996937339629,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 113.71,
+      "pred_median": 111.33356475830078,
+      "pred_return": -0.02089908751824121,
+      "actual_return": -0.0263829038782869,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 110.71,
+      "pred_median": 110.65906524658203,
+      "pred_return": -0.0004600736466260358,
+      "actual_return": 0.014723150573570765,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 112.34,
+      "pred_median": 111.42139434814453,
+      "pred_return": -0.008177013101793418,
+      "actual_return": 0.07308171621862192,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 120.55,
+      "pred_median": 121.81267547607422,
+      "pred_return": 0.010474288478425686,
+      "actual_return": -0.46337619245126505,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 64.69,
+      "pred_median": 60.92839813232422,
+      "pred_return": -0.05814811976620471,
+      "actual_return": -0.06152419230174677,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 60.71,
+      "pred_median": 61.78941345214844,
+      "pred_return": 0.017779829552766246,
+      "actual_return": -0.014659858342941812,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 59.82,
+      "pred_median": 60.9791374206543,
+      "pred_return": 0.019377088275732035,
+      "actual_return": -0.034102306920762326,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 57.78,
+      "pred_median": 57.2028923034668,
+      "pred_return": -0.009988018285448375,
+      "actual_return": 0.0266528210453445,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 59.32,
+      "pred_median": 58.763370513916016,
+      "pred_return": -0.009383504485569572,
+      "actual_return": -0.016351989211058626,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 58.35,
+      "pred_median": 59.78963851928711,
+      "pred_return": 0.024672468196865527,
+      "actual_return": 0.030676949443016355,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 60.14,
+      "pred_median": 60.54069519042969,
+      "pred_return": 0.006662706857826439,
+      "actual_return": -0.016627868307283022,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 59.14,
+      "pred_median": 59.15070724487305,
+      "pred_return": 0.00018104911858385364,
+      "actual_return": 0.04227257355427794,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 61.64,
+      "pred_median": 60.441566467285156,
+      "pred_return": -0.019442464839630857,
+      "actual_return": -0.05743024010382869,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 58.1,
+      "pred_median": 59.35514450073242,
+      "pred_return": 0.021603175571986544,
+      "actual_return": -0.02168674698795181,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 56.84,
+      "pred_median": 57.72677993774414,
+      "pred_return": 0.01560133599127611,
+      "actual_return": 0.005629838142153343,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 57.16,
+      "pred_median": 58.05033493041992,
+      "pred_return": 0.01557618842582098,
+      "actual_return": 0.034989503149055246,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 59.16,
+      "pred_median": 58.806549072265625,
+      "pred_return": -0.00597449167907993,
+      "actual_return": -0.027890466531440117,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 57.51,
+      "pred_median": 57.94310760498047,
+      "pred_return": 0.007530996435062942,
+      "actual_return": -0.002782124847852452,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 57.35,
+      "pred_median": 58.342403411865234,
+      "pred_return": 0.01730433150593247,
+      "actual_return": -0.016564952048823023,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 56.4,
+      "pred_median": 57.359012603759766,
+      "pred_return": 0.01700376957020855,
+      "actual_return": -0.02145390070921982,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 55.19,
+      "pred_median": 54.95598602294922,
+      "pred_return": -0.004240151785663726,
+      "actual_return": 0.04040587062873713,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 57.42,
+      "pred_median": 57.498722076416016,
+      "pred_return": 0.0013709870500873134,
+      "actual_return": -0.018112156043190497,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "BAFL",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 56.38,
+      "pred_median": 56.374305725097656,
+      "pred_return": -0.00010099813590536133,
+      "actual_return": 0.008691025186236212,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 2116.55,
+      "pred_median": 2137.176513671875,
+      "pred_return": 0.00974534675385641,
+      "actual_return": -0.015251234320001972,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 2084.27,
+      "pred_median": 2082.003173828125,
+      "pred_return": -0.0010875875831226622,
+      "actual_return": 0.035753525215063364,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 2158.79,
+      "pred_median": 2157.079833984375,
+      "pred_return": -0.0007921872973402078,
+      "actual_return": -0.02760805821779788,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 2099.19,
+      "pred_median": 2096.293701171875,
+      "pred_return": -0.0013797220966778045,
+      "actual_return": -0.019869568738418164,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 2057.48,
+      "pred_median": 2042.5380859375,
+      "pred_return": -0.007262240246563745,
+      "actual_return": -0.07151952874390033,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 1910.33,
+      "pred_median": 1949.9608154296875,
+      "pred_return": 0.020745533719141562,
+      "actual_return": -0.062418535017510046,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 1791.09,
+      "pred_median": 1845.4295654296875,
+      "pred_return": 0.030338824642919926,
+      "actual_return": 0.026213088119525052,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 1838.04,
+      "pred_median": 1826.9576416015625,
+      "pred_return": -0.006029443536831325,
+      "actual_return": -0.01195839045940239,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 1816.06,
+      "pred_median": 1821.8099365234375,
+      "pred_return": 0.0031661599966066323,
+      "actual_return": 0.0694580575531647,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 1942.2,
+      "pred_median": 1982.9273681640625,
+      "pred_return": 0.02096970866237391,
+      "actual_return": 0.034605087014725644,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 2009.41,
+      "pred_median": 2069.744140625,
+      "pred_return": 0.03002579892854107,
+      "actual_return": 0.0377374453197703,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 2085.24,
+      "pred_median": 2105.175048828125,
+      "pred_return": 0.009560074057722412,
+      "actual_return": -0.02553183326619468,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 2032.0,
+      "pred_median": 1984.741943359375,
+      "pred_return": -0.023256917638102892,
+      "actual_return": -0.019857283464566833,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 1991.65,
+      "pred_median": 1925.481201171875,
+      "pred_return": -0.03322310588111621,
+      "actual_return": 0.017206838550950287,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 2025.92,
+      "pred_median": 2015.3402099609375,
+      "pred_return": -0.005222215111683859,
+      "actual_return": 0.0033959879955771655,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 2032.8,
+      "pred_median": 2036.4749755859375,
+      "pred_return": 0.0018078392296032586,
+      "actual_return": -0.008805588351042837,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 2014.9,
+      "pred_median": 1984.202392578125,
+      "pred_return": -0.015235300720569334,
+      "actual_return": 0.01296342250235738,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 2041.02,
+      "pred_median": 2042.21484375,
+      "pred_return": 0.0005854150130817359,
+      "actual_return": 0.0044046604148906265,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 2050.01,
+      "pred_median": 2052.962890625,
+      "pred_return": 0.0014404274247441506,
+      "actual_return": -0.03895102950717322,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 1970.16,
+      "pred_median": 1964.717041015625,
+      "pred_return": -0.0027626989606809316,
+      "actual_return": -0.02027754091038292,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 1930.21,
+      "pred_median": 1916.064697265625,
+      "pred_return": -0.0073283750132757675,
+      "actual_return": 0.004046191865133775,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 1938.02,
+      "pred_median": 1934.2872314453125,
+      "pred_return": -0.001926073288556096,
+      "actual_return": -0.00477807246571238,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 1928.76,
+      "pred_median": 1933.3704833984375,
+      "pred_return": 0.0023903872946542393,
+      "actual_return": 0.020764636346668253,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 1968.81,
+      "pred_median": 1971.356201171875,
+      "pred_return": 0.0012932691178300093,
+      "actual_return": -0.012098678897405013,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 1944.99,
+      "pred_median": 1938.3992919921875,
+      "pred_return": -0.003388556243380414,
+      "actual_return": -0.01861192088391206,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 1908.79,
+      "pred_median": 1927.5672607421875,
+      "pred_return": 0.009837258547135797,
+      "actual_return": -0.039601003777261945,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 1833.2,
+      "pred_median": 1812.3194580078125,
+      "pred_return": -0.011390214920460107,
+      "actual_return": -0.020946977962033597,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 1794.8,
+      "pred_median": 1775.8575439453125,
+      "pred_return": -0.010554076250661626,
+      "actual_return": 0.002005794517495163,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "INDU",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 1798.4,
+      "pred_median": 1793.5201416015625,
+      "pred_return": -0.0027134443941490005,
+      "actual_return": 0.007045151245551606,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-01-22",
+      "horizon": 5,
+      "last_close": 826.86,
+      "pred_median": 828.981201171875,
+      "pred_return": 0.002565369194150069,
+      "actual_return": 0.024175797595723525,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-01-30",
+      "horizon": 5,
+      "last_close": 846.85,
+      "pred_median": 839.0468139648438,
+      "pred_return": -0.009214366222065618,
+      "actual_return": -0.00684891066894977,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-02-10",
+      "horizon": 5,
+      "last_close": 841.05,
+      "pred_median": 834.9059448242188,
+      "pred_return": -0.007305219874895963,
+      "actual_return": -0.048308661791807816,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-02-18",
+      "horizon": 5,
+      "last_close": 800.42,
+      "pred_median": 793.7380981445312,
+      "pred_return": -0.008347994622159294,
+      "actual_return": -0.08674196047075278,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-02-26",
+      "horizon": 5,
+      "last_close": 730.99,
+      "pred_median": 749.4741821289062,
+      "pred_return": 0.025286504779690855,
+      "actual_return": 0.05235365736877373,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-03-06",
+      "horizon": 5,
+      "last_close": 769.26,
+      "pred_median": 728.5580444335938,
+      "pred_return": -0.05291053163612591,
+      "actual_return": 0.06904037646569439,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-03-16",
+      "horizon": 5,
+      "last_close": 822.37,
+      "pred_median": 827.442138671875,
+      "pred_return": 0.006167708782999215,
+      "actual_return": -0.009509101742524728,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-03-26",
+      "horizon": 5,
+      "last_close": 814.55,
+      "pred_median": 809.9714965820312,
+      "pred_return": -0.005620899168827798,
+      "actual_return": 0.002148425511018459,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-04-03",
+      "horizon": 5,
+      "last_close": 816.3,
+      "pred_median": 831.7005004882812,
+      "pred_return": 0.01886622625049772,
+      "actual_return": 0.08208991792233244,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-04-13",
+      "horizon": 5,
+      "last_close": 883.31,
+      "pred_median": 873.20654296875,
+      "pred_return": -0.01143817802498548,
+      "actual_return": 0.00146041593551538,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-04-21",
+      "horizon": 5,
+      "last_close": 884.6,
+      "pred_median": 869.2562255859375,
+      "pred_return": -0.017345437953948162,
+      "actual_return": 0.08921546461677599,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-04-29",
+      "horizon": 5,
+      "last_close": 963.52,
+      "pred_median": 961.1273803710938,
+      "pred_return": -0.002483207021033551,
+      "actual_return": -0.069765028229824,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-05-08",
+      "horizon": 5,
+      "last_close": 896.3,
+      "pred_median": 899.5830688476562,
+      "pred_return": 0.003662912917166361,
+      "actual_return": -0.006147495258284064,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-05-18",
+      "horizon": 5,
+      "last_close": 890.79,
+      "pred_median": 893.0449829101562,
+      "pred_return": 0.0025314416530903827,
+      "actual_return": 0.008801176483795414,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-05-29",
+      "horizon": 5,
+      "last_close": 898.63,
+      "pred_median": 901.4900512695312,
+      "pred_return": 0.0031826794893685673,
+      "actual_return": -0.029122108097882293,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-06-08",
+      "horizon": 5,
+      "last_close": 872.46,
+      "pred_median": 892.3878173828125,
+      "pred_return": 0.022840952459496577,
+      "actual_return": 0.0031749306558466195,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-06-16",
+      "horizon": 5,
+      "last_close": 875.23,
+      "pred_median": 867.1484375,
+      "pred_return": -0.009233644299212806,
+      "actual_return": 0.03457376918067245,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-06-24",
+      "horizon": 5,
+      "last_close": 905.49,
+      "pred_median": 889.8168334960938,
+      "pred_return": -0.017309044278684738,
+      "actual_return": -0.03293244541629403,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-07-06",
+      "horizon": 5,
+      "last_close": 875.67,
+      "pred_median": 872.7075805664062,
+      "pred_return": -0.003383031774062961,
+      "actual_return": 0.058058400995808945,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-07-14",
+      "horizon": 5,
+      "last_close": 926.51,
+      "pred_median": 922.2575073242188,
+      "pred_return": -0.004589796845993255,
+      "actual_return": -0.005223904760876863,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-07-22",
+      "horizon": 5,
+      "last_close": 921.67,
+      "pred_median": 914.2412109375,
+      "pred_return": -0.008060139814141665,
+      "actual_return": 0.04100166003016281,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-07-30",
+      "horizon": 5,
+      "last_close": 959.46,
+      "pred_median": 946.77294921875,
+      "pred_return": -0.013223115899829163,
+      "actual_return": 0.020323932211869122,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-08-07",
+      "horizon": 5,
+      "last_close": 978.96,
+      "pred_median": 973.170166015625,
+      "pred_return": -0.005914270230014562,
+      "actual_return": 0.15018999754841866,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-08-18",
+      "horizon": 5,
+      "last_close": 1125.99,
+      "pred_median": 1124.128662109375,
+      "pred_return": -0.0016530678697190826,
+      "actual_return": -0.02627909661719896,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-08-27",
+      "horizon": 5,
+      "last_close": 1096.4,
+      "pred_median": 1135.0740966796875,
+      "pred_return": 0.0352737109446255,
+      "actual_return": 0.045211601605253504,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-09-04",
+      "horizon": 5,
+      "last_close": 1145.97,
+      "pred_median": 1153.2757568359375,
+      "pred_return": 0.006375172854383271,
+      "actual_return": -0.044433972966133606,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-09-14",
+      "horizon": 5,
+      "last_close": 1095.05,
+      "pred_median": 1107.7122802734375,
+      "pred_return": 0.011563198277190656,
+      "actual_return": 0.032519063056481556,
+      "dir_correct": 1
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-09-22",
+      "horizon": 5,
+      "last_close": 1130.66,
+      "pred_median": 1123.047607421875,
+      "pred_return": -0.006732698227694511,
+      "actual_return": 0.045150619991863206,
+      "dir_correct": 0
+    },
+    {
+      "symbol": "ATRL",
+      "date": "2026-09-30",
+      "horizon": 5,
+      "last_close": 1181.71,
+      "pred_median": 1177.3619384765625,
+      "pred_return": -0.003679465794008241,
+      "actual_return": 0.03129363380186345,
+      "dir_correct": 0
+    }
+  ]
+}
