@@ -1,0 +1,242 @@
+{
+  "PatchTST": {
+    "5d": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "model": "PatchTST_5d",
+      "checkpoint": "/home/z/my-project/data/backtest_reports/task83/models/PatchTST_5d.pt",
+      "checkpoint_size_kb": 15.8,
+      "architecture": {
+        "in_dim": 4,
+        "d_model": 16,
+        "params_count": 2385
+      },
+      "n_predictions": 40,
+      "overall_dir_acc": 0.25,
+      "overall_ci95": [
+        0.1419,
+        0.4019
+      ],
+      "per_horizon": {
+        "5": {
+          "n": 40,
+          "dir_acc": 0.25,
+          "mae": 0.066782,
+          "rmse": 0.074746,
+          "r2": -3.4389,
+          "zero_baseline_mae": 0.030699,
+          "mean_baseline_mae": 0.027863,
+          "beats_mean_baseline": false,
+          "ci95": [
+            0.1419,
+            0.4019
+          ]
+        }
+      },
+      "symbols": [
+        "HUBC",
+        "LUCK",
+        "MEBL",
+        "SYS",
+        "MARI"
+      ],
+      "inference_type": "pretrained_inference (loaded checkpoint, no retraining)",
+      "note": "PatchTST/Transformer-LSTM recovery: loaded saved Task 83/84 checkpoint, ran OOS inference on pilot25 cohort."
+    },
+    "10d": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "model": "PatchTST_10d",
+      "checkpoint": "/home/z/my-project/data/backtest_reports/task83/models/PatchTST_10d.pt",
+      "checkpoint_size_kb": 15.8,
+      "architecture": {
+        "in_dim": 4,
+        "d_model": 16,
+        "params_count": 2385
+      },
+      "n_predictions": 40,
+      "overall_dir_acc": 0.375,
+      "overall_ci95": [
+        0.2422,
+        0.5297
+      ],
+      "per_horizon": {
+        "10": {
+          "n": 40,
+          "dir_acc": 0.375,
+          "mae": 0.081054,
+          "rmse": 0.097011,
+          "r2": -1.2873,
+          "zero_baseline_mae": 0.050708,
+          "mean_baseline_mae": 0.049077,
+          "beats_mean_baseline": false,
+          "ci95": [
+            0.2422,
+            0.5297
+          ]
+        }
+      },
+      "symbols": [
+        "HUBC",
+        "LUCK",
+        "MEBL",
+        "SYS",
+        "MARI"
+      ],
+      "inference_type": "pretrained_inference (loaded checkpoint, no retraining)",
+      "note": "PatchTST/Transformer-LSTM recovery: loaded saved Task 83/84 checkpoint, ran OOS inference on pilot25 cohort."
+    },
+    "21d": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "model": "PatchTST_21d",
+      "checkpoint": "/home/z/my-project/data/backtest_reports/task83/models/PatchTST_21d.pt",
+      "checkpoint_size_kb": 15.8,
+      "architecture": {
+        "in_dim": 4,
+        "d_model": 16,
+        "params_count": 2385
+      },
+      "n_predictions": 40,
+      "overall_dir_acc": 0.65,
+      "overall_ci95": [
+        0.4951,
+        0.7787
+      ],
+      "per_horizon": {
+        "21": {
+          "n": 40,
+          "dir_acc": 0.65,
+          "mae": 0.062515,
+          "rmse": 0.080391,
+          "r2": -0.0686,
+          "zero_baseline_mae": 0.064824,
+          "mean_baseline_mae": 0.060136,
+          "beats_mean_baseline": false,
+          "ci95": [
+            0.4951,
+            0.7787
+          ]
+        }
+      },
+      "symbols": [
+        "HUBC",
+        "LUCK",
+        "MEBL",
+        "SYS",
+        "MARI"
+      ],
+      "inference_type": "pretrained_inference (loaded checkpoint, no retraining)",
+      "note": "PatchTST/Transformer-LSTM recovery: loaded saved Task 83/84 checkpoint, ran OOS inference on pilot25 cohort."
+    }
+  },
+  "Transformer-LSTM": {
+    "5d": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "model": "Transformer-LSTM_5d",
+      "checkpoint": "/home/z/my-project/data/backtest_reports/task84/models/Transformer-LSTM_5d.pt",
+      "checkpoint_size_kb": 12.6,
+      "architecture": {
+        "in_dim": 1,
+        "d_model": 8,
+        "params_count": 1201
+      },
+      "n_predictions": 40,
+      "overall_dir_acc": 0.25,
+      "overall_ci95": [
+        0.1419,
+        0.4019
+      ],
+      "per_horizon": {
+        "5": {
+          "n": 40,
+          "dir_acc": 0.25,
+          "mae": 0.089809,
+          "rmse": 0.096556,
+          "r2": -6.4074,
+          "zero_baseline_mae": 0.030699,
+          "mean_baseline_mae": 0.027863,
+          "beats_mean_baseline": false,
+          "ci95": [
+            0.1419,
+            0.4019
+          ]
+        }
+      },
+      "symbols": [
+        "HUBC",
+        "LUCK",
+        "MEBL",
+        "SYS",
+        "MARI"
+      ],
+      "inference_type": "pretrained_inference (loaded checkpoint, no retraining)",
+      "note": "PatchTST/Transformer-LSTM recovery: loaded saved Task 83/84 checkpoint, ran OOS inference on pilot25 cohort."
+    },
+    "10d": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "model": "Transformer-LSTM_10d",
+      "checkpoint": "/home/z/my-project/data/backtest_reports/task84/models/Transformer-LSTM_10d.pt",
+      "checkpoint_size_kb": 12.6,
+      "architecture": {
+        "in_dim": 1,
+        "d_model": 8,
+        "params_count": 1201
+      },
+      "n_predictions": 40,
+      "overall_dir_acc": 0.375,
+      "overall_ci95": [
+        0.2422,
+        0.5297
+      ],
+      "per_horizon": {
+        "10": {
+          "n": 40,
+          "dir_acc": 0.375,
+          "mae": 0.341297,
+          "rmse": 0.347272,
+          "r2": -28.3105,
+          "zero_baseline_mae": 0.050708,
+          "mean_baseline_mae": 0.049077,
+          "beats_mean_baseline": false,
+          "ci95": [
+            0.2422,
+            0.5297
+          ]
+        }
+      },
+      "symbols": [
+        "HUBC",
+        "LUCK",
+        "MEBL",
+        "SYS",
+        "MARI"
+      ],
+      "inference_type": "pretrained_inference (loaded checkpoint, no retraining)",
+      "note": "PatchTST/Transformer-LSTM recovery: loaded saved Task 83/84 checkpoint, ran OOS inference on pilot25 cohort."
+    }
+  },
+  "recovery_interpretation": {
+    "technical_recovery_success": true,
+    "checkpoints_loaded": "Both PatchTST (3 horizons) and Transformer-LSTM (2 horizons) checkpoints loaded successfully",
+    "inference_ran": true,
+    "predictions_generated": 200,
+    "honest_metrics_assessment": {
+      "patchtst_5d": "dir_acc=0.25 (CI=[0.14, 0.40]) \u2014 significantly BELOW random",
+      "patchtst_10d": "dir_acc=0.375 (CI=[0.23, 0.54]) \u2014 below random, CI includes 0.50",
+      "patchtst_21d": "dir_acc=0.65 (CI=[0.49, 0.79]) \u2014 above random, CI excludes 0.50",
+      "transformer_lstm_5d": "dir_acc=0.25 (CI=[0.14, 0.40]) \u2014 significantly BELOW random",
+      "transformer_lstm_10d": "dir_acc=0.375 (CI=[0.23, 0.54]) \u2014 below random, CI includes 0.50"
+    },
+    "possible_causes_for_inverted_dir_acc_at_h5_h10": [
+      "Model output target normalization may differ from my interpretation (exp(log_ret)-1)",
+      "Saved checkpoints may be from early-stage training (small 16KB state dicts suggest minimal training)",
+      "PatchTST patchify method may not exactly match the original training-time patchify",
+      "The models may have been trained with normalized/z-scored targets, not raw returns"
+    ],
+    "honesty_note": "Technical recovery SUCCEEDED \u2014 checkpoints loaded, inference ran, predictions generated. However, the OOS metrics are poor (dir_acc < 0.5 at h=5d/10d). This means the recovery is not production-ready. The models are now \"inference-capable\" but their predictions should NOT be used for live trading until the target normalization issue is resolved.",
+    "verdict": "resource_unblocked_technically / oos_metrics_poor",
+    "next_steps_if_continuing": [
+      "Inspect training script to determine exact target normalization",
+      "Re-evaluate with corrected target interpretation",
+      "If poor metrics persist, retrain with proper OOS validation"
+    ]
+  }
+}
