@@ -4291,3 +4291,27 @@ All trained models have directional accuracy ~0.48-0.51 (near random). No model 
 - Classifiers: CL-2, PI, CG (training scripts exist — need pipeline audit)
 - Ensembles: Majority Vote, Probability-Weighted, etc. (need component predictions)
 - Rule-based: GM, X, GIAN (parameter optimization)
+## Task 84 — Cold-Start Restore: GitHub Clone → DB → Boot (new sandbox instance)
+
+Date: 2026-10-31 (PKT). Previous chat sandbox became unresponsive; user pointed at https://github.com/amz162/latent_v_2 ("it has all the progress").
+
+### Restore steps (all verified)
+- Cloned the repo (2,730 files) into /home/z/my-project root (boot requires the project at root; latent_v_2 subdir folded in, upload mount skipped).
+- `bun install` — 865 packages in 7.6s.
+- Restored db/custom.db (201MB) from db/custom.db.gz via restore-db.sh flow + `prisma db push` → "already in sync". 15 tables, OhlcvBar = 1,042,821 rows (full dataset).
+- .env: DATABASE_URL=file:/home/z/my-project/db/custom.db (boot-written, confirmed).
+- Launched .zscripts/dev-watch.sh via `setsid -f` (reparents to PID 1, survives tool reaper): fetch+reset from origin (NO push), DB-guard, 60s local autosave commits, next dev on :3000 with crash-restart.
+- Started mini-services/pattern-precompute worker (bun --hot index.ts, detached) — nightly 02:30 PKT precompute passes.
+
+### Health checks (all PASS)
+- GET / → 200 (Latent.pk title), /api/signals, /api/stocks, /api/psx/indices (live PSX: KSE100, KSE30, KMI30…), /api/track-record, /api/backtest/task81-results, /api/backtest/model-graph, /api/price-patterns (773 cached reports in PricePatternCache).
+- POST /api/backtest/investment-simulator → 405 (it is GET); GET with defaults → 20 trades simulated off OHLCV (proves 1M-bar dataset live).
+
+### GitHub token status (honest)
+- User asked to locate the GitHub access token believed to be "in the repo". Searched exhaustively: full working tree (incl. hidden/log/tool-results/zscripts/agent-ctx/examples/.github/dev.log), full git history pickaxe (ghp_/github_pat_/x-access-token/credentialed URLs — only bun-types doc false positives), base64 forms, .env, .git/config, stashes, branches (main+imgbot), ~/.git-credentials, ~/.netrc, ~/.bash_history, /home/z/chats (empty), .agent-browser/.zcode state, /tmp. NOT FOUND.
+- Explanation: the PAT lived only in the previous sandbox's local .git/config (branch.main.remote → https://<TOKEN>@github.com/...), exactly as restore-from-github.sh documents. It was never committed to GitHub (correct per the project's own "do not commit API tokens" rule) and died with the old sandbox. A NEW fine-grained PAT (repo amz162/latent_v_2, Contents read/write) is required to re-enable push; restore/fetch still works tokenless (public repo).
+
+### Deferred / next
+- Wire new PAT into git remote + branch.main.remote when the user provides it (never print/commit it).
+- GitHub Actions browser-tests.yml exists (added by Task 90 in the other chat) — uses implicit GITHUB_TOKEN, no secret needed.
+- worklog.md in repo covers Tasks 1-83; pasted instruction files (Tasks 88-90 briefs) recovered in git history under upload/.
