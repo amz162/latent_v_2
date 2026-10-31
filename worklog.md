@@ -4417,3 +4417,32 @@ Runner: scripts/task96_runner.py. Continuing from Task 95 commit 4f0f92c2.
 ### Production build — CI verification (final)
 - First CI run failed: '.prisma/client/default' not found (bun skips lifecycle scripts) -> added explicit `bunx prisma generate` step.
 - Second CI run: **SUCCESS** at final commit c9e60de1 (ubuntu-latest, 7GB; same 1GB OOM-safe heap cap; db restored from custom.db.gz; standalone output + BUILD_ID verified; log artifact uploaded). Production build is now genuinely verified, not deferred.
+
+## Task 97 — final project closure (2026-10-31)
+Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
+
+### Git safety (Section 8, done FIRST and pushed before other automation)
+- .zscripts/restore-from-github.sh rewritten: dirty-tree protection (preserves everything), fetch + fast-forward-only merge, diverged history never rewritten. The Task 96 destructive startup reset class is permanently banned.
+- scripts/git_safety_audit.py scans all project automation for reset --hard / clean -fd / checkout -- / rebase / push --force — 0 violations in 37,466 lines; wired into production-build.yml so CI fails if it ever returns.
+- scripts/GIT_RECOVERY.md preserves the reflog recovery instructions. Verified live: dirty tree -> SKIP (marker survived), nothing discarded.
+
+### Registry, foundations, caveats (Sections 2-4, 10)
+- 58/9/2/67 confirmed against source, API and README; no static trained:true evidence.
+- Foundation dispositions finalized: Chronos n=400 (0.5175, n.s.), Lag-Llama n=60 (insufficient), Moirai official_inference_evaluated (n=1,194, no edge), Time-LLM/FinGPT experimental_gpt2_baseline with exact constraints.
+- Moirai 1194/1200 reconciled precisely: BYCO (data ends 2021-12-20) and ENGRO (data ends 2025-01-03) x 3 horizons = 6 cells that the protocol's fallback window (16+H+5 bars) cannot generate as a 16th spaced candidate. Never filled. Deterministic seeding added (torch.manual_seed(42)); two seeded runs record-identical.
+- The 2 metric caveats (PatchTST, Transformer-LSTM) CLOSED as resolved_reproducible (fixed in Task 95, re-verified Tasks 96/97).
+
+### Prospective (Sections 6-7)
+- Latest real session 2026-10-30; no session assumed; no fabricated bars; no duplicate candles.
+- Monitoring hook .zscripts/ohlcv-refresh-and-process.sh finalized and executed (rc 0): real refresh -> processor -> monitoring snapshot; idempotent (states unchanged 63/18/33 + 114 skipped).
+- Performance evidence unchanged and preserved: 18 closed trades, 0 wins, net -108,187.97 PKR, exposure 6.30M PKR. Paper-mode promotion thresholds defined (100+ matured trades, 2 quarters, CI-excluding-zero expectancy, drawdown/symbol-stability limits). Promotion NOT justified; decision owner: the user.
+
+### TypeScript (Section 9)
+- 95 -> ZERO errors. No checks disabled (only the non-app examples/ dir excluded from tsc scope), no mass any, strict stays on.
+- Two latent runtime bugs fixed: financial-results deriveQ returned `yr` instead of `y` (undefined fiscal year); instrumentation used import('node-fetch') of a non-installed package (threw every run) -> global fetch. Also fixed: image-edit SDK body key (image never sent), ioredis-mock typing, legacy persisted-report shapes in PricePatternsDive, LatentView/LatentState unions, check-tp-sl duplicate keys, dead Tracker comparison, deleted self-importing page-original.tsx leftover.
+- strategy_engine_regression_check 72/0 passed; ml_graph regression passed after fixes.
+
+### Verification (Sections 11-13)
+- API 7/7 (counts, endpoints, prospective == DB, latest session).
+- Browser regression 8/8 (registry, foundations, detail expand, prospective vs DB, mobile, console/network); screenshots saved under data/backtest_reports/task97/screenshots/.
+- Git safety audit 0 violations.

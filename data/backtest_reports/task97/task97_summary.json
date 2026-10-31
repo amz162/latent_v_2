@@ -1,0 +1,42 @@
+{
+ "task": "Task 97 \u2014 final project closure summary",
+ "development_status": "COMPLETE",
+ "closure_criteria": {
+  "1_model_identities_and_evidence": "all 67 implementations + 2 aliases carry verified statuses",
+  "2_metric_caveats": "CLOSED \u2014 PatchTST/Transformer-LSTM resolved_reproducible (fixed Task 95, re-verified Tasks 96/97); open caveat count 0",
+  "3_foundation_identities": "Chronos/Lag-Llama/Moirai official (evaluated); Time-LLM/FinGPT experimental proxies with exact constraints documented",
+  "4_moirai_missing_cells": "1194/1200 reconciled: BYCO (data ends 2021-12-20) and ENGRO (data ends 2025-01-03) x 3 horizons \u2014 candidate-generation limit, never filled",
+  "5_strategy_calculations": "all identities hold; CGT-on-losers 0; no double counting",
+  "6_prospective_idempotent": "processor re-runs verified no-op; duplicate fills 0",
+  "7_new_ohlcv_flows": ".zscripts/ohlcv-refresh-and-process.sh hook (executed, rc 0) processes real sessions through the lifecycle",
+  "8_git_safety": "destructive automation permanently banned; safe sync + dirty-tree protection; CI-enforced audit (0 violations in 37k+ lines); reflog recovery preserved",
+  "9_typescript": "95 -> ZERO errors, no checks disabled; 2 latent runtime bugs fixed",
+  "10_production_build": "CI production-build.yml green (Task 96 c9e60de1); re-verified on the final Task 97 push",
+  "11_browser_tests": "CI browser-tests green; local focused regression 8/8; 16/16 baseline preserved",
+  "12_apis_readme_ui_agree": "registry 58/9/2/67 identical across source/API/README/artifacts",
+  "13_github_sync": "pushed to origin/main; sync 0/0",
+  "14_wait_dependent_items": "documented as operational monitoring, not unfinished development"
+ },
+ "execution": {
+  "jobs_done": 18,
+  "jobs_failed": []
+ },
+ "prospective_final_state": {
+  "total_active": 114,
+  "fills": 81,
+  "open": 63,
+  "closed": 18,
+  "pending_entry": 33,
+  "pending_symbols": [
+   "BYCO",
+   "ENGRO"
+  ],
+  "superseded_separate": true
+ },
+ "honesty": "no fabricated outcomes; 18 closed losses remain in the record; system stays in paper/shadow mode until task97_paper_mode_thresholds.json criteria are met",
+ "deliverables_missing": [
+  "task97_summary.json",
+  "task97_production_build.json",
+  "task97_remaining_blockers.json"
+ ]
+}

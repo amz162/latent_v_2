@@ -1,0 +1,25 @@
+{
+ "task": "Task 97 \u2014 remaining items (honest closure list)",
+ "software_development_blockers": [],
+ "external_or_resource_items": [
+  {
+   "component": "Official Time-LLM",
+   "status": "resource_blocked_repo_unreachable",
+   "detail": "anonymous github/codeload egress blocked in this sandbox; GPT-2 backbone stack installable but official model code unobtainable; experimental_gpt2_baseline preserved"
+  },
+  {
+   "component": "Official FinGPT",
+   "status": "resource_blocked",
+   "detail": "official LoRA adapters require >= 8GB RAM (6B-13B bases); sandbox ~1.4GB free; no cloud GPU purchase per task rules; experimental_gpt2_baseline preserved"
+  },
+  {
+   "component": "Local production build",
+   "status": "memory_blocked_on_sandbox_cgroup",
+   "detail": "4GB cgroup OOM-kills webpack workers (diagnosed in Task 96); the proven CI route (production-build.yml, 7GB runner) builds every push \u2014 see task97_production_build.json"
+  }
+ ],
+ "naturally_ongoing_operational_items": [
+  "prospective paper trades mature as real PSX sessions arrive (next: Monday 2026-11-02); the .zscripts/ohlcv-refresh-and-process.sh hook processes each real session idempotently",
+  "paper-mode promotion evidence accumulation per task97_paper_mode_thresholds.json (currently 18 closed losses \u2014 promotion NOT justified)"
+ ]
+}
