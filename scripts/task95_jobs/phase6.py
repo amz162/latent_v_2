@@ -71,37 +71,35 @@ def p6_moirai_attempt(ctx):
     hf_cache = Path.home() / ".cache/huggingface/hub/models--Salesforce--moirai-1.1-R-small"
     result["prerequisites"] = {"disk_free_gb": round(disk_free_gb, 2), "hf_checkpoint_cached": hf_cache.exists()}
     steps.append("prerequisites checked")
-    try:
-        # step 1: venv + pinned deps (bounded; uv caches make retries cheap)
-        if not (venv / "bin/python").exists():
-            r = sh(f"uv venv {venv} --python 3.12", t=60)
-            steps.append(f"venv created rc={r.returncode}")
-        r = sh(f"uv pip install --python {venv}/bin/python "
-               f"'torch==2.4.1' 'numpy>=2.0' 'uni2ts' 'lightning' 'gluonts==0.14.4' 'pandas<2.2' "
-               f"--index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple",
-               t=135)
-        result["install"] = {"rc": r.returncode, "tail": (r.stdout or r.stderr).strip().splitlines()[-4:]}
-        steps.append(f"deps installed rc={r.returncode}")
-    except subprocess.TimeoutExpired:
-        result["install"] = {"rc": "timeout", "note": "install exceeded 135s — resumable: rerun job (uv caches downloads)"}
-        steps.append("install timeout")
-    except Exception as e:
-        result["install"] = {"rc": "error", "error": str(e)[:300]}
-        steps.append("install error")
-    # step 2: try import chain (only if install fully succeeded)
-    try:
-        if (venv / "bin/python").exists() and result.get("install", {}).get("rc") == 0:
-            probe = sh(f"{venv}/bin/python -c \"import uni2ts, gluonts, lightning, numpy, torch; "
-                       f"print('uni2ts', uni2ts.__version__ if hasattr(uni2ts,'__version__') else 'ok'); "
-                       f"print('numpy', numpy.__version__); print('torch', torch.__version__)\"", t=60)
-            result["import_probe"] = {"rc": probe.returncode, "out": probe.stdout.strip()[:300],
-                                      "err": probe.stderr.strip().splitlines()[-3:] if probe.returncode else []}
-            steps.append(f"import probe rc={probe.returncode}")
-    except Exception as e:
-        result["import_probe"] = {"error": str(e)[:200]}
+    # step 1: env exists? (installed manually: torch==2.4.1+cpu from cpu index, then uni2ts+lightning
+    # from pypi with torch==2.4.1.* constraint — resolver settles on numpy 1.26 + gluonts 0.14.4)
+    probe_rc = None
+    if (venv / "bin/python").exists():
+        probe = sh(f"{venv}/bin/python -c \"import uni2ts, gluonts, lightning, numpy, torch; "
+                   f"print('numpy', numpy.__version__, '| torch', torch.__version__)\"", t=90)
+        probe_rc = probe.returncode
+        result["import_probe"] = {"rc": probe_rc, "out": probe.stdout.strip()[:200],
+                                  "err": probe.stderr.strip().splitlines()[-3:] if probe_rc else []}
+        steps.append(f"import probe rc={probe_rc}")
+    if probe_rc != 0:
+        try:
+            if not (venv / "bin/python").exists():
+                sh(f"uv venv {venv} --python 3.12", t=60)
+            r = sh(f"uv pip install --python {venv}/bin/python 'torch==2.4.1' "
+                   f"--index-url https://download.pytorch.org/whl/cpu", t=135)
+            steps.append(f"torch cpu rc={r.returncode}")
+            r = sh(f"uv pip install --python {venv}/bin/python 'uni2ts' 'lightning' 'torch==2.4.1.*' "
+                   f"--index-url https://pypi.org/simple", t=135)
+            result["install"] = {"rc": r.returncode, "tail": (r.stdout or r.stderr).strip().splitlines()[-3:]}
+            steps.append(f"uni2ts install rc={r.returncode}")
+        except subprocess.TimeoutExpired:
+            result["install"] = {"rc": "timeout", "note": "resumable — rerun job (uv caches downloads)"}
+            steps.append("install timeout")
+        except Exception as e:
+            result["install"] = {"rc": "error", "error": str(e)[:300]}
     result["steps"] = steps
     if result.get("import_probe", {}).get("rc") == 0:
-        result["status"] = "env_recovered — inference attempt required next (resumable job)"
+        result["status"] = "env_recovered — run p6_moirai_inference for real forecasts"
     elif result.get("install", {}).get("rc") == "timeout":
         result["status"] = "install_in_progress — rerun p6_moirai_attempt to resume from uv cache"
     else:
