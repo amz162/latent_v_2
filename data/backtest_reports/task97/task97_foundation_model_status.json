@@ -1,0 +1,42 @@
+{
+ "task": "Task 97 Section 3 \u2014 final foundation-model dispositions (identity-honest)",
+ "dispositions": {
+  "Chronos (amazon/chronos-t5-tiny, official)": {
+   "result": "official_pretrained_inference_evaluated",
+   "n": 400,
+   "dir_acc": 0.5175,
+   "verdict": "no statistically significant directional advantage",
+   "retrained": false
+  },
+  "Lag-Llama (official checkpoint)": {
+   "result": "official_pretrained_inference_evaluated",
+   "n": 60,
+   "verdict": "insufficient evidence for a reliable predictive edge at n=60; sample expansion not performed in Task 97 (official pipeline stays as evaluated; no resource to grow n honestly within budget)",
+   "retrained": false
+  },
+  "Moirai (Salesforce/moirai-1.1-R-small, official)": {
+   "result": "official_inference_evaluated",
+   "n": 1194,
+   "symbols": 25,
+   "horizons": [
+    5,
+    10,
+    21
+   ],
+   "verdict": "no directional edge; negative R2; see task97_moirai_reconciliation.json",
+   "fine_tuned": false
+  },
+  "Time-LLM (official thuml repo)": {
+   "result": "resource_blocked_repo_unreachable",
+   "constraint": "anonymous github/codeload egress blocked in sandbox; GPT-2 backbone stack installable but official model code unobtainable; exact requirement: official repo + transformers + time-mark data providers",
+   "proxy_kept": "experimental_gpt2_baseline (not relabeled)"
+  },
+  "FinGPT (official AI4Finance-Foundation)": {
+   "result": "resource_blocked",
+   "constraint": "official LoRA adapters sit on 6B-13B bases; >= 8GB RAM fp16 (>= 13GB fp32); sandbox ~1.4GB free; no cloud GPU purchase per task rules",
+   "proxy_kept": "experimental_gpt2_baseline (not relabeled)"
+  }
+ },
+ "task96_constraints_preserved": "both models stay experimental_gpt2_baseline; no relabeling without a faithful official-architecture run producing real forecasts/scores",
+ "honesty": "no foundation family is claimed fine-tuned or significantly predictive; every family has exactly one explicit disposition"
+}

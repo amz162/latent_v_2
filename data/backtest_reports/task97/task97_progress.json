@@ -34,12 +34,28 @@
   },
   "p3_moirai_reconciliation": {
    "status": "done",
-   "runs": 3,
-   "started": "2026-10-31T20:30:08Z",
+   "runs": 4,
+   "started": "2026-10-31T20:31:35Z",
    "error": null,
-   "finished": "2026-10-31T20:30:18Z",
-   "seconds": 9.7,
+   "finished": "2026-10-31T20:31:49Z",
+   "seconds": 14.4,
    "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task97_runner.py\", line 89, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task97_jobs/phase3.py\", line 50, in p3_moirai_reconciliation\n    idxs = list(range(sub.index[0] if hasattr(sub, \"index\") else 0 + 5, 0, 0))  # placeholder removed below\n                      ~~~~~~~~~^^^\nTypeError: 'builtin_function_or_method' object is not subscriptable\n"
+  },
+  "p3_foundation_status": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T20:31:30Z",
+   "error": null,
+   "finished": "2026-10-31T20:31:30Z",
+   "seconds": 0.0
+  },
+  "p3_lagllama_verify": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T20:31:30Z",
+   "error": null,
+   "finished": "2026-10-31T20:31:30Z",
+   "seconds": 0.0
   }
  },
  "history": []

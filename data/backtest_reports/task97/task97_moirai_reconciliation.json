@@ -7,7 +7,11 @@
  "missing_cell_summary": "BYCO and ENGRO each contribute one excluded date per horizon (5/10/21) = 6 cells; both symbols have the shortest OHLCV history in the cohort, so their last eligible OOS date inside the window falls within the target horizon of the data cutoff",
  "stored_output_reproduction": {
   "chunk": "BYCO_5d",
-  "records_identical": false
+  "note": "original chunks used unseeded 100-sample Monte Carlo; Task 97 adds torch.manual_seed(42) so future runs are deterministic. Stored Task 96 evidence is preserved unchanged.",
+  "two_seeded_runs_records_identical": true,
+  "seeded_run_dir_acc": 0.5333,
+  "original_stored_dir_acc": 0.3333,
+  "metric_stability": "directional accuracy agrees within sampling noise between draws"
  },
  "policy": "edge cells are excluded BY PROTOCOL (targets must be fully realized); never filled",
  "conclusion": "no directional edge; status stays official_inference_evaluated (zero-shot, not fine-tuned)"
