@@ -1,0 +1,11 @@
+{
+  "status": "experimental_gpt2_baseline",
+  "model": "Time-LLM",
+  "previous_status": "family_faithful_local_model_trained",
+  "backbone": "GPT-2 small (124M params)",
+  "approach": "prompt-based price forecasting (experimental, NOT official Time-LLM)",
+  "n": 4,
+  "dir_acc": 0.5,
+  "note": "n=4 is insufficient evidence. This is a GPT-2 prompt experiment, NOT the official Time-LLM (which reprograms LLMs for time-series). Official Time-LLM needs a frozen LLM backbone + reprogramming layer.",
+  "official_implementation": "Requires LLM backbone (e.g., GPT-2/GPT-Neo) + time-series reprogramming layer + prompt-as-query mechanism. Not feasible in 4GB CPU sandbox without the official repo."
+}

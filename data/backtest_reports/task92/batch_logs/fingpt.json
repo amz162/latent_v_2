@@ -1,0 +1,12 @@
+{
+  "status": "experimental_gpt2_baseline",
+  "model": "FinGPT",
+  "previous_status": "family_faithful_local_model_trained",
+  "renamed_implementation": "gpt2_financial_sentiment_proxy",
+  "backbone": "GPT-2 small (124M params)",
+  "approach": "sentiment word-count from GPT-2 generated financial commentary (experimental proxy, NOT official FinGPT)",
+  "n": 21,
+  "dir_acc": 0.7619,
+  "note": "dir_acc=0.7619 on n=21 is NOT a proven predictive edge. Small sample, possible momentum continuation effect. This is a GPT-2 sentiment experiment, NOT official FinGPT (which uses a fine-tuned LLaMA with financial instruction data).",
+  "official_implementation": "Requires fine-tuned LLaMA/GPT model with financial instruction data. Not feasible in 4GB CPU sandbox."
+}

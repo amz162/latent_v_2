@@ -1,0 +1,35 @@
+{
+  "chronos": {
+    "status": "official_pretrained_inference_oos_evaluated",
+    "official": true,
+    "n": 172,
+    "dir_acc": 0.4767
+  },
+  "lag_llama": {
+    "status": "official_pretrained_inference_oos_evaluated",
+    "official": true,
+    "n": 5,
+    "dir_acc": 0.6,
+    "insufficient_samples": true
+  },
+  "moirai": {
+    "status": "dependency_blocked_after_attempts",
+    "official": true,
+    "model_loaded": true,
+    "inference_completed": false
+  },
+  "time_llm": {
+    "status": "experimental_gpt2_baseline",
+    "official": false,
+    "n": 4,
+    "dir_acc": 0.5,
+    "note": "GPT-2 proxy, NOT official Time-LLM"
+  },
+  "fingpt": {
+    "status": "experimental_gpt2_baseline",
+    "official": false,
+    "n": 21,
+    "dir_acc": 0.7619,
+    "note": "GPT-2 sentiment proxy, NOT official FinGPT, n=21 insufficient"
+  }
+}
