@@ -107,6 +107,14 @@ CURATED = {
     "LSECLR": S_RIGHTS,           # LSE Capital right issue
     "LSEFSLR": S_RIGHTS,          # LSE Financial Services right issue
     "LSEVLR": S_RIGHTS,           # LSE Ventures right issue
+    # final batch (dps.psx quotes recovered after rate-limit cooldown)
+    "KASBM": S_MOD,               # "KASBM - Stock quote for KASB Modaraba"
+    "PAKMI": S_MOD,               # "PAKMI - Stock quote for First Pak Modaraba"
+    "DOMF": S_FUND,               # "DOMF - Stock quote for Dominion Stock Fund Limited"
+    "BIPLS": S_INV,               # "BIPL Securities Limited" (dps.psx quote)
+    "BRR": "PROPERTY",            # "BRR Guardian Limited" (real estate development/marketing)
+    "JOVC": S_INV,                # "Javed Omer Vohra & Company Limited" (securities firm)
+    "AEL": "TEXTILE COMPOSITE",   # "AEL Textile Limited" (name-derived textile grouping)
 }
 # populated by CURATED.update({...}) blocks appended during curation
 
@@ -149,6 +157,10 @@ def main():
             sectors[s] = cat
             resolved_by["curated" if s in CURATED else "pattern"].append(s)
         else:
+            # searched online repeatedly (batches 1-5); no authoritative category
+            # surfaced for these (suspended/delisted obscurities) — "Others" is the
+            # honest terminal state, matching the UI's existing Others convention
+            sectors[s] = "Others"
             resolved_by["unresolved"].append(s)
     artifact = {
         "generated_at": "2026-10-31",
