@@ -5177,3 +5177,15 @@ Error: listen EADDRINUSE: address already in use :::3000
 }
 [?25h
 [watchdog] next dev exited (code=1) at Sat Oct 31 20:23:00 UTC 2026 — restarting in 2s
+⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use :::3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+    at new Promise (<anonymous>) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+[?25h
+[watchdog] next dev exited (code=1) at Sat Oct 31 20:23:03 UTC 2026 — restarting in 2s
