@@ -1,6 +1,6 @@
 {
   "task": "Task 98 \u2014 GM pillars backtest (production definitions + AskAnalyst data-enriched)",
-  "generated_at": "2026-10-31T21:48:01.615525+00:00",
+  "generated_at": "2026-10-31T21:48:42.926660+00:00",
   "universe": "pilot25",
   "evaluation": "task83 batch6 rule-model layout (range(50, len-h), target_{h}d actuals), em() metrics",
   "trackA_production": {
@@ -100,7 +100,33 @@
           "n": 58295
         }
       },
-      "signal_source": "AskAnalyst filings (data/askanalyst/filings): 7d/31d event intensity + keyword weights, 1-bar lag"
+      "signal_source": "AskAnalyst filings (data/askanalyst/filings): 7d/31d event intensity + keyword weights, centered on trailing 180-bar mean, 1-bar lag",
+      "research_note": "dir_acc << 0.5 means filing-intensity spikes are followed by NEGATIVE forward returns in this universe (sell-the-news pattern); see inverted variant"
+    },
+    "Announcements Engine (GM) \u2014 contrarian variant": {
+      "status": "rule_based_data_enriched_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.046744,
+          "r2": -0.0011,
+          "directional_accuracy": 0.2637,
+          "n": 58695
+        },
+        "10d": {
+          "mae": 0.067428,
+          "r2": -0.0018,
+          "directional_accuracy": 0.2607,
+          "n": 58570
+        },
+        "21d": {
+          "mae": 0.102202,
+          "r2": -0.0038,
+          "directional_accuracy": 0.2525,
+          "n": 58295
+        }
+      },
+      "signal_source": "inverted filings-intensity score (contrarian)",
+      "research_note": "experimental: one-sided score persists (intensity stays above/below its 180d mean for long stretches), so treat dir_acc with caution"
     },
     "Fundamental Engine (GM)": {
       "status": "rule_based_data_enriched_oos_evaluated",

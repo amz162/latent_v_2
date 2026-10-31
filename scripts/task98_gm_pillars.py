@@ -294,7 +294,16 @@ def main():
     trackB["Announcements Engine (GM)"] = {
         "status": "rule_based_data_enriched_oos_evaluated" if ok else "failed_after_attempts",
         "metrics": metrics,
-        "signal_source": "AskAnalyst filings (data/askanalyst/filings): 7d/31d event intensity + keyword weights, 1-bar lag",
+        "signal_source": "AskAnalyst filings (data/askanalyst/filings): 7d/31d event intensity + keyword weights, centered on trailing 180-bar mean, 1-bar lag",
+        "research_note": "dir_acc << 0.5 means filing-intensity spikes are followed by NEGATIVE forward returns in this universe (sell-the-news pattern); see inverted variant",
+    }
+    df["_predB_ann_inv"] = -df["_predB_ann"]
+    metrics, ok = evaluate_pred_arrays(df, "_predB_ann_inv", "B/Announcements (filings, contrarian)")
+    trackB["Announcements Engine (GM) — contrarian variant"] = {
+        "status": "rule_based_data_enriched_oos_evaluated" if ok else "failed_after_attempts",
+        "metrics": metrics,
+        "signal_source": "inverted filings-intensity score (contrarian)",
+        "research_note": "experimental: one-sided score persists (intensity stays above/below its 180d mean for long stretches), so treat dir_acc with caution",
     }
     metrics, ok = evaluate_pred_arrays(df, "_predB_fun", "B/Fundamental (quarterly+EPS)")
     trackB["Fundamental Engine (GM)"] = {

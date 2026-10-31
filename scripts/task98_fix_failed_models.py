@@ -121,8 +121,8 @@ def main():
         m.fit(pdf)
         future = m.make_future_dataframe(periods=max(HORIZONS), freq="B")
         fc = m.predict(future)
-        base = len(pdf) - 1
-        return [float(fc["yhat"].iloc[base + h]) for h in HORIZONS]
+        base = len(pdf)  # first future-business-day row = forecast step 1
+        return [float(x) for x in fc["yhat"].iloc[base:base + max(HORIZONS)]]
 
     results["Prophet"] = eval_stat_model(
         "Prophet", df, man["universe"]["symbols"], latest_ms, fit_fn=prophet_fit,
