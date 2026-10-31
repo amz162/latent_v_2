@@ -322,3 +322,42 @@ prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `m
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume`, `main`.`OhlcvBar`.`source`, `main`.`OhlcvBar`.`updatedAt` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
  GET /api/backtest/model-graph?symbol=___BOGUS___ 200 in 13ms (compile: 1484µs, render: 11ms)
+ GET / 200 in 488ms (compile: 9ms, render: 480ms)
+ GET /api/track-record 200 in 89ms (compile: 84ms, render: 5ms)
+[cache] Using in-memory cache (set REDIS_URL env var for production Redis)
+ GET /api/signals/all 200 in 5.6s (compile: 204ms, render: 5.4s)
+ GET /api/models/registry 200 in 27ms (compile: 5ms, render: 22ms)
+prisma:query SELECT 1
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionHistory`.`id` FROM `main`.`PredictionHistory` WHERE 1=1 LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionHistory`.`id` FROM `main`.`PredictionHistory` WHERE `main`.`PredictionHistory`.`signal` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionRiskLevels`.`id` FROM `main`.`PredictionRiskLevels` WHERE 1=1 LIMIT ? OFFSET ?) AS `sub`
+ GET /api/backtest/task81-results 200 in 32ms (compile: 5ms, render: 27ms)
+ GET /api/backtest/walk-forward 200 in 38ms (compile: 7ms, render: 31ms)
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ProspectivePaperTrade`.`id` FROM `main`.`ProspectivePaperTrade` WHERE 1=1 LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ProspectivePaperTrade`.`id` FROM `main`.`ProspectivePaperTrade` WHERE `main`.`ProspectivePaperTrade`.`isDemo` = ? LIMIT ? OFFSET ?) AS `sub`
+ GET /api/backtest/per-stock-walk-forward 200 in 36ms (compile: 5ms, render: 32ms)
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ProspectivePaperTrade`.`id` FROM `main`.`ProspectivePaperTrade` WHERE `main`.`ProspectivePaperTrade`.`isDemo` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ProspectivePaperTrade`.`id` FROM `main`.`ProspectivePaperTrade` WHERE `main`.`ProspectivePaperTrade`.`state` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ProspectivePaperTrade`.`id` FROM `main`.`ProspectivePaperTrade` WHERE `main`.`ProspectivePaperTrade`.`state` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ProspectivePaperTrade`.`id` FROM `main`.`ProspectivePaperTrade` WHERE `main`.`ProspectivePaperTrade`.`state` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`ProspectivePaperTrade`.`id` FROM `main`.`ProspectivePaperTrade` WHERE `main`.`ProspectivePaperTrade`.`state` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all`, `main`.`ProspectivePaperTrade`.`strategyId` FROM `main`.`ProspectivePaperTrade` WHERE 1=1 GROUP BY `main`.`ProspectivePaperTrade`.`strategyId` LIMIT ? OFFSET ?
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionOutcome`.`id` FROM `main`.`PredictionOutcome` WHERE 1=1 LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionOutcome`.`id` FROM `main`.`PredictionOutcome` WHERE `main`.`PredictionOutcome`.`outcomeStatus` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionOutcome`.`id` FROM `main`.`PredictionOutcome` WHERE `main`.`PredictionOutcome`.`outcomeStatus` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionOutcome`.`id` FROM `main`.`PredictionOutcome` WHERE `main`.`PredictionOutcome`.`outcomeStatus` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PaperTradeLeg`.`id` FROM `main`.`PaperTradeLeg` WHERE 1=1 LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT `main`.`ProspectivePaperTrade`.`id`, `main`.`ProspectivePaperTrade`.`sourcePredictionId`, `main`.`ProspectivePaperTrade`.`strategyId`, `main`.`ProspectivePaperTrade`.`policyVersion`, `main`.`ProspectivePaperTrade`.`bookId`, `main`.`ProspectivePaperTrade`.`modelId`, `main`.`ProspectivePaperTrade`.`horizon`, `main`.`ProspectivePaperTrade`.`symbol`, `main`.`ProspectivePaperTrade`.`direction`, `main`.`ProspectivePaperTrade`.`state`, `main`.`ProspectivePaperTrade`.`entryDate`, `main`.`ProspectivePaperTrade`.`entryPrice`, `main`.`ProspectivePaperTrade`.`quantity`, `main`.`ProspectivePaperTrade`.`allocatedCash`, `main`.`ProspectivePaperTrade`.`sl`, `main`.`ProspectivePaperTrade`.`tp1`, `main`.`ProspectivePaperTrade`.`tp2`, `main`.`ProspectivePaperTrade`.`tp3`, `main`.`ProspectivePaperTrade`.`activeStopFinal`, `main`.`ProspectivePaperTrade`.`exitReason`, `main`.`ProspectivePaperTrade`.`grossPnl`, `main`.`ProspectivePaperTrade`.`totalCosts`, `main`.`ProspectivePaperTrade`.`netPnl`, `main`.`ProspectivePaperTrade`.`isWin`, `main`.`ProspectivePaperTrade`.`isDemo`, `main`.`ProspectivePaperTrade`.`skipReason`, `main`.`ProspectivePaperTrade`.`createdAt`, `main`.`ProspectivePaperTrade`.`updatedAt` FROM `main`.`ProspectivePaperTrade` WHERE 1=1 LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
+prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`PredictionHistory`.`id` FROM `main`.`PredictionHistory` WHERE `main`.`PredictionHistory`.`kind` = ? LIMIT ? OFFSET ?) AS `sub`
+prisma:query SELECT `main`.`PredictionHistory`.`id`, `main`.`PredictionHistory`.`dedupKey`, `main`.`PredictionHistory`.`symbol`, `main`.`PredictionHistory`.`modelId`, `main`.`PredictionHistory`.`modelVersion`, `main`.`PredictionHistory`.`predictionTs`, `main`.`PredictionHistory`.`signal`, `main`.`PredictionHistory`.`predictedReturn`, `main`.`PredictionHistory`.`predictedProb`, `main`.`PredictionHistory`.`confidenceType`, `main`.`PredictionHistory`.`entryPrice`, `main`.`PredictionHistory`.`horizon`, `main`.`PredictionHistory`.`dataCutoff`, `main`.`PredictionHistory`.`kind`, `main`.`PredictionHistory`.`outcomeStatus`, `main`.`PredictionHistory`.`createdAt`, `main`.`PredictionHistory`.`updatedAt` FROM `main`.`PredictionHistory` WHERE `main`.`PredictionHistory`.`kind` = ? ORDER BY `main`.`PredictionHistory`.`createdAt` DESC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume`, `main`.`OhlcvBar`.`source`, `main`.`OhlcvBar`.`updatedAt` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
+ GET /api/backtest/walk-forward/prospective 200 in 423ms (compile: 8ms, render: 415ms)
+ GET /api/psx/live?symbol=ENGRO 200 in 392ms (compile: 116ms, render: 276ms)
+ GET /api/psx/indices/KSE100 200 in 1388ms (compile: 1073ms, render: 314ms)
+prisma:query SELECT `main`.`ModelPredictionCache`.`symbol`, `main`.`ModelPredictionCache`.`predictionsJson`, `main`.`ModelPredictionCache`.`computedAt`, `main`.`ModelPredictionCache`.`dataSourceDate` FROM `main`.`ModelPredictionCache` WHERE (`main`.`ModelPredictionCache`.`symbol` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`ModelBacktestCache`.`key`, `main`.`ModelBacktestCache`.`kind`, `main`.`ModelBacktestCache`.`label`, `main`.`ModelBacktestCache`.`payloadJson`, `main`.`ModelBacktestCache`.`coveredSymbols`, `main`.`ModelBacktestCache`.`computedAt` FROM `main`.`ModelBacktestCache` WHERE 1=1 LIMIT ? OFFSET ?
+ GET /api/ai-model-signals/ENGRO 200 in 1245ms (compile: 1056ms, render: 189ms)
+ GET /api/psx/companies 200 in 3.6s (compile: 75ms, render: 3.5s)
+ GET / 200 in 90ms (compile: 4ms, render: 86ms)
