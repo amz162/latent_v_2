@@ -85,7 +85,7 @@ def p5_cost_reconciliation(ctx):
                     return r_
         return None
     drag = find_drag(t93c)
-    all_ok = all(c["match"] for c in checks) and not bad
+    all_ok = all(c["match"] for c in checks) and not bad and not cgt_on_losers
     ctx.write("task95_cost_reconciliation.json", {
         "task": "Task 95 Phase 5.1 — PSX V2 cost reconciliation (independent)",
         "schedule_source": "src/lib/latent/trading-costs.ts",
@@ -94,6 +94,7 @@ def p5_cost_reconciliation(ctx):
         "arithmetic_checks": checks,
         "prospective_closed_trades_checked": len(rows),
         "prospective_gross_minus_costs_violations": len(bad),
+        "cgt_charged_on_losing_trades": len(cgt_on_losers),
         "task93_cost_drag_claim_pct": drag,
         "verdict": ("all P&L identities hold (net = gross − costs); no double deduction detected; "
                     "CGT charged on realized profits only" if all_ok else "MISMATCH — inspect checks"),
@@ -129,15 +130,16 @@ def p5_robustness(ctx):
     # slippage stress on real closed prospective fills: extra cost = Δslippage × traded notional (both sides)
     conn = sqlite3.connect(str(BASE / "db/custom.db"))
     conn.row_factory = sqlite3.Row
-    tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%Leg%'")]
+    tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND (name LIKE '%Leg%' OR name LIKE '%leg%')")]
     legs = []
-    if "ProspectiveTradeLeg" in tables:
-        cols = [r["name"] for r in conn.execute("PRAGMA table_info(ProspectiveTradeLeg)")]
+    leg_table = next((t for t in tables if "leg" in t.lower()), None)
+    if leg_table:
+        cols = [r[1] for r in conn.execute(f"PRAGMA table_info('{leg_table}')")]
         price_col = next((c for c in ("price", "fillPrice", "exitPrice") if c in cols), None)
         qty_col = next((c for c in ("quantity", "qty") if c in cols), None)
         if price_col and qty_col:
             legs = [dict(r) for r in conn.execute(
-                f"SELECT l.{qty_col} qty, l.{price_col} price, t.symbol FROM ProspectiveTradeLeg l "
+                f"SELECT l.{qty_col} qty, l.{price_col} price, t.symbol FROM {leg_table} l "
                 "JOIN ProspectivePaperTrade t ON t.id = l.tradeId WHERE t.state='closed'")]
     conn.close()
     scenarios = {}

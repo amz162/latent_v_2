@@ -3,7 +3,7 @@
  "schedule_source": "src/lib/latent/trading-costs.ts",
  "schedule_fields_found": {
   "commission_rate_per_side": 0.0015,
-  "slippage_rate_v2": 0.0015,
+  "slippage_rate_v2": 0.0,
   "psx_fee_rate": 3.5e-06,
   "nccpl_fee_rate": 8.1e-06,
   "cdc_fee_rate": 3.6e-05,
@@ -62,6 +62,7 @@
  ],
  "prospective_closed_trades_checked": 18,
  "prospective_gross_minus_costs_violations": 0,
+ "cgt_charged_on_losing_trades": 0,
  "task93_cost_drag_claim_pct": 285.03,
  "verdict": "all P&L identities hold (net = gross \u2212 costs); no double deduction detected; CGT charged on realized profits only"
 }

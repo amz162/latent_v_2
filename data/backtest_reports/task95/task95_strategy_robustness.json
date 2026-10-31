@@ -32,6 +32,19 @@
   ],
   "separated": true
  },
- "slippage_stress": "legs not available \u2014 analytic stress documented from schedule constants only",
+ "slippage_stress": {
+  "+0.05pct_per_side": {
+   "extra_cost_pkr": 849.91,
+   "note": "analytic stress: added per-side slippage \u00d7 realized leg notional (legs notional 1699827.0 PKR)"
+  },
+  "+0.15pct_per_side": {
+   "extra_cost_pkr": 2549.74,
+   "note": "analytic stress: added per-side slippage \u00d7 realized leg notional (legs notional 1699827.0 PKR)"
+  },
+  "+0.30pct_per_side": {
+   "extra_cost_pkr": 5099.48,
+   "note": "analytic stress: added per-side slippage \u00d7 realized leg notional (legs notional 1699827.0 PKR)"
+  }
+ },
  "honesty": "stress applied to REALIZED prospective legs only; no final-test optimization; historical Task 81/94 reports preserved"
 }
