@@ -1,0 +1,60 @@
+{
+ "task": "Task 95 Phase 3.5 \u2014 regression protection for recovered models",
+ "recovered_models": {
+  "ARIMA": {
+   "fix_expected": "numpy forecast indexing",
+   "src_files": [
+    "src/lib/latent/portfolio-config.ts",
+    "src/lib/latent/ml-graph-points.ts"
+   ],
+   "present": true
+  },
+  "Kalman Filter": {
+   "fix_expected": "working state-space implementation",
+   "src_files": [
+    "src/lib/latent/model-backtest.ts",
+    "src/lib/latent/fallback-predictions.ts"
+   ],
+   "present": true
+  },
+  "Prophet": {
+   "fix_expected": "timezone-naive date handling",
+   "src_files": "no-match",
+   "present": false
+  },
+  "TimesNet": {
+   "fix_expected": "recovered model",
+   "src_files": [
+    "src/lib/latent/model-backtest.ts",
+    "src/lib/latent/fallback-predictions.ts"
+   ],
+   "present": true
+  },
+  "TabNet": {
+   "fix_expected": "recovered model",
+   "src_files": [
+    "src/lib/latent/ensemble.ts"
+   ],
+   "present": true
+  },
+  "CL-2 Meta-Ensemble": {
+   "fix_expected": "recovered ensemble",
+   "src_files": [
+    "src/lib/latent/model-backtest.ts",
+    "src/lib/latent/fallback-predictions.ts"
+   ],
+   "present": true
+  }
+ },
+ "checkpoint_inventory": {
+  "checkpoints:task83/models": {
+   "exists": true,
+   "n_files": 18
+  },
+  "checkpoints:task84/models": {
+   "exists": true,
+   "n_files": 5
+  }
+ },
+ "verdict": "no regressions detected in recovered models (source markers present, checkpoints intact)"
+}

@@ -63,8 +63,8 @@ def p3_metric_caveats(ctx):
             r = mod.evaluate_model(f"{name}_{h}d", model, ckpt, conn, horizons=[h],
                                    symbols=mod.SYMBOLS[:5], n_per_sym=8, in_dim=in_dim)
             st = stored.get(name, {}).get(f"{h}d", {})
-            ph_new = r.get("per_horizon", {}).get(str(h), {})
-            ph_old = st.get("per_horizon", {}).get(str(h), {})
+            ph_new = r.get("per_horizon", {}).get(h) or r.get("per_horizon", {}).get(str(h), {})
+            ph_old = st.get("per_horizon", {}).get(h) or st.get("per_horizon", {}).get(str(h), {})
             fields = {}
             for k in ("n", "dir_acc", "mae", "rmse", "r2"):
                 if k in ph_old:

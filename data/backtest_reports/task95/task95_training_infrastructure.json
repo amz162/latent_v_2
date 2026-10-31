@@ -1,0 +1,40 @@
+{
+ "task": "Task 95 Phase 3.3 \u2014 training infrastructure verification",
+ "checks": {
+  "checkpoints:task83/models": {
+   "exists": true,
+   "n_files": 18
+  },
+  "checkpoints:task84/models": {
+   "exists": true,
+   "n_files": 5
+  },
+  "src:chronological_split": [
+   "src/lib/latent/patterns.ts",
+   "src/lib/latent/ml-graph-points.ts",
+   "src/lib/latent/model-backtest.ts"
+  ],
+  "src:maturity_purge": [
+   "src/lib/latent/prospective-lifecycle.ts",
+   "src/lib/latent/ensemble.ts",
+   "src/lib/latent/mock-company-results.ts"
+  ],
+  "src:train_only_preprocess": "no-match",
+  "src:prediction_provenance": [
+   "src/lib/latent/prospective-lifecycle.ts"
+  ],
+  "src:walkforward_engine": [
+   "src/lib/latent/portfolio-config.ts",
+   "src/lib/latent/ml-graph-points.ts",
+   "src/lib/latent/model-backtest.ts"
+  ],
+  "runner_dedupe": "scripts/task95_runner.py: done jobs skipped, per-job status persisted",
+  "runner_resume": "task95_progress.json persisted after every job",
+  "src:universe": [
+   "src/lib/latent/model-backtest.ts",
+   "src/lib/latent/risk-levels.ts"
+  ]
+ },
+ "policy": "valid checkpoints preserved; no retraining of reproduced models in Task 95",
+ "verdict": "infrastructure verified; Task 95 made no destructive training changes"
+}

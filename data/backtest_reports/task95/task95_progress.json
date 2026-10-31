@@ -23,6 +23,31 @@
    "error": null,
    "finished": "2026-10-31T18:15:45Z",
    "seconds": 0.0
+  },
+  "p3_training_infra": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T18:19:02Z",
+   "error": null,
+   "finished": "2026-10-31T18:19:02Z",
+   "seconds": 0.0
+  },
+  "p3_recovered_regressions": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T18:19:02Z",
+   "error": null,
+   "finished": "2026-10-31T18:19:02Z",
+   "seconds": 0.0
+  },
+  "p3_metric_caveats": {
+   "status": "failed",
+   "runs": 1,
+   "started": "2026-10-31T18:19:06Z",
+   "error": "ModuleNotFoundError: No module named 'torch'",
+   "finished": "2026-10-31T18:19:06Z",
+   "seconds": 0.3,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task95_runner.py\", line 88, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task95_jobs/phase3.py\", line 48, in p3_metric_caveats\n    rec.loader.exec_module(mod)  # definitions only; main() is __main__-guarded\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap_external>\", line 999, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/home/z/my-project/scripts/task94_phase2_recover_neural.py\", line 21, in <module>\n    import torch\nModuleNotFoundError: No module named 'torch'\n"
   }
  },
  "history": []
