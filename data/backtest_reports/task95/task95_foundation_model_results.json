@@ -1,0 +1,35 @@
+{
+ "task": "Task 95 Phase 6 \u2014 foundation model completeness",
+ "models": {
+  "Chronos (Amazon)": {
+   "identity": "official_pretrained_inference_oos_evaluated",
+   "checkpoint": "amazon/chronos-t5-tiny",
+   "package": "chronos-forecasting 2.3.2",
+   "n": 400,
+   "dir_acc": 0.4775,
+   "task95_verification": "metrics recomputed from 400 raw prediction records \u2014 all match",
+   "limitations": "zero-shot inference, CPU, NOT fine-tuned; dir_acc 0.4775 CI includes 0.50 \u2014 no proven edge"
+  },
+  "Lag-Llama": {
+   "identity": "official_pretrained_inference_insufficient_samples",
+   "checkpoint": "lag-llama.ckpt (29.5MB, official lag-llama.ckpt)",
+   "n": 60,
+   "task95_verification": "summary-only artifact (no raw prediction arrays persisted) \u2014 raw recompute infeasible",
+   "limitations": "n=60 below reliability threshold; no directional edge may be claimed"
+  },
+  "Moirai (Salesforce)": {
+   "identity": "dependency_blocked_after_attempts",
+   "task95_action": "see task95_moirai_results.json for the bounded re-attempt"
+  },
+  "Time-LLM": {
+   "identity": "experimental_gpt2_baseline",
+   "note": "kept experimental unless a faithful official implementation is executed"
+  },
+  "FinGPT": {
+   "identity": "experimental_gpt2_baseline",
+   "note": "21-sample proxy NOT promoted; official checkpoint + timestamped corpus required"
+  }
+ },
+ "chronos_raw_reproduction_match": true,
+ "reporting_rule": "official vs experimental identity preserved; no fabricated training claims; sample counts and CIs displayed; unavailable metrics stay unavailable"
+}

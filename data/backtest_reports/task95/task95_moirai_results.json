@@ -1,0 +1,23 @@
+{
+ "task": "Task 95 Phase 6.3 \u2014 bounded Moirai separate-env re-attempt",
+ "recipe_source": "task94_moirai_diagnostic.json (separate venv, torch<2.5, NumPy>=2.0)",
+ "prerequisites": {
+  "disk_free_gb": 5.68,
+  "hf_checkpoint_cached": false
+ },
+ "install": {
+  "rc": 1,
+  "tail": [
+   "Using Python 3.12.16 environment at: .moirai-venv",
+   "error: No solution found when resolving dependencies",
+   "  cause: Because gluonts==0.14.4 depends on numpy>=1.16,<2.dev0 and you require numpy>=2.0, we can conclude that your requirements and gluonts==0.14.4 are incompatible.",
+   "         And because you require gluonts==0.14.4, we can conclude that your requirements are unsatisfiable."
+  ]
+ },
+ "steps": [
+  "prerequisites checked",
+  "venv created rc=0",
+  "deps installed rc=1"
+ ],
+ "status": "dependency_blocked_after_attempts (Task 95 attempt documented)"
+}

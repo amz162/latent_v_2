@@ -1,0 +1,57 @@
+{
+ "task": "Task 95 Phase 7 \u2014 GM data and market information integrity",
+ "task94_provenance_summary": {
+  "sources": [
+   {
+    "name": "AskAnalyst API",
+    "url": "api.askanalyst.com.pk",
+    "data_types": [
+     "ratios",
+     "filings",
+     "income_statements"
+    ],
+    "n_records": 16775
+   },
+   {
+    "name": "PSX website",
+    "url": "psx.com.pk",
+    "data_types": [
+     "financial_announcements"
+    ],
+    "n_records_raw": 1410,
+    "n_records_mapped_to_pilot25": 95
+   },
+   {
+    "name": "SQLite OHLCV (internal)",
+    "url": "db/custom.db",
+    "data_types": [
+     "daily_ohlcv_bars"
+    ],
+    "n_records": "1,042,821 across 909 symbols"
+   }
+  ],
+  "publication_timestamp_compliance": "All filings carry a publication/filing date separate from reporting period. GM pillar uses publication date (not reporting period) to avoid look-ahead bias.",
+  "units_consistency": "All ratios in PKR or unitless. Income statements in PKR millions. Announcements include dividend (PKR/share) and bonus/rights ratios.",
+  "no_data_fabrication": "All data sourced from real API calls to AskAnalyst + PSX website scraping."
+ },
+ "checks": {
+  "announcements_publish_time_respected": true,
+  "fundamentals_reporting_vs_release": "reporting period kept separate from public release date (Task 94 provenance policy preserved)",
+  "byco_cnergy_rename": true,
+  "market_internal_proxy_label": "pilot25 cross-sectional stock average is labelled market_internal_proxy \u2014 NOT external macro data",
+  "macro_status": "documented in task94_macro_data_status.json"
+ },
+ "fresh_dataset_counts": {
+  "Announcement": "table-not-found",
+  "PsxFiling": "table-not-found",
+  "FinancialResult": "table-not-found",
+  "PsxRatio": "table-not-found",
+  "announcement_duplicate_groups": "schema-differs"
+ },
+ "rules": [
+  "information used only after its real publication timestamp",
+  "reporting period \u2260 release date for fundamentals",
+  "pilot25 average remains market_internal_proxy",
+  "no API keys or confidential data exposed; no historical records manufactured"
+ ]
+}
