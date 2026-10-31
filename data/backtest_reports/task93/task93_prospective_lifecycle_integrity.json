@@ -1,0 +1,102 @@
+{
+  "task": "Task 93.6 \u2014 Prospective lifecycle integrity check",
+  "total_trades": 114,
+  "expected_total": 114,
+  "total_matches_expected": true,
+  "state_distribution": {
+    "pending_entry": 114
+  },
+  "all_pending_entry": true,
+  "strategy_distribution": {
+    "fixed_first_hit": 38,
+    "max_tp_step_trailing": 38,
+    "scale_out_50_25_25": 38
+  },
+  "expected_strategy_distribution": {
+    "fixed_first_hit": 38,
+    "max_tp_step_trailing": 38,
+    "scale_out_50_25_25": 38
+  },
+  "strategy_distribution_consistent": true,
+  "field_null_counts": {
+    "symbol": 0,
+    "direction": 0,
+    "sl": 0,
+    "tp1": 0,
+    "tp2": 0,
+    "tp3": 0,
+    "modelId": 0,
+    "horizon": 0,
+    "sourcePredictionId": 0,
+    "policyVersion": 0,
+    "entryPrice": 114,
+    "allocatedCash": 114
+  },
+  "required_at_creation_fields": [
+    "symbol",
+    "direction",
+    "sl",
+    "tp1",
+    "tp2",
+    "tp3",
+    "modelId",
+    "horizon",
+    "sourcePredictionId",
+    "policyVersion"
+  ],
+  "post_entry_fields_legitimately_null_for_pending_entry": [
+    "entryPrice",
+    "allocatedCash"
+  ],
+  "no_required_field_nulls": true,
+  "idempotency": {
+    "n_duplicate_sourcePredictionId_strategyId_combos": 0,
+    "idempotent": true
+  },
+  "policy_versions": {
+    "task76-v1": 114
+  },
+  "allocation_sanity": {
+    "n_zero_or_null_allocatedCash": 114,
+    "n_negative_allocatedCash": 0
+  },
+  "sl_tp_sanity": {
+    "n_issues": 0,
+    "issues_sample": [],
+    "all_sane": true
+  },
+  "cross_reference_prediction_history": {
+    "n_orphaned_sourcePredictionIds": 0,
+    "all_sources_exist": true
+  },
+  "coverage": {
+    "n_distinct_symbols": 9,
+    "n_distinct_models": 5,
+    "n_distinct_horizons": 3,
+    "horizons": [
+      5,
+      10,
+      21
+    ]
+  },
+  "demo_flag_distribution": {
+    "0": 114
+  },
+  "overall_verdict": {
+    "total_matches_expected": true,
+    "all_pending_entry": true,
+    "strategy_distribution_consistent": true,
+    "no_required_field_nulls": true,
+    "idempotent": true,
+    "all_sources_exist_in_prediction_history": true,
+    "sl_tp_all_sane": true,
+    "lifecycle_integrity_pass": true
+  },
+  "honesty_notes": [
+    "All 114 prospective trades remain in pending_entry state \u2014 NO matured outcomes yet.",
+    "Statistical verification of prospective performance is NOT possible at this time (no exits).",
+    "Lifecycle integrity verifies structural soundness, NOT forecasting skill.",
+    "ACTIVE is an operational status (state=pending_entry), NOT proof of skill.",
+    "Once trades mature (entry + horizon days pass), outcomes can be backfilled and statistical significance can be assessed."
+  ]
+}
