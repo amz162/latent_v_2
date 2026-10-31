@@ -1,0 +1,41 @@
+name: Production Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies (incl. prisma generate)
+        run: bun install
+
+      - name: Restore SQLite database (same env as the dev sandbox)
+        run: gunzip -kc db/custom.db.gz > db/custom.db
+
+      - name: Production build (OOM-safe 1GB heap cap)
+        env:
+          NODE_OPTIONS: --max-old-space-size=1024
+          DATABASE_URL: file:${{ github.workspace }}/db/custom.db
+        run: bun run build
+
+      - name: Verify standalone output
+        run: |
+          test -d .next/standalone && echo "standalone output OK"
+          test -f .next/BUILD_ID && echo "BUILD_ID: $(cat .next/BUILD_ID)"
+
+      - name: Save build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-log
+          path: build.log
+          if-no-files-found: ignore
