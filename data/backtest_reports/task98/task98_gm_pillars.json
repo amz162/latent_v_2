@@ -1,0 +1,155 @@
+{
+  "task": "Task 98 \u2014 GM pillars backtest (production definitions + AskAnalyst data-enriched)",
+  "generated_at": "2026-10-31T21:48:01.615525+00:00",
+  "universe": "pilot25",
+  "evaluation": "task83 batch6 rule-model layout (range(50, len-h), target_{h}d actuals), em() metrics",
+  "trackA_production": {
+    "Announcements Engine (GM)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 1306.221058,
+          "r2": -3451849722.4782,
+          "directional_accuracy": 0.5066,
+          "n": 58695
+        },
+        "10d": {
+          "mae": 1305.599079,
+          "r2": -1632196132.6219,
+          "directional_accuracy": 0.5069,
+          "n": 58570
+        },
+        "21d": {
+          "mae": 1305.755111,
+          "r2": -692052449.2509,
+          "directional_accuracy": 0.5131,
+          "n": 58295
+        }
+      },
+      "signal_source": "production heuristic (train_all_models_db.py), OHLCV-derived"
+    },
+    "Fundamental Engine (GM)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 2151.522111,
+          "r2": -2179012429.8623,
+          "directional_accuracy": 0.5301,
+          "n": 58695
+        },
+        "10d": {
+          "mae": 2149.425201,
+          "r2": -1026701938.3257,
+          "directional_accuracy": 0.5275,
+          "n": 58570
+        },
+        "21d": {
+          "mae": 2146.083699,
+          "r2": -432971686.9222,
+          "directional_accuracy": 0.533,
+          "n": 58295
+        }
+      },
+      "signal_source": "production heuristic (train_all_models_db.py), OHLCV-derived"
+    },
+    "Macro Engine (GM)": {
+      "status": "rule_based_optimized_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 1281.009159,
+          "r2": -3410060726.858,
+          "directional_accuracy": 0.5075,
+          "n": 58695
+        },
+        "10d": {
+          "mae": 1280.087297,
+          "r2": -1607448584.5261,
+          "directional_accuracy": 0.5065,
+          "n": 58570
+        },
+        "21d": {
+          "mae": 1278.704753,
+          "r2": -679767873.3689,
+          "directional_accuracy": 0.5133,
+          "n": 58295
+        }
+      },
+      "signal_source": "production heuristic (train_all_models_db.py), OHLCV-derived"
+    }
+  },
+  "trackB_data_enriched": {
+    "Announcements Engine (GM)": {
+      "status": "rule_based_data_enriched_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.046806,
+          "r2": -0.0021,
+          "directional_accuracy": 0.2648,
+          "n": 58695
+        },
+        "10d": {
+          "mae": 0.067501,
+          "r2": -0.0022,
+          "directional_accuracy": 0.2651,
+          "n": 58570
+        },
+        "21d": {
+          "mae": 0.102226,
+          "r2": -0.0035,
+          "directional_accuracy": 0.2697,
+          "n": 58295
+        }
+      },
+      "signal_source": "AskAnalyst filings (data/askanalyst/filings): 7d/31d event intensity + keyword weights, 1-bar lag"
+    },
+    "Fundamental Engine (GM)": {
+      "status": "rule_based_data_enriched_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 0.128414,
+          "r2": -4.6196,
+          "directional_accuracy": 0.4871,
+          "n": 58695
+        },
+        "10d": {
+          "mae": 0.137783,
+          "r2": -2.179,
+          "directional_accuracy": 0.4903,
+          "n": 58570
+        },
+        "21d": {
+          "mae": 0.157063,
+          "r2": -0.9115,
+          "directional_accuracy": 0.4919,
+          "n": 58295
+        }
+      },
+      "signal_source": "data/financials quarterly Net-sales YoY (as-of = quarter end + 62d) + ratios annual EPS YoY (as-of = Oct 1, year+1)"
+    },
+    "Macro Engine (GM)": {
+      "status": "rule_based_data_enriched_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "mae": 1200.818581,
+          "r2": -386287902.8346,
+          "directional_accuracy": 0.4623,
+          "n": 58695
+        },
+        "10d": {
+          "mae": 1200.270311,
+          "r2": -182320025.7308,
+          "directional_accuracy": 0.4668,
+          "n": 58570
+        },
+        "21d": {
+          "mae": 1199.897767,
+          "r2": -77132476.3534,
+          "directional_accuracy": 0.4642,
+          "n": 58295
+        }
+      },
+      "signal_source": "market-breadth regime proxy (equal-weight universe mean 30d/14d return); no CPI/KIBOR series available in sandbox",
+      "data_limitation": "AskAnalyst ksechartnew returns HTTP 500 for index symbols; psxdata-api /indices has constituents only, no historical series"
+    }
+  }
+}

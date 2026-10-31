@@ -126,6 +126,10 @@ def filings_pred_column(sdf, events):
             s += 0.0008 + 0.0006 * ev[k][1]
             k += 1
         score[i] = s
+    # center against trailing 180-bar mean (min 60) so the score is sign-balanced —
+    # raw intensity is >=0 and would degenerate to an always-long signal
+    ser = pd.Series(score).rolling(180, min_periods=60).mean()
+    score = score - ser.fillna(0).values
     return pd.Series(score, index=sdf.index)
 
 
