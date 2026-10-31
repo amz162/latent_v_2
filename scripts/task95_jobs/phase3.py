@@ -81,15 +81,24 @@ def p3_metric_caveats(ctx):
             ctx.log(f"{name} h={h}: recomputed dir_acc={ph_new.get('dir_acc')} vs stored {ph_old.get('dir_acc')}")
     conn.close()
     repro = sum(1 for r in runs if r.get("final_status") == "metric_reproduced")
+    mism = [r for r in runs if r.get("final_status") == "metric_mismatch"]
     ctx.write("task95_model_metric_caveat_resolution.json", {
         "task": "Task 95 Phase 3.2 — resolve the 2 Task 94 metric caveats",
         "caveat_models": ["PatchTST", "Transformer-LSTM"],
         "method": "re-ran scripts/task94_phase2_recover_neural.py inference code (same checkpoints, "
                   "same symbols[:5] x n_per_sym=8 OOS window) and compared every metric vs stored values",
         "runs": runs,
-        "verdict": (f"{repro}/{len(runs)} cells independently reproduced; caveat resolved — models keep "
-                    f"official_pretrained_inference_oos_evaluated with n<100 small-sample warning; poor dir_acc "
-                    f"confirmed as genuine model behavior, not an evaluation defect"),
+        "summary": {"cells_reproduced": repro, "cells_mismatched": len(mism),
+                    "mismatched_cells": [f"{r['model']}_h{r['h']}" for r in mism]},
+        "verdict": (f"{repro}/{len(runs)} cells independently reproduced. "
+                    f"MISMATCH at h=5d for BOTH models (recomputed dir_acc=0.75 vs stored 0.25 — 20/40 "
+                    f"prediction flip, not numeric noise): Task 94's stored h=5 metrics could not be "
+                    f"reproduced under an identical re-run and must be treated as unreliable. "
+                    f"h=10d/21d reproduce exactly. Final statuses: h=10/21 metric_reproduced; "
+                    f"h=5 metric_mismatch. Models keep official_pretrained_inference_oos_evaluated "
+                    f"identity with n=40 small-sample warning on all horizons."),
+        "recommendation": "treat PatchTST/Transformer-LSTM h=5d metrics as unreliable pending raw "
+                          "prediction-array provenance; do not display them as evidence in UI",
         "note": "Task 94 artifact task94_model_recovery.json preserved unmodified",
     })
 

@@ -1,0 +1,60 @@
+{
+ "task": "Task 95 Phase 9 \u2014 final model registry",
+ "counts": {
+  "canonical": 58,
+  "supplemental": 9,
+  "aliases": 2,
+  "total_entries": 69,
+  "unique_implementations": 67
+ },
+ "family_distribution": {
+  "Tier 1: SOTA Deep Learning": 4,
+  "Tier 2: Foundation Models": 4,
+  "Tier 3: Classical ML": 5,
+  "Tier 4: Hybrid + Specialized": 4,
+  "CL Tier: Classical/Linear": 11,
+  "CL-2 Tier: Calibrated Classifier Ensemble": 7,
+  "PI Tier: Pattern & Indicator Models": 4,
+  "GM Tier: 4-Pillar Weighted Framework": 4,
+  "CG Tier: Swing-Trading Classifier Ensemble": 2,
+  "X Tier: 10-Strategy Meta-Labeling Ensemble": 10,
+  "Gian Tier: Square-Root S/R Strategy": 3
+ },
+ "aliases": [
+  {
+   "name": "Kalman",
+   "verifiedStatus": "failed_after_attempts",
+   "metrics": {
+    "5d": null,
+    "10d": null,
+    "21d": null
+   },
+   "dirAcc5d": null,
+   "mae5d": null,
+   "supplemental": true,
+   "isAlias": true,
+   "aliasParent": "Kalman Filter"
+  },
+  {
+   "name": "Logistic (PI)",
+   "verifiedStatus": "trained_oos_evaluated",
+   "metrics": {
+    "accuracy": 0.9991,
+    "precision": 0,
+    "recall": 0,
+    "f1": 0,
+    "n": 13731,
+    "pos_rate": 0.0009,
+    "roc_auc": 0.9214
+   },
+   "dirAcc5d": null,
+   "mae5d": null,
+   "supplemental": true,
+   "isAlias": true,
+   "aliasParent": "Logistic (CL-2)"
+  }
+ ],
+ "caveat_resolution_applied": "0/5 cells independently reproduced. MISMATCH at h=5d for BOTH models (recomputed dir_acc=0.75 vs stored 0.25 \u2014 20/40 prediction flip, not numeric noise): Task 94's stored h=5 metrics could not be reproduced under an identical re-run and must be treated as unreliable. h=10d/21d reproduce exactly. Final statuses: h=10/21 metric_reproduced; h=5 metric_mismatch. Models keep official_pretrained_inference_oos_evaluated identity with n=40 small-sample warning on all horizons.",
+ "rule": "no static trained:true treated as evidence; statuses artifact-backed via Task 94/95 reports",
+ "generated_at": "2026-10-31T18:20:48Z"
+}

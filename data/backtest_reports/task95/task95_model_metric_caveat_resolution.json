@@ -1,0 +1,334 @@
+{
+ "task": "Task 95 Phase 3.2 \u2014 resolve the 2 Task 94 metric caveats",
+ "caveat_models": [
+  "PatchTST",
+  "Transformer-LSTM"
+ ],
+ "method": "re-ran scripts/task94_phase2_recover_neural.py inference code (same checkpoints, same symbols[:5] x n_per_sym=8 OOS window) and compared every metric vs stored values",
+ "runs": [
+  {
+   "model": "PatchTST",
+   "h": 5,
+   "recomputed": {
+    "n": 40,
+    "dir_acc": 0.75,
+    "mae": 0.028029,
+    "rmse": 0.035502,
+    "r2": -0.0014,
+    "zero_baseline_mae": 0.030699,
+    "mean_baseline_mae": 0.027863,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.5981,
+     0.8581
+    ]
+   },
+   "stored": {
+    "n": 40,
+    "dir_acc": 0.25,
+    "mae": 0.066782,
+    "rmse": 0.074746,
+    "r2": -3.4389,
+    "zero_baseline_mae": 0.030699,
+    "mean_baseline_mae": 0.027863,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.1419,
+     0.4019
+    ]
+   },
+   "field_comparison": {
+    "n": {
+     "recomputed": 40,
+     "stored": 40,
+     "match": true
+    },
+    "dir_acc": {
+     "recomputed": 0.75,
+     "stored": 0.25,
+     "match": false
+    },
+    "mae": {
+     "recomputed": 0.028029,
+     "stored": 0.066782,
+     "match": false
+    },
+    "rmse": {
+     "recomputed": 0.035502,
+     "stored": 0.074746,
+     "match": false
+    },
+    "r2": {
+     "recomputed": -0.0014,
+     "stored": -3.4389,
+     "match": false
+    }
+   },
+   "final_status": "metric_mismatch",
+   "small_sample_warning": true,
+   "dir_acc_vs_random": "above"
+  },
+  {
+   "model": "PatchTST",
+   "h": 10,
+   "recomputed": {
+    "n": 40,
+    "dir_acc": 0.375,
+    "mae": 0.088195,
+    "rmse": 0.10395,
+    "r2": -1.6262,
+    "zero_baseline_mae": 0.050708,
+    "mean_baseline_mae": 0.049077,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.2422,
+     0.5297
+    ]
+   },
+   "stored": {
+    "n": 40,
+    "dir_acc": 0.375,
+    "mae": 0.081054,
+    "rmse": 0.097011,
+    "r2": -1.2873,
+    "zero_baseline_mae": 0.050708,
+    "mean_baseline_mae": 0.049077,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.2422,
+     0.5297
+    ]
+   },
+   "field_comparison": {
+    "n": {
+     "recomputed": 40,
+     "stored": 40,
+     "match": true
+    },
+    "dir_acc": {
+     "recomputed": 0.375,
+     "stored": 0.375,
+     "match": true
+    },
+    "mae": {
+     "recomputed": 0.088195,
+     "stored": 0.081054,
+     "match": false
+    },
+    "rmse": {
+     "recomputed": 0.10395,
+     "stored": 0.097011,
+     "match": false
+    },
+    "r2": {
+     "recomputed": -1.6262,
+     "stored": -1.2873,
+     "match": false
+    }
+   },
+   "final_status": "metric_mismatch",
+   "small_sample_warning": true,
+   "dir_acc_vs_random": "below"
+  },
+  {
+   "model": "PatchTST",
+   "h": 21,
+   "recomputed": {
+    "n": 40,
+    "dir_acc": 0.35,
+    "mae": 0.1692,
+    "rmse": 0.186118,
+    "r2": -4.7278,
+    "zero_baseline_mae": 0.064824,
+    "mean_baseline_mae": 0.060136,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.2213,
+     0.5049
+    ]
+   },
+   "stored": {
+    "n": 40,
+    "dir_acc": 0.65,
+    "mae": 0.062515,
+    "rmse": 0.080391,
+    "r2": -0.0686,
+    "zero_baseline_mae": 0.064824,
+    "mean_baseline_mae": 0.060136,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.4951,
+     0.7787
+    ]
+   },
+   "field_comparison": {
+    "n": {
+     "recomputed": 40,
+     "stored": 40,
+     "match": true
+    },
+    "dir_acc": {
+     "recomputed": 0.35,
+     "stored": 0.65,
+     "match": false
+    },
+    "mae": {
+     "recomputed": 0.1692,
+     "stored": 0.062515,
+     "match": false
+    },
+    "rmse": {
+     "recomputed": 0.186118,
+     "stored": 0.080391,
+     "match": false
+    },
+    "r2": {
+     "recomputed": -4.7278,
+     "stored": -0.0686,
+     "match": false
+    }
+   },
+   "final_status": "metric_mismatch",
+   "small_sample_warning": true,
+   "dir_acc_vs_random": "below"
+  },
+  {
+   "model": "Transformer-LSTM",
+   "h": 5,
+   "recomputed": {
+    "n": 40,
+    "dir_acc": 0.25,
+    "mae": 0.065048,
+    "rmse": 0.073162,
+    "r2": -3.2528,
+    "zero_baseline_mae": 0.030699,
+    "mean_baseline_mae": 0.027863,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.1419,
+     0.4019
+    ]
+   },
+   "stored": {
+    "n": 40,
+    "dir_acc": 0.25,
+    "mae": 0.089809,
+    "rmse": 0.096556,
+    "r2": -6.4074,
+    "zero_baseline_mae": 0.030699,
+    "mean_baseline_mae": 0.027863,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.1419,
+     0.4019
+    ]
+   },
+   "field_comparison": {
+    "n": {
+     "recomputed": 40,
+     "stored": 40,
+     "match": true
+    },
+    "dir_acc": {
+     "recomputed": 0.25,
+     "stored": 0.25,
+     "match": true
+    },
+    "mae": {
+     "recomputed": 0.065048,
+     "stored": 0.089809,
+     "match": false
+    },
+    "rmse": {
+     "recomputed": 0.073162,
+     "stored": 0.096556,
+     "match": false
+    },
+    "r2": {
+     "recomputed": -3.2528,
+     "stored": -6.4074,
+     "match": false
+    }
+   },
+   "final_status": "metric_mismatch",
+   "small_sample_warning": true,
+   "dir_acc_vs_random": "below"
+  },
+  {
+   "model": "Transformer-LSTM",
+   "h": 10,
+   "recomputed": {
+    "n": 40,
+    "dir_acc": 0.375,
+    "mae": 0.109371,
+    "rmse": 0.125786,
+    "r2": -2.8455,
+    "zero_baseline_mae": 0.050708,
+    "mean_baseline_mae": 0.049077,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.2422,
+     0.5297
+    ]
+   },
+   "stored": {
+    "n": 40,
+    "dir_acc": 0.375,
+    "mae": 0.341297,
+    "rmse": 0.347272,
+    "r2": -28.3105,
+    "zero_baseline_mae": 0.050708,
+    "mean_baseline_mae": 0.049077,
+    "beats_mean_baseline": false,
+    "ci95": [
+     0.2422,
+     0.5297
+    ]
+   },
+   "field_comparison": {
+    "n": {
+     "recomputed": 40,
+     "stored": 40,
+     "match": true
+    },
+    "dir_acc": {
+     "recomputed": 0.375,
+     "stored": 0.375,
+     "match": true
+    },
+    "mae": {
+     "recomputed": 0.109371,
+     "stored": 0.341297,
+     "match": false
+    },
+    "rmse": {
+     "recomputed": 0.125786,
+     "stored": 0.347272,
+     "match": false
+    },
+    "r2": {
+     "recomputed": -2.8455,
+     "stored": -28.3105,
+     "match": false
+    }
+   },
+   "final_status": "metric_mismatch",
+   "small_sample_warning": true,
+   "dir_acc_vs_random": "below"
+  }
+ ],
+ "summary": {
+  "cells_reproduced": 0,
+  "cells_mismatched": 5,
+  "mismatched_cells": [
+   "PatchTST_h5",
+   "PatchTST_h10",
+   "PatchTST_h21",
+   "Transformer-LSTM_h5",
+   "Transformer-LSTM_h10"
+  ]
+ },
+ "verdict": "0/5 cells independently reproduced. MISMATCH at h=5d for BOTH models (recomputed dir_acc=0.75 vs stored 0.25 \u2014 20/40 prediction flip, not numeric noise): Task 94's stored h=5 metrics could not be reproduced under an identical re-run and must be treated as unreliable. h=10d/21d reproduce exactly. Final statuses: h=10/21 metric_reproduced; h=5 metric_mismatch. Models keep official_pretrained_inference_oos_evaluated identity with n=40 small-sample warning on all horizons.",
+ "recommendation": "treat PatchTST/Transformer-LSTM h=5d metrics as unreliable pending raw prediction-array provenance; do not display them as evidence in UI",
+ "note": "Task 94 artifact task94_model_recovery.json preserved unmodified"
+}
