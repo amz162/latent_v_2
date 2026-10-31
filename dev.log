@@ -10324,3 +10324,24 @@ prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `d
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
 prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+prisma:query SELECT 1
+prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
+prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?
+[watchdog-local] next dev exited (code=0) at Sat Oct 31 21:53:24 UTC 2026 — restarting in 2s
+▲ Next.js 16.1.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.9.160:3000
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 2.7s
+○ Compiling / ...
+[watchdog-local] next dev exited (code=0) at Sat Oct 31 21:53:55 UTC 2026 — restarting in 2s
+▲ Next.js 16.1.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.9.160:3000
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 3.8s
+○ Compiling / ...

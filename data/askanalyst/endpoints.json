@@ -1,0 +1,41 @@
+{
+  "service": "askanalyst",
+  "base_url": "https://api.askanalyst.com.pk/api",
+  "auth": "none",
+  "required_headers": { "User-Agent": "Mozilla/5.0 (browser-like)" },
+  "rate_limit_seconds": 0.35,
+  "local_snapshot_dir": "data/askanalyst/",
+  "fetch_script": "scripts/fetch_askanalyst.py",
+  "reference_doc": "docs/askanalyst-api.md",
+  "last_verified": "2026-10-31",
+  "endpoints": [
+    { "id": 1, "path": "companylistwithsymbols", "proxy": "/api/psx/companies", "purpose": "All PSX-listed companies (symbol, name, sector)", "snapshot": "data/askanalyst/companylist.json" },
+    { "id": 2, "path": "technicalchart/day/{FROM}/{TO}/{symbol}", "proxy": "/api/psx/ohlcv/[symbol], /api/psx/technical/[symbol]", "purpose": "Daily OHLCV history for charting / technical indicators" },
+    { "id": 3, "path": "ksechartnew/{symbol}", "proxy": "/api/psx/ksechart/[symbol]", "purpose": "KSE chart data (candle series + index data)", "note": "returns HTTP 500 for index symbols (KSE100 etc.)" },
+    { "id": 4, "path": "settlementchartnew/{symbol}", "proxy": "/api/psx/settlement/[symbol]", "purpose": "Settlement / badla (T+2) rates", "sample": "data/askanalyst/samples/settlement_ENGRO.json" },
+    { "id": 5, "path": "bss/{symbol}", "proxy": "/api/psx/bss/[symbol]", "purpose": "Borrowing & short-selling (BSS) data", "sample": "data/askanalyst/samples/bss_ENGRO.json" },
+    { "id": 6, "path": "iss/{symbol}", "proxy": "/api/psx/iss/[symbol]", "purpose": "Insider / substantial shareholding disclosures", "sample": "data/askanalyst/samples/iss_ENGRO.json" },
+    { "id": 7, "path": "financialstatement/{symbol}", "proxy": "/api/psx/financials/[symbol]", "purpose": "Full financial statement (BS / P&L / CF)", "sample": "data/askanalyst/samples/financial_ENGRO.json" },
+    { "id": 8, "path": "incomestatement/{symbol}", "proxy": "/api/psx/incomestatement/[symbol], /api/psx/financial-results/[symbol]", "purpose": "Annual + quarterly income statement", "snapshot_all": "data/financials/{sym}.json (358 symbols)", "sample": "data/askanalyst/samples/income_ENGRO.json" },
+    { "id": 9, "path": "rationew/{symbol}", "proxy": "/api/psx/ratio/[symbol]", "purpose": "Financial ratios (P/E, ROE, BVPS, D/E, etc.)", "snapshot": "data/askanalyst/ratios/{sym}.json (pilot25)", "sample": "data/askanalyst/samples/ratios_ENGRO.json" },
+    { "id": 10, "path": "generatevaluation2/{symbol}", "proxy": "/api/psx/valuation/[symbol]", "purpose": "AskAnalyst's own valuation report", "sample": "data/askanalyst/samples/valuation_ENGRO.json" },
+    { "id": 11, "path": "news/{symbol}", "proxy": "/api/psx/news/[symbol], /api/portfolio/news-digest", "purpose": "Company-specific news feed", "sample": "data/askanalyst/samples/news_ENGRO.json" },
+    { "id": 12, "path": "filings/{symbol}", "proxy": "/api/psx/filings/[symbol]", "purpose": "PSX filings / announcements", "snapshot": "data/askanalyst/filings/{sym}.json (pilot25)", "sample": "data/askanalyst/samples/filings_ENGRO.json" },
+    { "id": 13, "path": "publishreports/{symbol}", "proxy": "/api/psx/reports/[symbol]", "purpose": "Published research reports", "sample": "data/askanalyst/samples/reports_ENGRO.json" }
+  ],
+  "derived_consumers": [
+    { "latent_route": "/api/portfolio/news-digest", "upstream": "news/{symbol}", "note": "Fetches news, then sends to GLM-4 LLM for summarization" },
+    { "latent_route": "/api/cron/check-tp-sl", "upstream": "technicalchart/day/{from}/{now}/{symbol}", "note": "Periodic price check for portfolio TP/SL hits" },
+    { "latent_route": "/api/fair-value/[symbol]", "upstream": "financialstatement + rationew + generatevaluation2 (parallel)", "note": "Uses endpoints 7, 9, 10 in parallel" },
+    { "latent_route": "/api/pattern-recognition/[symbol]", "upstream": "financialstatement + rationew", "note": "Historical ratios / quarterly financials" },
+    { "latent_route": "/api/ml/signal/[symbol]", "upstream": "financialstatement (per code comment)", "note": "Model trained on real PSX OHLCV from askanalyst" },
+    { "latent_route": "/api/tax/dividend", "upstream": "news/{symbol} (Option 3 fallback)", "note": "Parses dividend announcements from news" }
+  ],
+  "secondary_source": {
+    "service": "psxdata-api",
+    "base_url": "https://psxdata-api.fastapicloud.dev",
+    "client": "src/lib/latent/psxdata.ts",
+    "endpoints": ["indices", "indices/{name}", "historical/{sym}", "quote/{sym}", "fundamentals/{sym}", "screener", "sectors"],
+    "note": "Index constituents (snapshot) only — no historical index series from either source"
+  }
+}
