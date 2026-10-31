@@ -1,0 +1,59 @@
+{
+  "task": "task92",
+  "starting_head": "ffb379da",
+  "foundation_identity_corrections": {
+    "Time-LLM": {
+      "old": "family_faithful_local_model_trained",
+      "new": "experimental_gpt2_baseline",
+      "reason": "GPT-2 prompt experiment, NOT official Time-LLM. n=4 insufficient."
+    },
+    "FinGPT": {
+      "old": "family_faithful_local_model_trained",
+      "new": "experimental_gpt2_baseline",
+      "reason": "GPT-2 sentiment proxy, NOT official FinGPT. n=21, dir_acc=0.762 not proven."
+    },
+    "Chronos": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "official": true,
+      "n": 172
+    },
+    "Lag-Llama": {
+      "status": "official_pretrained_inference_oos_evaluated",
+      "official": true,
+      "n": 5,
+      "insufficient": true
+    },
+    "Moirai": {
+      "status": "dependency_blocked_after_attempts",
+      "model_loaded": true,
+      "inference_blocked": true
+    }
+  },
+  "browser_verification": {
+    "tool": "agent-browser",
+    "page_loads": true,
+    "screenshot_captured": true,
+    "title": "Latent.pk \u2014 AI-Driven Investment Intelligence for PSX"
+  },
+  "lag_llama_expansion": {
+    "status": "blocked_by_gluonts_pandas_version_conflict",
+    "note": "numpy 2.x upgrade for Moirai broke gluonts compatibility. Reverted to numpy 1.26.4 + pandas 2.1.4. Gluonts reinstalled. Patch needed for pandas 2.x to_offset compatibility."
+  },
+  "moirai": {
+    "status": "dependency_blocked_after_attempts",
+    "model_loaded": true,
+    "checkpoint": "Salesforce/moirai-1.1-R-small (55.3MB, 14M params)",
+    "blocking_issues": [
+      "gluonts pydantic v1 batch_size validation",
+      "pytorch_lightning MoiraiModule not recognized",
+      "forward() needs pre-patched inputs"
+    ],
+    "fix": "separate venv with torch<2.5 + compatible versions"
+  },
+  "remaining_work": [
+    "Lag-Llama expansion (needs gluonts patch re-application)",
+    "Full metric reproduction audit",
+    "Cost-aware strategy testing expansion",
+    "Moirai inference (needs separate venv)"
+  ]
+}
