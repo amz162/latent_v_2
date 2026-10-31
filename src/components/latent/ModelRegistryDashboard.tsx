@@ -280,7 +280,7 @@ export function ModelRegistryDashboard() {
           {walkForward?.available ? (
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs mb-4">
-                <div><span className="text-muted-foreground">Universe:</span> {walkForward.universe || walkForward.universeMode || "—"}</div>
+                <div><span className="text-muted-foreground">Universe:</span> {typeof walkForward.universe === "string" ? walkForward.universe : (walkForward.universe?.mode || walkForward.universeMode || "—")}</div>
                 <div><span className="text-muted-foreground">Samples:</span> {walkForward.n_samples ?? walkForward.totalSamples ?? "—"}</div>
                 <div><span className="text-muted-foreground">Models:</span> {walkForward.models?.length ?? walkForward.modelCount ?? "—"}</div>
                 <div><span className="text-muted-foreground">Horizons:</span> {(walkForward.horizons || [5,10,21]).join(", ")}</div>

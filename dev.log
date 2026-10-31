@@ -422,3 +422,7 @@ prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`
  GET /api/backtest/walk-forward/prospective 200 in 26ms (compile: 1418µs, render: 25ms)
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
  GET /api/backtest/per-stock-walk-forward 200 in 7ms (compile: 1920µs, render: 5ms)
+ GET /api/backtest/walk-forward 200 in 9ms (compile: 3ms, render: 6ms)
+✓ Compiled in 298ms
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 306ms (compile: 61ms, render: 245ms)
