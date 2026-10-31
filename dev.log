@@ -44373,3 +44373,12 @@ Failed to make API request: Error: API request failed with status 429: {"error":
 [price-pattern-llm] explanation failed for FIM: API request failed with status 429: {"error":"Too many requests, please try again later"}
 prisma:query INSERT INTO `main`.`PricePatternReport` (`symbol`, `computedAt`, `detectionJson`, `llmJson`, `barsCount`, `firstDate`, `lastDate`, `patternCount`) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT  (`symbol`) DO UPDATE SET `computedAt` = ?, `detectionJson` = ?, `llmJson` = ?, `barsCount` = ?, `firstDate` = ?, `lastDate` = ?, `patternCount` = ? WHERE (`main`.`PricePatternReport`.`symbol` = ? AND 1=1) RETURNING `symbol` AS `symbol`, `computedAt` AS `computedAt`, `detectionJson` AS `detectionJson`, `llmJson` AS `llmJson`, `barsCount` AS `barsCount`, `firstDate` AS `firstDate`, `lastDate` AS `lastDate`, `patternCount` AS `patternCount`
  POST /api/price-patterns/precompute 200 in 1131ms (compile: 1686µs, render: 1129ms)
+ GET /api/models/registry 200 in 71ms (compile: 58ms, render: 13ms)
+[watchdog-local] next dev exited (code=0) at Sat Oct 31 22:10:07 UTC 2026 — restarting in 2s
+▲ Next.js 16.1.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.9.160:3000
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 2.3s
