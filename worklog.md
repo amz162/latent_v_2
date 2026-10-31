@@ -4446,3 +4446,7 @@ Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
 - API 7/7 (counts, endpoints, prospective == DB, latest session).
 - Browser regression 8/8 (registry, foundations, detail expand, prospective vs DB, mobile, console/network); screenshots saved under data/backtest_reports/task97/screenshots/.
 - Git safety audit 0 violations.
+
+### Production build & CI (Section 12, final)
+- First final-commit CI run failed on a hardcoded sandbox path inside git_safety_audit.py (FileNotFoundError on the runner) — fixed by resolving the repo root from __file__.
+- Re-run: **Production Build SUCCESS + Browser Tests SUCCESS at final commit 69ce7400** (1GB OOM-safe heap cap, prisma generate, db restore, standalone + BUILD_ID verified).
