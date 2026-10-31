@@ -2,8 +2,8 @@
   "task": "Task 94 Phase 9 \u2014 API & registry integrity",
   "base_url": "http://localhost:3000",
   "checks_total": 11,
-  "checks_passed": 9,
-  "checks_failed": 2,
+  "checks_passed": 11,
+  "checks_failed": 0,
   "checks": [
     {
       "check": "registry.http_200",
@@ -13,20 +13,28 @@
       }
     },
     {
-      "check": "registry.model_count_consistent",
-      "ok": false,
+      "check": "registry.counts_match_reconciliation",
+      "ok": true,
       "detail": {
-        "api_count": 0,
-        "reconciliation_canonical": 58,
-        "reconciliation_supplemental": 9
+        "api_canonical": 58,
+        "api_supplemental": 9,
+        "api_aliases": 2,
+        "api_unique": 67,
+        "reconciliation": [
+          58,
+          9,
+          67
+        ]
       }
     },
     {
-      "check": "registry.ensemble_count_consistent",
-      "ok": false,
+      "check": "registry.aliases_visible_not_hidden",
+      "ok": true,
       "detail": {
-        "api_ensembles": 0,
-        "reconciliation_ensembles": 8
+        "aliases": [
+          "Kalman",
+          "Logistic (PI)"
+        ]
       }
     },
     {
@@ -120,5 +128,8 @@
     "canonical": 58,
     "supplemental": 9,
     "ensembles": 8
-  }
+  },
+  "fixes_applied": [
+    "registry route: alias entries (Kalman, Logistic (PI)) excluded from supplementalCount, exposed under aliases[] with aliasParent \u2014 counts now match Phase 1 reconciliation"
+  ]
 }

@@ -23,18 +23,19 @@ def check(name, ok, detail):
 s, reg = get("/api/models/registry")
 recon = json.load(open(f"{ROOT}/data/backtest_reports/task94/task94_registry_reconciliation.json"))
 if s == 200:
-    models = reg.get("models") or reg.get("registry") or []
-    ens = reg.get("ensembles") or []
-    n_models = reg.get("totalModels") or len(models)
-    n_ens = reg.get("totalEnsembles") or len(ens)
+    n_canon = reg.get("canonicalCount")
+    n_supp = reg.get("supplementalCount")
+    n_alias = reg.get("aliasCount")
+    uniq = reg.get("uniqueImplementationCount")
     check("registry.http_200", True, {"status": s})
-    check("registry.model_count_consistent",
-          n_models == recon["canonical_count"] + recon["supplemental_count"] or n_models == recon["canonical_count"],
-          {"api_count": n_models, "reconciliation_canonical": recon["canonical_count"],
-           "reconciliation_supplemental": recon["supplemental_count"]})
-    check("registry.ensemble_count_consistent",
-          (reg.get("ensembleCount") or n_ens) == recon["ensemble_total_in_registry_and_supplemental"] or n_ens > 0,
-          {"api_ensembles": n_ens, "reconciliation_ensembles": recon["ensemble_total_in_registry_and_supplemental"]})
+    check("registry.counts_match_reconciliation",
+          n_canon == recon["canonical_count"] and n_supp == recon["supplemental_count"] and uniq == recon["total_unique_implementations"],
+          {"api_canonical": n_canon, "api_supplemental": n_supp, "api_aliases": n_alias,
+           "api_unique": uniq, "reconciliation": [recon["canonical_count"], recon["supplemental_count"], recon["total_unique_implementations"]]})
+    alias_names = [a.get("name") for a in (reg.get("aliases") or [])]
+    check("registry.aliases_visible_not_hidden",
+          n_alias is not None and len(alias_names) == n_alias and all(a.get("aliasParent") for a in reg.get("aliases") or []),
+          {"aliases": alias_names})
 else:
     check("registry.http_200", False, {"status": s, "error": reg.get("error")})
 
@@ -83,7 +84,8 @@ report = {"task": "Task 94 Phase 9 — API & registry integrity",
           "checks_failed": len(checks) - passed, "checks": checks,
           "reconciliation_reference": {"canonical": recon["canonical_count"],
                                        "supplemental": recon["supplemental_count"],
-                                       "ensembles": recon["ensemble_total_in_registry_and_supplemental"]}}
+                                       "ensembles": recon["ensemble_total_in_registry_and_supplemental"]},
+          "fixes_applied": ["registry route: alias entries (Kalman, Logistic (PI)) excluded from supplementalCount, exposed under aliases[] with aliasParent — counts now match Phase 1 reconciliation"]}
 with open(OUT, "w") as f: json.dump(report, f, indent=2)
 print(f"PHASE9: {passed}/{len(checks)} checks passed")
 for c in checks:
