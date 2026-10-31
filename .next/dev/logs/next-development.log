@@ -505,3 +505,7 @@ Check the render method of `ModelRegistryDashboard`.
 [01:36:56.392] Server  LOG     prisma:query "BEGIN IMMEDIATE"
 [01:36:56.392] Server  LOG     prisma:query "UPDATE `main`.`Trade` SET `status` = ?, `exitPrice` = ?, `exitDate` = ? WHERE (`main`.`Trade`.`id` = ? AND `main`.`Trade`.`status` = ?)"
 [01:36:56.392] Server  LOG     prisma:query "COMMIT"
+[01:39:27.122] Server  LOG     prisma:query "SELECT 1"
+[01:39:27.920] Server  LOG     prisma:query "SELECT DISTINCT symbol FROM OhlcvBar"
+[01:39:27.929] Server  LOG     prisma:query "SELECT `main`.`PricePatternReport`.`symbol`, `main`.`PricePatternReport`.`computedAt`, `main`.`PricePatternReport`.`llmJson`, `main`.`PricePatternReport`.`patternCount` FROM `main`.`PricePatternReport` WHERE 1=1 LIMIT ? OFFSET ?"
+[01:39:27.946] Server  LOG     prisma:query "SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume` FROM `main`.`OhlcvBar` WHERE `main`.`OhlcvBar`.`symbol` = ? ORDER BY `main`.`OhlcvBar`.`date` ASC LIMIT ? OFFSET ?"
