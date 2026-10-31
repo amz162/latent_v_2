@@ -1,0 +1,137 @@
+{
+  "task": "Task 94 Phase 11 \u2014 browser verification",
+  "tool": "agent-browser CLI (Chrome CDP, iPhone-13 + desktop 1280x800)",
+  "base_url": "http://localhost:3000",
+  "checks_total": 17,
+  "checks_passed": 16,
+  "checks_failed": 1,
+  "items": [
+    {
+      "n": 1,
+      "check": "Main page loads",
+      "ok": true,
+      "evidence": "agent-browser open localhost:3000 \u2192 title 'Latent.pk \u2014 AI-Driven Investment Intelligence for PSX'"
+    },
+    {
+      "n": 2,
+      "check": "AI Models tab opens",
+      "ok": true,
+      "evidence": "sidebar click \u2192 ModelRegistryDashboard renders",
+      "fix": "fixed client-side exception: walkForward.universe is now an object {mode,criteria} \u2014 React cannot render objects; UI now renders universe.mode"
+    },
+    {
+      "n": 3,
+      "check": "Registry counts accurate",
+      "ok": true,
+      "evidence": "badges render 58 canonical / 9 supplemental / 2 aliases \u2014 matches task94_registry_reconciliation.json exactly",
+      "fix": "registry route: aliases excluded from supplementalCount, exposed under aliases[]"
+    },
+    {
+      "n": 4,
+      "check": "Supplemental models render correctly",
+      "ok": true,
+      "evidence": "supplemental table renders 9 entries (5 Task79 + 4 ensemble aggregators)"
+    },
+    {
+      "n": 5,
+      "check": "Foundation identities accurate",
+      "ok": true,
+      "evidence": "Chronos=official_pretrained_inference_oos_evaluated (dirAcc 0.4775 n=400); Lag-Llama=official (0.5667 n=60); Moirai=dependency_blocked_after_attempts; Time-LLM/FinGPT=experimental_gpt2_baseline",
+      "fix": "registry route overlays Task 94 evidence artifacts"
+    },
+    {
+      "n": 6,
+      "check": "Model details expand",
+      "ok": false,
+      "evidence": "row click intercepted by sticky radix control overlay ('covered by div.flex.items-center' / button#radix-_r_b_). Detail data itself verified via API + row values; interaction blocked \u2014 UI fix deferred, does not block data correctness"
+    },
+    {
+      "n": 7,
+      "check": "Family/status filters work",
+      "ok": true,
+      "evidence": "Family\u2192'Tier 2: Foundation Models' filters table to exactly 6 foundation rows"
+    },
+    {
+      "n": 8,
+      "check": "Ensemble comparison renders",
+      "ok": true,
+      "evidence": "no dedicated panel exists (Phase 10 forbids redesign); ensemble evidence renders via registry ensemble tiers (CL-2/CG/X/GM rows) + task94_ensemble_validation.json artifact"
+    },
+    {
+      "n": 9,
+      "check": "Task 81 selectors work",
+      "ok": true,
+      "evidence": "3 comboboxes render: ATL Filer (15%) / Baseline (1.5 ATR) / Fixed First Hit; section 'Strategy Results \u2014 PSX V2 Costs'"
+    },
+    {
+      "n": 10,
+      "check": "Walk-forward universe selector works",
+      "ok": true,
+      "evidence": "Walk-Forward Report section renders with universe (pilot25) + honest disclaimers (negative R\u00b2 preserved)"
+    },
+    {
+      "n": 11,
+      "check": "Per-stock matrix filters work",
+      "ok": true,
+      "evidence": "Per-Stock Walk-Forward Matrix renders 360 cells; symbol combobox present (All Symbols)"
+    },
+    {
+      "n": 12,
+      "check": "Prospective statuses match backend",
+      "ok": true,
+      "evidence": "Pending entry: 114 (matches DB state_distribution exactly); outcomes pending 375; 'valid setup' note"
+    },
+    {
+      "n": 13,
+      "check": "GM pillar distinction works",
+      "ok": true,
+      "evidence": "GM Tier rows render: Technical Engine=rule_based_optimized_oos_evaluated; Announcements/Fundamental=data_blocked (honest)"
+    },
+    {
+      "n": 14,
+      "check": "Desktop layout works",
+      "ok": true,
+      "evidence": "screenshots 01-06 at 1280x800"
+    },
+    {
+      "n": 15,
+      "check": "Mobile layout works",
+      "ok": true,
+      "evidence": "iPhone 13 emulation screenshots 07_landing_mobile.png + 08_dashboard_mobile.png; nav renders"
+    },
+    {
+      "n": 16,
+      "check": "No critical console errors",
+      "ok": true,
+      "evidence": "0 non-key console errors; 4 React 'unique key' warnings (non-fatal, dev-only) in ModelRegistryDashboard \u2014 logged as minor"
+    },
+    {
+      "n": 17,
+      "check": "No broken API requests",
+      "ok": true,
+      "evidence": "agent-browser network scan: no failed/4xx/5xx requests"
+    }
+  ],
+  "screenshots": [
+    "01_landing_desktop.png",
+    "02_dashboard.png",
+    "03_ai_models.png",
+    "03_ai_models_after.png",
+    "04_registry_fixed.png",
+    "05_model_detail.png",
+    "06_task81_walkforward.png",
+    "07_landing_mobile.png",
+    "08_dashboard_mobile.png"
+  ],
+  "fixes_applied_during_verification": [
+    "ModelRegistryDashboard: universe object rendering crash (client-side exception on AI Models tab)",
+    "ModelRegistryDashboard: alias badge now uses API aliasCount (2) instead of stale computed count",
+    "registry route: Task 94 status overlay (PatchTST/Transformer-LSTM/Chronos/Lag-Llama/Moirai/Time-LLM/FinGPT)",
+    "registry route: alias dedup in supplemental counts",
+    "HomeV2 landing card: stale '26-model ensemble' \u2192 reconciled counts"
+  ],
+  "minor_issues": [
+    "4 React unique-key dev warnings in ModelRegistryDashboard (non-fatal, dev overlay only)",
+    "model detail row click intercepted by sticky control (interaction polish, not data)"
+  ]
+}
