@@ -48,8 +48,9 @@ class PatchTSTInfer(nn.Module):
         self.register_buffer("pos", torch.zeros(1, 5, d_model))
         layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=2, dim_feedforward=32, batch_first=True)
         self.encoder = nn.TransformerEncoder(layer, num_layers=1)
-        # Flatten + linear output (1 forecast value)
-        self.head = nn.Linear(5 * d_model, 1)
+        # Task 95 fix: head must match the checkpoint fc (d_model inputs; original
+        # architecture mean-pools patches before the head, see forward)
+        self.head = nn.Linear(d_model, 1)
 
     def forward(self, x):
         # x shape: (batch, seq_len, in_dim)
@@ -71,8 +72,11 @@ class PatchTSTInfer(nn.Module):
         h = self.proj(x_patched) + self.pos
         # Encode
         h = self.encoder(h)
-        # Flatten + head
-        h = h.reshape(b, -1)
+        # Task 95 fix: checkpoint fc expects d_model inputs (fc.weight (1,16)) — the
+        # original task83 architecture mean-pools over patches before the head.
+        # The old code flattened 5*d_model into a differently-shaped head that could
+        # never load, leaving the head randomly initialized.
+        h = h.mean(dim=1)
         out = self.head(h)
         return out.squeeze(-1)
 
