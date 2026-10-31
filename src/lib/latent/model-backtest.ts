@@ -1,6 +1,6 @@
 // Latent.pk — Extended-universe backtest engine (Issue 2).
 //
-// Walk-forward simulation of ALL 65 models + 13 ensembles over the FULL DB
+// Walk-forward simulation of ALL 58 canonical + 11 supplemental = 69 models + 13 ensembles over the FULL DB
 // universe (the original 674 ML-trained stocks + the ~200 fallback-covered
 // stocks), so the Backtesting Report reflects every stock — including new /
 // low-data PSX listings.

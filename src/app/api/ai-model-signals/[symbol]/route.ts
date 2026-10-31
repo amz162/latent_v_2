@@ -132,7 +132,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ symbol: 
   // ---- Issue 2: EXTENDED TRAINING MERGE (DB-cached) ------------------------
   // Stocks outside the original ML-trained universe (new / low-data PSX
   // listings) previously showed "No prediction for X" for every model. They
-  // now get deterministic indicator-based predictions for ALL 65 models + 10
+  // now get deterministic indicator-based predictions for ALL 58 canonical + 11 supplemental = 69 models + 10
   // stored ensembles from the ModelPredictionCache table (precomputed by
   // scripts/train_missing_stocks.ts; self-healed on-demand here if missing).
   // Rows are NEVER deleted — repeat visits are pure DB reads.

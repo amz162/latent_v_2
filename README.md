@@ -2,7 +2,7 @@
 
 > The plan-first PSX investment platform for salaried Pakistanis. Latent.pk cuts through market noise using predictive algorithms trained on PSX data — translating every signal (news, results, technicals, fundamentals) into a clear, personalized action plan in your language. No WhatsApp rumors, no TradingView overwhelm. Just here's the plan to reach your goal.
 
-**Version 0.2.1** · **908 PSX-listed stocks covered** · **1,041,396 daily OHLCV bars (2016–2026)** · **65 AI models + 13 ensembles across 10 tiers** · **61 API routes**
+**Version 0.2.1** · **909 PSX-listed stocks covered** · **1,042,821 daily OHLCV bars (2016-10-21 → 2026-10-29)** · **58 canonical + 11 supplemental = 69 AI models, 13 ensembles across 10 tiers** · **61 API routes**
 
 ---
 
@@ -154,7 +154,7 @@ SQLite via Prisma. Key tables:
 
 | Table | Purpose |
 |---|---|
-| `OhlcvBar` | Daily OHLCV history — 908 symbols × ~1,149 bars each = **1,041,396 rows** (2016-10-21 → 2026-10-21). Composite PK `(symbol, date)`. |
+| `OhlcvBar` | Daily OHLCV history — 909 symbols × ~1,148 bars each = **1,042,821 rows** (2016-10-21 → 2026-10-29). Composite PK `(symbol, date)`. |
 | `ModelPredictionCache` | Per-symbol predictions for stocks outside the original ML-trained universe (extended/fallback coverage). |
 | `ModelBacktestCache` | Per-model + per-ensemble backtest stats (winRate, avgReturnPct, coveredSymbols, computedAt). 78 rows (65 models + 13 ensembles). |
 | `PricePatternCache` | Price-pattern finder output per symbol (permanent cache). |
@@ -302,6 +302,27 @@ Manual restore anytime: `bash .zscripts/restore-from-github.sh`.
 - **`allowedDevOrigins`** is set in `next.config.ts` so the preview iframe (different origin) can load `/_next/*` dev assets.
 - **No test files** — the project follows the convention of not shipping test code.
 - **DB size:** `db/custom.db` is ~197 MB — stored compressed as `db/custom.db.gz` in git; the raw file is gitignored.
+
+---
+
+## Task 93 Verification Batch (2026-10-31)
+
+All artifacts in `data/backtest_reports/task93/`. Read-only validation — NO protected artifacts modified.
+
+| # | Verification | Result |
+|---|---|---|
+| 1 | Chronos expanded OOS evaluation | n=232 (was 172), dir_acc=0.517, CI=[0.453, 0.581] — NOT significant (CI includes 0.50) |
+| 2 | Ensemble verification (Majority Vote) | dir_acc=0.565 @ h=5d VERIFIED (CI math matches, matrix=360 cells, within model range) — significant ONLY at h=5d |
+| 3 | Full metric reproduction | 56/58 canonical models have reproduced metrics (96.6%); 2 resource_blocked (PatchTST, Transformer-LSTM — PyTorch not in 4GB sandbox) |
+| 4 | Cost-aware strategy extension | 7 derived views from task81 540-cell artifact; cost drag = 22.5M PKR (285% of gross); 209/540 cells flipped gross-win → net-loss; **Variant B (net R:R ≥2.0) is ONLY profitable variant** |
+| 5 | GM data provenance | Functionally COMPLETE: 25 companies covered after BYCO→CNERGY corporate-rename accounting; 3,319 filings (matches log); 12,916 ratios + 540 income stmts |
+| 6 | Prospective lifecycle integrity | PASS — 114 trades all pending_entry, idempotent, 0 orphaned sources, 0 SL/TP issues, policyVersion=task76-v1 |
+
+**Key honest findings:**
+- Statistical significance holds ONLY at h=5d for the Majority Vote ensemble. h=10d and h=21d CIs include 0.50.
+- Foundation models (Chronos n=232, Lag-Llama n=60) do NOT show statistically significant directional advantage on PSX data.
+- PSX cost drag is severe — Variant B (net R:R ≥2.0 filter) is essential to overcome brokerage (56.57% of cost) + CGT (42.86% of cost).
+- All 114 prospective paper trades remain pending_entry — statistical verification of live performance is NOT yet possible.
 
 ---
 
