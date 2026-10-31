@@ -46,10 +46,7 @@ def p3_moirai_reconciliation(ctx):
         sub = [x for x in rows if "2026-01-15" <= x <= "2026-10-15"]
         if len(sub) < 16 + h + 5:
             sub = rows[-(16 + h + 5):]
-        step = (len(sub) - h - 5) // max(1, 16 - 1)
-        idxs = list(range(sub.index[0] if hasattr(sub, "index") else 0 + 5, 0, 0))  # placeholder removed below
         # recompute the picker exactly as task96_moirai_chunk.py does, on absolute indices
-        import numpy as np
         df_idx = [i for i, x in enumerate(rows) if "2026-01-15" <= x <= "2026-10-15"]
         if len(df_idx) < 16 + h + 5:
             df_idx = list(range(len(rows) - (16 + h + 5), len(rows)))

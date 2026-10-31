@@ -40,6 +40,8 @@ import numpy as np
 import pandas as pd
 import torch
 
+torch.manual_seed(42)  # deterministic 100-sample Monte Carlo draws (Task 97 reproducibility)
+np.random.seed(42)
 torch.set_num_threads(2)
 t0 = time.time()
 
