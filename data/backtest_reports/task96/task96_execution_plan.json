@@ -1,0 +1,44 @@
+{
+ "task": "Task 96 \u2014 execution plan (resumable, 150s bounded jobs)",
+ "runner": "scripts/task96_runner.py",
+ "phases": {
+  "P2": [
+   "p1_initial_status",
+   "p1_execution_plan",
+   "p2_registry_verification",
+   "p2_reproducibility_test"
+  ],
+  "P3_MOIRAI_P0": [
+   "p3_moirai_chunk_batch (repeats until 80 chunks done)",
+   "p3_moirai_aggregate"
+  ],
+  "P4": [
+   "p4_foundation_feasibility"
+  ],
+  "P5_P6": [
+   "p5_session_check",
+   "p5_process_and_idempotency",
+   "p5_reconcile_cohort",
+   "p5_performance_report"
+  ],
+  "P7": [
+   "p7_variant_b_costs"
+  ],
+  "P8": [
+   "p8_build_start",
+   "p8_build_poll (repeat)",
+   "p8_typescript_baseline"
+  ],
+  "P10_11": [
+   "p10_api_validation",
+   "p11_browser_regression"
+  ],
+  "P12": [
+   "p12_summary_blockers"
+  ]
+ },
+ "progress_snapshot": {
+  "p1_initial_status": "failed",
+  "p1_execution_plan": "running"
+ }
+}

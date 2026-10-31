@@ -1,0 +1,25 @@
+{
+ "task": "Task 96 Phase 2 \u2014 final registry verification",
+ "counts": {
+  "canonical": 58,
+  "supplemental": 9,
+  "aliases": 2,
+  "unique": 67,
+  "all_models_source": 58
+ },
+ "counts_match_task95": true,
+ "readme_consistent": true,
+ "task95_loader_fix_preserved": {
+  "fc_to_head_remap": true,
+  "missing_key_guard": true,
+  "seed": true,
+  "mean_pool_head": true,
+  "head_shape": true
+ },
+ "task95_caveat_status": {
+  "cells_reproduced_vs_stored": 0,
+  "cells_differing_from_stored": 5
+ },
+ "ensembles": "8 ensemble aggregation methods (Majority Vote, Probability-Weighted, Tier-Weighted, Final Consensus, CL-2, PI, CG, X/GIAN/M per task94 reconciliation)",
+ "verdict": "registry source of truth confirmed against source code, live API and README"
+}

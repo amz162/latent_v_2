@@ -1,0 +1,97 @@
+{
+ "task": "Task 96 Phase 2 \u2014 PatchTST / Transformer-LSTM reproducibility test",
+ "method": "fixed recovery loader, 2 identical runs per cell, compared across runs and vs Task 95 stored recomputed values",
+ "results": [
+  {
+   "model": "PatchTST",
+   "h": 5,
+   "run1": [
+    0.75,
+    0.029396,
+    0.039233,
+    -0.223
+   ],
+   "run2": [
+    0.75,
+    0.029396,
+    0.039233,
+    -0.223
+   ],
+   "deterministic": true,
+   "matches_task95_recomputed": true
+  },
+  {
+   "model": "PatchTST",
+   "h": 10,
+   "run1": [
+    0.55,
+    0.050404,
+    0.065372,
+    -0.0386
+   ],
+   "run2": [
+    0.55,
+    0.050404,
+    0.065372,
+    -0.0386
+   ],
+   "deterministic": true,
+   "matches_task95_recomputed": true
+  },
+  {
+   "model": "PatchTST",
+   "h": 21,
+   "run1": [
+    0.425,
+    0.067969,
+    0.0827,
+    -0.1309
+   ],
+   "run2": [
+    0.425,
+    0.067969,
+    0.0827,
+    -0.1309
+   ],
+   "deterministic": true,
+   "matches_task95_recomputed": true
+  },
+  {
+   "model": "Transformer-LSTM",
+   "h": 5,
+   "run1": [
+    0.25,
+    0.033578,
+    0.043886,
+    -0.5302
+   ],
+   "run2": [
+    0.25,
+    0.033578,
+    0.043886,
+    -0.5302
+   ],
+   "deterministic": true,
+   "matches_task95_recomputed": true
+  },
+  {
+   "model": "Transformer-LSTM",
+   "h": 10,
+   "run1": [
+    0.375,
+    0.053472,
+    0.068121,
+    -0.1278
+   ],
+   "run2": [
+    0.375,
+    0.053472,
+    0.068121,
+    -0.1278
+   ],
+   "deterministic": true,
+   "matches_task95_recomputed": true
+  }
+ ],
+ "verdict": "all cells deterministic and identical to Task 95's recovered results \u2014 no change to recovered results"
+}

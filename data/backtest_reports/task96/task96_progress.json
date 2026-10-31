@@ -1,0 +1,38 @@
+{
+ "jobs": {
+  "p1_initial_status": {
+   "status": "done",
+   "runs": 2,
+   "started": "2026-10-31T19:34:49Z",
+   "error": null,
+   "finished": "2026-10-31T19:34:49Z",
+   "seconds": 0.2,
+   "traceback": "Traceback (most recent call last):\n  File \"/home/z/my-project/scripts/task96_runner.py\", line 88, in run_job\n    ent[\"fn\"](ctx)\n  File \"/home/z/my-project/scripts/task96_jobs/phase1.py\", line 35, in p1_initial_status\n    \"head\": sh(\"git rev-parse HEAD\")[:12],\n            ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^\nTypeError: 'CompletedProcess' object is not subscriptable\n"
+  },
+  "p1_execution_plan": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:34:31Z",
+   "error": null,
+   "finished": "2026-10-31T19:34:31Z",
+   "seconds": 0.0
+  },
+  "p2_registry_verification": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:34:31Z",
+   "error": null,
+   "finished": "2026-10-31T19:34:31Z",
+   "seconds": 0.0
+  },
+  "p2_reproducibility_test": {
+   "status": "done",
+   "runs": 1,
+   "started": "2026-10-31T19:34:50Z",
+   "error": null,
+   "finished": "2026-10-31T19:34:52Z",
+   "seconds": 2.7
+  }
+ },
+ "history": []
+}
