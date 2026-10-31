@@ -1249,3 +1249,5 @@ prisma:query SELECT `main`.`PredictionHistory`.`id`, `main`.`PredictionHistory`.
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date`, `main`.`OhlcvBar`.`open`, `main`.`OhlcvBar`.`high`, `main`.`OhlcvBar`.`low`, `main`.`OhlcvBar`.`close`, `main`.`OhlcvBar`.`volume`, `main`.`OhlcvBar`.`source`, `main`.`OhlcvBar`.`updatedAt` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
 prisma:query SELECT `main`.`OhlcvBar`.`symbol`, `main`.`OhlcvBar`.`date` FROM `main`.`OhlcvBar` WHERE 1=1 ORDER BY `main`.`OhlcvBar`.`date` DESC LIMIT ? OFFSET ?
  GET /api/backtest/walk-forward/prospective 200 in 39ms (compile: 1337µs, render: 37ms)
+ GET / 200 in 82ms (compile: 3ms, render: 79ms)
+ GET / 200 in 39ms (compile: 2ms, render: 37ms)
