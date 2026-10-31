@@ -31,7 +31,7 @@ export interface PricePattern {
   description: string;
   period: string; // e.g. "2018-2026"
   occurrences: number;
-  years_seen: number;
+  years_seen: number | number[]; // legacy persisted reports may store the year list
   success_rate: number; // 0-100
   avg_move_pct: number; // signed %
   confidence: PatternConfidence;
@@ -890,7 +890,7 @@ export type PriceBar = EngineBar;
  *  `id` identity field (the engine now uses `key`) and optional extras. */
 export type StatPattern = PricePattern & {
   id: string;
-  details?: string;
+  details?: Record<string, number | string> | string; // legacy persisted rows store an object
   explanation?: string;
 };
 
@@ -913,6 +913,7 @@ export interface SeasonalityInfo {
   months: {
     month: number; // 0 = Jan
     avg: number; // avg return % across years
+    winRate?: number; // % of years positive
     yearsSampled: number;
     flaggedUp?: boolean; // same-direction (up) in ≥4 of last 5 years
     flaggedDown?: boolean; // same-direction (down) in ≥4 of last 5 years
@@ -932,7 +933,7 @@ export interface DetectionResult {
     firstDate: string;
     lastDate: string;
     years?: number;
-    skipped?: { reason: string }[];
+    skipped?: { reason: string; type?: string }[];
   };
   patterns: StatPattern[];
   zones: PriceZone[];
