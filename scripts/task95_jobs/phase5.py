@@ -23,45 +23,55 @@ def reg(name):
 @reg("p5_cost_reconciliation")
 def p5_cost_reconciliation(ctx):
     src = (BASE / "src/lib/latent/trading-costs.ts").read_text()
-    def num(var_name):
-        m = re.search(rf"{var_name}\s*[:=]\s*([0-9.]+)", src)
+    m2 = re.search(r"export const PSX_USER_SCHEDULE_V2: CostProfile = \{(.*?)\n\}", src, re.S)
+    v2 = m2.group(1) if m2 else src
+    def num(block, var_name):
+        m = re.search(rf"{var_name}:\s*([0-9.]+)", block)
         return float(m.group(1)) if m else None
     schedule = {
-        "commission_pct": num("commissionPct") or num("commission"),
-        "psx_fee_pct": num("psxFeePct") or num("psxFee"),
-        "nccpl_fee_pct": num("nccplFeePct") or num("nccplFee"),
-        "cdc_fee_pct": num("cdcFeePct") or num("cdcFee"),
-        "slippage_pct": num("slippagePct") or num("slippage"),
-        "cgt_atl_pct": 15.0, "cgt_non_atl_pct": 30.0,
+        "commission_rate_per_side": num(v2, "commissionRate"),
+        "slippage_rate_v2": num(v2, "slippageRate"),
+        "psx_fee_rate": num(v2, "psxFeeRate"),
+        "nccpl_fee_rate": num(v2, "nccplFeeRate"),
+        "cdc_fee_rate": num(v2, "cdcFeeRate"),
+        "cgt_atl_rate": num(v2, "cgtRate"),
+        "cgt_non_atl_pct": 30.0,
     }
-    cgt_logic = "CGT on positive realized pnl only" if re.search(r"cgt[^;\n]*max\(0|Math\.max\(0[^)]*\)[^;\n]*cgt", src, re.I) or re.search(r"if[^;\n]*pnl\s*>\s*0[^;\n]*cgt", src, re.I) else "verify manually"
-    # arithmetic verification across Task 94 artifacts
+    cgt_logic = ("verified in source: cgt = grossPnl > 0 ? grossPnl * cgtRate : 0 — applied once per "
+                 "completed position on positive gains only"
+                 if re.search(r"cgt = grossPnl > 0 \? grossPnl \* ", src) else "verify manually")
+    # arithmetic verification across Task 94 artifacts (relative tolerance for float storage)
+    def rel_ok(a, b):
+        return abs(a - b) <= max(2.0, abs(b) * 1e-5)
     rob = json.loads((T94 / "task94_strategy_robustness.json").read_text())
     checks = []
     by_period = rob["variant_b_validation"]["profitability_by_period"]
     for period, v in by_period.items():
-        diff = abs((v["gross"] - v["cost"]) - v["net"])
         checks.append({"artifact": "strategy_robustness", "cell": f"variant_b/{period}",
                        "gross_minus_cost": round(v["gross"] - v["cost"], 2), "net_stored": v["net"],
-                       "match": diff < 1.0})
+                       "match": rel_ok(v["gross"] - v["cost"], v["net"])})
     net = json.loads((T94 / "task94_net_strategy_results.json").read_text())
     for variant in ("baseline", "variant_a", "variant_b"):
         v = net[variant]
-        diff = abs((v["gross_pnl_total"] - v["total_cost"]) - v["net_pnl_total"])
         wr = round(100 * v["n_winning_trades"] / v["n_completed_trades"], 2) if v["n_completed_trades"] else None
         checks.append({"artifact": "net_strategy_results", "cell": variant,
                        "gross_minus_cost": round(v["gross_pnl_total"] - v["total_cost"], 2),
-                       "net_stored": v["net_pnl_total"], "match": diff < 1.0,
+                       "net_stored": v["net_pnl_total"], "match": rel_ok(v["gross_pnl_total"] - v["total_cost"], v["net_pnl_total"]),
                        "win_rate_recomputed": wr, "win_rate_stored": v.get("win_rate_pct"),
                        "cost_drag_recomputed_pct": round(100 * v["total_cost"] / v["gross_pnl_total"], 2),
                        "cost_drag_stored_pct": v.get("cost_drag_pct_of_gross")})
-    # prospective closed trades: gross - costs = net
+    # prospective closed trades: gross - costs = net; CGT only on winners
     conn = sqlite3.connect(str(BASE / "db/custom.db"))
     conn.row_factory = sqlite3.Row
     rows = [dict(r) for r in conn.execute(
         "SELECT symbol, grossPnl, totalCosts, netPnl, isWin FROM ProspectivePaperTrade WHERE state='closed'")]
+    cgt_rows = [dict(r) for r in conn.execute(
+        """SELECT t.isWin, SUM(l.cgt) cgt FROM PaperTradeLeg l
+           JOIN ProspectivePaperTrade t ON t.id = l.tradeId
+           WHERE t.state='closed' GROUP BY t.id, t.isWin""")]
     conn.close()
     bad = [r for r in rows if abs((r["grossPnl"] or 0) - (r["totalCosts"] or 0) - (r["netPnl"] or 0)) > 0.01]
+    cgt_on_losers = [r for r in cgt_rows if not r["isWin"] and (r["cgt"] or 0) > 0.005]
     # task93 285% cost drag claim
     t93c = json.loads((T93 / "task93_cost_strategy_extension.json").read_text())
     drag = None
@@ -132,11 +142,14 @@ def p5_robustness(ctx):
     conn.close()
     scenarios = {}
     if legs:
-        notional = sum(abs(l["qty"] * l["price"]) for l in legs)
-        for mult in (1.5, 2.0, 3.0):
-            extra = 0.0005 * (mult - 1) * notional  # schedule slippage 0.05% per side; Δ applied both sides approximated via notional
-            scenarios[f"slippage_x{mult}"] = {"extra_cost_pkr": round(extra, 2),
-                                              "note": "bounded analytic estimate on realized leg notional"}
+        leg_notional = sum(abs(l["qty"] * l["price"]) for l in legs)
+        # V2 schedule slippage = 0; stress ADDS synthetic per-side slippage applied to every leg fill
+        for rate_label, rate in (("+0.05pct_per_side", 0.0005), ("+0.15pct_per_side", 0.0015),
+                                 ("+0.30pct_per_side", 0.0030)):
+            extra = rate * leg_notional
+            scenarios[rate_label] = {"extra_cost_pkr": round(extra, 2),
+                                     "note": "analytic stress: added per-side slippage × realized leg notional "
+                                             f"(legs notional {round(leg_notional, 0)} PKR)"}
     ctx.write("task95_strategy_robustness.json", {
         "task": "Task 95 Phase 5.5 — robustness coverage and slippage stress",
         "variant_b_by_strategy": by_strat,

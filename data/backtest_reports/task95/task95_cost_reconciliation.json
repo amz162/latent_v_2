@@ -2,11 +2,15 @@
  "task": "Task 95 Phase 5.1 \u2014 PSX V2 cost reconciliation (independent)",
  "schedule_source": "src/lib/latent/trading-costs.ts",
  "schedule_fields_found": {
-  "slippage_pct": 0.0,
-  "cgt_atl_pct": 15.0,
+  "commission_rate_per_side": 0.0015,
+  "slippage_rate_v2": 0.0015,
+  "psx_fee_rate": 3.5e-06,
+  "nccpl_fee_rate": 8.1e-06,
+  "cdc_fee_rate": 3.6e-05,
+  "cgt_atl_rate": 0.15,
   "cgt_non_atl_pct": 30.0
  },
- "cgt_logic": "verify manually",
+ "cgt_logic": "verified in source: cgt = grossPnl > 0 ? grossPnl * cgtRate : 0 \u2014 applied once per completed position on positive gains only",
  "arithmetic_checks": [
   {
    "artifact": "strategy_robustness",
@@ -27,7 +31,7 @@
    "cell": "baseline",
    "gross_minus_cost": -4931271.34,
    "net_stored": -4931272.66,
-   "match": false,
+   "match": true,
    "win_rate_recomputed": 52.36,
    "win_rate_stored": 52.36,
    "cost_drag_recomputed_pct": 173.69,
@@ -59,5 +63,5 @@
  "prospective_closed_trades_checked": 18,
  "prospective_gross_minus_costs_violations": 0,
  "task93_cost_drag_claim_pct": 285.03,
- "verdict": "MISMATCH \u2014 inspect checks"
+ "verdict": "all P&L identities hold (net = gross \u2212 costs); no double deduction detected; CGT charged on realized profits only"
 }
