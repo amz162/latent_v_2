@@ -11,7 +11,8 @@ import re
 import sys
 from pathlib import Path
 
-BASE = Path("/home/z/my-project")
+# repo root resolved from this file's location — portable to CI runners
+BASE = Path(__file__).resolve().parents[1]
 
 DESTRUCTIVE = [
     (r"git\s+reset\s+--hard", "hard reset discards committed and uncommitted work"),

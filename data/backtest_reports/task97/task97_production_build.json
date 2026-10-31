@@ -1,8 +1,9 @@
 {
-  "task": "Task 97 Section 12 — production build on the final commit",
-  "local_status": "memory_blocked_on_sandbox_cgroup (4GB cgroup OOM-kills webpack workers; diagnosed in Task 96)",
-  "ci_route": ".github/workflows/production-build.yml (ubuntu-latest, 7GB, same 1GB OOM-safe heap cap, prisma generate, db restore, standalone+BUILD_ID verification)",
-  "last_verified_green_commit": "c9e60de1 (Task 96)",
-  "final_commit_verification": "re-verified after this push — see final_commit_result below",
-  "final_commit_result": "pending (this file is updated after the CI run for the final commit completes)"
+ "task": "Task 97 Section 12 \u2014 production build on the final commit",
+ "local_status": "memory_blocked_on_sandbox_cgroup (4GB cgroup OOM-kills webpack workers; diagnosed in Task 96)",
+ "ci_route": ".github/workflows/production-build.yml (ubuntu-latest, 7GB, same 1GB OOM-safe heap cap, prisma generate, db restore, standalone+BUILD_ID verification)",
+ "last_verified_green_commit": "c9e60de1 (Task 96)",
+ "final_commit_verification": "re-verified after this push \u2014 see final_commit_result below",
+ "final_commit_result": "pending (this file is updated after the CI run for the final commit completes)",
+ "first_final_push_run": "failed: audit script used a hardcoded sandbox path (FileNotFoundError on the runner); fixed by resolving the repo root from __file__"
 }
