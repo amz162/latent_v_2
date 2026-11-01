@@ -1,0 +1,73 @@
+{
+  "schema_version": "task99-psx-v1",
+  "n_features": 26,
+  "kept_features": [
+    "close_ret_1d",
+    "range_hl_over_c",
+    "lag1_open_over_close",
+    "lag1_close_over_close",
+    "lag1_volume_over_volume",
+    "lag2_open_over_close",
+    "lag2_volume_over_volume",
+    "lag3_open_over_close",
+    "lag3_volume_over_volume",
+    "close_ma_5_rel",
+    "close_ma_10_rel",
+    "close_ma_20_rel",
+    "close_ma_60_rel",
+    "close_ma_120_rel",
+    "volume_ma_5_rel",
+    "volume_ma_10_rel",
+    "volume_ma_20_rel",
+    "adx_14",
+    "adxr_14",
+    "macd_rel",
+    "rsi_14",
+    "boll_upper_dist",
+    "boll_lower_dist",
+    "ad_flow_5",
+    "atr_14_rel",
+    "ht_dcperiod"
+  ],
+  "feature_selection": {
+    "method": "train_only_missing>40pct_or_zero_var_or_corr>0.95",
+    "dropped": {
+      "missing_gt_40pct": [],
+      "zero_variance": [
+        "high_over_open",
+        "low_over_open",
+        "close_over_open"
+      ],
+      "corr_gt_095": [
+        "boll_mid_dist",
+        "lag1_high_over_close",
+        "lag1_low_over_close",
+        "lag2_close_over_close",
+        "lag2_high_over_close",
+        "lag2_low_over_close",
+        "lag3_close_over_close",
+        "lag3_high_over_close",
+        "lag3_low_over_close",
+        "log_ret_1d"
+      ]
+    }
+  },
+  "reference_defects_fixed": {
+    "ma_collision": "close_ma_5/10/20 and volume_ma_5/10/20 are DISTINCT fields (reference overwrote close MAs with volume MAs)",
+    "objective_mismatch": "feature selection uses the same horizon targets as training (no directional labels)",
+    "full_history_scaler": "StandardScaler + feature selection fit on TRAIN partition only"
+  },
+  "market_context": {
+    "included": false,
+    "reason": "no genuine KSE-100 index series in OhlcvBar (verified 2026-11-01); reference S&P 500 context not portable; synthetic proxy forbidden"
+  },
+  "seq_len": 30,
+  "targets": {
+    "5": "forward return close[t+h]/close[t]-1, per-stock, mature only",
+    "10": "forward return close[t+h]/close[t]-1, per-stock, mature only",
+    "21": "forward return close[t+h]/close[t]-1, per-stock, mature only"
+  },
+  "canonical8_variant": {
+    "n_features": 34
+  }
+}

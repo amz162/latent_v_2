@@ -188,8 +188,8 @@ export function ModelRegistryDashboard() {
           {/* Overall summary */}
           {t81Overall.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-              {t81Overall.map((o: any) => (
-                <div key={o.period} className="border rounded p-3">
+              {t81Overall.map((o: any, i: number) => (
+                <div key={`${o.variant}-${o.taxProfile}-${o.strategy}-${o.period ?? "all"}-${i}`} className="border rounded p-3">
                   <div className="text-xs text-muted-foreground">{o.period}</div>
                   <div className="text-lg font-bold">{o.nCompleted} trades</div>
                   <div className="text-xs">Win: {o.winRate}%</div>

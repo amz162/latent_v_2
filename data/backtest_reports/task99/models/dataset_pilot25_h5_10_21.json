@@ -1,0 +1,182 @@
+{
+  "tag": "pilot25_h5_10_21",
+  "universe": "pilot25",
+  "symbols_eligible": [
+    "ANL",
+    "BOP",
+    "BYCO",
+    "CNERGY",
+    "ENGRO",
+    "FCCL",
+    "HASCOL",
+    "HUBC",
+    "HUMNL",
+    "KEL",
+    "LOTCHEM",
+    "LUCK",
+    "MEBL",
+    "MLCF",
+    "OGDC",
+    "PAEL",
+    "PIBTL",
+    "PPL",
+    "PRL",
+    "PSO",
+    "SYS",
+    "TELE",
+    "TRG",
+    "UNITY",
+    "WTL"
+  ],
+  "symbols_excluded": {},
+  "min_bars": 250,
+  "horizons": [
+    5,
+    10,
+    21
+  ],
+  "seq_len": 30,
+  "feature_schema_version": "task99-psx-v1",
+  "n_features": 26,
+  "kept_features": [
+    "close_ret_1d",
+    "range_hl_over_c",
+    "lag1_open_over_close",
+    "lag1_close_over_close",
+    "lag1_volume_over_volume",
+    "lag2_open_over_close",
+    "lag2_volume_over_volume",
+    "lag3_open_over_close",
+    "lag3_volume_over_volume",
+    "close_ma_5_rel",
+    "close_ma_10_rel",
+    "close_ma_20_rel",
+    "close_ma_60_rel",
+    "close_ma_120_rel",
+    "volume_ma_5_rel",
+    "volume_ma_10_rel",
+    "volume_ma_20_rel",
+    "adx_14",
+    "adxr_14",
+    "macd_rel",
+    "rsi_14",
+    "boll_upper_dist",
+    "boll_lower_dist",
+    "ad_flow_5",
+    "atr_14_rel",
+    "ht_dcperiod"
+  ],
+  "feature_selection": {
+    "method": "train_only_missing>40pct_or_zero_var_or_corr>0.95",
+    "dropped": {
+      "missing_gt_40pct": [],
+      "zero_variance": [
+        "high_over_open",
+        "low_over_open",
+        "close_over_open"
+      ],
+      "corr_gt_095": [
+        "boll_mid_dist",
+        "lag1_high_over_close",
+        "lag1_low_over_close",
+        "lag2_close_over_close",
+        "lag2_high_over_close",
+        "lag2_low_over_close",
+        "lag3_close_over_close",
+        "lag3_high_over_close",
+        "lag3_low_over_close",
+        "log_ret_1d"
+      ]
+    }
+  },
+  "market_context_included": false,
+  "market_context_reason": "no genuine KSE-100 index series in OhlcvBar (verified 2026-11-01); reference S&P 500 context not portable; synthetic proxy forbidden",
+  "split_dates": {
+    "train_end": "2022-10-26",
+    "val_end": "2024-11-01",
+    "train_last": "2022-09-26",
+    "val_last": "2024-10-02"
+  },
+  "purge_sessions": 21,
+  "scaler": "StandardScaler fit on TRAIN partition only",
+  "scaler_params": {
+    "mean": [
+      -5.306617995165657e-05,
+      0.039444848031260214,
+      1.0044026187586834,
+      1.0009553882691549,
+      1.7947582905928245,
+      1.0054056363629094,
+      2.064456923210386,
+      1.0064305875899426,
+      2.307376842220414,
+      -0.0008274180793718868,
+      -0.0017023867868845915,
+      -0.003385095214619286,
+      -0.010107763751806763,
+      -0.019217623394370123,
+      0.017198446346723517,
+      0.0331733652199939,
+      0.046543264905725516,
+      0.25502960365444877,
+      0.2552723100279273,
+      -0.007001156953529074,
+      0.4824997512894633,
+      -0.04508260805061273,
+      0.04110948917644587,
+      -0.012945003027142896,
+      0.04194220393064645,
+      1.7348473521756163
+    ],
+    "scale": [
+      0.02987485656243108,
+      0.026014142518344163,
+      0.04253043229318945,
+      0.030934312764187333,
+      10.436891122064052,
+      0.053062188839946844,
+      10.629405190651287,
+      0.06177699253137945,
+      26.487607858830085,
+      0.03393294961131337,
+      0.05321080042233367,
+      0.0793924480956609,
+      0.14518916689572237,
+      0.2171144321170158,
+      0.6645495134899901,
+      0.8602285367054575,
+      1.0503918403630481,
+      0.10289882243191986,
+      0.09058457821548217,
+      0.03623088241981348,
+      0.12451569014436761,
+      0.05291907544765861,
+      0.04652748987247872,
+      0.09439077465922534,
+      0.016859628599606474,
+      0.8580899351367866
+    ]
+  },
+  "seed": 42,
+  "counts": {
+    "train": 32469,
+    "val": 11424,
+    "test": 10875
+  },
+  "date_ranges": {
+    "train": [
+      "2017-05-23",
+      "2022-09-26"
+    ],
+    "val": [
+      "2022-10-27",
+      "2024-10-03"
+    ],
+    "test": [
+      "2024-11-04",
+      "2026-09-22"
+    ]
+  },
+  "no_symbol_boundary_crossing": true,
+  "no_fabricated_bars": true
+}

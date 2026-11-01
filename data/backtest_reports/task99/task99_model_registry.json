@@ -1,0 +1,151 @@
+{
+  "task": 99,
+  "canonical_registry_untouched": true,
+  "supplemental_models": [
+    {
+      "id": "jw_reference_lstm",
+      "name": "Reference LSTM \u2014 PSX Adaptation",
+      "supplemental": true,
+      "source_reference": "https://github.com/jiewwantan/RNN_LSTM_trading_model",
+      "license_status": "no LICENSE in reference repo \u2014 independent PyTorch implementation, no code/weights copied",
+      "psx_adaptation": {
+        "seq_len": 30,
+        "horizons": [
+          5,
+          10,
+          21
+        ],
+        "targets": "forward returns 5d/10d/21d (output_dim=3)",
+        "market_context": "excluded \u2014 no genuine KSE-100 series in DB",
+        "features": 26,
+        "feature_schema": "task99-psx-v1"
+      },
+      "architecture": "Stacked LSTM 256(seq)\u2192Dropout(0.25)\u2192LSTM(64)\u2192Dropout(0.25)\u2192Dense(3); RMSprop(0.01); MAE loss",
+      "config": "reference_full_config (exact reference layer widths)",
+      "param_count": 373443,
+      "epochs_trained": 14,
+      "best_val_mae": 0.06517720967531204,
+      "checkpoint_sha16": "f00a0fc223a1be78",
+      "training_samples": 32469,
+      "validation_samples": 11424,
+      "test_samples": 10875,
+      "symbols": 25,
+      "training_duration_chunks": "~110s resumable CPU chunks (150s sandbox limit)",
+      "checkpoint_available": true,
+      "in_final_consensus": false,
+      "evaluation_policy": "paper/shadow until OOS evidence justifies promotion",
+      "verifiedStatus": "trained_oos_evaluated",
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "n": 10875,
+          "mae": 0.048537,
+          "rmse": 0.073626,
+          "r2": -0.048104,
+          "directional_accuracy": 0.4972,
+          "mae_ci95": [
+            0.047572,
+            0.049553
+          ]
+        },
+        "10d": {
+          "n": 10875,
+          "mae": 0.068887,
+          "rmse": 0.104269,
+          "r2": -0.032493,
+          "directional_accuracy": 0.4834,
+          "mae_ci95": [
+            0.067498,
+            0.070336
+          ]
+        },
+        "21d": {
+          "n": 10875,
+          "mae": 0.10632,
+          "rmse": 0.158075,
+          "r2": -0.01741,
+          "directional_accuracy": 0.5162,
+          "mae_ci95": [
+            0.104128,
+            0.108481
+          ]
+        }
+      },
+      "dirAcc5d": 0.4972,
+      "mae5d": 0.048537
+    },
+    {
+      "id": "jw_reference_cnn_lstm",
+      "name": "Reference CNN-LSTM \u2014 PSX Adaptation",
+      "supplemental": true,
+      "source_reference": "https://github.com/jiewwantan/RNN_LSTM_trading_model",
+      "license_status": "no LICENSE in reference repo \u2014 independent PyTorch implementation, no code/weights copied",
+      "psx_adaptation": {
+        "seq_len": 30,
+        "horizons": [
+          5,
+          10,
+          21
+        ],
+        "targets": "forward returns 5d/10d/21d (output_dim=3)",
+        "market_context": "excluded \u2014 no genuine KSE-100 series in DB",
+        "features": 26,
+        "feature_schema": "task99-psx-v1"
+      },
+      "architecture": "Conv1D(256,k8)\u2192Conv1D(256,k6)\u2192Dropout(0.25)\u2192MaxPool1D(3)\u2192LSTM(128)\u2192Dropout(0.25)\u2192Dense(3); Adagrad(0.01); MAE loss",
+      "config": "reference_full_config (exact reference layer widths)",
+      "param_count": 644995,
+      "epochs_trained": 11,
+      "best_val_mae": 0.06589968502521515,
+      "checkpoint_sha16": "1e0d4fed748c29da",
+      "training_samples": 32469,
+      "validation_samples": 11424,
+      "test_samples": 10875,
+      "symbols": 25,
+      "training_duration_chunks": "~110s resumable CPU chunks (150s sandbox limit)",
+      "checkpoint_available": true,
+      "in_final_consensus": false,
+      "evaluation_policy": "paper/shadow until OOS evidence justifies promotion",
+      "verifiedStatus": "trained_oos_evaluated",
+      "status": "trained_oos_evaluated",
+      "metrics": {
+        "5d": {
+          "n": 10875,
+          "mae": 0.050439,
+          "rmse": 0.074965,
+          "r2": -0.0866,
+          "directional_accuracy": 0.5011,
+          "mae_ci95": [
+            0.049477,
+            0.051464
+          ]
+        },
+        "10d": {
+          "n": 10875,
+          "mae": 0.073228,
+          "rmse": 0.107817,
+          "r2": -0.103952,
+          "directional_accuracy": 0.5073,
+          "mae_ci95": [
+            0.071753,
+            0.074703
+          ]
+        },
+        "21d": {
+          "n": 10875,
+          "mae": 0.112025,
+          "rmse": 0.163883,
+          "r2": -0.093548,
+          "directional_accuracy": 0.5106,
+          "mae_ci95": [
+            0.10974,
+            0.114298
+          ]
+        }
+      },
+      "dirAcc5d": 0.5011,
+      "mae5d": 0.050439
+    }
+  ],
+  "generatedAt": "2026-11-01T09:12:43+0000"
+}

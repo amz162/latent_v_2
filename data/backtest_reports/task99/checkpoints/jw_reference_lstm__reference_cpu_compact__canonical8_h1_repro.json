@@ -1,0 +1,77 @@
+{
+  "model_id": "jw_reference_lstm",
+  "config_name": "reference_cpu_compact",
+  "config": {
+    "kind": "lstm",
+    "config_name": "reference_cpu_compact",
+    "lstm_hidden_1": 96,
+    "lstm_hidden_2": 32,
+    "conv_filters_1": 0,
+    "conv_kernel_1": 0,
+    "conv_filters_2": 0,
+    "conv_kernel_2": 0,
+    "pool_size": 0,
+    "dropout": 0.25,
+    "output_dim": 3,
+    "optimizer": "rmsprop",
+    "lr": 0.01,
+    "optimizer_eps": 1e-08,
+    "optimizer_decay": 0.0002,
+    "loss": "mae",
+    "seq_len": 30,
+    "batch_size": 32,
+    "max_epochs": 14,
+    "early_stopping_patience": 8,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "extra": {}
+  },
+  "dataset_tag": "canonical8_h1_repro",
+  "dataset_sha16": "77d8a0fc408ca22e",
+  "n_features": 34,
+  "seq_len": 30,
+  "epoch": 13,
+  "best_val_mae": 0.014327085576951504,
+  "best_epoch": 5,
+  "finished": true,
+  "stop_reason": "early_stopping(patience=8)",
+  "param_count": 67427,
+  "counts": {
+    "train": 10521,
+    "val": 3968,
+    "test": 3477
+  },
+  "training_only_preprocessing": [
+    "StandardScaler",
+    "feature_selection"
+  ],
+  "loss": "mae",
+  "checkpoint_sha16": "e3c2a228b3860636",
+  "history_tail": [
+    {
+      "epoch": 9,
+      "train_mae": 0.01689368691918154,
+      "val_mae": 0.015433228574693203
+    },
+    {
+      "epoch": 10,
+      "train_mae": 0.016933283063733106,
+      "val_mae": 0.01972442865371704
+    },
+    {
+      "epoch": 11,
+      "train_mae": 0.01671157324386585,
+      "val_mae": 0.019561704248189926
+    },
+    {
+      "epoch": 12,
+      "train_mae": 0.016770681969277945,
+      "val_mae": 0.019753944128751755
+    },
+    {
+      "epoch": 13,
+      "train_mae": 0.01676506236037041,
+      "val_mae": 0.014867955818772316
+    }
+  ]
+}

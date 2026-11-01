@@ -176,6 +176,45 @@ export async function GET() {
       if (parent) { entry.isAlias = true; entry.aliasParent = parent; aliases.push(entry); }
       else supplemental.push(entry);
     }
+    // Task 99: merge the two reference RNN-LSTM supplemental implementations
+    // (github.com/jiewwantan/RNN_LSTM_trading_model — independent PSX adaptation).
+    // Canonical ALL_MODELS and Task 84 supplemental/alias handling are untouched;
+    // counts (supplementalCount / uniqueImplementationCount) include the entries
+    // automatically because they are appended before the response is built.
+    const t99Reg = await readJson("data/backtest_reports/task99/task99_model_registry.json");
+    if (t99Reg?.supplemental_models) {
+      for (const m of t99Reg.supplemental_models as any[]) {
+        supplemental.push({
+          name: m.name,
+          id: m.id,
+          verifiedStatus: m.verifiedStatus,
+          status: m.status,
+          metrics: m.metrics,
+          dirAcc5d: m.dirAcc5d ?? null,
+          mae5d: m.mae5d ?? null,
+          supplemental: true,
+          task99: {
+            source_reference: m.source_reference,
+            license_status: m.license_status,
+            architecture: m.architecture,
+            config: m.config,
+            param_count: m.param_count,
+            epochs_trained: m.epochs_trained,
+            best_val_mae: m.best_val_mae,
+            checkpoint_available: m.checkpoint_available,
+            checkpoint_sha16: m.checkpoint_sha16,
+            psx_adaptation: m.psx_adaptation,
+            training_samples: m.training_samples,
+            validation_samples: m.validation_samples,
+            test_samples: m.test_samples,
+            symbols: m.symbols,
+            training_duration_chunks: m.training_duration_chunks,
+            in_final_consensus: m.in_final_consensus,
+            evaluation_policy: m.evaluation_policy,
+          },
+        });
+      }
+    }
     return NextResponse.json({
       available: true,
       canonicalCount: ALL_MODELS.length,

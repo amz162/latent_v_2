@@ -1,0 +1,224 @@
+{
+  "same_sample_baselines": {
+    "zero_return": {
+      "5": {
+        "n": 10875,
+        "mae": 0.047627,
+        "rmse": 0.072191,
+        "r2": -0.00766,
+        "directional_accuracy": 0.0053,
+        "mae_ci95": [
+          0.046733,
+          0.048608
+        ]
+      },
+      "10": {
+        "n": 10875,
+        "mae": 0.068395,
+        "rmse": 0.103314,
+        "r2": -0.01366,
+        "directional_accuracy": 0.0058,
+        "mae_ci95": [
+          0.067008,
+          0.069871
+        ]
+      },
+      "21": {
+        "n": 10875,
+        "mae": 0.106306,
+        "rmse": 0.158518,
+        "r2": -0.023121,
+        "directional_accuracy": 0.0028,
+        "mae_ci95": [
+          0.104092,
+          0.108478
+        ]
+      }
+    },
+    "train_mean_return": {
+      "5": {
+        "n": 10875,
+        "mae": 0.04763,
+        "rmse": 0.072221,
+        "r2": -0.008504,
+        "directional_accuracy": 0.4971,
+        "mae_ci95": [
+          0.046731,
+          0.048612
+        ]
+      },
+      "10": {
+        "n": 10875,
+        "mae": 0.068401,
+        "rmse": 0.103334,
+        "r2": -0.014054,
+        "directional_accuracy": 0.4835,
+        "mae_ci95": [
+          0.067014,
+          0.06988
+        ]
+      },
+      "21": {
+        "n": 10875,
+        "mae": 0.10629,
+        "rmse": 0.158444,
+        "r2": -0.022167,
+        "directional_accuracy": 0.5162,
+        "mae_ci95": [
+          0.104078,
+          0.108456
+        ]
+      }
+    },
+    "ridge_flattened": {
+      "5": {
+        "n": 10875,
+        "mae": 0.055712,
+        "rmse": 0.12529,
+        "r2": -2.035149,
+        "directional_accuracy": 0.4971,
+        "mae_ci95": [
+          0.05384,
+          0.057838
+        ]
+      },
+      "10": {
+        "n": 10875,
+        "mae": 0.082926,
+        "rmse": 0.207669,
+        "r2": -3.095635,
+        "directional_accuracy": 0.5059,
+        "mae_ci95": [
+          0.079843,
+          0.086634
+        ]
+      },
+      "21": {
+        "n": 10875,
+        "mae": 0.129445,
+        "rmse": 0.29819,
+        "r2": -2.620399,
+        "directional_accuracy": 0.5215,
+        "mae_ci95": [
+          0.124794,
+          0.134344
+        ]
+      }
+    },
+    "lightgbm_flattened": {
+      "5": {
+        "n": 10875,
+        "mae": 0.049385,
+        "rmse": 0.073997,
+        "r2": -0.058698,
+        "directional_accuracy": 0.4968,
+        "mae_ci95": [
+          0.048476,
+          0.050396
+        ]
+      },
+      "10": {
+        "n": 10875,
+        "mae": 0.07255,
+        "rmse": 0.106744,
+        "r2": -0.082093,
+        "directional_accuracy": 0.4884,
+        "mae_ci95": [
+          0.071122,
+          0.073995
+        ]
+      },
+      "21": {
+        "n": 10875,
+        "mae": 0.110848,
+        "rmse": 0.161683,
+        "r2": -0.064385,
+        "directional_accuracy": 0.5005,
+        "mae_ci95": [
+          0.108546,
+          0.113146
+        ]
+      }
+    },
+    "xgboost_flattened": {
+      "5": {
+        "n": 10875,
+        "mae": 0.049422,
+        "rmse": 0.073874,
+        "r2": -0.055194,
+        "directional_accuracy": 0.5011,
+        "mae_ci95": [
+          0.048508,
+          0.050463
+        ]
+      },
+      "10": {
+        "n": 10875,
+        "mae": 0.072478,
+        "rmse": 0.106508,
+        "r2": -0.077307,
+        "directional_accuracy": 0.4903,
+        "mae_ci95": [
+          0.071113,
+          0.073919
+        ]
+      },
+      "21": {
+        "n": 10875,
+        "mae": 0.110105,
+        "rmse": 0.16122,
+        "r2": -0.058301,
+        "directional_accuracy": 0.5181,
+        "mae_ci95": [
+          0.107841,
+          0.112335
+        ]
+      }
+    }
+  },
+  "sample": {
+    "dataset": "pilot25_h5_10_21",
+    "n_test": 10875
+  },
+  "reference_only_published": {
+    "LSTM": {
+      "5d": {
+        "mae": 0.046233,
+        "rmse": 0.06901,
+        "r2": -0.0265,
+        "directional_accuracy": 0.4934,
+        "mean_bias": -0.001845,
+        "n": 13731,
+        "params": 2385,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "note": "Task 84 published evaluation window (13,731 pooled samples); NOT the same samples as task99 \u2014 reference-only."
+    },
+    "CNN-LSTM": {
+      "5d": {
+        "mae": 0.045352,
+        "rmse": 0.068547,
+        "r2": -0.0128,
+        "directional_accuracy": 0.5046,
+        "n": 13731,
+        "params": 617
+      },
+      "note": "Task 84 published evaluation window (13,731 pooled samples); NOT the same samples as task99 \u2014 reference-only."
+    },
+    "GRU": {
+      "5d": {
+        "mae": 0.047305,
+        "rmse": 0.071487,
+        "r2": -0.1015,
+        "directional_accuracy": 0.5035,
+        "mean_bias": -0.004427,
+        "n": 13731,
+        "params": 1793,
+        "epochs": 30,
+        "hidden": 16
+      },
+      "note": "Task 84 published evaluation window (13,731 pooled samples); NOT the same samples as task99 \u2014 reference-only."
+    }
+  }
+}

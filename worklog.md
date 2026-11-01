@@ -4450,3 +4450,22 @@ Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
 ### Production build & CI (Section 12, final)
 - First final-commit CI run failed on a hardcoded sandbox path inside git_safety_audit.py (FileNotFoundError on the runner) — fixed by resolving the repo root from __file__.
 - Re-run: **Production Build SUCCESS + Browser Tests SUCCESS at final commit 69ce7400** (1GB OOM-safe heap cap, prisma generate, db restore, standalone + BUILD_ID verified).
+
+## Task 98c — workspace rehydrated after sandbox recycle (2026-11-01)
+
+- Sandbox recycled: /home/z/my-project was reset to a bare initial commit (upload/ docs only); the app tree survived only at /tmp/my-project (no .git).
+- Restored the full app (src/, data/, docs/, scripts/, db/, prisma/, .zscripts/) into /home/z/my-project via rsync (excluded node_modules, .next, upload/, .env — fresh container's kept).
+- Re-attached origin github.com/amz162/latent_v_2.git; fetched origin/main = ce5a75bb (the last Task 98b push). Verified the recovered tree is identical to origin/main except a stale .next dev log and autosave.log → committed as 7c65884b.
+- Task 98b deliverables (sector for all 1,054 instruments via live sources > AskAnalyst snapshot > curated sector_overrides.json; StockSearch category chips; stable registry keys) are ALL on origin/main — nothing substantive is missing from GitHub.
+- PUSH BLOCKED for 7c65884b: this sandbox has no GitHub PAT (Task 95 finding stands: the token was wired into the old sandbox's .git/config only). Owner must supply a fresh PAT to push the housekeeping commit; app code on GitHub is already current.
+
+## Task 99 — Reference RNN-LSTM trading models (jiewwantan) integrated for PSX (2026-11-01)
+
+- Reference audited from source (branch master): stacked LSTM 256/64 + Dropout(0.25), RMSprop(0.01), MAE; CNN-LSTM Conv256k8→Conv256k6→Drop→MaxPool3→LSTM128→Drop→Dense, Adagrad(0.01), MAE; batch 4/8; defects catalogued (full-history scaler, pre-split selection, directional-label selection vs close target, shuffle+validation_split, close-MA overwritten by volume-MA, feature-axis-as-time CNN input, S&P 500 context).
+- NO LICENSE in reference repo → independent PyTorch implementation (scripts/task99_jw_models.py); no code/weights copied; attribution recorded (task99_license_and_provenance.json).
+- PSX adaptation: 39→26-34 selected features (close/volume MAs distinct), SEQ=30 genuine time axis, 5d/10d/21d forward-return targets (output 3), chronological 60/20/20 with strict 21-session purge, train-only scaler + feature selection, KSE-100 context excluded (no genuine index in DB).
+- Training (pilot25 pooled, 32,469/11,424/10,875): LSTM full config 387,779 params — 14 bounded epochs (val 0.06518); CNN-LSTM full config 673,667 params — 11 epochs, early-stopped (val 0.0659); resumable ~110s chunks via task99_runner.py (150s sandbox limit). 1-day reference-style repro (compact, canonical8): val 0.01433.
+- OOS final-test (n=10,875): LSTM 5d MAE 0.04854 / R² −0.048 / dir 49.7%; CNN-LSTM 5d MAE 0.05044 / R² −0.087 / dir 50.1%; negative R² preserved; same-sample baselines: zero 0.04763, ridge 0.05571, LGBM 0.04939, XGB 0.04942. No model beats zero-return MAE — reported honestly.
+- Cost-aware backtest via the EXISTING strategy-engine + trading-costs (psx_user_schedule_v2, ATL/NON-ATL, 3 strategies × baseline/variant_a/variant_b): all cells net-negative (e.g. CNN-LSTM variant_b NON-ATL FFH: gross +26,554 → net −92,046 PKR on 96 trades) — models stay paper/shadow, NOT in Final Consensus.
+- Registry: 2 supplemental entries merged in /api/models/registry (canonical 58 unchanged, supplemental 9→11, unique 69); statuses trained_oos_evaluated; browser-verified on the AI Models tab + zero React key warnings (fixed latent undefined-key bug in t81Overall cards).
+- All 19 required artifacts + models/predictions/checkpoints/batch_logs under data/backtest_reports/task99/. Push blocked: no GitHub PAT in this sandbox (owner must supply; see task99_remaining_blockers.json).

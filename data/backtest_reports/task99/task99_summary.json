@@ -1,0 +1,137 @@
+{
+  "task": 99,
+  "generated_at": "2026-11-01T09:20:13+0000",
+  "reference": {
+    "url": "https://github.com/jiewwantan/RNN_LSTM_trading_model",
+    "license": {
+      "copy_source_code": false,
+      "reuse_pretrained_h5_weights": false,
+      "rehost_reference_csv_datasets": false,
+      "independent_pytorch_implementation": true,
+      "attribution": "architecture attributed to the reference repository in model metadata, task99_jw_models.py header, task99_feature_schema.json and the registry entries",
+      "disclaimer": "attribution is not permission to copy; the implementation is an independent PSX adaptation, not a byte-for-byte port"
+    },
+    "architectures_implemented": [
+      "jw_reference_lstm",
+      "jw_reference_cnn_lstm"
+    ],
+    "independence": {
+      "time_axis": "genuine 30-step sequences (SEQ=30) of the same feature vector",
+      "targets": "5d/10d/21d forward-return regression, output_dim=3 (primary); 1-day-ahead reproduction experiment separate",
+      "leakage": "chronological 60/20/20 split, strict 21-session maturity purge, train-only scaler + feature selection",
+      "market_context": "EXCLUDED \u2014 no genuine KSE-100 series in the DB; synthetic proxy forbidden",
+      "indicators": "numpy/pandas equivalents (TA-Lib not installed); HT_DCPERIOD as Ehlers-style approximation"
+    }
+  },
+  "models": {
+    "jw_reference_lstm": {
+      "status": "trained_oos_evaluated",
+      "param_count": 373443,
+      "epochs": 14,
+      "final_test": {
+        "5": {
+          "n": 10875,
+          "mae": 0.048537,
+          "rmse": 0.073626,
+          "r2": -0.048104,
+          "directional_accuracy": 0.4972,
+          "mae_ci95": [
+            0.047572,
+            0.049553
+          ]
+        },
+        "10": {
+          "n": 10875,
+          "mae": 0.068887,
+          "rmse": 0.104269,
+          "r2": -0.032493,
+          "directional_accuracy": 0.4834,
+          "mae_ci95": [
+            0.067498,
+            0.070336
+          ]
+        },
+        "21": {
+          "n": 10875,
+          "mae": 0.10632,
+          "rmse": 0.158075,
+          "r2": -0.01741,
+          "directional_accuracy": 0.5162,
+          "mae_ci95": [
+            0.104128,
+            0.108481
+          ]
+        }
+      }
+    },
+    "jw_reference_cnn_lstm": {
+      "status": "trained_oos_evaluated",
+      "param_count": 644995,
+      "epochs": 11,
+      "final_test": {
+        "5": {
+          "n": 10875,
+          "mae": 0.050439,
+          "rmse": 0.074965,
+          "r2": -0.0866,
+          "directional_accuracy": 0.5011,
+          "mae_ci95": [
+            0.049477,
+            0.051464
+          ]
+        },
+        "10": {
+          "n": 10875,
+          "mae": 0.073228,
+          "rmse": 0.107817,
+          "r2": -0.103952,
+          "directional_accuracy": 0.5073,
+          "mae_ci95": [
+            0.071753,
+            0.074703
+          ]
+        },
+        "21": {
+          "n": 10875,
+          "mae": 0.112025,
+          "rmse": 0.163883,
+          "r2": -0.093548,
+          "directional_accuracy": 0.5106,
+          "mae_ci95": [
+            0.10974,
+            0.114298
+          ]
+        }
+      }
+    }
+  },
+  "baselines_same_sample": [
+    "zero_return",
+    "train_mean_return",
+    "ridge_flattened",
+    "lightgbm_flattened",
+    "xgboost_flattened"
+  ],
+  "backtest": {
+    "cost_profile": "psx_user_schedule_v2",
+    "models": [
+      "jw_reference_lstm",
+      "jw_reference_cnn_lstm"
+    ]
+  },
+  "registry": {
+    "canonical_untouched": true,
+    "supplemental_added": [
+      "jw_reference_lstm",
+      "jw_reference_cnn_lstm"
+    ],
+    "in_final_consensus": false
+  },
+  "existing_models_preserved": [
+    "LSTM",
+    "CNN-LSTM",
+    "CL LSTM",
+    "Transformer-LSTM",
+    "canonical 58 ALL_MODELS registry"
+  ]
+}
