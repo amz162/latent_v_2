@@ -1,0 +1,1397 @@
+# TASK 100 — PSX PREDICTION ACCURACY IMPROVEMENT, ALL-MODEL WALK-FORWARD EVALUATION & INVESTMENT SIMULATOR DIAGNOSTICS
+
+## MASTER OBJECTIVE
+
+Continue from the latest actual GitHub `origin/main` state after Task 99.
+
+Latent.pk already has:
+- 58 canonical model entries.
+- 9 supplemental models.
+- 2 aliases.
+- 67 unique model implementations.
+- 8 ensemble methods.
+- Classical ML, deep learning, statistical models, foundation models, classifiers and rule-based strategies.
+- Two independently implemented reference architectures from `jiewwantan/RNN_LSTM_trading_model`.
+- PSX User Schedule V2 cost calculations.
+- Multiple investment simulation strategies.
+- Walk-forward backtesting and per-stock reporting.
+
+However, the current walk-forward report uses only five classical models:
+- XGBoost.
+- LightGBM.
+- CatBoost.
+- Random Forest.
+- Ridge Regression.
+
+Current evaluation:
+- Universe: pilot25.
+- 25 symbols.
+- 400 total unique (symbol, decision-date) samples.
+- 5 models.
+- 3 horizons.
+- 6,000 model fits.
+- Sample spacing: 50 trading sessions per stock.
+- Expanding-window training.
+- Strict target maturity purge.
+
+Important statistical limitations:
+- 400 is the TOTAL unique stock/date sample count, not 400 samples per stock.
+- Adjacent 21-day forward-return windows overlap by 11 sessions.
+- Observations are therefore not independent.
+- Uncertainty requires date-blocked or symbol/date-aware resampling.
+- WIN_RATE_WEIGHTED uses frozen validation weights with maturity purge.
+- Report metrics were recomputed from raw sample-level records, not averaged chunk metrics.
+- Reported directional accuracy does not prove profitability.
+- The gross directional-return proxy is not net trading P&L.
+
+Task 99 also added:
+- `jw_reference_lstm`
+- `jw_reference_cnn_lstm`
+
+Both were trained on real PSX data and OOS evaluated, but neither beat the zero-return baseline on MAE. Their PSX-cost-aware strategy cells were net-negative.
+
+### THE MAIN GOAL
+
+Improve genuine PSX forecasting quality and trading performance.
+
+Investigate why current models are not predicting reliably and why trading strategies have low win rates.
+
+Evaluate all feasible registered model implementations and ensembles using consistent, leakage-free historical cohorts.
+
+Diagnose the investment simulator's exact calculations and make every displayed metric understandable.
+
+Build a reliable experimental framework so that any future model improvement is demonstrated on unseen data rather than selected through overfitting.
+
+**Do not optimize merely to make the displayed win rate higher. Optimize genuine net trading expectancy, robustness, prediction quality and risk-adjusted performance.**
+
+Do not claim success if no model or strategy genuinely improves.
+
+---
+
+# 1. STRICT SANDBOX EXECUTION LIMIT
+
+The sandbox execution limit is approximately three minutes.
+
+**Every individual command, script execution, training operation, inference job, test, browser operation and build command must finish within 150 seconds.**
+
+Create or reuse:
+
+`scripts/task100_runner.py`
+
+Required functionality:
+- `--budget-seconds 150`
+- Persistent progress.
+- Checkpoint/resume.
+- Independent jobs.
+- Small batches.
+- Resumable model training.
+- Resumable prediction generation.
+- Walk-forward evaluation.
+- Feature experiments.
+- Strategy simulation.
+- Metric reproduction.
+- Browser/API validation.
+
+Execution rules:
+
+1. Benchmark each operation first.
+2. Group lightweight jobs only when they fit within 150 seconds.
+3. Run heavy models individually.
+4. Split long training into resumable chunks.
+5. Save model and optimizer checkpoints where applicable.
+6. Save prediction chunks immediately.
+7. Resume from the last successful checkpoint.
+8. Never unnecessarily repeat valid completed work.
+9. Continue through successive executions until every feasible phase is processed.
+10. One model failure must not stop all other experiments.
+11. Do not run multiple memory-heavy jobs concurrently.
+12. Do not create duplicate builds or browser sessions.
+13. Update progress after each execution.
+14. Do not stop after creating the runner.
+
+Create:
+
+`data/backtest_reports/task100/task100_execution_plan.json`
+
+`data/backtest_reports/task100/task100_progress.json`
+
+`data/backtest_reports/task100/batch_logs/`
+
+`data/backtest_reports/task100/checkpoints/`
+
+---
+
+# 2. RECONCILE THE CURRENT MODEL AND STRATEGY PERFORMANCE
+
+Inspect actual current source and reports:
+
+- `ALL_MODELS`.
+- All supplemental model entries.
+- All ensemble implementations.
+- `scripts/walk_forward_backtesting.py`.
+- `scripts/ml_integrity.py`.
+- Task 54–57 walk-forward artifacts.
+- Task 81–99 reports.
+- All model prediction records.
+- Task 99 LSTM/CNN-LSTM results.
+- `src/lib/latent/investment-simulator.ts`.
+- `src/lib/latent/backtest.ts`.
+- `src/lib/latent/strategy-engine.ts`.
+- Actual Backtesting Report UI.
+- PSX User Schedule V2 implementation.
+
+Create a complete initial performance matrix.
+
+For every model record:
+- Model ID.
+- Canonical/supplemental.
+- Model family.
+- Current training status.
+- OOS evaluation status.
+- Artifact availability.
+- Horizon coverage.
+- Sample count.
+- Baseline comparison.
+- Directional accuracy.
+- MAE.
+- RMSE.
+- R².
+- Classification metrics where relevant.
+- Trading performance where available.
+
+Keep separate:
+- Model prediction quality.
+- Gross directional-return proxy.
+- Historical trading simulation.
+- Prospective paper-trading performance.
+
+Never mix these four types of evidence into one misleading performance score.
+
+---
+
+# 3. IDENTIFY WHY CURRENT MODELS ARE NOT PREDICTING WELL
+
+This is a primary research phase.
+
+Do not immediately start increasing neural network size or running random hyperparameter searches.
+
+First diagnose the actual data and prediction problem.
+
+## 3.1 Target and prediction diagnostics
+
+Inspect each forecast horizon:
+- 5d.
+- 10d.
+- 21d.
+
+Analyze:
+- Forward-return distribution.
+- Mean and median return.
+- Standard deviation.
+- Positive/negative target balance.
+- Near-zero return proportion.
+- Extreme-return frequency.
+- Outlier influence.
+- Symbol-specific target distributions.
+- Market-regime dependence.
+
+Check whether models are predicting:
+- Return direction.
+- Return magnitude.
+- Closing price.
+- Trading signal probability.
+
+These are different tasks and their metrics must not be mixed.
+
+Verify whether extreme values or low-volatility observations are dominating MAE/RMSE.
+
+Use robust diagnostics, but never silently remove difficult observations from the final test set.
+
+## 3.2 Feature diagnostics
+
+Audit all current features, including the existing 19-feature schema and any Task 99 supplemental features.
+
+For each feature assess:
+- Missing-value rate.
+- Distribution.
+- Outliers.
+- Cross-stock comparability.
+- Historical availability.
+- Correlation with targets.
+- Stability over time.
+- Redundancy.
+- Potential leakage.
+- Feature importance.
+
+Identify features that have no useful predictive contribution.
+
+Do not remove features based solely on final-test correlation.
+
+Fit feature selection and dimensionality reduction on training folds only.
+
+## 3.3 PSX data quality
+
+Investigate:
+- Missing OHLCV bars.
+- Stale symbols.
+- Suspended securities.
+- Corporate actions.
+- Splits and rights issues.
+- Dividend adjustments.
+- Volume anomalies.
+- Price limits and circuit effects.
+- Symbol renames.
+- Corporate mergers.
+- Inconsistent price histories.
+- Liquidity and turnover.
+
+Ensure adjusted/unadjusted price semantics are consistent.
+
+Do not allow symbol history discontinuities to become artificial training targets.
+
+The category overrides from Task 98 must remain intact:
+
+`data/askanalyst/sector_overrides.json`
+
+Do not overwrite them.
+
+## 3.4 Model residual analysis
+
+For all five original classical models and available additional models, analyze:
+
+- Prediction residuals.
+- Residual autocorrelation.
+- Error distribution.
+- Prediction bias.
+- Calibration.
+- Directional accuracy by symbol.
+- Directional accuracy by volatility regime.
+- Performance by liquidity regime.
+- Performance by market regime.
+- Performance by horizon.
+
+Identify whether the main problem is:
+- Feature quality.
+- Target noise.
+- Data quality.
+- Weak model architecture.
+- Lack of regime conditioning.
+- Inadequate sample coverage.
+- Poor signal thresholding.
+- Cost/entry/exit mismatch.
+
+Save the diagnosis instead of guessing.
+
+---
+
+# 4. IMPROVE THE TARGET AND FORECASTING OBJECTIVE
+
+Investigate alternative targets without replacing the existing standard evaluation.
+
+Keep the existing 5d, 10d and 21d forward-return targets as the baseline.
+
+Run controlled experiments on:
+
+### A. Standard return regression
+
+Predict:
+- 5d forward return.
+- 10d forward return.
+- 21d forward return.
+
+### B. Direction classification
+
+Predict:
+- Up.
+- Down.
+- Neutral/low-magnitude movement.
+
+Define the neutral threshold using training/validation data only.
+
+Do not choose thresholds from the final-test distribution.
+
+### C. Magnitude-aware classification
+
+Experiment with:
+- Strong positive movement.
+- Small positive movement.
+- Neutral.
+- Small negative movement.
+- Strong negative movement.
+
+Only retain this approach if sufficient class counts exist.
+
+### D. Risk/volatility prediction
+
+Where feasible, predict:
+- Forward volatility.
+- Expected adverse movement.
+- Expected favourable movement.
+- Probability of hitting SL before TP.
+- Probability of reaching TP1/TP2/TP3 within the forecast horizon.
+
+All targets must be constructed using genuine future market outcomes and the correct maturity purge.
+
+Do not use future OHLCV data in historical features.
+
+### E. Quantile prediction
+
+Where feasible, predict:
+- Lower return quantile.
+- Median return.
+- Upper return quantile.
+
+This can help quantify uncertainty and avoid treating all point forecasts as equally reliable.
+
+Evaluate calibration and interval coverage.
+
+Do not claim quantile calibration if the empirical coverage does not support it.
+
+---
+
+# 5. FEATURE ENGINEERING AND CONTROLLED EXPERIMENTS
+
+Create an experiment framework to test new PSX features.
+
+Possible feature groups:
+
+### Price/momentum
+- Multi-period returns.
+- Rolling volatility.
+- Momentum.
+- Reversal.
+- Breakout distance.
+- Moving-average distances.
+- Price acceleration.
+
+### Volume/liquidity
+- Volume ratios.
+- Turnover.
+- Relative volume.
+- Liquidity proxies.
+- Volume trend.
+- Price-volume divergence.
+
+### Technical indicators
+- RSI.
+- MACD.
+- ATR.
+- ADX.
+- Bollinger position.
+- Trend strength.
+- Volatility contraction.
+- Support/resistance distance.
+
+### Cross-sectional features
+- Relative strength versus eligible PSX universe.
+- Sector-relative momentum.
+- Stock rank within point-in-time universe.
+- Market breadth.
+- Market-regime indicators.
+
+### Fundamentals/announcements
+Use only historical records with genuine publication timestamps.
+
+Do not use a report before its actual publication.
+
+Do not use current company fundamentals in historical prediction samples.
+
+### Market context
+Use genuine KSE-100/index data only if actual records exist.
+
+Never substitute a synthetic pilot25 average and label it KSE-100.
+
+### Experiment procedure
+
+For every feature group:
+1. Establish a baseline model.
+2. Add one feature group at a time.
+3. Train only on the same chronological training partition.
+4. Use validation for selection.
+5. Compare on the untouched final-test cohort.
+6. Save ablation results.
+7. Retain only defensible improvements.
+
+Create:
+- Baseline experiment.
+- Price-only experiment.
+- OHLCV experiment.
+- Technical-indicator experiment.
+- Liquidity experiment.
+- Cross-sectional experiment.
+- Fundamental/event experiment where valid.
+- Combined-feature experiment.
+
+Do not add every possible feature to the model without ablation testing.
+
+---
+
+# 6. EXPAND WALK-FORWARD EVALUATION BEYOND THE FIVE MODELS
+
+The existing report uses only:
+- XGBoost.
+- LightGBM.
+- CatBoost.
+- Random Forest.
+- Ridge Regression.
+
+The other registered models must not remain unexamined simply because they are not in `MODEL_NAMES`.
+
+Audit every current model and supplemental implementation.
+
+Where genuine prediction generation and historical data are available, evaluate:
+
+### Classical ML
+- XGBoost.
+- LightGBM.
+- CatBoost.
+- Random Forest.
+- Ridge.
+- ExtraTrees.
+- HistGradientBoosting.
+- ElasticNet.
+- HuberRegressor.
+- SVR.
+- Task 99 Reference LSTM.
+- Task 99 Reference CNN-LSTM.
+
+### Deep learning
+- PatchTST.
+- N-BEATS.
+- TimesNet.
+- Informer.
+- Existing LSTM.
+- GRU.
+- Existing CNN-LSTM.
+- Transformer-LSTM.
+- TabNet.
+
+### Statistical
+- ARIMA.
+- Kalman Filter.
+- Prophet.
+- Holt-Winters.
+- GARCH.
+
+### Foundation
+- Chronos.
+- Lag-Llama.
+- Moirai.
+- Experimental GPT-2 proxy experiments must be separately labelled.
+
+### Classifiers
+- CL-2.
+- PI.
+- CG.
+- X meta-labeling.
+- Other real classification implementations.
+
+### Ensembles
+Evaluate all actual implemented ensemble methods.
+
+### Resource policy
+
+Do not retrain valid models unnecessarily.
+
+Reuse genuine existing OOS artifacts when evaluation cohort and target definitions match.
+
+When a new OOS forecast is necessary, use resumable bounded jobs.
+
+For every entry, provide:
+- Evaluated.
+- Partially evaluated.
+- Insufficient evidence.
+- Blocked.
+- Not applicable.
+
+Never silently omit an entry.
+
+---
+
+# 7. FIX THE WALK-FORWARD SAMPLE-FREQUENCY LIMITATION
+
+The existing walk-forward report uses sample spacing of 50 trading sessions per stock.
+
+This gives 400 total unique stock/date samples and makes the report sparse for an operational trading system.
+
+Create a new versioned experiment without overwriting the original historical report.
+
+Evaluate alternative sample spacing:
+
+- `sample_step=50` — existing benchmark.
+- `sample_step=10`.
+- `sample_step=5`.
+- `sample_step=1`, where resource/data constraints permit.
+
+### Important statistical requirement
+
+Smaller sample spacing increases overlapping forward-return windows and serial dependence.
+
+Do not interpret the larger number of observations as an equal increase in independent evidence.
+
+For every experiment:
+- Save exact unique sample IDs.
+- Preserve symbol and decision dates.
+- Use horizon-specific target maturity.
+- Keep point-in-time universe selection.
+- Apply the same expanding-window protocol.
+- Record total fits and failed fits.
+- Record actual sample coverage.
+
+### Uncertainty
+
+For 5d/10d/21d overlapping forecasts:
+- Use temporal date-block resampling.
+- Use symbol-aware clustering where appropriate.
+- Preserve market-wide common-date movements.
+- Use block lengths suitable for the forward horizon.
+- Do not use naive independent-observation standard errors.
+
+Compare all sample-step settings on:
+- Predictive metrics.
+- Sample count.
+- Runtime.
+- Dependence-adjusted uncertainty.
+- Trading signal coverage.
+
+The original sample-step-50 report must remain untouched.
+
+---
+
+# 8. TRAINING AND MODEL IMPROVEMENT EXPERIMENTS
+
+Run controlled experiments across appropriate model families.
+
+### Classical ML
+- Bounded hyperparameter tuning.
+- Regularization.
+- Feature selection.
+- Robust loss functions.
+- Regime-specific validation.
+
+### Deep learning
+- Compact architecture configurations.
+- Learning-rate search.
+- Dropout.
+- Sequence-length experiments.
+- Early stopping.
+- Gradient clipping.
+- Feature normalization.
+
+### Reference models
+Preserve:
+- `jw_reference_lstm`.
+- `jw_reference_cnn_lstm`.
+
+Their current test results do not beat zero-return MAE. Use new experiments to test whether feature/target improvements change their performance, not to alter historical results.
+
+### Statistical models
+Use bounded configurations and compare against simple baselines.
+
+### Ensemble models
+Test:
+- OOF meta-learning.
+- Probability averaging.
+- Rank aggregation.
+- Calibrated directional probabilities.
+- Model diversity.
+
+Only fit ensemble weights using OOF/validation data.
+
+Never use final-test results to fit or choose model weights.
+
+### Model selection rule
+
+A new configuration can be selected only using validation data.
+
+Final-test remains untouched.
+
+After selection, perform final evaluation once.
+
+Do not repeatedly tune against final-test until the desired metric appears.
+
+---
+
+# 9. PREDICTION CALIBRATION AND SIGNAL QUALITY
+
+A regression point forecast should not automatically become a BUY/SELL signal.
+
+Build a transparent prediction-to-signal layer.
+
+Investigate:
+- Predicted return magnitude.
+- Predicted direction.
+- Prediction confidence.
+- Forecast dispersion.
+- Market volatility.
+- Liquidity.
+- Expected net reward/risk.
+- Probability of hitting SL before TP.
+- Estimated costs.
+
+### Calibration
+
+Where classification probabilities are generated:
+- Inspect reliability diagrams.
+- Evaluate Brier score.
+- Evaluate log loss.
+- Use calibration only from validation data.
+- Avoid calibrating on final-test observations.
+
+### Signal thresholds
+
+Tune thresholds on training/validation data only.
+
+Test:
+- No-trade/neutral zone.
+- Minimum expected return.
+- Minimum probability.
+- Minimum predicted net reward/risk.
+- Minimum liquidity.
+- Maximum forecast uncertainty.
+
+Do not optimize these thresholds for final-test win rate.
+
+### Output
+
+Each signal should expose:
+- Predicted direction.
+- Expected return.
+- Confidence/probability, if properly calibrated.
+- Forecast horizon.
+- Expected downside.
+- Expected reward/risk.
+- Estimated transaction costs.
+- Net expected return.
+- Reason for BUY, SELL or NO TRADE.
+
+Do not force a signal when model uncertainty is high.
+
+A NO TRADE output is preferable to a low-quality false-positive trade.
+
+---
+
+# 10. INVESTMENT SIMULATOR — FULL DIAGNOSTIC AND FIELD-BY-FIELD EXPLANATION
+
+This phase is mandatory.
+
+Inspect the actual implementation:
+
+- `src/lib/latent/investment-simulator.ts`
+- `src/lib/latent/backtest.ts`
+- `src/lib/latent/strategy-engine.ts`
+- Relevant API routes.
+- Backtesting Report modal.
+- Investment Simulator UI.
+- Model/strategy ranking fields.
+
+Do not assume UI labels mean what they usually mean. Trace each value to its actual source code and formula.
+
+### A. Build a complete simulator data dictionary
+
+For every number shown in the simulator, document:
+
+- Field/display name.
+- Exact calculation/formula.
+- Unit.
+- Numerator and denominator.
+- Source data.
+- Whether it is gross or net.
+- Whether costs are included.
+- Whether it is realized or unrealized.
+- Whether it is a per-position or per-leg metric.
+- Relevant strategy behavior.
+- Relevant target horizon.
+- Missing-data behavior.
+
+Include at least:
+
+#### Prediction data
+- Current price.
+- Entry price.
+- Signal price.
+- Prediction timestamp.
+- Signal timestamp.
+- Target horizon.
+- Predicted direction.
+- Actual direction.
+- Predicted return.
+- Actual return.
+- Signal score.
+- Confidence.
+- Accuracy.
+
+#### Risk/target data
+- Entry.
+- Stop-loss.
+- TP1.
+- TP2.
+- TP3.
+- Expected reward/risk.
+- Realized reward/risk.
+- ATR.
+- Best target reached.
+- Exit reason.
+- Holding duration.
+
+#### Trading performance
+- Total signals.
+- Eligible signals.
+- Skipped signals.
+- Total positions.
+- Winning positions.
+- Losing positions.
+- Win rate.
+- Loss rate.
+- Gross P&L.
+- Commission.
+- Regulatory fees.
+- Slippage.
+- CGT.
+- Net P&L.
+- Profit factor.
+- Average win.
+- Average loss.
+- Expectancy.
+- Maximum drawdown.
+- Exposure.
+- Consecutive win/loss streaks.
+
+#### Strategy-specific data
+- Fixed First Hit.
+- Max TP Step Trailing.
+- Scale Out 50/25/25.
+- Baseline risk variant.
+- Variant A.
+- Variant B.
+
+#### Model ranking
+- Backtest Score.
+- Ranking criteria.
+- Minimum win-rate filter.
+- Streak score.
+- Strategy score.
+- Any other ranking/weighting field.
+
+### B. Define win rate correctly
+
+Trace the actual code that calculates win rate.
+
+Determine whether it uses:
+- Number of winning positions / total closed positions.
+- Number of winning signal legs / total legs.
+- Gross P&L.
+- Net P&L after costs.
+- TP labels.
+- Positive realized net P&L.
+
+Document the exact actual implementation.
+
+A strategy with positive win rate can still lose money after costs or because average losses exceed average wins.
+
+Conversely, a strategy with a win rate below 50% can potentially be profitable when average wins exceed average losses.
+
+### C. Diagnose low win rates
+
+For each strategy and horizon examine:
+- Entry quality.
+- Signal threshold.
+- SL distance.
+- TP distance.
+- Actual market volatility.
+- Same-candle SL/TP collisions.
+- Gap-aware stop fills.
+- Holding duration.
+- Directional accuracy.
+- Cost impact.
+- False positives.
+- Market regime.
+
+Do not assume the model is the only cause.
+
+Separate:
+1. Prediction error.
+2. Signal conversion error.
+3. Entry timing.
+4. Exit/target design.
+5. Brokerage/tax drag.
+6. Position-sizing effects.
+
+### D. Verify simulator semantics
+
+Preserve:
+- Task 57 SL-first same-candle priority.
+- Chronological first-touch handling.
+- TP1/TP2 milestones.
+- TP3 final target.
+- Gap-aware fills.
+- Best target reached versus realized exit separation.
+- Position-level scale-out accounting.
+
+Run deterministic tests for edge cases.
+
+### E. User-facing simulator guide
+
+Create a clear reference:
+
+`docs/investment-simulator-metrics.md`
+
+Include:
+- Every displayed field.
+- Exact formulas.
+- Example calculations.
+- Gross versus net explanation.
+- Win rate versus profitability.
+- Position versus execution-leg distinction.
+- How TP1/TP2/TP3 work.
+- How each strategy handles reversals.
+- Why SL can occur after a higher target milestone.
+- What skipped means.
+- How Backtest Score is calculated.
+- How PSX fees and CGT change results.
+
+Add concise tooltips/help text to the existing UI where a field is ambiguous.
+
+Do not redesign the simulator.
+
+Do not invent formulas. Extract them from actual code.
+
+---
+
+# 11. STRATEGY IMPROVEMENT — WIN RATE IS NOT THE ONLY OBJECTIVE
+
+The current strategy win rates are low.
+
+Do not simply increase TP distance or loosen SL until the displayed win rate improves.
+
+Evaluate each strategy on identical OOS signal sets.
+
+### Strategies
+- Fixed First Hit.
+- Max TP Step Trailing.
+- Scale Out 50/25/25.
+
+### Risk variants
+- Baseline.
+- `atr_tp1_rr_1_1_v1`.
+- `atr_min_net_rr_2_v1`.
+
+### Experiments
+
+Test controlled variations in:
+- Signal confidence threshold.
+- Neutral/no-trade threshold.
+- Minimum expected net return.
+- ATR stop distance.
+- Target distance.
+- Expected net R:R.
+- Maximum holding period.
+- Liquidity filter.
+- Volatility regime.
+- Entry timing.
+
+All threshold/risk optimization must use validation data only.
+
+Use final-test for frozen performance evaluation.
+
+### Evaluation metrics
+
+For every strategy report:
+- Eligible signals.
+- Skipped signals.
+- Total positions.
+- Winning positions.
+- Losing positions.
+- Gross win rate.
+- Net win rate.
+- Gross P&L.
+- Net P&L.
+- Average win.
+- Average loss.
+- Expectancy per trade.
+- Profit factor.
+- Maximum drawdown.
+- Exposure.
+- Average holding duration.
+- Cost drag.
+- Sample coverage.
+
+A strategy must not be ranked as best solely on win rate.
+
+### Primary objective
+
+Prioritize:
+1. Positive net expectancy.
+2. Positive net P&L across sufficiently diverse OOS periods.
+3. Acceptable drawdown.
+4. Adequate trade coverage.
+5. Stability across symbols.
+6. Robustness across different market regimes.
+7. Controlled transaction costs.
+
+A high win-rate strategy that loses money after PSX costs is not a successful strategy.
+
+A profitable strategy with low trade coverage must be clearly labelled.
+
+---
+
+# 12. PSX COST AND TRADING VALIDATION
+
+Use the actual:
+
+`psx_user_schedule_v2`
+
+Preserve:
+- Broker commission.
+- PSX fee.
+- NCCPL fee.
+- CDC fee.
+- Slippage.
+- CGT.
+- ATL 15%.
+- NON-ATL 30%.
+
+Use:
+- Actual next-session entry prices.
+- Correct exit fills.
+- Same-candle SL-first behavior.
+- Gap-aware stops.
+- Correct position-level costs.
+- Correct scale-out aggregation.
+
+Verify:
+- Gross minus total applicable costs equals net.
+- CGT on losing trades equals zero.
+- Fees are not double-counted.
+- Scale-out legs are not treated as separate forecasts.
+- Eligibility is not influenced by future results.
+
+Keep the original zero-slippage user profile.
+
+Run hypothetical slippage stress scenarios separately.
+
+Do not use legacy costs.
+
+Do not declare production profitability from gross directional returns.
+
+---
+
+# 13. POINT-IN-TIME DATA AND MODEL VALIDATION
+
+Use:
+
+`scripts/ml_integrity.py`
+
+Mandatory:
+- Per-symbol targets.
+- Immature target removal.
+- Chronological splits.
+- Horizon-specific purge.
+- Training-only preprocessing.
+- Point-in-time universe membership.
+- No latest-signal replay.
+- No future-volume leakage.
+- No test-set threshold tuning.
+
+Preserve the original pilot25 evaluation and its point-in-time selection cutoff.
+
+Do not change the canonical historic benchmark.
+
+### Existing report
+
+Keep:
+- 25 selected symbols.
+- 400 total unique stock/date samples.
+- 50-session sample spacing.
+- 5 classical models.
+- 3 horizons.
+- 6,000 fits.
+
+Never describe 400 as 400 samples per stock.
+
+### New sample-spacing experiments
+
+Run separate versioned experiments:
+- 50-session.
+- 10-session.
+- 5-session.
+- 1-session where feasible.
+
+All outputs must state:
+- Exact unique sample count.
+- Forecast overlap.
+- Date span.
+- Sample dependence.
+- Number of fits.
+- Evaluation coverage.
+
+Use dependence-aware uncertainty estimates.
+
+Never overwrite the original report.
+
+---
+
+# 14. ALL MODEL FAMILIES AND ENSEMBLES
+
+Do not limit evaluation to the original five classical models.
+
+Include every current feasible unique implementation.
+
+### Classical
+- XGBoost.
+- LightGBM.
+- CatBoost.
+- Random Forest.
+- Ridge.
+- ExtraTrees.
+- HistGradientBoosting.
+- ElasticNet.
+- HuberRegressor.
+- SVR.
+- Other registered variants.
+
+### Deep learning
+- PatchTST.
+- N-BEATS.
+- TimesNet.
+- Informer.
+- LSTM.
+- GRU.
+- CNN-LSTM.
+- Transformer-LSTM.
+- TabNet.
+- Reference LSTM.
+- Reference CNN-LSTM.
+
+### Statistical
+- ARIMA.
+- Kalman Filter.
+- Prophet.
+- Holt-Winters.
+- GARCH.
+
+### Foundation
+- Chronos.
+- Lag-Llama.
+- Moirai.
+- Experimental GPT-2 proxy implementations, kept separate.
+
+### Classifiers
+- CL-2.
+- PI.
+- CG.
+- X meta-labeling.
+- All other registered classifiers.
+
+### Ensembles
+- Majority Vote.
+- Probability-Weighted.
+- Tier-Weighted.
+- Final Consensus.
+- CL-2 Meta-Ensemble.
+- PI Meta-Ensemble.
+- CG Probability Ensemble.
+- X Meta-Labeling.
+- GIAN-Ensemble.
+- GIAN-Extender.
+- M-Ensemble.
+- Any other actual ensemble implementation.
+
+For learned ensembles:
+- Chronological OOF base predictions.
+- Correct alignment.
+- Validation-only tuning.
+- Frozen weights.
+- Untouched final-test.
+
+For fixed aggregators:
+- Aligned OOS component predictions.
+- No test-set fitting.
+
+Each model/ensemble gets an explicit disposition:
+- OOS evaluated.
+- Existing OOS evidence reproduced.
+- Partial evidence.
+- Insufficient samples.
+- Resource blocked.
+- Dependency blocked.
+- Data blocked.
+
+Do not label every model trained simply because its registry entry exists.
+
+---
+
+# 15. PER-STOCK AND REGIME ANALYSIS
+
+Produce detailed model/strategy analysis by:
+- Symbol.
+- Sector/category.
+- Liquidity group.
+- Volatility group.
+- Market regime.
+- Forecast horizon.
+- Evaluation period.
+
+Use genuine historical categories and point-in-time sector membership where available.
+
+Preserve:
+`data/askanalyst/sector_overrides.json`
+
+Do not classify historical observations using future company information.
+
+Identify:
+- Symbols where models work.
+- Symbols where models consistently fail.
+- Whether a few symbols dominate aggregate performance.
+- Whether low win rates are concentrated in specific sectors or regimes.
+- Whether illiquid or suspended stocks distort results.
+
+Use minimum sample criteria before drawing conclusions.
+
+Do not create a per-stock leaderboard from two or three trades and imply reliability.
+
+---
+
+# 16. PROSPECTIVE PAPER-TRADING INTEGRITY
+
+Inspect the current active prospective trading cohort.
+
+Do not assume the old Task 95 counts are still current.
+
+Read the actual database records.
+
+Verify:
+- Prediction IDs.
+- Pending entries.
+- Open positions.
+- Closed positions.
+- Matured outcomes.
+- Latest OHLCV session.
+- Processing errors.
+
+Preserve the existing lifecycle processor.
+
+Do not generate fake fills.
+
+Do not convert pending positions into open positions without genuine entry evidence.
+
+Do not optimize thresholds on prospective observations and then retroactively report them as untouched results.
+
+New experiments must use separate experiment IDs and versioned signal cohorts.
+
+Keep prospective production/shadow monitoring separate from historical research.
+
+---
+
+# 17. FINAL INTEGRATION AND USER EXPERIENCE
+
+Maintain the existing dashboard.
+
+Do not redesign working sections.
+
+Update:
+- Model result evidence.
+- Expanded walk-forward experiments.
+- Model confidence and calibration.
+- Strategy comparison.
+- Gross/net results.
+- Cost breakdown.
+- Simulator metric documentation.
+- Tooltips/help descriptions.
+- Low-sample warnings.
+- Baseline comparison.
+- No-trade/neutral outputs.
+
+Create a new experiment comparison view or expandable section only if it is genuinely necessary to inspect new results.
+
+The existing six sections must remain functional.
+
+Add:
+
+`docs/investment-simulator-metrics.md`
+
+This documentation is mandatory.
+
+---
+
+# 18. TESTS AND QUALITY CONTROL
+
+Add/update deterministic tests for:
+
+### Data
+- Correct feature calculation.
+- Separate price and volume moving averages.
+- Missing OHLCV.
+- Corporate action discontinuity handling.
+- Per-symbol sequence boundaries.
+- Point-in-time feature availability.
+
+### Leakage
+- Chronological splits.
+- Horizon maturity purge.
+- Training-only scaling.
+- Training-only feature selection.
+- No final-test tuning.
+- No future-universe leakage.
+
+### Forecasts
+- Regression target calculations.
+- Classification target calculations.
+- Neutral-zone definition.
+- Forecast horizon alignment.
+- Calibration.
+- Baseline calculations.
+
+### Statistics
+- Temporal block bootstrap.
+- Symbol/date-aware uncertainty.
+- Overlapping horizon dependence.
+- Sample count correctness.
+- Multiple-comparison controls.
+
+### Simulator
+- Win-rate numerator/denominator.
+- Position versus leg counts.
+- Gross/net P&L.
+- PSX V2 charges.
+- CGT-on-losses.
+- SL-first.
+- TP milestones.
+- Same-candle behavior.
+- Gap fills.
+- Best target versus realized exit.
+
+### Strategy
+- Same-sample comparisons.
+- Validation-only threshold selection.
+- Final-test protection.
+- No duplicate positions.
+- Skipped-signal accounting.
+
+### APIs/UI
+- Model status.
+- Metric evidence.
+- Experiment sample counts.
+- Negative R².
+- Simulator tooltips/documentation.
+- Missing-data states.
+- Responsive layout.
+
+Run:
+- Unit tests.
+- Integration tests.
+- API tests.
+- Lint.
+- TypeScript.
+- Production build through existing CI if local memory is insufficient.
+- Browser tests using agent-browser.
+
+Every individual operation must remain under 150 seconds.
+
+Do not disable tests to obtain a pass.
+
+---
+
+# 19. REQUIRED TASK 100 OUTPUTS
+
+Save all new work under:
+
+`data/backtest_reports/task100/`
+
+Required:
+
+- `task100_summary.json`
+- `task100_execution_plan.json`
+- `task100_progress.json`
+- `task100_initial_performance_matrix.json`
+- `task100_prediction_diagnostics.json`
+- `task100_feature_diagnostics.json`
+- `task100_data_quality_report.json`
+- `task100_feature_ablation.json`
+- `task100_target_experiments.json`
+- `task100_model_comparison.json`
+- `task100_walk_forward_expansion.json`
+- `task100_sample_step_comparison.json`
+- `task100_prediction_calibration.json`
+- `task100_ensemble_validation.json`
+- `task100_strategy_diagnostics.json`
+- `task100_strategy_optimization.json`
+- `task100_cost_reconciliation.json`
+- `task100_simulator_data_dictionary.json`
+- `task100_per_stock_analysis.json`
+- `task100_regime_analysis.json`
+- `task100_prospective_integrity.json`
+- `task100_api_validation.json`
+- `task100_browser_test_results.json`
+- `task100_remaining_blockers.json`
+- `task100_metrics.csv`
+
+Mandatory documentation:
+
+`docs/investment-simulator-metrics.md`
+
+Supporting directories:
+- `models/`
+- `predictions/`
+- `checkpoints/`
+- `batch_logs/`
+- `experiments/`
+
+Every artifact path must exist.
+
+Never overwrite Task 54–99 protected historical reports.
+
+Keep every experiment versioned and reproducible.
+
+---
+
+# 20. GIT SAFETY AND DELIVERY
+
+Before editing:
+- Fetch latest `origin/main`.
+- Inspect Git status.
+- Verify the expected repository.
+- Preserve unrelated changes.
+- Never stage `.env`, credentials or private API keys.
+- Never use `git reset --hard`.
+- Never use destructive `git clean`.
+- Never rewrite Git history.
+- Never force-push.
+- Preserve the Task 97 Git safety audit and protected synchronization scripts.
+
+Commit coherent work.
+
+Final commit message:
+
+`Task 100: improve PSX prediction quality and simulator diagnostics`
+
+Push to expected `origin/main`.
+
+Verify local HEAD equals remote HEAD.
+
+Report exact commits and final synchronization status.
+
+---
+
+# FINAL NON-NEGOTIABLE INSTRUCTIONS
+
+1. Diagnose before tuning.
+2. Do not optimize win rate at the expense of net profitability.
+3. Evaluate all feasible model families, not only the original five classical models.
+4. Preserve the original 400-sample pilot25 report.
+5. Run new sample-step experiments separately.
+6. Account for overlapping forecast windows.
+7. Use temporal and symbol-aware uncertainty.
+8. Never train scalers or feature selectors on test data.
+9. Never choose thresholds using final-test results.
+10. Evaluate all strategies on comparable signal sets.
+11. Use the genuine PSX User Schedule V2.
+12. Do not mix gross directional-return proxies with net trading P&L.
+13. Explain every displayed simulator metric using its actual source-code formula.
+14. Do not hide negative R², losses, skipped signals or insufficient samples.
+15. Do not promote experimental models or strategies without robust OOS and prospective evidence.
+16. Do not fabricate a performance improvement.
+
+**The objective is to make Latent.pk produce better, more reliable PSX forecasts and more defensible trading decisions—not merely higher-looking accuracy and win-rate numbers.**
+
+Complete every feasible phase, save all evidence, run the final tests and push the complete work to GitHub in this single Task 100 campaign.

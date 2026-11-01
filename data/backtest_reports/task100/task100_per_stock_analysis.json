@@ -1,0 +1,867 @@
+{
+  "regime_definition": {
+    "definition": "equal-weight pilot25 mean 5d return, 21-session trailing mean; bear < 33rd pct < bull of the trailing series",
+    "q_lo": -0.006607,
+    "q_hi": 0.011123,
+    "note": "pilot25 breadth statistic; NOT a KSE-100 index (no genuine index series in DB)"
+  },
+  "sector_overrides_preserved": "/home/z/my-project/data/askanalyst/sector_overrides.json",
+  "per_symbol": {
+    "HuberRegressor__21d__final_test": {
+      "ANL": {
+        "n": 85,
+        "mae": 0.09523,
+        "dir_accuracy": 0.4824
+      },
+      "BOP": {
+        "n": 85,
+        "mae": 0.15665,
+        "dir_accuracy": 0.5412
+      },
+      "CNERGY": {
+        "n": 85,
+        "mae": 0.1216,
+        "dir_accuracy": 0.4588
+      },
+      "ENGRO": {
+        "n": 40,
+        "mae": 0.0592,
+        "dir_accuracy": 0.575
+      },
+      "FCCL": {
+        "n": 85,
+        "mae": 0.10713,
+        "dir_accuracy": 0.4706
+      },
+      "HASCOL": {
+        "n": 85,
+        "mae": 0.14991,
+        "dir_accuracy": 0.4588
+      },
+      "HUBC": {
+        "n": 85,
+        "mae": 0.08941,
+        "dir_accuracy": 0.4
+      },
+      "HUMNL": {
+        "n": 85,
+        "mae": 0.09048,
+        "dir_accuracy": 0.5294
+      },
+      "KEL": {
+        "n": 85,
+        "mae": 0.13325,
+        "dir_accuracy": 0.4824
+      },
+      "LOTCHEM": {
+        "n": 85,
+        "mae": 0.0864,
+        "dir_accuracy": 0.5059
+      },
+      "LUCK": {
+        "n": 85,
+        "mae": 0.13074,
+        "dir_accuracy": 0.4
+      },
+      "MEBL": {
+        "n": 85,
+        "mae": 0.08606,
+        "dir_accuracy": 0.4471
+      },
+      "MLCF": {
+        "n": 85,
+        "mae": 0.09894,
+        "dir_accuracy": 0.4824
+      },
+      "OGDC": {
+        "n": 85,
+        "mae": 0.08445,
+        "dir_accuracy": 0.4235
+      },
+      "PAEL": {
+        "n": 85,
+        "mae": 0.12231,
+        "dir_accuracy": 0.4941
+      },
+      "PIBTL": {
+        "n": 85,
+        "mae": 0.12146,
+        "dir_accuracy": 0.5176
+      },
+      "PPL": {
+        "n": 85,
+        "mae": 0.10082,
+        "dir_accuracy": 0.4353
+      },
+      "PRL": {
+        "n": 85,
+        "mae": 0.14278,
+        "dir_accuracy": 0.4941
+      },
+      "PSO": {
+        "n": 85,
+        "mae": 0.10462,
+        "dir_accuracy": 0.3882
+      },
+      "SYS": {
+        "n": 85,
+        "mae": 0.09723,
+        "dir_accuracy": 0.4471
+      },
+      "TELE": {
+        "n": 85,
+        "mae": 0.10489,
+        "dir_accuracy": 0.4353
+      },
+      "TRG": {
+        "n": 85,
+        "mae": 0.10444,
+        "dir_accuracy": 0.5529
+      },
+      "UNITY": {
+        "n": 85,
+        "mae": 0.13244,
+        "dir_accuracy": 0.5412
+      },
+      "WTL": {
+        "n": 85,
+        "mae": 0.0953,
+        "dir_accuracy": 0.4941
+      }
+    },
+    "HuberRegressor__5d__final_test": {
+      "ANL": {
+        "n": 85,
+        "mae": 0.04344,
+        "dir_accuracy": 0.4235
+      },
+      "BOP": {
+        "n": 85,
+        "mae": 0.06237,
+        "dir_accuracy": 0.5059
+      },
+      "CNERGY": {
+        "n": 85,
+        "mae": 0.06135,
+        "dir_accuracy": 0.4588
+      },
+      "ENGRO": {
+        "n": 40,
+        "mae": 0.03986,
+        "dir_accuracy": 0.525
+      },
+      "FCCL": {
+        "n": 85,
+        "mae": 0.047,
+        "dir_accuracy": 0.4706
+      },
+      "HASCOL": {
+        "n": 85,
+        "mae": 0.05585,
+        "dir_accuracy": 0.5529
+      },
+      "HUBC": {
+        "n": 85,
+        "mae": 0.04187,
+        "dir_accuracy": 0.4353
+      },
+      "HUMNL": {
+        "n": 85,
+        "mae": 0.05162,
+        "dir_accuracy": 0.4588
+      },
+      "KEL": {
+        "n": 85,
+        "mae": 0.06349,
+        "dir_accuracy": 0.4824
+      },
+      "LOTCHEM": {
+        "n": 85,
+        "mae": 0.04042,
+        "dir_accuracy": 0.4824
+      },
+      "LUCK": {
+        "n": 85,
+        "mae": 0.04045,
+        "dir_accuracy": 0.5294
+      },
+      "MEBL": {
+        "n": 85,
+        "mae": 0.03556,
+        "dir_accuracy": 0.4353
+      },
+      "MLCF": {
+        "n": 85,
+        "mae": 0.04963,
+        "dir_accuracy": 0.4471
+      },
+      "OGDC": {
+        "n": 85,
+        "mae": 0.04086,
+        "dir_accuracy": 0.4235
+      },
+      "PAEL": {
+        "n": 85,
+        "mae": 0.05859,
+        "dir_accuracy": 0.4588
+      },
+      "PIBTL": {
+        "n": 85,
+        "mae": 0.05724,
+        "dir_accuracy": 0.4353
+      },
+      "PPL": {
+        "n": 85,
+        "mae": 0.04764,
+        "dir_accuracy": 0.4353
+      },
+      "PRL": {
+        "n": 85,
+        "mae": 0.05873,
+        "dir_accuracy": 0.4118
+      },
+      "PSO": {
+        "n": 85,
+        "mae": 0.04565,
+        "dir_accuracy": 0.4588
+      },
+      "SYS": {
+        "n": 85,
+        "mae": 0.04486,
+        "dir_accuracy": 0.4941
+      },
+      "TELE": {
+        "n": 85,
+        "mae": 0.05625,
+        "dir_accuracy": 0.5059
+      },
+      "TRG": {
+        "n": 85,
+        "mae": 0.05197,
+        "dir_accuracy": 0.5294
+      },
+      "UNITY": {
+        "n": 85,
+        "mae": 0.04599,
+        "dir_accuracy": 0.5765
+      },
+      "WTL": {
+        "n": 85,
+        "mae": 0.05491,
+        "dir_accuracy": 0.5412
+      }
+    },
+    "LightGBM__21d__final_test": {
+      "ANL": {
+        "n": 85,
+        "mae": 0.09413,
+        "dir_accuracy": 0.4588
+      },
+      "BOP": {
+        "n": 85,
+        "mae": 0.16816,
+        "dir_accuracy": 0.5412
+      },
+      "CNERGY": {
+        "n": 85,
+        "mae": 0.12645,
+        "dir_accuracy": 0.4706
+      },
+      "ENGRO": {
+        "n": 40,
+        "mae": 0.05841,
+        "dir_accuracy": 0.575
+      },
+      "FCCL": {
+        "n": 85,
+        "mae": 0.10607,
+        "dir_accuracy": 0.5294
+      },
+      "HASCOL": {
+        "n": 85,
+        "mae": 0.15486,
+        "dir_accuracy": 0.4471
+      },
+      "HUBC": {
+        "n": 85,
+        "mae": 0.08697,
+        "dir_accuracy": 0.5059
+      },
+      "HUMNL": {
+        "n": 85,
+        "mae": 0.08986,
+        "dir_accuracy": 0.5176
+      },
+      "KEL": {
+        "n": 85,
+        "mae": 0.13395,
+        "dir_accuracy": 0.4941
+      },
+      "LOTCHEM": {
+        "n": 85,
+        "mae": 0.08472,
+        "dir_accuracy": 0.5765
+      },
+      "LUCK": {
+        "n": 85,
+        "mae": 0.11162,
+        "dir_accuracy": 0.4706
+      },
+      "MEBL": {
+        "n": 85,
+        "mae": 0.08562,
+        "dir_accuracy": 0.4118
+      },
+      "MLCF": {
+        "n": 85,
+        "mae": 0.09716,
+        "dir_accuracy": 0.4941
+      },
+      "OGDC": {
+        "n": 85,
+        "mae": 0.08147,
+        "dir_accuracy": 0.5176
+      },
+      "PAEL": {
+        "n": 85,
+        "mae": 0.12183,
+        "dir_accuracy": 0.4235
+      },
+      "PIBTL": {
+        "n": 85,
+        "mae": 0.12194,
+        "dir_accuracy": 0.5882
+      },
+      "PPL": {
+        "n": 85,
+        "mae": 0.09903,
+        "dir_accuracy": 0.5176
+      },
+      "PRL": {
+        "n": 85,
+        "mae": 0.1396,
+        "dir_accuracy": 0.4941
+      },
+      "PSO": {
+        "n": 85,
+        "mae": 0.10348,
+        "dir_accuracy": 0.4353
+      },
+      "SYS": {
+        "n": 85,
+        "mae": 0.09645,
+        "dir_accuracy": 0.5059
+      },
+      "TELE": {
+        "n": 85,
+        "mae": 0.10283,
+        "dir_accuracy": 0.5294
+      },
+      "TRG": {
+        "n": 85,
+        "mae": 0.10291,
+        "dir_accuracy": 0.5176
+      },
+      "UNITY": {
+        "n": 85,
+        "mae": 0.1369,
+        "dir_accuracy": 0.5412
+      },
+      "WTL": {
+        "n": 85,
+        "mae": 0.10289,
+        "dir_accuracy": 0.4941
+      }
+    },
+    "LightGBM__5d__final_test": {
+      "ANL": {
+        "n": 85,
+        "mae": 0.04273,
+        "dir_accuracy": 0.5059
+      },
+      "BOP": {
+        "n": 85,
+        "mae": 0.06221,
+        "dir_accuracy": 0.5294
+      },
+      "CNERGY": {
+        "n": 85,
+        "mae": 0.06053,
+        "dir_accuracy": 0.5059
+      },
+      "ENGRO": {
+        "n": 40,
+        "mae": 0.03969,
+        "dir_accuracy": 0.5
+      },
+      "FCCL": {
+        "n": 85,
+        "mae": 0.04696,
+        "dir_accuracy": 0.4353
+      },
+      "HASCOL": {
+        "n": 85,
+        "mae": 0.05659,
+        "dir_accuracy": 0.5765
+      },
+      "HUBC": {
+        "n": 85,
+        "mae": 0.0418,
+        "dir_accuracy": 0.4588
+      },
+      "HUMNL": {
+        "n": 85,
+        "mae": 0.05095,
+        "dir_accuracy": 0.4824
+      },
+      "KEL": {
+        "n": 85,
+        "mae": 0.06401,
+        "dir_accuracy": 0.4824
+      },
+      "LOTCHEM": {
+        "n": 85,
+        "mae": 0.04068,
+        "dir_accuracy": 0.4
+      },
+      "LUCK": {
+        "n": 85,
+        "mae": 0.03772,
+        "dir_accuracy": 0.5765
+      },
+      "MEBL": {
+        "n": 85,
+        "mae": 0.03543,
+        "dir_accuracy": 0.4471
+      },
+      "MLCF": {
+        "n": 85,
+        "mae": 0.04872,
+        "dir_accuracy": 0.5059
+      },
+      "OGDC": {
+        "n": 85,
+        "mae": 0.0404,
+        "dir_accuracy": 0.4235
+      },
+      "PAEL": {
+        "n": 85,
+        "mae": 0.05845,
+        "dir_accuracy": 0.4471
+      },
+      "PIBTL": {
+        "n": 85,
+        "mae": 0.05576,
+        "dir_accuracy": 0.5529
+      },
+      "PPL": {
+        "n": 85,
+        "mae": 0.04731,
+        "dir_accuracy": 0.4353
+      },
+      "PRL": {
+        "n": 85,
+        "mae": 0.05744,
+        "dir_accuracy": 0.5059
+      },
+      "PSO": {
+        "n": 85,
+        "mae": 0.04513,
+        "dir_accuracy": 0.5882
+      },
+      "SYS": {
+        "n": 85,
+        "mae": 0.04453,
+        "dir_accuracy": 0.4706
+      },
+      "TELE": {
+        "n": 85,
+        "mae": 0.05637,
+        "dir_accuracy": 0.4824
+      },
+      "TRG": {
+        "n": 85,
+        "mae": 0.05148,
+        "dir_accuracy": 0.5176
+      },
+      "UNITY": {
+        "n": 85,
+        "mae": 0.04752,
+        "dir_accuracy": 0.4588
+      },
+      "WTL": {
+        "n": 85,
+        "mae": 0.05598,
+        "dir_accuracy": 0.4588
+      }
+    },
+    "XGBoost__21d__final_test": {
+      "ANL": {
+        "n": 85,
+        "mae": 0.09501,
+        "dir_accuracy": 0.5176
+      },
+      "BOP": {
+        "n": 85,
+        "mae": 0.17129,
+        "dir_accuracy": 0.5529
+      },
+      "CNERGY": {
+        "n": 85,
+        "mae": 0.12653,
+        "dir_accuracy": 0.5412
+      },
+      "ENGRO": {
+        "n": 40,
+        "mae": 0.0594,
+        "dir_accuracy": 0.5
+      },
+      "FCCL": {
+        "n": 85,
+        "mae": 0.10712,
+        "dir_accuracy": 0.5059
+      },
+      "HASCOL": {
+        "n": 85,
+        "mae": 0.1582,
+        "dir_accuracy": 0.4118
+      },
+      "HUBC": {
+        "n": 85,
+        "mae": 0.08779,
+        "dir_accuracy": 0.4941
+      },
+      "HUMNL": {
+        "n": 85,
+        "mae": 0.09015,
+        "dir_accuracy": 0.5059
+      },
+      "KEL": {
+        "n": 85,
+        "mae": 0.14592,
+        "dir_accuracy": 0.5176
+      },
+      "LOTCHEM": {
+        "n": 85,
+        "mae": 0.08645,
+        "dir_accuracy": 0.5529
+      },
+      "LUCK": {
+        "n": 85,
+        "mae": 0.12007,
+        "dir_accuracy": 0.5294
+      },
+      "MEBL": {
+        "n": 85,
+        "mae": 0.08718,
+        "dir_accuracy": 0.4
+      },
+      "MLCF": {
+        "n": 85,
+        "mae": 0.09874,
+        "dir_accuracy": 0.5176
+      },
+      "OGDC": {
+        "n": 85,
+        "mae": 0.08204,
+        "dir_accuracy": 0.4471
+      },
+      "PAEL": {
+        "n": 85,
+        "mae": 0.12248,
+        "dir_accuracy": 0.4118
+      },
+      "PIBTL": {
+        "n": 85,
+        "mae": 0.12058,
+        "dir_accuracy": 0.5647
+      },
+      "PPL": {
+        "n": 85,
+        "mae": 0.10142,
+        "dir_accuracy": 0.4706
+      },
+      "PRL": {
+        "n": 85,
+        "mae": 0.14038,
+        "dir_accuracy": 0.4471
+      },
+      "PSO": {
+        "n": 85,
+        "mae": 0.10528,
+        "dir_accuracy": 0.4235
+      },
+      "SYS": {
+        "n": 85,
+        "mae": 0.10531,
+        "dir_accuracy": 0.4941
+      },
+      "TELE": {
+        "n": 85,
+        "mae": 0.10237,
+        "dir_accuracy": 0.5529
+      },
+      "TRG": {
+        "n": 85,
+        "mae": 0.10241,
+        "dir_accuracy": 0.5059
+      },
+      "UNITY": {
+        "n": 85,
+        "mae": 0.13751,
+        "dir_accuracy": 0.5529
+      },
+      "WTL": {
+        "n": 85,
+        "mae": 0.10517,
+        "dir_accuracy": 0.4824
+      }
+    },
+    "XGBoost__5d__final_test": {
+      "ANL": {
+        "n": 85,
+        "mae": 0.04285,
+        "dir_accuracy": 0.4941
+      },
+      "BOP": {
+        "n": 85,
+        "mae": 0.06324,
+        "dir_accuracy": 0.5882
+      },
+      "CNERGY": {
+        "n": 85,
+        "mae": 0.05945,
+        "dir_accuracy": 0.4588
+      },
+      "ENGRO": {
+        "n": 40,
+        "mae": 0.03997,
+        "dir_accuracy": 0.525
+      },
+      "FCCL": {
+        "n": 85,
+        "mae": 0.04749,
+        "dir_accuracy": 0.4118
+      },
+      "HASCOL": {
+        "n": 85,
+        "mae": 0.05646,
+        "dir_accuracy": 0.5412
+      },
+      "HUBC": {
+        "n": 85,
+        "mae": 0.04181,
+        "dir_accuracy": 0.4941
+      },
+      "HUMNL": {
+        "n": 85,
+        "mae": 0.05093,
+        "dir_accuracy": 0.4824
+      },
+      "KEL": {
+        "n": 85,
+        "mae": 0.06608,
+        "dir_accuracy": 0.5176
+      },
+      "LOTCHEM": {
+        "n": 85,
+        "mae": 0.04141,
+        "dir_accuracy": 0.4118
+      },
+      "LUCK": {
+        "n": 85,
+        "mae": 0.03882,
+        "dir_accuracy": 0.5529
+      },
+      "MEBL": {
+        "n": 85,
+        "mae": 0.03576,
+        "dir_accuracy": 0.4471
+      },
+      "MLCF": {
+        "n": 85,
+        "mae": 0.04891,
+        "dir_accuracy": 0.5059
+      },
+      "OGDC": {
+        "n": 85,
+        "mae": 0.04067,
+        "dir_accuracy": 0.4235
+      },
+      "PAEL": {
+        "n": 85,
+        "mae": 0.05904,
+        "dir_accuracy": 0.4118
+      },
+      "PIBTL": {
+        "n": 85,
+        "mae": 0.05545,
+        "dir_accuracy": 0.5294
+      },
+      "PPL": {
+        "n": 85,
+        "mae": 0.04769,
+        "dir_accuracy": 0.4353
+      },
+      "PRL": {
+        "n": 85,
+        "mae": 0.05729,
+        "dir_accuracy": 0.4941
+      },
+      "PSO": {
+        "n": 85,
+        "mae": 0.04529,
+        "dir_accuracy": 0.5882
+      },
+      "SYS": {
+        "n": 85,
+        "mae": 0.04643,
+        "dir_accuracy": 0.4353
+      },
+      "TELE": {
+        "n": 85,
+        "mae": 0.05681,
+        "dir_accuracy": 0.5059
+      },
+      "TRG": {
+        "n": 85,
+        "mae": 0.05103,
+        "dir_accuracy": 0.5765
+      },
+      "UNITY": {
+        "n": 85,
+        "mae": 0.04813,
+        "dir_accuracy": 0.5059
+      },
+      "WTL": {
+        "n": 85,
+        "mae": 0.05598,
+        "dir_accuracy": 0.4588
+      }
+    }
+  },
+  "per_regime": {
+    "LightGBM__5d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.04571,
+        "dir_accuracy": 0.475
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.04801,
+        "dir_accuracy": 0.4745
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.05431,
+        "dir_accuracy": 0.5106
+      }
+    },
+    "LightGBM__21d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.09936,
+        "dir_accuracy": 0.505
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.10385,
+        "dir_accuracy": 0.4969
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.12248,
+        "dir_accuracy": 0.4994
+      }
+    },
+    "HuberRegressor__5d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.0461,
+        "dir_accuracy": 0.4593
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.04894,
+        "dir_accuracy": 0.4664
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.05416,
+        "dir_accuracy": 0.4994
+      }
+    },
+    "HuberRegressor__21d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.10112,
+        "dir_accuracy": 0.4379
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.10831,
+        "dir_accuracy": 0.4501
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.11907,
+        "dir_accuracy": 0.523
+      }
+    },
+    "XGBoost__5d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.04596,
+        "dir_accuracy": 0.4779
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.04826,
+        "dir_accuracy": 0.4684
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.05483,
+        "dir_accuracy": 0.5156
+      }
+    },
+    "XGBoost__21d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.10114,
+        "dir_accuracy": 0.4964
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.10461,
+        "dir_accuracy": 0.4868
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.12586,
+        "dir_accuracy": 0.5006
+      }
+    }
+  },
+  "concentration": {
+    "lgbm_21d_abs_error_share_top3": 0.1796,
+    "top3_symbols": [
+      "BOP",
+      "HASCOL",
+      "PRL"
+    ],
+    "note": "aggregate metrics can be dominated by a few volatile symbols"
+  },
+  "min_sample_rule": "n >= 30 per symbol before any conclusion",
+  "models": [
+    "LightGBM",
+    "HuberRegressor",
+    "XGBoost"
+  ],
+  "sector_mapping_coverage": {
+    "symbols_mapped": 0,
+    "pilot25": 25,
+    "note": "sector_overrides.json is preserved untouched; historical observations are NOT reclassified retroactively"
+  }
+}

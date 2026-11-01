@@ -1,0 +1,490 @@
+{
+  "protocol": {
+    "models": [
+      "LightGBM",
+      "Ridge Regression"
+    ],
+    "expanding_window": true,
+    "per_horizon_maturity_purge": true,
+    "bounded": "latest 90 test samples per step (coverage recorded per step)",
+    "uncertainty": "moving-block bootstrap over unique decision dates, block=21 sessions (horizon-matched), 200 draws; samples sharing a decision date move together"
+  },
+  "steps": {
+    "50": {
+      "sample_step": 50,
+      "total_test_samples_available": 399,
+      "bounded_to": 90,
+      "evaluated_samples": 90,
+      "unique_decision_dates": 12,
+      "date_span": [
+        1765324800000,
+        1785283200000
+      ],
+      "dependence": {
+        "note": "at step s, consecutive same-stock decision dates are s sessions apart; 21d-horizon windows overlap by max(0, 21-s) sessions; overlap fraction = max(0,1-s/21)",
+        "overlap_fraction_21d": 0.0,
+        "effective_overlap_note": "unique (symbol,date) pairs are NOT independent observations; CIs are date-block bootstrapped"
+      },
+      "models": {
+        "LightGBM": {
+          "5": {
+            "n": 90,
+            "mae": 0.041666,
+            "rmse": 0.061728,
+            "r2": -0.131542,
+            "directional_accuracy": 0.3444,
+            "mae_point": 0.041666,
+            "mae_ci95": [
+              0.032038,
+              0.065199
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.068093,
+            "rmse": 0.09854,
+            "r2": -0.222437,
+            "directional_accuracy": 0.3222,
+            "mae_point": 0.068093,
+            "mae_ci95": [
+              0.046146,
+              0.115818
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.088368,
+            "rmse": 0.147526,
+            "r2": -0.025254,
+            "directional_accuracy": 0.3889,
+            "mae_point": 0.088368,
+            "mae_ci95": [
+              0.068165,
+              0.112048
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "n": 90,
+            "mae": 0.042071,
+            "rmse": 0.062371,
+            "r2": -0.155211,
+            "directional_accuracy": 0.4444,
+            "mae_point": 0.042071,
+            "mae_ci95": [
+              0.031308,
+              0.066641
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.070191,
+            "rmse": 0.100052,
+            "r2": -0.260237,
+            "directional_accuracy": 0.2889,
+            "mae_point": 0.070191,
+            "mae_ci95": [
+              0.047493,
+              0.119003
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.088896,
+            "rmse": 0.146394,
+            "r2": -0.00958,
+            "directional_accuracy": 0.4333,
+            "mae_point": 0.088896,
+            "mae_ci95": [
+              0.068417,
+              0.114255
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          }
+        }
+      },
+      "runtime_note": "per-sample cost benchmarked in batch_logs/benchmark.json"
+    },
+    "10": {
+      "sample_step": 10,
+      "total_test_samples_available": 1995,
+      "bounded_to": 90,
+      "evaluated_samples": 90,
+      "unique_decision_dates": 12,
+      "date_span": [
+        1785888000000,
+        1790294400000
+      ],
+      "dependence": {
+        "note": "at step s, consecutive same-stock decision dates are s sessions apart; 21d-horizon windows overlap by max(0, 21-s) sessions; overlap fraction = max(0,1-s/21)",
+        "overlap_fraction_21d": 0.524,
+        "effective_overlap_note": "unique (symbol,date) pairs are NOT independent observations; CIs are date-block bootstrapped"
+      },
+      "models": {
+        "LightGBM": {
+          "5": {
+            "n": 90,
+            "mae": 0.037511,
+            "rmse": 0.051657,
+            "r2": -0.015619,
+            "directional_accuracy": 0.4111,
+            "mae_point": 0.037511,
+            "mae_ci95": [
+              0.027633,
+              0.045141
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.050605,
+            "rmse": 0.068813,
+            "r2": -0.105549,
+            "directional_accuracy": 0.3333,
+            "mae_point": 0.050605,
+            "mae_ci95": [
+              0.042954,
+              0.054287
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.086567,
+            "rmse": 0.108814,
+            "r2": -0.424891,
+            "directional_accuracy": 0.1444,
+            "mae_point": 0.086567,
+            "mae_ci95": [
+              0.072919,
+              0.099822
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "n": 90,
+            "mae": 0.036714,
+            "rmse": 0.051192,
+            "r2": 0.002577,
+            "directional_accuracy": 0.5778,
+            "mae_point": 0.036714,
+            "mae_ci95": [
+              0.026951,
+              0.044329
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.048777,
+            "rmse": 0.067342,
+            "r2": -0.058779,
+            "directional_accuracy": 0.5,
+            "mae_point": 0.048777,
+            "mae_ci95": [
+              0.04056,
+              0.05239
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.084271,
+            "rmse": 0.107555,
+            "r2": -0.392117,
+            "directional_accuracy": 0.4444,
+            "mae_point": 0.084271,
+            "mae_ci95": [
+              0.068767,
+              0.097629
+            ],
+            "n_boot": 200,
+            "block_days": 4,
+            "unique_dates": 12,
+            "n_samples": 90
+          }
+        }
+      },
+      "runtime_note": "per-sample cost benchmarked in batch_logs/benchmark.json"
+    },
+    "5": {
+      "sample_step": 5,
+      "total_test_samples_available": 3978,
+      "bounded_to": 90,
+      "evaluated_samples": 90,
+      "unique_decision_dates": 10,
+      "date_span": [
+        1787875200000,
+        1790640000000
+      ],
+      "dependence": {
+        "note": "at step s, consecutive same-stock decision dates are s sessions apart; 21d-horizon windows overlap by max(0, 21-s) sessions; overlap fraction = max(0,1-s/21)",
+        "overlap_fraction_21d": 0.762,
+        "effective_overlap_note": "unique (symbol,date) pairs are NOT independent observations; CIs are date-block bootstrapped"
+      },
+      "models": {
+        "LightGBM": {
+          "5": {
+            "n": 90,
+            "mae": 0.032333,
+            "rmse": 0.045294,
+            "r2": -0.249953,
+            "directional_accuracy": 0.4444,
+            "mae_point": 0.032333,
+            "mae_ci95": [
+              0.020597,
+              0.044354
+            ],
+            "n_boot": 200,
+            "block_days": 3,
+            "unique_dates": 10,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.046823,
+            "rmse": 0.061022,
+            "r2": -0.553074,
+            "directional_accuracy": 0.3222,
+            "mae_point": 0.046823,
+            "mae_ci95": [
+              0.034475,
+              0.056293
+            ],
+            "n_boot": 200,
+            "block_days": 3,
+            "unique_dates": 10,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.085119,
+            "rmse": 0.100723,
+            "r2": -0.80916,
+            "directional_accuracy": 0.1222,
+            "mae_point": 0.085119,
+            "mae_ci95": [
+              0.074666,
+              0.101146
+            ],
+            "n_boot": 200,
+            "block_days": 3,
+            "unique_dates": 10,
+            "n_samples": 90
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "n": 90,
+            "mae": 0.031727,
+            "rmse": 0.045398,
+            "r2": -0.255698,
+            "directional_accuracy": 0.5889,
+            "mae_point": 0.031727,
+            "mae_ci95": [
+              0.020107,
+              0.043742
+            ],
+            "n_boot": 200,
+            "block_days": 3,
+            "unique_dates": 10,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.044625,
+            "rmse": 0.060071,
+            "r2": -0.505035,
+            "directional_accuracy": 0.6444,
+            "mae_point": 0.044625,
+            "mae_ci95": [
+              0.031656,
+              0.054573
+            ],
+            "n_boot": 200,
+            "block_days": 3,
+            "unique_dates": 10,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.082002,
+            "rmse": 0.099088,
+            "r2": -0.750905,
+            "directional_accuracy": 0.5,
+            "mae_point": 0.082002,
+            "mae_ci95": [
+              0.070639,
+              0.09841
+            ],
+            "n_boot": 200,
+            "block_days": 3,
+            "unique_dates": 10,
+            "n_samples": 90
+          }
+        }
+      },
+      "runtime_note": "per-sample cost benchmarked in batch_logs/benchmark.json"
+    },
+    "1": {
+      "sample_step": 1,
+      "total_test_samples_available": 19851,
+      "bounded_to": 90,
+      "evaluated_samples": 90,
+      "unique_decision_dates": 7,
+      "date_span": [
+        1790035200000,
+        1790726400000
+      ],
+      "dependence": {
+        "note": "at step s, consecutive same-stock decision dates are s sessions apart; 21d-horizon windows overlap by max(0, 21-s) sessions; overlap fraction = max(0,1-s/21)",
+        "overlap_fraction_21d": 0.952,
+        "effective_overlap_note": "unique (symbol,date) pairs are NOT independent observations; CIs are date-block bootstrapped"
+      },
+      "models": {
+        "LightGBM": {
+          "5": {
+            "n": 90,
+            "mae": 0.035796,
+            "rmse": 0.046419,
+            "r2": -0.338186,
+            "directional_accuracy": 0.5778,
+            "mae_point": 0.035796,
+            "mae_ci95": [
+              0.028611,
+              0.044951
+            ],
+            "n_boot": 200,
+            "block_days": 2,
+            "unique_dates": 7,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.04734,
+            "rmse": 0.057896,
+            "r2": -0.710361,
+            "directional_accuracy": 0.2444,
+            "mae_point": 0.04734,
+            "mae_ci95": [
+              0.040874,
+              0.054522
+            ],
+            "n_boot": 200,
+            "block_days": 2,
+            "unique_dates": 7,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.076182,
+            "rmse": 0.086344,
+            "r2": -1.539459,
+            "directional_accuracy": 0.0889,
+            "mae_point": 0.076182,
+            "mae_ci95": [
+              0.063366,
+              0.090088
+            ],
+            "n_boot": 200,
+            "block_days": 2,
+            "unique_dates": 7,
+            "n_samples": 90
+          }
+        },
+        "Ridge Regression": {
+          "5": {
+            "n": 90,
+            "mae": 0.034972,
+            "rmse": 0.045851,
+            "r2": -0.305587,
+            "directional_accuracy": 0.6444,
+            "mae_point": 0.034972,
+            "mae_ci95": [
+              0.028,
+              0.044022
+            ],
+            "n_boot": 200,
+            "block_days": 2,
+            "unique_dates": 7,
+            "n_samples": 90
+          },
+          "10": {
+            "n": 90,
+            "mae": 0.044694,
+            "rmse": 0.056584,
+            "r2": -0.633709,
+            "directional_accuracy": 0.6778,
+            "mae_point": 0.044694,
+            "mae_ci95": [
+              0.037476,
+              0.052225
+            ],
+            "n_boot": 200,
+            "block_days": 2,
+            "unique_dates": 7,
+            "n_samples": 90
+          },
+          "21": {
+            "n": 90,
+            "mae": 0.073366,
+            "rmse": 0.085911,
+            "r2": -1.514047,
+            "directional_accuracy": 0.5444,
+            "mae_point": 0.073366,
+            "mae_ci95": [
+              0.060095,
+              0.087751
+            ],
+            "n_boot": 200,
+            "block_days": 2,
+            "unique_dates": 7,
+            "n_samples": 90
+          }
+        }
+      },
+      "runtime_note": "per-sample cost benchmarked in batch_logs/benchmark.json"
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "task": 100,
+  "objective": "Improve genuine PSX forecasting quality and trading performance; diagnose why current models underperform; expand walk-forward evaluation beyond the five classical models; document the investment simulator field-by-field from actual source code.",
+  "constraints": {
+    "sandbox_limit_seconds": 150,
+    "command_budget_seconds": 130,
+    "protected": "Task 54-99 reports are never overwritten; original 400-sample sample_step=50 pilot25 report stays untouched",
+    "integrity": "chronological splits, horizon-specific maturity purge, train-only preprocessing, validation-only selection, final-test touched once"
+  },
+  "phases": [
+    {
+      "id": "scaffold",
+      "outputs": [
+        "task100_execution_plan.json",
+        "task100_progress.json"
+      ]
+    },
+    {
+      "id": "benchmark",
+      "outputs": [
+        "batch_logs/benchmark.json"
+      ]
+    },
+    {
+      "id": "matrix",
+      "outputs": [
+        "task100_initial_performance_matrix.json"
+      ]
+    },
+    {
+      "id": "diag_pred",
+      "outputs": [
+        "task100_prediction_diagnostics.json"
+      ]
+    },
+    {
+      "id": "diag_feat",
+      "outputs": [
+        "task100_feature_diagnostics.json"
+      ]
+    },
+    {
+      "id": "diag_data",
+      "outputs": [
+        "task100_data_quality_report.json"
+      ]
+    },
+    {
+      "id": "compare",
+      "outputs": [
+        "task100_model_comparison.json",
+        "task100_walk_forward_expansion.json"
+      ]
+    },
+    {
+      "id": "steps",
+      "outputs": [
+        "task100_sample_step_comparison.json"
+      ]
+    },
+    {
+      "id": "ablation",
+      "outputs": [
+        "task100_feature_ablation.json"
+      ]
+    },
+    {
+      "id": "targets",
+      "outputs": [
+        "task100_target_experiments.json"
+      ]
+    },
+    {
+      "id": "calibration",
+      "outputs": [
+        "task100_prediction_calibration.json"
+      ]
+    },
+    {
+      "id": "ensemble",
+      "outputs": [
+        "task100_ensemble_validation.json"
+      ]
+    },
+    {
+      "id": "strategy",
+      "outputs": [
+        "task100_strategy_diagnostics.json",
+        "task100_strategy_optimization.json",
+        "task100_cost_reconciliation.json"
+      ]
+    },
+    {
+      "id": "simulator",
+      "outputs": [
+        "task100_simulator_data_dictionary.json",
+        "docs/investment-simulator-metrics.md"
+      ]
+    },
+    {
+      "id": "perstock",
+      "outputs": [
+        "task100_per_stock_analysis.json",
+        "task100_regime_analysis.json"
+      ]
+    },
+    {
+      "id": "prospective",
+      "outputs": [
+        "task100_prospective_integrity.json"
+      ]
+    },
+    {
+      "id": "api_browser",
+      "outputs": [
+        "task100_api_validation.json",
+        "task100_browser_test_results.json"
+      ]
+    },
+    {
+      "id": "finalize",
+      "outputs": [
+        "task100_summary.json",
+        "task100_metrics.csv",
+        "task100_remaining_blockers.json"
+      ]
+    },
+    {
+      "id": "deliver",
+      "outputs": [
+        "commit + push + HEAD==origin/main verification"
+      ]
+    }
+  ],
+  "generated_at": "2026-11-01T12:53:48+0000"
+}

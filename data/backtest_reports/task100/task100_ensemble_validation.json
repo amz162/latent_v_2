@@ -1,0 +1,315 @@
+{
+  "protocol": "fixed aggregators use aligned OOS component predictions; learned stacker (Ridge) fitted on VALIDATION OOF only, frozen, applied to final-test once",
+  "component_val_mae": {
+    "XGBoost": 0.088643,
+    "LightGBM": 0.086801,
+    "CatBoost": 0.088084,
+    "Random Forest": 0.088215,
+    "Ridge Regression": 0.088445,
+    "ExtraTrees": 0.087083,
+    "HistGradientBoosting": 0.089461,
+    "ElasticNet": 0.08713,
+    "HuberRegressor": 0.084976
+  },
+  "aggregators": {
+    "5": {
+      "n_val": 816,
+      "n_final_test": 1995,
+      "mean": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.049843,
+          "rmse": 0.075269,
+          "r2": -0.026497,
+          "directional_accuracy": 0.4922,
+          "mae_point": 0.049843,
+          "mae_ci95": [
+            0.043083,
+            0.056316
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "median": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.049866,
+          "rmse": 0.075321,
+          "r2": -0.027911,
+          "directional_accuracy": 0.4927,
+          "mae_point": 0.049866,
+          "mae_ci95": [
+            0.043163,
+            0.056316
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "inverse_mae_weighted_frozen": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.049841,
+          "rmse": 0.07527,
+          "r2": -0.026523,
+          "directional_accuracy": 0.4927,
+          "mae_point": 0.049841,
+          "mae_ci95": [
+            0.043079,
+            0.056317
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "ridge_stacker_oof_frozen": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.049764,
+          "rmse": 0.075644,
+          "r2": -0.036745,
+          "directional_accuracy": 0.4737,
+          "mae_point": 0.049764,
+          "mae_ci95": [
+            0.04281,
+            0.056593
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        },
+        "val_mae": 0.04214
+      },
+      "single_best_by_validation": {
+        "model": "HuberRegressor",
+        "final_test": {
+          "n": 1995,
+          "mae": 0.050041,
+          "rmse": 0.076113,
+          "r2": -0.04964,
+          "directional_accuracy": 0.4772,
+          "mae_point": 0.050041,
+          "mae_ci95": [
+            0.043,
+            0.057293
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      }
+    },
+    "10": {
+      "n_val": 816,
+      "n_final_test": 1995,
+      "mean": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.070502,
+          "rmse": 0.104743,
+          "r2": -0.031238,
+          "directional_accuracy": 0.4952,
+          "mae_point": 0.070502,
+          "mae_ci95": [
+            0.062375,
+            0.08244
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "median": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.070547,
+          "rmse": 0.104763,
+          "r2": -0.031625,
+          "directional_accuracy": 0.4937,
+          "mae_point": 0.070547,
+          "mae_ci95": [
+            0.06248,
+            0.082213
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "inverse_mae_weighted_frozen": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.070493,
+          "rmse": 0.104737,
+          "r2": -0.031116,
+          "directional_accuracy": 0.4957,
+          "mae_point": 0.070493,
+          "mae_ci95": [
+            0.062364,
+            0.082435
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "ridge_stacker_oof_frozen": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.069919,
+          "rmse": 0.10547,
+          "r2": -0.045601,
+          "directional_accuracy": 0.4882,
+          "mae_point": 0.069919,
+          "mae_ci95": [
+            0.061634,
+            0.081757
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        },
+        "val_mae": 0.060293
+      },
+      "single_best_by_validation": {
+        "model": "HuberRegressor",
+        "final_test": {
+          "n": 1995,
+          "mae": 0.070007,
+          "rmse": 0.10536,
+          "r2": -0.043414,
+          "directional_accuracy": 0.5018,
+          "mae_point": 0.070007,
+          "mae_ci95": [
+            0.061593,
+            0.083227
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      }
+    },
+    "21": {
+      "n_val": 816,
+      "n_final_test": 1995,
+      "mean": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.109954,
+          "rmse": 0.157026,
+          "r2": -0.061239,
+          "directional_accuracy": 0.4907,
+          "mae_point": 0.109954,
+          "mae_ci95": [
+            0.097698,
+            0.12969
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "median": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.109824,
+          "rmse": 0.157064,
+          "r2": -0.061763,
+          "directional_accuracy": 0.4917,
+          "mae_point": 0.109824,
+          "mae_ci95": [
+            0.097754,
+            0.129342
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "inverse_mae_weighted_frozen": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.109934,
+          "rmse": 0.15701,
+          "r2": -0.061031,
+          "directional_accuracy": 0.4897,
+          "mae_point": 0.109934,
+          "mae_ci95": [
+            0.097674,
+            0.129678
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      },
+      "ridge_stacker_oof_frozen": {
+        "final_test": {
+          "n": 1995,
+          "mae": 0.110631,
+          "rmse": 0.160923,
+          "r2": -0.114576,
+          "directional_accuracy": 0.4632,
+          "mae_point": 0.110631,
+          "mae_ci95": [
+            0.098033,
+            0.13072
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        },
+        "val_mae": 0.082174
+      },
+      "single_best_by_validation": {
+        "model": "HuberRegressor",
+        "final_test": {
+          "n": 1995,
+          "mae": 0.110112,
+          "rmse": 0.159602,
+          "r2": -0.096351,
+          "directional_accuracy": 0.4752,
+          "mae_point": 0.110112,
+          "mae_ci95": [
+            0.097468,
+            0.131199
+          ],
+          "n_boot": 200,
+          "block_days": 21,
+          "unique_dates": 154,
+          "n_samples": 1995
+        }
+      }
+    }
+  },
+  "frozen_weights_from_validation": {
+    "XGBoost": 0.1098,
+    "LightGBM": 0.1122,
+    "CatBoost": 0.1105,
+    "Random Forest": 0.1104,
+    "Ridge Regression": 0.1101,
+    "ExtraTrees": 0.1118,
+    "HistGradientBoosting": 0.1088,
+    "ElasticNet": 0.1117,
+    "HuberRegressor": 0.1146
+  }
+}

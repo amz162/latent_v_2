@@ -1,0 +1,342 @@
+{
+  "protocol": "frozen full-train-window, LightGBM, same chronological split + purge; bands/quantiles chosen on TRAIN only; final-test reported once",
+  "experiments": {
+    "A_return_regression": {
+      "source": "task100_feature_ablation.json combined_all_19",
+      "metrics": {
+        "validation": {
+          "5": {
+            "n": 816,
+            "mae": 0.042794,
+            "rmse": 0.058125,
+            "r2": -0.014098,
+            "directional_accuracy": 0.4534,
+            "mae_point": 0.042794,
+            "mae_ci95": [
+              0.040431,
+              0.046495
+            ],
+            "n_boot": 200,
+            "block_days": 11,
+            "unique_dates": 34,
+            "n_samples": 816
+          },
+          "10": {
+            "n": 816,
+            "mae": 0.061925,
+            "rmse": 0.08637,
+            "r2": -0.017112,
+            "directional_accuracy": 0.4498,
+            "mae_point": 0.061925,
+            "mae_ci95": [
+              0.058771,
+              0.067586
+            ],
+            "n_boot": 200,
+            "block_days": 11,
+            "unique_dates": 34,
+            "n_samples": 816
+          },
+          "21": {
+            "n": 816,
+            "mae": 0.086801,
+            "rmse": 0.120536,
+            "r2": -0.043453,
+            "directional_accuracy": 0.4816,
+            "mae_point": 0.086801,
+            "mae_ci95": [
+              0.082745,
+              0.098312
+            ],
+            "n_boot": 200,
+            "block_days": 11,
+            "unique_dates": 34,
+            "n_samples": 816
+          }
+        },
+        "final_test": {
+          "5": {
+            "n": 1995,
+            "mae": 0.049738,
+            "rmse": 0.075154,
+            "r2": -0.023351,
+            "directional_accuracy": 0.4892,
+            "mae_point": 0.049738,
+            "mae_ci95": [
+              0.042936,
+              0.056217
+            ],
+            "n_boot": 200,
+            "block_days": 21,
+            "unique_dates": 154,
+            "n_samples": 1995
+          },
+          "10": {
+            "n": 1995,
+            "mae": 0.070491,
+            "rmse": 0.104832,
+            "r2": -0.032985,
+            "directional_accuracy": 0.4857,
+            "mae_point": 0.070491,
+            "mae_ci95": [
+              0.062204,
+              0.082315
+            ],
+            "n_boot": 200,
+            "block_days": 21,
+            "unique_dates": 154,
+            "n_samples": 1995
+          },
+          "21": {
+            "n": 1995,
+            "mae": 0.109771,
+            "rmse": 0.157289,
+            "r2": -0.064799,
+            "directional_accuracy": 0.5008,
+            "mae_point": 0.109771,
+            "mae_ci95": [
+              0.097951,
+              0.129477
+            ],
+            "n_boot": 200,
+            "block_days": 21,
+            "unique_dates": 154,
+            "n_samples": 1995
+          }
+        }
+      }
+    },
+    "B_direction_classification_3class": {
+      "bands_from_train_quantile": {
+        "5": 0.020903,
+        "10": 0.030792,
+        "21": 0.049639
+      },
+      "metrics": {
+        "validation": {
+          "5": {
+            "n": 816,
+            "class_counts_actual": {
+              "-1": 326,
+              "0": 258,
+              "1": 232
+            },
+            "argmax_accuracy": 0.4228,
+            "sign_dir_accuracy": 0.5172,
+            "brier_up_vs_actual_up": 0.267718,
+            "neutral_zone_frac": 0.3162
+          },
+          "10": {
+            "n": 816,
+            "class_counts_actual": {
+              "-1": 317,
+              "0": 293,
+              "1": 206
+            },
+            "argmax_accuracy": 0.3811,
+            "sign_dir_accuracy": 0.5404,
+            "brier_up_vs_actual_up": 0.259864,
+            "neutral_zone_frac": 0.3591
+          },
+          "21": {
+            "n": 816,
+            "class_counts_actual": {
+              "-1": 330,
+              "0": 323,
+              "1": 163
+            },
+            "argmax_accuracy": 0.4032,
+            "sign_dir_accuracy": 0.5821,
+            "brier_up_vs_actual_up": 0.25158,
+            "neutral_zone_frac": 0.3958
+          }
+        },
+        "final_test": {
+          "5": {
+            "n": 1995,
+            "class_counts_actual": {
+              "-1": 602,
+              "0": 678,
+              "1": 715
+            },
+            "argmax_accuracy": 0.3694,
+            "sign_dir_accuracy": 0.4967,
+            "brier_up_vs_actual_up": 0.298443,
+            "neutral_zone_frac": 0.3398
+          },
+          "10": {
+            "n": 1995,
+            "class_counts_actual": {
+              "-1": 627,
+              "0": 666,
+              "1": 702
+            },
+            "argmax_accuracy": 0.3679,
+            "sign_dir_accuracy": 0.5163,
+            "brier_up_vs_actual_up": 0.293271,
+            "neutral_zone_frac": 0.3338
+          },
+          "21": {
+            "n": 1995,
+            "class_counts_actual": {
+              "-1": 552,
+              "0": 695,
+              "1": 748
+            },
+            "argmax_accuracy": 0.3519,
+            "sign_dir_accuracy": 0.4997,
+            "brier_up_vs_actual_up": 0.308258,
+            "neutral_zone_frac": 0.3484
+          }
+        }
+      }
+    },
+    "C_magnitude_classification_5class": {
+      "bands_from_train_quantile": {
+        "small": 0.020903,
+        "strong": 0.051734
+      },
+      "metrics": {
+        "5": {
+          "counts_train": {
+            "-2": 4962,
+            "-1": 5774,
+            "0": 10259,
+            "1": 4183,
+            "2": 4996
+          },
+          "validation": {
+            "n": 816,
+            "argmax_accuracy": 0.3076,
+            "strong_class_support": 241,
+            "strong_class_recall": 0.1203
+          },
+          "final_test": {
+            "n": 1995,
+            "argmax_accuracy": 0.3454,
+            "strong_class_support": 641,
+            "strong_class_recall": 0.17
+          }
+        },
+        "10": {
+          "counts_train": {
+            "-2": 4886,
+            "-1": 5755,
+            "0": 10259,
+            "1": 4202,
+            "2": 5072
+          },
+          "validation": {
+            "n": 816,
+            "argmax_accuracy": 0.3297,
+            "strong_class_support": 245,
+            "strong_class_recall": 0.098
+          },
+          "final_test": {
+            "n": 1995,
+            "argmax_accuracy": 0.3258,
+            "strong_class_support": 614,
+            "strong_class_recall": 0.1531
+          }
+        },
+        "21": {
+          "counts_train": {
+            "-2": 4938,
+            "-1": 5810,
+            "0": 10259,
+            "1": 4147,
+            "2": 5020
+          },
+          "validation": {
+            "n": 816,
+            "argmax_accuracy": 0.3321,
+            "strong_class_support": 205,
+            "strong_class_recall": 0.1122
+          },
+          "final_test": {
+            "n": 1995,
+            "argmax_accuracy": 0.3193,
+            "strong_class_support": 623,
+            "strong_class_recall": 0.13
+          }
+        }
+      }
+    },
+    "D_forward_volatility_21d": {
+      "target": "std of next 21 daily returns (per-stock shift; genuine future outcome)",
+      "train_rows": 29924,
+      "metrics": {
+        "validation": {
+          "n": 8359,
+          "mae": 0.007178,
+          "r2": 0.2418,
+          "dir_vol_accuracy_quartiles": 0.4279
+        },
+        "final_test": {
+          "n": 20187,
+          "mae": 0.00875,
+          "r2": 0.0736,
+          "dir_vol_accuracy_quartiles": 0.3851
+        }
+      }
+    },
+    "E_quantile": {
+      "metrics": {
+        "5": {
+          "validation": {
+            "n": 816,
+            "coverage_q10": 0.1029,
+            "coverage_q90": 0.9081,
+            "coverage_10_90_interval": 0.8051,
+            "median_mae": 0.042368
+          },
+          "final_test": {
+            "n": 1995,
+            "coverage_q10": 0.0867,
+            "coverage_q90": 0.8627,
+            "coverage_10_90_interval": 0.7759,
+            "median_mae": 0.050233
+          }
+        },
+        "10": {
+          "validation": {
+            "n": 816,
+            "coverage_q10": 0.1005,
+            "coverage_q90": 0.9105,
+            "coverage_10_90_interval": 0.81,
+            "median_mae": 0.061351
+          },
+          "final_test": {
+            "n": 1995,
+            "coverage_q10": 0.0747,
+            "coverage_q90": 0.8662,
+            "coverage_10_90_interval": 0.7915,
+            "median_mae": 0.070618
+          }
+        },
+        "21": {
+          "validation": {
+            "n": 816,
+            "coverage_q10": 0.1042,
+            "coverage_q90": 0.94,
+            "coverage_10_90_interval": 0.8358,
+            "median_mae": 0.084909
+          },
+          "final_test": {
+            "n": 1995,
+            "coverage_q10": 0.0717,
+            "coverage_q90": 0.8421,
+            "coverage_10_90_interval": 0.7704,
+            "median_mae": 0.111325
+          }
+        }
+      }
+    }
+  },
+  "retention": {
+    "B_retained_if": "sign_dir_accuracy on validation > 0.52 AND brier improves on validation",
+    "C": "kept as diagnostic; not promoted without robust OOS + prospective evidence",
+    "D_note": "vol prediction usable for position sizing/uncertainty gating, not direction",
+    "E_note": "quantile interval coverage on final test decides calibration claims"
+  }
+}

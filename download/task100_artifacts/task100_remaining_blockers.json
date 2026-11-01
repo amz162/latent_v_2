@@ -1,0 +1,31 @@
+{
+  "task": 100,
+  "generated_at": "2026-11-01T14:17:01+0000",
+  "blockers": [
+    {
+      "id": "no_genuine_edge_found",
+      "severity": "fundamental",
+      "detail": "No evaluated model, feature group, target variant or ensemble beats the zero-return MAE baseline on any horizon; validation directional accuracy 49-53%. This is a data/signal limitation, not an implementation defect. Next levers: genuine KSE-100 index series, fundamentals/announcements with real publication timestamps, longer histories, intraday data."
+    },
+    {
+      "id": "deep_statistical_foundation_families_not_pooled_evaluated",
+      "severity": "resource",
+      "detail": "PatchTST/N-BEATS/TimesNet/Informer/LSTM/GRU/CNN-LSTM/Transformer-LSTM/TabNet/ARIMA/Prophet/Holt-Winters/GARCH/Kalman/Chronos/Lag-Llama/Moirai were not re-run on the pooled 19-feature cohort (registry dispositions recorded in task100_initial_performance_matrix.json as partial/blocked; 150s command limit + 2 CPUs). Reference LSTM/CNN-LSTM retain their Task 99 OOS evidence."
+    },
+    {
+      "id": "svr_not_included",
+      "severity": "minor",
+      "detail": "SVR was in the Task 79 list but is O(n^2)-scale on 32k pooled rows; excluded from the Task 100 bounded cohorts (recorded, not silently omitted)."
+    },
+    {
+      "id": "simulator_interactive_run_deferred",
+      "severity": "minor",
+      "detail": "New simulator tooltips compile (tsc clean) and pages render with zero console errors; the interactive simulator run inside the browser was left to the owner (headless budget)."
+    },
+    {
+      "id": "quantile_and_isotonic_calibration_not_promotable",
+      "severity": "info",
+      "detail": "Empirical quantile coverage and isotonic Brier deltas are within sampling noise on final test; no calibration claim is made."
+    }
+  ]
+}

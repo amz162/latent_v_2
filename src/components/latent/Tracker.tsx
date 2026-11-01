@@ -1077,7 +1077,7 @@ export function Tracker() {
                             )
                           </p>
                           <div className="flex flex-wrap items-center gap-4 mt-2 text-[11px]">
-                            <span className="text-[#94A3B8]">
+                            <span className="text-[#94A3B8]" title="Running sum of realized NET P&L of trades entered so far (after the simulator's commission 0.15% x2, slippage 0.15%, CGT 15% on gains). SIP deposits add PKR 0.">
                               Total gain:{" "}
                               <span className={`font-mono font-semibold ${simResult.totalGain >= 0 ? "text-[#00E676]" : "text-[#FF5C5C]"}`}>
                                 {simResult.totalGain >= 0 ? "+" : ""}{fmtPkr(simResult.totalGain)}
@@ -1095,7 +1095,7 @@ export function Tracker() {
                             <span className="text-[#94A3B8]">
                               Losses: <span className="font-mono text-[#FF5C5C]">{simResult.losses}</span>
                             </span>
-                            <span className="text-[#94A3B8]">
+                            <span className="text-[#94A3B8]" title="Wins / (wins + losses). A win is NET P&L > 0 after the simulator's costs — a trade that touched TP2 then exited at SL counts as a LOSS if its net P&L is negative.">
                               Win rate:{" "}
                               <span className="font-mono text-[#F4F7FB]">
                                 {simResult.wins + simResult.losses > 0

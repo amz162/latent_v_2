@@ -586,7 +586,7 @@ export function AiModelSignals(){
               <div><div className="text-[10px] uppercase text-[#64748B]">Amount Per Trade</div><div className="font-mono text-[#F4F7FB]">PKR {Math.round(r.metrics.amountPerTrade).toLocaleString()}</div></div>
               <div><div className="text-[10px] uppercase text-[#64748B]">Total Trades (BUY only)</div><div className="font-mono text-[#F4F7FB]">{r.metrics.totalTrades} <span className="text-[#64748B] text-[10px]">(natural: {r.metrics.naturalBuyCount})</span></div></div>
               <div><div className="text-[10px] uppercase text-[#64748B]">Days</div><div className="font-mono text-[#F4F7FB]">{r.metrics.numDays} days <span className="text-[#64748B] text-[10px]">({r.metrics.tradesPerDay}/day)</span></div></div>
-              <div><div className="text-[10px] uppercase text-[#64748B]">Win Rate</div><div className="font-mono text-[#00E676]">{r.metrics.winRate.toFixed(2)}%</div></div>
+              <div><div className="text-[10px] uppercase text-[#64748B]" title="Winning trades / completed trades. A win is NET P&L > 0 after commission, slippage and CGT. Skipped and time-up trades are shown separately.">Win Rate</div><div className="font-mono text-[#00E676]">{r.metrics.winRate.toFixed(2)}%</div></div>
               <div><div className="text-[10px] uppercase text-[#64748B]">Win/Loss Trades</div><div className="font-mono"><span className="text-[#00E676]">{r.metrics.winTrades}</span>/<span className="text-[#FF5C5C]">{r.metrics.lossTrades}</span></div></div>
               <div><div className="text-[10px] uppercase text-[#64748B]">Avg Win</div><div className="font-mono text-[#00E676]">+{r.metrics.avgWinPct.toFixed(2)}%</div></div>
               <div><div className="text-[10px] uppercase text-[#64748B]">Avg Loss</div><div className="font-mono text-[#FF5C5C]">{r.metrics.avgLossPct.toFixed(2)}%</div></div>
@@ -1151,8 +1151,8 @@ export function AiModelSignals(){
            <span className="text-[#FBBF24] text-sm">{"★".repeat(m.stars||0)}<span className="text-[#64748B]">{"★".repeat(5-(m.stars||0))}</span></span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-           <div><div className="text-[10px] uppercase text-[#64748B]">Win Rate</div><div className="font-mono font-bold text-[#00E676]">{m.winRate}%</div></div>
-           <div><div className="text-[10px] uppercase text-[#64748B]">Avg Return</div><div className="font-mono text-[#F4F7FB]">{m.avgReturnPct}%</div></div>
+           <div><div className="text-[10px] uppercase text-[#64748B]" title="Gross directional-return proxy: share of trades whose signed forward return matched the trade direction. NO commission, fees or CGT deducted — not comparable to net trading P&L.">Win Rate</div><div className="font-mono font-bold text-[#00E676]">{m.winRate}%</div></div>
+           <div><div className="text-[10px] uppercase text-[#64748B]" title="Mean signed forward 21d return of the trades, before any costs (gross proxy).">Avg Return</div><div className="font-mono text-[#F4F7FB]">{m.avgReturnPct}%</div></div>
            <div><div className="text-[10px] uppercase text-[#64748B]">Best Trade</div><div className="font-mono text-[#00E676]">{m.maxReturnPct}%</div></div>
            <div><div className="text-[10px] uppercase text-[#64748B]">Worst Trade</div><div className="font-mono text-[#FF5C5C]">{m.minReturnPct}%</div></div>
            <div><div className="text-[10px] uppercase text-[#64748B]">Total Trades</div><div className="font-mono text-[#F4F7FB]">{m.totalTrades}</div></div>
@@ -1202,8 +1202,8 @@ export function AiModelSignals(){
            <span className="text-[#FBBF24] text-sm">{"★".repeat(m.stars||0)}<span className="text-[#64748B]">{"★".repeat(5-(m.stars||0))}</span></span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-           <div><div className="text-[10px] uppercase text-[#64748B]">Win Rate</div><div className="font-mono font-bold text-[#00E676]">{m.winRate}%</div></div>
-           <div><div className="text-[10px] uppercase text-[#64748B]">Avg Return</div><div className="font-mono text-[#F4F7FB]">{m.avgReturnPct}%</div></div>
+           <div><div className="text-[10px] uppercase text-[#64748B]" title="Gross directional-return proxy: share of trades whose signed forward return matched the trade direction. NO commission, fees or CGT deducted — not comparable to net trading P&L.">Win Rate</div><div className="font-mono font-bold text-[#00E676]">{m.winRate}%</div></div>
+           <div><div className="text-[10px] uppercase text-[#64748B]" title="Mean signed forward 21d return of the trades, before any costs (gross proxy).">Avg Return</div><div className="font-mono text-[#F4F7FB]">{m.avgReturnPct}%</div></div>
            <div><div className="text-[10px] uppercase text-[#64748B]">Best Trade</div><div className="font-mono text-[#00E676]">{m.maxReturnPct}%</div></div>
            <div><div className="text-[10px] uppercase text-[#64748B]">Worst Trade</div><div className="font-mono text-[#FF5C5C]">{m.minReturnPct}%</div></div>
            <div><div className="text-[10px] uppercase text-[#64748B]">Total Trades</div><div className="font-mono text-[#F4F7FB]">{m.totalTrades}</div></div>

@@ -1,0 +1,20 @@
+{
+  "purpose": "benchmark one walk-forward sample: 9 models x 3 horizons = 27 fits",
+  "sample": "LUCK@1790294400000",
+  "elapsed_seconds": 90.74,
+  "per_model_fits": {
+    "XGBoost": 3,
+    "LightGBM": 3,
+    "CatBoost": 3,
+    "Random Forest": 3,
+    "Ridge Regression": 3,
+    "ExtraTrees": 3,
+    "HistGradientBoosting": 3,
+    "ElasticNet": 3,
+    "HuberRegressor": 3
+  },
+  "errors": {},
+  "universe_n": 25,
+  "total_test_samples_at_step10": 1995,
+  "implication": "budget 130s allows ~1 samples/chunk at this cost"
+}

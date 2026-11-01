@@ -1,0 +1,1 @@
+{"models": ["HuberRegressor"], "gate": "val 5d directional_accuracy >= 0.50, then MAE", "gated_pass": ["HuberRegressor"], "mae_ranking_caveat": "ElasticNet/Huber rank top on MAE partly by shrinkage toward the conditional mean; constant-ish predictors must not drive signals"}

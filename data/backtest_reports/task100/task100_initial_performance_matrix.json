@@ -1,0 +1,1639 @@
+{
+  "generated_at": "2026-11-01T13:51:22+0000",
+  "evidence_types": {
+    "prediction_quality": "OOS regression metrics (MAE/RMSE/R2/directional accuracy) on matured targets",
+    "gross_directional_proxy": "signed-forward-return hit statistics with NO costs \u2014 NOT trading P&L",
+    "historical_trading_sim": "cost-aware strategy simulation (psx_user_schedule_v2) on OOS signals",
+    "prospective_paper_trading": "live shadow-book records \u2014 separate lifecycle, not historical research"
+  },
+  "cohort_note": "original report: 400 total unique (symbol,date) samples across 25 symbols, sample_step=50, 6000 fits, 30 unique prediction dates \u2014 400 is NOT per-stock",
+  "canonical_registry_size": 58,
+  "supplemental_registry_size": 2,
+  "entries": [
+    {
+      "model_id": "XGBoost",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "tier": "TIER_3",
+      "training_status": "trained",
+      "oos_evaluation": "expanding-window walk-forward (Task 54-57, 400 samples)",
+      "artifact_availability": [
+        "data/backtest_reports/walk_forward_latest.json",
+        "data/backtest_reports/task81_cost_rr_results_v1.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "5": {
+            "n": 400,
+            "mae": 0.052417,
+            "rmse": 0.071583,
+            "r2": 0.006724,
+            "directional_accuracy": 0.5675,
+            "zero_return_mae": 0.052597
+          },
+          "10": {
+            "n": 400,
+            "mae": 0.069577,
+            "rmse": 0.100928,
+            "r2": -0.042066,
+            "directional_accuracy": 0.505,
+            "zero_return_mae": 0.068285
+          },
+          "21": {
+            "n": 400,
+            "mae": 0.105987,
+            "rmse": 0.158879,
+            "r2": -0.056884,
+            "directional_accuracy": 0.4675,
+            "zero_return_mae": 0.104817
+          }
+        },
+        "gross_directional_proxy": {
+          "totalTrades": 105,
+          "wins": 62,
+          "winRate": 59.0,
+          "avgReturnPct": 5.43,
+          "maxReturnPct": 102.64,
+          "minReturnPct": -23.85,
+          "stars": 3,
+          "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+          "net_trading_pnl": "unavailable",
+          "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+        },
+        "historical_trading_sim": {
+          "cells": 108,
+          "net_profitable_cells": 18,
+          "best_netPnl": 24426.48,
+          "worst_netPnl": -118872.07,
+          "source": "task81_cost_rr_results_v1.json (540 cells, psx_user_schedule_v2)"
+        }
+      }
+    },
+    {
+      "model_id": "LightGBM",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "tier": "TIER_3",
+      "training_status": "trained",
+      "oos_evaluation": "expanding-window walk-forward (Task 54-57, 400 samples)",
+      "artifact_availability": [
+        "data/backtest_reports/walk_forward_latest.json",
+        "data/backtest_reports/task81_cost_rr_results_v1.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "5": {
+            "n": 400,
+            "mae": 0.052485,
+            "rmse": 0.071775,
+            "r2": 0.001384,
+            "directional_accuracy": 0.535,
+            "zero_return_mae": 0.052597
+          },
+          "10": {
+            "n": 400,
+            "mae": 0.06899,
+            "rmse": 0.100349,
+            "r2": -0.030143,
+            "directional_accuracy": 0.5025,
+            "zero_return_mae": 0.068285
+          },
+          "21": {
+            "n": 400,
+            "mae": 0.104942,
+            "rmse": 0.158645,
+            "r2": -0.053772,
+            "directional_accuracy": 0.5,
+            "zero_return_mae": 0.104817
+          }
+        },
+        "gross_directional_proxy": {
+          "totalTrades": 62,
+          "wins": 39,
+          "winRate": 62.9,
+          "avgReturnPct": 8.09,
+          "maxReturnPct": 102.64,
+          "minReturnPct": -16.46,
+          "stars": 4,
+          "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+          "net_trading_pnl": "unavailable",
+          "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+        },
+        "historical_trading_sim": {
+          "cells": 108,
+          "net_profitable_cells": 13,
+          "best_netPnl": 47744.32,
+          "worst_netPnl": -69647.23,
+          "source": "task81_cost_rr_results_v1.json (540 cells, psx_user_schedule_v2)"
+        }
+      }
+    },
+    {
+      "model_id": "CatBoost",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "tier": "TIER_3",
+      "training_status": "trained",
+      "oos_evaluation": "expanding-window walk-forward (Task 54-57, 400 samples)",
+      "artifact_availability": [
+        "data/backtest_reports/walk_forward_latest.json",
+        "data/backtest_reports/task81_cost_rr_results_v1.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "5": {
+            "n": 400,
+            "mae": 0.052213,
+            "rmse": 0.071456,
+            "r2": 0.010244,
+            "directional_accuracy": 0.58,
+            "zero_return_mae": 0.052597
+          },
+          "10": {
+            "n": 400,
+            "mae": 0.069143,
+            "rmse": 0.100534,
+            "r2": -0.033933,
+            "directional_accuracy": 0.5125,
+            "zero_return_mae": 0.068285
+          },
+          "21": {
+            "n": 400,
+            "mae": 0.105542,
+            "rmse": 0.158705,
+            "r2": -0.054563,
+            "directional_accuracy": 0.485,
+            "zero_return_mae": 0.104817
+          }
+        },
+        "gross_directional_proxy": {
+          "totalTrades": 84,
+          "wins": 50,
+          "winRate": 59.5,
+          "avgReturnPct": 5.12,
+          "maxReturnPct": 102.64,
+          "minReturnPct": -23.85,
+          "stars": 3,
+          "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+          "net_trading_pnl": "unavailable",
+          "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+        },
+        "historical_trading_sim": {
+          "cells": 108,
+          "net_profitable_cells": 14,
+          "best_netPnl": 9803.17,
+          "worst_netPnl": -113644.78,
+          "source": "task81_cost_rr_results_v1.json (540 cells, psx_user_schedule_v2)"
+        }
+      }
+    },
+    {
+      "model_id": "Random Forest",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "tier": "TIER_3",
+      "training_status": "trained",
+      "oos_evaluation": "expanding-window walk-forward (Task 54-57, 400 samples)",
+      "artifact_availability": [
+        "data/backtest_reports/walk_forward_latest.json",
+        "data/backtest_reports/task81_cost_rr_results_v1.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "5": {
+            "n": 400,
+            "mae": 0.052198,
+            "rmse": 0.071463,
+            "r2": 0.010038,
+            "directional_accuracy": 0.595,
+            "zero_return_mae": 0.052597
+          },
+          "10": {
+            "n": 400,
+            "mae": 0.069089,
+            "rmse": 0.100104,
+            "r2": -0.025115,
+            "directional_accuracy": 0.4925,
+            "zero_return_mae": 0.068285
+          },
+          "21": {
+            "n": 400,
+            "mae": 0.10453,
+            "rmse": 0.157929,
+            "r2": -0.044279,
+            "directional_accuracy": 0.455,
+            "zero_return_mae": 0.104817
+          }
+        },
+        "gross_directional_proxy": {
+          "totalTrades": 82,
+          "wins": 52,
+          "winRate": 63.4,
+          "avgReturnPct": 6.74,
+          "maxReturnPct": 102.64,
+          "minReturnPct": -23.85,
+          "stars": 4,
+          "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+          "net_trading_pnl": "unavailable",
+          "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+        },
+        "historical_trading_sim": {
+          "cells": 108,
+          "net_profitable_cells": 20,
+          "best_netPnl": 79627.6,
+          "worst_netPnl": -105469.59,
+          "source": "task81_cost_rr_results_v1.json (540 cells, psx_user_schedule_v2)"
+        }
+      }
+    },
+    {
+      "model_id": "Ridge Regression",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "tier": "TIER_CL",
+      "training_status": "trained",
+      "oos_evaluation": "expanding-window walk-forward (Task 54-57, 400 samples)",
+      "artifact_availability": [
+        "data/backtest_reports/walk_forward_latest.json",
+        "data/backtest_reports/task81_cost_rr_results_v1.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "5": {
+            "n": 400,
+            "mae": 0.052279,
+            "rmse": 0.071476,
+            "r2": 0.00969,
+            "directional_accuracy": 0.5475,
+            "zero_return_mae": 0.052597
+          },
+          "10": {
+            "n": 400,
+            "mae": 0.069649,
+            "rmse": 0.100739,
+            "r2": -0.03815,
+            "directional_accuracy": 0.525,
+            "zero_return_mae": 0.068285
+          },
+          "21": {
+            "n": 400,
+            "mae": 0.104316,
+            "rmse": 0.156867,
+            "r2": -0.030285,
+            "directional_accuracy": 0.5475,
+            "zero_return_mae": 0.104817
+          }
+        },
+        "gross_directional_proxy": {
+          "totalTrades": 145,
+          "wins": 85,
+          "winRate": 58.6,
+          "avgReturnPct": 4.91,
+          "maxReturnPct": 102.64,
+          "minReturnPct": -33.55,
+          "stars": 3,
+          "trading_metrics_label": "gross directional-return proxy (signed forward 21d return, NO commission/slippage/CGT/position-sizing deducted)",
+          "net_trading_pnl": "unavailable",
+          "net_trading_pnl_reason": "Genuine trade-execution simulator (entry/exit dates, commission, slippage, CGT, position sizing) is NOT connected to the walk-forward script. See src/lib/latent/investment-simulator.ts."
+        },
+        "historical_trading_sim": {
+          "cells": 108,
+          "net_profitable_cells": 23,
+          "best_netPnl": 68242.79,
+          "worst_netPnl": -175912.53,
+          "source": "task81_cost_rr_results_v1.json (540 cells, psx_user_schedule_v2)"
+        }
+      }
+    },
+    {
+      "model_id": "jw_reference_lstm",
+      "class": "supplemental",
+      "family": "reference-RNN (PyTorch, independent PSX adaptation)",
+      "training_status": "trained_oos_evaluated",
+      "oos_evaluation": "chronological 60/20/20 + purge (pilot25 pooled)",
+      "artifact_availability": [
+        "data/backtest_reports/task99/task99_summary.json",
+        "data/backtest_reports/task99/task99_walk_forward_metrics.json",
+        "data/backtest_reports/task99/task99_cost_aware_backtest.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "final_test": {
+            "5": {
+              "n": 10875,
+              "mae": 0.048537,
+              "rmse": 0.073626,
+              "r2": -0.048104,
+              "directional_accuracy": 0.4972,
+              "mae_ci95": [
+                0.047572,
+                0.049553
+              ]
+            },
+            "10": {
+              "n": 10875,
+              "mae": 0.068887,
+              "rmse": 0.104269,
+              "r2": -0.032493,
+              "directional_accuracy": 0.4834,
+              "mae_ci95": [
+                0.067498,
+                0.070336
+              ]
+            },
+            "21": {
+              "n": 10875,
+              "mae": 0.10632,
+              "rmse": 0.158075,
+              "r2": -0.01741,
+              "directional_accuracy": 0.5162,
+              "mae_ci95": [
+                0.104128,
+                0.108481
+              ]
+            }
+          },
+          "validation_period": {
+            "5": {
+              "n": 11424,
+              "mae": 0.042997,
+              "rmse": 0.061454,
+              "r2": -0.053459,
+              "directional_accuracy": 0.5117,
+              "mae_ci95": [
+                0.042194,
+                0.043811
+              ]
+            },
+            "10": {
+              "n": 11424,
+              "mae": 0.061071,
+              "rmse": 0.087049,
+              "r2": -0.028768,
+              "directional_accuracy": 0.5074,
+              "mae_ci95": [
+                0.059982,
+                0.06212
+              ]
+            },
+            "21": {
+              "n": 11424,
+              "mae": 0.091463,
+              "rmse": 0.128861,
+              "r2": -0.011116,
+              "directional_accuracy": 0.4762,
+              "mae_ci95": [
+                0.089621,
+                0.093128
+              ]
+            }
+          }
+        },
+        "baseline_comparison": {
+          "beats_zero_return_mae": {
+            "5": false,
+            "10": true,
+            "21": false
+          },
+          "note": "Task 99 verdict: neither reference model beat the zero-return MAE baseline on any horizon"
+        },
+        "historical_trading_sim": {
+          "source": "task99_cost_aware_backtest.json",
+          "verdict": "all strategy cells net-negative \u2014 models stay paper/shadow"
+        }
+      }
+    },
+    {
+      "model_id": "jw_reference_cnn_lstm",
+      "class": "supplemental",
+      "family": "reference-RNN (PyTorch, independent PSX adaptation)",
+      "training_status": "trained_oos_evaluated",
+      "oos_evaluation": "chronological 60/20/20 + purge (pilot25 pooled)",
+      "artifact_availability": [
+        "data/backtest_reports/task99/task99_summary.json",
+        "data/backtest_reports/task99/task99_walk_forward_metrics.json",
+        "data/backtest_reports/task99/task99_cost_aware_backtest.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "final_test": {
+            "5": {
+              "n": 10875,
+              "mae": 0.050439,
+              "rmse": 0.074965,
+              "r2": -0.0866,
+              "directional_accuracy": 0.5011,
+              "mae_ci95": [
+                0.049477,
+                0.051464
+              ]
+            },
+            "10": {
+              "n": 10875,
+              "mae": 0.073228,
+              "rmse": 0.107817,
+              "r2": -0.103952,
+              "directional_accuracy": 0.5073,
+              "mae_ci95": [
+                0.071753,
+                0.074703
+              ]
+            },
+            "21": {
+              "n": 10875,
+              "mae": 0.112025,
+              "rmse": 0.163883,
+              "r2": -0.093548,
+              "directional_accuracy": 0.5106,
+              "mae_ci95": [
+                0.10974,
+                0.114298
+              ]
+            }
+          },
+          "validation_period": {
+            "5": {
+              "n": 11424,
+              "mae": 0.044425,
+              "rmse": 0.062257,
+              "r2": -0.081158,
+              "directional_accuracy": 0.5159,
+              "mae_ci95": [
+                0.043608,
+                0.045194
+              ]
+            },
+            "10": {
+              "n": 11424,
+              "mae": 0.063538,
+              "rmse": 0.089818,
+              "r2": -0.095263,
+              "directional_accuracy": 0.5243,
+              "mae_ci95": [
+                0.062394,
+                0.064664
+              ]
+            },
+            "21": {
+              "n": 11424,
+              "mae": 0.096904,
+              "rmse": 0.136275,
+              "r2": -0.130809,
+              "directional_accuracy": 0.5157,
+              "mae_ci95": [
+                0.095163,
+                0.098728
+              ]
+            }
+          }
+        },
+        "baseline_comparison": {
+          "beats_zero_return_mae": {
+            "5": false,
+            "10": false,
+            "21": false
+          },
+          "note": "Task 99 verdict: neither reference model beat the zero-return MAE baseline on any horizon"
+        },
+        "historical_trading_sim": {
+          "source": "task99_cost_aware_backtest.json",
+          "verdict": "all strategy cells net-negative \u2014 models stay paper/shadow"
+        }
+      }
+    },
+    {
+      "model_id": "XGBoost",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.042932,
+              "rmse": 0.058292,
+              "r2": -0.019915,
+              "directional_accuracy": 0.4755,
+              "mae_point": 0.042932,
+              "mae_ci95": [
+                0.04222,
+                0.045401
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.06242,
+              "rmse": 0.086808,
+              "r2": -0.027449,
+              "directional_accuracy": 0.4755,
+              "mae_point": 0.06242,
+              "mae_ci95": [
+                0.060078,
+                0.066029
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.088643,
+              "rmse": 0.122898,
+              "r2": -0.084748,
+              "directional_accuracy": 0.5061,
+              "mae_point": 0.088643,
+              "mae_ci95": [
+                0.08392,
+                0.098059
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.050098,
+              "rmse": 0.075551,
+              "r2": -0.03419,
+              "directional_accuracy": 0.4907,
+              "mae_point": 0.050098,
+              "mae_ci95": [
+                0.043498,
+                0.056462
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.071718,
+              "rmse": 0.106097,
+              "r2": -0.058081,
+              "directional_accuracy": 0.5008,
+              "mae_point": 0.071718,
+              "mae_ci95": [
+                0.063599,
+                0.083374
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.111942,
+              "rmse": 0.160063,
+              "r2": -0.102698,
+              "directional_accuracy": 0.4957,
+              "mae_point": 0.111942,
+              "mae_ci95": [
+                0.100389,
+                0.131104
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "LightGBM",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.042794,
+              "rmse": 0.058125,
+              "r2": -0.014098,
+              "directional_accuracy": 0.4534,
+              "mae_point": 0.042794,
+              "mae_ci95": [
+                0.042075,
+                0.045414
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.061925,
+              "rmse": 0.08637,
+              "r2": -0.017112,
+              "directional_accuracy": 0.4498,
+              "mae_point": 0.061925,
+              "mae_ci95": [
+                0.059819,
+                0.065175
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.086801,
+              "rmse": 0.120536,
+              "r2": -0.043453,
+              "directional_accuracy": 0.4816,
+              "mae_point": 0.086801,
+              "mae_ci95": [
+                0.08232,
+                0.096125
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.049738,
+              "rmse": 0.075154,
+              "r2": -0.023351,
+              "directional_accuracy": 0.4892,
+              "mae_point": 0.049738,
+              "mae_ci95": [
+                0.042936,
+                0.056217
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.070491,
+              "rmse": 0.104832,
+              "r2": -0.032985,
+              "directional_accuracy": 0.4857,
+              "mae_point": 0.070491,
+              "mae_ci95": [
+                0.062204,
+                0.082315
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.109771,
+              "rmse": 0.157289,
+              "r2": -0.064799,
+              "directional_accuracy": 0.5008,
+              "mae_point": 0.109771,
+              "mae_ci95": [
+                0.097951,
+                0.129477
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "CatBoost",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.042967,
+              "rmse": 0.058387,
+              "r2": -0.023243,
+              "directional_accuracy": 0.4571,
+              "mae_point": 0.042967,
+              "mae_ci95": [
+                0.042254,
+                0.045559
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.062151,
+              "rmse": 0.086758,
+              "r2": -0.026274,
+              "directional_accuracy": 0.4828,
+              "mae_point": 0.062151,
+              "mae_ci95": [
+                0.059779,
+                0.065693
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.088084,
+              "rmse": 0.121907,
+              "r2": -0.067323,
+              "directional_accuracy": 0.4902,
+              "mae_point": 0.088084,
+              "mae_ci95": [
+                0.083317,
+                0.096961
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.050014,
+              "rmse": 0.075384,
+              "r2": -0.029628,
+              "directional_accuracy": 0.4902,
+              "mae_point": 0.050014,
+              "mae_ci95": [
+                0.043429,
+                0.056313
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.071029,
+              "rmse": 0.105356,
+              "r2": -0.043336,
+              "directional_accuracy": 0.4947,
+              "mae_point": 0.071029,
+              "mae_ci95": [
+                0.062882,
+                0.082582
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.111289,
+              "rmse": 0.159128,
+              "r2": -0.089845,
+              "directional_accuracy": 0.4927,
+              "mae_point": 0.111289,
+              "mae_ci95": [
+                0.099472,
+                0.130761
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "Random Forest",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.043053,
+              "rmse": 0.058492,
+              "r2": -0.026941,
+              "directional_accuracy": 0.4645,
+              "mae_point": 0.043053,
+              "mae_ci95": [
+                0.042397,
+                0.045586
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.062401,
+              "rmse": 0.086934,
+              "r2": -0.030429,
+              "directional_accuracy": 0.473,
+              "mae_point": 0.062401,
+              "mae_ci95": [
+                0.059965,
+                0.06609
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.088215,
+              "rmse": 0.122474,
+              "r2": -0.07728,
+              "directional_accuracy": 0.5012,
+              "mae_point": 0.088215,
+              "mae_ci95": [
+                0.083408,
+                0.097533
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.049941,
+              "rmse": 0.075355,
+              "r2": -0.028853,
+              "directional_accuracy": 0.4922,
+              "mae_point": 0.049941,
+              "mae_ci95": [
+                0.043264,
+                0.056451
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.071271,
+              "rmse": 0.105721,
+              "r2": -0.050578,
+              "directional_accuracy": 0.4907,
+              "mae_point": 0.071271,
+              "mae_ci95": [
+                0.063063,
+                0.083165
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.11112,
+              "rmse": 0.158922,
+              "r2": -0.087027,
+              "directional_accuracy": 0.4977,
+              "mae_point": 0.11112,
+              "mae_ci95": [
+                0.099392,
+                0.130962
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "Ridge Regression",
+      "class": "canonical",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.042818,
+              "rmse": 0.058166,
+              "r2": -0.01552,
+              "directional_accuracy": 0.4963,
+              "mae_point": 0.042818,
+              "mae_ci95": [
+                0.041891,
+                0.045485
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.061906,
+              "rmse": 0.086552,
+              "r2": -0.021413,
+              "directional_accuracy": 0.5123,
+              "mae_point": 0.061906,
+              "mae_ci95": [
+                0.059399,
+                0.065231
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.088445,
+              "rmse": 0.121778,
+              "r2": -0.065064,
+              "directional_accuracy": 0.5025,
+              "mae_point": 0.088445,
+              "mae_ci95": [
+                0.083874,
+                0.096972
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.050271,
+              "rmse": 0.075887,
+              "r2": -0.043407,
+              "directional_accuracy": 0.5113,
+              "mae_point": 0.050271,
+              "mae_ci95": [
+                0.043294,
+                0.056869
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.070987,
+              "rmse": 0.105211,
+              "r2": -0.040469,
+              "directional_accuracy": 0.4967,
+              "mae_point": 0.070987,
+              "mae_ci95": [
+                0.063098,
+                0.084231
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.110507,
+              "rmse": 0.158128,
+              "r2": -0.076195,
+              "directional_accuracy": 0.5048,
+              "mae_point": 0.110507,
+              "mae_ci95": [
+                0.098683,
+                0.13086
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "ExtraTrees",
+      "class": "canonical(untrained-in-tier)/new",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.042774,
+              "rmse": 0.058162,
+              "r2": -0.015371,
+              "directional_accuracy": 0.4657,
+              "mae_point": 0.042774,
+              "mae_ci95": [
+                0.042039,
+                0.045403
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.061755,
+              "rmse": 0.086483,
+              "r2": -0.01977,
+              "directional_accuracy": 0.4853,
+              "mae_point": 0.061755,
+              "mae_ci95": [
+                0.059439,
+                0.065105
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.087083,
+              "rmse": 0.121112,
+              "r2": -0.053456,
+              "directional_accuracy": 0.4877,
+              "mae_point": 0.087083,
+              "mae_ci95": [
+                0.082438,
+                0.096305
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.049755,
+              "rmse": 0.075243,
+              "r2": -0.025778,
+              "directional_accuracy": 0.4967,
+              "mae_point": 0.049755,
+              "mae_ci95": [
+                0.043003,
+                0.056184
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.070137,
+              "rmse": 0.104334,
+              "r2": -0.023199,
+              "directional_accuracy": 0.4992,
+              "mae_point": 0.070137,
+              "mae_ci95": [
+                0.06217,
+                0.081547
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.108618,
+              "rmse": 0.155747,
+              "r2": -0.044032,
+              "directional_accuracy": 0.5143,
+              "mae_point": 0.108618,
+              "mae_ci95": [
+                0.096554,
+                0.128081
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "HistGradientBoosting",
+      "class": "canonical(untrained-in-tier)/new",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.043316,
+              "rmse": 0.058747,
+              "r2": -0.035917,
+              "directional_accuracy": 0.462,
+              "mae_point": 0.043316,
+              "mae_ci95": [
+                0.042676,
+                0.045907
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.062838,
+              "rmse": 0.087226,
+              "r2": -0.037373,
+              "directional_accuracy": 0.4645,
+              "mae_point": 0.062838,
+              "mae_ci95": [
+                0.060281,
+                0.066602
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.089461,
+              "rmse": 0.123934,
+              "r2": -0.103118,
+              "directional_accuracy": 0.4963,
+              "mae_point": 0.089461,
+              "mae_ci95": [
+                0.084623,
+                0.098188
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.050278,
+              "rmse": 0.075545,
+              "r2": -0.034023,
+              "directional_accuracy": 0.4802,
+              "mae_point": 0.050278,
+              "mae_ci95": [
+                0.043753,
+                0.056747
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.071815,
+              "rmse": 0.106336,
+              "r2": -0.062837,
+              "directional_accuracy": 0.4932,
+              "mae_point": 0.071815,
+              "mae_ci95": [
+                0.063533,
+                0.083825
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.114243,
+              "rmse": 0.162457,
+              "r2": -0.135928,
+              "directional_accuracy": 0.5018,
+              "mae_point": 0.114243,
+              "mae_ci95": [
+                0.102526,
+                0.132643
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "ElasticNet",
+      "class": "canonical(untrained-in-tier)/new",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.042602,
+              "rmse": 0.057876,
+              "r2": -0.005401,
+              "directional_accuracy": 0.4326,
+              "mae_point": 0.042602,
+              "mae_ci95": [
+                0.041807,
+                0.045461
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.061803,
+              "rmse": 0.086295,
+              "r2": -0.015347,
+              "directional_accuracy": 0.4093,
+              "mae_point": 0.061803,
+              "mae_ci95": [
+                0.059639,
+                0.06477
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.08713,
+              "rmse": 0.120978,
+              "r2": -0.051125,
+              "directional_accuracy": 0.3873,
+              "mae_point": 0.08713,
+              "mae_ci95": [
+                0.082809,
+                0.096622
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.049479,
+              "rmse": 0.074963,
+              "r2": -0.018154,
+              "directional_accuracy": 0.5223,
+              "mae_point": 0.049479,
+              "mae_ci95": [
+                0.04261,
+                0.055916
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.069334,
+              "rmse": 0.103802,
+              "r2": -0.012793,
+              "directional_accuracy": 0.5028,
+              "mae_point": 0.069334,
+              "mae_ci95": [
+                0.061352,
+                0.08097
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.107386,
+              "rmse": 0.154474,
+              "r2": -0.027034,
+              "directional_accuracy": 0.5178,
+              "mae_point": 0.107386,
+              "mae_ci95": [
+                0.095263,
+                0.12742
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "HuberRegressor",
+      "class": "canonical(untrained-in-tier)/new",
+      "family": "classical-ml/linear",
+      "training_status": "trained (Task 100 frozen-protocol cohort)",
+      "oos_evaluation": "frozen full-train-window, chronological 50/15/35 + 21-session purge",
+      "artifact_availability": [
+        "data/backtest_reports/task100/task100_model_comparison.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "validation": {
+            "5": {
+              "n": 816,
+              "mae": 0.042337,
+              "rmse": 0.057844,
+              "r2": -0.004303,
+              "directional_accuracy": 0.5343,
+              "mae_point": 0.042337,
+              "mae_ci95": [
+                0.041238,
+                0.044571
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "10": {
+              "n": 816,
+              "mae": 0.060549,
+              "rmse": 0.085762,
+              "r2": -0.002831,
+              "directional_accuracy": 0.5662,
+              "mae_point": 0.060549,
+              "mae_ci95": [
+                0.05802,
+                0.063534
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            },
+            "21": {
+              "n": 816,
+              "mae": 0.084976,
+              "rmse": 0.119693,
+              "r2": -0.028903,
+              "directional_accuracy": 0.5809,
+              "mae_point": 0.084976,
+              "mae_ci95": [
+                0.080118,
+                0.093525
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 34,
+              "n_samples": 816
+            }
+          },
+          "final_test": {
+            "5": {
+              "n": 1995,
+              "mae": 0.050041,
+              "rmse": 0.076113,
+              "r2": -0.04964,
+              "directional_accuracy": 0.4772,
+              "mae_point": 0.050041,
+              "mae_ci95": [
+                0.043,
+                0.057293
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "10": {
+              "n": 1995,
+              "mae": 0.070007,
+              "rmse": 0.10536,
+              "r2": -0.043414,
+              "directional_accuracy": 0.5018,
+              "mae_point": 0.070007,
+              "mae_ci95": [
+                0.061593,
+                0.083227
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            },
+            "21": {
+              "n": 1995,
+              "mae": 0.110112,
+              "rmse": 0.159602,
+              "r2": -0.096351,
+              "directional_accuracy": 0.4752,
+              "mae_point": 0.110112,
+              "mae_ci95": [
+                0.097468,
+                0.131199
+              ],
+              "n_boot": 200,
+              "block_days": 21,
+              "unique_dates": 154,
+              "n_samples": 1995
+            }
+          }
+        }
+      }
+    },
+    {
+      "model_id": "jw_reference_lstm",
+      "class": "supplemental",
+      "family": "reference/other",
+      "training_status": "trained_oos_evaluated",
+      "oos_evaluation": "see task99_model_registry.json",
+      "artifact_availability": [
+        "data/backtest_reports/task99/task99_model_registry.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "seq_len": 30,
+          "horizons": [
+            5,
+            10,
+            21
+          ],
+          "targets": "forward returns 5d/10d/21d (output_dim=3)",
+          "market_context": "excluded \u2014 no genuine KSE-100 series in DB",
+          "features": 26,
+          "feature_schema": "task99-psx-v1"
+        }
+      }
+    },
+    {
+      "model_id": "jw_reference_cnn_lstm",
+      "class": "supplemental",
+      "family": "reference/other",
+      "training_status": "trained_oos_evaluated",
+      "oos_evaluation": "see task99_model_registry.json",
+      "artifact_availability": [
+        "data/backtest_reports/task99/task99_model_registry.json"
+      ],
+      "evidence": {
+        "prediction_quality": {
+          "seq_len": 30,
+          "horizons": [
+            5,
+            10,
+            21
+          ],
+          "targets": "forward returns 5d/10d/21d (output_dim=3)",
+          "market_context": "excluded \u2014 no genuine KSE-100 series in DB",
+          "features": 26,
+          "feature_schema": "task99-psx-v1"
+        }
+      }
+    }
+  ],
+  "canonical_dispositions": {
+    "PatchTST": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "N-BEATS": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "TimesNet": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "Informer": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "Chronos (Amazon)": "blocked \u2014 registry untrainedReason recorded (dependency/package)",
+    "Lag-Llama": "blocked \u2014 registry untrainedReason recorded (dependency/package)",
+    "Moirai (Salesforce)": "blocked \u2014 registry untrainedReason recorded (dependency/package)",
+    "Time-LLM": "blocked \u2014 registry untrainedReason recorded (dependency/package)",
+    "XGBoost": "OOS evaluated (see evidence rows above)",
+    "LightGBM": "OOS evaluated (see evidence rows above)",
+    "CatBoost": "OOS evaluated (see evidence rows above)",
+    "Random Forest": "OOS evaluated (see evidence rows above)",
+    "LSTM": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "CNN-LSTM": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "Transformer-LSTM": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "TabNet": "blocked \u2014 registry untrainedReason recorded (dependency/package)",
+    "FinGPT": "blocked \u2014 registry untrainedReason recorded (dependency/package)",
+    "ARIMA": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "Holt-Winters": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "GARCH": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "Ridge Regression": "OOS evaluated (see evidence rows above)",
+    "Kalman Filter": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "Prophet": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "GRU": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "XGBoost (CL)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "LightGBM (CL)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Random Forest (CL)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "LSTM (CL)": "partial \u2014 per-stock series/statistical or deep family: no pooled-cohort OOS artifact matched the 400-sample/21d cohort; covered by task100_model_comparison only for classical families (resource-blocked otherwise)",
+    "LightGBM-A (CL-2)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "LightGBM-B (CL-2)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "HistGBM (CL-2)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "ExtraTrees (CL-2)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "RandomForest (CL-2)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Logistic (CL-2)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "MLP (CL-2)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Linear Regression (PI)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Logistic Regression (PI)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Pattern Matcher KNN (PI)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Neural Network (PI)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Technical Engine (GM)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Announcements Engine (GM)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Fundamental Engine (GM)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Macro Engine (GM)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "LightGBM (CG)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "XGBoost (CG)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Trend Multi-TF (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Breakout RelVol (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Trend Pullback (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "RSI Divergence (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "BB Mean Reversion (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Vol Contraction (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Relative Strength (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Market Regime (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Meta-Label CG (X)": "partial \u2014 ensemble aggregator; component-level OOS evidence evaluated, aggregate covered by task100_ensemble_validation.json where OOF inputs exist",
+    "Triple Barrier Dyn (X)": "insufficient evidence \u2014 no OOS artifact matched the standard cohort; flagged, not silently omitted",
+    "Gian-Ensemble (GIAN)": "partial \u2014 ensemble aggregator; component-level OOS evidence evaluated, aggregate covered by task100_ensemble_validation.json where OOF inputs exist",
+    "Gian-Extender (GIAN-EXT)": "partial \u2014 ensemble aggregator; component-level OOS evidence evaluated, aggregate covered by task100_ensemble_validation.json where OOF inputs exist",
+    "M-Ensemble (M)": "partial \u2014 ensemble aggregator; component-level OOS evidence evaluated, aggregate covered by task100_ensemble_validation.json where OOF inputs exist"
+  }
+}

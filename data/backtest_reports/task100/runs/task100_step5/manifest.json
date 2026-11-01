@@ -1,0 +1,71 @@
+{
+  "run_id": "task100_step5",
+  "tag": "step5",
+  "model_names": [
+    "LightGBM",
+    "Ridge Regression"
+  ],
+  "feature_schema": [
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_width",
+    "bb_pct_b",
+    "atr_14",
+    "obv_change_pct",
+    "price_sma_20_ratio",
+    "price_sma_50_ratio",
+    "price_sma_200_ratio",
+    "volume_sma_20_ratio",
+    "return_1d",
+    "return_7d",
+    "return_14d",
+    "return_30d",
+    "hl_range_pct",
+    "body_size_pct",
+    "volatility_14d"
+  ],
+  "sample_step": 5,
+  "max_samples": 90,
+  "universe_symbols": [
+    "ENGRO",
+    "HUBC",
+    "LUCK",
+    "SYS",
+    "MEBL",
+    "PSO",
+    "OGDC",
+    "PPL",
+    "WTL",
+    "KEL",
+    "TRG",
+    "UNITY",
+    "BOP",
+    "CNERGY",
+    "HASCOL",
+    "MLCF",
+    "BYCO",
+    "PAEL",
+    "PIBTL",
+    "LOTCHEM",
+    "PRL",
+    "TELE",
+    "ANL",
+    "HUMNL",
+    "FCCL"
+  ],
+  "test_window": {
+    "start_epoch": 1682467200000,
+    "end_epoch": 1793232000000
+  },
+  "total_test_samples": 3978,
+  "bounded": true,
+  "horizons": [
+    5,
+    10,
+    21
+  ],
+  "data_fingerprint": "4c87eb271db64ee637de7080e2039222dcba87f7e5b8c3af16136123656878fa",
+  "protocol": "chronological 50/15/35 split + 21-session purge; pooled expanding window; per-horizon target-maturity filter; train>=50 rows gate"
+}

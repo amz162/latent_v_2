@@ -1,0 +1,491 @@
+{
+  "task": 100,
+  "generated_at": "2026-11-01T14:17:01+0000",
+  "objective": "Improve genuine PSX forecasting quality and trading performance; diagnose why models underperform; expand evaluation beyond the five classical models; document the simulator field-by-field from actual source code; build a reusable leak-free experiment framework.",
+  "headline_verdict": {
+    "no_model_beats_zero_return_mae": {
+      "5": false,
+      "10": true,
+      "21": false
+    },
+    "zero_return_mae_final_test": {
+      "5": 0.049519,
+      "10": 0.069318,
+      "21": 0.107605
+    },
+    "best_model_mae_final_test": {
+      "5": [
+        0.049479,
+        "ElasticNet"
+      ],
+      "10": [
+        0.069334,
+        "ElasticNet"
+      ],
+      "21": [
+        0.107386,
+        "ElasticNet"
+      ]
+    },
+    "no_validation_positive_strategy_cell": true,
+    "frozen_final_test_net_pnl": -131384.58,
+    "exploratory_positive_cells_final_test": [
+      {
+        "netPnl": 8497.65,
+        "variant": "variant_b__ATL_15",
+        "strategy": "max_tp_step_trailing"
+      },
+      {
+        "netPnl": 6423.59,
+        "variant": "variant_b__ATL_15",
+        "strategy": "fixed_first_hit"
+      },
+      {
+        "netPnl": 1059.08,
+        "variant": "variant_b__ATL_15",
+        "strategy": "scale_out_50_25_25"
+      }
+    ],
+    "honesty_note": "Nothing was tuned against final-test; thresholds/bands/weights are validation-frozen; no improvement is claimed because none was demonstrated."
+  },
+  "phases": {
+    "reconciliation_matrix": {
+      "evidence_rows": 18,
+      "canonical_dispositions": 58,
+      "original_report_intact": true,
+      "dependence_finding": "400 samples sit on 30 unique decision dates"
+    },
+    "diagnostics": {
+      "target_distributions": {
+        "validation_5d": {
+          "n": 816,
+          "mean": -0.003152,
+          "median": -0.007152,
+          "std": 0.05772,
+          "pos_frac": 0.4326,
+          "neg_frac": 0.5588,
+          "near_zero_frac_pm0p5": 0.0956,
+          "extreme_gt3sd_frac": 0.011,
+          "extreme_gt10pct_frac": 0.0809
+        },
+        "validation_10d": {
+          "n": 816,
+          "mean": -0.008155,
+          "median": -0.013857,
+          "std": 0.08564,
+          "pos_frac": 0.4093,
+          "neg_frac": 0.587,
+          "near_zero_frac_pm0p5": 0.0637,
+          "extreme_gt3sd_frac": 0.0135,
+          "extreme_gt10pct_frac": 0.1716
+        },
+        "validation_21d": {
+          "n": 816,
+          "mean": -0.020362,
+          "median": -0.027271,
+          "std": 0.117999,
+          "pos_frac": 0.3725,
+          "neg_frac": 0.6262,
+          "near_zero_frac_pm0p5": 0.0417,
+          "extreme_gt3sd_frac": 0.0135,
+          "extreme_gt10pct_frac": 0.3113
+        },
+        "final_test_5d": {
+          "n": 1995,
+          "mean": 0.0111,
+          "median": 0.00365,
+          "std": 0.074291,
+          "pos_frac": 0.5223,
+          "neg_frac": 0.4737,
+          "near_zero_frac_pm0p5": 0.0737,
+          "extreme_gt3sd_frac": 0.0195,
+          "extreme_gt10pct_frac": 0.1218
+        },
+        "final_test_10d": {
+          "n": 1995,
+          "mean": 0.014097,
+          "median": 0.00061,
+          "std": 0.103144,
+          "pos_frac": 0.5028,
+          "neg_frac": 0.4902,
+          "near_zero_frac_pm0p5": 0.0637,
+          "extreme_gt3sd_frac": 0.0155,
+          "extreme_gt10pct_frac": 0.203
+        },
+        "final_test_21d": {
+          "n": 1995,
+          "mean": 0.030887,
+          "median": 0.010883,
+          "std": 0.152428,
+          "pos_frac": 0.5338,
+          "neg_frac": 0.4632,
+          "near_zero_frac_pm0p5": 0.0336,
+          "extreme_gt3sd_frac": 0.0185,
+          "extreme_gt10pct_frac": 0.3865
+        },
+        "per_symbol_21d": {
+          "HASCOL": {
+            "n": 85,
+            "std": 0.2257
+          },
+          "BOP": {
+            "n": 85,
+            "std": 0.2121
+          },
+          "UNITY": {
+            "n": 85,
+            "std": 0.2058
+          },
+          "PRL": {
+            "n": 85,
+            "std": 0.1957
+          },
+          "KEL": {
+            "n": 85,
+            "std": 0.1918
+          },
+          "LUCK": {
+            "n": 85,
+            "std": 0.1624
+          },
+          "SYS": {
+            "n": 85,
+            "std": 0.157
+          },
+          "PAEL": {
+            "n": 85,
+            "std": 0.1553
+          }
+        }
+      },
+      "residual_autocorr_present": true,
+      "regime_variation": "directional accuracy varies by pilot25-breadth regime tercile",
+      "redundant_feature_pairs": 3,
+      "data_quality": {
+        "discontinuity_flags": 7,
+        "stale_symbols_flagged": 30
+      }
+    },
+    "model_comparison_frozen": {
+      "protocol": "frozen full-train-window (no expanding retraining), chronological 50/15/35 + 21-session purge",
+      "val_samples": 816,
+      "test_samples": 1995,
+      "models": {
+        "XGBoost": {
+          "val_5d_mae": 0.042932,
+          "test_5d_mae": 0.050098,
+          "test_5d_dir": 0.4907,
+          "test_21d_mae": 0.111942
+        },
+        "LightGBM": {
+          "val_5d_mae": 0.042794,
+          "test_5d_mae": 0.049738,
+          "test_5d_dir": 0.4892,
+          "test_21d_mae": 0.109771
+        },
+        "CatBoost": {
+          "val_5d_mae": 0.042967,
+          "test_5d_mae": 0.050014,
+          "test_5d_dir": 0.4902,
+          "test_21d_mae": 0.111289
+        },
+        "Random Forest": {
+          "val_5d_mae": 0.043053,
+          "test_5d_mae": 0.049941,
+          "test_5d_dir": 0.4922,
+          "test_21d_mae": 0.11112
+        },
+        "Ridge Regression": {
+          "val_5d_mae": 0.042818,
+          "test_5d_mae": 0.050271,
+          "test_5d_dir": 0.5113,
+          "test_21d_mae": 0.110507
+        },
+        "ExtraTrees": {
+          "val_5d_mae": 0.042774,
+          "test_5d_mae": 0.049755,
+          "test_5d_dir": 0.4967,
+          "test_21d_mae": 0.108618
+        },
+        "HistGradientBoosting": {
+          "val_5d_mae": 0.043316,
+          "test_5d_mae": 0.050278,
+          "test_5d_dir": 0.4802,
+          "test_21d_mae": 0.114243
+        },
+        "ElasticNet": {
+          "val_5d_mae": 0.042602,
+          "test_5d_mae": 0.049479,
+          "test_5d_dir": 0.5223,
+          "test_21d_mae": 0.107386
+        },
+        "HuberRegressor": {
+          "val_5d_mae": 0.042337,
+          "test_5d_mae": 0.050041,
+          "test_5d_dir": 0.4772,
+          "test_21d_mae": 0.110112
+        }
+      }
+    },
+    "expanding_cross_check": {
+      "samples": 30,
+      "rf_lean_note": "40-tree RF variant; historical RF evidence kept separate"
+    },
+    "sample_step_comparison": {
+      "50": {
+        "unique_dates": 12,
+        "overlap21": 0.0,
+        "lgb_21d_mae": 0.088368
+      },
+      "10": {
+        "unique_dates": 12,
+        "overlap21": 0.524,
+        "lgb_21d_mae": 0.086567
+      },
+      "5": {
+        "unique_dates": 10,
+        "overlap21": 0.762,
+        "lgb_21d_mae": 0.085119
+      },
+      "1": {
+        "unique_dates": 7,
+        "overlap21": 0.952,
+        "lgb_21d_mae": 0.076182
+      }
+    },
+    "feature_ablation": {
+      "groups": [
+        "baseline_returns_only",
+        "price_momentum",
+        "ohlcv_full",
+        "technical_indicators",
+        "liquidity_volume",
+        "cross_sectional",
+        "combined_all_19",
+        "combined_19_plus_cross_sectional"
+      ],
+      "defensible_improvement": null,
+      "val_21d_mae_range": [
+        0.086397,
+        0.088232
+      ],
+      "verdict": "all groups within date-block CI noise; no group retained"
+    },
+    "target_experiments": {
+      "classification_3class_final_dir": {
+        "5": 0.4967,
+        "10": 0.5163,
+        "21": 0.4997
+      },
+      "forward_vol_21d": {
+        "validation": {
+          "n": 8359,
+          "mae": 0.007178,
+          "r2": 0.2418,
+          "dir_vol_accuracy_quartiles": 0.4279
+        },
+        "final_test": {
+          "n": 20187,
+          "mae": 0.00875,
+          "r2": 0.0736,
+          "dir_vol_accuracy_quartiles": 0.3851
+        }
+      },
+      "quantile_coverage_final": {
+        "5": {
+          "n": 1995,
+          "coverage_q10": 0.0867,
+          "coverage_q90": 0.8627,
+          "coverage_10_90_interval": 0.7759,
+          "median_mae": 0.050233
+        },
+        "10": {
+          "n": 1995,
+          "coverage_q10": 0.0747,
+          "coverage_q90": 0.8662,
+          "coverage_10_90_interval": 0.7915,
+          "median_mae": 0.070618
+        },
+        "21": {
+          "n": 1995,
+          "coverage_q10": 0.0717,
+          "coverage_q90": 0.8421,
+          "coverage_10_90_interval": 0.7704,
+          "median_mae": 0.111325
+        }
+      }
+    },
+    "calibration": {
+      "5": {
+        "brier_val_raw": 0.267718,
+        "brier_final_raw": 0.298443,
+        "brier_final_isotonic": 0.257859
+      },
+      "10": {
+        "brier_val_raw": 0.259864,
+        "brier_final_raw": 0.293271,
+        "brier_final_isotonic": 0.260863
+      },
+      "21": {
+        "brier_val_raw": 0.25158,
+        "brier_final_raw": 0.308258,
+        "brier_final_isotonic": 0.275508
+      }
+    },
+    "ensemble_validation": {
+      "5": {
+        "mean_mae": 0.049843,
+        "stacker_mae": 0.049764,
+        "best_single_model": "HuberRegressor"
+      },
+      "10": {
+        "mean_mae": 0.070502,
+        "stacker_mae": 0.069919,
+        "best_single_model": "HuberRegressor"
+      },
+      "21": {
+        "mean_mae": 0.109954,
+        "stacker_mae": 0.110631,
+        "best_single_model": "HuberRegressor"
+      }
+    },
+    "strategy": {
+      "top_models_gate": "val 5d dir >= 0.50 then MAE -> HuberRegressor + Ridge Regression",
+      "thresholds": "validation q70/q80/q90 of predicted 5d returns",
+      "grid_cells_all_net_negative_on_validation": true,
+      "frozen": {
+        "model": "HuberRegressor",
+        "threshold": -0.000223,
+        "variant_key": "variant_a__ATL_15",
+        "strategy": "max_tp_step_trailing"
+      },
+      "frozen_final_test": {
+        "nCandidates": 302,
+        "nCompleted": 302,
+        "winRate": 44.04,
+        "netPnl": -131384.58,
+        "avgNetPerTrade": -435.05,
+        "maxDrawdown_net": -146835.27,
+        "exitReasons": {
+          "SL": 123,
+          "TIME_UP": 62,
+          "TRAILING_SL_AT_TP1": 72,
+          "TRAILING_SL_AT_TP2": 25,
+          "TP3": 20
+        }
+      },
+      "positive_cells_final_test": [
+        {
+          "netPnl": 8497.65,
+          "variant": "variant_b__ATL_15",
+          "strategy": "max_tp_step_trailing"
+        },
+        {
+          "netPnl": 6423.59,
+          "variant": "variant_b__ATL_15",
+          "strategy": "fixed_first_hit"
+        },
+        {
+          "netPnl": 1059.08,
+          "variant": "variant_b__ATL_15",
+          "strategy": "scale_out_50_25_25"
+        }
+      ],
+      "positive_cells_caveat": "variant_b (minimum-net-RR skip gate) cells only; marginal magnitude; NOT validation-selected; exploratory until prospective validation"
+    },
+    "cost_reconciliation": {
+      "rows_completed_checked": 4713,
+      "violations": 0,
+      "max_deviation_pkr": 0.01,
+      "cgt_zero_on_all_losing": true,
+      "slippage_always_zero": true,
+      "skipped_rows_excluded": 2199
+    },
+    "simulator_documentation": {
+      "docs": "docs/investment-simulator-metrics.md",
+      "dictionary": "task100_simulator_data_dictionary.json",
+      "key_distinction": "Investment Simulator uses the LEGACY flat cost model (0.15%x2 + 0.15% slippage + CGT 15%); strategy backtest uses psx_user_schedule_v2 \u2014 documented, not redesigned"
+    },
+    "per_stock_regime": {
+      "concentration_top3_share": 0.1796,
+      "top3_symbols": [
+        "BOP",
+        "HASCOL",
+        "PRL"
+      ]
+    },
+    "prospective_integrity": {
+      "db_counts": {
+        "prospective_paper_trades_total": 114,
+        "by_status": {
+          "pending_entry": 114
+        },
+        "paper_trade_legs": 0,
+        "prediction_history": 375,
+        "prediction_outcomes": 375,
+        "latest_ohlcv_bar": "2026-10-29"
+      },
+      "no_fabricated_fills": true,
+      "lifecycle_untouched": true
+    },
+    "api_validation": {
+      "registry": {
+        "http": 200,
+        "latency_s": 1.2,
+        "canonicalCount": 58,
+        "canonical_58": true,
+        "supplementalCount": 11,
+        "uniqueImplementationCount": 69
+      },
+      "walk_forward_api": {
+        "http": 200,
+        "latency_s": 0.32,
+        "n_unique_stock_date_samples": 400,
+        "original_400_preserved": true,
+        "sampling_interval_sessions": 50,
+        "n_model_fits": 6000,
+        "models": [
+          "XGBoost",
+          "LightGBM",
+          "CatBoost",
+          "Random Forest",
+          "Ridge Regression"
+        ]
+      },
+      "pages_200": true
+    },
+    "browser_tests": {
+      "pass": 5,
+      "fail": 0
+    },
+    "ui_tooltips_added": [
+      "ensemble-sim Win Rate (net basis)",
+      "per-model Win Rate (gross directional proxy)",
+      "per-model Avg Return (gross proxy)",
+      "simulator Total gain (realized net, costs)",
+      "simulator Win rate (net basis)"
+    ],
+    "tests": {
+      "suite": "scripts/task100_tests.py",
+      "passed": 21,
+      "failed": 0
+    }
+  },
+  "non_negotiables_compliance": {
+    "diagnose_before_tuning": true,
+    "no_win_rate_optimization": true,
+    "all_families_audited_with_dispositions": true,
+    "original_400_sample_report_untouched": true,
+    "new_step_experiments_versioned": true,
+    "overlap_dependence_accounted": true,
+    "train_only_scalers_selection": true,
+    "validation_only_thresholds": true,
+    "same_signal_sets_for_strategies": true,
+    "genuine_psx_v2_costs": true,
+    "gross_vs_net_separated": true,
+    "simulator_metrics_from_source": true,
+    "no_hidden_negatives": true,
+    "no_unfounded_promotion": true,
+    "no_fabricated_improvement": true
+  }
+}

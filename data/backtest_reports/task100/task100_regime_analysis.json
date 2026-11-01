@@ -1,0 +1,113 @@
+{
+  "regime_definition": {
+    "definition": "equal-weight pilot25 mean 5d return, 21-session trailing mean; bear < 33rd pct < bull of the trailing series",
+    "q_lo": -0.006607,
+    "q_hi": 0.011123,
+    "note": "pilot25 breadth statistic; NOT a KSE-100 index (no genuine index series in DB)"
+  },
+  "per_regime": {
+    "LightGBM__5d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.04571,
+        "dir_accuracy": 0.475
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.04801,
+        "dir_accuracy": 0.4745
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.05431,
+        "dir_accuracy": 0.5106
+      }
+    },
+    "LightGBM__21d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.09936,
+        "dir_accuracy": 0.505
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.10385,
+        "dir_accuracy": 0.4969
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.12248,
+        "dir_accuracy": 0.4994
+      }
+    },
+    "HuberRegressor__5d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.0461,
+        "dir_accuracy": 0.4593
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.04894,
+        "dir_accuracy": 0.4664
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.05416,
+        "dir_accuracy": 0.4994
+      }
+    },
+    "HuberRegressor__21d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.10112,
+        "dir_accuracy": 0.4379
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.10831,
+        "dir_accuracy": 0.4501
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.11907,
+        "dir_accuracy": 0.523
+      }
+    },
+    "XGBoost__5d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.04596,
+        "dir_accuracy": 0.4779
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.04826,
+        "dir_accuracy": 0.4684
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.05483,
+        "dir_accuracy": 0.5156
+      }
+    },
+    "XGBoost__21d": {
+      "flat": {
+        "n": 701,
+        "mae": 0.10114,
+        "dir_accuracy": 0.4964
+      },
+      "bear": {
+        "n": 491,
+        "mae": 0.10461,
+        "dir_accuracy": 0.4868
+      },
+      "bull": {
+        "n": 803,
+        "mae": 0.12586,
+        "dir_accuracy": 0.5006
+      }
+    }
+  },
+  "reading": "dir_accuracy varies by regime tercile -> regime conditioning is a legitimate lever; uniform thresholds are not. Regime = equal-weight pilot25 breadth (NOT a KSE-100 index)."
+}
