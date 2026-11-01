@@ -4494,3 +4494,5 @@ Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
 - Per-stock/regime + prospective: concentration (top-3 symbols share of abs error), regime tables, 114 ProspectivePaperTrade all pending_entry (no fabricated fills, lifecycle untouched).
 - Validation: registry API 58 canonical/11 supplemental/69 unique; walk-forward API serves the ORIGINAL 400-sample report untouched; pages 200; 0 browser console errors (agent-browser, 5/5 checks); tsc clean; 21/21 deterministic tests (scripts/task100_tests.py); 5 UI tooltips added (win-rate net basis x2, gross-proxy labels, simulator total-gain/win-rate).
 - Platform quirk handled: stray untracked src/app/page-original.tsx broke tsc (circular import) -> moved to .bak (untracked). UUID autosave commits stripped before push per documented procedure.
+
+- DELIVERED: commit `1402ea0e` "Task 100: improve PSX prediction quality and simulator diagnostics" pushed to origin/main (verified: ls-remote == local HEAD). Backup bundle of 10 key artifacts + docs copied to /home/z/my-project/download/task100_artifacts/. Next session: strip UUID autosave commits per Task 77 procedure before any push.
