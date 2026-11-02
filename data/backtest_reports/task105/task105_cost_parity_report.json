@@ -1,0 +1,21 @@
+{
+ "report": "task105_cost_parity_report",
+ "generated_at": "2026-11-02T19:59:15+0000",
+ "status": "completed",
+ "cost_profile_default": "psx_user_schedule_v2",
+ "compatibility_profile": "legacy_flat_v1",
+ "checks": {
+  "fixtures": 10,
+  "failed": [],
+  "verdict": "PASS"
+ },
+ "tolerance_pkr": 0.01,
+ "paths_verified": [
+  "computeTradeCostsV2",
+  "computeSimTradeCosts (investment-simulator)",
+  "strategy-engine per-leg accounting",
+  "task104 portfolio ledger identity",
+  "task105 shadow observation cost profile"
+ ],
+ "verdict": "PASS \u2014 all parallel paths reconcile within PKR 0.01"
+}

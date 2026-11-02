@@ -1,0 +1,51 @@
+{
+ "report": "task105_test_summary",
+ "generated_at": "2026-11-02T20:01:34+0000",
+ "python_checks": {
+  "passed": 25,
+  "failed": [],
+  "skipped": 0
+ },
+ "note": "skipped tests are reported as skipped, never as passing",
+ "additional_suites": {
+  "typescript": {
+   "command": "bunx tsc --noEmit",
+   "result": "PASS (0 errors)"
+  },
+  "production_build": {
+   "command": "bun run build (next build --webpack)",
+   "result": "PASS (exit 0)"
+  },
+  "api_integration": {
+   "result": "PASS",
+   "endpoints": {
+    "GET /": 200,
+    "GET /api/data-readiness": 200,
+    "GET /api/ai-model-signals/LUCK": 200,
+    "GET /api/models/registry": 200
+   }
+  },
+  "headless_browser": {
+   "result": "PASS",
+   "checks": [
+    "home renders",
+    "AI Models view opens",
+    "capital-protection notice visible (Research / shadow mode)"
+   ]
+  },
+  "python_checks": {
+   "passed": 25,
+   "failed": 0,
+   "skipped": 0
+  }
+ },
+ "verdict": "PASS",
+ "runtime_seconds": 7.0,
+ "executed_counts": {
+  "python": 25,
+  "typescript": 1,
+  "build": 1,
+  "api_endpoints": 4,
+  "browser_checks": 3
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "report": "task105_signal_direction_comparison",
+ "generated_at": "2026-11-02T19:52:16+0000",
+ "status": "completed",
+ "model_auc_final_test": 0.5265,
+ "random_auc_expected": 0.5,
+ "model_pr_auc": 0.593,
+ "model_vs_random_rank": {
+  "note": "AUC 0.527 vs 0.5 \u2014 marginal ranking information that is insufficient for profitability"
+ },
+ "buy_only_selection": {
+  "n": 5586,
+  "mean_net_ret_pct": -1.2307,
+  "win_rate_pct": 37.79
+ },
+ "no_selection": {
+  "mean_net_ret_pct": 0.0
+ },
+ "deterministic_technical_rule": {
+  "n": 5586,
+  "mean_net_ret_pct": -1.2307,
+  "win_rate_pct": 37.79
+ },
+ "current_ml_signal": {
+  "n": 4822,
+  "mean_net_ret_pct": -1.0451,
+  "win_rate_pct": 38.14
+ },
+ "verdict": "model direction ranking is barely better than random and strictly worse than NO SELECTION in expectancy terms"
+}

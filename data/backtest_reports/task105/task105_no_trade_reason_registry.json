@@ -1,0 +1,19 @@
+{
+ "report": "task105_no_trade_reason_registry",
+ "generated_at": "2026-11-02T19:55:09+0000",
+ "status": "completed",
+ "reasons": {
+  "no_reliable_predictive_edge": "Historical tests show no reliable predictive edge over a no-trade baseline.",
+  "confidence_uncalibrated": "The confidence score is not a calibrated win probability.",
+  "expected_net_value_not_positive": "Expected value after PSX trading costs is not positive.",
+  "missing_market_data": "Required market data is missing for this decision.",
+  "incomplete_fundamentals": "Fundamental data coverage is incomplete.",
+  "poor_data_quality": "Data quality checks failed for this instrument.",
+  "risk_limit_reached": "A risk limit for this account/policy has been reached.",
+  "portfolio_capacity_exhausted": "Available capital or position capacity is exhausted.",
+  "model_not_approved": "The model is not approved for trading use.",
+  "insufficient_historical_validation": "Forward validation has not accumulated the required evidence."
+ },
+ "current_default_reason": "expected_net_value_not_positive",
+ "source_of_truth": "NO_TRADE_REASON_REGISTRY in src/lib/latent/trading-policy.ts"
+}

@@ -1,0 +1,47 @@
+{
+ "report": "task105_task104_reconciliation",
+ "generated_at": "2026-11-02T19:40:36+0000",
+ "status": "completed",
+ "frozen_evidence_check": {
+  "best_configuration_reported": "fixed_first_hit C_r0_5 filtered ending PKR 8,796 (-91.2%)",
+  "best_configuration_actual": {
+   "id": "fixed_first_hit__C_r0_5__q70",
+   "strategy": "fixed_first_hit",
+   "sizing": "C_r0_5",
+   "filter": "q70",
+   "n_trades_taken": 2440,
+   "final_equity": 8796.07,
+   "roi_pct": -91.2039,
+   "max_drawdown_pct": -92.06,
+   "win_rate_pct": 35.86
+  },
+  "worst_reported_roi": -99.53,
+  "worst_actual_roi": -99.53,
+  "worst_actual_scenario": "max_tp_step_trailing__A_eq3__none",
+  "roi_range_reported": [
+   -91.2,
+   -99.5
+  ],
+  "roi_range_actual": [
+   -91.2039,
+   -99.5256
+  ],
+  "dd_range_reported": [
+   -92.0,
+   -99.7
+  ],
+  "dd_range_actual": [
+   -92.06,
+   -99.66
+  ],
+  "all_negative": true,
+  "n_scenarios": 60
+ },
+ "trade_level_vs_task102_labels": {
+  "n_compared_pairs": 6000,
+  "max_abs_deviation_pkr": 0.01,
+  "identical_within_0.01": true
+ },
+ "verdict": "Task 104 frozen evidence CONFIRMED against artifacts; no silent corrections",
+ "runtime_seconds": 0.5
+}

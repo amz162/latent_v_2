@@ -4550,3 +4550,22 @@ Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
 - Q9: 0/60 positive after actual psx_user_schedule_v2 costs.
 - QA: task104_tests.py 26/26 (incl. ledger identity, no-leverage, prior-task immutability); tsc clean; site verified (home 200, readiness API, browser 0 console errors) BEFORE push per owner instruction.
 - PUSH: single commit 280a2942 (worklog in follow-up) to origin/main; secret-scan clean; largest file 28MB (< 100MB limit).
+
+## Task 105 — Complete signal forensics, capital protection, model failure analysis & forward paper-trading validation (2026-11-02)
+
+- RECOVERY x3: sandbox recycled again; re-cloned (HEAD e4a141fa verified), DB restored, deps + symlinks re-created.
+- PHASE 1: Task 104 reproducibility audit — 6/6 scenario re-runs byte-identical, ledger/curve/win-rate/scale-out integrity PASS across all 60; frozen evidence confirmed (best PKR 8,796 / -91.2%, worst 474 / -99.5%).
+- PHASE 2: end-to-end signal path audit (18 stages, code-referenced); 6/6 production fixture suites (BUY/SELL geometry, SL-first gap fills, scale-out, costs); timestamp/feature-cutoff/entry alignment PASS. NO sign/mapping/execution defect. Two capital-protection findings: CP-1 SELL/SHORT displayed+simulated without verified rights (zero historical impact — cohort long-only), CP-2 confidence semantics.
+- PHASE 3: four prediction targets (directional return / P(net>0) / TP-before-SL / net-return) reconciled; sign fixtures on real bars PASS; labels mature on engine outcomes only; T1-vs-T2 display conflation flagged (fixed by labeling).
+- PHASE 4: 34,563 trade-strategy pairs decomposed across 12 dimensions; 69 subgroup tests, 67 FDR-significant NEGATIVE, none positive; TIME_UP share ~19%; cost totals vs gross per year/strategy.
+- PHASE 5: cash dominates every baseline; momentum/reversion/random/training-mean all non-positive; contrarian sign-flip recorded research-only with explicit caveats.
+- PHASE 6: confidence field inventory (semantics) + full calibration diagnostics (Brier/ECE/AUC/PR-AUC/slope/Wilson deciles); production decision UNRELIABLE — no live confidence is a win probability.
+- PHASE 7: src/lib/latent/trading-policy.ts (task105-v1: states, 10 no-trade reasons, safe defaults, evidence gates) + CapitalProtectionNotice mounted on AI signals page, Investment Strategy page, Portfolio Simulation dialog.
+- PHASE 8+9: shadow observation store task105-gen1 (idempotent, separate from Task 103 records): 12 observations at the 2026-10-29 frontier with production computeRiskLevels levels + frozen-protocol probabilities; maturity pending; state awaiting_data; evidence gates 0/9 met → not_promotable.
+- PHASE 10: UI audit + banners verified in headless browser ("Research / shadow mode" visible).
+- PHASE 11: registry audit — nothing promoted, nothing removed; consensus unchanged.
+- PHASE 12: cost/execution parity 10/10 fixtures PASS within PKR 0.01 (computeTradeCostsV2, computeSimTradeCosts, engine legs, tax profiles, legacy profile).
+- PHASE 13: 7 docs (signal-forensics, loss-attribution, capital-protection, forward-paper-trading, confidence-calibration, model-promotion-policy, production-readiness).
+- PHASE 14: QA 25/25 python checks + tsc clean + next build exit 0 + 4 API endpoints 200 + browser checks. Skipped tests reported as skipped (0 skipped).
+- PHASE 15: all 40 required artifacts present; security scan clean; blockers B1-B5 recorded; final summary answers all 17 questions; outcome = B (no defect; weak/absent edge; preserve protection; collect new evidence).
+- OUTCOME: B — no software defect found; predictive signal weak/absent; research/shadow mode preserved; NO-TRADE protection active; forward observation system operational (awaiting_data).

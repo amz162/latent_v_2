@@ -12,6 +12,7 @@ import{Brain,Sparkles,Layers,Cpu,BarChart3,DollarSign,Play,Loader2,Eye,ChevronLe
 import{toast}from"sonner";
 import{LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend}from"recharts";
 import{rankAndFilter as rankAndFilterEnsembles,computeBacktestScore}from"@/lib/latent/simulator-ranking";
+import{CapitalProtectionNotice}from"./CapitalProtectionNotice";
 
 interface MP{name:string;tier:string;tierLabel:string;category:string;trained:boolean;untrainedReason?:string;direction?:"LONG"|"SHORT";signal?:"BUY"|"SELL"|"HOLD";confidence?:number;currentPrice?:number;entry?:number;sl?:number;tp1?:number;tp2?:number;tp3?:number;avgReturn?:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;metrics?:any;backtest?:{totalTrades:number;buySignals:number;sellSignals:number;correctBuys:number;correctSells:number;winRate:number;avgReturnPct:number;maxReturnPct:number;minReturnPct:number;stars:number;coveredSymbols?:number;};extended?:boolean;}
 interface ER{method:string;methodLabel:string;signal:"BUY"|"SELL"|"HOLD";direction:"LONG"|"SHORT";confidence:number;predictedPrice:number;entry:number;sl:number;tp1:number;tp2:number;tp3:number;modelCount:number;buyCount:number;sellCount:number;holdCount:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;total_score?:number;pillars?:any;expected_return?:number;r_pct?:number;strategy_signals?:any;}
@@ -234,6 +235,8 @@ export function AiModelSignals(){
    <p className="text-xs md:text-sm text-[#94A3B8] mt-1">{data?`${data.trainedModelCount}/${data.totalModelCount} models trained·SL=support·TP1/2/3=5d/10d/21d predictions`:"Loading..."}</p>
   </div>
 
+  <CapitalProtectionNotice />
+
   <Card className="bg-[#131829] border-white/[0.08] mb-3 md:mb-4"><CardContent className="p-3 md:p-4">
    <div className="flex items-center gap-3 flex-wrap">
     <div className="flex-1 min-w-[180px]"><label className="text-[10px] uppercase tracking-wider text-[#64748B]">Select Stock (any of 1000+ PSX-listed companies)</label>
@@ -355,6 +358,7 @@ export function AiModelSignals(){
    <Dialog open={simOpen} onOpenChange={o=>{if(!o){setSimOpen(false);setSimDrilldown(null);}}}>
     <DialogContent className="bg-[#131829] border-white/[0.12] w-[95vw] max-w-[1600px] max-h-[90vh] overflow-y-auto">
      <DialogHeader><DialogTitle className="text-[#F4F7FB] flex items-center gap-2"><DollarSign className="h-5 w-5 text-[#00E676]"/>Portfolio Simulation</DialogTitle></DialogHeader>
+     <CapitalProtectionNotice compact />
      <div className="space-y-4">
       <p className="text-xs text-[#94A3B8]">
        <span className="text-[#F4F7FB] font-semibold">REAL-history simulation</span> — each ensemble runs on ITS OWN per-stock BUY signals

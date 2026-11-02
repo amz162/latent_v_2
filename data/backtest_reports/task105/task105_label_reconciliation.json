@@ -1,0 +1,67 @@
+{
+ "report": "task105_label_reconciliation",
+ "generated_at": "2026-11-02T19:43:37+0000",
+ "status": "completed",
+ "label_cohort": {
+  "n_samples": 11521,
+  "n_grid_samples": 11521,
+  "step": 5,
+  "partitions": {
+   "train": 5935,
+   "validation": 1608,
+   "final_test": 3978
+  }
+ },
+ "per_strategy_label_stats": {
+  "fixed_first_hit": {
+   "n": 11521,
+   "base_rate_net_positive_pct": 36.11,
+   "base_rate_tp_before_sl_pct": 28.59,
+   "mean_net_return_pct": -1.3354,
+   "mean_total_cost_pkr": 1235.08,
+   "n_sl_first_exits": 6460
+  },
+  "max_tp_step_trailing": {
+   "n": 11521,
+   "base_rate_net_positive_pct": 50.33,
+   "base_rate_tp_before_sl_pct": 6.2,
+   "mean_net_return_pct": -1.1561,
+   "mean_total_cost_pkr": 1067.6,
+   "n_sl_first_exits": 4517
+  },
+  "scale_out_50_25_25": {
+   "n": 11521,
+   "base_rate_net_positive_pct": 43.72,
+   "base_rate_tp_before_sl_pct": 28.59,
+   "mean_net_return_pct": -1.3331,
+   "mean_total_cost_pkr": 1058.18,
+   "n_sl_first_exits": 6460
+  }
+ },
+ "engine_reconstruction_vs_frozen_labels": [
+  {
+   "strategy": "fixed_first_hit",
+   "n": 11521,
+   "max_dev_pkr": 0.01,
+   "identical": true
+  },
+  {
+   "strategy": "max_tp_step_trailing",
+   "n": 11521,
+   "max_dev_pkr": 0.01,
+   "identical": true
+  },
+  {
+   "strategy": "scale_out_50_25_25",
+   "n": 11521,
+   "max_dev_pkr": 0.01,
+   "identical": true
+  }
+ ],
+ "conventions": {
+  "price": "next-session OPEN entry; SL/TP from ATR14 at decision date",
+  "costs": "psx_user_schedule_v2 ATL_15 applied on full round trip",
+  "net_vs_gross": "labels store NET (incl. costs); MFE/MAE are gross path statistics"
+ },
+ "verdict": "labels correspond to the actual strategy used in testing"
+}

@@ -1,0 +1,620 @@
+{
+ "namespace": "task105-gen1 (separate from Task 103 prospective lifecycle; preserved)",
+ "idempotency": "merge by decision_id; re-runs add nothing",
+ "updated_at": "2026-11-02T20:01:33+0000",
+ "n_observations": 12,
+ "observations": [
+  {
+   "decision_id": "t105gen1_LUCK_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "LUCK",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.514137,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 385.5446428571429,
+     "tp1": 404.6535714285714,
+     "tp2": 412.29714285714283,
+     "tp3": 419.94071428571425
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 385.5446428571429,
+     "tp1": 404.6535714285714,
+     "tp2": 412.29714285714283,
+     "tp3": 419.94071428571425
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 385.5446428571429,
+     "tp1": 404.6535714285714,
+     "tp2": 412.29714285714283,
+     "tp3": 419.94071428571425
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_SYS_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "SYS",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.487605,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 105.11607142857144,
+     "tp1": 111.23928571428571,
+     "tp2": 113.68857142857144,
+     "tp3": 116.13785714285714
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 105.11607142857144,
+     "tp1": 111.23928571428571,
+     "tp2": 113.68857142857144,
+     "tp3": 116.13785714285714
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 105.11607142857144,
+     "tp1": 111.23928571428571,
+     "tp2": 113.68857142857144,
+     "tp3": 116.13785714285714
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_MEBL_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "MEBL",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.48299,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 514.2557142857144,
+     "tp1": 533.9628571428572,
+     "tp2": 541.8457142857143,
+     "tp3": 549.7285714285715
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 514.2557142857144,
+     "tp1": 533.9628571428572,
+     "tp2": 541.8457142857143,
+     "tp3": 549.7285714285715
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 514.2557142857144,
+     "tp1": 533.9628571428572,
+     "tp2": 541.8457142857143,
+     "tp3": 549.7285714285715
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_KEL_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "KEL",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.521314,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 5.619285714285715,
+     "tp1": 6.187142857142857,
+     "tp2": 6.414285714285715,
+     "tp3": 6.6414285714285715
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 5.619285714285715,
+     "tp1": 6.187142857142857,
+     "tp2": 6.414285714285715,
+     "tp3": 6.6414285714285715
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 5.619285714285715,
+     "tp1": 6.187142857142857,
+     "tp2": 6.414285714285715,
+     "tp3": 6.6414285714285715
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_TRG_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "TRG",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.519679,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 49.3075,
+     "tp1": 55.595,
+     "tp2": 58.11,
+     "tp3": 60.625
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 49.3075,
+     "tp1": 55.595,
+     "tp2": 58.11,
+     "tp3": 60.625
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 49.3075,
+     "tp1": 55.595,
+     "tp2": 58.11,
+     "tp3": 60.625
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_BOP_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "BOP",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.54913,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 27.646428571428572,
+     "tp1": 29.335714285714285,
+     "tp2": 30.01142857142857,
+     "tp3": 30.68714285714286
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 27.646428571428572,
+     "tp1": 29.335714285714285,
+     "tp2": 30.01142857142857,
+     "tp3": 30.68714285714286
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 27.646428571428572,
+     "tp1": 29.335714285714285,
+     "tp2": 30.01142857142857,
+     "tp3": 30.68714285714286
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_CNERGY_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "CNERGY",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.524552,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 13.368571428571428,
+     "tp1": 14.554285714285713,
+     "tp2": 15.028571428571428,
+     "tp3": 15.502857142857142
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 13.368571428571428,
+     "tp1": 14.554285714285713,
+     "tp2": 15.028571428571428,
+     "tp3": 15.502857142857142
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 13.368571428571428,
+     "tp1": 14.554285714285713,
+     "tp2": 15.028571428571428,
+     "tp3": 15.502857142857142
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_MLCF_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "MLCF",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.540438,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 88.13928571428572,
+     "tp1": 92.95714285714286,
+     "tp2": 94.88428571428571,
+     "tp3": 96.81142857142856
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 88.13928571428572,
+     "tp1": 92.95714285714286,
+     "tp2": 94.88428571428571,
+     "tp3": 96.81142857142856
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 88.13928571428572,
+     "tp1": 92.95714285714286,
+     "tp2": 94.88428571428571,
+     "tp3": 96.81142857142856
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_PAEL_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "PAEL",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.535733,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 31.709642857142857,
+     "tp1": 33.39357142857143,
+     "tp2": 34.067142857142855,
+     "tp3": 34.74071428571428
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 31.709642857142857,
+     "tp1": 33.39357142857143,
+     "tp2": 34.067142857142855,
+     "tp3": 34.74071428571428
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 31.709642857142857,
+     "tp1": 33.39357142857143,
+     "tp2": 34.067142857142855,
+     "tp3": 34.74071428571428
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_PIBTL_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "PIBTL",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.549927,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 12.460714285714285,
+     "tp1": 13.492857142857144,
+     "tp2": 13.905714285714286,
+     "tp3": 14.31857142857143
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 12.460714285714285,
+     "tp1": 13.492857142857144,
+     "tp2": 13.905714285714286,
+     "tp3": 14.31857142857143
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 12.460714285714285,
+     "tp1": 13.492857142857144,
+     "tp2": 13.905714285714286,
+     "tp3": 14.31857142857143
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_LOTCHEM_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "LOTCHEM",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.54741,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 23.09107142857143,
+     "tp1": 25.389285714285712,
+     "tp2": 26.308571428571426,
+     "tp3": 27.22785714285714
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 23.09107142857143,
+     "tp1": 25.389285714285712,
+     "tp2": 26.308571428571426,
+     "tp3": 27.22785714285714
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 23.09107142857143,
+     "tp1": 25.389285714285712,
+     "tp2": 26.308571428571426,
+     "tp3": 27.22785714285714
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  },
+  {
+   "decision_id": "t105gen1_FCCL_2026-10-29",
+   "generation": "task105-gen1",
+   "symbol": "FCCL",
+   "decision_timestamp": "2026-10-29",
+   "data_cutoff": "2026-10-29",
+   "latest_verified_session": "2026-10-29",
+   "model_version": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation)",
+   "model_version_hash": "5a7b4637380f",
+   "feature_schema_version": "task101-22feat-v1 (rsi_14..xs_disp_5d)",
+   "data_source_versions": {
+    "db": "custom.db (psxdata importer)",
+    "latest_verified_date": "2026-10-29"
+   },
+   "prediction_horizon_sessions": 21,
+   "predicted_direction": "LONG-candidate (BUY-only cohort; SELL not executable)",
+   "raw_score": 0.541889,
+   "calibrated_probability": 0.428232,
+   "calibration": "isotonic fitted on validation partition only",
+   "strategies": {
+    "fixed_first_hit": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 50.63535714285714,
+     "tp1": 53.92642857142857,
+     "tp2": 55.24285714285714,
+     "tp3": 56.559285714285714
+    },
+    "max_tp_step_trailing": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 50.63535714285714,
+     "tp1": 53.92642857142857,
+     "tp2": 55.24285714285714,
+     "tp3": 56.559285714285714
+    },
+    "scale_out_50_25_25": {
+     "entry": "TBD_next_session_open_not_yet_imported",
+     "sl": 50.63535714285714,
+     "tp1": 53.92642857142857,
+     "tp2": 55.24285714285714,
+     "tp3": 56.559285714285714
+    }
+   },
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "decision_status": "no_trade",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "policy_version": "task105-v1",
+   "maturity_status": "pending_outcome",
+   "maturity_blocker": "next session open (entry) and outcome bars not yet imported \u2014 awaiting_data",
+   "realized_outcome": null,
+   "actual_net_pnl": null
+  }
+ ]
+}

@@ -1,0 +1,55 @@
+{
+ "report": "task105_baseline_comparison",
+ "generated_at": "2026-11-02T19:52:16+0000",
+ "status": "completed",
+ "cohort": "fixed_first_hit on validation+final_test (OOS for the filter models)",
+ "baselines": {
+  "cash_no_trade": {
+   "mean_net_ret_pct": 0.0,
+   "note": "beats every strategy \u2014 the honest benchmark"
+  },
+  "zero_return_baseline": {
+   "mean_net_ret_pct": 0.0
+  },
+  "train_mean_constant_policy": {
+   "mean_net_ret_pct": -1.434,
+   "note": "training-only mean net return applied as constant policy expectation"
+  },
+  "all_long_entries_no_selection": {
+   "n": 5586,
+   "mean_net_ret_pct": -1.2307,
+   "win_rate_pct": 37.79
+  },
+  "random_ranking_same_coverage": {
+   "n": 4660,
+   "mean_net_ret_pct": -1.2209,
+   "win_rate_pct": 38.07
+  },
+  "momentum_7d_positive": {
+   "n": 2692,
+   "mean_net_ret_pct": -1.0292,
+   "win_rate_pct": 39.9
+  },
+  "mean_reversion_7d_negative": {
+   "n": 2853,
+   "mean_net_ret_pct": -1.4014,
+   "win_rate_pct": 35.86
+  },
+  "ml_q70_filter": {
+   "n": 4822,
+   "mean_net_ret_pct": -1.0451,
+   "win_rate_pct": 38.14
+  },
+  "sell_only_selection": {
+   "not_applicable": true,
+   "note": "cohort is long-only; short selection would require unverified rights"
+  },
+  "equal_weight_buy_and_hold": {
+   "n_symbols": 25,
+   "mean_simple_return_pct": 50.37,
+   "median_pct": 18.31,
+   "note": "descriptive 10y reference incl. delisted-symbol survivorship caveats; no costs"
+  }
+ },
+ "verdict": "CASH dominates every strategy and every selection rule; no simple decision-time rule reaches positive expectancy either"
+}

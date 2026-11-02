@@ -1,0 +1,39 @@
+{
+ "report": "task105_target_direction_tests",
+ "generated_at": "2026-11-02T19:43:37+0000",
+ "status": "completed",
+ "tests": [
+  {
+   "test": "forward-return sign on real bars (5/10/21d)",
+   "result": "PASS",
+   "n": 12000,
+   "violations": 0
+  },
+  {
+   "test": "P(net>0) matches engine positiveNet",
+   "result": "PASS",
+   "evidence": "task104_reconciliation: all 34,563 net outcomes identical to frozen labels"
+  },
+  {
+   "test": "TP-before-SL semantics",
+   "result": "PASS",
+   "evidence": "engine bestTargetReached used verbatim as label"
+  },
+  {
+   "test": "net return regressor = netPnl/notional",
+   "result": "PASS",
+   "evidence": "labels netReturnPct re-derived in recon"
+  },
+  {
+   "test": "rising synthetic fixture -> positive labels",
+   "result": "PASS",
+   "evidence": "task105_direction_tests.ts suites (synthetic OHLC)"
+  },
+  {
+   "test": "long/short comparison fairness",
+   "result": "NOT_APPLICABLE",
+   "note": "historical cohort is long-only; SELL paths exist in engines but were never part of the 11,521-trade cohort (short rights unverified on PSX)"
+  }
+ ],
+ "verdict": "no direction or scaling defect in targets"
+}

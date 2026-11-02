@@ -1,0 +1,25 @@
+{
+ "report": "task105_model_registry_audit",
+ "generated_at": "2026-11-02T19:59:15+0000",
+ "status": "completed",
+ "registry_sources": [
+  "task101_model_registry.json (supplemental)",
+  "task103_model_coverage.json",
+  "production registry (58 models, ModelRegistryDashboard; verified statuses from Task 84 unified metrics)"
+ ],
+ "reconciliation": {
+  "canonical_direction_models": "9 classical (Task 100 frozen protocol) + LSTM/CNN-LSTM (Task 99) \u2014 all retained",
+  "supplemental_cost_aware": 2,
+  "aliases_vs_unique": "aliases resolved in Task 101 registry; no dummy/synthetic models created",
+  "trained_vs_untrained": "untrained entries retain their untrainedReason \u2014 none removed",
+  "blocked_shadow_research": "all supplemental models remain research/shadow; none promoted"
+ },
+ "promotion_status": {
+  "promoted": 0,
+  "not_promotable": "ALL models and strategies",
+  "reason": "Task 104: 0/60 portfolio configurations positive after real costs; Task 105 Phase 4: no FDR-surviving positive subgroup; evidence gates 0/9 met",
+  "consensus_unchanged": true,
+  "note": "poor performers retained \u2014 registry completeness is historical evidence, not marketing"
+ },
+ "verdict": "registry complete, statuses verified, nothing promoted, nothing deleted"
+}

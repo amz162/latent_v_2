@@ -1,0 +1,43 @@
+{
+ "report": "task105_timestamp_alignment_report",
+ "generated_at": "2026-11-02T19:42:28+0000",
+ "status": "completed",
+ "checks": [
+  {
+   "check": "features use bars <= decision date",
+   "implementation": "task101_phases._rebuild_grid_with_features via wf.build_sample_list cutoff",
+   "verdict": "PASS"
+  },
+  {
+   "check": "entry at next available execution point",
+   "implementation": "entryIdx = cutoffIdx + 1; entryPrice = bars[entryIdx].open; entry_convention=next_session_open",
+   "verdict": "PASS"
+  },
+  {
+   "check": "engine scans only post-entry bars",
+   "implementation": "scanBars = bars.slice(entryIdx, entryIdx+21)",
+   "verdict": "PASS"
+  },
+  {
+   "check": "portfolio sim chronological acceptance",
+   "implementation": "candidates sorted by entry_date; no future info in selection (Task 104)",
+   "verdict": "PASS"
+  },
+  {
+   "check": "label horizon == strategy horizon",
+   "implementation": "21-session MAX_HORIZON in labels and engine",
+   "verdict": "PASS"
+  },
+  {
+   "check": "no future candle used in exits",
+   "implementation": "engine walks scanBars forward only (fixture-tested)",
+   "verdict": "PASS"
+  },
+  {
+   "check": "decision-time model probabilities frozen",
+   "implementation": "train/val/final split chronological with 21-session purge (task104_probabilities.json)",
+   "verdict": "PASS"
+  }
+ ],
+ "verdict": "NO timestamp or lookahead defect"
+}

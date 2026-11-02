@@ -1,0 +1,169 @@
+{
+ "report": "task105_execution_manifest",
+ "generated_at": "2026-11-02T20:05:40+0000",
+ "git_head_at_generation": "e4a141fa826e",
+ "working_tree_dirty_files": 28,
+ "policy_version": "task105-v1",
+ "evidence_class": "development_only",
+ "phases": [
+  {
+   "phase": "phase1",
+   "script": "scripts/task105_phase1.py",
+   "artifacts": [
+    "task105_task104_reconciliation.json",
+    "task105_portfolio_integrity.json",
+    "task105_reproducibility_report.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "phase2",
+   "script": "scripts/task105_phase2.py",
+   "artifacts": [
+    "task105_signal_path_audit.json",
+    "task105_prediction_to_trade_trace.csv",
+    "task105_direction_mapping_tests.json",
+    "task105_timestamp_alignment_report.json",
+    "task105_execution_logic_audit.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "phase3",
+   "script": "scripts/task105_phase3.py",
+   "artifacts": [
+    "task105_target_semantics_audit.json",
+    "task105_label_reconciliation.json",
+    "task105_target_direction_tests.json",
+    "task105_label_maturity_audit.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "phase4",
+   "script": "scripts/task105_phase4.py",
+   "artifacts": [
+    "task105_loss_attribution.json",
+    "task105_symbol_failure_analysis.csv",
+    "task105_horizon_analysis.json",
+    "task105_long_short_analysis.json",
+    "task105_confidence_failure_analysis.json",
+    "task105_exit_geometry_analysis.json",
+    "task105_cost_vs_gross_loss.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "phase5_6",
+   "script": "scripts/task105_phase5_6.py",
+   "artifacts": [
+    "task105_baseline_comparison.json",
+    "task105_signal_direction_comparison.json",
+    "task105_contrarian_hypothesis.json",
+    "task105_calibration_diagnostics.json",
+    "task105_probability_reliability.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "phase7",
+   "script": "scripts/task105_phase7.py",
+   "artifacts": [
+    "task105_confidence_semantics.json",
+    "task105_confidence_production_decision.json",
+    "task105_capital_protection_policy.json",
+    "task105_no_trade_reason_registry.json",
+    "task105_production_signal_disposition.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "phase8_levels",
+   "script": "scripts/task105_phase8_levels.ts",
+   "artifacts": [],
+   "status": "completed"
+  },
+  {
+   "phase": "phase8_9",
+   "script": "scripts/task105_phase8.py",
+   "artifacts": [
+    "task105_forward_monitoring.json",
+    "task105_evidence_gate_report.json",
+    "task105_forward_validation_status.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "phase11_12",
+   "script": "scripts/task105_phase11_12.py",
+   "artifacts": [
+    "task105_model_registry_audit.json",
+    "task105_cost_parity_report.json"
+   ],
+   "status": "completed"
+  },
+  {
+   "phase": "parity_fixtures",
+   "script": "scripts/task105_parity.ts",
+   "artifacts": [],
+   "status": "completed"
+  },
+  {
+   "phase": "direction_fixtures",
+   "script": "scripts/task105_direction_tests.ts",
+   "artifacts": [],
+   "status": "completed"
+  },
+  {
+   "phase": "qa",
+   "script": "scripts/task105_tests.py",
+   "artifacts": [
+    "task105_test_summary.json"
+   ],
+   "status": "completed"
+  }
+ ],
+ "required_artifacts": {
+  "task105_execution_manifest.json": true,
+  "task105_task104_reconciliation.json": true,
+  "task105_portfolio_integrity.json": true,
+  "task105_reproducibility_report.json": true,
+  "task105_signal_path_audit.json": true,
+  "task105_prediction_to_trade_trace.csv": true,
+  "task105_direction_mapping_tests.json": true,
+  "task105_timestamp_alignment_report.json": true,
+  "task105_execution_logic_audit.json": true,
+  "task105_target_semantics_audit.json": true,
+  "task105_label_reconciliation.json": true,
+  "task105_target_direction_tests.json": true,
+  "task105_label_maturity_audit.json": true,
+  "task105_loss_attribution.json": true,
+  "task105_symbol_failure_analysis.csv": true,
+  "task105_horizon_analysis.json": true,
+  "task105_long_short_analysis.json": true,
+  "task105_confidence_failure_analysis.json": true,
+  "task105_exit_geometry_analysis.json": true,
+  "task105_cost_vs_gross_loss.json": true,
+  "task105_baseline_comparison.json": true,
+  "task105_signal_direction_comparison.json": true,
+  "task105_contrarian_hypothesis.json": true,
+  "task105_confidence_semantics.json": true,
+  "task105_calibration_diagnostics.json": true,
+  "task105_probability_reliability.json": true,
+  "task105_confidence_production_decision.json": true,
+  "task105_capital_protection_policy.json": true,
+  "task105_no_trade_reason_registry.json": true,
+  "task105_production_signal_disposition.json": true,
+  "task105_forward_monitoring.json": true,
+  "task105_evidence_gate_report.json": true,
+  "task105_forward_validation_status.json": true,
+  "task105_cost_parity_report.json": true,
+  "task105_model_registry_audit.json": true,
+  "task105_api_validation.json": true,
+  "task105_test_summary.json": true,
+  "task105_security_audit.json": true,
+  "task105_remaining_blockers.json": true,
+  "task105_final_summary.json": true
+ },
+ "all_required_present": true
+}

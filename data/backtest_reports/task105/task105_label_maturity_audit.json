@@ -1,0 +1,11 @@
+{
+ "report": "task105_label_maturity_audit",
+ "generated_at": "2026-11-02T19:43:37+0000",
+ "status": "completed",
+ "maturity_rule": "a label matures only when the trade RESOLVES (SL/TP3 hit or TIME_UP at 21 sessions); samples without 21 future sessions cannot mature",
+ "n_sampled_for_maturity": 3000,
+ "n_with_less_than_21_future_sessions": 0,
+ "time_up_exits_all_strategies": 2223,
+ "partition_maturity": "train/validation/final_test are chronological with a 21-session purge between partitions \u2014 no immature label leaks across partitions",
+ "verdict": "PASS \u2014 labels mature on realized engine outcomes only"
+}

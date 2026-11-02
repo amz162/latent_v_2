@@ -1,0 +1,102 @@
+{
+ "suites": [
+  {
+   "suite": "risk_levels_buy_geometry",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "BUY sl below entry",
+     true
+    ],
+    [
+     "BUY tp1>tp2>tp3 above entry",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "risk_levels_sell_geometry",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "SELL sl above entry",
+     true
+    ],
+    [
+     "SELL tp1<tp2<tp3 below entry",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "engine_buy_outcomes",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "BUY TP3 exit on uptrend",
+     true
+    ],
+    [
+     "exit leg net = gross - costs",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "engine_buy_sl_gap_aware",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "BUY SL on downtrend",
+     true
+    ],
+    [
+     "gap fill at open when open beyond SL",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "engine_sell_symmetry",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "SELL profits on downtrend",
+     true
+    ],
+    [
+     "SELL entry-notional basis used",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "costs_v2",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "scale-out cost identity net=gross-cost",
+     true
+    ],
+    [
+     "CGT zero on losing trade",
+     true
+    ],
+    [
+     "costs scale with size (not linear-fixture, sanity only)",
+     true
+    ],
+    [
+     "non-ATL profile supported",
+     true
+    ]
+   ]
+  }
+ ]
+}

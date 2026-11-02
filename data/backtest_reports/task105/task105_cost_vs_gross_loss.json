@@ -1,0 +1,84 @@
+{
+ "report": "task105_cost_vs_gross_loss",
+ "generated_at": "2026-11-02T19:51:04+0000",
+ "status": "completed",
+ "by_year_all_strategies": {
+  "2016": {
+   "gross": 1574568.0,
+   "costs": 713596.0,
+   "net": 860972.0
+  },
+  "2017": {
+   "gross": -3696612.0,
+   "costs": 3083214.0,
+   "net": -6779825.0
+  },
+  "2018": {
+   "gross": -3171425.0,
+   "costs": 3492280.0,
+   "net": -6663705.0
+  },
+  "2019": {
+   "gross": -2560861.0,
+   "costs": 4995465.0,
+   "net": -7556326.0
+  },
+  "2020": {
+   "gross": 4530751.0,
+   "costs": 5615731.0,
+   "net": -1084980.0
+  },
+  "2021": {
+   "gross": -2445674.0,
+   "costs": 2892106.0,
+   "net": -5337779.0
+  },
+  "2022": {
+   "gross": -4589177.0,
+   "costs": 3540230.0,
+   "net": -8129407.0
+  },
+  "2023": {
+   "gross": 3286341.0,
+   "costs": 4198164.0,
+   "net": -911823.0
+  },
+  "2024": {
+   "gross": 1121073.0,
+   "costs": 4075329.0,
+   "net": -2954255.0
+  },
+  "2025": {
+   "gross": 2109951.0,
+   "costs": 3712084.0,
+   "net": -1602134.0
+  },
+  "2026": {
+   "gross": -1484847.0,
+   "costs": 2402254.0,
+   "net": -3887101.0
+  }
+ },
+ "by_strategy": {
+  "fixed_first_hit": {
+   "gross": -1150031.0,
+   "costs": 14229356.0,
+   "net": -15379387.0
+  },
+  "max_tp_step_trailing": {
+   "gross": -1014645.0,
+   "costs": 12299825.0,
+   "net": -13314470.0
+  },
+  "scale_out_50_25_25": {
+   "gross": -3161236.0,
+   "costs": 12191272.0,
+   "net": -15352508.0
+  }
+ },
+ "cost_components_share": {
+  "brokerage_of_costs_pct": null,
+  "note": "components per trade in task104_engine_recon.json; brokerage dominates"
+ },
+ "verdict": "gross loss dominates; costs add 40-60% on top depending on strategy"
+}

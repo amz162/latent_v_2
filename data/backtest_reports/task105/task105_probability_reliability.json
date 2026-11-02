@@ -1,0 +1,186 @@
+{
+ "report": "task105_probability_reliability",
+ "generated_at": "2026-11-02T19:52:21+0000",
+ "status": "completed",
+ "reliability_diagrams_data": {
+  "fixed_first_hit__validation": [
+   {
+    "bucket": 1,
+    "n": 81,
+    "avg_confidence": 0.1358,
+    "realized_win_rate_pct": 13.58,
+    "wilson95_pct": [
+     7.76,
+     22.7
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 10,
+    "n": 1527,
+    "avg_confidence": 0.2672,
+    "realized_win_rate_pct": 26.72,
+    "wilson95_pct": [
+     24.56,
+     28.99
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   }
+  ],
+  "fixed_first_hit__final_test": [
+   {
+    "bucket": 1,
+    "n": 95,
+    "avg_confidence": 0.1313,
+    "realized_win_rate_pct": 51.58,
+    "wilson95_pct": [
+     41.67,
+     61.37
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 10,
+    "n": 3883,
+    "avg_confidence": 0.2672,
+    "realized_win_rate_pct": 42.31,
+    "wilson95_pct": [
+     40.77,
+     43.87
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   }
+  ],
+  "max_tp_step_trailing__validation": [
+   {
+    "bucket": 1,
+    "n": 56,
+    "avg_confidence": 0.3036,
+    "realized_win_rate_pct": 30.36,
+    "wilson95_pct": [
+     19.9,
+     43.34
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 2,
+    "n": 224,
+    "avg_confidence": 0.3571,
+    "realized_win_rate_pct": 35.71,
+    "wilson95_pct": [
+     29.73,
+     42.18
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 10,
+    "n": 1328,
+    "avg_confidence": 0.4352,
+    "realized_win_rate_pct": 43.52,
+    "wilson95_pct": [
+     40.88,
+     46.21
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   }
+  ],
+  "max_tp_step_trailing__final_test": [
+   {
+    "bucket": 1,
+    "n": 123,
+    "avg_confidence": 0.3092,
+    "realized_win_rate_pct": 69.11,
+    "wilson95_pct": [
+     60.47,
+     76.59
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 2,
+    "n": 361,
+    "avg_confidence": 0.3577,
+    "realized_win_rate_pct": 42.11,
+    "wilson95_pct": [
+     37.12,
+     47.26
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 10,
+    "n": 3494,
+    "avg_confidence": 0.4415,
+    "realized_win_rate_pct": 56.33,
+    "wilson95_pct": [
+     54.67,
+     57.96
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   }
+  ],
+  "scale_out_50_25_25__validation": [
+   {
+    "bucket": 1,
+    "n": 88,
+    "avg_confidence": 0.1932,
+    "realized_win_rate_pct": 19.32,
+    "wilson95_pct": [
+     12.43,
+     28.78
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 2,
+    "n": 206,
+    "avg_confidence": 0.3301,
+    "realized_win_rate_pct": 33.01,
+    "wilson95_pct": [
+     26.95,
+     39.69
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 10,
+    "n": 1314,
+    "avg_confidence": 0.3592,
+    "realized_win_rate_pct": 35.92,
+    "wilson95_pct": [
+     33.37,
+     38.55
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   }
+  ],
+  "scale_out_50_25_25__final_test": [
+   {
+    "bucket": 1,
+    "n": 347,
+    "avg_confidence": 0.2862,
+    "realized_win_rate_pct": 49.86,
+    "wilson95_pct": [
+     44.63,
+     55.09
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   },
+   {
+    "bucket": 10,
+    "n": 3631,
+    "avg_confidence": 0.3596,
+    "realized_win_rate_pct": 49.85,
+    "wilson95_pct": [
+     48.22,
+     51.47
+    ],
+    "mean_net_win_rate_note": "labels are net-positive outcomes"
+   }
+  ]
+ },
+ "reading_guide": "a reliable probability has avg_confidence ~= realized_win_rate with wide buckets; final_test shows flat/inverted segments and Spearman ~0 (Task 104) \u2014 see task105_confidence_semantics.json",
+ "verdict": "out-of-sample reliability NOT established"
+}

@@ -1,0 +1,37 @@
+{
+ "report": "task105_remaining_blockers",
+ "generated_at": "2026-11-02T20:05:40+0000",
+ "status": "completed",
+ "blockers": [
+  {
+   "id": "B1",
+   "blocker": "No licensed market data feed connected",
+   "impact": "forward shadow observations cannot mature; state remains awaiting_data",
+   "unblocks": "importing sessions after 2026-10-29 matures the 12 frozen observations and starts monitoring"
+  },
+  {
+   "id": "B2",
+   "blocker": "Intraday records unavailable",
+   "impact": "execution realism bounded by daily bars; same-candle ambiguity resolved SL-first (conservative)"
+  },
+  {
+   "id": "B3",
+   "blocker": "Corporate actions / point-in-time statements unavailable",
+   "impact": "label adjustments rely on the single import convention; unchanged from Tasks 98-104"
+  },
+  {
+   "id": "B4",
+   "blocker": "PSX retail short-selling rights unverified",
+   "impact": "SELL/SHORT signals remain research-only (CP-1); contrarian hypothesis untestable"
+  },
+  {
+   "id": "B5",
+   "blocker": "No positive-expectancy configuration exists",
+   "impact": "not a defect: research/shadow posture is mandatory until new forward evidence arrives"
+  }
+ ],
+ "not_blockers": [
+  "all 40 required artifacts produced",
+  "no skipped-as-passing tests"
+ ]
+}

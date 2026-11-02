@@ -1,0 +1,49 @@
+{
+ "report": "task105_confidence_semantics",
+ "generated_at": "2026-11-02T19:55:09+0000",
+ "status": "completed",
+ "fields": [
+  {
+   "field": "ai-model-signals confidence",
+   "surface": "per-model signal cards + Final Consensus",
+   "production_value": "heuristic 50-85 derived from |RSI-50| (route.ts) or ensemble agreement % (ensemble.ts clampConfidence)",
+   "meaning": "MODEL AGREEMENT / HEURISTIC STRENGTH \u2014 NOT a probability of winning",
+   "calibrated": false
+  },
+  {
+   "field": "exp_win_rate",
+   "surface": "simulator ranking (model-backtest.ts)",
+   "production_value": "calibrated expected win rate for the TP1-before-SL-in-5-days target (one specific target)",
+   "meaning": "a calibrated probability FOR THAT TARGET ONLY",
+   "calibrated": true,
+   "caveat": "target-specific; not the probability that a displayed BUY signal profits"
+  },
+  {
+   "field": "raw_prob",
+   "surface": "signal cards",
+   "meaning": "raw model score before calibration",
+   "calibrated": false
+  },
+  {
+   "field": "agreement",
+   "surface": "ensemble cards",
+   "meaning": "share of trained models agreeing on the direction",
+   "calibrated": false
+  },
+  {
+   "field": "Task 101/104 calibrated P(net>0)",
+   "surface": "RESEARCH ARTIFACTS ONLY (not served live)",
+   "meaning": "isotonic-calibrated probability that the 21-session TP/SL trade ends net-positive",
+   "calibrated": true,
+   "caveat": "OOS association with outcomes ~0 (Spearman -0.002..-0.07); unreliable for ranking"
+  },
+  {
+   "field": "technical-rule strength (RSI/EMA)",
+   "surface": "ai-model-signals",
+   "meaning": "deterministic rule state, not a probability",
+   "calibrated": false
+  }
+ ],
+ "separation": "directional confidence vs P(positive return) vs P(net-profitable trade) vs ensemble agreement vs raw score are DISTINCT quantities and are now labeled as such",
+ "verdict": "no live-served confidence field qualifies as a verified win probability"
+}

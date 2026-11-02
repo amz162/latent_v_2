@@ -1,0 +1,41 @@
+{
+ "report": "task105_portfolio_integrity",
+ "generated_at": "2026-11-02T19:40:36+0000",
+ "status": "completed",
+ "scenarios_checked": 60,
+ "checks_per_scenario": [
+  "initial_cash",
+  "ledger_identity",
+  "no_negative_cash",
+  "equity_curve_end",
+  "drawdown_consistency",
+  "win_rate_denominator",
+  "cost_nonnegativity"
+ ],
+ "violations_by_type": {},
+ "scaleout_leg_aggregation_bad": 0,
+ "rejected_signals_tracked": {
+  "note": "Task 104 sim records skips by cause (filter/slots/funds/below-1-share)",
+  "example_scenarios": {
+   "fixed_first_hit__A_eq3__none": {
+    "filter": 0,
+    "slots": 10781,
+    "funds": 0,
+    "tiny": 0
+   },
+   "fixed_first_hit__A_eq3__q70": {
+    "filter": 176,
+    "slots": 10602,
+    "funds": 0,
+    "tiny": 0
+   },
+   "fixed_first_hit__A_eq5__none": {
+    "filter": 0,
+    "slots": 10283,
+    "funds": 0,
+    "tiny": 0
+   }
+  }
+ },
+ "verdict": "PASS"
+}

@@ -1,0 +1,63 @@
+{
+ "report": "task105_evidence_gate_report",
+ "generated_at": "2026-11-02T20:01:33+0000",
+ "status": "completed",
+ "gates": [
+  {
+   "gate": "at_least_100_matured_trades",
+   "required": 100,
+   "actual": 0,
+   "met": false
+  },
+  {
+   "gate": "at_least_two_distinct_calendar_quarters",
+   "required": 2,
+   "actual": 0,
+   "met": false
+  },
+  {
+   "gate": "multiple_independent_symbols",
+   "required": ">=15",
+   "actual": 12,
+   "met": false
+  },
+  {
+   "gate": "more_than_one_market_regime",
+   "required": 2,
+   "actual": 0,
+   "met": false
+  },
+  {
+   "gate": "positive_net_expectancy_after_real_costs",
+   "actual": null,
+   "met": false,
+   "note": "frozen Task 104 evidence: NEGATIVE across all 60 configurations"
+  },
+  {
+   "gate": "confidence_interval_supports_positive_expectancy",
+   "actual": null,
+   "met": false
+  },
+  {
+   "gate": "acceptable_drawdown",
+   "actual": null,
+   "met": false,
+   "note": "historical drawdowns -92..-99.7%"
+  },
+  {
+   "gate": "no_severe_concentration",
+   "actual": null,
+   "met": false
+  },
+  {
+   "gate": "calibration_stability",
+   "actual": null,
+   "met": false,
+   "note": "OOS Spearman(confidence, outcome) ~0"
+  }
+ ],
+ "gates_met": 0,
+ "gates_total": 9,
+ "promotion_conclusion": "NOT_PROMOTABLE \u2014 no model or strategy satisfies the minimum evidence gates; frozen historical evidence is negative on every gate it touches",
+ "significance_testing_note": "no repeated testing without adjustment; gates are minimum checks, not a promotion formula"
+}

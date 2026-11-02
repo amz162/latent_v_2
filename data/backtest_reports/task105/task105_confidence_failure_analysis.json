@@ -1,0 +1,129 @@
+{
+ "report": "task105_confidence_failure_analysis",
+ "generated_at": "2026-11-02T19:51:04+0000",
+ "status": "completed",
+ "quintiles": [
+  {
+   "strategy": "fixed_first_hit",
+   "bucket": 1,
+   "conf_range": [
+    0.0,
+    0.267
+   ],
+   "n": 314,
+   "n_dates": 53,
+   "gross_mean": -2114.48,
+   "net_mean": -3206.0,
+   "gross_win_rate_pct": 22.29,
+   "net_win_rate_pct": 20.7,
+   "avg_winner": 6928.53,
+   "avg_loser": -5851.56,
+   "profit_factor": 0.309,
+   "mae_mean_pct": -11.76,
+   "mfe_mean_pct": 7.42,
+   "drawdown_equity_pct": -3.2067
+  },
+  {
+   "strategy": "fixed_first_hit",
+   "bucket": 5,
+   "conf_range": [
+    0.267,
+    0.267
+   ],
+   "n": 11521,
+   "n_dates": 1157,
+   "gross_mean": -99.82,
+   "net_mean": -1334.9,
+   "gross_win_rate_pct": 37.0,
+   "net_win_rate_pct": 36.11,
+   "avg_winner": 7711.31,
+   "avg_loser": -6447.28,
+   "profit_factor": 0.676,
+   "mae_mean_pct": -9.43,
+   "mfe_mean_pct": 11.32,
+   "drawdown_equity_pct": -1.3354
+  },
+  {
+   "strategy": "max_tp_step_trailing",
+   "bucket": 1,
+   "conf_range": [
+    0.273,
+    0.428
+   ],
+   "n": 1366,
+   "n_dates": 488,
+   "gross_mean": -1400.17,
+   "net_mean": -3634.46,
+   "gross_win_rate_pct": 45.39,
+   "net_win_rate_pct": 31.63,
+   "avg_winner": 2844.84,
+   "avg_loser": -6631.31,
+   "profit_factor": 0.198,
+   "mae_mean_pct": -11.38,
+   "mfe_mean_pct": 10.97,
+   "drawdown_equity_pct": -3.6348
+  },
+  {
+   "strategy": "max_tp_step_trailing",
+   "bucket": 5,
+   "conf_range": [
+    0.428,
+    0.571
+   ],
+   "n": 11521,
+   "n_dates": 1157,
+   "gross_mean": -88.07,
+   "net_mean": -1155.67,
+   "gross_win_rate_pct": 53.83,
+   "net_win_rate_pct": 50.33,
+   "avg_winner": 3481.0,
+   "avg_loser": -5853.1,
+   "profit_factor": 0.603,
+   "mae_mean_pct": -9.43,
+   "mfe_mean_pct": 11.32,
+   "drawdown_equity_pct": -1.1561
+  },
+  {
+   "strategy": "scale_out_50_25_25",
+   "bucket": 1,
+   "conf_range": [
+    0.071,
+    0.359
+   ],
+   "n": 1217,
+   "n_dates": 241,
+   "gross_mean": -1980.88,
+   "net_mean": -3100.34,
+   "gross_win_rate_pct": 28.76,
+   "net_win_rate_pct": 24.82,
+   "avg_winner": 3190.18,
+   "avg_loser": -5176.56,
+   "profit_factor": 0.203,
+   "mae_mean_pct": -11.33,
+   "mfe_mean_pct": 8.0,
+   "drawdown_equity_pct": -3.1009
+  },
+  {
+   "strategy": "scale_out_50_25_25",
+   "bucket": 5,
+   "conf_range": [
+    0.359,
+    0.4
+   ],
+   "n": 11521,
+   "n_dates": 1157,
+   "gross_mean": -274.39,
+   "net_mean": -1332.57,
+   "gross_win_rate_pct": 46.1,
+   "net_win_rate_pct": 43.72,
+   "avg_winner": 3960.28,
+   "avg_loser": -5444.24,
+   "profit_factor": 0.565,
+   "mae_mean_pct": -9.43,
+   "mfe_mean_pct": 11.32,
+   "drawdown_equity_pct": -1.3331
+  }
+ ],
+ "finding": "net returns stay negative in every confidence bucket for every strategy; the highest-confidence bucket does not recover positive expectancy (Task 104 finding reproduced)",
+ "verdict": "confidence cannot rank trades into profitability"
+}

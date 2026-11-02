@@ -1,0 +1,37 @@
+{
+ "report": "task105_confidence_production_decision",
+ "generated_at": "2026-11-02T19:55:09+0000",
+ "status": "completed",
+ "decision": "UNRELIABLE \u2014 confidence must not be presented as a win probability",
+ "basis": {
+  "final_test_diagnostics": {
+   "fixed_first_hit__final_test": {
+    "auc": 0.4956,
+    "brier_cal": 0.271493,
+    "ece_mean_abs": 0.4653,
+    "calibration_slope": -0.0232
+   },
+   "max_tp_step_trailing__final_test": {
+    "auc": 0.5265,
+    "brier_cal": 0.262258,
+    "ece_mean_abs": 0.5048,
+    "calibration_slope": 0.5409
+   },
+   "scale_out_50_25_25__final_test": {
+    "auc": 0.5002,
+    "brier_cal": 0.272377,
+    "ece_mean_abs": 0.5,
+    "calibration_slope": -0.2015
+   }
+  },
+  "task104_frozen": "Spearman(confidence, outcome) OOS = -0.002..-0.07; filter improves expectancy but stays negative"
+ },
+ "production_actions": [
+  "CapitalProtectionNotice mounted on AI-model signals and Investment Strategy surfaces",
+  "confidence labeled as agreement/strength indicator (Phase 10 wording)",
+  "calibrated P(net>0) remains research-only; not promoted",
+  "policy module src/lib/latent/trading-policy.ts is the single source of truth (POLICY_VERSION task105-v1)"
+ ],
+ "reversal_condition": "decision can be revisited only after task105 evidence gates are met on genuinely new forward observations",
+ "runtime_seconds": 0.0
+}

@@ -1,0 +1,20 @@
+{
+ "report": "task105_execution_logic_audit",
+ "generated_at": "2026-11-02T19:42:28+0000",
+ "status": "completed",
+ "semantics_verified": [
+  "SL-first same-candle priority",
+  "gap-aware stop fills (open beyond SL -> open)",
+  "TP3 terminal; TP1/TP2 milestones then continue",
+  "step-trailing after TP1/TP2",
+  "scale-out 50/25/25 integer split with per-leg costs once per leg",
+  "TIME_UP exit at 21-session horizon",
+  "suspended symbols carry last close in MTM (Task 104 sim)",
+  "same-session ordering: exits processed before entries (conservative)",
+  "no double-counting of exit legs; cash reused only after leg exits"
+ ],
+ "daily_bar_limitation": "execution realism bounded by daily OHLC (no intraday records exist); same-candle SL+TP ambiguous case resolved SL-first \u2014 the CONSERVATIVE choice (pessimistic for results)",
+ "raw_vs_adjusted": "single adjustment convention; no mixing found",
+ "suspended_or_stale": "data-freshness module gates live signals; historical labels exclude missing-entry-bar samples",
+ "verdict": "NO execution-logic defect that would explain negative performance; SL-first bias is conservative"
+}

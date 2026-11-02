@@ -1,0 +1,43 @@
+{
+ "report": "task105_production_signal_disposition",
+ "generated_at": "2026-11-02T19:55:09+0000",
+ "status": "completed",
+ "surfaces": [
+  {
+   "surface": "AI Models / ai-model-signals (per-model + ensembles + Final Consensus)",
+   "state": "research_only",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "labeling": "CapitalProtectionNotice banner; BUY/SELL displayed as research signals with SL/TP geometry"
+  },
+  {
+   "surface": "Strategy cards / InvestmentStrategy",
+   "state": "research_only",
+   "no_trade_reason": "expected_net_value_not_positive",
+   "labeling": "CapitalProtectionNotice compact banner"
+  },
+  {
+   "surface": "Investment Simulator",
+   "state": "research_only",
+   "no_trade_reason": null,
+   "note": "simulation-only; includes SELL (short) paths that assume unverified rights \u2014 disclosed in banner wording"
+  },
+  {
+   "surface": "Backtesting reports",
+   "state": "research_only",
+   "note": "historical, development_only labels preserved"
+  },
+  {
+   "surface": "Paper-trading dashboard (prospective lifecycle)",
+   "state": "shadow_only",
+   "note": "Task 103 lifecycle records preserved; Task 105 shadow observations use a separate namespace"
+  },
+  {
+   "surface": "Live order execution",
+   "state": "no_trade",
+   "no_trade_reason": "model_not_approved",
+   "note": "no live-order pathway exists in the application; policy codifies this"
+  }
+ ],
+ "consensus_unchanged": true,
+ "verdict": "all surfaces accurately labeled; nothing presented as validated profitable"
+}

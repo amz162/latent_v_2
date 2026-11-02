@@ -35,7 +35,7 @@ const T104 = "data/backtest_reports/task104";
 const TAX: "ATL_15" | "NON_ATL_30" = "ATL_15";
 const CAPITAL = 100_000;
 const Q70_THR = 0.4282;
-const RESULTS = `${T104}/task104_portfolio_results.json`;
+const RESULTS = process.env.TASK104_RESULTS || `${T104}/task104_portfolio_results.json`;
 
 const STRATS = ["fixed_first_hit", "max_tp_step_trailing", "scale_out_50_25_25"] as const;
 const SIZINGS: Record<string, any> = {

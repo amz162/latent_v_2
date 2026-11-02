@@ -1,0 +1,136 @@
+{
+ "report": "task105_signal_path_audit",
+ "generated_at": "2026-11-02T19:42:28+0000",
+ "status": "completed",
+ "evidence_class": "code inspection + fixture tests + frozen historical artifacts (development_only)",
+ "stages": [
+  {
+   "stage": 1,
+   "name": "raw market data",
+   "source": "Prisma OhlcvBar (db/custom.db), psxdata.ts importer",
+   "finding": "OK \u2014 25-symbol pilot cohort, dates 2016-2026; verified latest session 2026-10-29"
+  },
+  {
+   "stage": 2,
+   "name": "adjusted market data",
+   "source": "task101_data_quality_report.json adjustment_semantics; psxdata.ts",
+   "finding": "OK \u2014 single adjustment convention applied at import; no raw/adjusted mixing found in feature or label paths"
+  },
+  {
+   "stage": 3,
+   "name": "feature generation",
+   "source": "task101_phases._rebuild_grid_with_features (T0.FC + 3 cross-sectional)",
+   "finding": "OK \u2014 22 frozen features, bars strictly <= decision date (cutoff index), train-median NaN fill, train-only scaler"
+  },
+  {
+   "stage": 4,
+   "name": "model input",
+   "source": "StandardScaler fit on train partition only",
+   "finding": "OK \u2014 no test statistics leak into scaling"
+  },
+  {
+   "stage": 5,
+   "name": "model output",
+   "source": "cls_fit101 RandomForest predict_proba (P(net>0)); historical direction models predict forward return",
+   "finding": "OK \u2014 output is a probability for cost-aware models; return-regression models output fraction-of-price returns"
+  },
+  {
+   "stage": 6,
+   "name": "prediction horizon",
+   "source": "task100 horizons 5/10/21d; trade labels 21-session engine horizon",
+   "finding": "CONSISTENT WITHIN each protocol; direction models (5/10/21d) and trade labels (21-session TP/SL) are DIFFERENT targets \u2014 see task105_target_semantics_audit.json"
+  },
+  {
+   "stage": 7,
+   "name": "probability/confidence transformation",
+   "source": "isotonic on validation (task104_probabilities.json)",
+   "finding": "calibrated probabilities valid by construction on validation; OOS association ~0 (Task 104) \u2014 reproduced in Phase 6"
+  },
+  {
+   "stage": 8,
+   "name": "BUY/SELL/HOLD mapping",
+   "source": "ensemble.ts (avgRet>+1% BUY, <-1% SELL); ai-model-signals route (EMA/RSI rules); cost-aware filter: no direction \u2014 take/skip long trade",
+   "finding": "MAPPING DIRECTIONALLY CORRECT; SELL/SHORT signals are DISPLAYED and SIMULATED although PSX retail has no verified short-selling rights \u2014 flagged as capital-protection issue, not a sign defect"
+  },
+  {
+   "stage": 9,
+   "name": "entry timestamp",
+   "source": "portfolio-config entry_convention=next_session_open; label engine entryIdx=cutoffIdx+1",
+   "finding": "OK \u2014 decision date is the information cutoff; entry is the NEXT session's open"
+  },
+  {
+   "stage": 10,
+   "name": "entry price",
+   "source": "bars[entryIdx].open",
+   "finding": "OK \u2014 verified in recon records"
+  },
+  {
+   "stage": 11,
+   "name": "ATR calculation",
+   "source": "risk-levels.ts (ATR14, canonical atr14-1-1.5-2-3)",
+   "finding": "OK \u2014 uses historical candles up to cutoff only; fixture-tested"
+  },
+  {
+   "stage": 12,
+   "name": "SL calculation",
+   "source": "risk-levels.ts: entry -/+ 1xATR",
+   "finding": "OK \u2014 direction-correct on both sides (fixture suite risk_levels_buy/sell_geometry)"
+  },
+  {
+   "stage": 13,
+   "name": "TP1/TP2/TP3",
+   "source": "risk-levels.ts: entry +/- {1,1.5,2}xATR (tp3 at 2x per policy string 1-1.5-2-3)",
+   "finding": "OK \u2014 monotone, direction-correct"
+  },
+  {
+   "stage": 14,
+   "name": "position sizing",
+   "source": "Task 104 sizing policies (A/B/C); engine quantity=floor(alloc/price)",
+   "finding": "OK \u2014 whole shares, cash-constrained, no leverage"
+  },
+  {
+   "stage": 15,
+   "name": "exit strategy",
+   "source": "strategy-engine.ts (SL-first same-candle, gap-aware, TP3 terminal, step-trailing, 50/25/25, TIME_UP@21)",
+   "finding": "OK \u2014 6/6 fixture suites pass"
+  },
+  {
+   "stage": 16,
+   "name": "execution simulation",
+   "source": "strategy-engine.ts + task104_portfolio_sim.ts (exits before entries same session)",
+   "finding": "OK \u2014 daily-bar realism limitation documented; no intraday data exists"
+  },
+  {
+   "stage": 17,
+   "name": "fee calculation",
+   "source": "trading-costs.ts computeTradeCostsV2 (psx_user_schedule_v2, ATL_15/NON_ATL_30)",
+   "finding": "OK \u2014 parity-tested in Task 103/104 and Phase 12"
+  },
+  {
+   "stage": 18,
+   "name": "final net P&L",
+   "source": "net = gross - costs per leg; portfolio ledger identity verified",
+   "finding": "OK \u2014 task105_portfolio_integrity.json PASS"
+  }
+ ],
+ "defects_found": [
+  {
+   "id": "CP-1",
+   "severity": "capital-protection",
+   "title": "SELL/SHORT signals displayed and simulated without verified short-selling rights",
+   "affected_production_surface": "ai-model-signals route, Investment Simulator (simTrade direction=SELL), ensemble SELL mapping",
+   "historical_impact": "NONE on Task 100-104 results \u2014 all 11,521 historical label trades are BUY-only",
+   "action": "Task 105 policy layer marks short-capable signals research_only; UI disclosure added (Phase 10)"
+  },
+  {
+   "id": "CP-2",
+   "severity": "capital-protection",
+   "title": "Uncalibrated confidence displayed as if actionable",
+   "affected_production_surface": "ai-model-signals confidence formula (55+min(30,|rsi-50|)) is a heuristic score, not a probability",
+   "historical_impact": "none on labels; misleads users if read as win probability",
+   "action": "Phase 6 semantics + Phase 10 UI labeling"
+  }
+ ],
+ "sign_defects_found": "NONE \u2014 no evidence of reversed predictions, mis-scaled targets, or wrong-horizon conflation in the execution path",
+ "runtime_seconds": 0.3
+}

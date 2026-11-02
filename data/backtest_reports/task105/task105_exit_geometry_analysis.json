@@ -1,0 +1,45 @@
+{
+ "report": "task105_exit_geometry_analysis",
+ "generated_at": "2026-11-02T19:51:04+0000",
+ "status": "completed",
+ "by_exit_reason": {
+  "SL": {
+   "n": 4517,
+   "net_mean_pct": -6.771,
+   "share_pct": 39.2
+  },
+  "TP3": {
+   "n": 3294,
+   "net_mean_pct": 8.779,
+   "share_pct": 28.6
+  },
+  "TIME_UP": {
+   "n": 1767,
+   "net_mean_pct": 0.061,
+   "share_pct": 15.3
+  },
+  "SL_AFTER_TP1": {
+   "n": 1455,
+   "net_mean_pct": -7.198,
+   "share_pct": 12.6
+  },
+  "SL_AFTER_TP2": {
+   "n": 488,
+   "net_mean_pct": -6.876,
+   "share_pct": 4.2
+  }
+ },
+ "geometry": {
+  "sl_dist_mean_pct": 6.41,
+  "tp1_dist_mean_pct": 3.79,
+  "rr_ratio_mean": 0.665,
+  "policy": "ATR14 multipliers 1 / 1 / 1.5 / 2 (SL/TP1/TP2/TP3) \u2014 RR at TP1 ~1.0, at TP2 1.5, at TP3 2.0"
+ },
+ "mae_mfe": {
+  "mean_mae_pct": -9.43,
+  "mean_mfe_pct": 11.32,
+  "note": "MFE >> achieved return: price frequently travels toward targets then reverses before filling"
+ },
+ "finding": "SL-first same-candle priority + ~6-9% average stop distance with ~50% win rate and 1.0-2.0 RR cannot overcome negative drift; TIME_UP exits (19%) add capital drag without payoff",
+ "verdict": "geometry is internally consistent but mismatched to signal quality \u2014 not a software defect"
+}

@@ -1,0 +1,13 @@
+{
+ "report": "task105_long_short_analysis",
+ "generated_at": "2026-11-02T19:51:04+0000",
+ "status": "completed",
+ "cohort_direction_counts": {
+  "BUY": 34563
+ },
+ "finding": "ALL 11,521 historical label trades are LONG. The SELL/SHORT branch exists in the engines (fixture-tested symmetric) but was never part of the historical cohort because PSX retail short-selling rights are unverified.",
+ "long_vs_short_fairness": "no long/short comparison is possible from history without inventing short executions \u2014 deliberately NOT simulated",
+ "short_asymmetry_risk": "UI surfaces SELL/SHORT signals (CP-1); a user acting on them would need rights the platform cannot verify",
+ "contrarian_note": "inverting a negative-expectancy long system into shorts is a research hypothesis ONLY (see task105_contrarian_hypothesis.json); not executable on PSX retail and not validated forward",
+ "verdict": "long-only evidence; short side untestable historically"
+}

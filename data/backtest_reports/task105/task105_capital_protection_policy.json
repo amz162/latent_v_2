@@ -1,0 +1,41 @@
+{
+ "report": "task105_capital_protection_policy",
+ "generated_at": "2026-11-02T19:55:09+0000",
+ "status": "completed",
+ "policy_version": "task105-v1",
+ "implementation": "src/lib/latent/trading-policy.ts (compiled, tsc-clean) + src/components/latent/CapitalProtectionNotice.tsx",
+ "defaults": {
+  "allowRealTrades": false,
+  "allowLiveOrderExecution": false,
+  "allowAutomaticPromotion": false,
+  "presentConfidenceAsWinProbability": false,
+  "displayShortSellSignalsAsTradable": false,
+  "requireForwardEvidenceForPromotion": true
+ },
+ "states": [
+  "research_only",
+  "shadow_only",
+  "no_trade",
+  "insufficient_evidence",
+  "data_unavailable",
+  "promoted"
+ ],
+ "evidence_gates": {
+  "minMaturedForwardTrades": 100,
+  "minDistinctCalendarQuarters": 2,
+  "minIndependentSymbols": 15,
+  "minMarketRegimes": 2,
+  "requirePositiveNetExpectancyAfterCosts": true,
+  "requireCISupportsPositiveExpectancy": true,
+  "requireAcceptableMaxDrawdown": true,
+  "requireNoSevereConcentration": true,
+  "requireCalibrationStability": true
+ },
+ "preservation_guarantees": [
+  "historical signals and paper-trading records preserved",
+  "prospective lifecycle records untouched",
+  "production consensus unchanged",
+  "no model removed from the registry"
+ ],
+ "verdict": "policy active with safe defaults; nothing promoted"
+}

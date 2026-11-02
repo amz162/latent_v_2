@@ -1,0 +1,44 @@
+{
+ "report": "task105_target_semantics_audit",
+ "generated_at": "2026-11-02T19:43:37+0000",
+ "status": "completed",
+ "targets_in_campaign": [
+  {
+   "target": "T1 directional forward stock return (5/10/21d)",
+   "tasks": "Task 99/100",
+   "definition": "close[t+h]/close[t]-1 sign; models output fraction returns",
+   "what_it_means": "direction of the STOCK over horizon h \u2014 NOT a completed trade"
+  },
+  {
+   "target": "T2 net-positive completed trade P(net>0)",
+   "tasks": "Task 101/102/104",
+   "definition": "production engine outcome incl. SL/TP geometry, 21-session horizon, full V2 costs",
+   "what_it_means": "profitability of a FIXED-GEOMETRY TP/SL trade"
+  },
+  {
+   "target": "T3 TP-before-SL",
+   "tasks": "Task 101/102",
+   "definition": "engine bestTargetReached==TP3/exitReason==TP3 before SL",
+   "what_it_means": "path-dependent geometry outcome"
+  },
+  {
+   "target": "T4 net return % of trade (regressor)",
+   "tasks": "Task 101",
+   "definition": "netPnl/notional",
+   "what_it_means": "expected value of the trade"
+  }
+ ],
+ "conflation_risk_findings": {
+  "labels_match_strategy_under_test": true,
+  "ui_conflation_found": "ai-model-signals route presents forward-return predictions and technical-rule BUY/SELL with SL/TP cards \u2014 a T1 prediction is displayed in the visual grammar of a T2 trade; addressed by Phase 10 labeling",
+  "model_target_horizon_consistency": "T2/T3/T4 all use the SAME 21-session engine horizon as the strategy under test \u2014 no horizon mismatch in trade-level models"
+ },
+ "sign_convention_fixture": {
+  "method": "real bars, sign(fwd close return) vs price comparison; rising series must give positive label",
+  "n_checked": 12000,
+  "n_insufficient_future": 0,
+  "sign_violations": 0,
+  "verdict": "PASS"
+ },
+ "verdict": "targets are internally consistent; T1-vs-T2 display conflation is a communication issue (fixed in Phase 10), not a computation defect"
+}

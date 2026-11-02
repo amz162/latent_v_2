@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useLatentStore } from "@/lib/latent/store";
 import { Target, ArrowRight, Coins, TrendingUp, Zap, Activity, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { CapitalProtectionNotice } from "./CapitalProtectionNotice";
 
 const GOALS = [
   {
@@ -91,6 +92,8 @@ export function InvestmentStrategy() {
             Pick your goal. We&apos;ll recommend the best PSX strategy — and either build you a portfolio or route you to live signals.
           </p>
         </div>
+
+        <CapitalProtectionNotice compact />
 
         {/* Goal selector */}
         <Card className="bg-[#131829] border-white/[0.08] mb-4">

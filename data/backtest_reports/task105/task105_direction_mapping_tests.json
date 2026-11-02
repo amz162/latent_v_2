@@ -1,0 +1,113 @@
+{
+ "report": "task105_direction_mapping_tests",
+ "generated_at": "2026-11-02T19:42:28+0000",
+ "status": "completed",
+ "method": "fixture tests executed against PRODUCTION modules (scripts/task105_direction_tests.ts); synthetic OHLC fixtures only \u2014 no market claims",
+ "suites": [
+  {
+   "suite": "risk_levels_buy_geometry",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "BUY sl below entry",
+     true
+    ],
+    [
+     "BUY tp1>tp2>tp3 above entry",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "risk_levels_sell_geometry",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "SELL sl above entry",
+     true
+    ],
+    [
+     "SELL tp1<tp2<tp3 below entry",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "engine_buy_outcomes",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "BUY TP3 exit on uptrend",
+     true
+    ],
+    [
+     "exit leg net = gross - costs",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "engine_buy_sl_gap_aware",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "BUY SL on downtrend",
+     true
+    ],
+    [
+     "gap fill at open when open beyond SL",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "engine_sell_symmetry",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "SELL profits on downtrend",
+     true
+    ],
+    [
+     "SELL entry-notional basis used",
+     true
+    ]
+   ]
+  },
+  {
+   "suite": "costs_v2",
+   "passed": true,
+   "failed": [],
+   "cases": [
+    [
+     "scale-out cost identity net=gross-cost",
+     true
+    ],
+    [
+     "CGT zero on losing trade",
+     true
+    ],
+    [
+     "costs scale with size (not linear-fixture, sanity only)",
+     true
+    ],
+    [
+     "non-ATL profile supported",
+     true
+    ]
+   ]
+  }
+ ],
+ "production_mappings": {
+  "cost_aware_filter": "probability of net-positive trade; take/skip a long-only trade; no direction inversion",
+  "ensemble_majority_and_return": "avgReturn>+1% BUY, <-1% SELL, else HOLD (ensemble.ts)",
+  "ai_model_signals_route": "EMA20/50 + RSI rules -> BUY/SELL/HOLD with heuristic confidence 50-85",
+  "strategy_engine": "direction-aware SL-first gap-aware TP/SL; BUY and SELL symmetric (fixtures pass)"
+ },
+ "verdict": "NO sign or mapping defect; SELL capability is a rights/permissions issue (CP-1), not a bug"
+}
