@@ -1,0 +1,459 @@
+{
+  "report": "task103_feature_ablation_report",
+  "generated_at": "2026-11-02T12:17:17+0000",
+  "status": "completed_with_limitations",
+  "question": "does newly acquired VERIFIED data add value?",
+  "answer": "NO new verified data was acquired (KSE-100 blocked, fundamentals without publication timestamps, corporate actions unverified, intraday unavailable) -> no new ablation is scientifically possible; the Task 102 matched-sample ablation remains the governing evidence: ALL group deltas within noise (expectancy \u00b10.006%, AUC \u00b10.0024, MAE \u00b10.0019)",
+  "matched_sample_discipline": "Task 102 ablated on matched samples with coverage loss recorded; composition changes are not attributed to features",
+  "genuine_data_ablation_when_unblocked": "re-run on matched samples under the same frozen protocol is specified in docs/task103-forward-validation.md",
+  "reused_task102": {
+    "reused_from": "data/backtest_reports/task102/task102_feature_ablation_results.json",
+    "reused_at": "2026-11-02T12:17:17+0000",
+    "provenance": "historical evidence \u2014 not recomputed in Task 103; the key scientific answer stands: no implementable feature group adds value beyond technical-only on matched samples",
+    "generated_at": "2026-11-02T01:01:32+0000",
+    "protocol": "identical frozen cohort & splits for ALL groups (matched samples); isotonic calibration on validation; q70 thresholds frozen on validation; final test evaluated once; disposition development_only",
+    "n_samples": {
+      "train": 5935,
+      "validation": 1608,
+      "final_test": 3978
+    },
+    "groups": {
+      "technical_only_v1": {
+        "features": {
+          "n_base": 22,
+          "group": "technical_only_v1",
+          "enabled": true
+        },
+        "target_A": {
+          "fixed_first_hit": {
+            "RandomForest": {
+              "brier_val_raw": 0.208602,
+              "brier_val_cal": 0.191805,
+              "brier_test_cal": 0.271493,
+              "auc_val": 0.4664,
+              "auc_test": 0.5181,
+              "thr_q70": 0.2672,
+              "n_val_selected": 1527,
+              "n_test_selected": 3883,
+              "val_expectancy_pct": -2.7627,
+              "test_expectancy_pct": -0.622,
+              "baseline_all_test_expectancy_pct": -0.5833
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.21786,
+              "brier_val_cal": 0.192162,
+              "brier_test_cal": 0.271285,
+              "auc_val": 0.4526,
+              "auc_test": 0.5123,
+              "thr_q70": 0.2665,
+              "n_val_selected": 1470,
+              "n_test_selected": 3839,
+              "val_expectancy_pct": -2.7886,
+              "test_expectancy_pct": -0.6171,
+              "baseline_all_test_expectancy_pct": -0.5833
+            }
+          },
+          "max_tp_step_trailing": {
+            "RandomForest": {
+              "brier_val_raw": 0.251396,
+              "brier_val_cal": 0.241541,
+              "brier_test_cal": 0.262258,
+              "auc_val": 0.5057,
+              "auc_test": 0.5373,
+              "thr_q70": 0.4282,
+              "n_val_selected": 1328,
+              "n_test_selected": 3494,
+              "val_expectancy_pct": -1.6858,
+              "test_expectancy_pct": -0.5311,
+              "baseline_all_test_expectancy_pct": -0.6501
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.254425,
+              "brier_val_cal": 0.24194,
+              "brier_test_cal": 0.26238,
+              "auc_val": 0.5242,
+              "auc_test": 0.5328,
+              "thr_q70": 0.4439,
+              "n_val_selected": 585,
+              "n_test_selected": 1905,
+              "val_expectancy_pct": -1.5674,
+              "test_expectancy_pct": -0.2746,
+              "baseline_all_test_expectancy_pct": -0.6501
+            }
+          }
+        },
+        "regression_21d": {
+          "zero_return_baseline_mae": 0.105622,
+          "train_mean_baseline_mae": 0.105333,
+          "ridge": {
+            "mae": 0.108756,
+            "rmse": 0.155925,
+            "r2": -0.0713,
+            "dir_acc": 0.4952
+          },
+          "lightgbm": {
+            "mae": 0.114824,
+            "rmse": 0.163183,
+            "r2": -0.1733,
+            "dir_acc": 0.4829
+          }
+        }
+      },
+      "technical_market_regime_v1": {
+        "features": {
+          "n_base": 27,
+          "group": "technical_market_regime_v1",
+          "enabled": true
+        },
+        "target_A": {
+          "fixed_first_hit": {
+            "RandomForest": {
+              "brier_val_raw": 0.208541,
+              "brier_val_cal": 0.191703,
+              "brier_test_cal": 0.27162,
+              "auc_val": 0.4589,
+              "auc_test": 0.5198,
+              "thr_q70": 0.2672,
+              "n_val_selected": 1527,
+              "n_test_selected": 3893,
+              "val_expectancy_pct": -2.7508,
+              "test_expectancy_pct": -0.622,
+              "baseline_all_test_expectancy_pct": -0.5833
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.218671,
+              "brier_val_cal": 0.192237,
+              "brier_test_cal": 0.271354,
+              "auc_val": 0.4444,
+              "auc_test": 0.5148,
+              "thr_q70": 0.2652,
+              "n_val_selected": 1478,
+              "n_test_selected": 3820,
+              "val_expectancy_pct": -2.7671,
+              "test_expectancy_pct": -0.591,
+              "baseline_all_test_expectancy_pct": -0.5833
+            }
+          },
+          "max_tp_step_trailing": {
+            "RandomForest": {
+              "brier_val_raw": 0.251701,
+              "brier_val_cal": 0.241778,
+              "brier_test_cal": 0.262305,
+              "auc_val": 0.5035,
+              "auc_test": 0.5384,
+              "thr_q70": 0.4323,
+              "n_val_selected": 1310,
+              "n_test_selected": 3467,
+              "val_expectancy_pct": -1.6677,
+              "test_expectancy_pct": -0.5173,
+              "baseline_all_test_expectancy_pct": -0.6501
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.255271,
+              "brier_val_cal": 0.241945,
+              "brier_test_cal": 0.261897,
+              "auc_val": 0.5199,
+              "auc_test": 0.5361,
+              "thr_q70": 0.4272,
+              "n_val_selected": 1218,
+              "n_test_selected": 3370,
+              "val_expectancy_pct": -1.7108,
+              "test_expectancy_pct": -0.5167,
+              "baseline_all_test_expectancy_pct": -0.6501
+            }
+          }
+        },
+        "regression_21d": {
+          "zero_return_baseline_mae": 0.105622,
+          "train_mean_baseline_mae": 0.105333,
+          "ridge": {
+            "mae": 0.10887,
+            "rmse": 0.15606,
+            "r2": -0.0731,
+            "dir_acc": 0.4972
+          },
+          "lightgbm": {
+            "mae": 0.114127,
+            "rmse": 0.162184,
+            "r2": -0.159,
+            "dir_acc": 0.4816
+          }
+        }
+      },
+      "technical_liquidity_v1": {
+        "features": {
+          "n_base": 25,
+          "group": "technical_liquidity_v1",
+          "enabled": true
+        },
+        "target_A": {
+          "fixed_first_hit": {
+            "RandomForest": {
+              "brier_val_raw": 0.208908,
+              "brier_val_cal": 0.192128,
+              "brier_test_cal": 0.27145,
+              "auc_val": 0.4614,
+              "auc_test": 0.5205,
+              "thr_q70": 0.2657,
+              "n_val_selected": 1246,
+              "n_test_selected": 3543,
+              "val_expectancy_pct": -2.9031,
+              "test_expectancy_pct": -0.6281,
+              "baseline_all_test_expectancy_pct": -0.5833
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.21758,
+              "brier_val_cal": 0.192411,
+              "brier_test_cal": 0.271689,
+              "auc_val": 0.4492,
+              "auc_test": 0.5176,
+              "thr_q70": 0.2634,
+              "n_val_selected": 1473,
+              "n_test_selected": 3804,
+              "val_expectancy_pct": -2.8478,
+              "test_expectancy_pct": -0.5976,
+              "baseline_all_test_expectancy_pct": -0.5833
+            }
+          },
+          "max_tp_step_trailing": {
+            "RandomForest": {
+              "brier_val_raw": 0.252041,
+              "brier_val_cal": 0.241486,
+              "brier_test_cal": 0.262128,
+              "auc_val": 0.5007,
+              "auc_test": 0.5357,
+              "thr_q70": 0.4303,
+              "n_val_selected": 1316,
+              "n_test_selected": 3461,
+              "val_expectancy_pct": -1.6982,
+              "test_expectancy_pct": -0.5189,
+              "baseline_all_test_expectancy_pct": -0.6501
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.254859,
+              "brier_val_cal": 0.242004,
+              "brier_test_cal": 0.262776,
+              "auc_val": 0.5206,
+              "auc_test": 0.5281,
+              "thr_q70": 0.4332,
+              "n_val_selected": 645,
+              "n_test_selected": 2068,
+              "val_expectancy_pct": -1.6915,
+              "test_expectancy_pct": -0.2825,
+              "baseline_all_test_expectancy_pct": -0.6501
+            }
+          }
+        },
+        "regression_21d": {
+          "zero_return_baseline_mae": 0.105622,
+          "train_mean_baseline_mae": 0.105333,
+          "ridge": {
+            "mae": 0.108773,
+            "rmse": 0.15624,
+            "r2": -0.0756,
+            "dir_acc": 0.5005
+          },
+          "lightgbm": {
+            "mae": 0.112966,
+            "rmse": 0.160855,
+            "r2": -0.1401,
+            "dir_acc": 0.4837
+          }
+        }
+      },
+      "technical_corporate_action_safe_v1": {
+        "features": {
+          "n_base": 24,
+          "group": "technical_corporate_action_safe_v1",
+          "enabled": true
+        },
+        "target_A": {
+          "fixed_first_hit": {
+            "RandomForest": {
+              "brier_val_raw": 0.208749,
+              "brier_val_cal": 0.191976,
+              "brier_test_cal": 0.271749,
+              "auc_val": 0.4602,
+              "auc_test": 0.5201,
+              "thr_q70": 0.2664,
+              "n_val_selected": 1520,
+              "n_test_selected": 3871,
+              "val_expectancy_pct": -2.7765,
+              "test_expectancy_pct": -0.6277,
+              "baseline_all_test_expectancy_pct": -0.5833
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.21786,
+              "brier_val_cal": 0.192162,
+              "brier_test_cal": 0.271285,
+              "auc_val": 0.4526,
+              "auc_test": 0.5123,
+              "thr_q70": 0.2665,
+              "n_val_selected": 1470,
+              "n_test_selected": 3839,
+              "val_expectancy_pct": -2.7886,
+              "test_expectancy_pct": -0.6171,
+              "baseline_all_test_expectancy_pct": -0.5833
+            }
+          },
+          "max_tp_step_trailing": {
+            "RandomForest": {
+              "brier_val_raw": 0.251732,
+              "brier_val_cal": 0.242092,
+              "brier_test_cal": 0.262354,
+              "auc_val": 0.5057,
+              "auc_test": 0.5371,
+              "thr_q70": 0.432,
+              "n_val_selected": 1152,
+              "n_test_selected": 3194,
+              "val_expectancy_pct": -1.6681,
+              "test_expectancy_pct": -0.4757,
+              "baseline_all_test_expectancy_pct": -0.6501
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.254425,
+              "brier_val_cal": 0.24194,
+              "brier_test_cal": 0.26238,
+              "auc_val": 0.5242,
+              "auc_test": 0.5328,
+              "thr_q70": 0.4439,
+              "n_val_selected": 585,
+              "n_test_selected": 1905,
+              "val_expectancy_pct": -1.5674,
+              "test_expectancy_pct": -0.2746,
+              "baseline_all_test_expectancy_pct": -0.6501
+            }
+          }
+        },
+        "regression_21d": {
+          "zero_return_baseline_mae": 0.105622,
+          "train_mean_baseline_mae": 0.105333,
+          "ridge": {
+            "mae": 0.108756,
+            "rmse": 0.155925,
+            "r2": -0.0713,
+            "dir_acc": 0.4952
+          },
+          "lightgbm": {
+            "mae": 0.114824,
+            "rmse": 0.163183,
+            "r2": -0.1733,
+            "dir_acc": 0.4829
+          }
+        }
+      },
+      "combined_verified_v1": {
+        "features": {
+          "n_base": 32,
+          "group": "combined_verified_v1",
+          "enabled": true
+        },
+        "target_A": {
+          "fixed_first_hit": {
+            "RandomForest": {
+              "brier_val_raw": 0.20896,
+              "brier_val_cal": 0.191954,
+              "brier_test_cal": 0.271481,
+              "auc_val": 0.4583,
+              "auc_test": 0.5205,
+              "thr_q70": 0.2662,
+              "n_val_selected": 1529,
+              "n_test_selected": 3900,
+              "val_expectancy_pct": -2.791,
+              "test_expectancy_pct": -0.6274,
+              "baseline_all_test_expectancy_pct": -0.5833
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.217536,
+              "brier_val_cal": 0.192211,
+              "brier_test_cal": 0.271369,
+              "auc_val": 0.4564,
+              "auc_test": 0.5158,
+              "thr_q70": 0.2663,
+              "n_val_selected": 1476,
+              "n_test_selected": 3827,
+              "val_expectancy_pct": -2.7695,
+              "test_expectancy_pct": -0.6061,
+              "baseline_all_test_expectancy_pct": -0.5833
+            }
+          },
+          "max_tp_step_trailing": {
+            "RandomForest": {
+              "brier_val_raw": 0.250902,
+              "brier_val_cal": 0.24178,
+              "brier_test_cal": 0.263498,
+              "auc_val": 0.507,
+              "auc_test": 0.5373,
+              "thr_q70": 0.4317,
+              "n_val_selected": 1314,
+              "n_test_selected": 3458,
+              "val_expectancy_pct": -1.6539,
+              "test_expectancy_pct": -0.5292,
+              "baseline_all_test_expectancy_pct": -0.6501
+            },
+            "LightGBM": {
+              "brier_val_raw": 0.25535,
+              "brier_val_cal": 0.242163,
+              "brier_test_cal": 0.262411,
+              "auc_val": 0.5198,
+              "auc_test": 0.53,
+              "thr_q70": 0.4378,
+              "n_val_selected": 523,
+              "n_test_selected": 1679,
+              "val_expectancy_pct": -1.6177,
+              "test_expectancy_pct": -0.2954,
+              "baseline_all_test_expectancy_pct": -0.6501
+            }
+          }
+        },
+        "regression_21d": {
+          "zero_return_baseline_mae": 0.105622,
+          "train_mean_baseline_mae": 0.105333,
+          "ridge": {
+            "mae": 0.108805,
+            "rmse": 0.156224,
+            "r2": -0.0754,
+            "dir_acc": 0.4977
+          },
+          "lightgbm": {
+            "mae": 0.113271,
+            "rmse": 0.160966,
+            "r2": -0.1417,
+            "dir_acc": 0.4801
+          }
+        }
+      },
+      "technical_pit_fundamental_v1": {
+        "status": "disabled",
+        "reason": "DISABLED: no verified publication timestamps link statements/ratios to decision times; filings carry genuine PSX announcement dates for 24 symbols but statement-level linkage is not verifiable"
+      }
+    },
+    "deltas_vs_technical_only": {
+      "technical_market_regime_v1": {
+        "ff_rf_test_expectancy_delta_pct": 0.0,
+        "ff_rf_auc_test_delta": 0.0017,
+        "lgbm_21d_mae_delta": -0.000697,
+        "matched_sample": true
+      },
+      "technical_liquidity_v1": {
+        "ff_rf_test_expectancy_delta_pct": -0.0061,
+        "ff_rf_auc_test_delta": 0.0024,
+        "lgbm_21d_mae_delta": -0.001858,
+        "matched_sample": true
+      },
+      "technical_corporate_action_safe_v1": {
+        "ff_rf_test_expectancy_delta_pct": -0.0057,
+        "ff_rf_auc_test_delta": 0.002,
+        "lgbm_21d_mae_delta": 0.0,
+        "matched_sample": true
+      },
+      "combined_verified_v1": {
+        "ff_rf_test_expectancy_delta_pct": -0.0054,
+        "ff_rf_auc_test_delta": 0.0024,
+        "lgbm_21d_mae_delta": -0.001553,
+        "matched_sample": true
+      }
+    },
+    "coverage_loss": "none within the cohort (all groups same rows); between-cohort coverage differences do not exist by construction"
+  }
+}

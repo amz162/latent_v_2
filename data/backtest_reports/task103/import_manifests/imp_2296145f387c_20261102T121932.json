@@ -1,0 +1,42 @@
+{
+ "import_id": "imp_2296145f387c_20261102T121932",
+ "type": "kse100",
+ "filename": "kse100_dupes.csv",
+ "sha256": "2296145f387ce9205f6748600e9b878b9c4b252be821b209ca73022a964550cc",
+ "source": "user_supplied",
+ "provider": "unspecified",
+ "retrieval_date": "2026-11-02",
+ "date_coverage": [
+  "2026-10-30",
+  "2026-10-31"
+ ],
+ "record_count": 3,
+ "valid_count": 2,
+ "rejected_count": 1,
+ "duplicate_in_staging": 1,
+ "validation": {
+  "columns": [
+   "date",
+   "close"
+  ],
+  "rows_in_file": 3,
+  "valid_rows": 2,
+  "rejected_rows": 1,
+  "in_file_duplicates": 1,
+  "fixture_rows": 0,
+  "rejected_sample": [
+   {
+    "date": "2026-10-30",
+    "close": "78300",
+    "_row": 3,
+    "_reasons": [
+     "duplicate of an earlier row in the same file"
+    ]
+   }
+  ]
+ },
+ "result": "imported_to_staging",
+ "imported_at": "2026-11-02T12:19:32+0000",
+ "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+ "runtime_seconds": 0.0
+}

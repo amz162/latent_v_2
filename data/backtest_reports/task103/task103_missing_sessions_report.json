@@ -1,0 +1,71 @@
+{
+  "report": "task103_missing_sessions",
+  "generated_at": "2026-11-02T12:17:15+0000",
+  "status": "completed",
+  "definition": "sessions present in the global PSX calendar (union of all symbols) inside a symbol's own first..last span but absent for that symbol",
+  "symbols_with_gaps": 669,
+  "worst": [
+    {
+      "symbol": "NATM",
+      "sessions_in_span": 2479,
+      "present": 166,
+      "missing_sessions": 2313
+    },
+    {
+      "symbol": "AWTX",
+      "sessions_in_span": 2473,
+      "present": 243,
+      "missing_sessions": 2230
+    },
+    {
+      "symbol": "ITANZ",
+      "sessions_in_span": 2479,
+      "present": 260,
+      "missing_sessions": 2219
+    },
+    {
+      "symbol": "JVDCPS",
+      "sessions_in_span": 2399,
+      "present": 289,
+      "missing_sessions": 2110
+    },
+    {
+      "symbol": "ASLCPS",
+      "sessions_in_span": 2429,
+      "present": 338,
+      "missing_sessions": 2091
+    },
+    {
+      "symbol": "ASIC",
+      "sessions_in_span": 2479,
+      "present": 406,
+      "missing_sessions": 2073
+    },
+    {
+      "symbol": "EWIC",
+      "sessions_in_span": 2478,
+      "present": 444,
+      "missing_sessions": 2034
+    },
+    {
+      "symbol": "FSWL",
+      "sessions_in_span": 2479,
+      "present": 479,
+      "missing_sessions": 2000
+    },
+    {
+      "symbol": "FIL",
+      "sessions_in_span": 2479,
+      "present": 489,
+      "missing_sessions": 1990
+    },
+    {
+      "symbol": "HAFL",
+      "sessions_in_span": 2479,
+      "present": 549,
+      "missing_sessions": 1930
+    }
+  ],
+  "note": "gaps are legitimate (suspensions/holidays per-symbol); they are reported, not deleted or forward-filled",
+  "full_top50": "task103_missing_sessions_top50.csv"
+}

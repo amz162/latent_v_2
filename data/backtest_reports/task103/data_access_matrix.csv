@@ -1,0 +1,14 @@
+provider,kind,status,eod,kse100_index,fundamentals,corporate_actions,intraday,auth,probe_http,last_verified,failure_reason
+psx_data_portal_official,official_exchange_portal,provider_unavailable,yes,yes,no,announcements_only,no,none for public downloads (per portal description),000,,"HTTP 000 connection failed from this sandbox (network egress restriction), reproduced in Task 102 and again 2026-11-02; the official portal "
+psx_closing_rates_pdf,official_exchange_download,provider_unavailable,yes,partial,no,no,no,none (public URL pattern),000,,HTTP 000 unreachable from sandbox (same egress restriction)
+yahoo_finance_chart_v8,public_api,not_available,no,no,no,no,no,none,404,,HTTP 404 'symbol may be delisted' (Task 102) - Yahoo does not carry KSE-100
+stooq_csv,public_api,provider_unavailable,unknown,unknown,no,no,no,none,000,,"connection failed (HTTP 000, host unreachable from sandbox; Task 102 same)"
+wsj_historical_download,news_portal_download,not_available,no,blocked,no,no,no,none for page; bot protection active,401,,HTTP 401 DataDome captcha (bot protection) - bypassing is NOT permitted
+investing_api,public_api,not_available,no,blocked,no,no,no,undocumented; UA filtering observed,403,,"HTTP 403 forbidden (Task 102 + 2026-11-02) - private/undocumented endpoint, scraping it is not permitted"
+tradingeconomics,public_api,credential_required,no,paid_tier_only,no,no,paid_only,API key (paid tiers),410,,HTTP 410 gone on guest tier (Task 102); KSE-100 requires a paid TE subscription key
+alphavantage,public_api,not_available,no,no,no,no,other_markets_only,free API key,200,,no Pakistan market coverage in the public directory; demo probe returns empty/error payload for KSE-100
+nasdaq_data_link,licensed_data_marketplace,not_available,no,no,no,no,no,API key for datasets,403,,no PSX/KSE-100 dataset publicly listed
+bloomberg_refinitiv_professional,licensed_terminal_vendor,paid_access_required,yes,yes,yes,yes,yes,commercial subscription + terminal/API credentials,n/a,,commercial subscription required; sandbox has no credentials and pricing is quote-based
+askanalyst_existing_ingest,in_project_legacy_ingest,verified_access,no,no,statements_no_ts,no,no,n/a (already ingested),n/a,2026-11-02T12:17:06+0000,
+pypsx_intraday_provider,in_project_adapter,credential_required,no,no,no,no,yes_live_only,PYPSX API credentials (owner-side),n/a,,credentials not present in environment
+user_supplied_licensed_files,onboarding_path,public_access,yes,yes,yes,yes,yes,n/a (owner supplies files),n/a,2026-11-02T12:17:06+0000,

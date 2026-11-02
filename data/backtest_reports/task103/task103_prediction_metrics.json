@@ -1,0 +1,113 @@
+{
+  "report": "task103_prediction_metrics",
+  "generated_at": "2026-11-02T12:17:43+0000",
+  "status": "completed_with_limitations",
+  "baselines_verdict": "NO model beats the zero-return baseline; NO model beats the training-only mean baseline (Task 101: ARIMA MAE 0.0982 vs zero-return 0.0853)",
+  "reused_task102": {
+    "reused_from": "data/backtest_reports/task102/task102_prediction_metrics.json",
+    "reused_at": "2026-11-02T12:17:43+0000",
+    "provenance": "historical evidence \u2014 not recomputed in Task 103; prediction metrics vs baselines",
+    "generated_at": "2026-11-02T01:08:06+0000",
+    "disposition": "development_only",
+    "by_group": {
+      "technical_only_v1": {
+        "zero_return_baseline_mae": 0.105622,
+        "train_mean_baseline_mae": 0.105333,
+        "ridge": {
+          "mae": 0.108756,
+          "rmse": 0.155925,
+          "r2": -0.0713,
+          "dir_acc": 0.4952
+        },
+        "lightgbm": {
+          "mae": 0.114824,
+          "rmse": 0.163183,
+          "r2": -0.1733,
+          "dir_acc": 0.4829
+        }
+      },
+      "technical_market_regime_v1": {
+        "zero_return_baseline_mae": 0.105622,
+        "train_mean_baseline_mae": 0.105333,
+        "ridge": {
+          "mae": 0.10887,
+          "rmse": 0.15606,
+          "r2": -0.0731,
+          "dir_acc": 0.4972
+        },
+        "lightgbm": {
+          "mae": 0.114127,
+          "rmse": 0.162184,
+          "r2": -0.159,
+          "dir_acc": 0.4816
+        }
+      },
+      "technical_liquidity_v1": {
+        "zero_return_baseline_mae": 0.105622,
+        "train_mean_baseline_mae": 0.105333,
+        "ridge": {
+          "mae": 0.108773,
+          "rmse": 0.15624,
+          "r2": -0.0756,
+          "dir_acc": 0.5005
+        },
+        "lightgbm": {
+          "mae": 0.112966,
+          "rmse": 0.160855,
+          "r2": -0.1401,
+          "dir_acc": 0.4837
+        }
+      },
+      "technical_corporate_action_safe_v1": {
+        "zero_return_baseline_mae": 0.105622,
+        "train_mean_baseline_mae": 0.105333,
+        "ridge": {
+          "mae": 0.108756,
+          "rmse": 0.155925,
+          "r2": -0.0713,
+          "dir_acc": 0.4952
+        },
+        "lightgbm": {
+          "mae": 0.114824,
+          "rmse": 0.163183,
+          "r2": -0.1733,
+          "dir_acc": 0.4829
+        }
+      },
+      "combined_verified_v1": {
+        "zero_return_baseline_mae": 0.105622,
+        "train_mean_baseline_mae": 0.105333,
+        "ridge": {
+          "mae": 0.108805,
+          "rmse": 0.156224,
+          "r2": -0.0754,
+          "dir_acc": 0.4977
+        },
+        "lightgbm": {
+          "mae": 0.113271,
+          "rmse": 0.160966,
+          "r2": -0.1417,
+          "dir_acc": 0.4801
+        }
+      },
+      "technical_pit_fundamental_v1": {}
+    },
+    "bootstrap_ci": {
+      "all_trades_ff_final_test_expectancy_pct_ci95": [
+        -1.3784,
+        0.3546
+      ],
+      "point_estimate_pct": -0.5833,
+      "block_days": 21,
+      "n_unique_decision_dates": 237,
+      "n_boot": 200,
+      "method": "date-block bootstrap (all samples sharing a date move together)"
+    },
+    "by_horizon_note": "21d shown; 5d/10d identical mechanics",
+    "baselines_compared": [
+      "zero_return",
+      "train_mean",
+      "task101 frozen technical-only"
+    ]
+  }
+}

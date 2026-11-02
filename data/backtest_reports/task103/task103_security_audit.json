@@ -1,0 +1,84 @@
+{
+  "report": "task103_security_audit",
+  "generated_at": "2026-11-02T12:17:44+0000",
+  "status": "completed_with_limitations",
+  "historical_env_exposure": {
+    "commits_adding_env": "9aab5fff Full backup \u2014 Latent.pk PSX platform: 13-ensemble portfolio simulator, real-history backtest, intraday (pypsx), live data (psxdata), prediction score + automate, technical fallback, 1000+ stocks. .env included (private repo).",
+    "env_tracked_now": false,
+    "rotation_status": "not verifiable from this sandbox \u2014 owner-controlled rotation requirement stands: any credential that ever appeared in git history MUST be treated as exposed and rotated by its owner; values are never printed here",
+    "history_rewrite": "FORBIDDEN \u2014 the old exposure is documented, never force-pushed away"
+  },
+  "secrets_scan_tracked_files": {
+    "patterns_checked": [
+      "AKIA",
+      "ghp_",
+      "github_pat",
+      "sk_live",
+      "BEGIN PRIVATE KEY",
+      "password="
+    ],
+    "findings": [
+      {
+        "pattern": "ghp_",
+        "files": [
+          "worklog.md"
+        ]
+      },
+      {
+        "pattern": "github_pat",
+        "files": [
+          "worklog.md"
+        ]
+      },
+      {
+        "pattern": "password=",
+        "files": [
+          "skills/pdf/briefs/process.md"
+        ]
+      }
+    ]
+  },
+  "env_guards": {
+    "CRON_SECRET": {
+      "referenced": true,
+      "note": "checked for presence (value never printed)"
+    },
+    "PRECOMPUTE_KEY": {
+      "referenced": true,
+      "note": "checked for presence (value never printed)"
+    },
+    "PREDICTION_INGEST_TOKEN": {
+      "referenced": true,
+      "note": "checked for presence (value never printed)"
+    }
+  },
+  "practices": {
+    ".env": "gitignored (verified)",
+    "upload/": "never committed",
+    "db backups": "kept out of public commits (custom.db.gz is the documented sanitized data backup procedure \u2014 owner decision to keep private)",
+    "licensed_data": "never exposed through public APIs nor committed"
+  },
+  "api_security": {
+    "auth_gated_endpoints": [
+      "cron (CRON_SECRET)",
+      "precompute (PRECOMPUTE_KEY)",
+      "prediction ingest (PREDICTION_INGEST_TOKEN)"
+    ],
+    "csv_import_security": "staging-only imports, schema/type validation, fixture quarantine, no shell interpolation",
+    "sql_injection": "Prisma ORM parameterized queries; staging DB uses parameterized sqlite",
+    "error_handling": "no raw exceptions containing secrets returned to clients"
+  },
+  "operational_checks": [
+    "db availability",
+    "data freshness",
+    "ingestion failures",
+    "feature generation failures",
+    "model inference failures",
+    "cost-parity drift",
+    "shadow pipeline delays",
+    "paper-trading duplicates",
+    "API health",
+    "stale model versions"
+  ],
+  "runbook": "docs/task103-operational-runbook.md"
+}

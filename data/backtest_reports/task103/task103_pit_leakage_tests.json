@@ -1,0 +1,67 @@
+{
+  "pass": 12,
+  "fail": 0,
+  "tests": [
+    {
+      "id": "late_published_excluded",
+      "pass": true,
+      "detail": "late filing (eps 99) must never appear; amended v2 (eps 12) should be in force"
+    },
+    {
+      "id": "early_published_included",
+      "pass": true,
+      "detail": "got 10"
+    },
+    {
+      "id": "amendment_not_leaking_before_amendment_date",
+      "pass": true,
+      "detail": "pre-amendment decision must see v1 (eps 10), got 10"
+    },
+    {
+      "id": "amendment_visible_after_amendment_date",
+      "pass": true,
+      "detail": "post-amendment decision must see v2 (eps 12), got 12"
+    },
+    {
+      "id": "unknown_publication_timestamp_unavailable",
+      "pass": true,
+      "detail": "records without publication info must never be returned"
+    },
+    {
+      "id": "latest_available_version_wins",
+      "pass": true,
+      "detail": "got 120"
+    },
+    {
+      "id": "conservative_instant_is_1700_pkt",
+      "pass": true,
+      "detail": "2025-04-10T12:00:00.000Z"
+    },
+    {
+      "id": "after_close_same_session_not_available",
+      "pass": true,
+      "detail": "market-hours decision on announcement day must NOT see the filing"
+    },
+    {
+      "id": "after_close_next_session_available",
+      "pass": true,
+      "detail": "next-session decision must see the filing"
+    },
+    {
+      "id": "kse100_blocked_returns_null_not_proxy",
+      "pass": true,
+      "detail": "status=blocked_external_data; adapter must never substitute the internal proxy"
+    },
+    {
+      "id": "kse100_status_reports_blockers",
+      "pass": true,
+      "detail": "status=blocked_external_data, blockers=8"
+    },
+    {
+      "id": "as_of_boundary_day_before",
+      "pass": true,
+      "detail": "got 8"
+    }
+  ],
+  "at": "2026-11-02T12:17:17.063Z"
+}

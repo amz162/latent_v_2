@@ -1,0 +1,123 @@
+{
+  "report": "task103_kse100_coverage",
+  "generated_at": "2026-11-02T12:17:16+0000",
+  "status": "blocked_external_data",
+  "genuine_index_data_available": false,
+  "provider_states": [
+    {
+      "provider": "psx_data_portal_official",
+      "status": "provider_unavailable",
+      "failure_reason": "HTTP 000 connection failed from this sandbox (network egress restriction), reproduced in Task 102 and again 2026-11-02; the official portal DOES advertise KSE-100 + daily EOD downloads per web evidence, so the documented unblock path is to run the fetch from an unrestricted host or supply the official export via the Task 103 import system",
+      "last_verified": null
+    },
+    {
+      "provider": "psx_closing_rates_pdf",
+      "status": "provider_unavailable",
+      "failure_reason": "HTTP 000 unreachable from sandbox (same egress restriction)",
+      "last_verified": null
+    },
+    {
+      "provider": "wsj_historical_download",
+      "status": "not_available",
+      "failure_reason": "HTTP 401 DataDome captcha (bot protection) - bypassing is NOT permitted",
+      "last_verified": null
+    },
+    {
+      "provider": "tradingeconomics",
+      "status": "credential_required",
+      "failure_reason": "HTTP 410 gone on guest tier (Task 102); KSE-100 requires a paid TE subscription key",
+      "last_verified": null
+    },
+    {
+      "provider": "user_supplied_licensed_files",
+      "status": "public_access",
+      "failure_reason": null,
+      "last_verified": "2026-11-02T12:17:06+0000"
+    }
+  ],
+  "reproduced_task102_history": [
+    {
+      "provider": "yahoo_finance_chart_v8",
+      "result": "HTTP 404 - 'symbol may be delisted' (Yahoo does not carry KSE-100)"
+    },
+    {
+      "provider": "wsj_download",
+      "result": "HTTP 401 - DataDome captcha (bot protection)"
+    },
+    {
+      "provider": "psx_data_portal",
+      "result": "connection failed (HTTP 000, unreachable from sandbox)"
+    },
+    {
+      "provider": "investing_api",
+      "result": "HTTP 403 forbidden"
+    },
+    {
+      "provider": "tradingeconomics",
+      "result": "HTTP 410 gone (guest tier does not expose KSE-100)"
+    },
+    {
+      "provider": "yahoo_finance_chart_v8",
+      "result": null
+    }
+  ],
+  "import_activation_path": {
+    "mechanism": "scripts/task103_import_data.py --type kse100 --file <official CSV> --dry-run | --validate | --import",
+    "schema_required": [
+      "date",
+      "close"
+    ],
+    "schema_optional": [
+      "open",
+      "high",
+      "low",
+      "volume",
+      "turnover",
+      "provider",
+      "source_id",
+      "retrieved_at"
+    ],
+    "validation_rules": [
+      "date format",
+      "numeric checks",
+      "OHLC relationships",
+      "duplicate dates (in-file and vs staging)",
+      "fixture quarantine",
+      "idempotent SHA-256 manifest"
+    ],
+    "validation_proof_dry_run": {
+      "status": "already_imported",
+      "import_id": "imp_4a177fcbb0ff_20261102T120357",
+      "sha256": "4a177fcbb0ffe86a913872d201561c12815e47549eb43e9d22e31c48149402ea",
+      "note": "idempotent: identical file (same SHA-256) was already imported; no rows inserted again",
+      "previous_result": "imported"
+    },
+    "post_import": "adapter src/lib/market-data/kse100-provider.ts auto-detects the official CSV at data/backtest_reports/task102/raw_external_data/kse100_official_eod.csv (or a vendor key in .env) and switches status to verified/partially_verified WITHOUT code changes"
+  },
+  "feature_availability_contract": {
+    "module": "src/lib/market-data/feature-availability.ts",
+    "states": [
+      "verified_index",
+      "internal_proxy",
+      "unavailable"
+    ],
+    "tests": {
+      "pass": 8,
+      "fail": 0,
+      "ts_stdout_tail": [
+        "kse100 contract tests: 8 pass, 0 fail"
+      ]
+    },
+    "regime_rule": "where index data is absent, market-regime prediction returns 'unknown' unless the caller explicitly opts into the separately labeled internal-proxy namespace"
+  },
+  "honesty": {
+    "never_fabricated": "no index observations were created, downloaded or synthesized",
+    "proxy_separation": "market_internal_proxy remains a DIFFERENT feature source (pilot25 equal-weight breadth) and is never served as KSE-100"
+  },
+  "requirements_to_unblock": [
+    "run the official-portal fetch from a host without the sandbox egress restriction (dps.psx.com.pk/historical advertises KSE-100 history; HTTP 000 from here), then import the export via the onboarding CLI",
+    "or supply any permitted vendor export/API key (owner-side)",
+    "everything downstream (adapter, contract tests, freshness) activates automatically"
+  ],
+  "runtime_seconds": 0.4
+}

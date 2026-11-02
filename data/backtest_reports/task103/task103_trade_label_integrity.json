@@ -1,0 +1,39 @@
+{
+  "report": "task103_trade_label_integrity",
+  "generated_at": "2026-11-02T12:17:17+0000",
+  "status": "completed",
+  "reconciliation_task102_record": {
+    "vs_task101_labels": {
+      "matched": 11521,
+      "differences": 0,
+      "max_net_deviation_pkr": 0.0,
+      "verdict": "IDENTICAL"
+    }
+  },
+  "n_labeled_task102": 11521,
+  "reverified_now": {
+    "labels_file_present_task102": true,
+    "labels_file_present_task101": true,
+    "sha256_task102_labels": "348fbbf56a1f24ced13ea4b0ecaa3c317638b3d5ebc5ab567192f0ef38f513e8",
+    "sha256_task101_labels": "348fbbf56a1f24ced13ea4b0ecaa3c317638b3d5ebc5ab567192f0ef38f513e8",
+    "identical_files": true,
+    "n_label_rows_task102": 6
+  },
+  "label_engine": "strategy-engine.ts + computeTradeCostsV2 (UNCHANGED from Task 101)",
+  "exit_semantics": "unchanged: TP-before-SL, SL-first gap-aware, scale-out legs not double-charged, net of computeSimTradeCosts -> computeTradeCostsV2",
+  "preserved_fields": [
+    "net outcome",
+    "TP-before-SL",
+    "net return",
+    "MFE",
+    "MAE",
+    "TP1/TP2/TP3",
+    "stop-loss probability",
+    "expectancy",
+    "duration",
+    "actual costs",
+    "maturity (unresolved outcomes never mislabeled as losses)"
+  ],
+  "task103_new_labels": "NOT created - no new verified features justify a new label dataset (spec: build only where new verified observations exist)",
+  "task101_artifacts_untouched": true
+}

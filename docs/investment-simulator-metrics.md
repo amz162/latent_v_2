@@ -233,3 +233,7 @@ Data honesty (Task 102):
 - No screen presents the internal pilot25-breadth proxy as the KSE-100 index; genuine KSE-100
   status is `blocked_external_data` (see `docs/task102-data-foundation.md`).
 - Fundamentals and intraday coverage gaps are reported as unavailable, never interpolated.
+
+## Task 103 re-verification (2026-11-02)
+
+All metric formulas and denominators in this document were re-verified by `scripts/task103_tests.py` and `scripts/task103_parity.ts` (33/33 fixtures). The default cost profile remains `psx_user_schedule_v2` via `computeSimTradeCosts` → `computeTradeCostsV2`; `legacy_flat_v1` is available only when explicitly requested. Prediction probability, calibrated probability, historical model accuracy, trade win rate, expected net return and realized net return continue to be displayed as distinct, separately labeled quantities; development-only results are never mixed with genuine forward-validation results (of which there are none yet — see `docs/task103-forward-validation.md`).

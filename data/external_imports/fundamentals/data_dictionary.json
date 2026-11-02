@@ -1,0 +1,26 @@
+{
+ "type": "fundamentals",
+ "required": [
+  "symbol",
+  "period_end",
+  "metric",
+  "value"
+ ],
+ "optional": [
+  "period_start",
+  "statement_type",
+  "publication_datetime",
+  "announcement_date",
+  "source",
+  "filing_id",
+  "version",
+  "amendment_of",
+  "currency",
+  "unit",
+  "source_checksum",
+  "retrieved_at"
+ ],
+ "notes": "publication_datetime when the source truly publishes it; otherwise leave BOTH publication_datetime and announcement_date empty - the record stays 'unknown' and is NOT usable for point-in-time decisions (conservative policy). Do not misrepresent financial-period dates as publication dates.",
+ "drop_location": "/home/z/my-project/latent_v_2/data/external_imports/fundamentals",
+ "import_command": "python scripts/task103_import_data.py --type fundamentals --file <path> --dry-run"
+}

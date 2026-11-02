@@ -19,3 +19,7 @@ No legitimate intraday PSX source exists in this environment. The DB contains no
 ## To unblock
 
 Provide a permitted intraday vendor (credentials in `.env`); the adapter auto-detects it. Until then every intraday-dependent conclusion stays labeled as unavailable.
+
+## Task 103 update (2026-11-02)
+
+The intraday ingestion pathway is now operational end-to-end via the onboarding CLI: `python scripts/task103_import_data.py --type intraday --file <csv> --dry-run | --validate | --import`, supporting 1/5/15/30/60-minute bars with session-boundary, duplicate-timestamp, bar-integrity and volume-consistency validation, SHA-256 manifests and fixture quarantine (`quality=synthetic_fixture` rows can never enter production). No genuine intraday provider is reachable (status `provider_unavailable`), so the activation rule stands: an interval is enabled only when a verified provider actually supplies it, and all execution realism remains labeled daily-OHLC approximation.

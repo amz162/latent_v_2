@@ -1,0 +1,21 @@
+{
+ "type": "psx_eod",
+ "required": [
+  "symbol",
+  "date",
+  "open",
+  "high",
+  "low",
+  "close",
+  "volume"
+ ],
+ "optional": [
+  "turnover",
+  "provider",
+  "source_id",
+  "retrieved_at"
+ ],
+ "notes": "Raw UNADJUSTED prices as published by the source. If the vendor series is adjusted, set provider_adjusted=true column; adjusted and raw must never be mixed.",
+ "drop_location": "/home/z/my-project/latent_v_2/data/external_imports/psx_eod",
+ "import_command": "python scripts/task103_import_data.py --type psx_eod --file <path> --dry-run"
+}

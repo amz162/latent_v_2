@@ -1,0 +1,24 @@
+{
+ "type": "intraday",
+ "required": [
+  "symbol",
+  "date",
+  "bar_start",
+  "bar_end",
+  "open",
+  "high",
+  "low",
+  "close",
+  "volume"
+ ],
+ "optional": [
+  "turnover",
+  "interval",
+  "provider",
+  "source_id",
+  "quality"
+ ],
+ "notes": "interval in {1min,5min,15min,30min,60min}. Never manufacture intraday bars from daily OHLC; synthetic rows must carry quality=synthetic_fixture and are quarantined (rejected on import unless --allow-fixture).",
+ "drop_location": "/home/z/my-project/latent_v_2/data/external_imports/intraday",
+ "import_command": "python scripts/task103_import_data.py --type intraday --file <path> --dry-run"
+}

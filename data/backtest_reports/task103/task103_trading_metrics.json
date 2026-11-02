@@ -1,0 +1,80 @@
+{
+  "report": "task103_trading_metrics",
+  "generated_at": "2026-11-02T12:17:43+0000",
+  "status": "completed_with_limitations",
+  "reused_task102": {
+    "reused_from": "data/backtest_reports/task102/task102_trading_metrics.json",
+    "reused_at": "2026-11-02T12:17:43+0000",
+    "provenance": "historical evidence \u2014 not recomputed in Task 103; net-of-costs trading metrics",
+    "generated_at": "2026-11-02T01:08:06+0000",
+    "disposition": "development_only",
+    "cohort": "final_test partition, all 3 production strategies, 100k notional",
+    "all_trades": {
+      "fixed_first_hit": {
+        "n_trades": 3978,
+        "grossPnl": 2796120.13,
+        "totalCost": 5114882.93,
+        "netPnl": -2318762.8,
+        "expectancy_net_pct": -0.5829,
+        "win_rate_pct": 42.53,
+        "profit_factor": 0.843,
+        "avg_win_pkr": 7369.65,
+        "avg_loss_pkr": -6469.03,
+        "avg_hold_sessions": 10.19
+      },
+      "max_tp_step_trailing": {
+        "n_trades": 3978,
+        "grossPnl": 1695087.84,
+        "totalCost": 4279426.14,
+        "netPnl": -2584338.3,
+        "expectancy_net_pct": -0.6497,
+        "win_rate_pct": 55.43,
+        "profit_factor": 0.742,
+        "avg_win_pkr": 3370.52,
+        "avg_loss_pkr": -5649.37,
+        "avg_hold_sessions": 5.67
+      },
+      "scale_out_50_25_25": {
+        "n_trades": 3978,
+        "grossPnl": 1243621.52,
+        "totalCost": 4290666.05,
+        "netPnl": -3047044.53,
+        "expectancy_net_pct": -0.766,
+        "win_rate_pct": 49.85,
+        "profit_factor": 0.714,
+        "avg_win_pkr": 3839.41,
+        "avg_loss_pkr": -5343.66,
+        "avg_hold_sessions": 10.19
+      }
+    },
+    "cost_profile": "psx_user_schedule_v2 / ATL_15",
+    "atl_sensitivity_non_atl_30": {
+      "fixed_first_hit": {
+        "extra_cgt_pkr": 2408439.2,
+        "netPnl_nonATL": -4727202.0
+      },
+      "max_tp_step_trailing": {
+        "extra_cgt_pkr": 1574230.48,
+        "netPnl_nonATL": -4158568.78
+      },
+      "scale_out_50_25_25": {
+        "extra_cgt_pkr": 1585867.45,
+        "netPnl_nonATL": -4632911.98
+      }
+    },
+    "frozen_rule_shadow": {
+      "note": "thresholds frozen on validation; test evaluated once (development_only)",
+      "brier_val_raw": 0.250902,
+      "brier_val_cal": 0.24178,
+      "brier_test_cal": 0.263498,
+      "auc_val": 0.507,
+      "auc_test": 0.5373,
+      "thr_q70": 0.4317,
+      "n_val_selected": 1314,
+      "n_test_selected": 3458,
+      "val_expectancy_pct": -1.6539,
+      "test_expectancy_pct": -0.5292,
+      "baseline_all_test_expectancy_pct": -0.6501
+    }
+  }
+}

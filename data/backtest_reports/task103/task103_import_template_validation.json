@@ -1,0 +1,430 @@
+{
+  "report": "task103_import_template_validation",
+  "generated_at": "2026-11-02T12:19:34+0000",
+  "status": "completed",
+  "checks": {
+    "template_every_type_exists": true,
+    "valid_file_imports": true,
+    "reimport_idempotent": true,
+    "malformed_fails_visibly": true,
+    "missing_column_fails": true,
+    "fixture_rows_quarantined": true,
+    "intraday_fixture_quarantined": true,
+    "in_file_duplicates_rejected": true,
+    "all_types_importable": true
+  },
+  "n_checks": 9,
+  "n_passed": 9,
+  "results": {
+    "template_psx_eod": {
+      "exists": true,
+      "valid_rows": 1,
+      "errors": [],
+      "notes": "Raw UNADJUSTED prices as published by the source. If the vendor series is adjusted, set provider_adjusted=true column; adjusted and raw must never be mixed."
+    },
+    "template_kse100": {
+      "exists": true,
+      "valid_rows": 1,
+      "errors": [],
+      "notes": "GENUINE KSE-100 index values only. Never an average of pilot stocks or an internal proxy; such series must never be imported under this type."
+    },
+    "template_fundamentals": {
+      "exists": true,
+      "valid_rows": 1,
+      "errors": [],
+      "notes": "publication_datetime when the source truly publishes it; otherwise leave BOTH publication_datetime and announcement_date empty - the record stays 'unknown' and "
+    },
+    "template_filings": {
+      "exists": true,
+      "valid_rows": 1,
+      "errors": [],
+      "notes": "date = genuine exchange announcement date (day precision is fine)."
+    },
+    "template_corporate_actions": {
+      "exists": true,
+      "valid_rows": 1,
+      "errors": [],
+      "notes": "event_type in {split, bonus, rights, cash_dividend, other}. Events without a verifiable source are stored with verification_status=unverified_suspect and are NO"
+    },
+    "template_intraday": {
+      "exists": true,
+      "valid_rows": 0,
+      "errors": [
+        "ENTIRE file is synthetic fixture data - never mixed into production imports"
+      ],
+      "notes": "interval in {1min,5min,15min,30min,60min}. Never manufacture intraday bars from daily OHLC; synthetic rows must carry quality=synthetic_fixture and are quaranti"
+    },
+    "kse100_valid_import": {
+      "status": "imported",
+      "manifest": "/home/z/my-project/latent_v_2/data/backtest_reports/task103/import_manifests/imp_4a177fcbb0ff_20261102T121931.json",
+      "summary": {
+        "columns": [
+          "date",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "provider",
+          "source_id",
+          "retrieved_at"
+        ],
+        "rows_in_file": 2,
+        "valid_rows": 2,
+        "rejected_rows": 0,
+        "in_file_duplicates": 0,
+        "fixture_rows": 0
+      },
+      "import_id": "imp_4a177fcbb0ff_20261102T121931",
+      "type": "kse100",
+      "filename": "kse100_valid.csv",
+      "sha256": "4a177fcbb0ffe86a913872d201561c12815e47549eb43e9d22e31c48149402ea",
+      "source": "user_supplied",
+      "provider": "unspecified",
+      "retrieval_date": "2026-11-02",
+      "date_coverage": [
+        "2026-10-30",
+        "2026-10-31"
+      ],
+      "record_count": 2,
+      "valid_count": 2,
+      "rejected_count": 0,
+      "duplicate_in_staging": 0,
+      "result": "imported_to_staging",
+      "imported_at": "2026-11-02T12:19:31+0000",
+      "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+      "runtime_seconds": 0.0
+    },
+    "kse100_idempotent_reimport": {
+      "status": "already_imported",
+      "import_id": "imp_4a177fcbb0ff_20261102T121931",
+      "sha256": "4a177fcbb0ffe86a913872d201561c12815e47549eb43e9d22e31c48149402ea",
+      "note": "idempotent: identical file (same SHA-256) was already imported; no rows inserted again",
+      "previous_result": "imported"
+    },
+    "kse100_malformed_validate": {
+      "status": "validation_failed",
+      "sha256": "f9d49ed916f2f06898bdd9498bb3cd73686130b3887d48898ab0b33029b7799f",
+      "summary": {
+        "columns": [
+          "date",
+          "open",
+          "high",
+          "low",
+          "close"
+        ],
+        "rows_in_file": 2,
+        "valid_rows": 1,
+        "rejected_rows": 1,
+        "in_file_duplicates": 0,
+        "fixture_rows": 0,
+        "rejected_sample": [
+          {
+            "date": "not-a-date",
+            "open": "1",
+            "high": "2",
+            "low": "3",
+            "close": "4",
+            "_row": 2,
+            "_reasons": [
+              "date not YYYY-MM-DD: not-a-date"
+            ]
+          }
+        ]
+      },
+      "note": "validate mode is a strict gate: any rejected row fails the file"
+    },
+    "kse100_missing_col": {
+      "status": "dry_run_fatal",
+      "sha256": "3e892cf7934d55d2bc3429eddc6c86c1ee9575d4f3735b20ee8004d4b2086503",
+      "errors": [
+        "missing required column: close"
+      ],
+      "summary": {
+        "columns": [
+          "date",
+          "volume"
+        ],
+        "rows": 0
+      },
+      "note": null
+    },
+    "kse100_fixture_quarantined": {
+      "status": "validation_failed",
+      "sha256": "3d8812475d05ce1206cf34220029c53184b7cba896eee50591c73f4dbc6f59ce",
+      "errors": [
+        "ENTIRE file is synthetic fixture data - never mixed into production imports"
+      ],
+      "summary": {
+        "columns": [
+          "date",
+          "close",
+          "quality"
+        ],
+        "rows_in_file": 2,
+        "valid_rows": 0,
+        "rejected_rows": 2,
+        "in_file_duplicates": 0,
+        "fixture_rows": 2,
+        "rejected_sample": [
+          {
+            "date": "2026-10-30",
+            "close": "100",
+            "quality": "synthetic_fixture",
+            "_row": 2,
+            "_reasons": [
+              "synthetic fixture row (quality=synthetic_fixture) - quarantine; use --allow-fixture to load into the fixture quarantine table only"
+            ]
+          },
+          {
+            "date": "2026-10-31",
+            "close": "101",
+            "quality": "synthetic_fixture",
+            "_row": 3,
+            "_reasons": [
+              "synthetic fixture row (quality=synthetic_fixture) - quarantine; use --allow-fixture to load into the fixture quarantine table only"
+            ]
+          }
+        ]
+      },
+      "note": null
+    },
+    "kse100_dupes_rejected": {
+      "status": "imported",
+      "manifest": "/home/z/my-project/latent_v_2/data/backtest_reports/task103/import_manifests/imp_2296145f387c_20261102T121932.json",
+      "summary": {
+        "columns": [
+          "date",
+          "close"
+        ],
+        "rows_in_file": 3,
+        "valid_rows": 2,
+        "rejected_rows": 1,
+        "in_file_duplicates": 1,
+        "fixture_rows": 0
+      },
+      "import_id": "imp_2296145f387c_20261102T121932",
+      "type": "kse100",
+      "filename": "kse100_dupes.csv",
+      "sha256": "2296145f387ce9205f6748600e9b878b9c4b252be821b209ca73022a964550cc",
+      "source": "user_supplied",
+      "provider": "unspecified",
+      "retrieval_date": "2026-11-02",
+      "date_coverage": [
+        "2026-10-30",
+        "2026-10-31"
+      ],
+      "record_count": 3,
+      "valid_count": 2,
+      "rejected_count": 1,
+      "duplicate_in_staging": 1,
+      "result": "imported_to_staging",
+      "imported_at": "2026-11-02T12:19:32+0000",
+      "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+      "runtime_seconds": 0.0
+    },
+    "psx_eod_import": {
+      "status": "imported",
+      "manifest": "/home/z/my-project/latent_v_2/data/backtest_reports/task103/import_manifests/imp_6514fc72d0c9_20261102T121932.json",
+      "summary": {
+        "columns": [
+          "symbol",
+          "date",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "provider",
+          "source_id",
+          "retrieved_at"
+        ],
+        "rows_in_file": 1,
+        "valid_rows": 1,
+        "rejected_rows": 0,
+        "in_file_duplicates": 0,
+        "fixture_rows": 0
+      },
+      "import_id": "imp_6514fc72d0c9_20261102T121932",
+      "type": "psx_eod",
+      "filename": "psx_eod_valid.csv",
+      "sha256": "6514fc72d0c9dd0cc74cee08f2446ab445b9d329d502cff119f35c502c89c2dc",
+      "source": "user_supplied",
+      "provider": "unspecified",
+      "retrieval_date": "2026-11-02",
+      "date_coverage": [
+        "2026-10-30",
+        "2026-10-30"
+      ],
+      "record_count": 1,
+      "valid_count": 1,
+      "rejected_count": 0,
+      "duplicate_in_staging": 0,
+      "result": "imported_to_staging",
+      "imported_at": "2026-11-02T12:19:32+0000",
+      "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+      "runtime_seconds": 0.0
+    },
+    "fundamentals_import": {
+      "status": "imported",
+      "manifest": "/home/z/my-project/latent_v_2/data/backtest_reports/task103/import_manifests/imp_95b76268d3cb_20261102T121933.json",
+      "summary": {
+        "columns": [
+          "symbol",
+          "period_end",
+          "metric",
+          "value",
+          "currency",
+          "unit"
+        ],
+        "rows_in_file": 1,
+        "valid_rows": 1,
+        "rejected_rows": 0,
+        "in_file_duplicates": 0,
+        "fixture_rows": 0
+      },
+      "import_id": "imp_95b76268d3cb_20261102T121933",
+      "type": "fundamentals",
+      "filename": "fundamentals_valid.csv",
+      "sha256": "95b76268d3cbc24ef7493495b48289251ec472adb8bef3c37c84f44e57b2173f",
+      "source": "user_supplied",
+      "provider": "unspecified",
+      "retrieval_date": "2026-11-02",
+      "date_coverage": [
+        "2026-09-30",
+        "2026-09-30"
+      ],
+      "record_count": 1,
+      "valid_count": 1,
+      "rejected_count": 0,
+      "duplicate_in_staging": 0,
+      "result": "imported_to_staging",
+      "imported_at": "2026-11-02T12:19:33+0000",
+      "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+      "runtime_seconds": 0.0
+    },
+    "corporate_actions_import": {
+      "status": "imported",
+      "manifest": "/home/z/my-project/latent_v_2/data/backtest_reports/task103/import_manifests/imp_52221c7db58e_20261102T121933.json",
+      "summary": {
+        "columns": [
+          "symbol",
+          "event_type",
+          "ex_date",
+          "ratio",
+          "announcement_date",
+          "source"
+        ],
+        "rows_in_file": 1,
+        "valid_rows": 1,
+        "rejected_rows": 0,
+        "in_file_duplicates": 0,
+        "fixture_rows": 0
+      },
+      "import_id": "imp_52221c7db58e_20261102T121933",
+      "type": "corporate_actions",
+      "filename": "corporate_actions_valid.csv",
+      "sha256": "52221c7db58ed3588449586e11036420e2c724ce527dab8b3c74498dcd1a4694",
+      "source": "user_supplied",
+      "provider": "unspecified",
+      "retrieval_date": "2026-11-02",
+      "date_coverage": [
+        "2026-06-15",
+        "2026-06-15"
+      ],
+      "record_count": 1,
+      "valid_count": 1,
+      "rejected_count": 0,
+      "duplicate_in_staging": 0,
+      "result": "imported_to_staging",
+      "imported_at": "2026-11-02T12:19:33+0000",
+      "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+      "runtime_seconds": 0.0
+    },
+    "intraday_import": {
+      "status": "validation_failed",
+      "sha256": "995358b4bfbfdff28fa75b4ca788ff44fa7150feaad55720bf105c9cbfa39b1b",
+      "errors": [
+        "ENTIRE file is synthetic fixture data - never mixed into production imports"
+      ],
+      "summary": {
+        "columns": [
+          "symbol",
+          "date",
+          "bar_start",
+          "bar_end",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "interval",
+          "quality"
+        ],
+        "rows_in_file": 1,
+        "valid_rows": 0,
+        "rejected_rows": 1,
+        "in_file_duplicates": 0,
+        "fixture_rows": 1,
+        "rejected_sample": [
+          {
+            "symbol": "TEST",
+            "date": "2026-10-30",
+            "bar_start": "2026-10-30T10:00:00",
+            "bar_end": "2026-10-30T10:05:00",
+            "open": "10",
+            "high": "10.2",
+            "low": "9.9",
+            "close": "10.1",
+            "volume": "100",
+            "interval": "5min",
+            "quality": "synthetic_fixture",
+            "_row": 2,
+            "_reasons": [
+              "synthetic fixture row (quality=synthetic_fixture) - quarantine; use --allow-fixture to load into the fixture quarantine table only"
+            ]
+          }
+        ]
+      },
+      "note": null
+    },
+    "filings_import": {
+      "status": "imported",
+      "manifest": "/home/z/my-project/latent_v_2/data/backtest_reports/task103/import_manifests/imp_48114c46a49c_20261102T121934.json",
+      "summary": {
+        "columns": [
+          "symbol",
+          "date",
+          "description",
+          "category"
+        ],
+        "rows_in_file": 1,
+        "valid_rows": 1,
+        "rejected_rows": 0,
+        "in_file_duplicates": 0,
+        "fixture_rows": 0
+      },
+      "import_id": "imp_48114c46a49c_20261102T121934",
+      "type": "filings",
+      "filename": "filings_valid.csv",
+      "sha256": "48114c46a49c5bda9f1badb8e781f0ffce6aecd22ccda446228d99d3f4e165f8",
+      "source": "user_supplied",
+      "provider": "unspecified",
+      "retrieval_date": "2026-11-02",
+      "date_coverage": [
+        "2026-10-30",
+        "2026-10-30"
+      ],
+      "record_count": 1,
+      "valid_count": 1,
+      "rejected_count": 0,
+      "duplicate_in_staging": 0,
+      "result": "imported_to_staging",
+      "imported_at": "2026-11-02T12:19:34+0000",
+      "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+      "runtime_seconds": 0.0
+    }
+  },
+  "notes": "all imports land in the STAGING db only; UNIT_TEST_FIXTURE_NOT_REAL_DATA provenance marks these rows as test data; production promotion is a separate explicit step; fixture rows are quarantined by design",
+  "runtime_seconds": 3.3
+}

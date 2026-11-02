@@ -52,3 +52,7 @@ Required leakage cases, all covered with synthetic fixtures:
 (`scripts/task102_pit_fundamentals.py`) produces the PIT records and coverage report; the
 `getFundamentalsAsOf` production interface is ready and tested for the day genuine
 publication timestamps exist (issuer/exchange announcement archive or a permitted vendor).
+
+## Task 103 status (2026-11-02)
+
+Task 103 rebuilt the PIT records (3,319) from the genuine Task 90 announcement ingest and added a timestamp audit (`task103_filing_timestamp_report.json`): 0 filings carry a real publication *datetime* (day-precision only) and 0 statement/ratio rows carry any publication timestamp. The conservative availability rule is unchanged: an announcement known only to day precision becomes available 17:00 PKT that date, i.e. usable from the NEXT session; unknown publication time stays unknown/unavailable. `technical_pit_fundamental_v1` remains disabled. The onboarding importer (`scripts/task103_import_data.py --type fundamentals`) honours a genuine `publication_datetime` column the moment a source provides one; leakage tests pass 12/12 in `data/backtest_reports/task103/task103_pit_leakage_report.json`.

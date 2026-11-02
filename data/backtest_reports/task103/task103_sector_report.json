@@ -1,0 +1,28 @@
+{
+  "report": "task103_sector_report",
+  "generated_at": "2026-11-02T12:17:17+0000",
+  "status": "completed_with_limitations",
+  "sector_source": "Task 98 verified classification + preserved sector_overrides (data/askanalyst/sector_overrides.json)",
+  "unknown_policy": "unknown sectors are NEVER inferred; small samples are never presented as full-market breadth",
+  "reused_task102": {
+    "reused_from": "data/backtest_reports/task102/task102_sector_analysis.json",
+    "reused_at": "2026-11-02T12:17:17+0000",
+    "provenance": "historical evidence \u2014 not recomputed in Task 103; sector engine unchanged",
+    "generated_at": "2026-11-02T00:59:11+0000",
+    "source": "data/askanalyst/sector_overrides.json (Task 98; PRESERVED, not regenerated)",
+    "coverage": {
+      "symbols_in_cohort": 25,
+      "mapped": 0
+    },
+    "final_test_fixed_first_hit_by_sector": {
+      "unknown": {
+        "n": 3978,
+        "netPnl": -2318762.8,
+        "netWinRate": 42.53,
+        "n_symbols": 24
+      }
+    },
+    "unknown_policy": "unmapped symbols -> 'unknown' bucket; never guessed",
+    "honesty": "pilot25 is a small universe; sector buckets with n<30 are not interpretable"
+  }
+}

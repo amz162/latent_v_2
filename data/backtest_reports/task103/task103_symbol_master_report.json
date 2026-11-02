@@ -1,0 +1,23 @@
+{
+  "report": "task103_symbol_master_report",
+  "generated_at": "2026-11-02T12:17:15+0000",
+  "status": "completed",
+  "n_instruments": 909,
+  "instrument_id_scheme": "PSX-INST-#### (stable internal surrogate, ordered by symbol)",
+  "trading_status_counts": {
+    "active": 563,
+    "delisted_or_inactive": 312,
+    "suspended_or_illiquid_recent": 34
+  },
+  "sector_coverage": {
+    "with_sector": 225,
+    "unknown": 684,
+    "source": "task98 sector_overrides (verified families only; no sector is inferred for unknown symbols)"
+  },
+  "limitations": [
+    "company_name not available from any verified source (null, not invented)",
+    "historical symbol changes cannot be detected from a single-source price table; no rename registry exists (blocked_external_data)",
+    "listing/delisting dates are observation-derived approximations"
+  ],
+  "master_file": "data/backtest_reports/task103/task103_symbol_master.csv"
+}

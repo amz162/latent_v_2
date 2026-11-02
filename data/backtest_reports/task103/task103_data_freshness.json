@@ -1,0 +1,28 @@
+{
+  "report": "task103_data_freshness",
+  "generated_at": "2026-11-02T12:17:15+0000",
+  "status": "completed",
+  "latest_session": "2026-10-29",
+  "freshness_by_status": [
+    {
+      "status": "partially_verified",
+      "count": 298,
+      "median": 8.0,
+      "max": 3215
+    },
+    {
+      "status": "stale",
+      "count": 609,
+      "median": 10.0,
+      "max": 3563
+    },
+    {
+      "status": "verified",
+      "count": 2,
+      "median": 8.0,
+      "max": 8
+    }
+  ],
+  "stale_definition": "days_behind_latest > 0 at the symbol's last observation",
+  "note": "freshness is limited by the ingestion pipeline, not by vendor staleness"
+}

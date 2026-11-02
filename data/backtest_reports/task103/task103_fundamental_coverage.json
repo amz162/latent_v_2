@@ -1,0 +1,183 @@
+{
+  "report": "task103_fundamental_coverage",
+  "generated_at": "2026-11-02T12:17:16+0000",
+  "status": "completed_with_limitations",
+  "filings": {
+    "symbols": 24,
+    "total_records": 3319,
+    "genuine_publication_dates": 3319,
+    "financial_result_announcements": 24,
+    "time_of_day_known": false,
+    "granularity": "day (conservative 17:00 PKT rule)"
+  },
+  "statements_and_ratios": {
+    "symbols": 24,
+    "period_labels": [
+      "2003",
+      "2004",
+      "2005",
+      "2006",
+      "2007",
+      "2008",
+      "2009",
+      "2010",
+      "2011",
+      "2012",
+      "2013",
+      "2014"
+    ],
+    "period_granularity": "annual=year; quarter=year-label only",
+    "publication_timestamps": 0,
+    "verdict": "NOT point-in-time usable: accounting-period labels without publication dates must never be treated as available at period end"
+  },
+  "by_symbol": {
+    "ENGRO": {
+      "filings": 126,
+      "result_announcements": 0,
+      "statements_annual": 25,
+      "statements_quarter": 29
+    },
+    "HUBC": {
+      "filings": 166,
+      "result_announcements": 0,
+      "statements_annual": 28,
+      "statements_quarter": 28
+    },
+    "LUCK": {
+      "filings": 279,
+      "result_announcements": 0,
+      "statements_annual": 28,
+      "statements_quarter": 29
+    },
+    "SYS": {
+      "filings": 118,
+      "result_announcements": 0,
+      "statements_annual": 22,
+      "statements_quarter": 22
+    },
+    "MEBL": {
+      "filings": 152,
+      "result_announcements": 0,
+      "statements_annual": 34,
+      "statements_quarter": 34
+    },
+    "PSO": {
+      "filings": 97,
+      "result_announcements": 0,
+      "statements_annual": 20,
+      "statements_quarter": 20
+    },
+    "OGDC": {
+      "filings": 242,
+      "result_announcements": 0,
+      "statements_annual": 22,
+      "statements_quarter": 22
+    },
+    "PPL": {
+      "filings": 238,
+      "result_announcements": 1,
+      "statements_annual": 21,
+      "statements_quarter": 21
+    },
+    "WTL": {
+      "filings": 92,
+      "result_announcements": 0,
+      "statements_annual": 19,
+      "statements_quarter": 19
+    },
+    "KEL": {
+      "filings": 225,
+      "result_announcements": 2,
+      "statements_annual": 20,
+      "statements_quarter": 19
+    },
+    "TRG": {
+      "filings": 116,
+      "result_announcements": 1,
+      "statements_annual": 20,
+      "statements_quarter": 18
+    },
+    "UNITY": {
+      "filings": 150,
+      "result_announcements": 1,
+      "statements_annual": 23,
+      "statements_quarter": 23
+    },
+    "BOP": {
+      "filings": 105,
+      "result_announcements": 0,
+      "statements_annual": 31,
+      "statements_quarter": 31
+    },
+    "CNERGY": {
+      "filings": 109,
+      "result_announcements": 0,
+      "statements_annual": 21,
+      "statements_quarter": 21
+    },
+    "HASCOL": {
+      "filings": 116,
+      "result_announcements": 2,
+      "statements_annual": 22,
+      "statements_quarter": 28
+    },
+    "MLCF": {
+      "filings": 136,
+      "result_announcements": 0,
+      "statements_annual": 22,
+      "statements_quarter": 22
+    },
+    "PAEL": {
+      "filings": 85,
+      "result_announcements": 0,
+      "statements_annual": 20,
+      "statements_quarter": 20
+    },
+    "PIBTL": {
+      "filings": 73,
+      "result_announcements": 4,
+      "statements_annual": 18,
+      "statements_quarter": 18
+    },
+    "LOTCHEM": {
+      "filings": 145,
+      "result_announcements": 1,
+      "statements_annual": 19,
+      "statements_quarter": 19
+    },
+    "PRL": {
+      "filings": 116,
+      "result_announcements": 0,
+      "statements_annual": 20,
+      "statements_quarter": 20
+    },
+    "TELE": {
+      "filings": 106,
+      "result_announcements": 3,
+      "statements_annual": 21,
+      "statements_quarter": 22
+    },
+    "ANL": {
+      "filings": 98,
+      "result_announcements": 1,
+      "statements_annual": 19,
+      "statements_quarter": 20
+    },
+    "HUMNL": {
+      "filings": 94,
+      "result_announcements": 7,
+      "statements_annual": 24,
+      "statements_quarter": 24
+    },
+    "FCCL": {
+      "filings": 135,
+      "result_announcements": 1,
+      "statements_annual": 21,
+      "statements_quarter": 20
+    }
+  },
+  "pit_fundamental_feature_group": "DISABLED (task103_lib.FEATURE_GROUPS)",
+  "usable_as_pit": "announcement-driven records only",
+  "as_of_query": "src/lib/fundamentals/point-in-time.ts getFundamentalsAsOf()",
+  "import_path": "scripts/task103_import_data.py --type fundamentals (publication_datetime column honoured when the source truly publishes it)"
+}

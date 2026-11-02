@@ -1,0 +1,17 @@
+{
+  "report": "task103_forward_validation_status",
+  "generated_at": "2026-11-02T12:17:17+0000",
+  "status": "awaiting_data",
+  "latest_verified_db_date": "2026-10-29",
+  "real_world_sessions_since": "2026-10-30..2026-11-02 occurred but NO licensed feed is connected, so no genuine new observations exist in the system; a later script run does not make the last DB date an untouched test date",
+  "forward_decisions_made": 0,
+  "forward_trades_matured": 0,
+  "statistical_sufficiency": "insufficient_evidence (nothing collected yet)",
+  "state_machine": [
+    "collecting",
+    "insufficient_matured_trades",
+    "awaiting_data",
+    "not_yet_evaluable"
+  ],
+  "activation": "begins automatically when the owner supplies official EOD (onboarding import) or connects a licensed feed; see docs/task103-forward-validation.md"
+}

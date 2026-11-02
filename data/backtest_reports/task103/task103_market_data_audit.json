@@ -1,0 +1,72 @@
+{
+  "report": "task103_market_data_audit",
+  "generated_at": "2026-11-02T12:17:15+0000",
+  "status": "completed",
+  "source": "db/custom.db OhlcvBar recomputed 2026-11-02 (Task 102 audit semantics preserved; per-symbol rows in task103_symbol_coverage.csv)",
+  "n_symbols": 909,
+  "n_bars": 1042821,
+  "date_range": [
+    "2016-10-21",
+    "2026-10-29"
+  ],
+  "status_counts": {
+    "stale": 609,
+    "partially_verified": 298,
+    "verified": 2
+  },
+  "universes": {
+    "pilot25_symbols": [
+      "ENGRO",
+      "HUBC",
+      "LUCK",
+      "SYS",
+      "MEBL",
+      "PSO",
+      "OGDC",
+      "PPL",
+      "WTL",
+      "KEL",
+      "TRG",
+      "UNITY",
+      "BOP",
+      "CNERGY",
+      "HASCOL",
+      "MLCF",
+      "BYCO",
+      "PAEL",
+      "PIBTL",
+      "LOTCHEM",
+      "PRL",
+      "TELE",
+      "ANL",
+      "HUMNL",
+      "FCCL"
+    ],
+    "canonical8_symbols": [
+      "ENGRO",
+      "HUBC",
+      "LUCK",
+      "SYS",
+      "MEBL",
+      "PSO",
+      "OGDC",
+      "PPL"
+    ],
+    "source": "frozen Task 102 inventory (reused, not re-derived)"
+  },
+  "checks": [
+    "OHLC envelope (vendor trait recorded, raw preserved)",
+    "duplicate dates",
+    "negative values",
+    "zero/stale volume",
+    "session gaps >5d",
+    "single-day jumps >=40% (corporate-action suspects, NOT adjusted)",
+    "survivorship: delisted histories retained, no purge"
+  ],
+  "honesty": {
+    "raw_vs_adjusted": "raw only; no adjusted series exists in the DB",
+    "pit_universes": "membership by observation window; survivors-only universes are prohibited",
+    "suspensions": "legitimate suspended/illiquid periods kept identifiable via trading_status + zero-volume fractions"
+  },
+  "runtime_seconds": 4.4
+}

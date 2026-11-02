@@ -1,0 +1,37 @@
+{
+  "report": "task103_api_validation",
+  "generated_at": "2026-11-02T12:23:06+0000",
+  "status": "completed",
+  "checks": {
+    "/": {
+      "http": 200,
+      "snippet": "<!DOCTYPE html><html lang=\"en\" class=\"dark\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/><link rel=\"stylesh"
+    },
+    "/api/data-readiness": {
+      "http": 200,
+      "snippet": "{\"asOf\":\"2026-11-02T12:23:04.963Z\",\"marketData\":{\"latestVerifiedTradingDate\":\"2026-10-29\",\"nSymbols\":909,\"nBars\":1042821,\"lastSuccessfulRefresh\":\"2026-11-02T12:"
+    },
+    "/api/models/registry": {
+      "http": 200,
+      "snippet": "{\"available\":true,\"canonicalCount\":58,\"supplementalCount\":13,\"aliasCount\":2,\"uniqueImplementationCount\":71,\"totalCount\":73,\"aliases\":[{\"name\":\"Kalman\",\"verified"
+    },
+    "/api/backtest/walk-forward/portfolio": {
+      "http": 200,
+      "snippet": "{\"available\":true,\"task\":\"task61_portfolio_simulation\",\"schema_version\":\"1.0\",\"generated_at\":\"2026-10-29T01:43:56.762Z\",\"source_run_id\":\"pilot25_step50_20261028"
+    },
+    "/api/simulate": {
+      "http": 200,
+      "snippet": "{\"amount\":100000,\"positionPct\":2,\"positionSize\":2000,\"results\":[{\"name\":\"pi ensemble\",\"totalTrades\":705,\"winTrades\":552,\"lossTrades\":153,\"winRate\":78.3,\"avgRetu"
+    }
+  },
+  "registry_ok": true,
+  "walk_forward_ok": true,
+  "sim_ok": true,
+  "data_readiness_api": {
+    "implemented": true,
+    "route": "src/app/api/data-readiness/route.ts",
+    "responds": 200,
+    "states_are_explicit": "unknown/unavailable are explicit states"
+  },
+  "compatibility": "API schemas preserve old consumers; historical report schema semantics unchanged"
+}

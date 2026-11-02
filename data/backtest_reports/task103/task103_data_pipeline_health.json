@@ -1,0 +1,181 @@
+{
+  "report": "task103_data_pipeline_health",
+  "generated_at": "2026-11-02T12:17:17+0000",
+  "status": "completed_with_limitations",
+  "pipeline_stages": [
+    "External Source",
+    "Raw Import (onboarding CLI, staging)",
+    "Validation",
+    "Normalization",
+    "Point-in-Time Storage",
+    "Feature Store",
+    "Prediction",
+    "Shadow Decision",
+    "Outcome Maturation",
+    "Evaluation"
+  ],
+  "stage_states": {
+    "external_source": "blocked_external_data (KSE-100), provider_unavailable (intraday)",
+    "raw_import": "operational (staging; promotion step documented)",
+    "validation": "operational (9/9 onboarding checks)",
+    "normalization_pit_storage": "operational for existing data; PIT fundamentals disabled at source level",
+    "feature_store": "operational (verified-only groups)",
+    "prediction_shadow": "operational (shadow-only models retained)",
+    "outcome_maturation": "operational (label engine unchanged)",
+    "evaluation": "operational (frozen protocol)"
+  },
+  "freshness": {
+    "latest_session": "2026-10-29",
+    "by_status": [
+      {
+        "status": "partially_verified",
+        "count": 298,
+        "median": 8.0,
+        "max": 3215
+      },
+      {
+        "status": "stale",
+        "count": 609,
+        "median": 10.0,
+        "max": 3563
+      },
+      {
+        "status": "verified",
+        "count": 2,
+        "median": 8.0,
+        "max": 8
+      }
+    ]
+  },
+  "ingestion_runs": {
+    "runs": [
+      {
+        "run_id": "run_cae9ce3df2",
+        "job": "sources",
+        "start": "2026-11-02T12:16:55+0000",
+        "finish": "2026-11-02T12:17:06+0000",
+        "source": "scripts/task103_runner.py",
+        "rows_fetched": null,
+        "rows_inserted": null,
+        "rows_updated": null,
+        "rows_rejected": null,
+        "failure_reason": null,
+        "checkpoint": "phase:sources=done",
+        "duration_seconds": 11.4,
+        "last_successful_run": "2026-11-02T12:17:06+0000"
+      },
+      {
+        "run_id": "run_c6495f13c2",
+        "job": "import_onboarding",
+        "start": "2026-11-02T12:17:06+0000",
+        "finish": "2026-11-02T12:17:10+0000",
+        "source": "scripts/task103_runner.py",
+        "rows_fetched": null,
+        "rows_inserted": null,
+        "rows_updated": null,
+        "rows_rejected": null,
+        "failure_reason": null,
+        "checkpoint": "phase:import_onboarding=done",
+        "duration_seconds": 3.9,
+        "last_successful_run": "2026-11-02T12:17:10+0000"
+      },
+      {
+        "run_id": "run_a9943dcc1e",
+        "job": "market_audit",
+        "start": "2026-11-02T12:17:10+0000",
+        "finish": "2026-11-02T12:17:15+0000",
+        "source": "scripts/task103_runner.py",
+        "rows_fetched": null,
+        "rows_inserted": null,
+        "rows_updated": null,
+        "rows_rejected": null,
+        "failure_reason": null,
+        "checkpoint": "phase:market_audit=done",
+        "duration_seconds": 4.8,
+        "last_successful_run": "2026-11-02T12:17:15+0000"
+      },
+      {
+        "run_id": "run_a02e2caadc",
+        "job": "kse100",
+        "start": "2026-11-02T12:17:15+0000",
+        "finish": "2026-11-02T12:17:16+0000",
+        "source": "scripts/task103_runner.py",
+        "rows_fetched": null,
+        "rows_inserted": null,
+        "rows_updated": null,
+        "rows_rejected": null,
+        "failure_reason": null,
+        "checkpoint": "phase:kse100=done",
+        "duration_seconds": 0.7,
+        "last_successful_run": "2026-11-02T12:17:16+0000"
+      },
+      {
+        "run_id": "run_88e63cd6df",
+        "job": "pit_fundamentals",
+        "start": "2026-11-02T12:17:16+0000",
+        "finish": "2026-11-02T12:17:17+0000",
+        "source": "scripts/task103_runner.py",
+        "rows_fetched": null,
+        "rows_inserted": null,
+        "rows_updated": null,
+        "rows_rejected": null,
+        "failure_reason": null,
+        "checkpoint": "phase:pit_fundamentals=done",
+        "duration_seconds": 0.8,
+        "last_successful_run": "2026-11-02T12:17:17+0000"
+      },
+      {
+        "run_id": "run_36b5c232b9",
+        "job": "corporate_actions",
+        "start": "2026-11-02T12:17:17+0000",
+        "finish": "2026-11-02T12:17:17+0000",
+        "source": "scripts/task103_runner.py",
+        "rows_fetched": null,
+        "rows_inserted": null,
+        "rows_updated": null,
+        "rows_rejected": null,
+        "failure_reason": null,
+        "checkpoint": "phase:corporate_actions=done",
+        "duration_seconds": 0.0,
+        "last_successful_run": "2026-11-02T12:17:17+0000"
+      },
+      {
+        "run_id": "run_64ebc03a5b",
+        "job": "intraday",
+        "start": "2026-11-02T12:17:17+0000",
+        "finish": "2026-11-02T12:17:17+0000",
+        "source": "scripts/task103_runner.py",
+        "rows_fetched": null,
+        "rows_inserted": null,
+        "rows_updated": null,
+        "rows_rejected": null,
+        "failure_reason": null,
+        "checkpoint": "phase:intraday=done",
+        "duration_seconds": 0.0,
+        "last_successful_run": "2026-11-02T12:17:17+0000"
+      }
+    ]
+  },
+  "job_record_fields": [
+    "run_id",
+    "start",
+    "finish",
+    "source",
+    "rows_fetched",
+    "rows_inserted",
+    "rows_updated",
+    "rows_rejected",
+    "failure_reason",
+    "checkpoint",
+    "duration_seconds",
+    "last_successful_run"
+  ],
+  "scheduler_reality": {
+    "deployed_recurring_service": false,
+    "blocker": "no deployment configuration or service credentials in this sandbox; a local script run once is NOT claimed to be a recurring service",
+    "implementation": "scripts/task103_runner.py supports incremental phase execution with checkpoints/resume; CRON_SECRET-based /api/cron endpoints exist in the app for scheduled refresh on a deployment host",
+    "deployment_instructions": "docs/task103-operational-runbook.md (exact crontab + vercel cron config)"
+  },
+  "idempotency": "every job writes a SHA-256 checkpoint; scheduled runs dedupe on (symbol, date) keys so observations and trades are never duplicated",
+  "readiness_api": "/api/data-readiness (Task 103) reports last refresh, latest verified date, KSE-100/fundamentals/filings/corporate-actions/intraday freshness, source failures and feature availability with explicit unknown/unavailable states"
+}

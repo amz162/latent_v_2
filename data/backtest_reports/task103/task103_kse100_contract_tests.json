@@ -1,0 +1,49 @@
+{
+  "report": "task103_kse100_contract_tests",
+  "pass": 8,
+  "fail": 0,
+  "results": [
+    {
+      "id": "kse100_blocked_no_fabricated_data",
+      "pass": true,
+      "detail": "status=blocked_external_data rows=0"
+    },
+    {
+      "id": "kse100_asof_null_while_blocked",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "kse100_availability_state_unavailable",
+      "pass": true,
+      "detail": "{\"requested\":\"verified_index\",\"state\":\"unavailable\",\"asOf\":null,\"stale\":true,\"reason\":\"genuine KSE-100 blocked_external_data: place official PSX KSE-100 EOD CSV at data/backtest_reports/task102/raw_external_data/kse100_official_eod.csv or set a permitted vendor key in .env\"}"
+    },
+    {
+      "id": "kse100_regime_gate_unknown_while_blocked",
+      "pass": true,
+      "detail": "{\"decision\":\"unknown\",\"label\":\"regime unknown — genuine KSE-100 blocked_external_data: place official PSX KSE-100 EOD CSV at data/backtest_reports/task102/raw_external_data/kse100_official_eod.csv or set a permitted vendor key in .env\"}"
+    },
+    {
+      "id": "proxy_explicitly_labeled",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "proxy_absent_is_unavailable",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "verified_gate_cannot_serve_proxy",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "freshness_fields_present",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "note": "contract: verified_index / internal_proxy / unavailable; a verified_index consumer can never receive proxy values; blocked source -> regime unknown",
+  "at": "2026-11-02T12:17:15.787Z"
+}

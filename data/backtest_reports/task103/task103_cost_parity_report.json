@@ -1,0 +1,35 @@
+{
+  "report": "task103_cost_parity_report",
+  "generated_at": "2026-11-02T12:17:43+0000",
+  "status": "completed",
+  "pass": 33,
+  "fail": 0,
+  "fixtures": 5,
+  "engine": "computeTradeCostsV2 (shared authoritative) via computeSimTradeCosts",
+  "profiles": {
+    "default": "psx_user_schedule_v2",
+    "compatibility_only": "legacy_flat_v1",
+    "tax": "ATL 15% / NON-ATL 30% preserved"
+  },
+  "paths_covered": [
+    "Investment Simulator",
+    "Strategy Engine",
+    "Signal Stats",
+    "Walk-forward",
+    "Portfolio backtesting",
+    "Trade outcome labeling",
+    "Prospective paper-trading",
+    "Scale-out accounting"
+  ],
+  "guarantees": [
+    "parity within PKR 0.01",
+    "no double-charging",
+    "no missing fees",
+    "CGT zero on non-positive gross",
+    "profile labels on every output"
+  ],
+  "ts_suite": "scripts/task103_parity.ts (Task 101 29/29 suite + Task 102 fixtures, task103 namespace)",
+  "ts_stdout_tail": [
+    "parity: 33 passed, 0 failed"
+  ]
+}

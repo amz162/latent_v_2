@@ -1,0 +1,24 @@
+{
+ "report": "task103 provider_verification_report",
+ "generated_at": "2026-11-02T12:17:06+0000",
+ "n_providers": 13,
+ "status_counts": {
+  "credential_required": 2,
+  "not_available": 5,
+  "paid_access_required": 1,
+  "provider_unavailable": 3,
+  "public_access": 1,
+  "verified_access": 1
+ },
+ "reachable_in_sandbox": [
+  "alphavantage",
+  "askanalyst_existing_ingest",
+  "user_supplied_licensed_files"
+ ],
+ "genuine_data_fetched_this_run": [
+  "askanalyst_existing_ingest"
+ ],
+ "kse100_conclusion": "Genuine historical KSE-100 remains BLOCKED from this sandbox: every reachable permitted provider lacks the index and the official portal (which advertises it) is unreachable (HTTP 000). Nothing was fabricated; the import system is the unblock path.",
+ "runtime_seconds": 11.1,
+ "status": "completed"
+}

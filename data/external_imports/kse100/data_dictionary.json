@@ -1,0 +1,20 @@
+{
+ "type": "kse100",
+ "required": [
+  "date",
+  "close"
+ ],
+ "optional": [
+  "open",
+  "high",
+  "low",
+  "volume",
+  "turnover",
+  "provider",
+  "source_id",
+  "retrieved_at"
+ ],
+ "notes": "GENUINE KSE-100 index values only. Never an average of pilot stocks or an internal proxy; such series must never be imported under this type.",
+ "drop_location": "/home/z/my-project/latent_v_2/data/external_imports/kse100",
+ "import_command": "python scripts/task103_import_data.py --type kse100 --file <path> --dry-run"
+}

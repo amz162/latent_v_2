@@ -1,0 +1,49 @@
+{
+  "report": "task103_intraday_coverage",
+  "generated_at": "2026-11-02T12:17:17+0000",
+  "status": "provider_unavailable",
+  "genuine_intraday_available": false,
+  "supported_intervals": [
+    "1min",
+    "5min",
+    "15min",
+    "30min",
+    "60min"
+  ],
+  "activation_rule": "an interval is enabled ONLY when a verified provider actually supplies it; nothing is activated today",
+  "ingestion_pipeline": {
+    "import_type": "intraday (scripts/task103_import_data.py)",
+    "schema_required": [
+      "symbol",
+      "date",
+      "bar_start",
+      "bar_end",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume"
+    ],
+    "validation": "session boundaries, duplicate timestamps, bar integrity (OHLC envelope), volume consistency, interval consistency, fixture quarantine (quality=synthetic_fixture rows are rejected)",
+    "proven_import": "task103_import_template_validation.json (intraday fixture correctly quarantined; valid file imports to staging)"
+  },
+  "honesty": {
+    "never_manufactured": "intraday bars are NEVER synthesized from daily OHLC",
+    "execution_labeling": "where real intraday coverage is absent, execution engines remain labeled 'daily OHLC approximation'; a daily-candle simulation is never presented as intraday execution",
+    "synthetic_fixtures": "kept in clearly isolated test files only"
+  },
+  "reused_task102_detail": {
+    "status": "provider_unavailable",
+    "intervals_audited": [
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ],
+    "configured_providers": "none (env has no intraday provider credentials)",
+    "blocker": "No legitimate intraday PSX source exists in the environment; PSX Data Portal unreachable from sandbox (HTTP 000); no credentials configured",
+    "adapter": "src/lib/market-data/intraday-provider.ts (normalized schema + provider abstraction; refuses to synthesize bars from daily OHLC)",
+    "tests": "synthetic fixtures only, clearly marked, never mixed with real data"
+  }
+}
