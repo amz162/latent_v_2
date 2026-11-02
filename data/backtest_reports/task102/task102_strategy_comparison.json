@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-11-02T01:01:46+0000",
+  "identical_cohort": "final_test, identical signals + costs",
+  "strategies": {
+    "fixed_first_hit": {
+      "n": 3978,
+      "netWinRate_pct": 42.53,
+      "grossPnl": 2796120.13,
+      "totalCost": 5114882.93,
+      "netPnl": -2318762.8,
+      "expectancy_pct_of_notional": -0.5829,
+      "profit_factor": 0.843,
+      "avg_hold_n_a": null
+    },
+    "max_tp_step_trailing": {
+      "n": 3978,
+      "netWinRate_pct": 55.43,
+      "grossPnl": 1695087.84,
+      "totalCost": 4279426.14,
+      "netPnl": -2584338.3,
+      "expectancy_pct_of_notional": -0.6497,
+      "profit_factor": 0.742,
+      "avg_hold_n_a": null
+    },
+    "scale_out_50_25_25": {
+      "n": 3978,
+      "netWinRate_pct": 49.85,
+      "grossPnl": 1243621.52,
+      "totalCost": 4290666.05,
+      "netPnl": -3047044.53,
+      "expectancy_pct_of_notional": -0.766,
+      "profit_factor": 0.714,
+      "avg_hold_n_a": null
+    }
+  },
+  "exit_reasons": {
+    "fixed_first_hit": {
+      "TP3": 1373,
+      "SL": 1288,
+      "TIME_UP": 673,
+      "SL_AFTER_TP1": 465,
+      "SL_AFTER_TP2": 179
+    },
+    "max_tp_step_trailing": {
+      "TRAILING_SL_AT_TP1": 1793,
+      "SL": 1288,
+      "TRAILING_SL_AT_TP2": 489,
+      "TP3": 294,
+      "TIME_UP": 114
+    },
+    "scale_out_50_25_25": {
+      "SCALE_TP1_TP2_TP3": 1373,
+      "SL": 1288,
+      "SL_AFTER_PARTIALS": 644,
+      "TIME_UP_AFTER_PARTIALS": 567,
+      "TIME_UP": 106
+    }
+  },
+  "atr_baselines": {
+    "atr_tp1_rr_1_1_v1": {
+      "status": "not_applicable",
+      "reason": "ATR policy exists in risk-levels.ts and its historical evidence in task78 artifacts; adding it as a NEW label path would change fill semantics without a defined cost contract \u2014 historical evidence reused instead",
+      "historical_evidence": "data/backtest_reports/task78_final_audit.json"
+    },
+    "atr_min_net_rr_2_v1": {
+      "status": "not_applicable",
+      "reason": "same as above (risk-levels.ts policy; Task 78 evidence reused)"
+    }
+  },
+  "engine_agreement": "simulator == strategy engine proven by task102 parity fixtures (task102_cost_parity_report.json, task101 29/29 retained)"
+}

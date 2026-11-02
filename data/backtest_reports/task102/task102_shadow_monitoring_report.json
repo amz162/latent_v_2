@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-11-02T01:01:49+0000",
+  "mode": "data_readiness_mode (no real-time provider reachable)",
+  "monitors_defined": [
+    "data_feed_freshness (OhlcvBar max date vs today)",
+    "missing_kse100_observations (blocked - external data)",
+    "missing_fundamental_updates (filings-only coverage, 24 symbols)",
+    "feature_drift (extras distribution vs train window)",
+    "prediction_drift",
+    "calibration_drift (rolling Brier on matured)",
+    "model_failure (exception alerts)",
+    "cost_mismatch (parity fixtures)",
+    "symbol_coverage_decline (n symbols with recent bars)"
+  ],
+  "shadow_prediction_store": "defined (model version, feature schema version, prediction ts, data cutoff, probabilities, expected net value, decision, NO-TRADE reason, realized outcome, cost profile); NOT activated because verified new features are unavailable",
+  "paper_pipeline_audit": {
+    "generated_at": "2026-11-02T01:01:49+0000",
+    "read_only_audit": true,
+    "lifecycle_untouched": true,
+    "totals": {
+      "trades": 114,
+      "by_state": {
+        "pending_entry": 114
+      },
+      "legs": 0,
+      "prediction_history": 375,
+      "prediction_outcomes": 375
+    },
+    "duplicate_processing": {
+      "signal_key_duplicates": null,
+      "idempotency": "processor is keyed/idempotent; no mutation performed"
+    },
+    "cost_reconciliation": "prospective processor uses psx_user_schedule_v2 via risk-levels/trading-costs (unchanged); label rows in task102 reconcile identically to task101 (label integrity artifact)"
+  }
+}

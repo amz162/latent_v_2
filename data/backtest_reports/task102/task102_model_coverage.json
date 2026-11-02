@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-11-02T01:05:44+0000",
+  "evaluated_new_task102": [
+    "RandomForest",
+    "LightGBM (cls + reg)",
+    "Ridge (reg)",
+    "matched-sample feature-group comparison"
+  ],
+  "reused_valid_evidence": {
+    "9 classical frozen cohort": "task100 (identical protocol)",
+    "SVR/LinearSVR/Ridge/HGB": "task101 campaign",
+    "LSTM/CNN-LSTM": "task99 (zero-return not beaten)",
+    "statistical family": "task101 ARIMA/Holt-Winters"
+  },
+  "blocked": {
+    "deep/foundation": "resource limit (150s/2CPU/4GB)",
+    "Chronos/Lag-Llama/Moirai": "packages/checkpoints unavailable",
+    "Prophet/GARCH/Kalman": "packages unavailable",
+    "CatBoost/ElasticNet/Huber": "not run this task (limited incremental value vs frozen protocol; documented rather than silently skipped)"
+  },
+  "principle": "no aliases as implementations; no false completion claims"
+}

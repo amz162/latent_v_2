@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-11-02T01:05:43+0000",
+  "already_used_periods": {
+    "task100_final_test": "chronological final 35% of the pooled pilot25 cohort (inspected & used for model selection evidence)",
+    "task101_final_test": "same window; frozen q70 rule evaluated once on it",
+    "rule": "these observations are NOT a new untouched test for Task 102"
+  },
+  "overlap_check": {
+    "db_last_bar": "2026-10-29",
+    "label_grid_first_date": "2016-10-21",
+    "label_grid_last_date": "2026-09-29",
+    "conclusion": "the DB ends inside/at the Task 101 final-test window; there is NO genuinely untouched historical period left for a new final evaluation"
+  },
+  "task102_protocol": {
+    "train": "same frozen 50% window as Task 101",
+    "validation": "same frozen 15% window (calibration + thresholds ONLY)",
+    "final_test": "same frozen 35% window \u2014 reported once, disposition development_only",
+    "purge": "21-session maturity purge on horizon boundaries; step-5 overlap documented (76% overlap with 21d horizon)",
+    "scalers/encoders/imputation": "train-only (task101 _features_and_labels uses train median)",
+    "calibration": "validation-only isotonic",
+    "thresholds": "validation-only quantiles (q70/q80/q90), q70 frozen",
+    "effective_sample_sizes": {
+      "n_rows": 11521,
+      "n_unique_decision_dates": 1157,
+      "note": "row counts are NOT independent experiments; date-block bootstrap only"
+    }
+  },
+  "disposition": "development_only",
+  "forward_plan": "reserve every future session for prospective shadow validation; promotion requires matured positive-expectancy evidence on new data",
+  "bootstrap": "moving-block date-block bootstrap (task100_lib.moving_block_bootstrap_ci)"
+}

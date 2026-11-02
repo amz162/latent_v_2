@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-11-02T01:10:01+0000",
+  "pit_leakage_tests": {
+    "pass": 12,
+    "fail": 0,
+    "cases": [
+      "late_published_excluded",
+      "early_published_included",
+      "amendment_not_leaking_before_amendment_date",
+      "amendment_visible_after_amendment_date",
+      "unknown_publication_timestamp_unavailable",
+      "latest_available_version_wins",
+      "conservative_instant_is_1700_pkt",
+      "after_close_same_session_not_available",
+      "after_close_next_session_available",
+      "kse100_blocked_returns_null_not_proxy",
+      "kse100_status_reports_blockers",
+      "as_of_boundary_day_before"
+    ]
+  },
+  "feature_group_audits": {
+    "technical_only_v1": {
+      "cutoff_bounded": true,
+      "sources": [
+        "ohlcv_technical"
+      ],
+      "adjusted_expost_used": false,
+      "notes": "trailing windows of bars <= decision date only"
+    },
+    "technical_market_regime_v1": {
+      "cutoff_bounded": true,
+      "sources": [
+        "ohlcv_technical",
+        "market_regime_internal_proxy"
+      ],
+      "adjusted_expost_used": false,
+      "notes": "regime features from pilot25 equal-weight breadth (internal proxy) - genuine KSE-100 blocked"
+    },
+    "technical_pit_fundamental_v1": {
+      "cutoff_bounded": true,
+      "sources": [
+        "pit_fundamentals"
+      ],
+      "adjusted_expost_used": false,
+      "notes": "DISABLED: no verified publication timestamps link statements/ratios to decision times; filings carry genuine PSX announcement dates for 24 symbols but statement-level linkage is not verifiable"
+    },
+    "technical_liquidity_v1": {
+      "cutoff_bounded": true,
+      "sources": [
+        "ohlcv_technical",
+        "ohlcv_liquidity"
+      ],
+      "adjusted_expost_used": false,
+      "notes": "trailing windows of bars <= decision date only"
+    },
+    "technical_corporate_action_safe_v1": {
+      "cutoff_bounded": true,
+      "sources": [
+        "ohlcv_technical",
+        "corporate_action_flags"
+      ],
+      "adjusted_expost_used": false,
+      "notes": "raw-price CA-suspicion flags only; no adjusted ex-post series used in decision features"
+    },
+    "combined_verified_v1": {
+      "cutoff_bounded": true,
+      "sources": [
+        "ohlcv_technical",
+        "ohlcv_liquidity",
+        "corporate_action_flags",
+        "market_regime_internal_proxy"
+      ],
+      "adjusted_expost_used": false,
+      "notes": "only verified sources; PIT fundamentals excluded (unavailable), genuine KSE-100 excluded (blocked)"
+    }
+  },
+  "no_test_scaler_fitting": "train-only median imputation + scaling (task101 _features_and_labels)",
+  "no_future_target_leakage": "labels come from the production engine over the 21-session forward window; features are trailing/same-date only",
+  "index_discipline": "getKse100AsOf returns null while blocked; proxy labeled market_internal_proxy",
+  "matched_sample": "none within the cohort (all groups same rows); between-cohort coverage differences do not exist by construction",
+  "verdict": "no leakage found; PIT group disabled rather than risk unverified timestamps"
+}

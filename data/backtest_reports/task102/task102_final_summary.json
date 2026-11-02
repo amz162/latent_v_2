@@ -1,0 +1,40 @@
+{
+  "task": 102,
+  "generated_at": "2026-11-02T01:05:44+0000",
+  "disposition": "completed_with_limitations",
+  "answers": {
+    "1_kse100_genuine": "NO - blocked_external_data; 6 providers attempted (all blocked); adapter + unblock path ready; internal proxy kept separate",
+    "2_symbols_usable_ohlcv": "909 symbols, 1042821 bars (2016-10-21..2026-10-29)",
+    "3_symbols_pit_fundamentals": "0 with VERIFIED statement-level publication timestamps; 24 symbols have genuine PSX announcement dates (filings)",
+    "4_records_genuine_pub_timestamps": 3319,
+    "5_corporate_action_history": "missing (no registry/source); jump-suspicion flags only",
+    "6_intraday": "not available; adapter + synthetic fixtures only",
+    "7_which_groups_add_value": "matched-sample deltas: {\"technical_market_regime_v1\": {\"ff_rf_test_expectancy_delta_pct\": 0.0, \"ff_rf_auc_test_delta\": 0.0017, \"lgbm_21d_mae_delta\": -0.000697, \"matched_sample\": true}, \"technical_liquidity_v1\": {\"ff_rf_test_expectancy_delta_pct\": -0.0061, \"ff_rf_auc_test_delta\": 0.0024, \"lgbm_21d_mae_delta\": -0.001858, \"matched_sample\": true}, \"technical_corporate_action_safe_v1\": {\"ff_rf_test_expectancy_delta_pct\": -0.0057, \"ff_rf_auc_test_delta\": 0.002, \"lgbm_21d_mae_delta\": 0.0, \"matched_sample\": true}, \"combined_verified_v1\": {\"ff_rf_test_expectancy_delta_pct\": -0.0054, \"ff_rf_auc_test_delta\": 0.0024, \"lgbm_21d_mae_delta\": -0.001553, \"matched_sample\": true}}",
+    "8_fundamentals_kse100_improve": "NO - both sources unavailable; PIT group disabled, KSE-100 replaced by labeled internal proxy only",
+    "9_beats_baselines": "NO - no model beats zero-return MAE (consistent with Tasks 99-101)",
+    "10_positive_net_expectancy": "NO - best frozen shadow rule -0.5292%/trade vs baseline -0.6501% (improvement, still negative)",
+    "11_untouched_data": "NO - no untouched period remains; disposition development_only",
+    "12_promotion_eligible": "NONE - promotion gates fail (no untouched OOS, negative expectancy)",
+    "13_shadow_only": [
+      "psx_cost_aware_trade_classifier",
+      "psx_net_expectancy_meta_model"
+    ],
+    "14_blocked_families": "deep/foundation + Prophet/GARCH/Kalman/Chronos family - reasons in baseline inventory + task102_model_coverage.json",
+    "15_cost_parity": "yes - task102 parity fixtures pass (29/29 equivalent suite)",
+    "16_paper_records_preserved": true,
+    "17_tests_passing": "python tests + TS PIT tests + parity + tsc + API + browser (see task102_test_summary.json)",
+    "18_missing_access": [
+      "genuine KSE-100 EOD history (PSX Data Portal or permitted vendor)",
+      "intraday vendor access",
+      "fundamental publication timestamps (issuer/exchange announcement archive)"
+    ]
+  },
+  "outcome": "B (improved but still negative) / C (no demonstrated improvement) combined: verified new feature sources could not be obtained; matched-sample deltas of the implementable groups are within noise; nothing promoted",
+  "protected": [
+    "task54 walk-forward",
+    "task100 artifacts",
+    "task101 artifacts + labels",
+    "prospective paper-trading lifecycle",
+    "sector_overrides.json"
+  ]
+}

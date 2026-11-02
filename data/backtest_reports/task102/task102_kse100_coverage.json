@@ -1,0 +1,66 @@
+{
+  "status": "blocked_external_data",
+  "genuine_index_data_available": false,
+  "conclusion": "Genuine historical KSE-100 index data could NOT be obtained from any permitted source reachable in this sandbox. No index observations were created, downloaded or fabricated. The internal market proxy (pilot25 equal-weight breadth, market_internal_proxy) remains available and SEPARATELY LABELED; it is never presented as the KSE-100 index.",
+  "attempts": [
+    {
+      "provider": "yahoo_finance_chart_v8",
+      "symbol": "^KSE100",
+      "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/%5EKSE100",
+      "result": "HTTP 404 - 'symbol may be delisted' (Yahoo does not carry KSE-100)"
+    },
+    {
+      "provider": "wsj_download",
+      "symbol": "XX/XKAR/IDXKSE100",
+      "endpoint": "https://www.wsj.com/market-data/quotes/XX/XKAR/IDXKSE100/historical-prices/download",
+      "result": "HTTP 401 - DataDome captcha (bot protection)"
+    },
+    {
+      "provider": "psx_data_portal",
+      "symbol": "KSE100",
+      "endpoint": "https://dps.psx.com.pk/api/historic",
+      "result": "connection failed (HTTP 000, unreachable from sandbox)"
+    },
+    {
+      "provider": "investing_api",
+      "symbol": "3440",
+      "endpoint": "https://api.investing.com/api/financialdata/historical/3440",
+      "result": "HTTP 403 forbidden"
+    },
+    {
+      "provider": "tradingeconomics",
+      "symbol": "markets/index",
+      "endpoint": "https://api.tradingeconomics.com/markets/index?c=guest:guest",
+      "result": "HTTP 410 gone (guest tier does not expose KSE-100)"
+    },
+    {
+      "provider": "yahoo_finance_chart_v8",
+      "http": "404",
+      "bytes": 108,
+      "success": false,
+      "head": "{\"chart\":{\"result\":null,\"error\":{\"code\":\"Not Found\",\"description\":\"No data found, symbol may be delisted\"}}}"
+    },
+    {
+      "provider": "stooq_csv",
+      "http": "000",
+      "bytes": 0,
+      "success": false,
+      "head": ""
+    },
+    {
+      "provider": "psx_data_portal",
+      "http": "000",
+      "bytes": 0,
+      "success": false,
+      "head": ""
+    }
+  ],
+  "requirements_to_unblock": [
+    "manual download of PSX KSE-100 EOD history (CSV) placed at data/backtest_reports/task102/raw_external_data/kse100_official_eod.csv (source: PSX Data Portal / owner account)",
+    "or any permitted vendor API key in .env (e.g. KSE_DATA_PROVIDER_KEY)",
+    "the adapter src/lib/market-data/kse100-provider.ts auto-detects either and switches status to verified/partially_verified without code changes"
+  ],
+  "adapter": "src/lib/market-data/kse100-provider.ts",
+  "regime_features": "computed from the internal proxy only, feature group technical_market_regime_v1 carries an explicit proxy label",
+  "at": "2026-11-02T00:54:33+0000"
+}

@@ -1,0 +1,171 @@
+{
+  "task": 102,
+  "generated_at": "2026-11-02T00:53:50+0000",
+  "git": {
+    "HEAD": "7fc1cd5b33fc7a157bbc8937429766b41d3ed89e",
+    "branch": "main",
+    "dirty_files": 2,
+    "note": "autosave commits by the platform harness may stack on main; meaningful history = Task 101 commits 80a99d87/b870faf1/529fb1f2"
+  },
+  "registry": {
+    "canonical_count": 58,
+    "supplemental_count": 13,
+    "unique_implementations": 70,
+    "aliases_policy": "aliases are never counted as new implementations (Task 82 audit)",
+    "task101_new_models": [
+      "psx_cost_aware_trade_classifier",
+      "psx_net_expectancy_meta_model"
+    ],
+    "promotion_statuses": {
+      "production_consensus": "canonical models (Task 54 lineage)",
+      "shadow_only_not_promoted": [
+        "psx_cost_aware_trade_classifier"
+      ],
+      "research_only": [
+        "psx_net_expectancy_meta_model"
+      ]
+    }
+  },
+  "benchmarks": {
+    "task54": "400-sample walk-forward, 9 models, 6,000 fits (untouched; preserved)",
+    "task99": "JW reference LSTM/CNN-LSTM: genuine PSX OOS, zero-return not beaten (reused)",
+    "task100": {
+      "best_zero_return_beaten": false,
+      "sample_step_dependence": "documented (50/10/5/1)"
+    },
+    "task101": {
+      "n_labeled_trades": "11,521",
+      "frozen_rule": {
+        "strategy": "max_tp_step_trailing",
+        "model": "RandomForest",
+        "threshold_rule": "q70",
+        "thr": 0.4282,
+        "n_val": 1328,
+        "val_expectancy_pct": -1.6858,
+        "val_coverage_frac": 0.8259
+      },
+      "final_test": {
+        "n_eligible": 3494,
+        "coverage_frac": 0.8783,
+        "n_no_trade": 484,
+        "final_expectancy_pct": -0.5311,
+        "final_win_rate": 0.5633,
+        "baseline_all_trades_expectancy_pct": -0.6501,
+        "baseline_all_trades_win_rate": 0.5543,
+        "validation_expectancy_pct": -1.6858,
+        "honesty_note": "validation-to-final-test expectancy difference is reported, not hidden"
+      },
+      "cost_parity_fixtures": "29/29"
+    }
+  },
+  "database": {
+    "tables": [
+      "User",
+      "RiskProfile",
+      "Plan",
+      "Trade",
+      "OhlcvBar",
+      "PricePatternCache",
+      "ResultPatternCache",
+      "ModelPredictionCache",
+      "ModelBacktestCache",
+      "PredictionHistory",
+      "PricePatternReport",
+      "PredictionOutcome",
+      "ProspectivePaperTrade",
+      "PaperTradeLeg",
+      "PredictionRiskLevels"
+    ],
+    "ohlcv_bars": 1042821,
+    "min_date": "2016-10-21",
+    "max_date": "2026-10-29",
+    "symbols": 909,
+    "index_tables": [],
+    "fundamental_tables": [],
+    "corporate_action_tables": [],
+    "intraday_tables": []
+  },
+  "data_availability": {
+    "ohlcv_daily": {
+      "status": "verified",
+      "range": [
+        "2016-10-21",
+        "2026-10-29"
+      ]
+    },
+    "kse100_genuine": {
+      "status": "blocked_external_data",
+      "detail": "6 providers attempted; all blocked (see task102_kse100_coverage.json)"
+    },
+    "kse100_proxy": {
+      "status": "partially_verified",
+      "detail": "pilot25 equal-weight breadth internal proxy, labeled market_internal_proxy, never shown as index"
+    },
+    "fundamentals": {
+      "status": "partially_verified",
+      "detail": "24 symbols; 3319 filings with genuine PSX announcement dates (day granularity); statements/ratios carry period labels only, no publication timestamps"
+    },
+    "corporate_actions": {
+      "status": "missing",
+      "detail": "no registry in DB; jump-based suspicion flags only"
+    },
+    "intraday": {
+      "status": "provider_unavailable",
+      "detail": "no intraday tables or configured provider"
+    }
+  },
+  "sector_overrides": {
+    "instruments": "n/a",
+    "sectors": [
+      "786",
+      "786R",
+      "AEL",
+      "AHL",
+      "AKBLTFC6",
+      "AKDCL",
+      "AKDSL",
+      "AKZO",
+      "AMBL",
+      "AMSL",
+      "ARM",
+      "ARMG"
+    ],
+    "generated_at": "2026-10-31",
+    "preserved": true
+  },
+  "prospective_lifecycle": {
+    "total": 114,
+    "by_state": {
+      "pending_entry": 114
+    },
+    "legs": 0,
+    "prediction_history": 375,
+    "outcomes": 375,
+    "untouched": true
+  },
+  "blocked_model_families": {
+    "PatchTST/N-BEATS/TimesNet/Informer/LSTM/GRU/CNN-LSTM/Transformer-LSTM/TabNet": "cannot retrain in 150s/2CPU/4GB; no pooled OOS artifact",
+    "Chronos/Lag-Llama/Moirai": "packages/checkpoints not installed",
+    "Prophet": "package not installed (ARIMA/Holt-Winters cover statistical family)",
+    "GARCH": "arch package not installed (EWMA proxy evaluated)",
+    "Kalman": "no implementation artifact; pykalman absent"
+  },
+  "test_coverage": {
+    "python_deterministic": [
+      "task101_tests.py 15/15",
+      "task102_tests.py (this task)"
+    ],
+    "typescript": [
+      "tsc --noEmit",
+      "task102_pit_tests.ts",
+      "task102_parity.ts"
+    ],
+    "api": [
+      "registry",
+      "walk-forward",
+      "simulator V2",
+      "signal-stats"
+    ],
+    "browser": "agent-browser headless suite"
+  }
+}

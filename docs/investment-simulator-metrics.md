@@ -201,3 +201,35 @@ simulator itself was verified, not redesigned.
   are unchanged from earlier sections; `data/backtest_reports/task101/` holds
   the full evidence (`task101_cost_parity_report.json`,
   `task101_strategy_optimization.json`, `task101_cost_reconciliation.json`).
+
+---
+
+## 10. Task 102 additions — definitions, data honesty and shadow-vs-production
+
+Definitions (unchanged mechanics, made explicit):
+
+- **Win rate** numerator = trades with realized net P&L > 0 after full `psx_user_schedule_v2`
+  costs; denominator = **completed trades** (a trade = one signal position; scale-out legs are
+  NOT separate trades). Skipped/unmatured trades are excluded from both.
+- **Gross vs net P&L**: gross = realized price P&L before costs; net = gross − (brokerage +
+  PSX + NCCPL + CDC + CGT + slippage). CGT applies only to positive gross realized profit
+  (ATL 15% / NON-ATL 30%).
+- **Return-percentage denominator** = position notional (100,000 PKR by default).
+- **Drawdown** = running max of cumulative net P&L minus current cumulative net P&L, over
+  chronological completed trades.
+- **Model confidence vs calibrated probability**: `confidence` is a model score (uncalibrated);
+  the cost-aware decision rule uses **isotonic-calibrated** P(net>0) fitted on validation only.
+- **Shadow vs production**: production models drive the live consensus; shadow-only models
+  (the two Task 101 cost-aware models) are computed and stored but never place trades or
+  alter signals; `development_only` results never upgrade to production without passing the
+  promotion gates.
+- **Unmatured labels**: trades without a full 21-session outcome window are excluded from
+  training artifacts, never filled with zeros.
+
+Data honesty (Task 102):
+
+- The Investment Simulator and signal-stats display **only** `psx_user_schedule_v2` by default;
+  `legacy_flat_v1` is available only when explicitly requested.
+- No screen presents the internal pilot25-breadth proxy as the KSE-100 index; genuine KSE-100
+  status is `blocked_external_data` (see `docs/task102-data-foundation.md`).
+- Fundamentals and intraday coverage gaps are reported as unavailable, never interpolated.

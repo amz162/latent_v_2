@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-11-02T00:56:51+0000",
+  "status": "provider_unavailable",
+  "intervals_audited": [
+    "1m",
+    "5m",
+    "15m",
+    "30m",
+    "1h"
+  ],
+  "existing_tables": [],
+  "configured_providers": "none (env has no intraday provider credentials)",
+  "coverage": {
+    "symbols": 0,
+    "history_depth": null
+  },
+  "licensing": "unknown \u2014 no provider reachable to review terms",
+  "blocker": "No legitimate intraday PSX source exists in the environment; PSX Data Portal unreachable from sandbox (HTTP 000); no credentials configured",
+  "adapter": "src/lib/market-data/intraday-provider.ts (normalized schema + provider abstraction; refuses to synthesize bars from daily OHLC)",
+  "tests": "synthetic fixtures only, clearly marked, never mixed with real data",
+  "execution_realism": {
+    "entry_price": "daily-bar approximation: next-session open (documented)",
+    "gap_behavior": "gap-aware fills in strategy-engine.ts (SL-first same-candle)",
+    "sl_tp_ordering": "same-bar: SL first (conservative); intraday ordering UNKNOWN without intraday data \u2014 labeled as daily OHLC approximation",
+    "spread_slippage": "psx_user_schedule_v2 slippage = 0; no defensible intraday proxy",
+    "findings_basis": "ALL execution-realism findings in this repository are based on daily bars; no intraday-based finding exists"
+  }
+}

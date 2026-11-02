@@ -1,0 +1,77 @@
+{
+  "generated_at": "2026-11-02T00:58:24+0000",
+  "implementation": "python build path (scripts/task102_phases.py::_extras_for_cohort + _group_matrix); production as-of interface: src/lib/features/feature-store.ts buildFeaturesAsOf()",
+  "cohort": {
+    "n_samples": 11521,
+    "grid": "identical to Task 101 label grid (step 5)"
+  },
+  "feature_groups": {
+    "technical_only_v1": {
+      "sources": [
+        "ohlcv_technical"
+      ],
+      "enabled": true,
+      "n_extra_features": 0
+    },
+    "technical_market_regime_v1": {
+      "sources": [
+        "ohlcv_technical",
+        "market_regime_internal_proxy"
+      ],
+      "enabled": true,
+      "note": "regime features from pilot25 equal-weight breadth (internal proxy) - genuine KSE-100 blocked",
+      "n_extra_features": 5
+    },
+    "technical_pit_fundamental_v1": {
+      "sources": [
+        "pit_fundamentals"
+      ],
+      "enabled": false,
+      "note": "DISABLED: no verified publication timestamps link statements/ratios to decision times; filings carry genuine PSX announcement dates for 24 symbols but statement-level linkage is not verifiable",
+      "n_extra_features": 10
+    },
+    "technical_liquidity_v1": {
+      "sources": [
+        "ohlcv_technical",
+        "ohlcv_liquidity"
+      ],
+      "enabled": true,
+      "n_extra_features": 3
+    },
+    "technical_corporate_action_safe_v1": {
+      "sources": [
+        "ohlcv_technical",
+        "corporate_action_flags"
+      ],
+      "enabled": true,
+      "note": "raw-price CA-suspicion flags only; no adjusted ex-post series used in decision features",
+      "n_extra_features": 2
+    },
+    "combined_verified_v1": {
+      "sources": [
+        "ohlcv_technical",
+        "ohlcv_liquidity",
+        "corporate_action_flags",
+        "market_regime_internal_proxy"
+      ],
+      "enabled": true,
+      "note": "only verified sources; PIT fundamentals excluded (unavailable), genuine KSE-100 excluded (blocked)",
+      "n_extra_features": 10
+    }
+  },
+  "point_in_time_guarantees": [
+    "every extra feature is a trailing window of bars with date <= decision date",
+    "regime features are same-date cross-sectional stats of trailing 5d returns",
+    "no adjusted ex-post series; raw prices only",
+    "PIT fundamentals group disabled (no verified publication timestamps)",
+    "KSE-100 group inputs unavailable -> internal proxy only, labeled"
+  ],
+  "lineage": {
+    "ohlcv": "db/custom.db OhlcvBar (raw)",
+    "sector_map": "data/askanalyst/sector_overrides.json (Task 98, preserved)",
+    "regime_proxy": "pilot25 equal-weight breadth/dispersion (internal)",
+    "fundamentals": "AskAnalyst Task 90 ingest (filings only, day granularity)"
+  },
+  "per_symbol_coverage": "complete for all cohort symbols (extras default 0 when <130 bars)",
+  "schema_version": "task102-features-v1"
+}

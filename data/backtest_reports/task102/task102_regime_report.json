@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-11-02T00:59:11+0000",
+  "regime_source": "pilot25 equal-weight 5d breadth + dispersion (market_internal_proxy) - genuine KSE-100 blocked; rules deterministic, point-in-time (rolling stats use data <= decision date)",
+  "regime_counts": {
+    "bear_trend": 1212,
+    "bull_trend": 1131,
+    "sideways": 118,
+    "unknown": 19
+  },
+  "strategy_performance_by_regime_final_test": {
+    "fixed_first_hit": {
+      "unknown": {
+        "n": 3978,
+        "netPnl": -2318762.8,
+        "netWinRate": 42.53
+      }
+    },
+    "max_tp_step_trailing": {
+      "unknown": {
+        "n": 3978,
+        "netPnl": -2584338.3,
+        "netWinRate": 55.43
+      }
+    },
+    "scale_out_50_25_25": {
+      "unknown": {
+        "n": 3978,
+        "netPnl": -3047044.53,
+        "netWinRate": 49.85
+      }
+    }
+  },
+  "caution": "regime buckets are small and dependent (overlapping labels); results are descriptive, NOT generalizable"
+}

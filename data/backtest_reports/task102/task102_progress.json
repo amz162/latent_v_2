@@ -1,0 +1,95 @@
+{
+  "phases": {
+    "baseline": {
+      "status": "done",
+      "detail": "HEAD 7fc1cd5b, 1042821 bars",
+      "artifact": "task102_baseline_inventory.json",
+      "updated_at": "2026-11-02T00:53:50+0000"
+    },
+    "kse100": {
+      "status": "done",
+      "detail": "external script rc=0 (27s)",
+      "artifact": null,
+      "updated_at": "2026-11-02T00:54:33+0000"
+    },
+    "intraday": {
+      "status": "done",
+      "detail": "blocked_external_data documented",
+      "artifact": "task102_intraday_coverage.json",
+      "updated_at": "2026-11-02T00:56:51+0000"
+    },
+    "feature_store": {
+      "status": "done",
+      "detail": "extras + groups defined",
+      "artifact": "task102_feature_store_report.json",
+      "updated_at": "2026-11-02T00:58:24+0000"
+    },
+    "corporate_actions": {
+      "status": "done",
+      "detail": "289 suspect events (unverified)",
+      "artifact": "task102_corporate_actions_report.json",
+      "updated_at": "2026-11-02T00:59:09+0000"
+    },
+    "regime_sector": {
+      "status": "done",
+      "detail": "regime rules + sector buckets",
+      "artifact": "task102_regime_report.json",
+      "updated_at": "2026-11-02T00:59:11+0000"
+    },
+    "labels102": {
+      "status": "done",
+      "detail": "11521 labels, match=11521",
+      "artifact": "task102_trade_label_integrity.json",
+      "updated_at": "2026-11-02T00:59:15+0000"
+    },
+    "feature_value": {
+      "status": "done",
+      "detail": "5 groups evaluated",
+      "artifact": "task102_feature_ablation_results.json",
+      "updated_at": "2026-11-02T01:01:32+0000"
+    },
+    "strategy_cmp": {
+      "status": "done",
+      "detail": "3 production strategies + 2 baseline dispositions",
+      "artifact": "task102_strategy_comparison.json",
+      "updated_at": "2026-11-02T01:01:47+0000"
+    },
+    "registry_promotion": {
+      "status": "done",
+      "detail": "no promotion; shadow-only retained",
+      "artifact": "task102_model_promotion_decisions.json",
+      "updated_at": "2026-11-02T01:01:48+0000"
+    },
+    "paper_audit": {
+      "status": "done",
+      "detail": "114 prospective records, untouched",
+      "artifact": "task102_shadow_monitoring_report.json",
+      "updated_at": "2026-11-02T01:01:49+0000"
+    },
+    "evaluation": {
+      "status": "done",
+      "detail": "prediction + trading metrics",
+      "artifact": "task102_trading_metrics.json",
+      "updated_at": "2026-11-02T01:08:06+0000"
+    },
+    "qa": {
+      "status": "done",
+      "detail": "API + browser checks",
+      "artifact": "task102_api_validation.json",
+      "updated_at": "2026-11-02T01:04:46+0000"
+    },
+    "validation": {
+      "status": "done",
+      "detail": "dev_only protocol frozen",
+      "artifact": "task102_validation_protocol.json",
+      "updated_at": "2026-11-02T01:05:43+0000"
+    },
+    "finalize": {
+      "status": "done",
+      "detail": "final summary + blockers + coverage",
+      "artifact": "task102_final_summary.json",
+      "updated_at": "2026-11-02T01:05:44+0000"
+    }
+  },
+  "last_phase": "evaluation"
+}

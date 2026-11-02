@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-11-02T01:04:26+0000",
+  "checks": {
+    "registry": {
+      "http": 200,
+      "canonicalCount": 58,
+      "supplementalCount": 13
+    },
+    "walk_forward_untouched": {
+      "http": 200,
+      "samples_400": true,
+      "fits_6000": true
+    },
+    "sim_v2_default": {
+      "http": 200,
+      "costProfile": "psx_user_schedule_v2",
+      "defaults_to_v2": true
+    },
+    "home": {
+      "http": null
+    }
+  },
+  "browser": {
+    "tool": "agent-browser (headless chromium)",
+    "tests": [
+      {
+        "id": "home_renders",
+        "pass": true
+      },
+      {
+        "id": "body_content",
+        "pass": true
+      },
+      {
+        "id": "no_console_errors",
+        "observed": "",
+        "pass": true
+      }
+    ],
+    "pass_count": 3
+  }
+}

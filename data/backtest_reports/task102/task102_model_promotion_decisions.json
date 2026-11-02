@@ -1,0 +1,76 @@
+{
+  "generated_at": "2026-11-02T01:01:48+0000",
+  "registry_state": {
+    "canonical": 58,
+    "supplemental": 13,
+    "unique": 70,
+    "alias_policy": "aliases never counted as implementations"
+  },
+  "decisions": [
+    {
+      "model": "psx_cost_aware_trade_classifier",
+      "status": "shadow_only",
+      "reason": "fails promotion gates: no untouched OOS period; final-test expectancy net-negative (-0.526%/trade); no evidence robust edge exists"
+    },
+    {
+      "model": "psx_net_expectancy_meta_model",
+      "status": "research_only",
+      "reason": "improves uncertainty estimates; no standalone trade signals"
+    },
+    {
+      "model": "production consensus (canonical 58)",
+      "status": "unchanged",
+      "reason": "experimental outputs never overwrite production consensus"
+    }
+  ],
+  "gates": {
+    "adequate_matured_trade_count": {
+      "threshold": ">= 1000 matured trades",
+      "pass": null
+    },
+    "calendar_coverage": {
+      "threshold": ">= 12 months",
+      "pass": null
+    },
+    "multiple_regimes": {
+      "threshold": ">= 2 regimes represented",
+      "pass": null
+    },
+    "oos_evidence": {
+      "threshold": "genuinely untouched period",
+      "pass": false,
+      "reason": "no untouched period remains (task102_validation_protocol.json)"
+    },
+    "positive_net_expectancy_after_real_costs": {
+      "threshold": "> 0",
+      "pass": false,
+      "reason": "-0.526%/trade best frozen rule"
+    },
+    "confidence_interval_stability": {
+      "threshold": "CI95 of expectancy > 0",
+      "pass": false
+    },
+    "drawdown_limits": {
+      "threshold": "within policy",
+      "pass": null
+    },
+    "concentration_limits": {
+      "threshold": "symbol/sector caps",
+      "pass": null
+    },
+    "calibration_quality": {
+      "threshold": "isotonic improves val Brier",
+      "pass": null
+    },
+    "reproducibility": {
+      "threshold": "deterministic rebuild",
+      "pass": true,
+      "reason": "Task 101 rebuilt identically after two sandbox wipes"
+    },
+    "no_leakage_warnings": {
+      "threshold": "clean leakage audit",
+      "pass": true
+    }
+  },
+  "rule": "best-among-negatives is NOT promotable; shadow-only until genuinely new matured evidence passes ALL gates"
+}
