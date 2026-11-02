@@ -1,0 +1,62 @@
+{
+ "report": "task106_strategy_status_report",
+ "generated_at": "2026-11-02T20:34:56+0000",
+ "status": "completed",
+ "claims_verification": {
+  "fixed_first_hit_least_negative_task104_capital": {
+   "claim": "Fixed First Hit had the least negative Task 104 capital outcome",
+   "verified": true,
+   "evidence": {
+    "fixed_first_hit": [
+     "fixed_first_hit__C_r0_5__q70",
+     -91.2
+    ],
+    "max_tp_step_trailing": [
+     "max_tp_step_trailing__C_r0_5__q70",
+     -95.79
+    ],
+    "scale_out_50_25_25": [
+     "scale_out_50_25_25__C_r0_5__q70",
+     -93.57
+    ]
+   }
+  },
+  "max_tp_step_trailing_highest_win_rate_task102": {
+   "claim": "Max TP Step Trailing had the highest reported raw trade win rate in Task 102",
+   "verified": true,
+   "evidence": {
+    "fixed_first_hit": 36.11,
+    "max_tp_step_trailing": 50.33,
+    "scale_out_50_25_25": 43.72
+   }
+  },
+  "scale_out_most_negative_expectancy_task102": {
+   "claim": "Scale Out 50/25/25 had the most negative per-trade expectancy in Task 102",
+   "verified": false,
+   "correction": "NOT CONFIRMED against artifacts: most negative per-trade expectancy is fixed_first_hit (-1.3354%) vs scale_out (-1.3331%); the difference is 0.002pp \u2014 effectively tied. Reported with the correction rather than the unverified claim."
+  },
+  "all_60_task104_scenarios_lost": {
+   "claim": "All 60 Task 104 capital scenarios lost money",
+   "verified": true,
+   "evidence": "task105_portfolio_integrity.json / task106 phase1: all final_equity < 100,000"
+  }
+ },
+ "strategy_context": {
+  "fixed_first_hit": {
+   "task104_best_roi_pct": -91.2,
+   "status": "not_promotable"
+  },
+  "max_tp_step_trailing": {
+   "task104_best_roi_pct": -95.79,
+   "note": "highest win rate yet the WORST Task 104 capital outcome \u2014 wins were too small/too few relative to losses and trade count",
+   "status": "not_promotable"
+  },
+  "scale_out_50_25_25": {
+   "task104_best_roi_pct": -93.57,
+   "status": "not_promotable"
+  }
+ },
+ "no_renaming_or_relabeling": true,
+ "strategy_records_preserved": true,
+ "verdict": "statements corrected where artifacts disagree; all strategies remain accurately labeled with negative results"
+}

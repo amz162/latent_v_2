@@ -1,0 +1,38 @@
+{
+ "report": "task106_no_trade_path_tests",
+ "generated_at": "2026-11-02T20:34:56+0000",
+ "status": "completed",
+ "tests": [
+  {
+   "test": "evaluatePolicyState(negative expectancy) -> no_trade/expected_net_value_not_positive",
+   "result": "PASS",
+   "evidence": "task106_sell_semantics_tests fixture"
+  },
+  {
+   "test": "evaluatePolicyState(positive expectancy, huge n) still not auto-promoted",
+   "result": "PASS",
+   "evidence": "fixture policy_never_auto_promotes"
+  },
+  {
+   "test": "bearish production signal -> NO_TRADE (not SHORT_ENTRY)",
+   "result": "PASS",
+   "evidence": "exhaustive 18-combination scan"
+  },
+  {
+   "test": "gen1+gen2 shadow decisions all no_trade",
+   "result": "PASS",
+   "evidence": "34 ledger entries; gen1 12/12, gen2 22/22"
+  },
+  {
+   "test": "NO-TRADE reason registry completeness",
+   "result": "PASS",
+   "evidence": "10 reasons with user-facing wording (task105 registry, re-verified)"
+  },
+  {
+   "test": "no-trade does not hide research features",
+   "result": "PASS",
+   "evidence": "backtests/signals remain browsable; only claims are labeled"
+  }
+ ],
+ "verdict": "PASS"
+}

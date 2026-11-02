@@ -135,3 +135,66 @@ export function evaluatePolicyState(input?: {
   // versioned decision — the system itself never promotes.
   return { state: "no_trade", noTradeReason: "model_not_approved" };
 }
+
+/* ── Task 106 — SELL semantics (long-only compliance) ────────────────────────
+ * Four distinct concepts that must never be conflated:
+ *   SELL_TO_CLOSE      selling an EXISTING long position (always permissible)
+ *   BEARISH_SIGNAL     the model expects negative price direction (an opinion)
+ *   SHORT_ENTRY        OPENING a genuinely short position (requires verified
+ *                      execution rights — NOT verified for PSX retail)
+ *   NO_TRADE           no permissible or sufficiently supported action
+ * Task 106 research verdict: PSX ready-market short selling is restricted for
+ * retail (a licensed PSX brokerage's own glossary), and the SLB mechanism's
+ * participant eligibility for this application's users is unverifiable from
+ * accessible authoritative sources → compliance_status = compliance_unverified.
+ * DEFAULT: bearish predictions map to BEARISH_RESEARCH_ONLY / NO_TRADE — never
+ * to SHORT_ENTRY, and never inverted into BUY predictions. */
+
+export type SellAction =
+  | "SELL_TO_CLOSE"
+  | "BEARISH_SIGNAL"
+  | "BEARISH_RESEARCH_ONLY"
+  | "SHORT_ENTRY"
+  | "NO_TRADE"
+  | "LONG_CANDIDATE";
+
+export const SHORT_SELLING_COMPLIANCE = {
+  status: "compliance_unverified" as const,
+  verified_execution_pathway: false,
+  retail_ready_market_short_selling: "restricted (not verified as available)",
+  slb_mechanism: "exists on PSX/NCCPL (Category A short-selling since 2015) but participant eligibility for this application's users is UNVERIFIED",
+  single_stock_futures: "limited eligible contracts; not integrated into this application's execution model",
+  sources: [
+    "https://www.bsl.com.pk/glossary/short-selling (licensed PSX brokerage glossary)",
+    "NCCPL circular 13-4-2015: SLB Eligible Securities — Category A for short selling (PDF access denied; snippet only)",
+  ],
+  resolved_at: null as string | null,
+};
+
+/**
+ * Map a signal to its permissible action. A bearish signal can NEVER produce
+ * SHORT_ENTRY unless short-selling rights are verified AND this policy module
+ * is explicitly versioned to allow it. Historical short-side simulation stays
+ * research-only/hypothetical.
+ */
+export function classifySellAction(input: {
+  signal: "BUY" | "SELL" | "HOLD";
+  holdsExistingLongPosition: boolean;
+  isSimulationOnly?: boolean;
+}): { action: SellAction; label: string } {
+  const c = SHORT_SELLING_COMPLIANCE;
+  if (input.signal === "SELL") {
+    if (input.holdsExistingLongPosition) {
+      return { action: "SELL_TO_CLOSE", label: "SELL (close existing long)" };
+    }
+    if (input.isSimulationOnly) {
+      return { action: "BEARISH_RESEARCH_ONLY", label: "Bearish — research/hypothetical only" };
+    }
+    return { action: c.verified_execution_pathway ? "SHORT_ENTRY" : "NO_TRADE",
+             label: c.verified_execution_pathway ? "SELL (short entry)" : "Bearish signal — no permissible action (short entry unverified)" };
+  }
+  if (input.signal === "BUY") {
+    return { action: "LONG_CANDIDATE", label: "BUY signal (long side; subject to policy state)" };
+  }
+  return { action: "NO_TRADE", label: "No trade" };
+}

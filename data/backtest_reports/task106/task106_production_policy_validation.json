@@ -1,0 +1,44 @@
+{
+ "report": "task106_production_policy_validation",
+ "generated_at": "2026-11-02T20:34:56+0000",
+ "status": "completed",
+ "policy_version": "task105-v1 (+ Task 106 sell-semantics extension)",
+ "validation": [
+  {
+   "check": "no real trades / live orders",
+   "result": "PASS",
+   "evidence": "policy defaults false; zero order-placement code paths in src/"
+  },
+  {
+   "check": "no automatic promotion",
+   "result": "PASS",
+   "evidence": "evaluatePolicyState cannot return promoted; gates 0/9"
+  },
+  {
+   "check": "no unverified probability claims",
+   "result": "PASS",
+   "evidence": "confidence-semantics module + UI labels (Task 106 Phase 3)"
+  },
+  {
+   "check": "no unsupported short entries",
+   "result": "PASS",
+   "evidence": "classifySellAction exhaustive fixtures (23 cases) + compliance_unverified"
+  },
+  {
+   "check": "NO-TRADE when evidence inadequate",
+   "result": "PASS",
+   "evidence": "all 34 shadow entries no_trade; gen1+gen2 verified"
+  },
+  {
+   "check": "UI notice uses policy state",
+   "result": "PASS",
+   "evidence": "CapitalProtectionNotice renders CAPITAL_PROTECTION_POLICY.historicalEvidenceNote"
+  },
+  {
+   "check": "historical exploration preserved",
+   "result": "PASS",
+   "evidence": "git-verified: Task 100-105 artifacts unmodified"
+  }
+ ],
+ "verdict": "ALL CHECKS PASS"
+}

@@ -1,0 +1,33 @@
+{
+ "report": "task106_source_freshness",
+ "generated_at": "2026-11-02T20:28:17+0000",
+ "status": "completed",
+ "sources": [
+  {
+   "source": "psxdata free REST API (psxdata-api.fastapicloud.dev)",
+   "status": "LIVE",
+   "evidence": "/indices returned meta.timestamp 2026-11-02T20:24Z; /stocks/LUCK/historical returned 2026-11-02 bars",
+   "activated_for": "psx_eod (pilot25) after overlap validation"
+  },
+  {
+   "source": "PSX Data Portal dps.psx.com.pk/historical",
+   "status": "unreachable (Task 103 verified HTTP 000; not retested this session)"
+  },
+  {
+   "source": "licensed vendors (Refinitiv/LSEG, Bloomberg)",
+   "status": "not configured (no credentials in environment)"
+  },
+  {
+   "source": "KSE-100 index history",
+   "status": "blocked \u2014 provider exposes constituents only"
+  },
+  {
+   "source": "corporate actions / filings / point-in-time fundamentals",
+   "status": "blocked_external_data \u2014 no verified source with publication timestamps"
+  },
+  {
+   "source": "intraday bars",
+   "status": "blocked_external_data"
+  }
+ ]
+}

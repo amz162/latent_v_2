@@ -1,0 +1,63 @@
+{
+ "report": "task106_evidence_gate_report",
+ "generated_at": "2026-11-02T20:32:56+0000",
+ "status": "completed",
+ "gates": [
+  {
+   "gate": "at_least_100_matured_trades",
+   "required": 100,
+   "actual": "4 unique trades (12 strategy-outcomes)",
+   "met": false,
+   "note": "counted at trade level; strategy-outcomes share identical SL-first exits"
+  },
+  {
+   "gate": "at_least_two_calendar_quarters",
+   "required": 2,
+   "actual": 0,
+   "met": false
+  },
+  {
+   "gate": "multiple_independent_symbols",
+   "required": ">=15",
+   "actual": 22,
+   "met": true
+  },
+  {
+   "gate": "multiple_market_regimes",
+   "required": ">1",
+   "actual": 0,
+   "met": false
+  },
+  {
+   "gate": "positive_net_expectancy_after_costs",
+   "actual": null,
+   "met": false,
+   "note": "nothing matured; frozen history negative"
+  },
+  {
+   "gate": "statistical_uncertainty_acceptable",
+   "actual": null,
+   "met": false
+  },
+  {
+   "gate": "stable_performance_and_drawdown",
+   "actual": null,
+   "met": false
+  },
+  {
+   "gate": "no_unresolved_leakage",
+   "actual": "PASS (timestamp/cutoff fixtures)",
+   "met": true
+  },
+  {
+   "gate": "calibration_stability",
+   "actual": null,
+   "met": false,
+   "note": "OOS calibration not established (Task 105)"
+  }
+ ],
+ "gates_met": 2,
+ "gates_total": 9,
+ "promotion_conclusion": "not_promotable \u2014 minimum review conditions not met; frozen historical evidence remains negative",
+ "note": "minimum checks, not an approval formula; passing them permits review only"
+}

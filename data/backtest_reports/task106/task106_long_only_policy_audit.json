@@ -1,0 +1,41 @@
+{
+ "report": "task106_long_only_policy_audit",
+ "generated_at": "2026-11-02T20:22:24+0000",
+ "status": "completed",
+ "policy_module": "src/lib/latent/trading-policy.ts",
+ "concepts_separated": {
+  "SELL_TO_CLOSE": "selling an existing long position \u2014 permissible, labeled",
+  "BEARISH_SIGNAL": "model expects negative direction \u2014 an opinion, not an action",
+  "BEARISH_RESEARCH_ONLY": "bearish entries allowed only inside research/hypothetical simulation",
+  "SHORT_ENTRY": "opening a genuine short \u2014 DISABLED (compliance_unverified)",
+  "NO_TRADE": "no permissible or sufficiently supported action"
+ },
+ "surfaces_checked": [
+  {
+   "surface": "classifySellAction (policy module)",
+   "enforcement": "exhaustive: no input combination yields SHORT_ENTRY"
+  },
+  {
+   "surface": "ai-model-signals model cards",
+   "enforcement": "SELL badge \u2192 'SELL\u00b7R' + policy-driven tooltip"
+  },
+  {
+   "surface": "strategy-engine SELL direction",
+   "enforcement": "preserved for research simulation only; excluded from all production decision paths (Task 105 evidence: cohort long-only)"
+  },
+  {
+   "surface": "Investment Simulator",
+   "enforcement": "SELL paths remain hypothetical research, disclosed in the capital-protection notice"
+  },
+  {
+   "surface": "shadow observations (task105-gen1)",
+   "enforcement": "LONG-candidate only; SELL not executable"
+  },
+  {
+   "surface": "inversion guard",
+   "enforcement": "bearish predictions are never converted into BUY predictions (fixture-tested)"
+  }
+ ],
+ "historical_preservation": "no SELL signal deleted; no historical result altered",
+ "verdict": "long-only default enforced across all surfaces"
+}

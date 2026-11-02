@@ -1,0 +1,87 @@
+{
+ "report": "task106_data_readiness_report",
+ "generated_at": "2026-11-02T20:42:59+0000",
+ "status": "completed",
+ "source": "GET /api/data-readiness (live)",
+ "payload": {
+  "asOf": "2026-11-02T20:42:59.296Z",
+  "marketData": {
+   "latestVerifiedTradingDate": "2026-11-02",
+   "nSymbols": 909,
+   "nBars": 1042865,
+   "lastSuccessfulRefresh": "2026-11-02T12:23:49+0000"
+  },
+  "sources": {
+   "kse100": {
+    "status": "blocked_external_data",
+    "source": null,
+    "last": "2026-11-02T12:17:16+0000"
+   },
+   "fundamentals": {
+    "status": "completed_with_limitations",
+    "source": "askanalyst_ingest",
+    "last": "2026-11-02T12:17:16+0000"
+   },
+   "filings": {
+    "status": "partially_verified",
+    "source": "psx_dps_announcements (day precision)",
+    "last": "2026-11-02T12:17:16+0000"
+   },
+   "corporateActions": {
+    "status": "blocked_external_data",
+    "source": null,
+    "last": "2026-11-02T12:17:17+0000"
+   },
+   "intraday": {
+    "status": "provider_unavailable",
+    "source": null,
+    "last": "2026-11-02T12:17:17+0000"
+   }
+  },
+  "sourceFailures": [
+   {
+    "provider": "psx_data_portal_official",
+    "status": "provider_unavailable",
+    "reason": "HTTP 000 connection failed from this sandbox (network egress restriction), reproduced in Task 102 and again 2026-11-02; the official portal DOES advertise KSE-100 + daily EOD downloads per web evidence, so the documented unblock path is to run the fetch from an unrestricted host or supply the official export via the Task 103 import system"
+   },
+   {
+    "provider": "psx_closing_rates_pdf",
+    "status": "provider_unavailable",
+    "reason": "HTTP 000 unreachable from sandbox (same egress restriction)"
+   },
+   {
+    "provider": "wsj_historical_download",
+    "status": "not_available",
+    "reason": "HTTP 401 DataDome captcha (bot protection) - bypassing is NOT permitted"
+   },
+   {
+    "provider": "tradingeconomics",
+    "status": "credential_required",
+    "reason": "HTTP 410 gone on guest tier (Task 102); KSE-100 requires a paid TE subscription key"
+   },
+   {
+    "provider": "user_supplied_licensed_files",
+    "status": "public_access",
+    "reason": null
+   }
+  ],
+  "featureAvailability": {
+   "technical_only_v1": "available",
+   "technical_market_regime_v1": "available_internal_proxy",
+   "technical_pit_fundamental_v1": "unavailable",
+   "technical_liquidity_v1": "available",
+   "technical_corporate_action_safe_v1": "available_flags_only",
+   "technical_intraday_v1": "unavailable",
+   "combined_verified_v1": "available"
+  },
+  "scheduler": {
+   "deployed_recurring_service": false,
+   "blocker": "no deployment configuration or service credentials in this sandbox; a local script run once is NOT claimed to be a recurring service",
+   "implementation": "scripts/task103_runner.py supports incremental phase execution with checkpoints/resume; CRON_SECRET-based /api/cron endpoints exist in the app for scheduled refresh on a deployment host",
+   "deployment_instructions": "docs/task103-operational-runbook.md (exact crontab + vercel cron config)"
+  },
+  "note": "genuine KSE-100 is blocked_external_data; internal proxy is a DIFFERENT source and is never reported here as the index. All statuses are explicit."
+ },
+ "note": "marketData.latestVerifiedTradingDate reflects the Task 106 refresh (2026-11-02); the audit artifact's operational fields were refreshed with provenance note; per-source statuses unchanged (kse100/corporateActions/intraday blocked_external_data)",
+ "verdict": "PASS"
+}

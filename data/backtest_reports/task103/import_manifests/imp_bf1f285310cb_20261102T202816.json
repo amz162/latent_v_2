@@ -1,0 +1,90 @@
+{
+ "import_id": "imp_bf1f285310cb_20261102T202816",
+ "type": "psx_eod",
+ "filename": "task106_refresh.csv",
+ "sha256": "bf1f285310cb007b9d7ccabfb099486735cac0bc05512becd76b51c6c6a1d70b",
+ "source": "task106_refresh",
+ "provider": "psxdata-api.fastapicloud.dev",
+ "retrieval_date": "2026-11-02",
+ "date_coverage": [
+  "2026-10-30",
+  "2026-11-02"
+ ],
+ "record_count": 44,
+ "valid_count": 41,
+ "rejected_count": 3,
+ "duplicate_in_staging": 41,
+ "validation": {
+  "columns": [
+   "symbol",
+   "date",
+   "open",
+   "high",
+   "low",
+   "close",
+   "volume",
+   "provider",
+   "source_id",
+   "retrieved_at"
+  ],
+  "rows_in_file": 44,
+  "valid_rows": 41,
+  "rejected_rows": 3,
+  "in_file_duplicates": 0,
+  "fixture_rows": 0,
+  "rejected_sample": [
+   {
+    "symbol": "CNERGY",
+    "date": "2026-11-02",
+    "open": "12.55",
+    "high": "12.59",
+    "low": "12.28",
+    "close": "12.28",
+    "volume": "93109988",
+    "provider": "psxdata-api.fastapicloud.dev",
+    "source_id": "psxdata:CNERGY:2026-11-02",
+    "retrieved_at": "2026-11-02T20:28:13Z",
+    "_row": 24,
+    "_reasons": [
+     "OHLC envelope violation"
+    ]
+   },
+   {
+    "symbol": "PRL",
+    "date": "2026-11-02",
+    "open": "87.26",
+    "high": "88.0",
+    "low": "87.26",
+    "close": "87.26",
+    "volume": "10902027",
+    "provider": "psxdata-api.fastapicloud.dev",
+    "source_id": "psxdata:PRL:2026-11-02",
+    "retrieved_at": "2026-11-02T20:28:15Z",
+    "_row": 36,
+    "_reasons": [
+     "OHLC envelope violation"
+    ]
+   },
+   {
+    "symbol": "TELE",
+    "date": "2026-11-02",
+    "open": "6.25",
+    "high": "6.89",
+    "low": "6.25",
+    "close": "6.44",
+    "volume": "1408889",
+    "provider": "psxdata-api.fastapicloud.dev",
+    "source_id": "psxdata:TELE:2026-11-02",
+    "retrieved_at": "2026-11-02T20:28:15Z",
+    "_row": 38,
+    "_reasons": [
+     "OHLC envelope violation"
+    ]
+   }
+  ]
+ },
+ "result": "imported_to_staging",
+ "imported_at": "2026-11-02T20:28:16+0000",
+ "promotion_to_production": "separate explicit step; see docs/task103-provider-onboarding.md",
+ "runtime_seconds": 0.0
+}

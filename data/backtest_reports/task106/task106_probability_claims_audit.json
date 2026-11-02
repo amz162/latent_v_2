@@ -1,0 +1,22 @@
+{
+ "report": "task106_probability_claims_audit",
+ "generated_at": "2026-11-02T20:24:10+0000",
+ "status": "completed",
+ "scan": {
+  "scope": "src/components/latent + src/lib/latent + src/app/api (grep for win chance / probability claims)",
+  "misleading_claims_found": [],
+  "residual_field_names_rendered": [
+   {
+    "field": "exp_win_rate",
+    "label_style": "technical field name + tooltip 'Predicted P(net-positive trade) ... Probability calibration not established'",
+    "verdict": "acceptable \u2014 named, not presented as verified"
+   }
+  ]
+ },
+ "api_semantics": {
+  "ai-model-signals confidence": "heuristic/agreement value; response field names unchanged for compatibility; UI labels carry the semantics",
+  "models/registry": "verified statuses; no probability claims"
+ },
+ "calibrated_probability_exposure": "NONE live \u2014 only research artifacts (task105) hold calibrated values",
+ "verdict": "no unsupported probability claims in production surfaces"
+}

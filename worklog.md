@@ -4569,3 +4569,16 @@ Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
 - PHASE 14: QA 25/25 python checks + tsc clean + next build exit 0 + 4 API endpoints 200 + browser checks. Skipped tests reported as skipped (0 skipped).
 - PHASE 15: all 40 required artifacts present; security scan clean; blockers B1-B5 recorded; final summary answers all 17 questions; outcome = B (no defect; weak/absent edge; preserve protection; collect new evidence).
 - OUTCOME: B — no software defect found; predictive signal weak/absent; research/shadow mode preserved; NO-TRADE protection active; forward observation system operational (awaiting_data).
+
+## Task 106 — Final operational safety, PSX data activation, long-only compliance & forward shadow validation (2026-11-02)
+
+- HEAD 64b35c39 verified clean; Task 105 artifacts + 12 gen1 shadow observations audited field-by-field (zero problems; idempotency proven).
+- SELL COMPLIANCE: researched PSX/SECP sources — retail ready-market shorting restricted (licensed-brokerage glossary), SLB eligibility unverifiable (NCCPL PDF 403) → compliance_unverified; implemented classifySellAction (SELL_TO_CLOSE / BEARISH_SIGNAL / BEARISH_RESEARCH_ONLY / SHORT_ENTRY / NO_TRADE / LONG_CANDIDATE) with 23 exhaustive fixtures proving no SHORT_ENTRY path and no BUY inversion; UI SELL badges → "SELL·R" with policy-driven tooltips.
+- CONFIDENCE: canonical names module (raw_model_score / ensemble_agreement / directional_score / calibrated_probability / predicted_net_positive_probability); ensemble cards renamed "Ensemble agreement (not a win probability)" (x13 live in browser); "Probability calibration not established" policy.
+- DATA ACTIVATION: app's own approved free provider (psxdata-api.fastapicloud.dev, same source='psxdata') validated 48/48 overlap bars vs DB → 44 genuinely new bars (2026-10-30, 2026-11-02) imported via Task 103 controlled-drop importer → promoted with (symbol,date) dedup after DB backup. Frontier now 2026-11-02. 3 staging-validator rejections documented (strict low==min(open,close) equality; bars verified genuine). data-readiness API freshness refreshed.
+- SHADOW: 22 task106-gen2 observations at the new frontier (frozen protocol, no retraining); task105-gen1 store untouched (byte-identical restored after QA caught a timestamp-only no-op rewrite; generator now guarded); maturation ledger separates fills from frozen records.
+- MATURATION: production-engine maturation pathway live (task106_mature.ts, V2 costs): 4 unique trades matured (SYS/KEL/CNERGY/PAEL — all SL losses, -PKR 75,548), 24 strategy-outcomes pending MTM (never counted as wins), 22 gen2 entries awaiting first future session. Gates 1/9 → not_promotable; campaign state collecting.
+- CAPITAL PROTECTION: bypass scan zero hits; 6/6 no-trade path tests; Task 103 staging ledger classified as append-only operational record.
+- REGISTRY FREEZE: no new models/aliases; statuses unchanged; strategy claims verified against artifacts — "SO most negative expectancy" CORRECTED (FF -1.3354% vs SO -1.3331%).
+- QA: 15/15 python, tsc clean, build exit 0, 5 API endpoints 200, browser validation (notice, agreement labels x13, SELL·R x21). All 34 required artifacts complete.
+- OUTCOME: collecting — genuine new data processed honestly; nothing fabricated; nothing promoted; no live trading.

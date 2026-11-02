@@ -1,0 +1,36 @@
+{
+ "report": "task106_scheduler_status",
+ "generated_at": "2026-11-02T20:34:56+0000",
+ "status": "completed",
+ "scheduler_infrastructure": {
+  "cron_api_routes": [
+   {
+    "route": "update-data/route.ts",
+    "head": "import { NextResponse } from \"next/server\";\nimport { promises as fs } from \"fs\";\nimport path from \"path\";\nimport { execSync } from \"child_process\";\n\nexport const dynamic = \"force-dynamic\";\nexport cons"
+   },
+   {
+    "route": "check-tp-sl/route.ts",
+    "head": "import { NextResponse } from \"next/server\";\nimport { NextRequest } from \"next/server\";\nimport { promises as fs } from \"fs\";\nimport path from \"path\";\nimport { db } from \"@/lib/db\";\nimport { MOCK_TRADES"
+   },
+   {
+    "route": "scheduler-status/route.ts",
+    "head": "import { NextResponse } from \"next/server\";\nimport { promises as fs } from \"fs\";\nimport path from \"path\";\n\nexport const dynamic = \"force-dynamic\";\nexport const maxDuration = 5;\n\n/**\n * Scheduler statu"
+   },
+   {
+    "route": "refresh-ohlcv/route.ts",
+    "head": "import { NextResponse } from \"next/server\";\nimport { db } from \"@/lib/db\";\nimport { getHistorical } from \"@/lib/latent/psxClient\";\n\nexport const dynamic = \"force-dynamic\";\nexport const maxDuration = 3"
+   }
+  ],
+  "vercel_json": false,
+  "github_workflows": [
+   "browser-tests.yml",
+   "production-build.yml",
+   "browser-tests.yml",
+   "production-build.yml"
+  ],
+  "deployment_scheduler_configured": false
+ },
+ "honest_status": "NO scheduled job is ACTIVE \u2014 the deployment has not configured a cron/worker. The code (importer, shadow generation, maturation) is runnable and idempotent on demand.",
+ "deployment_requirement": "to activate: schedule `python3 scripts/task106_runner.py run refresh` (or equivalent) after each PSX session close (\u224816:30 PKT / 11:30 UTC Mon-Fri), with a writable DATABASE_URL and network egress to the psxdata endpoint; record last-run checkpoints in data/backtest_reports/task106/ops/",
+ "claims": "no claim of an active scheduler is made"
+}

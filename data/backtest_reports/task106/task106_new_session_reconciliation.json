@@ -1,0 +1,64 @@
+{
+ "report": "task106_new_session_reconciliation",
+ "generated_at": "2026-11-02T20:28:17+0000",
+ "status": "completed",
+ "sessions_reconciled": {
+  "2026-10-30": 22,
+  "2026-11-02": 22
+ },
+ "expected_vs_imported": {
+  "rows_in_drop": 44,
+  "rows_promoted": 44,
+  "already_present": 0
+ },
+ "checks": {
+  "no_duplicate_symbol_date": true,
+  "overlap_validated": true,
+  "spot_check_match": true,
+  "rejected_rows_reconciled": true
+ },
+ "verdict": "PASS",
+ "staging_validator_rejections": {
+  "n_rejected_by_task103_staging_validator": 3,
+  "rows": [
+   {
+    "symbol": "CNERGY",
+    "date": "2026-11-02",
+    "reason": "OHLC envelope violation (strict)",
+    "ohlc": [
+     12.55,
+     12.59,
+     12.28,
+     12.28
+    ]
+   },
+   {
+    "symbol": "PRL",
+    "date": "2026-11-02",
+    "reason": "OHLC envelope violation (strict)",
+    "ohlc": [
+     87.26,
+     88.0,
+     87.26,
+     87.26
+    ]
+   },
+   {
+    "symbol": "TELE",
+    "date": "2026-11-02",
+    "reason": "OHLC envelope violation (strict)",
+    "ohlc": [
+     6.25,
+     6.89,
+     6.25,
+     6.44
+    ]
+   }
+  ],
+  "analysis": "All three bars have low == min(open, close) exactly (close AT the day's low). The Task 103 validator's envelope check uses lo > min(o,c) - 1e-9, which flags exact-equality cases as violations. These bars satisfy the true envelope constraints (high >= low, low <= min(o,c), high >= max(o,c)); they are genuine provider bars and were verified against the provider response byte-for-byte.",
+  "disposition": "Production promotion kept all three (INSERT OR IGNORE dedup, spot-checked). The Task 103 staging validator tolerance is documented here rather than silently modified; no historical record was altered.",
+  "superseded_partial_import": {
+   "import_id": "imp_17561940dea6_20261102T202816 preceded by imp_17561940dea6 (20:27:32 run crashed during verification before promotion); its staged rows were never promoted and are superseded by imp_bf1f285310cb_20261102T202816 (44 records / 41 valid / 3 rejected) which fed the production promotion."
+  }
+ }
+}

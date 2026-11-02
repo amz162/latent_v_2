@@ -1,0 +1,57 @@
+{
+ "report": "task106_test_summary",
+ "generated_at": "2026-11-02T20:36:50+0000",
+ "python_checks": {
+  "passed": 15,
+  "failed": [],
+  "runtime_seconds": 1.0
+ },
+ "additional_suites": {
+  "typescript": {
+   "command": "bunx tsc --noEmit",
+   "result": "PASS (0 errors after fixing holdSessions -> nBarsExamined in task106_mature.ts)"
+  },
+  "production_build": {
+   "command": "bun run build (next build --webpack)",
+   "result": "PASS (exit 0)"
+  },
+  "api_integration": {
+   "result": "PASS",
+   "endpoints": 5
+  },
+  "headless_browser": {
+   "result": "PASS",
+   "checks": [
+    "home",
+    "AI Models view",
+    "notice",
+    "agreement labels x13",
+    "SELL\u00b7R x21"
+   ]
+  },
+  "no_trade_policy_tests": {
+   "result": "PASS",
+   "evidence": "task106_no_trade_path_tests.json"
+  },
+  "sell_vs_short_tests": {
+   "result": "PASS",
+   "evidence": "task106_sell_semantics_tests.json (23 fixtures)"
+  },
+  "v2_cost_parity": {
+   "result": "PASS",
+   "evidence": "task105_parity.ts re-run within suite"
+  },
+  "shadow_idempotency": {
+   "result": "PASS",
+   "evidence": "task106_shadow_idempotency_report.json + QA checks"
+  }
+ },
+ "verdict": "PASS",
+ "executed_counts": {
+  "python": 15,
+  "typescript": 1,
+  "build": 1,
+  "api_endpoints": 5,
+  "browser_checks": 6
+ }
+}

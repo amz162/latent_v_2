@@ -1,0 +1,814 @@
+{
+ "generated_at": "2026-11-02T20:32:56.075Z",
+ "engine": "production simulateStrategy (strategy-engine.ts)",
+ "cost_profile": "psx_user_schedule_v2",
+ "summary": {
+  "n": 34,
+  "matured": 12,
+  "pending_mtm": 24,
+  "unfilled": 22,
+  "realized_total_pkr": -75548.35,
+  "unrealized_total_pkr": -35674.53,
+  "note": "MTM is hypothetical unrealized value, not evidence of edge"
+ },
+ "observations": [
+  {
+   "decision_id": "t105gen1_LUCK_2026-10-29",
+   "symbol": "LUCK",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 398,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 398,
+     "quantity": 251,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 395.52,
+       "qty": 251,
+       "net": -922.1740000000045
+      }
+     ],
+     "realized_net_pnl": -922.1740000000045,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 398,
+     "quantity": 251,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 395.52,
+       "qty": 251,
+       "net": -922.1740000000045
+      }
+     ],
+     "realized_net_pnl": -922.1740000000045,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 398,
+     "quantity": 251,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 395.52,
+       "qty": 251,
+       "net": -922.1740000000045
+      }
+     ],
+     "realized_net_pnl": -922.1740000000045,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_SYS_2026-10-29",
+   "symbol": "SYS",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 108.61,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 108.61,
+     "quantity": 920,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3514.17788571427,
+     "net_return_pct": -3.516949241716743,
+     "sessions_used": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 108.61,
+     "quantity": 920,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3514.17788571427,
+     "net_return_pct": -3.516949241716743,
+     "sessions_used": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 108.61,
+     "quantity": 920,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3514.17788571427,
+     "net_return_pct": -3.516949241716743,
+     "sessions_used": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_MEBL_2026-10-29",
+   "symbol": "MEBL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 527,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 527,
+     "quantity": 189,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 527.44,
+       "qty": 189,
+       "net": -228.12299999999124
+      }
+     ],
+     "realized_net_pnl": -228.12299999999124,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 527,
+     "quantity": 189,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 527.44,
+       "qty": 189,
+       "net": -228.12299999999124
+      }
+     ],
+     "realized_net_pnl": -228.12299999999124,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 527,
+     "quantity": 189,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 533.9628571428572,
+       "qty": 94,
+       "net": 407.7182857142871
+      },
+      {
+       "exit_date": "2026-11-02",
+       "price": 527.44,
+       "qty": 95,
+       "net": -114.66499999999559
+      }
+     ],
+     "realized_net_pnl": 293.0532857142915,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_KEL_2026-10-29",
+   "symbol": "KEL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 5.95,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 5.95,
+     "quantity": 16806,
+     "exit_reason": "SL",
+     "realized_net_pnl": -6566.344285714282,
+     "net_return_pct": -6.566626650660261,
+     "sessions_used": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 5.95,
+     "quantity": 16806,
+     "exit_reason": "SL",
+     "realized_net_pnl": -6566.344285714282,
+     "net_return_pct": -6.566626650660261,
+     "sessions_used": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 5.95,
+     "quantity": 16806,
+     "exit_reason": "SL",
+     "realized_net_pnl": -6566.344285714282,
+     "net_return_pct": -6.566626650660261,
+     "sessions_used": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_TRG_2026-10-29",
+   "symbol": "TRG",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 53,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 53,
+     "quantity": 1886,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 51.87,
+       "qty": 1886,
+       "net": -2431.0540000000046
+      }
+     ],
+     "realized_net_pnl": -2431.0540000000046,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 53,
+     "quantity": 1886,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 51.87,
+       "qty": 1886,
+       "net": -2431.0540000000046
+      }
+     ],
+     "realized_net_pnl": -2431.0540000000046,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 53,
+     "quantity": 1886,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 51.87,
+       "qty": 1886,
+       "net": -2431.0540000000046
+      }
+     ],
+     "realized_net_pnl": -2431.0540000000046,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_BOP_2026-10-29",
+   "symbol": "BOP",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 28.9,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 28.9,
+     "quantity": 3460,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 28.1,
+       "qty": 3460,
+       "net": -3067.98199999999
+      }
+     ],
+     "realized_net_pnl": -3067.98199999999,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 28.9,
+     "quantity": 3460,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 28.1,
+       "qty": 3460,
+       "net": -3067.98199999999
+      }
+     ],
+     "realized_net_pnl": -3067.98199999999,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 28.9,
+     "quantity": 3460,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 28.1,
+       "qty": 3460,
+       "net": -3067.98199999999
+      }
+     ],
+     "realized_net_pnl": -3067.98199999999,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_CNERGY_2026-10-29",
+   "symbol": "CNERGY",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 14.2,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 14.2,
+     "quantity": 7042,
+     "exit_reason": "SL",
+     "realized_net_pnl": -12041.81999999999,
+     "net_return_pct": -12.042253521126751,
+     "sessions_used": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 14.2,
+     "quantity": 7042,
+     "exit_reason": "SL",
+     "realized_net_pnl": -12041.81999999999,
+     "net_return_pct": -12.042253521126751,
+     "sessions_used": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 14.2,
+     "quantity": 7042,
+     "exit_reason": "SL",
+     "realized_net_pnl": -12041.81999999999,
+     "net_return_pct": -12.042253521126751,
+     "sessions_used": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_MLCF_2026-10-29",
+   "symbol": "MLCF",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 91.03,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 91.03,
+     "quantity": 1098,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 91.96,
+       "qty": 1098,
+       "net": 568.1161799999932
+      }
+     ],
+     "realized_net_pnl": 568.1161799999932,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 91.03,
+     "quantity": 1098,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 91.96,
+       "qty": 1098,
+       "net": 568.1161799999932
+      }
+     ],
+     "realized_net_pnl": 568.1161799999932,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 91.03,
+     "quantity": 1098,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 91.96,
+       "qty": 1098,
+       "net": 568.1161799999932
+      }
+     ],
+     "realized_net_pnl": 568.1161799999932,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_PAEL_2026-10-29",
+   "symbol": "PAEL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 32.61,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 32.61,
+     "quantity": 3066,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3060.441779999999,
+     "net_return_pct": -3.060984798703289,
+     "sessions_used": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 32.61,
+     "quantity": 3066,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3060.441779999999,
+     "net_return_pct": -3.060984798703289,
+     "sessions_used": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 32.61,
+     "quantity": 3066,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3060.441779999999,
+     "net_return_pct": -3.060984798703289,
+     "sessions_used": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_PIBTL_2026-10-29",
+   "symbol": "PIBTL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 13.19,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 13.19,
+     "quantity": 7581,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 12.78,
+       "qty": 7581,
+       "net": -3563.070000000001
+      }
+     ],
+     "realized_net_pnl": -3563.070000000001,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 13.19,
+     "quantity": 7581,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 12.78,
+       "qty": 7581,
+       "net": -3563.070000000001
+      }
+     ],
+     "realized_net_pnl": -3563.070000000001,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 13.19,
+     "quantity": 7581,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 12.78,
+       "qty": 7581,
+       "net": -3563.070000000001
+      }
+     ],
+     "realized_net_pnl": -3563.070000000001,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_LOTCHEM_2026-10-29",
+   "symbol": "LOTCHEM",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 24.47,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 24.47,
+     "quantity": 4086,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 23.55,
+       "qty": 4086,
+       "net": -4059.073259999993
+      }
+     ],
+     "realized_net_pnl": -4059.073259999993,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 24.47,
+     "quantity": 4086,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 23.55,
+       "qty": 4086,
+       "net": -4059.073259999993
+      }
+     ],
+     "realized_net_pnl": -4059.073259999993,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 24.47,
+     "quantity": 4086,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 23.55,
+       "qty": 4086,
+       "net": -4059.073259999993
+      }
+     ],
+     "realized_net_pnl": -4059.073259999993,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t105gen1_FCCL_2026-10-29",
+   "symbol": "FCCL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 52.61,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 52.61,
+     "quantity": 1900,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 53.81,
+       "qty": 1900,
+       "net": 1638.1230000000046
+      }
+     ],
+     "realized_net_pnl": 1638.1230000000046,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 52.61,
+     "quantity": 1900,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 53.81,
+       "qty": 1900,
+       "net": 1638.1230000000046
+      }
+     ],
+     "realized_net_pnl": 1638.1230000000046,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 52.61,
+     "quantity": 1900,
+     "sessions_available": 2,
+     "resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 53.81,
+       "qty": 1900,
+       "net": 1638.1230000000046
+      }
+     ],
+     "realized_net_pnl": 1638.1230000000046,
+     "unrealized_mtm_pkr": 0,
+     "note": "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-02"
+  },
+  {
+   "decision_id": "t106gen2_HUBC_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_LUCK_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_SYS_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_MEBL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_PSO_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_OGDC_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_WTL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_KEL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_TRG_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_UNITY_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_BOP_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_CNERGY_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_HASCOL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_MLCF_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_PAEL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_PIBTL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_LOTCHEM_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_PRL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_TELE_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_ANL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_HUMNL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  },
+  {
+   "decision_id": "t106gen2_FCCL_2026-11-02",
+   "status": "awaiting_entry_bar",
+   "entry": null,
+   "outcomes": {}
+  }
+ ]
+}

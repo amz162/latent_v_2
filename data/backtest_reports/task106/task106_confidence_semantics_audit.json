@@ -1,0 +1,68 @@
+{
+ "report": "task106_confidence_semantics_audit",
+ "generated_at": "2026-11-02T20:24:10+0000",
+ "status": "completed",
+ "canonical_names_module": "src/lib/latent/confidence-semantics.ts (new in Task 106)",
+ "canonical_fields": {
+  "raw_model_score": {
+   "meaning": "raw model output pre-calibration",
+   "presentable_as_probability": false
+  },
+  "ensemble_agreement": {
+   "meaning": "share of trained models agreeing on direction",
+   "presentable_as_probability": false
+  },
+  "directional_score": {
+   "meaning": "indicator/rule strength (RSI/EMA-derived)",
+   "presentable_as_probability": false
+  },
+  "calibrated_probability": {
+   "meaning": "probability fitted to realized outcomes",
+   "presentable_as_probability": true,
+   "condition": "valid calibration method AND separate evaluation evidence \u2014 currently NONE served live"
+  },
+  "predicted_net_positive_probability": {
+   "meaning": "P(net-positive 21-session TP/SL trade) per Task 101/104 protocol",
+   "presentable_as_probability": false,
+   "condition": "research-only; OOS calibration not established (Spearman -0.002..-0.07)"
+  }
+ },
+ "trace_by_layer": [
+  {
+   "layer": "base model confidence",
+   "field": "raw_model_score",
+   "surface": "signal cards (raw_prob)"
+  },
+  {
+   "layer": "ensemble agreement",
+   "field": "ensemble_agreement",
+   "surface": "ensemble cards (agreement, clampConfidence)"
+  },
+  {
+   "layer": "Final Consensus",
+   "field": "ensemble_agreement",
+   "surface": "consensus card (majority-vote share)"
+  },
+  {
+   "layer": "directional score",
+   "field": "directional_score",
+   "surface": "SignalDetail confidenceScore (RSI-derived 50-85)"
+  },
+  {
+   "layer": "cost-aware calibrated probability",
+   "field": "predicted_net_positive_probability",
+   "surface": "simulator internals (exp_win_rate; TP1-before-SL-5d target) \u2014 research only"
+  },
+  {
+   "layer": "UI percentage badges",
+   "field": "ensemble_agreement",
+   "surface": "AI Models page (now labeled '(not a win probability)')"
+  }
+ ],
+ "calibration_evidence": {
+  "task105_frozen": "final_test AUC 0.496-0.527; ECE/Brier/slope in task105_calibration_diagnostics.json",
+  "displayed_when_weak": "Probability calibration not established"
+ },
+ "verdict": "all displayed scores map to exactly one canonical field; none is a verified win probability",
+ "runtime_seconds": 0.0
+}

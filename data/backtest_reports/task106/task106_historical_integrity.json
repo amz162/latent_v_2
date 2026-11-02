@@ -1,0 +1,20 @@
+{
+ "report": "task106_historical_integrity",
+ "generated_at": "2026-11-02T20:41:07+0000",
+ "status": "completed",
+ "task_100_105_reports_unmodified": true,
+ "git_dirty_paths_in_history_dirs": [],
+ "task103_operational_ledger_changes": {
+  "allowed": true,
+  "paths": [
+   "data/backtest_reports/task103/external_imports_staging.db (append-only import ledger)",
+   "data/backtest_reports/task103/import_manifests/*.json (new import manifests)",
+   "data/backtest_reports/task103/task103_market_data_audit.json (operational freshness fields refreshed; history preserved in note)"
+  ]
+ },
+ "task105_gen1_records": "12 observations byte-identical to git HEAD (verified after restoring a timestamp-only no-op rewrite; generator now guarded)",
+ "task105_gen2_collision": "none \u2014 Task 106 uses a separate task106-gen2 namespace/store",
+ "prospective_lifecycle_records": "untouched",
+ "db_compressed_snapshot": "unchanged in this task (live DB advanced by 44 rows; backup db/backups/custom_pre_task106.db)",
+ "verdict": "PASS"
+}

@@ -105,64 +105,71 @@ def main() -> None:
             "maturity_blocker": "next session open (entry) and outcome bars not yet imported — awaiting_data",
             "realized_outcome": None, "actual_net_pnl": None})
     all_obs = existing["observations"] + obs
-    STORE.parent.mkdir(parents=True, exist_ok=True)
-    STORE.write_text(json.dumps({
-        "namespace": "task105-gen1 (separate from Task 103 prospective lifecycle; preserved)",
-        "idempotency": "merge by decision_id; re-runs add nothing",
-        "updated_at": L.NOW(), "n_observations": len(all_obs),
-        "observations": all_obs}, indent=1))
+    if obs:
+        # Task 106 rule: a no-op re-run must NOT touch the frozen Task 105
+        # artifacts — rewrite the store only when genuinely new observations
+        # were merged.
+        STORE.parent.mkdir(parents=True, exist_ok=True)
+        STORE.write_text(json.dumps({
+            "namespace": "task105-gen1 (separate from Task 103 prospective lifecycle; preserved)",
+            "idempotency": "merge by decision_id; re-runs add nothing",
+            "updated_at": L.NOW(), "n_observations": len(all_obs),
+            "observations": all_obs}, indent=1))
+    else:
+        print("phase8: no new observations — Task 105 artifacts left untouched (idempotent no-op)")
 
-    # ── Phase 9 artifacts ────────────────────────────────────────────────────
-    (T105 / "task105_forward_monitoring.json").write_text(json.dumps({
-        "report": "task105_forward_monitoring", "generated_at": L.NOW(), "status": "collecting_awaiting_data",
-        "metrics": {
-            "n_new_independent_decision_dates": 1,
-            "decision_dates": [FRONTIER],
-            "note": "frontier recording only — outcomes require sessions AFTER the last verified date",
-            "n_independent_symbols": len(frows),
-            "n_generated_predictions": len(frows),
-            "n_no_trade_decisions": len(frows),
-            "n_hypothetical_fills": 0,
-            "n_matured_trades": 0,
-            "net_expectancy": None, "win_rate": None, "profit_factor": None, "drawdown": None,
-            "confidence_calibration": "insufficient matured trades",
-            "cost_ratio": None, "symbol_concentration": None,
-            "regime_coverage": "single point — no regime coverage yet"}},
-        indent=1))
+    if obs:
+        # ── Phase 9 artifacts ────────────────────────────────────────────────────
+        (T105 / "task105_forward_monitoring.json").write_text(json.dumps({
+            "report": "task105_forward_monitoring", "generated_at": L.NOW(), "status": "collecting_awaiting_data",
+            "metrics": {
+                "n_new_independent_decision_dates": 1,
+                "decision_dates": [FRONTIER],
+                "note": "frontier recording only — outcomes require sessions AFTER the last verified date",
+                "n_independent_symbols": len(frows),
+                "n_generated_predictions": len(frows),
+                "n_no_trade_decisions": len(frows),
+                "n_hypothetical_fills": 0,
+                "n_matured_trades": 0,
+                "net_expectancy": None, "win_rate": None, "profit_factor": None, "drawdown": None,
+                "confidence_calibration": "insufficient matured trades",
+                "cost_ratio": None, "symbol_concentration": None,
+                "regime_coverage": "single point — no regime coverage yet"}},
+            indent=1))
 
-    gates = [
-        {"gate": "at_least_100_matured_trades", "required": 100, "actual": 0, "met": False},
-        {"gate": "at_least_two_distinct_calendar_quarters", "required": 2, "actual": 0, "met": False},
-        {"gate": "multiple_independent_symbols", "required": ">=15", "actual": len(frows), "met": len(frows) >= 15},
-        {"gate": "more_than_one_market_regime", "required": 2, "actual": 0, "met": False},
-        {"gate": "positive_net_expectancy_after_real_costs", "actual": None, "met": False,
-          "note": "frozen Task 104 evidence: NEGATIVE across all 60 configurations"},
-        {"gate": "confidence_interval_supports_positive_expectancy", "actual": None, "met": False},
-        {"gate": "acceptable_drawdown", "actual": None, "met": False,
-          "note": "historical drawdowns -92..-99.7%"},
-        {"gate": "no_severe_concentration", "actual": None, "met": False},
-        {"gate": "calibration_stability", "actual": None, "met": False,
-          "note": "OOS Spearman(confidence, outcome) ~0"}]
-    (T105 / "task105_evidence_gate_report.json").write_text(json.dumps({
-        "report": "task105_evidence_gate_report", "generated_at": L.NOW(), "status": "completed",
-        "gates": gates, "gates_met": sum(1 for g in gates if g["met"]), "gates_total": len(gates),
-        "promotion_conclusion": "NOT_PROMOTABLE — no model or strategy satisfies the minimum evidence gates; "
-                                 "frozen historical evidence is negative on every gate it touches",
-        "significance_testing_note": "no repeated testing without adjustment; gates are minimum checks, not a promotion formula"}, indent=1))
+        gates = [
+            {"gate": "at_least_100_matured_trades", "required": 100, "actual": 0, "met": False},
+            {"gate": "at_least_two_distinct_calendar_quarters", "required": 2, "actual": 0, "met": False},
+            {"gate": "multiple_independent_symbols", "required": ">=15", "actual": len(frows), "met": len(frows) >= 15},
+            {"gate": "more_than_one_market_regime", "required": 2, "actual": 0, "met": False},
+            {"gate": "positive_net_expectancy_after_real_costs", "actual": None, "met": False,
+              "note": "frozen Task 104 evidence: NEGATIVE across all 60 configurations"},
+            {"gate": "confidence_interval_supports_positive_expectancy", "actual": None, "met": False},
+            {"gate": "acceptable_drawdown", "actual": None, "met": False,
+              "note": "historical drawdowns -92..-99.7%"},
+            {"gate": "no_severe_concentration", "actual": None, "met": False},
+            {"gate": "calibration_stability", "actual": None, "met": False,
+              "note": "OOS Spearman(confidence, outcome) ~0"}]
+        (T105 / "task105_evidence_gate_report.json").write_text(json.dumps({
+            "report": "task105_evidence_gate_report", "generated_at": L.NOW(), "status": "completed",
+            "gates": gates, "gates_met": sum(1 for g in gates if g["met"]), "gates_total": len(gates),
+            "promotion_conclusion": "NOT_PROMOTABLE — no model or strategy satisfies the minimum evidence gates; "
+                                     "frozen historical evidence is negative on every gate it touches",
+            "significance_testing_note": "no repeated testing without adjustment; gates are minimum checks, not a promotion formula"}, indent=1))
 
-    (T105 / "task105_forward_validation_status.json").write_text(json.dumps({
-        "report": "task105_forward_validation_status", "generated_at": L.NOW(),
-        "state": "awaiting_data",
-        "state_machine": ["collecting", "insufficient_matured_trades", "awaiting_data",
-                           "negative_edge", "inconclusive", "eligible_for_review", "not_promotable"],
-        "reason": "no licensed market feed is connected; the last verified session (2026-10-29) is the "
-                   "recorded frontier. Shadow observations for that frontier are stored and FROZEN; they "
-                   "mature only when genuinely new sessions are imported.",
-        "latest_verified_db_date": FRONTIER,
-        "observations_recorded": len(all_obs), "matured": 0,
-        "idempotent": True,
-        "task103_records_preserved": True,
-        "runtime_seconds": round(time.time() - t0, 1)}, indent=1))
+        (T105 / "task105_forward_validation_status.json").write_text(json.dumps({
+            "report": "task105_forward_validation_status", "generated_at": L.NOW(),
+            "state": "awaiting_data",
+            "state_machine": ["collecting", "insufficient_matured_trades", "awaiting_data",
+                               "negative_edge", "inconclusive", "eligible_for_review", "not_promotable"],
+            "reason": "no licensed market feed is connected; the last verified session (2026-10-29) is the "
+                       "recorded frontier. Shadow observations for that frontier are stored and FROZEN; they "
+                       "mature only when genuinely new sessions are imported.",
+            "latest_verified_db_date": FRONTIER,
+            "observations_recorded": len(all_obs), "matured": 0,
+            "idempotent": True,
+            "task103_records_preserved": True,
+            "runtime_seconds": round(time.time() - t0, 1)}, indent=1))
     print(f"phase8+9 done: {len(obs)} new observations, {len(all_obs)} total, state=awaiting_data")
 
 

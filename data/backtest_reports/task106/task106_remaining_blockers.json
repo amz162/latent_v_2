@@ -1,0 +1,37 @@
+{
+ "report": "task106_remaining_blockers",
+ "generated_at": "2026-11-02T20:42:59+0000",
+ "status": "completed",
+ "blockers": [
+  {
+   "id": "B1",
+   "blocker": "No scheduled job is configured in the deployment",
+   "impact": "refresh/shadow/maturation run on demand only; no stale predictions possible (fail-safe by design)",
+   "unblocks": "deploy a cron/worker (see docs/task106-data-refresh-runbook.md step: post-session ~11:30 UTC)"
+  },
+  {
+   "id": "B2",
+   "blocker": "KSE-100 index history unavailable from the free provider (constituents only)",
+   "impact": "benchmark/regime analysis still uses internal breadth proxies"
+  },
+  {
+   "id": "B3",
+   "blocker": "Corporate actions, filings with publication timestamps, PIT fundamentals, intraday bars",
+   "impact": "unchanged since Task 102/103; no verified source"
+  },
+  {
+   "id": "B4",
+   "blocker": "Short-selling eligibility documentation for the intended account type",
+   "impact": "SHORT_ENTRY stays disabled (compliance_unverified)"
+  },
+  {
+   "id": "B5",
+   "blocker": "Forward maturity needs future market sessions",
+   "impact": "24 strategy-outcomes pending MTM (8 gen1 trades); full 21-session maturity ~2026-12-01"
+  }
+ ],
+ "not_blockers": [
+  "all 34 required artifacts produced",
+  "website/build/tests green"
+ ]
+}

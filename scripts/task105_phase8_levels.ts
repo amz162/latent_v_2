@@ -13,7 +13,8 @@ const db = new PrismaClient({ log: ["error"] });
 const PILOT = ["ENGRO", "HUBC", "LUCK", "SYS", "MEBL", "PSO", "OGDC", "PPL", "WTL",
   "KEL", "TRG", "UNITY", "BOP", "CNERGY", "HASCOL", "MLCF", "BYCO", "PAEL",
   "PIBTL", "LOTCHEM", "PRL", "TELE", "ANL", "HUMNL", "FCCL"];
-const FRONTIER = "2026-10-29";
+const FRONTIER = process.argv[2] ?? "2026-10-29";
+const OUT = process.argv[3] ?? "data/backtest_reports/task105/_frontier_levels.json";
 
 async function main() {
   const out: any = { frontier_date: FRONTIER, generated_at: new Date().toISOString(), symbols: {} };
@@ -26,15 +27,17 @@ async function main() {
     const levels = computeRiskLevels(
       bars.map((b) => ({ date: b.date, high: b.high, low: b.low, close: b.close })),
       FRONTIER, "BUY");
+    const hasNext = idx + 1 < bars.length;
     out.symbols[sym] = levels
       ? { status: "levels_computed", decision_close: bars[idx].close,
            sl: levels.sl, tp1: levels.tp1, tp2: levels.tp2, tp3: levels.tp3,
-           entry: "TBD_next_session_open_not_yet_imported" }
+           entry: hasNext ? bars[idx + 1].open : "TBD_next_session_open_not_yet_imported",
+           entry_date: hasNext ? bars[idx + 1].date : null }
       : { status: "levels_unavailable" };
   }
-  fs.writeFileSync("data/backtest_reports/task105/_frontier_levels.json", JSON.stringify(out, null, 1));
+  fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
   const ok = Object.values(out.symbols).filter((s: any) => s.status === "levels_computed").length;
-  console.log(`frontier levels: ${ok}/${PILOT.length} symbols`);
+  console.log(`frontier levels: ${ok}/${PILOT.length} symbols -> ${OUT}`);
   await db.$disconnect();
 }
 main().catch((e) => { console.error(e); process.exit(1); });

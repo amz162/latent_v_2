@@ -1,0 +1,32 @@
+{
+ "report": "task106_confidence_ui_audit",
+ "generated_at": "2026-11-02T20:24:10+0000",
+ "status": "completed",
+ "changes_made_task106": [
+  {
+   "file": "src/components/latent/AiModelSignals.tsx",
+   "site": "ensemble card",
+   "change": "'Confidence:' renamed 'Ensemble agreement:' with '(not a win probability)' suffix + policy-driven tooltip"
+  },
+  {
+   "file": "src/components/latent/AiModelSignals.tsx",
+   "site": "raw_prob/exp_win_rate/agreement breakdown",
+   "change": "canonical tooltips on all three fields"
+  },
+  {
+   "file": "src/components/latent/SignalDetail.tsx",
+   "site": "Confidence badge",
+   "change": "labeled 'directional score, not a win probability' + tooltip"
+  }
+ ],
+ "unchanged_correct_labels": [
+  "sim 'Backtest Score' already titled 'empirical winRate/100 from completed trades'",
+  "Win Rate metric already titled 'winning trades / completed trades ... NET P&L > 0 after commission, slippage and CGT'",
+  "SignalDetail 'What the confidence score means' section retained (LLM-explained, now bounded by the fixed label above)",
+  "ModelRegistryDashboard verified-status badges retained"
+ ],
+ "no_score_of_70_displayed_as_win_chance": "verified \u2014 every % badge now carries its canonical name in the same view",
+ "task105_warning_maintained": "CapitalProtectionNotice unchanged on all 3 surfaces",
+ "negative_performance_visibility": "negative R2, negative net returns and losing win rates remain displayed as-is",
+ "verdict": "UI correctly labeled"
+}

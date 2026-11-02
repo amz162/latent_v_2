@@ -1,0 +1,27 @@
+{
+ "report": "task106_forward_evaluation",
+ "generated_at": "2026-11-02T20:32:56+0000",
+ "state": "collecting",
+ "matured_trades": 4,
+ "pending_mtm": 24,
+ "unfilled": 22,
+ "realized_total_pkr": -75548.35,
+ "unrealized_total_pkr": -35674.53,
+ "interpretation": "MTM values are unrealized and are NOT performance evidence; no expectancy claim is possible",
+ "outcomes_distinguished": {
+  "positive_forward_return": "pending (21-session horizon not reached)",
+  "positive_completed_trade": "none matured",
+  "tp_before_sl": "none matured",
+  "net_positive_completed_position": "none matured"
+ },
+ "historical_labeling": "all Task 100-105 results remain development_only",
+ "verdict": "insufficient_matured_trades",
+ "matured_strategy_outcomes": 12,
+ "matured_detail": {
+  "unique_trades": 4,
+  "note": "the three strategies share identical SL-first outcomes; 12 strategy-outcomes = 4 unique matured trades (SYS, KEL, CNERGY, PAEL \u2014 all SL exits)",
+  "all_losses": true,
+  "realized_total_pkr": -75548.35,
+  "evidence_status": "genuinely matured forward trades but far too few for any inference; consistent with (not proof of) the frozen negative-edge finding"
+ }
+}

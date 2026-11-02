@@ -13,6 +13,8 @@ import{toast}from"sonner";
 import{LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend}from"recharts";
 import{rankAndFilter as rankAndFilterEnsembles,computeBacktestScore}from"@/lib/latent/simulator-ranking";
 import{CapitalProtectionNotice}from"./CapitalProtectionNotice";
+import{classifySellAction,SHORT_SELLING_COMPLIANCE}from"@/lib/latent/trading-policy";
+import{confidenceTooltip}from"@/lib/latent/confidence-semantics";
 
 interface MP{name:string;tier:string;tierLabel:string;category:string;trained:boolean;untrainedReason?:string;direction?:"LONG"|"SHORT";signal?:"BUY"|"SELL"|"HOLD";confidence?:number;currentPrice?:number;entry?:number;sl?:number;tp1?:number;tp2?:number;tp3?:number;avgReturn?:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;metrics?:any;backtest?:{totalTrades:number;buySignals:number;sellSignals:number;correctBuys:number;correctSells:number;winRate:number;avgReturnPct:number;maxReturnPct:number;minReturnPct:number;stars:number;coveredSymbols?:number;};extended?:boolean;}
 interface ER{method:string;methodLabel:string;signal:"BUY"|"SELL"|"HOLD";direction:"LONG"|"SHORT";confidence:number;predictedPrice:number;entry:number;sl:number;tp1:number;tp2:number;tp3:number;modelCount:number;buyCount:number;sellCount:number;holdCount:number;raw_prob?:number;exp_win_rate?:number;agreement?:number;total_score?:number;pillars?:any;expected_return?:number;r_pct?:number;strategy_signals?:any;}
@@ -276,7 +278,7 @@ export function AiModelSignals(){
      <div key={en.method} className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5 md:p-3">
       <div className="text-[10px] uppercase text-[#64748B] mb-1.5">{en.methodLabel}</div>
       <div className={`text-lg md:text-xl font-bold mb-1 ${sc(en.signal)}`}>{en.signal}</div>
-      <div className="text-[10px] text-[#94A3B8] mb-1.5">Confidence:<span className="font-mono">{en.confidence}%</span></div>
+      <div className="text-[10px] text-[#94A3B8] mb-1.5" title={confidenceTooltip("ensemble_agreement")}>Ensemble agreement:<span className="font-mono">{en.confidence}%</span><span className="text-[#64748B]"> (not a win probability)</span></div>
       <div className="grid grid-cols-2 gap-1 text-[10px]">
        <div><span className="text-[#64748B]">Entry:</span><span className="font-mono text-[#F4F7FB]">{en.entry.toFixed(2)}</span></div>
        <div><span className="text-[#64748B]">SL:</span><span className="font-mono text-[#FF5C5C]">{en.sl.toFixed(2)}</span></div>
@@ -288,9 +290,9 @@ export function AiModelSignals(){
       <div className="text-[10px] text-[#64748B] mt-1.5 pt-1.5 border-t border-white/[0.04]">{en.buyCount}B·{en.sellCount}S·{en.holdCount}H</div>
       {en.raw_prob!=null&&en.exp_win_rate!=null&&en.agreement!=null&&(
        <div className="text-[10px] text-[#64748B] mt-1 pt-1 border-t border-white/[0.04]">
-        <div className="flex items-center justify-between"><span>raw_prob:</span><span className="font-mono text-[#94A3B8]">{typeof en.raw_prob==="number"?en.raw_prob.toFixed(3):String(en.raw_prob)}</span></div>
-        <div className="flex items-center justify-between"><span>exp_win_rate:</span><span className="font-mono text-[#00E676]">{typeof en.exp_win_rate==="number"?(en.exp_win_rate*100).toFixed(1)+"%":String(en.exp_win_rate)}</span></div>
-        <div className="flex items-center justify-between"><span>agreement:</span><span className="font-mono text-[#F4F7FB]">{typeof en.agreement==="number"?(en.agreement*100).toFixed(0)+"%":String(en.agreement)}</span></div>
+        <div className="flex items-center justify-between"><span title={confidenceTooltip("raw_model_score")}>raw_prob:</span><span className="font-mono text-[#94A3B8]">{typeof en.raw_prob==="number"?en.raw_prob.toFixed(3):String(en.raw_prob)}</span></div>
+        <div className="flex items-center justify-between"><span title={confidenceTooltip("predicted_net_positive_probability")}>exp_win_rate:</span><span className="font-mono text-[#00E676]">{typeof en.exp_win_rate==="number"?(en.exp_win_rate*100).toFixed(1)+"%":String(en.exp_win_rate)}</span></div>
+        <div className="flex items-center justify-between"><span title={confidenceTooltip("ensemble_agreement")}>agreement:</span><span className="font-mono text-[#F4F7FB]">{typeof en.agreement==="number"?(en.agreement*100).toFixed(0)+"%":String(en.agreement)}</span></div>
        </div>
       )}
       {en.total_score!=null&&en.pillars!=null&&typeof en.total_score==="number"&&(
@@ -1609,7 +1611,7 @@ function MC({m}:{m:MP}){
  return(<div className="rounded-md bg-[#0A0E1A] border border-white/[0.06] p-2.5 md:p-3">
   <div className="flex items-start justify-between gap-2 mb-1.5"><div><div className="flex items-center gap-1.5 flex-wrap">
    <span className="text-xs md:text-sm font-semibold text-[#F4F7FB]">{m.name}</span>
-   <Badge className={`text-[9px] py-0 h-3.5 md:h-4 border ${sb}`}>{m.signal}</Badge>
+   <Badge className={`text-[9px] py-0 h-3.5 md:h-4 border ${sb}`} title={m.signal==="SELL"?`${classifySellAction({signal:"SELL",holdsExistingLongPosition:false,isSimulationOnly:true}).label} — compliance: ${SHORT_SELLING_COMPLIANCE.status}`:undefined}>{m.signal==="SELL"?"SELL·R":m.signal}</Badge>
    {m.extended&&<Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#FBBF24]/40 text-[#FBBF24]" title="Extended training — indicator-based engine covering stocks outside the original ML universe">EXT</Badge>}
    {m.trained&&<Badge variant="outline" className="text-[8px] py-0 h-3.5 border-[#22D3EE]/30 text-[#22D3EE]" title="A Python-trained artifact exists in ml_predictions_multi.json for LIVE per-stock predictions. The RUNTIME BACKTEST shown here uses the shared strategySignal() indicator engine — NOT this trained artifact — so the BT stats below are an indicator-strategy evaluation, not a trained-ML evaluation.">ML·live</Badge>}
    {m.backtest&&<span className="text-[9px] text-[#FBBF24]">{"★".repeat(m.backtest.stars)}<span className="text-[#64748B]">{"★".repeat(5-m.backtest.stars)}</span></span>}

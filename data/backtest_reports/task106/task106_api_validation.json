@@ -1,0 +1,26 @@
+{
+ "report": "task106_api_validation",
+ "generated_at": "2026-11-02T20:41:07+0000",
+ "status": "completed",
+ "dev_server": "bun run dev (port 3000)",
+ "endpoints": {
+  "GET /": 200,
+  "GET /api/data-readiness": 200,
+  "GET /api/ai-model-signals/LUCK": 200,
+  "GET /api/models/registry": 200,
+  "GET /api/signals/all": 200
+ },
+ "data_readiness_semantics": {
+  "latestVerifiedTradingDate": "2026-11-02 (refreshed from 2026-10-29 after the Task 106 import)",
+  "nBars": 1042865,
+  "nSymbols": 909,
+  "sources": {
+   "kse100": "blocked_external_data",
+   "fundamentals": "completed_with_limitations",
+   "filings": "partially_verified",
+   "corporateActions": "blocked_external_data",
+   "intraday": "provider_unavailable"
+  }
+ },
+ "verdict": "PASS"
+}

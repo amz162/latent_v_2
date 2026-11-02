@@ -1,0 +1,62 @@
+{
+ "report": "task106_baseline_inventory",
+ "generated_at": "2026-11-02T20:18:25+0000",
+ "status": "completed",
+ "git": {
+  "head": "64b35c39",
+  "branch": "main",
+  "dirty_paths": 1
+ },
+ "recent_commits": [
+  "64b35c39 Task 105: complete signal forensics, capital protection, model failure analysis & forward paper-trading validation",
+  "e4a141fa Task 104 worklog entry",
+  "280a2942 Task 104: PKR 100,000 capital-constrained portfolio backtest, all-model accuracy audit, confidence calibration & three-strategy ROI analysis (engine reconstruction 11,521x3 ALL IDENTICAL <=0.01 PKR; per-sample probabilities reproduced via frozen Task 101 protocol, thr 0.4282 exact; 60-scenario account-ledger sim with production engine at actual size: all configurations lose -91.2%..-99.5%, none positive after real costs; confidence-vs-outcome Spearman ~0 OOS; filter improves expectancy but stays negative; QA 26/26 + tsc clean)"
+ ],
+ "task105_artifact_count": 40,
+ "component_checks": {
+  "trading_policy_module": true,
+  "capital_protection_notice": true,
+  "notice_ai_model_signals": true,
+  "notice_investment_strategy": true,
+  "task105_artifacts_complete": true,
+  "task103_importer": true,
+  "data_readiness_api": true,
+  "cost_engine_v2": true,
+  "cron_api_dir": true,
+  "strategy_engine": true,
+  "investment_simulator": true,
+  "shadow_store": true,
+  "task105_policy_version": "task105-v1"
+ },
+ "api_routes": [
+  "ai-model-signals",
+  "backtest",
+  "cron",
+  "data-readiness",
+  "dividends",
+  "execute",
+  "fair-value",
+  "llm",
+  "ml",
+  "models",
+  "onboarding",
+  "pattern-recognition",
+  "plan",
+  "portfolio",
+  "predictions",
+  "price-patterns",
+  "psx",
+  "result-patterns",
+  "scrape",
+  "signals",
+  "simulate",
+  "stock-patterns",
+  "stocks",
+  "tax",
+  "track-record"
+ ],
+ "limitations": [
+  "no licensed PSX feed configured in deployment",
+  "no live scheduler verified"
+ ]
+}

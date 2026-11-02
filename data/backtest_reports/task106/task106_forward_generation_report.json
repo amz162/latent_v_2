@@ -1,0 +1,28 @@
+{
+ "report": "task106_forward_generation_report",
+ "generated_at": "2026-11-02T20:32:56+0000",
+ "status": "completed",
+ "frontier": {
+  "previous": "2026-10-29",
+  "current": "2026-11-02",
+  "new_sessions": [
+   "2026-10-30",
+   "2026-11-02"
+  ]
+ },
+ "gen1_task105": {
+  "n_observations": 12,
+  "records_modified": false,
+  "entries_now_fillable": true,
+  "note": "entry bars (2026-10-30 open) arrived with the Task 106 refresh; fills are recorded in the Task 106 maturation ledger, NOT by mutating the frozen gen1 store"
+ },
+ "gen2_task106": {
+  "n_new_observations": 22,
+  "decision_date": "2026-11-02",
+  "model": "frozen Task 104 protocol (no retraining, no threshold changes)",
+  "policy": "task105-v1 -> all no_trade (expected_net_value_not_positive)",
+  "store": "/home/z/my-project/latent_v_2/data/backtest_reports/task106/shadow_observations/task106_shadow_observations.json"
+ },
+ "never_replayed_old_dates": "gen2 decisions are only at the NEW frontier session; Task 100-105 dates are never re-observed",
+ "runtime_seconds": 6.2
+}

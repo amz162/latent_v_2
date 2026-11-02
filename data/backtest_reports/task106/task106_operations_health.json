@@ -1,0 +1,54 @@
+{
+ "report": "task106_operations_health",
+ "generated_at": "2026-11-02T20:34:56+0000",
+ "status": "completed",
+ "jobs": [
+  {
+   "job": "EOD data ingestion (Task 103 importer + Task 106 refresh)",
+   "last_run": "2026-11-02T20:34:56+0000",
+   "last_successful_run": "2026-11-02T20:34:56+0000",
+   "last_data_date": "2026-11-02",
+   "rows_fetched": 44,
+   "rows_accepted": 41,
+   "rows_rejected_by_staging_validator": 3,
+   "rejected_reason": "strict OHLC envelope equality (low == min(open,close)); bars verified genuine and promoted; documented",
+   "failure_reason": null,
+   "checkpoint": "data/external_imports/psx_eod/task106_refresh.csv (sha256 manifest)",
+   "retry_status": "idempotent by SHA-256 + INSERT OR IGNORE dedup"
+  },
+  {
+   "job": "shadow prediction generation (gen1/gen2)",
+   "last_run": "2026-11-02T20:34:56+0000",
+   "last_successful_run": "2026-11-02T20:34:56+0000",
+   "rows_fetched": 34,
+   "rows_accepted": 34,
+   "rows_rejected": 0,
+   "failure_reason": null,
+   "checkpoint": "decision_id idempotent stores",
+   "retry_status": "safe to re-run"
+  },
+  {
+   "job": "outcome maturation (task106_mature.ts)",
+   "last_run": "2026-11-02T20:34:56+0000",
+   "last_successful_run": "2026-11-02T20:34:56+0000",
+   "rows_fetched": 34,
+   "rows_accepted": 34,
+   "rows_rejected": 0,
+   "failure_reason": null,
+   "checkpoint": "_matured.json recomputed from immutable bars",
+   "retry_status": "safe to re-run; premature-maturity impossible by construction"
+  },
+  {
+   "job": "KSE-100 refresh",
+   "status": "blocked_external_data",
+   "failure_reason": "provider exposes constituents only; dps.psx.com.pk unreachable from sandbox (Task 103 verified)"
+  },
+  {
+   "job": "financial announcements / corporate actions / PIT fundamentals / intraday",
+   "status": "blocked_external_data",
+   "failure_reason": "no verified source with publication timestamps"
+  }
+ ],
+ "staleness_guard": "predictions are only generated at a verified frontier; maturation only on validated bars \u2014 failures cannot silently produce stale predictions",
+ "verdict": "PASS (code-complete; scheduling deployment pending)"
+}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLatentStore } from "@/lib/latent/store";
+import { confidenceTooltip } from "@/lib/latent/confidence-semantics";
 import { Signal } from "@/lib/latent/types";
 import {
   ArrowLeft,
@@ -255,8 +256,9 @@ export function SignalDetail() {
             {/* Confidence + Action button */}
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-3">
-                <div className="text-xs text-[#94A3B8]">
+                <div className="text-xs text-[#94A3B8]" title={confidenceTooltip("directional_score")}>
                   Confidence: <span className="text-[#00E676] font-mono font-bold">{signal.confidenceScore}/100</span>
+                  <span className="text-[#64748B]"> (directional score, not a win probability)</span>
                 </div>
                 <div className="text-xs text-[#94A3B8]">
                   Setup score: <span className="text-[#F4F7FB] font-mono">{signal.setupScore}</span>

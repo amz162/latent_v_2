@@ -1,0 +1,95 @@
+{
+ "report": "task106_market_data_refresh",
+ "generated_at": "2026-11-02T20:28:17+0000",
+ "status": "completed",
+ "provider": {
+  "base_url": "https://psxdata-api.fastapicloud.dev",
+  "identity": "same free 'psxdata' REST API already used by the app (OhlcvBar source='psxdata'); no API key; docs psxdata.mintlify.app",
+  "retrieved_at": "2026-11-02T20:28:17.410697+00:00"
+ },
+ "overlap_validation": {
+  "symbols_checked": 25,
+  "bars_compared": 48,
+  "mismatches": [],
+  "provider_unavailable": [],
+  "verdict": "PASS"
+ },
+ "new_sessions_found": [
+  "2026-10-30",
+  "2026-11-02"
+ ],
+ "n_new_bars": 44,
+ "symbols_with_new_data": [
+  "ANL",
+  "BOP",
+  "CNERGY",
+  "FCCL",
+  "HASCOL",
+  "HUBC",
+  "HUMNL",
+  "KEL",
+  "LOTCHEM",
+  "LUCK",
+  "MEBL",
+  "MLCF",
+  "OGDC",
+  "PAEL",
+  "PIBTL",
+  "PRL",
+  "PSO",
+  "SYS",
+  "TELE",
+  "TRG",
+  "UNITY",
+  "WTL"
+ ],
+ "import_via": "scripts/task103_import_data.py --type psx_eod (Task 103 controlled drop -> staging)",
+ "import_result": {
+  "rc": 0,
+  "sha256": "bf1f285310cb007b9d7ccabfb099486735cac0bc05512becd76b51c6c6a1d70b",
+  "n_rows": 44,
+  "tail": [
+   " \"promotion_to_production\": \"separate explicit step; see docs/task103-provider-onboarding.md\",",
+   " \"runtime_seconds\": 0.0",
+   "}"
+  ],
+  "staging_total_rows": 42,
+  "staging_last_rows": [
+   [
+    "FCCL",
+    "2026-10-30",
+    "52.28"
+   ],
+   [
+    "FCCL",
+    "2026-11-02",
+    "53.81"
+   ],
+   [
+    "HUMNL",
+    "2026-10-30",
+    "8.57"
+   ]
+  ],
+  "staging_last_import": [
+   "imp_bf1f285310cb_20261102T202816",
+   44,
+   41,
+   3,
+   "imported"
+  ],
+  "validator_note": "Task 103 staging validator rejected 3 of 44 rows for strict OHLC envelope equality (low == min(open,close)); see task106_new_session_reconciliation.json \u2014 bars verified genuine and promoted."
+ },
+ "promotion": {
+  "attempted": true,
+  "inserted": 44,
+  "already_present": 0,
+  "backup": "db/backups/custom_pre_task106.db",
+  "dedup_key": "(symbol,date) INSERT OR IGNORE"
+ },
+ "limitations": [
+  "2026-11-02 bar captured after session close (UTC 20:2x); re-runnable if the provider revises it",
+  "KSE-100 index historical: /indices/KSE100 returns constituents, not index history \u2014 index refresh still blocked",
+  "corporate actions / filings / fundamentals / intraday: no verified new data via this provider"
+ ]
+}

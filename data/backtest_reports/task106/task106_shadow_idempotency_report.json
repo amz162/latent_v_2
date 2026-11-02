@@ -1,0 +1,21 @@
+{
+ "report": "task106_shadow_idempotency_report",
+ "generated_at": "2026-11-02T20:32:56+0000",
+ "status": "completed",
+ "gen1": {
+  "n_observations": 12,
+  "unique_ids": 12,
+  "phase1_recheck_added_zero": true
+ },
+ "gen2": {
+  "n_observations": 22,
+  "unique_ids": 22,
+  "idempotent": true,
+  "merge_rule": "by decision_id; re-runs add nothing"
+ },
+ "maturity_engine": {
+  "rerun_safe": true,
+  "basis": "ledger regeneration is deterministic; outcomes recomputed from immutable bars"
+ },
+ "verdict": "PASS"
+}
