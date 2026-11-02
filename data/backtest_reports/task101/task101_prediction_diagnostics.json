@@ -1,0 +1,144 @@
+{
+  "reused": "task100_prediction_diagnostics.json (same cohort; not rerun unchanged)",
+  "target_diagnostics": {
+    "validation_5d": {
+      "n": 816,
+      "mean": -0.003152,
+      "median": -0.007152,
+      "std": 0.05772,
+      "pos_frac": 0.4326,
+      "neg_frac": 0.5588,
+      "near_zero_frac_pm0p5": 0.0956,
+      "extreme_gt3sd_frac": 0.011,
+      "extreme_gt10pct_frac": 0.0809
+    },
+    "validation_10d": {
+      "n": 816,
+      "mean": -0.008155,
+      "median": -0.013857,
+      "std": 0.08564,
+      "pos_frac": 0.4093,
+      "neg_frac": 0.587,
+      "near_zero_frac_pm0p5": 0.0637,
+      "extreme_gt3sd_frac": 0.0135,
+      "extreme_gt10pct_frac": 0.1716
+    },
+    "validation_21d": {
+      "n": 816,
+      "mean": -0.020362,
+      "median": -0.027271,
+      "std": 0.117999,
+      "pos_frac": 0.3725,
+      "neg_frac": 0.6262,
+      "near_zero_frac_pm0p5": 0.0417,
+      "extreme_gt3sd_frac": 0.0135,
+      "extreme_gt10pct_frac": 0.3113
+    },
+    "final_test_5d": {
+      "n": 1995,
+      "mean": 0.0111,
+      "median": 0.00365,
+      "std": 0.074291,
+      "pos_frac": 0.5223,
+      "neg_frac": 0.4737,
+      "near_zero_frac_pm0p5": 0.0737,
+      "extreme_gt3sd_frac": 0.0195,
+      "extreme_gt10pct_frac": 0.1218
+    },
+    "final_test_10d": {
+      "n": 1995,
+      "mean": 0.014097,
+      "median": 0.00061,
+      "std": 0.103144,
+      "pos_frac": 0.5028,
+      "neg_frac": 0.4902,
+      "near_zero_frac_pm0p5": 0.0637,
+      "extreme_gt3sd_frac": 0.0155,
+      "extreme_gt10pct_frac": 0.203
+    },
+    "final_test_21d": {
+      "n": 1995,
+      "mean": 0.030887,
+      "median": 0.010883,
+      "std": 0.152428,
+      "pos_frac": 0.5338,
+      "neg_frac": 0.4632,
+      "near_zero_frac_pm0p5": 0.0336,
+      "extreme_gt3sd_frac": 0.0185,
+      "extreme_gt10pct_frac": 0.3865
+    },
+    "per_symbol_21d": {
+      "HASCOL": {
+        "n": 85,
+        "std": 0.2257
+      },
+      "BOP": {
+        "n": 85,
+        "std": 0.2121
+      },
+      "UNITY": {
+        "n": 85,
+        "std": 0.2058
+      },
+      "PRL": {
+        "n": 85,
+        "std": 0.1957
+      },
+      "KEL": {
+        "n": 85,
+        "std": 0.1918
+      },
+      "LUCK": {
+        "n": 85,
+        "std": 0.1624
+      },
+      "SYS": {
+        "n": 85,
+        "std": 0.157
+      },
+      "PAEL": {
+        "n": 85,
+        "std": 0.1553
+      }
+    }
+  },
+  "verdict": {
+    "zero_return_mae_final_test": {
+      "5": 0.049519,
+      "10": 0.069318,
+      "21": 0.107605
+    },
+    "beats_zero_return_any_model": {
+      "5": [
+        {
+          "model": "ElasticNet",
+          "mae": 0.04947927268524058
+        }
+      ],
+      "10": [],
+      "21": [
+        {
+          "model": "ElasticNet",
+          "mae": 0.10738553779453582
+        }
+      ]
+    },
+    "problem_attribution": {
+      "target_noise_dominates": "R2 ~ 0 across families and horizons while residual bias ~ 0: targets are near martingale; feature signal is weak, not the optimizer",
+      "residual_autocorr": "date-level mean residuals show mild positive autocorrelation -> overlapping windows + regime persistence; block bootstrap mandatory",
+      "regime_asymmetry": "directional accuracy varies by regime tercile -> regime conditioning is a legitimate lever, uniform thresholds are not"
+    },
+    "evidence_separation_note": "directional accuracy is a gross directional proxy, NOT net trading P&L"
+  },
+  "trade_outcome_diagnostics": {
+    "positive_net_rate_by_strategy": {
+      "fixed_first_hit": 0.3611,
+      "max_tp_step_trailing": 0.5033,
+      "scale_out_50_25_25": 0.4372
+    },
+    "mean_total_cost_frac_of_notional": 0.012351,
+    "cost_model": "psx_user_schedule_v2 (ATL_15); zero slippage",
+    "label_integrity": "outcomes from strategy-engine.ts (SL-first, gap-aware) + computeTradeCostsV2; no fabricated fills",
+    "avg_hold_sessions_fixed_first_hit": 9.74
+  }
+}

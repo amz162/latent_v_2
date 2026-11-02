@@ -7,7 +7,7 @@ numbers is the single most common misreading:
 
 | Context | Where | Entry price | Cost model |
 | --- | --- | --- | --- |
-| **Investment Simulator** (Tracker → Investment Simulator) | `investment-simulator.ts` | close of the bar nearest the slot target | commission 0.15% × 2 sides + slippage 0.15% + CGT 15% (legacy flat model, **no** PSX/NCCPL/CDC fees, no ATL/NON-ATL choice) |
+| **Investment Simulator** (Tracker → Investment Simulator) | `investment-simulator.ts` | close of the bar nearest the slot target | **`psx_user_schedule_v2` (Task 101 default)**: 0.03 PKR/share (price ≤ 20) or 0.15%/side, PSX + NCCPL + CDC fees, zero slippage, CGT 15% ATL / 30% NON-ATL — via the shared `computeSimTradeCosts` → `computeTradeCostsV2` |
 | **Strategy Backtest** (Backtesting Report / walk-forward trading) | `strategy-engine.ts` + `trading-costs.ts` | **next session's open** after the decision date | `psx_user_schedule_v2`: 0.03 PKR/share (price ≤ 20) or 0.15%/side, PSX + NCCPL + CDC fees, **zero** slippage, CGT 15% ATL / 30% NON-ATL |
 | **Ensemble Tracker backtest** (AI Models tab) | `backtest.ts` | per model card simulation | per-trade costs included in `netPnlPkr`; win/loss decided on **net** P&L |
 
@@ -182,3 +182,22 @@ simulator itself was verified, not redesigned.
 - `src/lib/latent/simulator-ranking.ts` (Backtest Score, filters)
 - `src/lib/latent/backtest.ts` (tracker backtest win rate on net P&L)
 - Machine-readable twin: `data/backtest_reports/task100/task100_simulator_data_dictionary.json`
+
+
+---
+
+## 9. Task 101 additions — cost-aware trade selection
+
+- `psx_cost_aware_trade_classifier` / `psx_net_expectancy_meta_model` are
+  supplemental registry entries trained on **11,521 trade outcomes labeled by
+  the production engine** (SL-first, gap-aware, V2 costs) over the pilot25
+  chronological 50/15/35 cohort.
+- Decision rule: BUY only when the isotonic-calibrated probability of a
+  positive-net trade exceeds a validation-frozen threshold; otherwise
+  **NO TRADE**. Final test: the filter improved per-trade expectancy from
+  −0.650% (all trades) to **−0.526%** and abstained on 483 low-quality setups —
+  still net-negative, so the models remain **shadow-only, not promoted**.
+- Exit-reason mix, skipped accounting and win-rate-vs-profitability guidance
+  are unchanged from earlier sections; `data/backtest_reports/task101/` holds
+  the full evidence (`task101_cost_parity_report.json`,
+  `task101_strategy_optimization.json`, `task101_cost_reconciliation.json`).

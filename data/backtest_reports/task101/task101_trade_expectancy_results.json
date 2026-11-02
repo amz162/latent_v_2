@@ -1,0 +1,52 @@
+{
+  "expectancy_rule": {
+    "selection_rule": "max validation expectancy_pct per labeled trade with n_val >= 30; isotonic-calibrated probabilities; NO TRADE below frozen threshold",
+    "frozen": {
+      "strategy": "max_tp_step_trailing",
+      "model": "RandomForest",
+      "threshold_rule": "q70",
+      "thr": 0.4282,
+      "n_val": 1328,
+      "val_expectancy_pct": -1.6858,
+      "val_coverage_frac": 0.8259
+    },
+    "final_test": {
+      "n_eligible": 3494,
+      "coverage_frac": 0.8783,
+      "n_no_trade": 484,
+      "final_expectancy_pct": -0.5311,
+      "final_win_rate": 0.5633,
+      "baseline_all_trades_expectancy_pct": -0.6501,
+      "baseline_all_trades_win_rate": 0.5543,
+      "validation_expectancy_pct": -1.6858,
+      "honesty_note": "validation-to-final-test expectancy difference is reported, not hidden"
+    }
+  },
+  "target_C_net_return_regressor": {
+    "target": "fixed_first_hit netReturnPct (Target C)",
+    "val_mae_pct": 5.8571
+  },
+  "target_D_excursions_probabilities": {
+    "mfePct": {
+      "val_mae_pct": 7.2357,
+      "val_spearman": 0.1779
+    },
+    "maePct": {
+      "val_mae_pct": 5.7037,
+      "val_spearman": 0.1411
+    },
+    "P(tp1Hit)": {
+      "base_rate": 0.4496,
+      "val_auc": 0.5041
+    },
+    "P(tp2Hit)": {
+      "base_rate": 0.2575,
+      "val_auc": 0.4808
+    },
+    "P(tp3Hit)": {
+      "base_rate": 0.1959,
+      "val_auc": 0.4911
+    }
+  },
+  "no_trade_policy": "below frozen calibrated-probability threshold -> NO TRADE; poor calibration (val Brier worsens with isotonic) -> abstain"
+}

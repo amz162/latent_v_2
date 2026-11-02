@@ -215,6 +215,37 @@ export async function GET() {
         });
       }
     }
+    // Task 101: merge the cost-aware trade-outcome models (supplemental).
+    // psx_cost_aware_trade_classifier: P(realized net trade > 0 after full
+    // psx_user_schedule_v2 costs) on 11,521 production-engine-labeled trades;
+    // psx_net_expectancy_meta_model: net-return/excursion regressors (Targets C/D).
+    // Both are shadow-only until matured positive-expectancy evidence exists.
+    const t101Reg = await readJson("data/backtest_reports/task101/task101_model_registry.json");
+    if (t101Reg?.supplemental_models) {
+      for (const m of t101Reg.supplemental_models as any[]) {
+        supplemental.push({
+          name: m.name,
+          id: m.id,
+          verifiedStatus: m.verifiedStatus,
+          status: m.status,
+          metrics: m.metrics,
+          dirAcc5d: m.dirAcc5d ?? null,
+          mae5d: m.mae5d ?? null,
+          supplemental: true,
+          task101: {
+            family: m.family,
+            cost_profile: m.cost_profile,
+            label_engine: m.label_engine,
+            n_labeled_trades: m.n_labeled_trades,
+            positive_rate_train: m.positive_rate_train,
+            frozen_rule: m.frozen_rule,
+            final_test_summary: m.final_test_summary,
+            promotion_status: m.promotion_status,
+            evaluation_policy: m.evaluation_policy,
+          },
+        });
+      }
+    }
     return NextResponse.json({
       available: true,
       canonicalCount: ALL_MODELS.length,

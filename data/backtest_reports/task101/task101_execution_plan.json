@@ -1,0 +1,114 @@
+{
+  "task": 101,
+  "objective": "Build and validate a cost-aware PSX prediction and trade-selection system; unify simulator/backtest cost models on psx_user_schedule_v2; close the resource-limited model-coverage gap; prove improvements on untouched data; confidently output NO TRADE when evidence is insufficient.",
+  "constraints": {
+    "sandbox": "4GB RAM / 2 CPUs / 150s per command",
+    "protected": "Tasks 54-100 reports, sector_overrides.json, user cost schedule",
+    "integrity": "chronological splits, horizon purge, validation-only selection, frozen final-test, no fabricated labels"
+  },
+  "phases": [
+    {
+      "id": "scaffold",
+      "outputs": [
+        "task101_execution_plan.json",
+        "task101_progress.json"
+      ]
+    },
+    {
+      "id": "matrix",
+      "outputs": [
+        "task101_initial_performance_matrix.json"
+      ]
+    },
+    {
+      "id": "cost_parity",
+      "outputs": [
+        "src/lib/latent/investment-simulator.ts V2 default",
+        "task101_cost_parity_report.json",
+        "task101_cost_reconciliation.json"
+      ]
+    },
+    {
+      "id": "labels",
+      "outputs": [
+        "trade_outcome_labels/",
+        "task101_trade_outcome_labels.json"
+      ]
+    },
+    {
+      "id": "cost_aware",
+      "outputs": [
+        "task101_cost_aware_training.json",
+        "task101_trade_probability_results.json",
+        "task101_trade_expectancy_results.json"
+      ]
+    },
+    {
+      "id": "strategy",
+      "outputs": [
+        "task101_strategy_diagnostics.json",
+        "task101_strategy_optimization.json"
+      ]
+    },
+    {
+      "id": "campaign",
+      "outputs": [
+        "task101_model_comparison.json",
+        "task101_model_coverage.json",
+        "task101_walk_forward_expansion.json",
+        "task101_sample_step_comparison.json"
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "outputs": [
+        "task101_prediction_diagnostics.json",
+        "task101_feature_diagnostics.json",
+        "task101_data_quality_report.json",
+        "task101_feature_ablation.json"
+      ]
+    },
+    {
+      "id": "ensemble",
+      "outputs": [
+        "task101_ensemble_validation.json"
+      ]
+    },
+    {
+      "id": "simulator",
+      "outputs": [
+        "task101_simulator_validation.json",
+        "task101_per_stock_analysis.json",
+        "task101_regime_analysis.json"
+      ]
+    },
+    {
+      "id": "prospective",
+      "outputs": [
+        "task101_prospective_integrity.json"
+      ]
+    },
+    {
+      "id": "api_browser",
+      "outputs": [
+        "task101_api_validation.json",
+        "task101_browser_test_results.json"
+      ]
+    },
+    {
+      "id": "finalize",
+      "outputs": [
+        "task101_summary.json",
+        "task101_metrics.csv",
+        "task101_remaining_blockers.json"
+      ]
+    },
+    {
+      "id": "deliver",
+      "outputs": [
+        "commit 'Task 101: build cost-aware PSX prediction and trading engine' + push"
+      ]
+    }
+  ],
+  "generated_at": "2026-11-02T00:09:01+0000"
+}

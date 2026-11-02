@@ -1,0 +1,22 @@
+{
+  "tool": "agent-browser (headless chromium)",
+  "tests": [
+    {
+      "id": "home_renders",
+      "observed": "open rc=0 ok=True",
+      "pass": true
+    },
+    {
+      "id": "ai_models_tab_registry",
+      "observed": "registry text visible=True",
+      "pass": true
+    },
+    {
+      "id": "console_errors",
+      "observed": "",
+      "pass": true
+    }
+  ],
+  "pass_count": 3,
+  "fail_count": 0
+}

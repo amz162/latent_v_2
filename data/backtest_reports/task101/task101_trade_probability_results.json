@@ -1,0 +1,545 @@
+{
+  "protocol": "frozen full-train-window fit; OOF = validation partition predictions; isotonic fitted on validation; thresholds = validation probability quantiles q70/q80/q90; final-test reported once",
+  "features": [
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_width",
+    "bb_pct_b",
+    "atr_14",
+    "obv_change_pct",
+    "price_sma_20_ratio",
+    "price_sma_50_ratio",
+    "price_sma_200_ratio",
+    "volume_sma_20_ratio",
+    "return_1d",
+    "return_7d",
+    "return_14d",
+    "return_30d",
+    "hl_range_pct",
+    "body_size_pct",
+    "volatility_14d",
+    "xs_rank_5d",
+    "xs_breadth_5d",
+    "xs_disp_5d"
+  ],
+  "results": {
+    "fixed_first_hit": {
+      "models": {
+        "LightGBM": {
+          "brier_val_raw": 0.217396,
+          "brier_val_cal": 0.191837,
+          "brier_test_raw": 0.258488,
+          "brier_test_cal": 0.271119,
+          "auc_val": 0.4536,
+          "base_rate_val": 0.2606,
+          "thresholds": {
+            "q70": {
+              "thr": 0.2656,
+              "n_val": 1477,
+              "val_expectancy_pct": -2.7836,
+              "val_coverage_frac": 0.9185
+            },
+            "q80": {
+              "thr": 0.2656,
+              "n_val": 1477,
+              "val_expectancy_pct": -2.7836,
+              "val_coverage_frac": 0.9185
+            },
+            "q90": {
+              "thr": 0.2656,
+              "n_val": 1477,
+              "val_expectancy_pct": -2.7836,
+              "val_coverage_frac": 0.9185
+            }
+          }
+        },
+        "XGBoost": {
+          "brier_val_raw": 0.209923,
+          "brier_val_cal": 0.191861,
+          "brier_test_raw": 0.258087,
+          "brier_test_cal": 0.271645,
+          "auc_val": 0.4496,
+          "base_rate_val": 0.2606,
+          "thresholds": {
+            "q70": {
+              "thr": 0.2644,
+              "n_val": 1509,
+              "val_expectancy_pct": -2.8012,
+              "val_coverage_frac": 0.9384
+            },
+            "q80": {
+              "thr": 0.2644,
+              "n_val": 1509,
+              "val_expectancy_pct": -2.8012,
+              "val_coverage_frac": 0.9384
+            },
+            "q90": {
+              "thr": 0.2644,
+              "n_val": 1509,
+              "val_expectancy_pct": -2.8012,
+              "val_coverage_frac": 0.9384
+            }
+          }
+        },
+        "ExtraTrees": {
+          "brier_val_raw": 0.202019,
+          "brier_val_cal": 0.192145,
+          "brier_test_raw": 0.252531,
+          "brier_test_cal": 0.271717,
+          "auc_val": 0.4514,
+          "base_rate_val": 0.2606,
+          "thresholds": {
+            "q70": {
+              "thr": 0.2659,
+              "n_val": 1399,
+              "val_expectancy_pct": -2.8256,
+              "val_coverage_frac": 0.87
+            },
+            "q80": {
+              "thr": 0.2659,
+              "n_val": 1399,
+              "val_expectancy_pct": -2.8256,
+              "val_coverage_frac": 0.87
+            },
+            "q90": {
+              "thr": 0.2659,
+              "n_val": 1399,
+              "val_expectancy_pct": -2.8256,
+              "val_coverage_frac": 0.87
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "brier_val_raw": 0.213208,
+          "brier_val_cal": 0.192127,
+          "brier_test_raw": 0.260629,
+          "brier_test_cal": 0.271471,
+          "auc_val": 0.4385,
+          "base_rate_val": 0.2606,
+          "thresholds": {
+            "q70": {
+              "thr": 0.266,
+              "n_val": 1489,
+              "val_expectancy_pct": -2.8288,
+              "val_coverage_frac": 0.926
+            },
+            "q80": {
+              "thr": 0.266,
+              "n_val": 1489,
+              "val_expectancy_pct": -2.8288,
+              "val_coverage_frac": 0.926
+            },
+            "q90": {
+              "thr": 0.266,
+              "n_val": 1489,
+              "val_expectancy_pct": -2.8288,
+              "val_coverage_frac": 0.926
+            }
+          }
+        },
+        "LogisticRegression": {
+          "brier_val_raw": 0.20257,
+          "brier_val_cal": 0.192173,
+          "brier_test_raw": 0.255576,
+          "brier_test_cal": 0.271551,
+          "auc_val": 0.4652,
+          "base_rate_val": 0.2606,
+          "thresholds": {
+            "q70": {
+              "thr": 0.2622,
+              "n_val": 1450,
+              "val_expectancy_pct": -2.8677,
+              "val_coverage_frac": 0.9017
+            },
+            "q80": {
+              "thr": 0.2622,
+              "n_val": 1450,
+              "val_expectancy_pct": -2.8677,
+              "val_coverage_frac": 0.9017
+            },
+            "q90": {
+              "thr": 0.2622,
+              "n_val": 1450,
+              "val_expectancy_pct": -2.8677,
+              "val_coverage_frac": 0.9017
+            }
+          }
+        },
+        "RandomForest": {
+          "brier_val_raw": 0.208599,
+          "brier_val_cal": 0.191805,
+          "brier_test_raw": 0.256598,
+          "brier_test_cal": 0.271493,
+          "auc_val": 0.4664,
+          "base_rate_val": 0.2606,
+          "thresholds": {
+            "q70": {
+              "thr": 0.2672,
+              "n_val": 1527,
+              "val_expectancy_pct": -2.7627,
+              "val_coverage_frac": 0.9496
+            },
+            "q80": {
+              "thr": 0.2672,
+              "n_val": 1527,
+              "val_expectancy_pct": -2.7627,
+              "val_coverage_frac": 0.9496
+            },
+            "q90": {
+              "thr": 0.2672,
+              "n_val": 1527,
+              "val_expectancy_pct": -2.7627,
+              "val_coverage_frac": 0.9496
+            }
+          }
+        }
+      }
+    },
+    "max_tp_step_trailing": {
+      "models": {
+        "LightGBM": {
+          "brier_val_raw": 0.2558,
+          "brier_val_cal": 0.24228,
+          "brier_test_raw": 0.257438,
+          "brier_test_cal": 0.26345,
+          "auc_val": 0.5116,
+          "base_rate_val": 0.4198,
+          "thresholds": {
+            "q70": {
+              "thr": 0.436,
+              "n_val": 1155,
+              "val_expectancy_pct": -1.7171,
+              "val_coverage_frac": 0.7183
+            },
+            "q80": {
+              "thr": 0.436,
+              "n_val": 1155,
+              "val_expectancy_pct": -1.7171,
+              "val_coverage_frac": 0.7183
+            },
+            "q90": {
+              "thr": 0.436,
+              "n_val": 1155,
+              "val_expectancy_pct": -1.7171,
+              "val_coverage_frac": 0.7183
+            }
+          }
+        },
+        "XGBoost": {
+          "brier_val_raw": 0.252574,
+          "brier_val_cal": 0.242291,
+          "brier_test_raw": 0.256393,
+          "brier_test_cal": 0.263902,
+          "auc_val": 0.5078,
+          "base_rate_val": 0.4198,
+          "thresholds": {
+            "q70": {
+              "thr": 0.4212,
+              "n_val": 1340,
+              "val_expectancy_pct": -1.7517,
+              "val_coverage_frac": 0.8333
+            },
+            "q80": {
+              "thr": 0.4212,
+              "n_val": 1340,
+              "val_expectancy_pct": -1.7517,
+              "val_coverage_frac": 0.8333
+            },
+            "q90": {
+              "thr": 0.4579,
+              "n_val": 191,
+              "val_expectancy_pct": -1.7356,
+              "val_coverage_frac": 0.1188
+            }
+          }
+        },
+        "ExtraTrees": {
+          "brier_val_raw": 0.248086,
+          "brier_val_cal": 0.241827,
+          "brier_test_raw": 0.252153,
+          "brier_test_cal": 0.266146,
+          "auc_val": 0.4977,
+          "base_rate_val": 0.4198,
+          "thresholds": {
+            "q70": {
+              "thr": 0.4284,
+              "n_val": 1379,
+              "val_expectancy_pct": -1.8097,
+              "val_coverage_frac": 0.8576
+            },
+            "q80": {
+              "thr": 0.4402,
+              "n_val": 380,
+              "val_expectancy_pct": -1.7895,
+              "val_coverage_frac": 0.2363
+            },
+            "q90": {
+              "thr": 0.4402,
+              "n_val": 380,
+              "val_expectancy_pct": -1.7895,
+              "val_coverage_frac": 0.2363
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "brier_val_raw": 0.253735,
+          "brier_val_cal": 0.242171,
+          "brier_test_raw": 0.257948,
+          "brier_test_cal": 0.263409,
+          "auc_val": 0.5157,
+          "base_rate_val": 0.4198,
+          "thresholds": {
+            "q70": {
+              "thr": 0.4275,
+              "n_val": 709,
+              "val_expectancy_pct": -1.7458,
+              "val_coverage_frac": 0.4409
+            },
+            "q80": {
+              "thr": 0.4275,
+              "n_val": 709,
+              "val_expectancy_pct": -1.7458,
+              "val_coverage_frac": 0.4409
+            },
+            "q90": {
+              "thr": 0.4706,
+              "n_val": 164,
+              "val_expectancy_pct": -1.8497,
+              "val_coverage_frac": 0.102
+            }
+          }
+        },
+        "LogisticRegression": {
+          "brier_val_raw": 0.251746,
+          "brier_val_cal": 0.24243,
+          "brier_test_raw": 0.255043,
+          "brier_test_cal": 0.264994,
+          "auc_val": 0.4853,
+          "base_rate_val": 0.4198,
+          "thresholds": {
+            "q70": {
+              "thr": 0.4286,
+              "n_val": 515,
+              "val_expectancy_pct": -1.9139,
+              "val_coverage_frac": 0.3203
+            },
+            "q80": {
+              "thr": 0.4311,
+              "n_val": 459,
+              "val_expectancy_pct": -1.8502,
+              "val_coverage_frac": 0.2854
+            },
+            "q90": {
+              "thr": 0.4311,
+              "n_val": 459,
+              "val_expectancy_pct": -1.8502,
+              "val_coverage_frac": 0.2854
+            }
+          }
+        },
+        "RandomForest": {
+          "brier_val_raw": 0.2514,
+          "brier_val_cal": 0.241541,
+          "brier_test_raw": 0.255976,
+          "brier_test_cal": 0.262258,
+          "auc_val": 0.5057,
+          "base_rate_val": 0.4198,
+          "thresholds": {
+            "q70": {
+              "thr": 0.4282,
+              "n_val": 1328,
+              "val_expectancy_pct": -1.6858,
+              "val_coverage_frac": 0.8259
+            },
+            "q80": {
+              "thr": 0.4282,
+              "n_val": 1328,
+              "val_expectancy_pct": -1.6858,
+              "val_coverage_frac": 0.8259
+            },
+            "q90": {
+              "thr": 0.4282,
+              "n_val": 1328,
+              "val_expectancy_pct": -1.6858,
+              "val_coverage_frac": 0.8259
+            }
+          }
+        }
+      }
+    },
+    "scale_out_50_25_25": {
+      "models": {
+        "LightGBM": {
+          "brier_val_raw": 0.244745,
+          "brier_val_cal": 0.225134,
+          "brier_test_raw": 0.266042,
+          "brier_test_cal": 0.272061,
+          "auc_val": 0.495,
+          "base_rate_val": 0.3464,
+          "thresholds": {
+            "q70": {
+              "thr": 0.3556,
+              "n_val": 1240,
+              "val_expectancy_pct": -2.27,
+              "val_coverage_frac": 0.7711
+            },
+            "q80": {
+              "thr": 0.3556,
+              "n_val": 1240,
+              "val_expectancy_pct": -2.27,
+              "val_coverage_frac": 0.7711
+            },
+            "q90": {
+              "thr": 0.3556,
+              "n_val": 1240,
+              "val_expectancy_pct": -2.27,
+              "val_coverage_frac": 0.7711
+            }
+          }
+        },
+        "XGBoost": {
+          "brier_val_raw": 0.238284,
+          "brier_val_cal": 0.22497,
+          "brier_test_raw": 0.264007,
+          "brier_test_cal": 0.274597,
+          "auc_val": 0.4826,
+          "base_rate_val": 0.3464,
+          "thresholds": {
+            "q70": {
+              "thr": 0.3518,
+              "n_val": 1392,
+              "val_expectancy_pct": -2.2234,
+              "val_coverage_frac": 0.8657
+            },
+            "q80": {
+              "thr": 0.3518,
+              "n_val": 1392,
+              "val_expectancy_pct": -2.2234,
+              "val_coverage_frac": 0.8657
+            },
+            "q90": {
+              "thr": 0.3518,
+              "n_val": 1392,
+              "val_expectancy_pct": -2.2234,
+              "val_coverage_frac": 0.8657
+            }
+          }
+        },
+        "ExtraTrees": {
+          "brier_val_raw": 0.233365,
+          "brier_val_cal": 0.224578,
+          "brier_test_raw": 0.257654,
+          "brier_test_cal": 0.274442,
+          "auc_val": 0.4807,
+          "base_rate_val": 0.3464,
+          "thresholds": {
+            "q70": {
+              "thr": 0.3577,
+              "n_val": 1434,
+              "val_expectancy_pct": -2.1847,
+              "val_coverage_frac": 0.8918
+            },
+            "q80": {
+              "thr": 0.3577,
+              "n_val": 1434,
+              "val_expectancy_pct": -2.1847,
+              "val_coverage_frac": 0.8918
+            },
+            "q90": {
+              "thr": 0.3577,
+              "n_val": 1434,
+              "val_expectancy_pct": -2.1847,
+              "val_coverage_frac": 0.8918
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "brier_val_raw": 0.241619,
+          "brier_val_cal": 0.225659,
+          "brier_test_raw": 0.266422,
+          "brier_test_cal": 0.273485,
+          "auc_val": 0.4766,
+          "base_rate_val": 0.3464,
+          "thresholds": {
+            "q70": {
+              "thr": 0.3512,
+              "n_val": 1443,
+              "val_expectancy_pct": -2.2326,
+              "val_coverage_frac": 0.8974
+            },
+            "q80": {
+              "thr": 0.3512,
+              "n_val": 1443,
+              "val_expectancy_pct": -2.2326,
+              "val_coverage_frac": 0.8974
+            },
+            "q90": {
+              "thr": 0.3512,
+              "n_val": 1443,
+              "val_expectancy_pct": -2.2326,
+              "val_coverage_frac": 0.8974
+            }
+          }
+        },
+        "LogisticRegression": {
+          "brier_val_raw": 0.235302,
+          "brier_val_cal": 0.226041,
+          "brier_test_raw": 0.261517,
+          "brier_test_cal": 0.272548,
+          "auc_val": 0.4897,
+          "base_rate_val": 0.3464,
+          "thresholds": {
+            "q70": {
+              "thr": 0.3514,
+              "n_val": 737,
+              "val_expectancy_pct": -2.5017,
+              "val_coverage_frac": 0.4583
+            },
+            "q80": {
+              "thr": 0.3514,
+              "n_val": 737,
+              "val_expectancy_pct": -2.5017,
+              "val_coverage_frac": 0.4583
+            },
+            "q90": {
+              "thr": 0.3514,
+              "n_val": 737,
+              "val_expectancy_pct": -2.5017,
+              "val_coverage_frac": 0.4583
+            }
+          }
+        },
+        "RandomForest": {
+          "brier_val_raw": 0.239882,
+          "brier_val_cal": 0.224793,
+          "brier_test_raw": 0.262743,
+          "brier_test_cal": 0.272377,
+          "auc_val": 0.4833,
+          "base_rate_val": 0.3464,
+          "thresholds": {
+            "q70": {
+              "thr": 0.3591,
+              "n_val": 1314,
+              "val_expectancy_pct": -2.2307,
+              "val_coverage_frac": 0.8172
+            },
+            "q80": {
+              "thr": 0.3591,
+              "n_val": 1314,
+              "val_expectancy_pct": -2.2307,
+              "val_coverage_frac": 0.8172
+            },
+            "q90": {
+              "thr": 0.3591,
+              "n_val": 1314,
+              "val_expectancy_pct": -2.2307,
+              "val_coverage_frac": 0.8172
+            }
+          }
+        }
+      }
+    }
+  }
+}

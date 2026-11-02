@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { simulateProgressiveTpSl } from "@/lib/latent/tp-sl-engine";
+import { computeSimTradeCosts } from "@/lib/latent/investment-simulator";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -30,9 +31,10 @@ export const maxDuration = 60;
 // Costs match the investment simulator: commission 0.15%×2, slippage 0.15%,
 // CGT 15% on gross profit.
 
-const COMMISSION_RATE = 0.0015;
-const SLIPPAGE_RATE = 0.0015;
-const CGT_RATE = 0.15;
+// Task 101 — cost model unified with the strategy engine: psx_user_schedule_v2
+// by default via the shared Investment-Simulator cost helper; the legacy flat
+// model is available ONLY as an explicitly named compatibility profile.
+const SIGNAL_STATS_NOTIONAL = 100_000; // notional used to size cost fractions
 
 interface Bar {
   date: string;
@@ -112,9 +114,10 @@ function replaySignal(sig: SignalIn, bars: Bar[]): {
   const grossPct = direction === "BUY"
     ? ((exitPrice - entryPrice) / entryPrice) * 100
     : ((entryPrice - exitPrice) / entryPrice) * 100;
-  const costPct = (COMMISSION_RATE * 2 + SLIPPAGE_RATE) * 100;
-  const cgtPct = grossPct > 0 ? grossPct * CGT_RATE : 0;
-  const netPct = grossPct - costPct - cgtPct;
+  const grossAbs = (grossPct / 100) * SIGNAL_STATS_NOTIONAL;
+  const costs = computeSimTradeCosts(SIGNAL_STATS_NOTIONAL, entryPrice, exitPrice, grossAbs, "psx_user_schedule_v2", "ATL_15");
+  const costPct = (costs.totalCost / SIGNAL_STATS_NOTIONAL) * 100;
+  const netPct = grossPct - costPct;
   // Map canonical hit → legacy "TP3"|"TP2"|"TP1"|"SL"|"—" (backward compat).
   const hitLegacy: "TP3" | "TP2" | "TP1" | "SL" | "—" =
     tpSl.exitReason === "TP3_HIT" ? "TP3"

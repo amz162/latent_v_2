@@ -1,0 +1,119 @@
+{
+  "scope": "OhlcvBar table, 909 symbols",
+  "global": {
+    "n_symbols": 909,
+    "n_bars": 1042821,
+    "date_min": "2016-10-21",
+    "date_max": "2026-10-29"
+  },
+  "flags": {
+    "stale_symbols_no_bar_in_90d": [
+      "786R",
+      "AAL",
+      "AASM",
+      "ABSON",
+      "ADOS",
+      "ADTM",
+      "AEL",
+      "AGICR2",
+      "AKBLTFC6",
+      "AKDCL",
+      "AKZO",
+      "ALQT",
+      "AMSL",
+      "ANNT",
+      "APOT",
+      "AQTM",
+      "ARM",
+      "ASCR1",
+      "ASRL",
+      "AWWAL",
+      "AYTM",
+      "AYZT",
+      "AZMT",
+      "AZTM",
+      "BAFLTFC6",
+      "BAFLTFC8",
+      "BAHLTFC10",
+      "BAHLTFC9",
+      "BCML",
+      "BEEM"
+    ],
+    "large_price_discontinuities": [
+      {
+        "symbol": "HASCOL",
+        "n_gt25pct_1d_moves": 2,
+        "example_dates": [
+          "2019-11-19",
+          "2022-08-12"
+        ]
+      },
+      {
+        "symbol": "HUMNL",
+        "n_gt25pct_1d_moves": 1,
+        "example_dates": [
+          "2020-04-20"
+        ]
+      },
+      {
+        "symbol": "LUCK",
+        "n_gt25pct_1d_moves": 1,
+        "example_dates": [
+          "2025-04-28"
+        ]
+      },
+      {
+        "symbol": "SYS",
+        "n_gt25pct_1d_moves": 2,
+        "example_dates": [
+          "2022-03-31",
+          "2025-06-02"
+        ]
+      },
+      {
+        "symbol": "TELE",
+        "n_gt25pct_1d_moves": 2,
+        "example_dates": [
+          "2020-09-09",
+          "2021-02-08"
+        ]
+      },
+      {
+        "symbol": "UNITY",
+        "n_gt25pct_1d_moves": 1,
+        "example_dates": [
+          "2017-10-16"
+        ]
+      },
+      {
+        "symbol": "WTL",
+        "n_gt25pct_1d_moves": 6,
+        "example_dates": [
+          "2019-08-22",
+          "2020-05-11",
+          "2020-08-06",
+          "2021-02-10"
+        ]
+      }
+    ],
+    "zero_volume_bars": {
+      "786": 2,
+      "AABS": 46,
+      "AAL": 21,
+      "AASM": 76,
+      "AATM": 72,
+      "ABSON": 91,
+      "ACIETF": 13,
+      "ACPL": 1,
+      "ADAMS": 9,
+      "ADMM": 23
+    },
+    "high_gap_symbols": []
+  },
+  "adjustment_semantics": "OhlcvBar stores UNADJUSTED PSX daily bars fetched from PSXData; forward-return targets are close-to-close; splits/right issues appear as large one-day close gaps \u2014 flagged below, never silently dropped",
+  "sector_overrides": "data/askanalyst/sector_overrides.json preserved untouched (Task 98)",
+  "task101_refresh": {
+    "latest_ohlcv_bar": "2026-10-29",
+    "db_restored_from": "origin/main db/custom.db.gz"
+  }
+}

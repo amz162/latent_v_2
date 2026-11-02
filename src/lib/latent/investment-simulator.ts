@@ -45,6 +45,70 @@
 
 import { db } from "@/lib/db";
 import { simulateProgressiveTpSl, type TpSlBar } from "./tp-sl-engine";
+import {
+  PSX_USER_SCHEDULE_V2, computeTradeCostsV2, type TaxProfile,
+} from "./trading-costs";
+
+// ─── Task 101 — unified cost models ──────────────────────────────────────────
+// The Investment Simulator now DEFAULTS to psx_user_schedule_v2 (the same
+// canonical cost functions the strategy engine uses), so the same trade shows
+// the same gross/net P&L on every screen. The old flat model (commission
+// 0.15% x2 + slippage 0.15% + CGT 15%, no PSX/NCCPL/CDC fees) is preserved
+// ONLY as the explicitly named historical compatibility profile
+// "legacy_flat_v1". Results always carry costProfile/taxProfile labels.
+export type SimCostProfileId = "psx_user_schedule_v2" | "legacy_flat_v1";
+export const SIM_DEFAULT_COST_PROFILE: SimCostProfileId = "psx_user_schedule_v2";
+export const SIM_COST_PROFILES: { id: SimCostProfileId; label: string; defaultTaxProfile: TaxProfile }[] = [
+  { id: "psx_user_schedule_v2", label: "PSX User Schedule v2 (0.03/share <=20 or 0.15% >20 per side, PSX+NCCPL+CDC fees, zero slippage, CGT 15% ATL / 30% NON-ATL)", defaultTaxProfile: "ATL_15" },
+  { id: "legacy_flat_v1", label: "Legacy flat v1 (commission 0.15% x2, slippage 0.15%, CGT 15% flat, no ancillary fees) — historical compatibility only", defaultTaxProfile: "ATL_15" },
+];
+
+export interface SimCostBreakdown {
+  costProfile: SimCostProfileId;
+  taxProfile: TaxProfile;
+  brokerage: number;
+  psxFee: number;
+  nccplFee: number;
+  cdcFee: number;
+  slippage: number;
+  cgt: number;
+  totalCost: number;
+  netPnl: number;
+}
+
+/**
+ * Single source of truth for Investment-Simulator trade costs.
+ * V2 delegates to computeTradeCostsV2 (strategy-engine parity by construction);
+ * quantity is the exact fraction entryAmount/entryPrice so value-based fees are
+ * exact and the per-share minimum applies pro-rata. Legacy path reproduces the
+ * pre-Task-101 flat model bit-for-bit.
+ */
+export function computeSimTradeCosts(
+  entryAmount: number,
+  entryPrice: number,
+  exitPrice: number,
+  grossPnl: number,
+  profileId: SimCostProfileId = SIM_DEFAULT_COST_PROFILE,
+  taxProfile: TaxProfile = "ATL_15",
+): SimCostBreakdown {
+  if (profileId === "legacy_flat_v1") {
+    const commission = entryAmount * COMMISSION_RATE * 2; // both sides
+    const slippage = entryAmount * SLIPPAGE_RATE;
+    const cgt = grossPnl > 0 ? grossPnl * CGT_RATE : 0; // legacy flat 15%
+    const totalCost = commission + slippage + cgt;
+    return { costProfile: profileId, taxProfile: "ATL_15", brokerage: commission,
+             psxFee: 0, nccplFee: 0, cdcFee: 0, slippage, cgt, totalCost,
+             netPnl: grossPnl - totalCost };
+  }
+  const qty = entryPrice > 0 ? entryAmount / entryPrice : 0;
+  const v2 = computeTradeCostsV2(qty, entryPrice,
+    [{ quantity: qty, exitPrice }], grossPnl, PSX_USER_SCHEDULE_V2, taxProfile);
+  void exitPrice; // exit fills enter via the leg list above
+  return { costProfile: profileId, taxProfile, brokerage: v2.totalBrokerage,
+           psxFee: v2.totalPSX, nccplFee: v2.totalNCCPL, cdcFee: v2.totalCDC,
+           slippage: v2.slippage, cgt: v2.cgt, totalCost: v2.totalCost,
+           netPnl: v2.netPnl };
+}
 
 export type PeriodUnit = "day" | "month" | "year";
 const UNIT_DAYS: Record<PeriodUnit, number> = { day: 1, month: 21, year: 252 };
@@ -88,6 +152,16 @@ export interface SimTradeRow {
   entryAmount: number;
   pnl: number; // realized NET P&L (after costs)
   grossPnl: number; // realized GROSS P&L (before costs)
+  // Task 101 — cost breakdown (V2 by default; legacy when legacy_flat_v1)
+  commission?: number;
+  psxFee?: number;
+  nccplFee?: number;
+  cdcFee?: number;
+  slippage?: number;
+  cgt?: number;
+  totalCost?: number;
+  costProfile?: SimCostProfileId;
+  taxProfile?: TaxProfile;
   totalGain: number; // cumulative net P&L up to and including this row
   exitAmount: number;
   returnPct: number; // realized net return %
@@ -98,6 +172,10 @@ export interface SimTradeRow {
 }
 
 export interface InvestmentSimResult {
+  costProfile: SimCostProfileId; // Task 101 — label of the cost model used
+  taxProfile: TaxProfile;
+  totalCosts: number; // sum of per-trade totalCost (brokerage+fees+slippage+CGT)
+  costBreakdown: { brokerage: number; psxFee: number; nccplFee: number; cdcFee: number; slippage: number; cgt: number };
   initialAmount: number;
   finalAmount: number;
   totalPnl: number; // = totalGain
@@ -319,6 +397,10 @@ export interface InvestmentSimInput {
   direction: "BOTH" | "LONG" | "SHORT";
   signals: SimSignal[];
   seed?: number;
+  /** Task 101: cost model — psx_user_schedule_v2 (default) or legacy_flat_v1. */
+  costProfile?: SimCostProfileId;
+  /** Task 101: CGT profile for the V2 path (ATL 15% / NON-ATL 30%). */
+  taxProfile?: TaxProfile;
 }
 
 export async function runInvestmentSimulation(input: InvestmentSimInput): Promise<InvestmentSimResult> {
@@ -332,6 +414,8 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     direction,
     signals: rawSignals,
     seed = Date.now(),
+    costProfile = SIM_DEFAULT_COST_PROFILE,
+    taxProfile = "ATL_15",
   } = input;
 
   const startDate = computeStartDate(periodValue, periodUnit);
@@ -543,11 +627,18 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
         ? ((pickedRes.exitPrice - pickedRes.entryPrice) / pickedRes.entryPrice) * 100
         : ((pickedRes.entryPrice - pickedRes.exitPrice) / pickedRes.entryPrice) * 100;
     const grossPnl = (grossPnlPct / 100) * entryAmount;
-    const commission = entryAmount * COMMISSION_RATE * 2; // both sides
-    const slippage = entryAmount * SLIPPAGE_RATE;
-    const cgt = grossPnl > 0 ? grossPnl * CGT_RATE : 0;
-    const cost = commission + slippage + cgt;
-    const netPnl = grossPnl - cost;
+    // Task 101: unified cost model (psx_user_schedule_v2 by default; the
+    // legacy flat model only when costProfile === "legacy_flat_v1").
+    const costs = computeSimTradeCosts(entryAmount, pickedRes.entryPrice,
+      pickedRes.exitPrice, grossPnl, costProfile, taxProfile);
+    const commission = costs.brokerage;
+    const slippage = costs.slippage;
+    const cgt = costs.cgt;
+    const cost = costs.totalCost;
+    const netPnl = costs.netPnl;
+    const psxFee = costs.psxFee;
+    const nccplFee = costs.nccplFee;
+    const cdcFee = costs.cdcFee;
     const exitAmount = entryAmount + netPnl;
     // Task 57 Phase 2: isWin is based on REALIZED NET P&L > 0, NOT on the hit
     // field. A trade that touched TP2 then exited at SL has negative P&L → LOSS
@@ -587,6 +678,15 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
       activeStop: pickedRes.activeStop,
       entryAmount,
       pnl: netPnl,
+      commission: costs.brokerage,
+      psxFee: costs.psxFee,
+      nccplFee: costs.nccplFee,
+      cdcFee: costs.cdcFee,
+      slippage: costs.slippage,
+      cgt: costs.cgt,
+      totalCost: costs.totalCost,
+      costProfile: costProfile,
+      taxProfile: taxProfile,
       grossPnl,
       totalGain: 0, // assigned after chronological sort
       exitAmount,
@@ -661,7 +761,24 @@ export async function runInvestmentSimulation(input: InvestmentSimInput): Promis
     ? tradeRows.filter((r) => r.bestTargetReached !== "—").length / tradeCount
     : 0;
 
+  // Task 101 — cost profile labels + aggregate cost breakdown
+  const tradeRowsOnly = rows.filter((r) => r.type === "TRADE");
+  const costBreakdown = tradeRowsOnly.reduce(
+    (acc, r) => ({
+      brokerage: acc.brokerage + (r.commission ?? 0),
+      psxFee: acc.psxFee + (r.psxFee ?? 0),
+      nccplFee: acc.nccplFee + (r.nccplFee ?? 0),
+      cdcFee: acc.cdcFee + (r.cdcFee ?? 0),
+      slippage: acc.slippage + (r.slippage ?? 0),
+      cgt: acc.cgt + (r.cgt ?? 0),
+    }),
+    { brokerage: 0, psxFee: 0, nccplFee: 0, cdcFee: 0, slippage: 0, cgt: 0 });
+
   return {
+    costProfile,
+    taxProfile,
+    totalCosts: tradeRowsOnly.reduce((sm, r) => sm + (r.totalCost ?? 0), 0),
+    costBreakdown,
     initialAmount: capital,
     finalAmount,
     totalPnl,

@@ -1,0 +1,56 @@
+{
+  "task": 101,
+  "generatedAt": "2026-11-02T00:12:29+0000",
+  "supplemental_models": [
+    {
+      "id": "psx_cost_aware_trade_classifier",
+      "name": "PSX Cost-Aware Trade Classifier",
+      "family": "meta-label classifier on production-engine trade outcomes",
+      "verifiedStatus": "trained_oos_evaluated",
+      "status": "shadow_only_not_promoted",
+      "cost_profile": "psx_user_schedule_v2",
+      "label_engine": "strategy-engine.ts (SL-first, gap-aware)",
+      "n_labeled_trades": 11521,
+      "positive_rate_train": 0.345,
+      "frozen_rule": {
+        "strategy": "max_tp_step_trailing",
+        "model": "RandomForest",
+        "threshold_rule": "q70",
+        "thr": 0.4282,
+        "n_val": 1328,
+        "val_expectancy_pct": -1.6858,
+        "val_coverage_frac": 0.8259
+      },
+      "final_test_summary": {
+        "n_eligible": 3494,
+        "n_no_trade": 484,
+        "final_expectancy_pct": -0.5311,
+        "final_win_rate": 0.5633,
+        "baseline_all_trades_expectancy_pct": -0.6501
+      },
+      "promotion_status": "NOT promoted - final-test expectancy remains net-negative; requires matured positive-expectancy evidence in a versioned shadow cohort",
+      "metrics": {
+        "5d": null
+      },
+      "evaluation_policy": "chronological 50/15/35 + 21-session purge; isotonic calibration on validation; thresholds frozen pre-final-test; NO TRADE below threshold"
+    },
+    {
+      "id": "psx_net_expectancy_meta_model",
+      "name": "PSX Net-Expectancy Meta Model",
+      "family": "net-return regressor + MFE/MAE excursions + P(TP1/TP2/TP3)",
+      "verifiedStatus": "trained_oos_evaluated",
+      "status": "research_only",
+      "cost_profile": "psx_user_schedule_v2",
+      "label_engine": "strategy-engine.ts",
+      "n_labeled_trades": 11521,
+      "positive_rate_train": 0.345,
+      "frozen_rule": null,
+      "final_test_summary": null,
+      "promotion_status": "research - improves uncertainty/excursion estimates; no standalone signals",
+      "metrics": {
+        "5d": null
+      },
+      "evaluation_policy": "same label cohort; validation-only tuning"
+    }
+  ]
+}

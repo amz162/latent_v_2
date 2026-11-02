@@ -1,0 +1,40 @@
+{
+  "reused": "task100/task100_sample_step_comparison.json (steps 50/10/5/1; NOT rerun unchanged)",
+  "steps": {
+    "50": {
+      "unique_decision_dates": 12,
+      "overlap21": 0.0,
+      "lgb_21d_mae": 0.088368,
+      "evaluated": 90
+    },
+    "10": {
+      "unique_decision_dates": 12,
+      "overlap21": 0.524,
+      "lgb_21d_mae": 0.086567,
+      "evaluated": 90
+    },
+    "5": {
+      "unique_decision_dates": 10,
+      "overlap21": 0.762,
+      "lgb_21d_mae": 0.085119,
+      "evaluated": 90
+    },
+    "1": {
+      "unique_decision_dates": 7,
+      "overlap21": 0.952,
+      "lgb_21d_mae": 0.076182,
+      "evaluated": 90
+    }
+  },
+  "task101_cohort": {
+    "sample_step": 5,
+    "n_labeled_trades": 11521,
+    "train_validation_final_test": [
+      5935,
+      1608,
+      3978
+    ],
+    "dependence_note": "5-session step overlaps the 21d horizon by 76%; label cohort treated as dependent; no naive standard errors"
+  },
+  "principle": "larger sample counts are NOT more independent observations; date-block bootstrap only"
+}

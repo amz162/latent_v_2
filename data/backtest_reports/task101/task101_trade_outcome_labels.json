@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "sample_step": 5,
+    "universe": [
+      "ENGRO",
+      "HUBC",
+      "LUCK",
+      "SYS",
+      "MEBL",
+      "PSO",
+      "OGDC",
+      "PPL",
+      "WTL",
+      "KEL",
+      "TRG",
+      "UNITY",
+      "BOP",
+      "CNERGY",
+      "HASCOL",
+      "MLCF",
+      "BYCO",
+      "PAEL",
+      "PIBTL",
+      "LOTCHEM",
+      "PRL",
+      "TELE",
+      "ANL",
+      "HUMNL",
+      "FCCL"
+    ],
+    "feature_schema": [
+      "rsi_14",
+      "macd",
+      "macd_signal",
+      "macd_hist",
+      "bb_width",
+      "bb_pct_b",
+      "atr_14",
+      "obv_change_pct",
+      "price_sma_20_ratio",
+      "price_sma_50_ratio",
+      "price_sma_200_ratio",
+      "volume_sma_20_ratio",
+      "return_1d",
+      "return_7d",
+      "return_14d",
+      "return_30d",
+      "hl_range_pct",
+      "body_size_pct",
+      "volatility_14d",
+      "xs_rank_5d",
+      "xs_breadth_5d",
+      "xs_disp_5d"
+    ],
+    "splits": {
+      "train": 5935,
+      "validation": 1608,
+      "final_test": 3978
+    },
+    "costProfile": "psx_user_schedule_v2",
+    "taxProfile": "ATL_15",
+    "riskPolicy": "atr14-1-1.5-2-3 (baseline)",
+    "labelEngine": "strategy-engine.ts (SL-first, gap-aware)",
+    "nLabeled": 11521
+  },
+  "label_definitions": {
+    "A_positive_net": "realized net P&L > 0 after full psx_user_schedule_v2 costs (per strategy)",
+    "B_tp_before_sl": "TP3 reached (bestTargetReached==TP3 or exit TP3) before SL \u2014 1 else 0",
+    "C_net_return": "realized net return % of the position",
+    "D_excursions": "MFE/MAE over the 21-session horizon window (future OHLCV used ONLY as label)",
+    "D_probabilities": "P(TP1 hit), P(TP2 hit), P(TP3 hit) via classifiers",
+    "maturity": "trades without >=1 bar after decision date or without risk levels are excluded (not fabricated)"
+  },
+  "counts": {
+    "by_partition": {
+      "train": 5935,
+      "validation": 1608,
+      "final_test": 3978
+    },
+    "by_symbol_top": {
+      "ANL": 476,
+      "HASCOL": 476,
+      "HUBC": 476,
+      "HUMNL": 476,
+      "OGDC": 476
+    },
+    "positive_rate_fixed_first_hit": 0.3611
+  },
+  "labels_file": "/home/z/my-project/data/backtest_reports/task101/trade_outcome_labels/labels.json"
+}

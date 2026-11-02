@@ -1,0 +1,262 @@
+{
+  "scope": "TRAIN partition only (50% earliest) + purge; final-test untouched",
+  "features": {
+    "rsi_14": {
+      "missing_frac": 0.0,
+      "mean": 49.07871,
+      "std": 12.7586,
+      "p99_abs_outlier_frac_gt3sd": 0.0016,
+      "abs_corr_with_target": {
+        "5": 0.04,
+        "10": 0.0379,
+        "21": 0.0468
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.983
+    },
+    "macd": {
+      "missing_frac": 0.0,
+      "mean": 0.02159,
+      "std": 4.60632,
+      "p99_abs_outlier_frac_gt3sd": 0.0261,
+      "abs_corr_with_target": {
+        "5": 0.0043,
+        "10": 0.0072,
+        "21": 0.0134
+      },
+      "stability_first_vs_second_half_mean_ratio": -0.593
+    },
+    "macd_signal": {
+      "missing_frac": 0.0,
+      "mean": 0.02323,
+      "std": 4.33711,
+      "p99_abs_outlier_frac_gt3sd": 0.0265,
+      "abs_corr_with_target": {
+        "5": 0.0064,
+        "10": 0.0096,
+        "21": 0.0191
+      },
+      "stability_first_vs_second_half_mean_ratio": -0.535
+    },
+    "macd_hist": {
+      "missing_frac": 0.0,
+      "mean": -0.00164,
+      "std": 1.31044,
+      "p99_abs_outlier_frac_gt3sd": 0.0229,
+      "abs_corr_with_target": {
+        "5": -0.0061,
+        "10": -0.0068,
+        "21": -0.0162
+      },
+      "stability_first_vs_second_half_mean_ratio": -1.53
+    },
+    "bb_width": {
+      "missing_frac": 0.0,
+      "mean": 0.18782,
+      "std": 0.14773,
+      "p99_abs_outlier_frac_gt3sd": 0.0134,
+      "abs_corr_with_target": {
+        "5": 0.1052,
+        "10": 0.1437,
+        "21": 0.1369
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.873
+    },
+    "bb_pct_b": {
+      "missing_frac": 0.0,
+      "mean": 0.47321,
+      "std": 0.32674,
+      "p99_abs_outlier_frac_gt3sd": 0.0001,
+      "abs_corr_with_target": {
+        "5": 0.0574,
+        "10": 0.0512,
+        "21": 0.0567
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.957
+    },
+    "atr_14": {
+      "missing_frac": 0.0,
+      "mean": 2.82128,
+      "std": 4.32788,
+      "p99_abs_outlier_frac_gt3sd": 0.0298,
+      "abs_corr_with_target": {
+        "5": -0.0013,
+        "10": -0.0027,
+        "21": -0.0099
+      },
+      "stability_first_vs_second_half_mean_ratio": 1.152
+    },
+    "obv_change_pct": {
+      "missing_frac": 0.0,
+      "mean": 0.88037,
+      "std": 116.24733,
+      "p99_abs_outlier_frac_gt3sd": 0.0002,
+      "abs_corr_with_target": {
+        "5": -0.0018,
+        "10": 0.002,
+        "21": 0.008
+      },
+      "stability_first_vs_second_half_mean_ratio": 2.067
+    },
+    "price_sma_20_ratio": {
+      "missing_frac": 0.0,
+      "mean": 0.99921,
+      "std": 0.08093,
+      "p99_abs_outlier_frac_gt3sd": 0.0131,
+      "abs_corr_with_target": {
+        "5": 0.0315,
+        "10": 0.0312,
+        "21": 0.0438
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.996
+    },
+    "price_sma_50_ratio": {
+      "missing_frac": 0.0,
+      "mean": 0.99884,
+      "std": 0.13449,
+      "p99_abs_outlier_frac_gt3sd": 0.013,
+      "abs_corr_with_target": {
+        "5": 0.0371,
+        "10": 0.0435,
+        "21": 0.0603
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.989
+    },
+    "price_sma_200_ratio": {
+      "missing_frac": 0.0,
+      "mean": 0.99564,
+      "std": 0.29187,
+      "p99_abs_outlier_frac_gt3sd": 0.0139,
+      "abs_corr_with_target": {
+        "5": 0.0399,
+        "10": 0.0508,
+        "21": 0.0654
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.956
+    },
+    "volume_sma_20_ratio": {
+      "missing_frac": 0.0,
+      "mean": 1.04676,
+      "std": 1.06203,
+      "p99_abs_outlier_frac_gt3sd": 0.0188,
+      "abs_corr_with_target": {
+        "5": 0.0239,
+        "10": 0.0131,
+        "21": 0.0288
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.998
+    },
+    "return_1d": {
+      "missing_frac": 0.0,
+      "mean": 0.00016,
+      "std": 0.02999,
+      "p99_abs_outlier_frac_gt3sd": 0.0108,
+      "abs_corr_with_target": {
+        "5": 0.0405,
+        "10": 0.0252,
+        "21": 0.0327
+      },
+      "stability_first_vs_second_half_mean_ratio": -0.188
+    },
+    "return_7d": {
+      "missing_frac": 0.0,
+      "mean": 0.00197,
+      "std": 0.08637,
+      "p99_abs_outlier_frac_gt3sd": 0.0148,
+      "abs_corr_with_target": {
+        "5": 0.0358,
+        "10": 0.0302,
+        "21": 0.0481
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.016
+    },
+    "return_14d": {
+      "missing_frac": 0.0,
+      "mean": 0.0043,
+      "std": 0.12678,
+      "p99_abs_outlier_frac_gt3sd": 0.0117,
+      "abs_corr_with_target": {
+        "5": 0.0363,
+        "10": 0.0455,
+        "21": 0.0547
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.003
+    },
+    "return_30d": {
+      "missing_frac": 0.0,
+      "mean": 0.0103,
+      "std": 0.20617,
+      "p99_abs_outlier_frac_gt3sd": 0.009,
+      "abs_corr_with_target": {
+        "5": 0.0411,
+        "10": 0.0487,
+        "21": 0.0642
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.06
+    },
+    "hl_range_pct": {
+      "missing_frac": 0.0,
+      "mean": 0.03896,
+      "std": 0.02624,
+      "p99_abs_outlier_frac_gt3sd": 0.0145,
+      "abs_corr_with_target": {
+        "5": 0.0661,
+        "10": 0.0891,
+        "21": 0.1174
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.909
+    },
+    "body_size_pct": {
+      "missing_frac": 0.0,
+      "mean": 0.01956,
+      "std": 0.01938,
+      "p99_abs_outlier_frac_gt3sd": 0.0161,
+      "abs_corr_with_target": {
+        "5": 0.0653,
+        "10": 0.0786,
+        "21": 0.0918
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.898
+    },
+    "volatility_14d": {
+      "missing_frac": 0.0,
+      "mean": 0.0255,
+      "std": 0.01438,
+      "p99_abs_outlier_frac_gt3sd": 0.0104,
+      "abs_corr_with_target": {
+        "5": 0.0685,
+        "10": 0.091,
+        "21": 0.1186
+      },
+      "stability_first_vs_second_half_mean_ratio": 0.904
+    }
+  },
+  "redundant_pairs_gt090": [
+    {
+      "a": "macd",
+      "b": "macd_signal",
+      "corr": 0.959
+    },
+    {
+      "a": "price_sma_20_ratio",
+      "b": "return_14d",
+      "corr": 0.916
+    },
+    {
+      "a": "price_sma_50_ratio",
+      "b": "return_30d",
+      "corr": 0.91
+    }
+  ],
+  "leakage_audit": {
+    "feature_horizon": "all 19 features are trailing-window functions of PAST bars only (pct_change/rolling on close/volume; no forward shift)",
+    "target_construction": "per-stock groupby shift (ml_integrity.add_forward_returns); immature rows NaN",
+    "selection_rule": "any ablation/selection fitted on TRAIN folds only (see task100_feature_ablation.json)",
+    "cross_stock_comparability": "all scale-sensitive quantities expressed as ratios; price levels excluded"
+  },
+  "task101_additions": {
+    "xs_rank_5d": "point-in-time same-date rank of trailing 5d return",
+    "xs_breadth_5d": "equal-weight mean trailing 5d return (pilot25 breadth)",
+    "xs_disp_5d": "same-date cross-sectional dispersion",
+    "note": "used in the cost-aware pipeline (22-feature schema)"
+  }
+}

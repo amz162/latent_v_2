@@ -84,6 +84,12 @@ export async function GET(req: Request) {
       minConfidence,
       direction,
       signals,
+      // Task 101 — cost model defaults to psx_user_schedule_v2; callers may
+      // request legacy_flat_v1 explicitly for historical comparison.
+      costProfile: ["psx_user_schedule_v2", "legacy_flat_v1"].includes(String(url.searchParams.get("costProfile")))
+        ? (url.searchParams.get("costProfile") as "psx_user_schedule_v2" | "legacy_flat_v1")
+        : undefined,
+      taxProfile: url.searchParams.get("taxProfile") === "NON_ATL_30" ? "NON_ATL_30" : "ATL_15",
     });
 
     if (result.tradeCount === 0) {

@@ -1,0 +1,21 @@
+{
+  "task": 101,
+  "generated_at": "2026-11-02T00:12:29+0000",
+  "blockers": [
+    {
+      "id": "system_still_net_negative",
+      "severity": "fundamental",
+      "detail": "Even with the cost-aware filter (best validation-frozen rule), final-test expectancy is -0.526%/trade. No evaluated configuration is genuinely profitable after real PSX V2 costs. Levers: richer data (genuine KSE-100 index, fundamentals with publication timestamps, intraday bars), longer horizons, regime-conditioned sizing."
+    },
+    {
+      "id": "deep_foundation_not_rerun",
+      "severity": "resource",
+      "detail": "PatchTST/N-BEATS/TimesNet/Informer/LSTM/GRU/CNN-LSTM/Transformer-LSTM/TabNet and Chronos/Lag-Llama/Moirai/Prophet/GARCH/Kalman not rerun on the pooled cohort \u2014 blocked by the 150s/2-CPU/4GB limit or missing packages; dispositions in task101_model_coverage.json."
+    },
+    {
+      "id": "push_pending_owner_pat",
+      "severity": "delivery",
+      "detail": "GitHub push requires the owner PAT (the token lived only in a pre-recycle sandbox .git/config). Local commit prepared; push executes the moment credentials exist."
+    }
+  ]
+}

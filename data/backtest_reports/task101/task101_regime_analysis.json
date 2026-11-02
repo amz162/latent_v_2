@@ -1,0 +1,26 @@
+{
+  "regime_definition": {
+    "definition": "equal-weight pilot25 mean 5d return, 21-session trailing mean; bear < 33rd pct < bull of the trailing series",
+    "q_lo": -0.006607,
+    "q_hi": 0.011123,
+    "note": "pilot25 breadth statistic; NOT a KSE-100 index (no genuine index series in DB)"
+  },
+  "final_test_fixed_first_hit_by_regime": {
+    "bear": {
+      "n": 857,
+      "netPnl": 105250.33,
+      "netWinRate": 43.99
+    },
+    "flat": {
+      "n": 1525,
+      "netPnl": -1712395.96,
+      "netWinRate": 40.07
+    },
+    "bull": {
+      "n": 1596,
+      "netPnl": -711617.17,
+      "netWinRate": 44.11
+    }
+  },
+  "reading": "trade outcomes vary by pilot25-breadth regime; regime conditioning remains a legitimate lever; regime = breadth statistic, NOT a KSE-100 index"
+}

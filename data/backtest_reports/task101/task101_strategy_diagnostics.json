@@ -1,0 +1,131 @@
+{
+  "engine": "strategy-engine.ts + psx_user_schedule_v2 (labels phase)",
+  "per_strategy": {
+    "fixed_first_hit": {
+      "validation": {
+        "nCompleted": 1608,
+        "nWinning": 419,
+        "nLosing": 1189,
+        "grossWinRate": 26.68,
+        "netWinRate": 26.06,
+        "grossPnl": -2838834.53,
+        "totalCost": 1714007.12,
+        "netPnl": -4552841.65,
+        "costDragPctOfGross": 60.38,
+        "avgWinNet": 6878.34,
+        "avgLossNet": -6253.04,
+        "expectancyNetPerTrade": -2831.37,
+        "netProfitFactor": 0.388,
+        "maxDrawdown": -4581864.69
+      },
+      "final_test": {
+        "nCompleted": 3978,
+        "nWinning": 1692,
+        "nLosing": 2286,
+        "grossWinRate": 43.79,
+        "netWinRate": 42.53,
+        "grossPnl": 2796120.13,
+        "totalCost": 5114882.93,
+        "netPnl": -2318762.8,
+        "costDragPctOfGross": 182.93,
+        "avgWinNet": 7369.65,
+        "avgLossNet": -6469.03,
+        "expectancyNetPerTrade": -582.9,
+        "netProfitFactor": 0.843,
+        "maxDrawdown": -3097123.52
+      }
+    },
+    "max_tp_step_trailing": {
+      "validation": {
+        "nCompleted": 1608,
+        "nWinning": 675,
+        "nLosing": 933,
+        "grossWinRate": 45.96,
+        "netWinRate": 41.98,
+        "grossPnl": -1453495.21,
+        "totalCost": 1617667.27,
+        "netPnl": -3071162.48,
+        "costDragPctOfGross": 111.29,
+        "avgWinNet": 3153.19,
+        "avgLossNet": -5572.95,
+        "expectancyNetPerTrade": -1909.93,
+        "netProfitFactor": 0.409,
+        "maxDrawdown": -3116898.89
+      },
+      "final_test": {
+        "nCompleted": 3978,
+        "nWinning": 2205,
+        "nLosing": 1773,
+        "grossWinRate": 59.75,
+        "netWinRate": 55.43,
+        "grossPnl": 1695087.84,
+        "totalCost": 4279426.14,
+        "netPnl": -2584338.3,
+        "costDragPctOfGross": 252.46,
+        "avgWinNet": 3370.52,
+        "avgLossNet": -5649.37,
+        "expectancyNetPerTrade": -649.66,
+        "netProfitFactor": 0.742,
+        "maxDrawdown": -2592262.98
+      }
+    },
+    "scale_out_50_25_25": {
+      "validation": {
+        "nCompleted": 1608,
+        "nWinning": 557,
+        "nLosing": 1051,
+        "grossWinRate": 37.13,
+        "netWinRate": 34.64,
+        "grossPnl": -2025202.49,
+        "totalCost": 1567833.09,
+        "netPnl": -3593035.58,
+        "costDragPctOfGross": 77.42,
+        "avgWinNet": 3481.89,
+        "avgLossNet": -5263.99,
+        "expectancyNetPerTrade": -2234.47,
+        "netProfitFactor": 0.351,
+        "maxDrawdown": -3623861.8
+      },
+      "final_test": {
+        "nCompleted": 3978,
+        "nWinning": 1983,
+        "nLosing": 1995,
+        "grossWinRate": 52.49,
+        "netWinRate": 49.85,
+        "grossPnl": 1243621.52,
+        "totalCost": 4290666.05,
+        "netPnl": -3047044.53,
+        "costDragPctOfGross": 345.01,
+        "avgWinNet": 3839.41,
+        "avgLossNet": -5343.66,
+        "expectancyNetPerTrade": -765.97,
+        "netProfitFactor": 0.714,
+        "maxDrawdown": -3088106.17
+      }
+    }
+  },
+  "exit_reasons_final_test_fixed_first_hit": {
+    "SL_AFTER_TP2": 179,
+    "SL": 1288,
+    "TIME_UP": 673,
+    "SL_AFTER_TP1": 465,
+    "TP3": 1373
+  },
+  "win_rate_vs_profitability": {
+    "fixed_first_hit": {
+      "netWinRate": 42.53,
+      "netPnl": -2318762.8,
+      "expectancy": -582.9
+    },
+    "max_tp_step_trailing": {
+      "netWinRate": 55.43,
+      "netPnl": -2584338.3,
+      "expectancy": -649.66
+    },
+    "scale_out_50_25_25": {
+      "netWinRate": 49.85,
+      "netPnl": -3047044.53,
+      "expectancy": -765.97
+    }
+  }
+}

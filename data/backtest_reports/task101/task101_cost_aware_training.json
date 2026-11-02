@@ -1,0 +1,60 @@
+{
+  "protocol": "max validation expectancy_pct per labeled trade with n_val >= 30; isotonic-calibrated probabilities; NO TRADE below frozen threshold",
+  "features": [
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_width",
+    "bb_pct_b",
+    "atr_14",
+    "obv_change_pct",
+    "price_sma_20_ratio",
+    "price_sma_50_ratio",
+    "price_sma_200_ratio",
+    "volume_sma_20_ratio",
+    "return_1d",
+    "return_7d",
+    "return_14d",
+    "return_30d",
+    "hl_range_pct",
+    "body_size_pct",
+    "volatility_14d",
+    "xs_rank_5d",
+    "xs_breadth_5d",
+    "xs_disp_5d"
+  ],
+  "feature_leakage_statement": "features are trailing-window functions of bars at or before the decision date; labels use future OHLCV only via the production engine; grid/split identical to labels phase",
+  "n_samples": {
+    "train": 5935,
+    "validation": 1608,
+    "final_test": 3978
+  },
+  "positive_rate_train_fixed_first_hit": 0.3452,
+  "models_trained": {
+    "fixed_first_hit": [
+      "LightGBM",
+      "XGBoost",
+      "ExtraTrees",
+      "HistGradientBoosting",
+      "LogisticRegression",
+      "RandomForest"
+    ],
+    "max_tp_step_trailing": [
+      "LightGBM",
+      "XGBoost",
+      "ExtraTrees",
+      "HistGradientBoosting",
+      "LogisticRegression",
+      "RandomForest"
+    ],
+    "scale_out_50_25_25": [
+      "LightGBM",
+      "XGBoost",
+      "ExtraTrees",
+      "HistGradientBoosting",
+      "LogisticRegression",
+      "RandomForest"
+    ]
+  }
+}

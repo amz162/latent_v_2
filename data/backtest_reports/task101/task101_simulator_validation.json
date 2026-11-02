@@ -1,0 +1,32 @@
+{
+  "checks": {
+    "v2_default": {
+      "http": 200,
+      "costProfile": "psx_user_schedule_v2",
+      "taxProfile": "ATL_15",
+      "totalCosts": 3104.259313791111,
+      "costBreakdown": {
+        "brokerage": 2625.2942534094864,
+        "psxFee": 4.137250185746959,
+        "nccplFee": 9.574779001300104,
+        "cdcFee": 42.554573339111585,
+        "slippage": 0,
+        "cgt": 422.6984578554653
+      },
+      "tradeCount": 6,
+      "defaults_to_v2": true
+    },
+    "legacy_explicit": {
+      "http": 200,
+      "costProfile": "legacy_flat_v1",
+      "totalCosts": 2360.680641622109,
+      "labelled_legacy": true
+    },
+    "signal_stats_v2": {
+      "http": 200
+    }
+  },
+  "docs": {
+    "investment_simulator_metrics_md": true
+  }
+}

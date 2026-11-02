@@ -1,0 +1,83 @@
+{
+  "reused": "task100_ensemble_validation.json (return-regression aggregators, unchanged)",
+  "return_regression": {
+    "5": {
+      "mean_mae": 0.049843,
+      "stacker_mae": 0.049764
+    },
+    "10": {
+      "mean_mae": 0.070502,
+      "stacker_mae": 0.069919
+    },
+    "21": {
+      "mean_mae": 0.109954,
+      "stacker_mae": 0.110631
+    }
+  },
+  "probability_ensemble": {
+    "fixed_first_hit__q70": {
+      "thr": 0.2687,
+      "n_final_eligible": 3754,
+      "final_expectancy_pct": -0.6479,
+      "brier_final_cal": 0.270697,
+      "auc_final": 0.4939
+    },
+    "fixed_first_hit__q80": {
+      "thr": 0.2687,
+      "n_final_eligible": 3754,
+      "final_expectancy_pct": -0.6479,
+      "brier_final_cal": 0.270697,
+      "auc_final": 0.4939
+    },
+    "fixed_first_hit__q90": {
+      "thr": 0.2687,
+      "n_final_eligible": 3754,
+      "final_expectancy_pct": -0.6479,
+      "brier_final_cal": 0.270697,
+      "auc_final": 0.4939
+    },
+    "max_tp_step_trailing__q70": {
+      "thr": 0.4251,
+      "n_final_eligible": 3012,
+      "final_expectancy_pct": -0.4821,
+      "brier_final_cal": 0.26373,
+      "auc_final": 0.523
+    },
+    "max_tp_step_trailing__q80": {
+      "thr": 0.4251,
+      "n_final_eligible": 3012,
+      "final_expectancy_pct": -0.4821,
+      "brier_final_cal": 0.26373,
+      "auc_final": 0.523
+    },
+    "max_tp_step_trailing__q90": {
+      "thr": 0.4321,
+      "n_final_eligible": 792,
+      "final_expectancy_pct": -0.2471,
+      "brier_final_cal": 0.26373,
+      "auc_final": 0.523
+    },
+    "scale_out_50_25_25__q70": {
+      "thr": 0.3602,
+      "n_final_eligible": 3621,
+      "final_expectancy_pct": -0.7941,
+      "brier_final_cal": 0.27245,
+      "auc_final": 0.4932
+    },
+    "scale_out_50_25_25__q80": {
+      "thr": 0.3602,
+      "n_final_eligible": 3621,
+      "final_expectancy_pct": -0.7941,
+      "brier_final_cal": 0.27245,
+      "auc_final": 0.4932
+    },
+    "scale_out_50_25_25__q90": {
+      "thr": 0.3602,
+      "n_final_eligible": 3621,
+      "final_expectancy_pct": -0.7941,
+      "brier_final_cal": 0.27245,
+      "auc_final": 0.4932
+    }
+  },
+  "note": "weights/aggregation use validation OOF only; final-test evaluated once"
+}
