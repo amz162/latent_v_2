@@ -1,0 +1,147 @@
+{
+ "trade_level_records": {
+  "task102_labels": {
+   "path": "data/backtest_reports/task102/trade_outcome_labels/labels.json",
+   "records": 11521,
+   "fields_used": [
+    "sample_id",
+    "symbol",
+    "date",
+    "entryPrice",
+    "sl",
+    "tp1",
+    "tp2",
+    "tp3",
+    "strategies.<s>.netPnl/netReturnPct/totalCost/brokerage/psxFee/nccplFee/cdcFee/cgt/slippage/legs/holdSessions/exitReason/positiveNet/tp*Hit/slHit"
+   ],
+   "not_available": [
+    "exit dates",
+    "per-leg quantities"
+   ]
+  },
+  "task101_samples_grid": {
+   "path": "data/backtest_reports/task101/trade_outcome_labels/samples.json",
+   "records": 11521,
+   "fields_used": [
+    "sample_id",
+    "symbol",
+    "date"
+   ]
+  }
+ },
+ "production_implementations": {
+  "strategy_engine": {
+   "path": "src/lib/latent/strategy-engine.ts",
+   "semantics": "SL-first same-candle priority, gap-aware stop fills, TP3 terminal, step-trailing after TP1/TP2, 50/25/25 scale-out with integer share splits, TIME_UP at 21-session horizon"
+  },
+  "cost_model": {
+   "path": "src/lib/latent/trading-costs.ts",
+   "profile": "psx_user_schedule_v2 (+ATL_15/NON_ATL_30 CGT profiles; legacy_flat_v1 compatibility-only)"
+  },
+  "risk_levels": {
+   "path": "src/lib/latent/risk-levels.ts",
+   "policy": "atr14-1-1.5-2-3 (baseline)"
+  },
+  "investment_simulator": {
+   "path": "src/lib/latent/investment-simulator.ts",
+   "note": "UI simulator uses computeSimTradeCosts -> computeTradeCostsV2 (Task 101 default)"
+  },
+  "confidence_ui": {
+   "path": "src/ pages displaying model confidence/probability",
+   "note": "confidence = model probability (net>0), calibrated on validation via isotonic; UI shows calibrated value where the models API serves it"
+  }
+ },
+ "historical_artifacts": {
+  "task99": {
+   "n_files": 25,
+   "key_reports": [
+    "task99_api_validation.json",
+    "task99_baseline_comparison.json",
+    "task99_browser_test_results.json",
+    "task99_cnn_lstm_results.json",
+    "task99_cost_aware_backtest.json",
+    "task99_execution_plan.json",
+    "task99_feature_schema.json",
+    "task99_license_and_provenance.json",
+    "task99_lstm_results.json",
+    "task99_model_artifact_validation.json",
+    "task99_model_registry.json",
+    "task99_per_stock_metrics.json"
+   ]
+  },
+  "task100": {
+   "n_files": 41,
+   "key_reports": [
+    "cells_HuberRegressor__thr-0.000__both.json",
+    "cells_HuberRegressor__thr-0.000__both_ledger.json",
+    "cells_HuberRegressor__thr-0.000__validation.json",
+    "cells_HuberRegressor__thr-0.000__validation_ledger.json",
+    "cells_HuberRegressor__thr-0.002__validation.json",
+    "cells_HuberRegressor__thr-0.002__validation_ledger.json",
+    "cells_HuberRegressor__thr-0.003__validation.json",
+    "cells_HuberRegressor__thr-0.003__validation_ledger.json",
+    "strategy_top_models.json",
+    "task100_api_validation.json",
+    "task100_browser_test_results.json",
+    "task100_cost_reconciliation.json"
+   ]
+  },
+  "task101": {
+   "n_files": 31,
+   "key_reports": [
+    "task101_api_validation.json",
+    "task101_browser_test_results.json",
+    "task101_cost_aware_training.json",
+    "task101_cost_parity_report.json",
+    "task101_cost_reconciliation.json",
+    "task101_data_quality_report.json",
+    "task101_ensemble_validation.json",
+    "task101_execution_plan.json",
+    "task101_feature_ablation.json",
+    "task101_feature_diagnostics.json",
+    "task101_initial_performance_matrix.json",
+    "task101_model_comparison.json"
+   ]
+  },
+  "task102": {
+   "n_files": 31,
+   "key_reports": [
+    "task102_api_validation.json",
+    "task102_baseline_inventory.json",
+    "task102_corporate_actions_report.json",
+    "task102_cost_parity_report.json",
+    "task102_data_quality_report.json",
+    "task102_execution_manifest.json",
+    "task102_feature_ablation_results.json",
+    "task102_feature_leakage_report.json",
+    "task102_feature_store_report.json",
+    "task102_final_summary.json",
+    "task102_fundamental_coverage.json",
+    "task102_intraday_coverage.json"
+   ]
+  },
+  "task103": {
+   "n_files": 55,
+   "key_reports": [
+    "data_source_registry.json",
+    "pit_fundamentals.json",
+    "provider_verification_report.json",
+    "source_evidence_web.json",
+    "task103_api_validation.json",
+    "task103_baseline_inventory.json",
+    "task103_build_status.json",
+    "task103_corporate_actions_coverage.json",
+    "task103_cost_parity_report.json",
+    "task103_data_freshness.json",
+    "task103_data_pipeline_health.json",
+    "task103_execution_manifest.json"
+   ]
+  }
+ },
+ "probabilities": {
+  "path": "data/backtest_reports/task104/task104_probabilities.json",
+  "provenance": "deterministic reproduction via the persisted Task 101 pipeline (frozen features/protocol); threshold q70 reproduced exactly (0.4282 for max_tp_step_trailing); AUC/Brier within tolerance of Task 101/102 reports (task104_reconciliation.json quantifies the deltas)"
+ },
+ "generated_at": "2026-11-02T16:29:07+0000",
+ "status": "completed"
+}
