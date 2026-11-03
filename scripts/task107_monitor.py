@@ -314,11 +314,15 @@ def run_cycle() -> tuple[str, dict]:
         costs = {}
         if cost_in:
             Path("/tmp/t107_costs_in.json").write_text(json.dumps(cost_in))
-            rc = subprocess.run(["bun", "scripts/task107_cost_quote.ts", "/tmp/t107_costs_in.json", "/tmp/t107_costs_out.json"],
-                                 capture_output=True, text=True, cwd=ROOT, timeout=120)
-            if rc.returncode == 0:
+            try:
+                rc = subprocess.run(["bun", "scripts/task107_cost_quote.ts", "/tmp/t107_costs_in.json", "/tmp/t107_costs_out.json"],
+                                     capture_output=True, text=True, cwd=ROOT, timeout=120)
+            except FileNotFoundError:
+                rc = None
+                errors.append({"cost_engine": "bun runtime unavailable on this host — cost figures omitted this cycle"})
+            if rc is not None and rc.returncode == 0:
                 costs = json.loads(Path("/tmp/t107_costs_out.json").read_text())
-            else:
+            elif rc is not None:
                 errors.append({"cost_engine": rc.stderr[-160:]})
         for r in rows:
             c = costs.get(r["trade_key"], {})

@@ -75,9 +75,21 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements-actions.txt
 
+      - name: Setup Bun (V2 cost engine)
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Poll delayed snapshots (structured exit semantics)
         id: poll
-        run: python3 scripts/task107_monitor.py
+        run: |
+          python3 scripts/task107_monitor.py
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          # 2 = degraded_provider: retryable — run completes green, but the step
+          # summary + ::warning:: make the missing refresh unmissable.
+          # 3/4/5 = configuration / internal / integrity: red run.
+          case $rc in 0|2) exit 0 ;; *) exit $rc ;; esac
 
       - name: Job summary (never a fake success)
         if: always()
@@ -98,4 +110,4 @@ jobs:
           git config user.name "latent-poll-bot"
           git config user.email "poll@users.noreply.github.com"
           git add data/backtest_reports/task107/ops data/backtest_reports/task107/task107_*.json data/backtest_reports/task107/task107_*.csv 2>/dev/null || true
-          git diff --cached --quiet || { git fetch origin main && git rebase origin/main && git commit -m "Intraday monitor state $(date -u +%Y-%m-%dT%H:%MZ) [${{ job.status }}]" && git push; }
+          git diff --cached --quiet || { git commit -m "Intraday monitor state $(date -u +%Y-%m-%dT%H:%MZ) [rc=${{ steps.poll.outputs.rc }}]" && git fetch origin main && git rebase origin/main && git push; }

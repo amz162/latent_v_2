@@ -94,8 +94,8 @@ jobs:
             gunzip -kf db/custom.db.gz 2>/dev/null || true
             gzip -kf db/custom.db
             git add db/custom.db.gz data/external_imports/psx_eod/task107_snapshots.db
-            git fetch origin main && git rebase origin/main   # never force, never discard; conflict fails visibly
             git commit -m "Daily PSX pipeline: frontier $FRONTIER (run ${{ github.run_id }})"
+            git fetch origin main && git rebase origin/main   # commit first, then rebase (index must be clean); never force, never discard
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "run_id=${{ github.run_id }}" >> "$GITHUB_OUTPUT"
