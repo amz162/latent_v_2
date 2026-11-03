@@ -1,0 +1,33 @@
+{
+ "report": "task109_provider_delay_distribution",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:20:35Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "awaiting_future_observations",
+ "provider": "https://psxdata-api.fastapicloud.dev",
+ "provider_supplies_source_timestamp": false,
+ "structural_verification": "provider quote snapshots carry no market/source timestamp (verified task107_delay_verification.json); daily OHLC only",
+ "documented_estimate": {
+  "rule": "estimated_source_timestamp = retrieved_at - 15 minutes",
+  "status": "explicit assumption, labeled estimated_source_timestamp on every row",
+  "basis": "user-observed ~15-minute delay"
+ },
+ "delay_minutes_claimed": 15,
+ "in_session_distribution": {
+  "status": "awaiting_future_observations",
+  "requirement": ">=3 genuine trading sessions with in-window captures before any distribution is reported",
+  "sessions_captured_in_window_so_far": 0,
+  "next_window": "2026-11-04 09:45-15:45 PKT"
+ },
+ "value_agreement_evidence": {
+  "session": "2026-11-03",
+  "checked": 22,
+  "quote_equals_daily_close": 22,
+  "interpretation": "final delayed quote equals the verified daily close \u2014 value agreement only; it is NOT proof of exact observation time and cannot establish a 15-minute constant delay"
+ },
+ "distinctions": {
+  "provider_delay": "time between the real market event and the provider publishing it (~15 min, estimated)",
+  "bar_interval": "provider supplies NO intraday bars; interval is null/none",
+  "application_polling_interval": "worker polls every 120 s; Actions fallback every 5 min"
+ }
+}

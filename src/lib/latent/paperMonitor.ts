@@ -100,6 +100,8 @@ interface RawOutcome {
   resolved_legs_pnl_pkr?: number;
   unrealized_mtm_pkr?: number;
   mark_date?: string;
+  realized_net_pnl?: number;
+  exit_reason?: string;
 }
 
 function nowPktParts() {
@@ -139,6 +141,19 @@ export async function buildMonitorPayload(): Promise<MonitorPayload> {
   const ledger = readJson<{ decision_id: string; generation: string; symbol: string; levels: Record<string, number | null> }[]>(
     path.join(T107, "_pending_ledger.json"));
   const state = readJson<Record<string, unknown>>(path.join(T107, "ops/monitor_state.json"));
+  // Durable snapshot-store prices written by the monitoring worker: prefer
+  // these so the API matches the shared durable state even when the provider
+  // rate-limits; the live fetch below is only a fallback for symbols the
+  // worker has no snapshot for.
+  const durable = new Map<string, { price: number | null; marketTs: string | null; retrievedAt: string | null }>();
+  for (const sp of ((state?.positions ?? []) as Record<string, unknown>[])) {
+    if (typeof sp.trade_key !== "string") continue;
+    durable.set(sp.trade_key, {
+      price: typeof sp.latest_price === "number" ? sp.latest_price : null,
+      marketTs: typeof sp.market_timestamp === "string" ? sp.market_timestamp : null,
+      retrievedAt: typeof sp.retrieved_at === "string" ? sp.retrieved_at : null,
+    });
+  }
   // Daily-resolution same-candle ambiguity (computed by the monitor engine from
   // verified daily bars: a bar whose high≥TP1 AND low≤SL cannot order touches).
   const ambMap = new Map<string, string[]>();
@@ -166,11 +181,15 @@ export async function buildMonitorPayload(): Promise<MonitorPayload> {
         const resolvedQty = resolved.reduce((s, l) => s + l.qty, 0);
         const remaining = Math.max(0, res.quantity - resolvedQty);
         const q = quotes.get(String(o.symbol)) ?? null;
-        const price = q?.price ?? null;
+        const stored = durable.get(`${o.decision_id}::${strat}`) ?? null;
+        const price = stored?.price ?? q?.price ?? null;
+        const storedMarketTs = stored?.marketTs ?? null;
+        const retrievalTs = stored?.retrievedAt ?? q?.retrievedAt ?? null;
         const estimatedSourceTs =
-          q?.retrievedAt
+          storedMarketTs ??
+          (q?.retrievedAt
             ? new Date(new Date(q.retrievedAt).getTime() - PROVIDER_DELAY_MINUTES * 60_000).toISOString()
-            : null;
+            : null);
         const ambiguous = ambMap.get(`${o.decision_id}::${strat}`) ?? [];
         const realizedLegs = res.resolved_legs_pnl_pkr ?? resolved.reduce((s, l) => s + l.net, 0);
         let unrealizedGross: number | null = null;
@@ -220,11 +239,12 @@ export async function buildMonitorPayload(): Promise<MonitorPayload> {
               : null,
           latestPrice: price,
           marketTimestamp: estimatedSourceTs,
-          retrievalTimestamp: q?.retrievedAt ?? null,
+          retrievalTimestamp: retrievalTs,
           providerDelayMinutes: PROVIDER_DELAY_MINUTES,
           timestampQuality: estimatedSourceTs ? "estimated_source_timestamp" : "none",
           dataInterval: null,
-          dataSource: q ? "provider delayed quote snapshot" : "unavailable",
+          dataSource: stored?.price != null ? "provider delayed quote snapshot (durable store)"
+            : q ? "provider delayed quote snapshot (live fetch fallback)" : "unavailable",
           status,
           resolvedLegsPnl: realizedLegs,
           realizedNetPnl: 0,
@@ -247,6 +267,22 @@ export async function buildMonitorPayload(): Promise<MonitorPayload> {
     errors.push("maturity engine output unavailable — run python3 scripts/task107_maturity.py");
   }
 
+  // Realized P&L is always recomputed from the maturity ledger outcomes —
+  // never hardcoded (it changes as new outcomes mature).
+  let realizedTotal = 0;
+  let slExits = 0;
+  let fullExits = 0;
+  for (const o of ((matured?.observations ?? []) as Record<string, unknown>[])) {
+    const outs = (o.outcomes ?? {}) as Record<string, RawOutcome>;
+    for (const strat of STRATS) {
+      const res = outs[strat];
+      if (!res || !String(res.status ?? "").startsWith("matured")) continue;
+      realizedTotal += res.realized_net_pnl ?? 0;
+      if (String(res.exit_reason ?? "") === "SL") slExits += 1;
+      else fullExits += 1;
+    }
+  }
+  realizedTotal = Math.round(realizedTotal * 100) / 100;
   const byStatus: Record<string, number> = {};
   for (const p of positions) byStatus[p.status] = (byStatus[p.status] ?? 0) + 1;
   const stateFeed = (state?.feed ?? {}) as Record<string, unknown>;
@@ -280,8 +316,8 @@ export async function buildMonitorPayload(): Promise<MonitorPayload> {
       pendingData: byStatus["pending_data"] ?? 0,
       estimatedUnrealizedNetPnlTotalPkr:
         Math.round(positions.reduce((s, p) => s + (p.estimatedUnrealizedNetPnl ?? 0), 0) * 100) / 100,
-      realizedNetPnlSeparatePkr: -102348.02,
-      realizedNote: "from the maturity ledger (12 SL + 31 full-exit outcomes); MTM here is NEVER merged into it",
+      realizedNetPnlSeparatePkr: realizedTotal,
+      realizedNote: `from the maturity ledger outcomes (${slExits} SL + ${fullExits} full-exit), recomputed at request time; MTM here is NEVER merged into it`,
     },
     positions,
     legacyPaperTrades:

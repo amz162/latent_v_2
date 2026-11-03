@@ -1,0 +1,72 @@
+{
+ "report": "task109_scheduler_execution_report",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:20:25Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "design": "worker (host, 120 s) = primary monitor; intraday Actions (5-min cron in window) = fallback; daily pipeline = consolidated EOD ingest + DB backup commit",
+ "workflows_verified": {
+  "Browser Tests": {
+   "runs_seen": 17,
+   "successful_runs": 17,
+   "latest": {
+    "workflow": "Browser Tests",
+    "run_id": 41698030600,
+    "trigger": "push",
+    "head": "ea678442",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-03T18:53:06Z",
+    "updated_at": "2026-11-03T18:57:02Z",
+    "url": "https://github.com/amz162/latent_v_2/actions/runs/41698030600"
+   },
+   "executed_successfully": true
+  },
+  "Production Build": {
+   "runs_seen": 16,
+   "successful_runs": 9,
+   "latest": {
+    "workflow": "Production Build",
+    "run_id": 41698030562,
+    "trigger": "push",
+    "head": "ea678442",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-03T18:53:06Z",
+    "updated_at": "2026-11-03T18:54:55Z",
+    "url": "https://github.com/amz162/latent_v_2/actions/runs/41698030562"
+   },
+   "executed_successfully": true
+  },
+  "Intraday snapshot poll": {
+   "runs_seen": 7,
+   "successful_runs": 2,
+   "latest": {
+    "workflow": "Intraday snapshot poll",
+    "run_id": 41696585793,
+    "trigger": "workflow_dispatch",
+    "head": "a5f4357d",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-03T18:43:55Z",
+    "updated_at": "2026-11-03T18:45:23Z",
+    "url": "https://github.com/amz162/latent_v_2/actions/runs/41696585793"
+   },
+   "executed_successfully": true
+  }
+ },
+ "worker_evidence": {
+  "poll_cycles": 7,
+  "new_observations": 24,
+  "job_history_entries": 9
+ },
+ "fallback_evidence": "intraday-poll runs present in workflow_run_history with real executions",
+ "unified_concurrency_group": "task107-state-writers",
+ "exit_code_semantics": {
+  "0": "success_with_updates | success_no_change",
+  "2": "degraded_provider (visible, run stays green with warning)",
+  "3": "failed_configuration",
+  "4": "failed_internal_error",
+  "5": "failed_data_integrity"
+ }
+}

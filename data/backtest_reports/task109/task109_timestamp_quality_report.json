@@ -1,0 +1,23 @@
+{
+ "report": "task109_timestamp_quality_report",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:20:35Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "snapshots_total": 24,
+ "timestamp_quality_field_distribution": {
+  "estimated_source_timestamp": 24
+ },
+ "estimate_rule_verified_in_code": "scripts/task107_monitor.py: src_dt = ret_dt - timedelta(minutes=PROVIDER_DELAY_MIN)",
+ "estimated_never_verified": "no observation is ever labeled as a verified source timestamp",
+ "provider_delay_minutes_field": "constant 15 (assumption), retained per row",
+ "fields_retained_per_observation": [
+  "retrieved_at",
+  "provider_timestamp (not supplied)",
+  "estimated_source_ts",
+  "provider_delay_minutes",
+  "poll_interval_seconds (monitor feed meta)",
+  "observed_poll_latency_seconds (cycle_latency)",
+  "timestamp_quality"
+ ]
+}

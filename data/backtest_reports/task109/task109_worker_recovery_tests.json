@@ -1,0 +1,40 @@
+{
+ "report": "task109_worker_recovery_tests",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:18:54Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "tests": [
+  {
+   "test": "duplicate_worker_refused_while_primary_alive",
+   "rc": 3,
+   "refused": true,
+   "passed": true
+  },
+  {
+   "test": "graceful_restart_no_duplicate_observations",
+   "old_pid": 5429,
+   "new_pid": 5534,
+   "graceful_shutdown": true,
+   "lock_released": true,
+   "new_worker_reacquired": true,
+   "snapshots_before": 24,
+   "snapshots_after": 24,
+   "no_duplicates": true,
+   "passed": true
+  },
+  {
+   "test": "error_injection_suite_8_cases",
+   "rc": 0,
+   "tail": [
+    "{\"cycle_id\": \"cycle_20261103T191851Z\", \"classification\": \"success_with_updates\", \"window\": \"pre_window\", \"new\": 25, \"total\": 25, \"positions\": 59, \"status_counts\": {\"stop_loss_observed\": 11, \"open\": 44, \"target_touched\": 4}, \"errors\": [], \"structural_symbols\": [], \"rejected\": [], \"duration_s\": 2.92, \"interval_prev_s\": null, \"eod\": null, \"started_at\": \"2026-11-03T19:18:48+0000\", \"ended_at\": \"2026-11-03T19:18:51+0000\"}",
+    "{\"cycle_id\": \"cycle_20261103T191854Z\", \"classification\": \"success_with_updates\", \"window\": \"pre_window\", \"new\": 5, \"total\": 30, \"positions\": 59, \"status_counts\": {\"open\": 55, \"target_touched\": 4}, \"errors\": [], \"structural_symbols\": [], \"rejected\": [], \"duration_s\": 2.94, \"interval_prev_s\": 3.324544, \"eod\": null, \"started_at\": \"2026-11-03T19:18:51+0000\", \"ended_at\": \"2026-11-03T19:18:54+0000\"}",
+    "{\"passed\": 8, \"failed\": 0, \"scenarios\": \"all passed\"}"
+   ],
+   "passed": true
+  }
+ ],
+ "note": "executed against the LIVE worker (post-window idle) and the redirected-copy injection suite; duplicate observations after recovery are the failure signal",
+ "new_worker_pid": 5534,
+ "all_passed": true
+}

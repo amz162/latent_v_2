@@ -1,0 +1,43 @@
+{
+ "report": "task109_test_summary",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:50:00Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "suites": {
+  "task107_v2_tests": {
+   "rc": 0,
+   "tail": [
+    "task107 v2 QA: 29 passed, 0 failed, 0 skipped"
+   ]
+  },
+  "task107_v1_tests": {
+   "rc": 0,
+   "tail": [
+    "",
+    "task107 QA: 28 passed, 0 failed, 2 skipped"
+   ]
+  },
+  "tsc_no_emit": {
+   "rc": 0,
+   "clean": true
+  },
+  "workflow_yaml": {
+   "rc": 0,
+   "output": "YAML_OK"
+  },
+  "production_build": {
+   "rc": 0,
+   "tail": [
+    "\u0192  (Dynamic)  server-rendered on demand",
+    ""
+   ]
+  }
+ },
+ "injection_suite": "task108_error_injection_tests.py 8/8 (task109_worker_recovery_tests.json)",
+ "worker_restart_tests": "passed (graceful + duplicate-refusal + no duplicate observations)",
+ "backup_restore": "passed (task109_backup_verification.json)",
+ "wal_concurrency": "{\"interleaved_writes_ok\": 20, \"integrity\": \"ok\"}",
+ "cost_parity": "task107_v2_tests includes the python-vs-TS V2 cost parity fixture",
+ "skipped_not_counted_as_passing": true
+}

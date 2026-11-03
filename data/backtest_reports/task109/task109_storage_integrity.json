@@ -1,0 +1,20 @@
+{
+ "report": "task109_storage_integrity",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:44:07Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "main_db": {
+  "integrity_check": "ok",
+  "journal_mode": "delete",
+  "size_bytes": 201588736,
+  "wal_sidecars": []
+ },
+ "snapshot_db": {
+  "integrity_check": "ok",
+  "journal_mode": "wal",
+  "size_bytes": 36864
+ },
+ "shared_store": "worker and website read/write the same db/custom.db + task107_snapshots.db (WAL)",
+ "managed_volume": "optional improvement only \u2014 NOT introduced (no new paid storage without owner approval)"
+}

@@ -1,0 +1,43 @@
+{
+ "report": "task109_remaining_blockers",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:50:15Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "blockers": [
+  {
+   "blocker": "in-session provider-delay distribution",
+   "status": "awaiting_future_observations",
+   "need": ">=3 genuine sessions with 09:45-15:45 PKT captures; first window 2026-11-04; worker collects automatically; re-run: python3 scripts/task109_runner.py --phase 3"
+  },
+  {
+   "blocker": "daily pipeline first scheduled fire",
+   "status": "awaiting_first_scheduled_run",
+   "need": "cron has 0 runs; next weekday fire; verified structurally (YAML + git-safety audit)"
+  },
+  {
+   "blocker": "5/10/21-session cohort maturity",
+   "status": "awaiting_future_observations",
+   "need": "sessions after each decision date: gen1 3 of 21, gen2 1, gen3 0 (actual DB calendar)"
+  },
+  {
+   "blocker": "21-session complete evaluation",
+   "status": "awaiting_future_observations",
+   "need": "final cohort (2026-11-03 decisions) needs 21 verified sessions; projected early December 2026 from the actual session cadence \u2014 never claimed before the data arrives"
+  },
+  {
+   "blocker": "OOS probability calibration",
+   "status": "not_established",
+   "need": "isotonic remains validation-only; no future-dated calibration evidence exists"
+  },
+  {
+   "blocker": "single-host storage durability",
+   "status": "documented_limitation",
+   "need": "managed volume optional; requires owner approval before any paid change"
+  }
+ ],
+ "nothing_blocked_by_choice": [
+  "no model promotion (blocked by negative evidence, not logistics)",
+  "no live trading (disabled by policy)"
+ ]
+}

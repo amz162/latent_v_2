@@ -1,0 +1,53 @@
+{
+ "report": "task109_forward_model_scorecard",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:40:49Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "model": "task104-frozen-protocol-repro (RandomForest P(net>0), isotonic on validation) \u2014 unchanged, no retraining",
+ "per_generation": {
+  "task105-gen1": {
+   "n_completed": 21,
+   "wins": 4,
+   "losses": 17,
+   "win_rate": 0.1905,
+   "net_expectancy_pkr": -4079.63,
+   "total_net_pnl_pkr": -85672.24,
+   "gross_profit_pkr": 4673.09,
+   "gross_loss_pkr": 90345.33,
+   "profit_factor": 0.0517,
+   "max_drawdown_pkr": -85672.24,
+   "avg_winner_pkr": 1168.27,
+   "avg_loser_pkr": -5314.43
+  },
+  "task106-gen2": {
+   "n_completed": 22,
+   "wins": 9,
+   "losses": 13,
+   "win_rate": 0.4091,
+   "net_expectancy_pkr": -757.99,
+   "total_net_pnl_pkr": -16675.78,
+   "gross_profit_pkr": 5552.21,
+   "gross_loss_pkr": 22227.99,
+   "profit_factor": 0.2498,
+   "max_drawdown_pkr": -16675.78,
+   "avg_winner_pkr": 616.91,
+   "avg_loser_pkr": -1709.85
+  }
+ },
+ "overall": {
+  "n_completed": 43,
+  "wins": 13,
+  "losses": 30,
+  "win_rate": 0.3023,
+  "net_expectancy_pkr": -2380.19,
+  "total_net_pnl_pkr": -102348.02,
+  "gross_profit_pkr": 10225.3,
+  "gross_loss_pkr": 112573.32,
+  "profit_factor": 0.0908,
+  "max_drawdown_pkr": -102348.02,
+  "avg_winner_pkr": 786.56,
+  "avg_loser_pkr": -3752.44
+ },
+ "verdict": "negative forward net expectancy on completed trades; model remains not_promotable"
+}

@@ -51,7 +51,7 @@ The whole experience is dark-themed, responsive (mobile → desktop), bilingual-
 | 08 | **Investment Strategy** | Goal-based strategy selector — dividend, yield, swing, or intraday. Goal questionnaire, strategy auto-selection, portfolio builder for income goals. |
 | 09 | **Dividends** | Top-to-bottom list of dividend announcements by PSX-listed companies — sorted by yield, ex-date, amount. Latest declarations, yield rankings, ex-date alerts. |
 | 10 | **Tracker** | Two-track accuracy dashboard: **Signal Tracker** (last-1-month reconstructed performance across all 908 DB stocks — total signals / win rate / avg return / best-worst, plus an Investment Simulator that guarantees the user's trade count with compounding + monthly SIP) and **Portfolio Tracker** (your open positions + closed-trades P&L + sector-concentration pie chart). |
-| 11 | **Paper Trade Monitor** | Live verification of the delayed paper-trade campaign: delay banner (provider snapshots ≈15 min behind the market, never presented as live), summary cards, the full open-position table with both timestamps (estimated market + actual retrieval), SL←ENTRY→TP1→TP2→TP3 ladder, per-trade detail, status filters, realized/unrealized P&L kept strictly separate. Backed by `/api/paper-trading/monitor`. |
+| 11 | **Paper Trade Monitor** | Live verification of the delayed paper-trade campaign: delay banner (provider snapshots ≈15 min behind the market, never presented as live), summary cards, the full open-position table with both timestamps (estimated market + actual retrieval), SL←ENTRY→TP1→TP2→TP3 ladder, per-trade detail, status filters, realized/unrealized P&L kept strictly separate, all net figures from the production `computeTradeCostsV2` engine (psx_user_schedule_v2). Backed by `/api/paper-trading/monitor`. |
 
 ### Investment Simulator (Tracker → Signal Tracker)
 A chronological, **realized-compounding** trade-by-trade simulator:
@@ -115,7 +115,7 @@ latent_v_2/
 │   │   │   ├── ai-model-signals/     # per-symbol 65-model predictions + backtest
 │   │   │   ├── backtest/             # investment-simulator, ensembles, signal-stats, model-graph
 │   │   │   ├── signals/             # /signals/all — final consensus for ~361 stocks
-│   │   │   ├── psx/                  # companies, live quotes, indices, financial-results…
+│   │   │   ├── psx/                  # companies, delayed quote snapshots, indices, financial-results…
 │   │   │   ├── llm/                  # interpret-news, explain-signal
 │   │   │   ├── ml/, pattern-recognition/, price-patterns/, result-patterns/
 │   │   │   ├── portfolio/, tax/, track-record/, dividends/, plan/, onboarding/…

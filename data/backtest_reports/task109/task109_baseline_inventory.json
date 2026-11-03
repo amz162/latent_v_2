@@ -1,0 +1,71 @@
+{
+ "report": "task109_baseline_inventory",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:14:55Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "recalculated_from": "db/custom.db + task107 state files (rebuilt, not assumed)",
+ "forward_observations": 57,
+ "independent_decision_dates": [
+  "2026-10-29",
+  "2026-11-02",
+  "2026-11-03"
+ ],
+ "observations_per_decision_date": {
+  "2026-10-29": 12,
+  "2026-11-02": 22,
+  "2026-11-03": 23
+ },
+ "generations": {
+  "task105-gen1": {
+   "observations": 12,
+   "unique_symbols": 12
+  },
+  "task106-gen2": {
+   "observations": 22,
+   "unique_symbols": 22
+  },
+  "task107-gen3": {
+   "observations": 23,
+   "unique_symbols": 23
+  }
+ },
+ "distinct_entities": {
+  "observations_decisions": 57,
+  "signals_entered_positions": 59,
+  "partial_exit_legs": 0,
+  "matured_strategy_outcomes": 43,
+  "pending_outcomes_mtm": 59,
+  "unfilled_signals": 23
+ },
+ "realized_net_pnl_pkr_recalc": -102348.02,
+ "realized_net_pnl_pkr_frozen": -102348.02,
+ "realized_recalc_matches_frozen": true,
+ "realized_wins_recalc": 13,
+ "unrealized_engine_daily_marks_pkr": -53867.96,
+ "unrealized_monitor_snapshot_pkr": -35151.75,
+ "note_mtm": "engine daily marks and monitor snapshot MTM are two estimates of the SAME open exposure; neither is realized",
+ "generation_ids": [
+  "task105-gen1",
+  "task106-gen2",
+  "task107-gen3"
+ ],
+ "legacy_task76_pending_entry_rows": 114,
+ "data_frontier_daily": "2026-11-03",
+ "ohlcv_rows": 1042923,
+ "snapshot_store": {
+  "path": "data/external_imports/psx_eod/task107_snapshots.db",
+  "rows": 24,
+  "poll_log_rows": 7
+ },
+ "worker": {
+  "pid": 2096,
+  "heartbeat_at": "2026-11-03T19:07:38Z",
+  "cycles": 1,
+  "note": "pre_window: no delayed observations expected before 09:45 PKT \u2014 idling"
+ },
+ "monitor_api_http": "200",
+ "limitations": [
+  "next PSX session (2026-11-04) has not opened yet at generation time; session-dependent reports are marked awaiting_future_observations"
+ ]
+}

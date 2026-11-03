@@ -1,0 +1,13 @@
+{
+ "report": "task109_concurrency_audit",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:20:25Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "concurrency_group": "task107-state-writers (workflows; YAML-verified in both files)",
+ "worker_lock": "ops/task108_worker.lock \u2014 pid-LIVENESS based (fixed this task: age-based staleness wrongly admitted a second worker after 5 idle minutes)",
+ "monitor_cycle_lock": "task107_monitor.lock serializes actual poll cycles",
+ "intraday_overlapping_runs": "none",
+ "push_policy": "fast-forward-only sync + merge-based recovery; rebase/force/reset banned by scripts/git_safety_audit.py (CI-enforced, 0 violations)",
+ "duplicate_write_evidence": "graceful restart + duplicate-refusal tests passed with snapshot count unchanged (task109_worker_recovery_tests.json)"
+}

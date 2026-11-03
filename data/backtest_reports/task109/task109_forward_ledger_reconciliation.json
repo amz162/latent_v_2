@@ -1,0 +1,45 @@
+{
+ "report": "task109_forward_ledger_reconciliation",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:14:57Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "ledger_rebuilt": 57,
+ "ledger_on_disk": 57,
+ "rebuilt_equals_disk": true,
+ "decision_dates": [
+  "2026-10-29",
+  "2026-11-02",
+  "2026-11-03"
+ ],
+ "per_generation": {
+  "task105-gen1": {
+   "observations": 12,
+   "unique_symbols": 12
+  },
+  "task106-gen2": {
+   "observations": 22,
+   "unique_symbols": 22
+  },
+  "task107-gen3": {
+   "observations": 23,
+   "unique_symbols": 23
+  }
+ },
+ "matured_summary_frozen": {
+  "n": 57,
+  "matured": 43,
+  "pending_mtm": 59,
+  "unfilled": 23,
+  "realized_total_pkr": -102348.02,
+  "unrealized_total_pkr": -53867.96,
+  "note": "MTM is hypothetical unrealized value, not evidence of edge"
+ },
+ "monitor_positions": 59,
+ "monitor_status_counts": {
+  "open": 53,
+  "target_touched": 4,
+  "pending_data": 2
+ },
+ "reconciliation": "matured outcomes (43) + pending MTM (59) + unfilled (23) are three DISTINCT populations; never merged into one trade count"
+}

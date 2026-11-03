@@ -1,0 +1,36 @@
+{
+ "report": "task109_public_claims_audit",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:52:07Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "claims": [
+  {
+   "claim": "Market data delayed ~15 minutes; displayed price carries an earlier estimated timestamp",
+   "evidence": "paperMonitor.ts banner + worker PROVIDER_DELAY_MIN=15 + task109_provider_delay_distribution",
+   "accurate": true
+  },
+  {
+   "claim": "No verified 15-minute OHLC; provider is delayed snapshot only",
+   "evidence": "task107_delay_verification.json (no candle endpoint, OpenAPI-verified); monitor feed meta says delayed_snapshot_only",
+   "accurate": true
+  },
+  {
+   "claim": "Realized P&L separate from unrealized MTM; MTM never counted as realized",
+   "evidence": "API recomputes realized from ledger outcomes; audit artifact task109_open_position_audit",
+   "accurate": true
+  },
+  {
+   "claim": "Models remain research/shadow (not_promotable); no real orders",
+   "evidence": "task109_model_registry_audit + task109_promotion_decision",
+   "accurate": true
+  },
+  {
+   "claim": "Negative history visible in the UI (realized \u2212PKR 102,348.02)",
+   "evidence": "browser check realized_separation_text passed (task109_browser_verification.json)",
+   "accurate": true
+  }
+ ],
+ "all_accurate": true,
+ "stale_findings": []
+}

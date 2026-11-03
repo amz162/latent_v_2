@@ -1,0 +1,55 @@
+{
+ "report": "task109_operational_failure_report",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:20:25Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "classification_taxonomy": "quarantine (rejected observations are never\n    inserted into the store; the run fails visibly).\n  - per-cycle and per-symbol latency recorded in the snapshot store.\n  - ops/last_cycle_result.json consumed by the Actions step summary and the\n    monitoring worker heartbeat.\n  - report tree redirectable via TASK108_T107_DIR / TASK108_SNAP_DB so error\n    injection tests never touch real artifacts.\n",
+ "live_last_cycle": {
+  "cycle_id": "cycle_20261103T184500Z",
+  "classification": "success_no_change",
+  "window": "post_window",
+  "new": 0,
+  "total": 24,
+  "positions": 59,
+  "status_counts": {
+   "open": 53,
+   "target_touched": 4,
+   "pending_data": 2
+  },
+  "errors": [
+   {
+    "symbol": "HASCOL",
+    "status": 404,
+    "error": "HTTP 404"
+   }
+  ],
+  "structural_symbols": [
+   "HASCOL"
+  ],
+  "rejected": [],
+  "duration_s": 7.5,
+  "interval_prev_s": 6756.376611,
+  "eod": {
+   "session_date": "2026-11-03",
+   "checked": 22,
+   "quote_matches_close": 22,
+   "state": "eod_verified",
+   "note": "quote price equals the session daily close for matched symbols; the provider publishes no final-candle completeness flag, so completeness follows the data itself"
+  },
+  "started_at": "2026-11-03T18:44:53+0000",
+  "ended_at": "2026-11-03T18:45:00+0000"
+ },
+ "real_failures_observed": [
+  {
+   "event": "Task 108 dispatch 1-5 initial failures",
+   "handling": "runs stayed RED, root-caused (deps, paths, bun, dirty-tree rebase, lock) \u2014 never masked as success"
+  },
+  {
+   "event": "Production Build failure on 5ede8ff4",
+   "handling": "repo git-safety audit gate rejected git rebase in workflows; sync redesigned ff-only/merge; gate now 0 violations"
+  }
+ ],
+ "unexpected_error_never_success": "task107_monitor.main() maps unexpected exceptions to failed_internal_error exit 4; workflow summary renderer fails when no cycle result exists",
+ "degraded_vs_failed": "degraded_provider keeps the run green WITH ::warning:: banner (retryable); integrity/config/internal failures are red"
+}

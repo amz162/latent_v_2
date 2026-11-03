@@ -1,0 +1,22 @@
+{
+ "report": "task109_api_database_consistency",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:40:13Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "api_positions": 59,
+ "durable_state_positions": 59,
+ "field_mismatches": [],
+ "mismatch_count": 0,
+ "realized_total_api_computed": -102348.02,
+ "realized_total_frozen": -102348.02,
+ "realized_match": true,
+ "unrealized_api": -35151.75,
+ "unrealized_state": -35151.75,
+ "price_source_distribution": [
+  "provider delayed quote snapshot (durable store)",
+  "unavailable"
+ ],
+ "store_first_fix": "API now prefers worker-written durable snapshot prices; live fetch is fallback only (was: per-request provider fetch, which served pending_data during provider rate-limiting even though the durable store held fresh prices)",
+ "hardcoded_realized_removed": true
+}

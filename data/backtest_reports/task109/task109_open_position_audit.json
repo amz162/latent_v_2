@@ -1,0 +1,34 @@
+{
+ "report": "task109_open_position_audit",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:40:13Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "n_open": 59,
+ "status_counts": {
+  "open": 53,
+  "target_touched": 4,
+  "pending_data": 2
+ },
+ "checks": {
+  "ui_matches_api": true,
+  "api_matches_durable_db": true,
+  "closed_trades_not_shown_open": true,
+  "pending_signals_not_counted_as_positions": true,
+  "target_touches_not_realized_wins": true,
+  "unrealized_separate_from_realized": true,
+  "stale_prices_marked": true,
+  "every_trade_traceable": true,
+  "ladder_from_recorded_levels": true,
+  "no_hardcoded_demonstration_values": true
+ },
+ "unrealized_mtm_total_pkr": -35151.75,
+ "realized_separate_pkr": -102348.02,
+ "legacy_task76_shown_separately": 114,
+ "fresh_stale_counts": {
+  "fresh": 0,
+  "session_closed_data": 57,
+  "stale_data": 0,
+  "no_data": 2
+ }
+}

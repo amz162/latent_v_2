@@ -66,14 +66,27 @@ def _write_heartbeat(pid: int, started: str, cycles: int, last: dict | None, not
         "timestamp_quality": "estimated_source_timestamp (provider supplies no source ts)"} , indent=1))
 
 
+def _pid_alive(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
 def _acquire_worker_lock(pid: int) -> bool:
+    """Refuse while the LOCK HOLDER PROCESS IS ALIVE (pid-liveness, not lock
+    age): a timestamp alone goes stale after 5 idle minutes and would admit a
+    second worker. A lock left by a DEAD pid (SIGKILL/crash) is stolen so the
+    monitor self-heals after an ungraceful death."""
     OPS.mkdir(parents=True, exist_ok=True)
     if WORKER_LOCK.exists():
         try:
             info = json.loads(WORKER_LOCK.read_text())
-            if time.time() - info.get("ts", 0) < max(300, INTERVAL * 10):
+            holder = info.get("pid")
+            if holder and holder != pid and _pid_alive(holder):
                 print(json.dumps({"error": "duplicate_worker_refused",
-                                   "held_by_pid": info.get("pid")}))
+                                   "held_by_pid": holder}))
                 return False
         except json.JSONDecodeError:
             pass

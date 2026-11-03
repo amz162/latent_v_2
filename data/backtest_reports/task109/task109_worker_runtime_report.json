@@ -1,0 +1,170 @@
+{
+ "report": "task109_worker_runtime_report",
+ "task": "task109",
+ "generated_at": "2026-11-03T19:18:15Z",
+ "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+ "status": "completed",
+ "worker_script": "scripts/task108_worker.py",
+ "pid": 5429,
+ "process_alive": true,
+ "process_start_time": "1613597",
+ "cmdline": "/home/z/.venv/bin/python3 scripts/task108_worker.py",
+ "started_at": "2026-11-03T19:17:04Z",
+ "last_heartbeat": "2026-11-03T19:17:04Z",
+ "heartbeat_age_seconds": 71.3,
+ "poll_interval_seconds": 120,
+ "idle_interval_seconds": 600,
+ "cycles_completed": 0,
+ "last_cycle": null,
+ "last_cycle_result_file": {
+  "cycle_id": "cycle_20261103T184500Z",
+  "classification": "success_no_change",
+  "window": "post_window",
+  "new": 0,
+  "total": 24,
+  "positions": 59,
+  "status_counts": {
+   "open": 53,
+   "target_touched": 4,
+   "pending_data": 2
+  },
+  "errors": [
+   {
+    "symbol": "HASCOL",
+    "status": 404,
+    "error": "HTTP 404"
+   }
+  ],
+  "structural_symbols": [
+   "HASCOL"
+  ],
+  "rejected": [],
+  "duration_s": 7.5,
+  "interval_prev_s": 6756.376611,
+  "eod": {
+   "session_date": "2026-11-03",
+   "checked": 22,
+   "quote_matches_close": 22,
+   "state": "eod_verified",
+   "note": "quote price equals the session daily close for matched symbols; the provider publishes no final-candle completeness flag, so completeness follows the data itself"
+  },
+  "started_at": "2026-11-03T18:44:53+0000",
+  "ended_at": "2026-11-03T18:45:00+0000"
+ },
+ "poll_log_rows": [
+  {
+   "cycle_id": "cycle_20261103T132925Z",
+   "started_at": "2026-11-03T13:29:25+0000",
+   "ended_at": "2026-11-03T13:29:25Z",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 24,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T132936Z",
+   "started_at": "2026-11-03T13:29:36+0000",
+   "ended_at": "2026-11-03T13:29:36Z",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T133049Z",
+   "started_at": "2026-11-03T13:30:49+0000",
+   "ended_at": "2026-11-03T13:30:49Z",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T133311Z",
+   "started_at": "2026-11-03T13:33:11+0000",
+   "ended_at": "2026-11-03T13:33:11Z",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T162537Z",
+   "started_at": "2026-11-03T16:25:24+0000",
+   "ended_at": "2026-11-03T16:25:37+0000",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T162738Z",
+   "started_at": "2026-11-03T16:27:27+0000",
+   "ended_at": "2026-11-03T16:27:38+0000",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T163656Z",
+   "started_at": "2026-11-03T16:36:45+0000",
+   "ended_at": "2026-11-03T16:36:56+0000",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  }
+ ],
+ "cycle_latency_rows": [
+  {
+   "cycle_id": "cycle_20261103T162537Z",
+   "started_at": "2026-11-03T16:25:24+0000",
+   "duration_seconds": 13.59,
+   "interval_since_prev_seconds": 10333.404194,
+   "avg_symbol_latency_ms": 426.0,
+   "max_symbol_latency_ms": 898.0,
+   "window_status": "post_window"
+  },
+  {
+   "cycle_id": "cycle_20261103T162738Z",
+   "started_at": "2026-11-03T16:27:27+0000",
+   "duration_seconds": 10.65,
+   "interval_since_prev_seconds": 123.985104,
+   "avg_symbol_latency_ms": 309.4,
+   "max_symbol_latency_ms": 379.3,
+   "window_status": "post_window"
+  },
+  {
+   "cycle_id": "cycle_20261103T163656Z",
+   "started_at": "2026-11-03T16:36:45+0000",
+   "duration_seconds": 10.66,
+   "interval_since_prev_seconds": 558.942695,
+   "avg_symbol_latency_ms": 309.7,
+   "max_symbol_latency_ms": 381.0,
+   "window_status": "post_window"
+  }
+ ],
+ "symbol_gaps": [
+  {
+   "symbol": "HASCOL",
+   "status": 404,
+   "first_seen": "2026-11-03T16:36:52+0000",
+   "last_seen": "2026-11-03T16:36:52+0000",
+   "consecutive_cycles": 2
+  }
+ ],
+ "run_log_entries": 12,
+ "quote_requests_total": 168,
+ "new_observations_total": 24,
+ "failed_symbol_cycles": 7,
+ "worker_is_primary_actions_is_fallback": true,
+ "session_note": "worker deployed 2026-11-03T16:27Z (post-close); first in-session window is 2026-11-04 09:45-15:45 PKT \u2014 runtime stats so far are pre-window/idle-cycle evidence; in-session stats awaiting_future_observations"
+}
