@@ -7,7 +7,10 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path("/home/z/my-project")
-T107 = ROOT / "data/backtest_reports/task107"
+# Task 108: tests can redirect the whole task107 report tree via env so error
+# injection never touches real artifacts.
+_T107_ENV = os.environ.get("TASK108_T107_DIR")
+T107 = Path(_T107_ENV) if _T107_ENV else ROOT / "data/backtest_reports/task107"
 OPS = T107 / "ops"
 T103 = ROOT / "data/backtest_reports/task103"
 BASE = "https://psxdata-api.fastapicloud.dev"

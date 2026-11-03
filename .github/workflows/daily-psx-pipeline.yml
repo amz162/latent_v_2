@@ -8,6 +8,10 @@ name: Daily PSX pipeline
 # Status: DEPLOYMENT-READY, NOT yet verified in production. Do not claim active
 # scheduling until a real run has succeeded (see task107_scheduler_test_report.json).
 
+# Task 108 Phase 3/5: unified writer concurrency with the intraday poll —
+# both workflows mutate Task 107 state, so they share ONE serialized
+# concurrency group (task107-state-writers) and push with rebase safety.
+
 on:
   schedule:
     - cron: "30 11 * * 1-5"
@@ -19,7 +23,7 @@ on:
         default: false
 
 concurrency:
-  group: daily-psx-pipeline
+  group: task107-state-writers
   cancel-in-progress: false
 
 permissions:
@@ -62,6 +66,8 @@ jobs:
           test -f db/custom.db.gz || { echo "::error::db/custom.db.gz missing"; exit 1; }
           gunzip -kf db/custom.db.gz
           echo "DATABASE_URL=file:$GITHUB_WORKSPACE/db/custom.db" >> "$GITHUB_ENV"
+          sqlite3 db/custom.db "PRAGMA integrity_check;" | grep -qx ok || { echo "::error::daily DB integrity check failed"; exit 1; }
+          test -f data/external_imports/psx_eod/task107_snapshots.db && sqlite3 data/external_imports/psx_eod/task107_snapshots.db "PRAGMA integrity_check;" | grep -qx ok || echo "::warning::snapshot store missing or failed integrity check (continuing with artifact handoff state)"
 
       - name: Run pipeline (ingest -> shadow -> maturity -> reports)
         run: |
@@ -82,7 +88,8 @@ jobs:
           else
             gunzip -kf db/custom.db.gz 2>/dev/null || true
             gzip -kf db/custom.db
-            git add db/custom.db.gz
+            git add db/custom.db.gz data/external_imports/psx_eod/task107_snapshots.db
+            git fetch origin main && git rebase origin/main   # never force, never discard; conflict fails visibly
             git commit -m "Daily PSX pipeline: frontier $FRONTIER (run ${{ github.run_id }})"
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"

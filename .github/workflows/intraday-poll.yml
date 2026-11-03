@@ -1,39 +1,96 @@
 name: Intraday snapshot poll
 
-# Task 107 v2 — delayed-snapshot polling during the feed availability window
-# (09:45-15:45 PKT = 04:45-10:45 UTC). Polls every 15 minutes (GitHub Actions
-# floor for meaningful cadence; the engine itself defaults to 120s when run on
-# an always-on host — see task107_polling_configuration.json). Holidays are
-# data-decided: no changed quotes -> no-op run.
+# Task 108 — delayed-snapshot polling fallback.
+#
+# PRIMARY production polling is the always-on host worker
+# (scripts/task108_worker.py, 120s cadence) on the deployed host; THIS workflow
+# is the fallback for when that worker is unavailable.
+#
+# Cadence: every 5 minutes (GitHub Actions minimum supported floor). Actions
+# cron events are NOT guaranteed to fire at their exact scheduled minute — the
+# monitor records the ACTUAL spacing between poll attempts in cycle_latency and
+# the step summary displays it. The 15-minute cadence of Task 107 is retired:
+# this does NOT add a second 15-minute wait on top of the provider delay (the
+# engine processes each new observation immediately on arrival).
+#
+# Failure semantics (Task 108 Phase 4) — `|| exit 0` was removed:
+#   exit 0  success_with_updates | success_no_change (legitimate no-op included)
+#   exit 2  degraded_provider  -> run stays green but carries a loud degraded
+#           summary + ::warning:: (provider outage is retryable, not a crash)
+#   exit 3  failed_configuration   -> red run
+#   exit 4  failed_internal_error  -> red run
+#   exit 5  failed_data_integrity  -> red run (quarantined observations)
+#
+# Storage (Task 108 Phase 6): Git is NOT the runtime database. The snapshot
+# SQLite is handed between runs via Actions artifacts (30-day retention) and
+# merged into the durable store by the daily pipeline's single daily commit.
 
 on:
   schedule:
-    - cron: "*/15 4-10 * * 1-5"
+    - cron: "*/5 4-10 * * 1-5"
   workflow_dispatch:
 
 concurrency:
-  group: intraday-snapshot-poll
+  group: task107-state-writers
   cancel-in-progress: false
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   poll:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 9
     steps:
       - uses: actions/checkout@v4
+
+      - name: Restore daily DB (monitor reads daily closes + position state)
+        run: |
+          test -f db/custom.db.gz || { echo "::error::db/custom.db.gz missing"; exit 1; }
+          gunzip -kf db/custom.db.gz
+          sqlite3 db/custom.db "PRAGMA integrity_check;" | grep -qx ok || { echo "::error::daily DB integrity check failed"; exit 1; }
+
+      - name: Restore snapshot store from last successful run (artifact handoff)
+        run: |
+          RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/intraday-poll.yml/runs?status=success&per_page=1" --jq '.workflow_runs[0].id' 2>/dev/null || echo "")
+          if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
+            ART_ID=$(gh api "repos/${{ github.repository }}/actions/runs/$RUN_ID/artifacts" --jq '.artifacts[] | select(.name=="task107-snapshots-db") | .id' 2>/dev/null | head -1)
+            if [ -n "$ART_ID" ] && [ "$ART_ID" != "null" ]; then
+              mkdir -p data/external_imports/psx_eod
+              gh api "repos/${{ github.repository }}/actions/artifacts/$ART_ID/zip" > /tmp/snaps.zip
+              unzip -o /tmp/snaps.zip -d data/external_imports/psx_eod/
+              echo "restored snapshot store from run $RUN_ID"
+            fi
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Poll delayed snapshots (idempotent, price-change detected)
-        run: |
-          test -f data/external_imports/psx_eod/task107_snapshots.db || sqlite3 data/external_imports/psx_eod/task107_snapshots.db "SELECT 1;" 2>/dev/null || true
-          python3 scripts/task107_monitor.py || exit 0   # engine exits 0; provider failures are recorded, not silent
-      - name: Commit snapshot store + monitor state
+
+      - name: Poll delayed snapshots (structured exit semantics)
+        id: poll
+        run: python3 scripts/task107_monitor.py
+
+      - name: Job summary (never a fake success)
+        if: always()
+        run: python3 scripts/task108_workflow_summary.py
+
+      - name: Upload snapshot store (state handoff between runs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task107-snapshots-db
+          path: data/external_imports/psx_eod/task107_snapshots.db
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Commit small monitor state (SQLite is NOT committed here)
+        if: always()
         run: |
           git config user.name "latent-poll-bot"
           git config user.email "poll@users.noreply.github.com"
-          git add data/external_imports/psx_eod/task107_snapshots.db data/backtest_reports/task107/ops data/backtest_reports/task107/task107_*.json data/backtest_reports/task107/task107_*.csv 2>/dev/null || true
-          git diff --cached --quiet || (git commit -m "Intraday snapshot poll $(date -u +%Y-%m-%dT%H:%MZ)" && git push)
+          git add data/backtest_reports/task107/ops data/backtest_reports/task107/task107_*.json data/backtest_reports/task107/task107_*.csv 2>/dev/null || true
+          git diff --cached --quiet || { git fetch origin main && git rebase origin/main && git commit -m "Intraday monitor state $(date -u +%Y-%m-%dT%H:%MZ) [${{ job.status }}]" && git push; }
