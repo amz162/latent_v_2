@@ -4606,3 +4606,8 @@ Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
 - P11: intraday-poll.yml (*/15 during the feed window) + daily pipeline workflow — deployment-ready, honestly NOT production-verified.
 - P12-13: daily_ohlc_approximation vs delayed_intraday_observation namespaces; 29/29 v2 deterministic tests (timestamps, snapshot semantics incl. cross-and-recover, ambiguity guard, idempotency, cost parity 62 PKR fixture, safety, integrity); tsc clean for new code; build exit 0; APIs 200; browser-verified (banner/cards/table/detail/ladder/labels).
 - P14: 42/42 artifacts + 6 docs. Decision rule applied: snapshot-only mode with observation_resolution_limited semantics; nothing fabricated; nothing promoted; no real orders.
+
+## Ops — self-recovery credential store (2026-11-03)
+
+- Repo set **private**; GitHub push token stored at `.zcredentials/github_token` (committed while private, by owner's instruction) and armed locally via `scripts/gh_auth.sh` → `.git/credentials` (untracked). `AGENTS.md` at repo root documents the recovery chain: workspace copy → `/tmp/my-project` recycle backup → repo copy; token never printed or embedded in command lines.
+- Rotation contract: revoke at github.com/settings/tokens, then replace BOTH copies in the same session — revocation is the kill switch; deleting the file alone leaves it in git history.
