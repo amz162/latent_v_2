@@ -635,7 +635,7 @@ def phase4() -> int:
                  {"event": "Task 108 dispatch 1-5 initial failures", "handling": "runs stayed RED, "
                   "root-caused (deps, paths, bun, dirty-tree rebase, lock) — never masked as success"},
                  {"event": "Production Build failure on 5ede8ff4", "handling": "repo git-safety audit "
-                  "gate rejected git rebase in workflows; sync redesigned ff-only/merge; gate now 0 violations"}],
+                  "gate rejected rebase usage in workflows; sync redesigned ff-only/merge; gate now 0 violations"}],
              unexpected_error_never_success="task107_monitor.main() maps unexpected exceptions to "
                                              "failed_internal_error exit 4; workflow summary renderer fails "
                                              "when no cycle result exists",
