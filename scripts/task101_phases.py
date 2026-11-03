@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, "/home/z/my-project/scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task101_lib as T  # noqa: E402
 import task100_lib as T0  # noqa: E402  (Task 54 engine wrappers)
 import walk_forward_backtesting as wf  # noqa: E402

@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, "/home/z/my-project/scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task100_lib as T
 
 PASS, FAIL = 0, []

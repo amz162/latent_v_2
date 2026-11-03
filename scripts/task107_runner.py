@@ -8,7 +8,7 @@ nothing new. Usage:
 from __future__ import annotations
 import json, subprocess, sys, time
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 import task107_lib as LB  # noqa: E402
 

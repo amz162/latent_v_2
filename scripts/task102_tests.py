@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 B = ROOT / "data/backtest_reports/task102"
 PASS, FAIL = 0, []
 def check(name, cond, detail=""):

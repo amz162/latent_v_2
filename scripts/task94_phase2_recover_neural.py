@@ -22,7 +22,7 @@ import torch
 import torch.nn as nn
 warnings.filterwarnings("ignore")
 
-DB = "/home/z/my-project/db/custom.db"
+DB = str(ROOT / "db/custom.db")
 OUT = Path("/home/z/my-project/data/backtest_reports/task94")
 CKPT_T83 = Path("/home/z/my-project/data/backtest_reports/task83/models")
 CKPT_T84 = Path("/home/z/my-project/data/backtest_reports/task84/models")

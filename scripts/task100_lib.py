@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 
 warnings.filterwarnings("ignore")
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import walk_forward_backtesting as wf  # noqa: E402  (Task 54 engine — DO NOT MODIFY)

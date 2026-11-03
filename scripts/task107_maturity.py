@@ -16,7 +16,7 @@ TIME_UP maturity requires 21 full sessions; terminal SL/TP3 exits mature early.
 from __future__ import annotations
 import csv, json, os, sqlite3, subprocess, sys, time
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T107 = ROOT / "data/backtest_reports/task107"
 T106 = ROOT / "data/backtest_reports/task106"
 T105 = ROOT / "data/backtest_reports/task105"

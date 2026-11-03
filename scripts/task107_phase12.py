@@ -4,7 +4,7 @@ final_summary (self-checking), and artifact manifest."""
 from __future__ import annotations
 import json, subprocess, sys, time
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T107 = ROOT / "data/backtest_reports/task107"
 sys.path.insert(0, str(ROOT / "scripts"))
 import task103_lib as L  # type: ignore  # noqa: E402

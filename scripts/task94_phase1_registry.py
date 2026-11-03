@@ -18,7 +18,7 @@ import json, re, subprocess
 from pathlib import Path
 from collections import defaultdict
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 ENS_TS = ROOT / "src/lib/latent/ensemble.ts"
 T84 = ROOT / "data/backtest_reports/task84/task84_metrics.json"
 T82 = ROOT / "data/backtest_reports/task82_model_registry_audit.json"

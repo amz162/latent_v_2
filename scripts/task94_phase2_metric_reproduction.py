@@ -21,7 +21,7 @@ import json, sqlite3
 from pathlib import Path
 from collections import defaultdict
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T84 = ROOT / "data/backtest_reports/task84/task84_metrics.json"
 WF = ROOT / "data/backtest_reports/walk_forward_latest.json"
 T89 = ROOT / "data/backtest_reports/task89/batch_logs"

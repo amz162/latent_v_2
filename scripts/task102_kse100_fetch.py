@@ -7,7 +7,7 @@ from __future__ import annotations
 import json, subprocess, sys, time
 from pathlib import Path
 import pandas as pd
-sys.path.insert(0, "/home/z/my-project/scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task102_lib as L  # noqa: E402
 
 OUT_JSON = L.BASE / "kse100_index_data.json"

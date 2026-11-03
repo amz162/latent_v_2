@@ -21,7 +21,7 @@ from collections import defaultdict, Counter
 from datetime import datetime, timezone
 import pandas as pd
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 DB = ROOT / "db/custom.db"
 OUT = ROOT / "data/backtest_reports/task94"
 

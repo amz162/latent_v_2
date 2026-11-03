@@ -25,7 +25,7 @@ from __future__ import annotations
 import json, os, signal, sqlite3, sys, time
 from datetime import datetime, timedelta
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 import task107_lib as LB  # noqa: E402
 import task107_monitor as M  # noqa: E402

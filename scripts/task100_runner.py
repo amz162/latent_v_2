@@ -22,7 +22,7 @@ from __future__ import annotations
 import argparse, json, sys, time
 from pathlib import Path
 
-sys.path.insert(0, "/home/z/my-project/scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task100_lib as T  # noqa: E402
 
 

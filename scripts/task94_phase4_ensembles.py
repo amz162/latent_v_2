@@ -27,7 +27,7 @@ from pathlib import Path
 from collections import defaultdict
 import numpy as np
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T87 = ROOT / "data/backtest_reports/task87/task87_ensemble_validation.json"
 T84 = ROOT / "data/backtest_reports/task84/task84_metrics.json"
 WF  = ROOT / "data/backtest_reports/walk_forward_latest.json"

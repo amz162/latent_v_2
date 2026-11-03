@@ -12,7 +12,7 @@ from __future__ import annotations
 import json, sys, time
 import numpy as np
 from pathlib import Path
-sys.path.insert(0, "/home/z/my-project/scripts")   # task101 pipeline expects this ROOT
+sys.path.insert(0, str(Path(__file__).resolve().parent))   # task101 pipeline expects this ROOT
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import task103_lib as L104  # noqa: E402  (portable helpers, task104 paths)
 import task101_lib as T101  # noqa: E402

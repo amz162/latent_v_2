@@ -4,7 +4,7 @@ psx_user_schedule_v2 (default), keep legacy_flat_v1 as an explicitly named
 compatibility profile, extend the models registry with task101 supplemental
 entries, update docs. Idempotent-ish: asserts expected anchors exist."""
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 
 # ── 1. investment-simulator.ts ────────────────────────────────────────────────
 p = ROOT / "src/lib/latent/investment-simulator.ts"

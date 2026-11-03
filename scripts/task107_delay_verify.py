@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv, json, sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T107 = ROOT / "data/backtest_reports/task107"
 sys.path.insert(0, str(ROOT / "scripts"))
 import task103_lib as L  # type: ignore  # noqa: E402

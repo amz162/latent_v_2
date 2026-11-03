@@ -88,7 +88,7 @@ try:
 except Exception:
     HAVE_SK = False
 
-ROOT = Path("/home/z/my-project") if Path("/home/z/my-project").exists() else Path(".")
+ROOT = Path(__file__).resolve().parent.parent if Path("/home/z/my-project").exists() else Path(".")
 DB_PATH = ROOT / "db" / "custom.db"
 PRED_FILE = ROOT / "data" / "ml_predictions_multi.json"
 TMP_FILE = PRED_FILE.with_suffix(".json.tmp")

@@ -10,7 +10,7 @@ exists — a run without a cycle result must never look like success.
 from __future__ import annotations
 import json, os, sqlite3, sys
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T107 = Path(os.environ.get("TASK108_T107_DIR") or ROOT / "data/backtest_reports/task107")
 OPS = T107 / "ops"
 SNAP_DB = Path(os.environ.get("TASK108_SNAP_DB") or ROOT / "data/external_imports/psx_eod/task107_snapshots.db")

@@ -93,7 +93,7 @@ warnings.filterwarnings("ignore")
 # ------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 OHLCV_DIR = ROOT / "data" / "ohlcv_all"
 PRED_FILE = ROOT / "data" / "ml_predictions_multi.json"
 CALIB_FILE = ROOT / "data" / "cl2_cache" / "calib.pkl"

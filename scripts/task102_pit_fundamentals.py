@@ -7,7 +7,7 @@ from __future__ import annotations
 import json, re, sys, time
 import numpy as np
 import pandas as pd
-sys.path.insert(0, "/home/z/my-project/scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task102_lib as L  # noqa: E402
 import walk_forward_backtesting as wf  # noqa: E402
 

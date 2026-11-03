@@ -26,7 +26,7 @@ from __future__ import annotations
 import csv, json, os, sqlite3, subprocess, sys, time, traceback
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T107 = LB_T107 = Path(os.environ.get("TASK108_T107_DIR") or ROOT / "data/backtest_reports/task107")
 OPS = T107 / "ops"
 sys.path.insert(0, str(ROOT / "scripts"))

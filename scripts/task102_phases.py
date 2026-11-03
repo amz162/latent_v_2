@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, "/home/z/my-project/scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task102_lib as L  # noqa: E402
 import task100_lib as T0  # noqa: E402
 import task101_lib as T101  # noqa: E402

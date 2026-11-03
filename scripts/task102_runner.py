@@ -7,7 +7,7 @@ from __future__ import annotations
 import argparse, json, sys, time
 from pathlib import Path
 
-sys.path.insert(0, "/home/z/my-project/scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import task102_lib as L  # noqa: E402
 
 PHASE_ORDER = ["baseline", "market_audit", "kse100", "pit_fundamentals", "corporate_actions",

@@ -23,7 +23,7 @@ from pathlib import Path
 from collections import defaultdict
 import numpy as np
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T81 = ROOT / "data/backtest_reports/task81_cost_rr_results_v1.json"
 DB = ROOT / "db/custom.db"
 OUT = ROOT / "data/backtest_reports/task94"

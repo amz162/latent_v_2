@@ -22,7 +22,7 @@ import json
 from pathlib import Path
 from collections import Counter, defaultdict
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "data/backtest_reports/task90/raw_external_data"
 BATCH = ROOT / "data/backtest_reports/task90/batch_logs"
 OUT = ROOT / "data/backtest_reports/task94"

@@ -88,7 +88,7 @@ from train_cl2_tier import (
 # ------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------
-PI_CALIB_FILE = ROOT = Path("/home/z/my-project") / "data" / "pi_cache" / "calib.pkl"
+PI_CALIB_FILE = ROOT = Path(__file__).resolve().parent.parent / "data" / "pi_cache" / "calib.pkl"
 PI_CACHE_DIR = Path("/home/z/my-project") / "data" / "pi_cache"
 PI_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 

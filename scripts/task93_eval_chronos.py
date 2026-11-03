@@ -27,7 +27,7 @@ import pandas as pd
 from chronos import ChronosPipeline
 import torch
 
-DB = "/home/z/my-project/db/custom.db"
+DB = str(ROOT / "db/custom.db")
 OUT_DIR = Path("/home/z/my-project/data/backtest_reports/task93")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

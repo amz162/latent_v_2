@@ -6,7 +6,7 @@ import csv, hashlib, json, os, sqlite3, subprocess, sys, time, urllib.request, u
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 # Task 108: tests can redirect the whole task107 report tree via env so error
 # injection never touches real artifacts.
 _T107_ENV = os.environ.get("TASK108_T107_DIR")

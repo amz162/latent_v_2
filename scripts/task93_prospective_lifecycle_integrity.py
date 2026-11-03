@@ -17,7 +17,7 @@ import sqlite3, json
 from pathlib import Path
 from collections import Counter
 
-DB = "/home/z/my-project/db/custom.db"
+DB = str(ROOT / "db/custom.db")
 OUT = Path("/home/z/my-project/data/backtest_reports/task93/task93_prospective_lifecycle_integrity.json")
 
 

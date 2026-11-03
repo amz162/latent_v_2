@@ -5,7 +5,7 @@ from __future__ import annotations
 import json, subprocess, sys, time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 T107 = ROOT / "data/backtest_reports/task107"
 sys.path.insert(0, str(ROOT / "scripts"))
 import task107_monitor as M  # noqa: E402

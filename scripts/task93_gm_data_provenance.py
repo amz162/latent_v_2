@@ -32,7 +32,7 @@ PILOT25 = [
 
 RAW_DIR = Path("/home/z/my-project/data/backtest_reports/task90/raw_external_data")
 BATCH_DIR = Path("/home/z/my-project/data/backtest_reports/task90/batch_logs")
-DB = "/home/z/my-project/db/custom.db"
+DB = str(ROOT / "db/custom.db")
 OUT = Path("/home/z/my-project/data/backtest_reports/task93/task93_gm_data_provenance.json")
 
 

@@ -18,7 +18,7 @@ import argparse, json, os, sys, time, subprocess, traceback
 from pathlib import Path
 from datetime import datetime, timezone
 
-ROOT = Path("/home/z/my-project")
+ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data/backtest_reports/task94"
 PROGRESS = OUT / "task94_progress.json"
 CHECKPOINTS = OUT / "checkpoints"
