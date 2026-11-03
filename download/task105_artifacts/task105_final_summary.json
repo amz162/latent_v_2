@@ -1,0 +1,28 @@
+{
+ "report": "task105_final_summary",
+ "generated_at": "2026-11-02T20:05:40+0000",
+ "status": "completed",
+ "outcome": "B \u2014 no software defect; predictive signal weak/absent; research/shadow mode preserved; NO-TRADE protection active; forward observation collecting",
+ "final_questions": {
+  "Q1_genuine_defect_found": "NO \u2014 6/6 direction/geometry fixture suites, sign conventions, timestamps, costs and ledgers all verified clean",
+  "Q2_affected_records": "NONE affected by defects; two capital-protection findings (CP-1 SELL-display, CP-2 confidence semantics) affect presentation only \u2014 zero historical records impacted",
+  "Q3_evidence_of_weak_edge": "YES \u2014 gross-negative expectancy across all strategies; 67/69 FDR-significant negative subgroups; cash dominates all baselines; model ranking ~random (AUC 0.527)",
+  "Q4_largest_gross_loss_component": "Poor direction prediction (primary), amplified by win/loss asymmetry and ~19% TIME_UP capital drag; costs then double the loss",
+  "Q5_confidence_useful_for_ranking": "NO \u2014 OOS Spearman(confidence, outcome) -0.002..-0.07; AUC 0.496-0.527 final test",
+  "Q6_calibration_trustworthy": "NO \u2014 final-test reliability flat/inverted; slope departs from 1; validation calibration is in-sample by construction",
+  "Q7_suitable_for_real_money": "NO \u2014 nothing promotable; no live-order pathway exists",
+  "Q8_unsupported_claims_prevented": "YES \u2014 CapitalProtectionNotice on 3 surfaces; honest metric labels; policy module task105-v1",
+  "Q9_no_trade_policy_working": "YES \u2014 evaluatePolicyState returns no_trade/expected_net_value_not_positive; all 12 shadow observations no_trade",
+  "Q10_forward_shadow_operational": "YES \u2014 task105-gen1 store, idempotent, production levels, frozen-model probabilities; awaiting outcomes",
+  "Q11_new_independent_decision_dates": "1 frontier recording date (2026-10-29); outcomes require sessions not yet imported",
+  "Q12_matured_from_new_observations": "0 \u2014 awaiting_data (no licensed feed)",
+  "Q13_blocked_by_external": "new market sessions (B1), intraday records (B2), corporate actions/PIT fundamentals (B3), short-selling rights (B4)",
+  "Q14_promotion_status": "not_promotable for ALL models/strategies; gates 0/9; consensus unchanged; registry complete",
+  "Q15_preservation": "YES \u2014 Tasks 100-104 artifacts and Task 103 lifecycle records untouched (git-verified)",
+  "Q16_git_head": "e4a141fa826e; working tree contains Task 105 additions only (28 paths)",
+  "Q17_tests": "python 25/25 passed, 0 failed-as-passed; tsc clean; build exit 0; 4 API endpoints 200; browser 3/3 checks"
+ },
+ "decision_rule_outcome": "B",
+ "never_forced_c": true,
+ "runtime_seconds": 0.0
+}

@@ -1,0 +1,431 @@
+{
+ "report": "task103 data_source_registry",
+ "generated_at": "2026-11-02T12:17:06+0000",
+ "method": "live bounded HTTP probes (<=8s each) from this sandbox + z-ai web_search evidence (server-side) + Task 102 attempt history",
+ "status_vocabulary": [
+  "verified_access",
+  "public_access",
+  "credential_required",
+  "paid_access_required",
+  "not_available",
+  "provider_unavailable",
+  "license_restricted",
+  "not_verified"
+ ],
+ "rule": "a provider is NEVER marked available merely because a website exists; genuine data must have been fetched or the exact blocker recorded",
+ "providers": [
+  {
+   "provider": "psx_data_portal_official",
+   "kind": "official_exchange_portal",
+   "documentation": "https://dps.psx.com.pk/historical",
+   "data_types": [
+    "EOD market summary",
+    "KSE-100 index history",
+    "closing rates PDF",
+    "corporate announcements"
+   ],
+   "historical_coverage": "per web evidence: historical EOD + KSE-100; exact depth unverified",
+   "symbol_index_coverage": "all listed PSX symbols + KSE-100 (per portal description)",
+   "intraday_intervals": [],
+   "auth_requirement": "none for public downloads (per portal description)",
+   "pricing": "free public downloads (per portal description; not verifiable from sandbox)",
+   "licensing": "PSX data-dissemination terms apply; redistribution restrictions possible",
+   "retrieval_method": "HTTP GET (official pages); import via scripts/task103_import_data.py --type psx_eod / --type kse100",
+   "integration_status": "import_ready_via_onboarding",
+   "live_probe": {
+    "http": "000",
+    "bytes": 0,
+    "reachable": false,
+    "detail": "curl: (56) OpenSSL SSL_read: OpenSSL/3.5.7: error:0A000126:SSL routines::unexpected eof while reading, errno 0"
+   },
+   "web_evidence": [
+    {
+     "url": "https://dps.psx.com.pk/download/closing_rates/2024-01-11.pdf",
+     "title": "Pakistan Stock Exchange Limited",
+     "snippet": "Jan 11, 2024 \u2014 ***STOCK INDEX FUTURE CONTRACTS***. BKTI-FEB. BKTI-FEB. 0. 15496. -. 0. 0. 15582. 86. BKTI-JAN. BKTI-JAN. 0. 15241. -. 0. 0. 15325. 84. BKTI-MAR. Read more"
+    },
+    {
+     "url": "https://dps.psx.com.pk/download/closing_rates/2023-08-24.pdf",
+     "title": "Pakistan Stock Exchange Limited",
+     "snippet": "Aug 24, 2023 \u2014 ***STOCK INDEX FUTURE CONTRACTS***. BKTI-AUG. BKTI-AUG. 0. 11857. -. 0. 0. 12023. 166. BKTI-OCT. BKTI-OCT. 0. 12321. -. 0. 0. 12494. 173. BKTI-\u00a0... Read more"
+    },
+    {
+     "url": "https://dps.psx.com.pk/download/closing_rates/2024-01-11.pdf",
+     "title": "Pakistan Stock Exchange Limited",
+     "snippet": "Jan 11, 2024 \u2014 636168115 P. KSE100 Ind: 63919.85 P.KSE30 Ind: 21340.88 Plus: 204. C. Vol.: 586548829 C. KSE100 Ind: 64617.57 C.KSE30 Ind: 21579.53 Minus: 131. Read more"
+    },
+    {
+     "url": "https://dps.psx.com.pk/download/closing_rates/2025-08-12.pdf",
+     "title": "Pakistan Stock Exchange Limited",
+     "snippet": "Aug 12, 2025 \u2014 611205197 P. KSE100 Ind: 146929.84 P.KSE30 Ind: 45104.03 Plus: 208. C. Vol.: 691658929 C. KSE100 Ind: 147005.32 C.KSE30 Ind: 45011.74 Minus\u00a0... Read more 25 pages"
+    }
+   ],
+   "last_verified": null,
+   "status": "provider_unavailable",
+   "failure_reason": "HTTP 000 connection failed from this sandbox (network egress restriction), reproduced in Task 102 and again 2026-11-02; the official portal DOES advertise KSE-100 + daily EOD downloads per web evidence, so the documented unblock path is to run the fetch from an unrestricted host or supply the official export via the Task 103 import system",
+   "unblock_path": "owner downloads PSX official EOD/KSE-100 export -> python scripts/task103_import_data.py --type kse100 --file <csv> --validate",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "psx_closing_rates_pdf",
+   "kind": "official_exchange_download",
+   "documentation": "https://dps.psx.com.pk/download/closing_rates/<YYYY-MM-DD>.pdf",
+   "data_types": [
+    "daily closing rates (PDF)"
+   ],
+   "historical_coverage": "daily files (depth unverified)",
+   "symbol_index_coverage": "all PSX symbols per session",
+   "intraday_intervals": [],
+   "auth_requirement": "none (public URL pattern)",
+   "pricing": "free (unverified)",
+   "licensing": "PSX terms apply",
+   "retrieval_method": "HTTP GET per session date",
+   "integration_status": "pdf_requires_manual_conversion",
+   "live_probe": {
+    "http": "000",
+    "bytes": 0,
+    "reachable": false,
+    "detail": "curl: (56) OpenSSL SSL_read: OpenSSL/3.5.7: error:0A000126:SSL routines::unexpected eof while reading, errno 0"
+   },
+   "web_evidence": [
+    {
+     "url": "https://dps.psx.com.pk/download/closing_rates/2024-01-11.pdf",
+     "title": "Pakistan Stock Exchange Limited",
+     "snippet": "Jan 11, 2024 \u2014 ***STOCK INDEX FUTURE CONTRACTS***. BKTI-FEB. BKTI-FEB. 0. 15496. -. 0. 0. 15582. 86. BKTI-JAN. BKTI-JAN. 0. 15241. -. 0. 0. 15325. 84. BKTI-MAR. Read more"
+    },
+    {
+     "url": "https://dps.psx.com.pk/download/closing_rates/2023-08-24.pdf",
+     "title": "Pakistan Stock Exchange Limited",
+     "snippet": "Aug 24, 2023 \u2014 ***STOCK INDEX FUTURE CONTRACTS***. BKTI-AUG. BKTI-AUG. 0. 11857. -. 0. 0. 12023. 166. BKTI-OCT. BKTI-OCT. 0. 12321. -. 0. 0. 12494. 173. BKTI-\u00a0... Read more"
+    }
+   ],
+   "last_verified": null,
+   "status": "provider_unavailable",
+   "failure_reason": "HTTP 000 unreachable from sandbox (same egress restriction)",
+   "unblock_path": "owner downloads per-session PDFs; CSV conversion + import via onboarding",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "yahoo_finance_chart_v8",
+   "kind": "public_api",
+   "documentation": "https://query1.finance.yahoo.com/v8/finance/chart/",
+   "data_types": [
+    "daily OHLCV index history"
+   ],
+   "symbol_index_coverage": "no KSE-100 (symbol absent from Yahoo directory)",
+   "intraday_intervals": [],
+   "auth_requirement": "none",
+   "pricing": "free tier (unofficial)",
+   "licensing": "Yahoo ToS - non-redistributable",
+   "retrieval_method": "HTTP GET chart v8",
+   "integration_status": "not_integrable",
+   "live_probe": {
+    "http": "404",
+    "bytes": 108,
+    "reachable": false,
+    "detail": ""
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "not_available",
+   "failure_reason": "HTTP 404 'symbol may be delisted' (Task 102) - Yahoo does not carry KSE-100",
+   "unblock_path": "none - source does not list the index",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "stooq_csv",
+   "kind": "public_api",
+   "documentation": "https://stooq.com/q/d/l/?s=<sym>&i=d",
+   "data_types": [
+    "daily OHLCV"
+   ],
+   "symbol_index_coverage": "unknown for KSE-100",
+   "intraday_intervals": [],
+   "auth_requirement": "none",
+   "pricing": "free",
+   "licensing": "Stooq terms",
+   "retrieval_method": "HTTP GET CSV",
+   "integration_status": "not_integrable",
+   "live_probe": {
+    "http": "000",
+    "bytes": 0,
+    "reachable": false,
+    "detail": "curl: (28) Connection timed out after 8002 milliseconds"
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "provider_unavailable",
+   "failure_reason": "connection failed (HTTP 000, host unreachable from sandbox; Task 102 same)",
+   "unblock_path": "retry from unrestricted host",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "wsj_historical_download",
+   "kind": "news_portal_download",
+   "documentation": "https://www.wsj.com/market-data/quotes/XX/XKAR/IDXKSE100",
+   "data_types": [
+    "daily index OHLC"
+   ],
+   "symbol_index_coverage": "KSE-100 listed as IDXKSE100",
+   "intraday_intervals": [],
+   "auth_requirement": "none for page; bot protection active",
+   "pricing": "free page",
+   "licensing": "WSJ/Dow Jones ToS - non-redistributable",
+   "retrieval_method": "HTTP GET download endpoint",
+   "integration_status": "not_integrable",
+   "live_probe": {
+    "http": "401",
+    "bytes": 767,
+    "reachable": false,
+    "detail": ""
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "not_available",
+   "failure_reason": "HTTP 401 DataDome captcha (bot protection) - bypassing is NOT permitted",
+   "unblock_path": "manual browser download by owner, then import via onboarding",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "investing_api",
+   "kind": "public_api",
+   "documentation": "https://api.investing.com/api/financialdata/historical/",
+   "data_types": [
+    "daily index OHLCV"
+   ],
+   "symbol_index_coverage": "Karachi-100 pair id 3440 (web evidence)",
+   "intraday_intervals": [],
+   "auth_requirement": "undocumented; UA filtering observed",
+   "pricing": "free tier (unofficial)",
+   "licensing": "Investing.com ToS - non-redistributable",
+   "retrieval_method": "HTTP GET",
+   "integration_status": "not_integrable",
+   "live_probe": {
+    "http": "403",
+    "bytes": 3,
+    "reachable": false,
+    "detail": ""
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "not_available",
+   "failure_reason": "HTTP 403 forbidden (Task 102 + 2026-11-02) - private/undocumented endpoint, scraping it is not permitted",
+   "unblock_path": "manual export by owner, then import via onboarding",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "tradingeconomics",
+   "kind": "public_api",
+   "documentation": "https://api.tradingeconomics.com/markets/index",
+   "data_types": [
+    "index quotes/history"
+   ],
+   "symbol_index_coverage": "guest tier lacks KSE-100",
+   "intraday_intervals": [],
+   "auth_requirement": "API key (paid tiers)",
+   "pricing": "paid plans (free guest tier limited)",
+   "licensing": "TE terms - redistribution restricted",
+   "retrieval_method": "HTTP GET with client key",
+   "integration_status": "blocked_credentials",
+   "live_probe": {
+    "http": "410",
+    "bytes": 214,
+    "reachable": false,
+    "detail": ""
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "credential_required",
+   "failure_reason": "HTTP 410 gone on guest tier (Task 102); KSE-100 requires a paid TE subscription key",
+   "unblock_path": "owner subscribes + puts TE key in .env (TE_API_KEY); adapter switch documented",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "alphavantage",
+   "kind": "public_api",
+   "documentation": "https://www.alphavantage.co/documentation/",
+   "data_types": [
+    "daily FX/equities (US-centric)"
+   ],
+   "symbol_index_coverage": "no PSX equities or KSE-100 coverage",
+   "intraday_intervals": [
+    "1min..60min for covered markets only"
+   ],
+   "auth_requirement": "free API key",
+   "pricing": "free tier w/ rate limits",
+   "licensing": "AlphaVantage terms",
+   "retrieval_method": "HTTP GET with key",
+   "integration_status": "not_integrable",
+   "live_probe": {
+    "http": "200",
+    "bytes": 220,
+    "reachable": true,
+    "detail": ""
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "not_available",
+   "failure_reason": "no Pakistan market coverage in the public directory; demo probe returns empty/error payload for KSE-100",
+   "unblock_path": "none - market not covered",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "nasdaq_data_link",
+   "kind": "licensed_data_marketplace",
+   "documentation": "https://data.nasdaq.com/search?q=karachi",
+   "data_types": [
+    "curated datasets"
+   ],
+   "symbol_index_coverage": "no active KSE-100 dataset found",
+   "intraday_intervals": [],
+   "auth_requirement": "API key for datasets",
+   "pricing": "dataset-dependent",
+   "licensing": "per-dataset license",
+   "retrieval_method": "HTTP GET with key",
+   "integration_status": "not_integrable",
+   "live_probe": {
+    "http": "403",
+    "bytes": 882,
+    "reachable": false,
+    "detail": ""
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "not_available",
+   "failure_reason": "no PSX/KSE-100 dataset publicly listed",
+   "unblock_path": "none identified",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "bloomberg_refinitiv_professional",
+   "kind": "licensed_terminal_vendor",
+   "documentation": "https://www.lseg.com/en/market-data (Refinitiv/LSEG); https://www.bloomberg.com/professional/",
+   "data_types": [
+    "full EOD + intraday + fundamentals + corporate actions"
+   ],
+   "symbol_index_coverage": "global incl. PSX (market coverage per vendor docs)",
+   "intraday_intervals": [
+    "1min",
+    "5min",
+    "15min",
+    "30min",
+    "60min"
+   ],
+   "auth_requirement": "commercial subscription + terminal/API credentials",
+   "pricing": "commercial (subscription; exact pricing requires vendor quote)",
+   "licensing": "strict redistribution restrictions (licensed display/download only)",
+   "retrieval_method": "vendor terminal export / licensed API",
+   "integration_status": "import_ready_via_onboarding (licensed files)",
+   "live_probe": {
+    "http": "n/a",
+    "bytes": 0,
+    "reachable": false,
+    "detail": "credential-gated commercial service; no probe possible"
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "paid_access_required",
+   "failure_reason": "commercial subscription required; sandbox has no credentials and pricing is quote-based",
+   "unblock_path": "owner licenses vendor feed -> exports CSV -> onboarding import (licensed files only; no redistribution into the public repo)",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "askanalyst_existing_ingest",
+   "kind": "in_project_legacy_ingest",
+   "documentation": "data/backtest_reports/task90/raw_external_data/ (Task 90 ingest)",
+   "data_types": [
+    "3,319 PSX announcements (24 symbols)",
+    "income statements",
+    "ratios"
+   ],
+   "historical_coverage": "announcements with genuine PSX dates; statements have period labels but NO verified publication timestamps",
+   "symbol_index_coverage": "24 symbols",
+   "intraday_intervals": [],
+   "auth_requirement": "n/a (already ingested)",
+   "pricing": "n/a",
+   "licensing": "in-project",
+   "retrieval_method": "existing JSON files",
+   "integration_status": "active_pit_records",
+   "live_probe": {
+    "http": "n/a",
+    "bytes": 0,
+    "reachable": true,
+    "detail": "files present in repo (verified by checksum in PIT report)"
+   },
+   "web_evidence": [],
+   "last_verified": "2026-11-02T12:17:06+0000",
+   "status": "verified_access",
+   "failure_reason": null,
+   "unblock_path": "n/a - existing verified data; publication-timestamp gap documented",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "pypsx_intraday_provider",
+   "kind": "in_project_adapter",
+   "documentation": "src/lib/market-data/intraday-provider.ts; env PYPSX_API_BASE/KEY/SECRET",
+   "data_types": [
+    "intraday bars (live/forward)"
+   ],
+   "symbol_index_coverage": "PSX symbols per provider",
+   "intraday_intervals": [
+    "1min",
+    "5min",
+    "15min",
+    "30min",
+    "60min"
+   ],
+   "auth_requirement": "PYPSX API credentials (owner-side)",
+   "pricing": "unknown (owner-side service)",
+   "licensing": "owner-side terms",
+   "retrieval_method": "HTTP API via adapter",
+   "integration_status": "adapter_ready",
+   "live_probe": {
+    "http": "n/a",
+    "bytes": 0,
+    "reachable": false,
+    "detail": "no PYPSX_API_BASE configured in this sandbox"
+   },
+   "web_evidence": [],
+   "last_verified": null,
+   "status": "credential_required",
+   "failure_reason": "credentials not present in environment",
+   "unblock_path": "owner configures PYPSX_* env vars on the deployment host",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  },
+  {
+   "provider": "user_supplied_licensed_files",
+   "kind": "onboarding_path",
+   "documentation": "docs/task103-provider-onboarding.md; scripts/task103_import_data.py",
+   "data_types": [
+    "psx_eod",
+    "kse100",
+    "fundamentals",
+    "filings",
+    "corporate_actions",
+    "intraday"
+   ],
+   "symbol_index_coverage": "as supplied",
+   "intraday_intervals": [
+    "1/5/15/30/60min as supplied"
+   ],
+   "auth_requirement": "n/a (owner supplies files)",
+   "pricing": "depends on upstream license",
+   "licensing": "owner must hold license; licensed data NOT committed to the public repo",
+   "retrieval_method": "CSV drop into data/external_imports/<type>/ + import CLI",
+   "integration_status": "active_onboarding",
+   "live_probe": {
+    "http": "n/a",
+    "bytes": 0,
+    "reachable": true,
+    "detail": "validated via template fixtures"
+   },
+   "web_evidence": [],
+   "last_verified": "2026-11-02T12:17:06+0000",
+   "status": "public_access",
+   "failure_reason": null,
+   "unblock_path": "n/a - this IS the unblock path",
+   "probe_at": "2026-11-02T12:17:06+0000"
+  }
+ ],
+ "status": "completed"
+}

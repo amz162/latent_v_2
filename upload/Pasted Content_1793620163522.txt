@@ -1,0 +1,1504 @@
+# TASK 103 — FINAL COMPREHENSIVE PSX DATA ACQUISITION, HISTORICAL RECOVERY, AUTOMATED VALIDATION, FORWARD PAPER-TRADING & PRODUCTION READINESS
+
+## MASTER OBJECTIVE
+
+Repository: `amz162/latent_v_2`
+
+Project: Latent.pk — PSX machine-learning prediction, trade selection, backtesting, Investment Simulator and prospective paper-trading platform.
+
+Task 102 is complete and pushed. Its reported GitHub HEAD is `6676ff72`. Task 101 and earlier work contain important frozen benchmarks, cost-model fixes, leakage controls, model implementations and paper-trading records.
+
+This task must inspect the real repository before assuming that these historical descriptions match the current source code.
+
+**This is the final consolidated remaining-work campaign. Complete every feasible engineering, data, validation, monitoring, UI, documentation and production-readiness objective in one task. Do not create another list of small follow-up tasks. Do not stop after producing a plan.**
+
+The central problem is now established:
+
+- Models have not demonstrated a reliable predictive advantage over the zero-return baseline.
+- The Task 101 cost-aware filter reduced losses but remained net-negative.
+- Task 102 found no meaningful improvement from the implementable feature groups.
+- Genuine KSE-100 historical data is blocked.
+- Verified point-in-time financial statement coverage is zero.
+- Corporate-action history is missing.
+- Historical intraday data is unavailable.
+- Task 102's historical results are `development_only`, because the previous final-test periods have already been used.
+- No model is currently eligible for promotion.
+
+The objective is therefore to complete the entire data-to-production pipeline so Latent.pk can use genuine data when it becomes available, preserve honest existing results, and validate any future improvement on genuinely new observations.
+
+**Do not manufacture a profitable outcome. A reliable system that honestly reports no edge is preferable to a falsely profitable system.**
+
+---
+
+# PART A — EXECUTION RULES AND REPOSITORY SAFETY
+
+## A1. Establish the actual current state
+
+Before changing anything, inspect:
+
+- `git status`
+- Current branch and HEAD.
+- `origin/main`, if reachable.
+- Existing uncommitted changes.
+- Current Task 102 artifacts.
+- Task 54, 55, 56, 97, 99, 100, 101 and 102 reports.
+- Existing database schema and coverage.
+- Existing market-data ingestion and provider adapters.
+- Existing point-in-time fundamental implementation.
+- Corporate-action adapter and status.
+- Intraday adapter and status.
+- Feature store, model registry and evaluation scripts.
+- APIs and UI.
+- Paper-trading lifecycle and monitoring.
+- CI workflows and existing tests.
+
+The reported Task 102 GitHub HEAD is `6676ff72`; verify whether that is still the actual repository HEAD before proceeding.
+
+Do not assume that a file, artifact, table or function exists merely because an earlier summary mentions it.
+
+## A2. Respect existing working implementations
+
+Preserve:
+
+- Task 54's original 400-sample walk-forward benchmark.
+- Task 100's original benchmark artifacts.
+- Task 101's original 11,521 trade labels and evaluation artifacts.
+- Task 102's complete 28-artifact output.
+- The Task 98 sector override file and sector classification work.
+- The existing PSX cost schedule.
+- Existing prospective paper-trading lifecycle records.
+- Existing valid model implementations and checkpoint files.
+- Existing historical reports and their source data.
+
+Do not overwrite historic outputs with new experiments.
+
+New outputs must use a separate Task 103 directory.
+
+## A3. Sandbox and resource limits
+
+The environment may have a strict limit of approximately 150 seconds per command, with limited CPU/RAM and no guaranteed GPU.
+
+Build or extend:
+
+`scripts/task103_runner.py`
+
+Requirements:
+
+- Bounded execution chunks.
+- Deterministic checkpoints.
+- Automatic resume.
+- Per-phase status.
+- Per-symbol progress.
+- Retry handling.
+- Failure logging.
+- Reuse of completed outputs.
+- No repeated expensive work unnecessarily.
+- No command expected to exceed the sandbox execution limit.
+- No claim of full completion when only part of a phase ran.
+
+Support the project's equivalent of:
+
+`python scripts/task103_runner.py --phase all --resume`
+
+And individual phase execution.
+
+Use existing orchestration conventions where more appropriate.
+
+## A4. Security and Git rules
+
+- Never use `git reset --hard`.
+- Never use destructive cleanup or force push.
+- Never rewrite Git history.
+- Never overwrite unrelated user work.
+- Never print or commit credentials.
+- Never stage `.env`, private database files, passwords, tokens or API keys.
+- Keep database backups and private source files out of public Git commits.
+- Recheck `git status` before every commit.
+- Do not push automatically unless explicitly authorized by the user.
+- If remote synchronization is needed, only use safe fast-forward-only procedures.
+- Stop and report conflicts rather than overwriting remote or local work.
+
+There was a historical `.env` exposure in Git history. Audit whether the previously exposed credentials have been rotated. Do not expose their values. If a potentially exposed credential is still active, document the owner-controlled rotation requirement. Do not rewrite Git history or force-push to hide the old exposure.
+
+---
+
+# PART B — COMPLETE EXTERNAL DATA-SOURCE ACQUISITION CAMPAIGN
+
+## PHASE 1 — FIND EVERY LEGITIMATE AVAILABLE DATA SOURCE
+
+Task 102 tried six providers and found no usable genuine historical KSE-100 source. Do not merely repeat the same failed URLs.
+
+Investigate the current, legitimate availability of:
+
+1. Official PSX historical/EOD market data.
+2. Official KSE-100 index history.
+3. Approved PSX market-data distributors.
+4. Licensed historical data vendors.
+5. Approved financial-data providers.
+6. Issuer and exchange financial announcements.
+7. Corporate-action sources.
+8. Historical intraday data vendors.
+9. Exchange calendars and security master records.
+
+Use current documentation and source pages to determine whether sources are still accessible and whether their use is permitted.
+
+Do not bypass:
+
+- Login systems.
+- Paid access restrictions.
+- CAPTCHAs.
+- API limits.
+- Authentication.
+- Provider terms or licensing restrictions.
+
+Do not scrape restricted endpoints or use undocumented private APIs.
+
+Use only:
+
+- Existing authorized credentials from environment variables.
+- Official publicly downloadable data.
+- Legitimately accessible APIs.
+- User-supplied licensed files.
+- Existing verified data already present in the project.
+
+Do not ask the user to paste secrets into code, logs or chat.
+
+## PHASE 1 DELIVERABLES
+
+Create:
+
+`data/backtest_reports/task103/data_source_registry.json`
+
+`data/backtest_reports/task103/data_access_matrix.csv`
+
+`data/backtest_reports/task103/provider_verification_report.json`
+
+`docs/task103-data-source-guide.md`
+
+For every provider, record:
+
+- Provider name.
+- Official documentation/source page.
+- Data types.
+- Historical date coverage.
+- Symbol/index coverage.
+- Intraday intervals if applicable.
+- Authentication requirement.
+- Pricing/access requirement, if verifiable.
+- Licensing or use restrictions.
+- Retrieval method.
+- Integration status.
+- Last successfully verified time.
+- Exact failure reason, if blocked.
+
+Use explicit statuses:
+
+- `verified_access`
+- `public_access`
+- `credential_required`
+- `paid_access_required`
+- `not_available`
+- `provider_unavailable`
+- `license_restricted`
+- `not_verified`
+
+Never label a provider available based on a website existing alone.
+
+---
+
+# PHASE 2 — BUILD A COMPLETE USER DATA-ONBOARDING SYSTEM
+
+Because several historical datasets require a licensed provider, official export or user-supplied files, build a robust data onboarding mechanism that works without manually editing application code.
+
+Create a controlled data drop structure, following existing repository conventions. A suitable structure is:
+
+`data/external_imports/psx_eod/`
+
+`data/external_imports/kse100/`
+
+`data/external_imports/fundamentals/`
+
+`data/external_imports/filings/`
+
+`data/external_imports/corporate_actions/`
+
+`data/external_imports/intraday/`
+
+Do not commit confidential or licensed input data unless explicitly permitted.
+
+Provide:
+
+- CSV templates.
+- Column specifications.
+- Example non-production fixtures.
+- Data dictionaries.
+- Import commands.
+- Schema validation.
+- Dry-run mode.
+- Duplicate detection.
+- Idempotent imports.
+- Import manifests.
+- Provenance tracking.
+- Reconciliation reports.
+- Rollback-safe ingestion where possible.
+
+Suggested entry point:
+
+`scripts/task103_import_data.py`
+
+Example interface:
+
+`python scripts/task103_import_data.py --type kse100 --file <path> --dry-run`
+
+`python scripts/task103_import_data.py --type psx_eod --file <path> --validate`
+
+`python scripts/task103_import_data.py --type fundamentals --file <path> --import`
+
+Use actual project conventions if different.
+
+An import must fail visibly if required columns, source metadata, date formats or data validations are missing.
+
+Do not silently drop invalid records.
+
+Maintain an immutable record of the original file's:
+
+- Filename.
+- SHA-256 checksum.
+- Source.
+- Provider.
+- Retrieval date.
+- Date coverage.
+- Record count.
+- Validation result.
+- Import result.
+
+Never mix synthetic fixtures into production market data.
+
+---
+
+# PART C — HISTORICAL MARKET DATA AND REFERENCE DATA
+
+## PHASE 3 — COMPLETE THE 909-SYMBOL MARKET-DATA PIPELINE
+
+Task 102 audited:
+
+- 909 symbols.
+- 1,042,821 daily bars.
+- Data from 2016 to 2026-10-29.
+- 2 verified.
+- 298 partially verified.
+- 609 stale.
+- 0 invalid.
+
+These are historical Task 102 figures, not guaranteed current counts. Recalculate from the real database.
+
+Complete the data audit and improve the ingestion/reconciliation pipeline.
+
+Audit:
+
+- Listing and delisting dates.
+- Symbol changes.
+- Ticker mapping.
+- Historical symbol identity.
+- Suspensions.
+- Missing sessions.
+- Stale prices.
+- Duplicate rows.
+- Invalid prices.
+- OHLC consistency.
+- Volume and turnover.
+- Raw versus adjusted series.
+- Date alignment.
+- Provider discrepancies.
+- Survivorship bias.
+- Data provenance.
+
+Preserve delisted stocks and their historical observations.
+
+Build a historical security master containing:
+
+- Stable internal instrument ID.
+- Current symbol.
+- Historical symbols.
+- Company name.
+- Sector.
+- Listing date.
+- Delisting date.
+- Instrument type.
+- Trading status.
+- Source.
+- Effective date of changes.
+
+Historical model universes must use point-in-time membership. A stock must not appear in a historical universe simply because it survives today.
+
+Implement data-quality scoring that distinguishes completeness from correctness.
+
+Keep legitimate suspensions and illiquid periods identifiable rather than deleting them.
+
+## PHASE 3 DELIVERABLES
+
+- Updated symbol master.
+- Symbol mapping report.
+- Historical data quality report.
+- Data coverage matrix.
+- Missing-session report.
+- Reconciliation report.
+- Data freshness report.
+
+---
+
+# PART D — GENUINE KSE-100 AND MARKET DATA
+
+## PHASE 4 — ACTIVATE THE REAL KSE-100 PIPELINE
+
+Existing implementation:
+
+`src/lib/market-data/kse100-provider.ts`
+
+Inspect and reuse it.
+
+Task 102 correctly returned `null` when genuine KSE-100 data was unavailable. Preserve that behavior.
+
+Implement an end-to-end import and activation path for official PSX EOD or another verified licensed source.
+
+Required fields:
+
+- Trading date.
+- Open.
+- High.
+- Low.
+- Close.
+- Volume.
+- Turnover.
+- Provider.
+- Source document or record ID.
+- Retrieval timestamp.
+- Verification state.
+
+Do not require every optional field if the provider does not actually supply it; record the missing coverage.
+
+Validate:
+
+- Date continuity.
+- Duplicate dates.
+- Index value validity.
+- OHLC relationships.
+- Large changes.
+- Provider consistency.
+- Historical coverage.
+- Timezone and session alignment.
+
+Use genuine KSE-100 values only.
+
+Never use the average of pilot stocks as a substitute for the index.
+
+Preserve `market_internal_proxy` as a different feature source, not as genuine KSE-100.
+
+Build a proper feature-availability contract:
+
+- `verified_index`
+- `internal_proxy`
+- `unavailable`
+
+Do not let a consumer silently switch between these sources.
+
+Where index data is absent, market-regime prediction must return `unknown` or use a clearly declared separate proxy-based method.
+
+## PHASE 4 DELIVERABLES
+
+- Working KSE-100 import and validation.
+- Historical coverage report.
+- Index/proxy separation tests.
+- Feature freshness checks.
+- Source provenance.
+- Operational instructions for supplying an official data export.
+
+---
+
+# PART E — POINT-IN-TIME FUNDAMENTALS AND COMPANY ANNOUNCEMENTS
+
+## PHASE 5 — COMPLETE FUNDAMENTAL DATA VERSIONING
+
+Task 102 found zero symbols with verified point-in-time statement fundamentals.
+
+It found 3,319 filing records with genuine PSX announcement dates across 24 symbols, but the available AskAnalyst statements and ratios have period labels without reliable publication timestamps.
+
+Do not misrepresent financial-period dates as publication dates.
+
+Inspect all current financial data, filings, announcement ingestion and AskAnalyst records.
+
+Implement or complete:
+
+`getFundamentalsAsOf(symbol, decisionTimestamp)`
+
+The historical result must contain only statements actually publicly available by the decision time.
+
+Each financial record should include:
+
+- Symbol.
+- Reporting period.
+- Period start and end.
+- Actual publication datetime if available.
+- Announcement date if only date precision exists.
+- Source.
+- Original filing ID.
+- Filing version.
+- Amendment status.
+- Retrieval time.
+- Currency.
+- Unit.
+- Source-document checksum.
+- Data-quality state.
+
+Where the source has only an announcement date, apply a conservative next-trading-session availability policy.
+
+Task 102 used a 17:00 PKT rule for date-granularity filings. Review its precise implementation and exchange-session assumptions. Preserve it only if it is conservative for the actual announcement-time uncertainty.
+
+An announcement after market close must not be used in that day's earlier decision.
+
+A filing with unknown publication time must remain unknown or unavailable under a conservative policy.
+
+Maintain amended statements as distinct versions. A later amendment must not rewrite what the historical model would have seen before the amendment.
+
+Implement point-in-time calculation of:
+
+- Revenue growth.
+- Earnings growth.
+- EPS.
+- Profit margins.
+- ROE.
+- ROA.
+- Debt/equity.
+- Current ratio.
+- Operating cash flow.
+- Cash-flow quality.
+- Profitability trends.
+- Valuation metrics only when price and fundamental inputs are aligned at the same cutoff.
+
+Do not activate fundamentals in production feature groups until the source and timestamps are validated.
+
+Build a filing-source coverage report by symbol and financial period.
+
+Test at least these cases:
+
+- Announcement before the decision.
+- Announcement after the decision.
+- Announcement after market close.
+- Later filing amendment.
+- Missing publication time.
+- Two statements with different publication dates.
+- Restated historical value.
+- Delisted company statement.
+
+## PHASE 5 DELIVERABLES
+
+- Point-in-time fundamentals store.
+- Filing-version history.
+- As-of query.
+- Timestamp audit.
+- Leakage tests.
+- Coverage dashboard/API.
+- Import guide.
+- Explicit record-level provenance.
+
+---
+
+# PART F — CORPORATE ACTIONS AND PRICE ADJUSTMENTS
+
+## PHASE 6 — COMPLETE CORPORATE-ACTION ONBOARDING
+
+Task 102 found no verified corporate-action source.
+
+Build the full supported ingestion pipeline for:
+
+- Splits.
+- Bonus shares.
+- Rights issues.
+- Cash dividends.
+- Other documented capital changes.
+
+Each event must contain:
+
+- Symbol.
+- Event type.
+- Announcement date/time.
+- Ex-date.
+- Record date.
+- Payment date.
+- Ratio or amount.
+- Source.
+- Retrieval time.
+- Verification status.
+- Related filing ID.
+
+Keep:
+
+1. Raw prices.
+2. Split/bonus adjusted series.
+3. Dividend-adjusted series.
+4. Total-return series, only when valid.
+
+Never double-adjust already-adjusted vendor data.
+
+Do not use an adjustment caused by a future corporate action as if it were known at an earlier decision timestamp.
+
+Provide an explicitly named ex-post adjusted analytical dataset separately from a point-in-time decision dataset.
+
+Detect artificial returns around split and bonus events.
+
+For every adjustment, record its calculation and source.
+
+If there is no verified source, retain events as unverified suspects and do not apply them as confirmed facts.
+
+---
+
+# PART G — HISTORICAL INTRADAY DATA
+
+## PHASE 7 — FINISH INTRADAY DATA ACQUISITION READINESS
+
+Task 102 found no historical intraday dataset, only a provider adapter and synthetic test fixtures.
+
+Inspect the existing adapter. Complete the operational ingestion pathway for legitimate supplied data.
+
+Support:
+
+- 1-minute bars.
+- 5-minute bars.
+- 15-minute bars.
+- 30-minute bars.
+- 60-minute bars.
+
+Only activate intervals actually supplied by a verified provider.
+
+Required fields:
+
+- Instrument ID.
+- Symbol.
+- Trading date.
+- Bar start/end timestamp.
+- Open.
+- High.
+- Low.
+- Close.
+- Volume.
+- Turnover if available.
+- Provider.
+- Source ID.
+- Data-quality status.
+
+Never manufacture intraday records from daily OHLC.
+
+Use synthetic fixtures only in clearly isolated test data.
+
+Where real intraday coverage exists, validate:
+
+- Session boundaries.
+- Missing intervals.
+- Duplicate timestamps.
+- Bar integrity.
+- Volume consistency.
+- Gap handling.
+- Entry execution.
+- SL/TP order.
+- Liquidity constraints.
+- Spread/slippage estimates where defensible.
+
+Where it does not exist, keep the execution engine labeled as daily OHLC approximation.
+
+Do not present a daily candle simulation as accurate intraday execution.
+
+---
+
+# PART H — AUTOMATED DATA PIPELINE AND MONITORING
+
+## PHASE 8 — BUILD THE END-TO-END DATA OPERATIONS ENGINE
+
+Complete the pipeline:
+
+`External Source → Raw Import → Validation → Normalization → Point-in-Time Storage → Feature Store → Prediction → Shadow Decision → Outcome Maturation → Evaluation`
+
+Implement or improve:
+
+- Provider adapters.
+- Scheduled import jobs, using existing supported scheduling infrastructure.
+- Incremental daily EOD ingestion.
+- Index-data refresh.
+- Filing/announcement refresh.
+- Fundamental version refresh.
+- Corporate-action update.
+- Intraday update.
+- Market-calendar update.
+- Symbol-master update.
+- Reconciliation.
+- Retry and idempotency.
+- Data freshness monitoring.
+- Provider failure alerts.
+- Data lineage.
+
+Scheduled jobs must not duplicate observations or create duplicate trades.
+
+Every job must have:
+
+- Run ID.
+- Start and finish timestamps.
+- Source.
+- Rows fetched.
+- Rows inserted.
+- Rows updated.
+- Rows rejected.
+- Failure reason.
+- Checkpoint.
+- Duration.
+- Last successful run.
+
+Use the project's existing queue, cron, task scheduler or hosted scheduler where available.
+
+Do not pretend that a local script running once constitutes an active recurring service.
+
+If deployment configuration or service credentials are unavailable, complete the scheduler implementation and exact deployment instructions, but report the operational blocker.
+
+Create a data-readiness API that reports:
+
+- Last successful market-data refresh.
+- Latest verified trading date.
+- KSE-100 freshness.
+- Fundamental freshness.
+- Filing freshness.
+- Corporate-action freshness.
+- Intraday freshness.
+- Source failures.
+- Feature availability.
+
+Make `unknown` and `unavailable` explicit states.
+
+---
+
+# PART I — VERIFIED FEATURE STORE AND MARKET INTELLIGENCE
+
+## PHASE 9 — COMPLETE POINT-IN-TIME FEATURE STORE
+
+Complete one reproducible feature-building interface:
+
+`buildFeaturesAsOf(symbol, decisionTimestamp)`
+
+Use only information genuinely available at that timestamp.
+
+Maintain:
+
+- Feature name.
+- Feature value.
+- Feature timestamp.
+- Source timestamp.
+- Decision cutoff.
+- Symbol.
+- Schema version.
+- Data-quality state.
+- Provenance.
+
+Separate feature groups:
+
+- `technical_only_v1`
+- `technical_market_regime_v1`
+- `technical_pit_fundamental_v1`
+- `technical_liquidity_v1`
+- `technical_corporate_action_safe_v1`
+- `technical_intraday_v1`
+- `combined_verified_v1`
+
+A feature group may become enabled only when its upstream source passes its verification requirements.
+
+Do not substitute a proxy silently.
+
+Implement:
+
+- Missing-data handling.
+- Feature versioning.
+- As-of data joins.
+- Training-only imputation.
+- Training-only scaling.
+- Leakage detection.
+- Historical reproducibility.
+
+Provide a feature-coverage matrix by symbol, date and source.
+
+## PHASE 10 — MARKET REGIME AND SECTOR ENGINE
+
+Build or complete interpretable market regimes:
+
+- `bull_trend`
+- `bear_trend`
+- `sideways`
+- `high_volatility`
+- `market_stress`
+- `unknown`
+
+Use historical values available at the decision timestamp.
+
+No future return can be used to decide the earlier regime.
+
+Use real KSE-100 features where verified. Keep internal proxy results in a different namespace.
+
+Complete sector intelligence using verified Task 98 classification and preserved sector overrides.
+
+Analyze:
+
+- Relative strength.
+- Volume and turnover.
+- Sector volatility.
+- Market correlation.
+- Regime-conditioned performance.
+- Signal concentration.
+- Sector-level drawdown.
+- Symbol/sector evidence quality.
+
+Do not infer unknown sectors.
+
+Do not present a small or incomplete sample as full-market breadth.
+
+---
+
+# PART J — TRADE LABELS AND MODEL EVALUATION
+
+## PHASE 11 — RECONCILE THE LABEL ENGINE
+
+Use the Task 101 production trade engine and Task 102 validated features as the foundation.
+
+Before creating new labels, confirm the Task 102 reconciliation:
+
+- 11,521/11,521 label records matched.
+- Existing exit semantics are unchanged.
+- Costs use `computeSimTradeCosts` → `computeTradeCostsV2`.
+- Default cost profile remains `psx_user_schedule_v2`.
+- `legacy_flat_v1` is explicit compatibility only.
+- ATL 15% and NON-ATL 30% are preserved as configured tax profiles.
+- CGT behavior remains correct.
+- Scale-out does not double-charge.
+- Stops remain SL-first and gap-aware.
+
+Build a separate Task 103 label dataset only where new verified features or observations justify it.
+
+Do not overwrite earlier labels.
+
+Preserve:
+
+- Net-positive outcome.
+- TP-before-SL.
+- Net return.
+- MFE.
+- MAE.
+- TP1/TP2/TP3 outcomes.
+- Stop-loss probability.
+- Trade expectancy.
+- Duration.
+- Actual costs.
+- Label maturity.
+
+Unresolved outcomes must not be mislabeled as a loss.
+
+Add deterministic checksums and lineage.
+
+## PHASE 12 — RUN FEATURE ABLATION ON GENUINE DATA
+
+The key scientific question is whether newly acquired verified data adds value.
+
+Evaluate, on matched samples:
+
+1. Technical-only.
+2. Technical + genuine KSE-100.
+3. Technical + point-in-time fundamentals.
+4. Technical + verified corporate actions.
+5. Technical + liquidity.
+6. Technical + genuine intraday.
+7. Combined verified features.
+
+Report:
+
+- Original sample count.
+- Matched sample count.
+- Coverage loss.
+- Independent dates.
+- Unique symbols.
+- Incremental prediction improvement.
+- Incremental trading improvement.
+- Confidence intervals.
+- Missing data.
+
+Do not attribute sample composition changes to better features.
+
+A feature is useful only when its incremental benefit is demonstrated under the same frozen evaluation protocol.
+
+## PHASE 13 — COMPLETE FEASIBLE MODEL COVERAGE
+
+Inspect the actual registry and valid implementations.
+
+Evaluate existing feasible models without adding aliases or inflated model counts.
+
+Relevant families include:
+
+- RandomForest.
+- ExtraTrees.
+- XGBoost.
+- LightGBM.
+- CatBoost.
+- HistGradientBoosting.
+- Ridge.
+- ElasticNet.
+- Huber.
+- RBF-SVR.
+- LinearSVR.
+- ARIMA.
+- Holt-Winters.
+- Kalman.
+- Prophet.
+- LSTM.
+- CNN-LSTM.
+- PatchTST.
+- N-BEATS.
+- TimesNet.
+- Informer.
+- Chronos.
+- Lag-Llama.
+- Moirai.
+- Other actual canonical implementations.
+
+Reuse valid Task 99/100/101/102 out-of-sample evidence where appropriate and mark it as historical evidence, not a new run.
+
+Run new model evaluations only on appropriate data and splits.
+
+For every blocked model, record the exact reason:
+
+- Missing package.
+- Missing checkpoint.
+- Network failure.
+- Provider access.
+- CPU/RAM limitation.
+- Time limit.
+- Input incompatibility.
+- Insufficient historical observations.
+- Unsupported output schema.
+
+Do not misrepresent GPT-2 proxies as official Time-LLM or FinGPT.
+
+Do not claim a deep or foundation model was evaluated when it only loaded or ran on a tiny smoke-test subset.
+
+Use bounded datasets for computationally expensive algorithms and label their sample limitations.
+
+---
+
+# PART K — STRICT FORWARD VALIDATION
+
+## PHASE 14 — PROTECT THE HISTORICAL FINAL TESTS
+
+Task 100/101/102 historical final-test periods have already been examined.
+
+Do not reuse them as untouched out-of-sample evidence.
+
+Determine the exact latest verified date in the actual database.
+
+Freeze:
+
+- Feature definitions.
+- Model configuration.
+- Calibration method.
+- Thresholds.
+- Trade-selection rules.
+- Cost schedule.
+- Position sizing.
+- Exit strategy.
+- Universe rules.
+
+Create a forward-validation process that starts with genuinely new market observations after the previously used test period.
+
+Use the point-in-time universe selection rules.
+
+For each new session:
+
+1. Build features strictly as of the decision timestamp.
+2. Generate predictions using frozen model versions.
+3. Generate the shadow decision.
+4. Record NO TRADE when expected value is insufficient.
+5. Do not silently alter thresholds.
+6. Record the predicted entry/SL/TP.
+7. Replay or monitor the actual valid market execution.
+8. Mature outcomes only when enough data exists.
+9. Calculate actual costs.
+10. Compare predictions with realized outcomes.
+
+Keep all forward records immutable and idempotent.
+
+The latest available historical database date is not automatically an untouched test date merely because a new script was executed afterward.
+
+If actual new market sessions have not occurred or a licensed feed is unavailable, forward-validation status must remain:
+
+- `collecting`
+- `insufficient_matured_trades`
+- `awaiting_data`
+- `not_yet_evaluable`
+
+Never invent future observations or claim a multi-quarter test has completed immediately.
+
+## PHASE 15 — SHADOW PAPER-TRADING COMPLETION
+
+Connect the new verified data and models to shadow paper-trading only.
+
+Do not:
+
+- Place real trades.
+- Change existing prospective records.
+- Alter existing fills.
+- Rewrite closed outcomes.
+- Replace production consensus.
+- Delete old generations.
+
+Log every shadow decision with:
+
+- Signal ID.
+- Symbol.
+- Model ID/version.
+- Feature schema.
+- Data cutoff.
+- Prediction time.
+- Probability.
+- Expected net value.
+- Entry.
+- Stop-loss.
+- Targets.
+- Position size assumptions.
+- Cost profile.
+- Tax profile.
+- NO TRADE reason.
+- Realized result once mature.
+
+Retain the existing idempotency guarantees.
+
+Ensure old and new generations can be compared without mixing their data.
+
+---
+
+# PART L — TRADING EDGE, RISK AND PROMOTION
+
+## PHASE 16 — RE-EVALUATE TRADING STRATEGIES
+
+Evaluate using identical signals and identical costs:
+
+- Fixed First Hit.
+- Max TP Step Trailing.
+- Scale Out 50/25/25.
+- Existing ATR baseline.
+- `atr_tp1_rr_1_1_v1`.
+- `atr_min_net_rr_2_v1`.
+- Task 101 frozen RandomForest q70 filter.
+- Any newly justified shadow candidates.
+
+Report:
+
+- Gross P&L.
+- Net P&L.
+- Expectancy.
+- Win rate.
+- Profit factor.
+- Average winner.
+- Average loser.
+- Drawdown.
+- Exposure.
+- Turnover.
+- Trade coverage.
+- Skipped trades.
+- Holding duration.
+- Costs and taxes.
+- Symbol concentration.
+- Sector concentration.
+- Regime stability.
+- Confidence intervals.
+
+Use date-block and symbol-aware bootstrap where appropriate.
+
+Report independent decision dates, not just trade-row counts.
+
+Evaluate net expectancy, drawdown and stability, not just win rate.
+
+Do not optimize the final-test results.
+
+## PHASE 17 — PROMOTION AND CONSENSUS SAFEGUARDS
+
+Keep the current statuses unless genuine new evidence justifies a change.
+
+Task 101 models:
+
+- `psx_cost_aware_trade_classifier`
+- `psx_net_expectancy_meta_model`
+
+must not become production models automatically.
+
+Check all promotion gates used by the project, including:
+
+- Adequate matured trade count.
+- Sufficient calendar coverage.
+- Multiple market regimes.
+- Positive net expectancy after actual costs.
+- Confidence interval stability.
+- Drawdown constraints.
+- Symbol/sector diversity.
+- Calibration.
+- Reproducibility.
+- No data-leakage warnings.
+- Genuine out-of-sample performance.
+
+A minimum count of 100 trades or two quarters is not by itself sufficient.
+
+A model that is the best among several negative models is not promotable.
+
+If no model passes, leave the existing production selection unchanged and state `not_promotable`.
+
+---
+
+# PART M — COSTS AND EXECUTION CONSISTENCY
+
+## PHASE 18 — FINAL COST PARITY AUDIT
+
+Recheck every relevant pathway:
+
+- Investment Simulator.
+- Strategy Engine.
+- Signal Stats.
+- Walk-forward.
+- Portfolio backtesting.
+- Trade outcome labeling.
+- Prospective paper-trading.
+- New shadow pipeline.
+- Scale-out accounting.
+
+Use `computeTradeCostsV2` as the shared authoritative cost engine through the existing integration.
+
+Keep `psx_user_schedule_v2` as default.
+
+Keep `legacy_flat_v1` only for explicit historical compatibility.
+
+Ensure:
+
+- Brokerage.
+- PSX/NCCPL/CDC fees.
+- Applicable taxes.
+- ATL/NON-ATL treatment.
+- Slippage assumptions.
+- Position quantities.
+- Scale-out legs.
+- Partial fills.
+- Actual execution dates.
+
+Do not invent current tax or fee rules. Where rates need to change, verify them against current authoritative sources and retain effective dates and source references.
+
+Extend cost-parity fixtures for any new trade paths.
+
+Target:
+
+- Exact or within PKR 0.01 parity.
+- No double-charging.
+- No missing fees.
+- Correct positive-gross CGT behavior under configured rules.
+- Consistent profile labels on every output.
+
+---
+
+# PART N — APPLICATION, APIS AND USER EXPERIENCE
+
+## PHASE 19 — FINAL UI AND API COMPLETION
+
+Inspect all relevant application screens.
+
+Improve:
+
+- AI Models tab.
+- Model registry.
+- Backtesting Report.
+- Walk-Forward Report.
+- Investment Simulator.
+- Signal Stats.
+- Market regime display.
+- Sector analysis.
+- Data-readiness display.
+- Shadow prediction reporting.
+- Paper-trading monitoring.
+
+Use honest, consistent labels:
+
+- `ML live`
+- `Technical rule`
+- `Untrained`
+- `Blocked`
+- `Shadow only`
+- `Research only`
+- `Not promotable`
+- `Promoted`
+- `Data unavailable`
+- `Data partially verified`
+
+The UI must never imply genuine KSE-100 coverage when only an internal proxy exists.
+
+Display data provenance and as-of timestamps wherever they materially affect interpretation.
+
+Distinguish:
+
+- Prediction probability.
+- Calibrated probability.
+- Historical model accuracy.
+- Trade win rate.
+- Expected net return.
+- Realized net return.
+- Development-only results.
+- Genuine forward-validation results.
+
+Do not mix these metrics.
+
+Complete:
+
+`docs/investment-simulator-metrics.md`
+
+Include exact formulas and denominators for all important displayed metrics.
+
+Ensure API schemas preserve old consumers and compatibility.
+
+Do not silently change historical report schema semantics.
+
+---
+
+# PART O — PRODUCTION SECURITY, RELIABILITY AND OPERATIONS
+
+## PHASE 20 — FINAL PRODUCTION HARDENING
+
+Audit:
+
+- Environment-variable handling.
+- Secrets.
+- API authentication.
+- Database access.
+- Upload validation.
+- CSV import security.
+- File paths.
+- SQL injection.
+- Request validation.
+- Provider rate limits.
+- External API timeouts.
+- Retry behavior.
+- Duplicate jobs.
+- Idempotency.
+- Logging.
+- Error handling.
+- Data retention.
+- Access permissions.
+
+Do not expose licensed source data through public APIs.
+
+Do not return credentials or raw exception details containing secrets.
+
+Add operational checks for:
+
+- Database availability.
+- Latest data freshness.
+- Data ingestion failures.
+- Feature generation failures.
+- Model inference failures.
+- Cost-parity drift.
+- Shadow pipeline delays.
+- Paper-trading duplicates.
+- API health.
+- Stale model versions.
+
+Create an operational runbook and recovery procedures.
+
+Preserve safe Git and backup practices.
+
+---
+
+# PART P — AUTOMATED TESTING AND REGRESSION
+
+## PHASE 21 — COMPLETE DETERMINISTIC QA
+
+Add or extend tests for the full pipeline.
+
+### Data-source tests
+
+- Provider availability.
+- Provenance.
+- Authentication failure.
+- Missing source.
+- Malformed CSV.
+- Duplicate import.
+- Repeat import idempotency.
+- Checksum validation.
+- Date parsing.
+- Timezone conversion.
+
+### Market-data tests
+
+- OHLC validity.
+- Trading sessions.
+- Suspensions.
+- Delisted symbols.
+- Symbol changes.
+- Missing dates.
+- Stale prices.
+- KSE-100/proxy separation.
+
+### Fundamental tests
+
+- Point-in-time publication availability.
+- After-close announcements.
+- Filing amendments.
+- Unknown timestamps.
+- Historical version retrieval.
+- No future leakage.
+
+### Corporate-action tests
+
+- Splits.
+- Bonus issues.
+- Rights.
+- Dividends.
+- Raw/adjusted separation.
+- No double adjustments.
+
+### Intraday tests
+
+- Bar timestamp integrity.
+- Session boundary.
+- Duplicate bars.
+- Synthetic fixture isolation.
+- Real-data provenance.
+- Daily versus intraday execution labeling.
+
+### Feature tests
+
+- As-of cutoff.
+- Data lineage.
+- Missing-data states.
+- Schema version.
+- No future features.
+- Train-only preprocessing.
+
+### Trading tests
+
+- V2 costs.
+- Tax profiles.
+- CGT.
+- Scale-out.
+- SL-first.
+- Gap fills.
+- Net expectancy.
+- Immature labels.
+- Cross-screen parity.
+
+### Model and evaluation tests
+
+- Chronological split.
+- Purge/embargo.
+- Frozen thresholds.
+- Untouched-test guards.
+- Baseline comparisons.
+- Model coverage reporting.
+- Promotion guards.
+
+### Production tests
+
+- API.
+- UI.
+- Browser.
+- Shadow pipeline.
+- Idempotency.
+- Historical artifact immutability.
+- Scheduler failure and recovery.
+
+Run:
+
+1. Python tests.
+2. TypeScript compiler.
+3. Production build.
+4. API integration tests.
+5. Database integrity checks.
+6. Headless browser tests.
+7. Existing CI workflows where available.
+
+Report every skipped or blocked test with the reason.
+
+Do not present a partial test run as full success.
+
+---
+
+# PART Q — REQUIRED FINAL OUTPUTS
+
+## PHASE 22 — TASK 103 REPORTS
+
+Create:
+
+`data/backtest_reports/task103/`
+
+At minimum:
+
+1. `task103_baseline_inventory.json`
+2. `task103_execution_manifest.json`
+3. `data_source_registry.json`
+4. `data_access_matrix.csv`
+5. `provider_verification_report.json`
+6. `task103_import_template_validation.json`
+7. `task103_market_data_audit.json`
+8. `task103_symbol_master_report.json`
+9. `task103_kse100_coverage.json`
+10. `task103_fundamental_coverage.json`
+11. `task103_filing_timestamp_report.json`
+12. `task103_pit_leakage_report.json`
+13. `task103_corporate_actions_coverage.json`
+14. `task103_intraday_coverage.json`
+15. `task103_data_pipeline_health.json`
+16. `task103_feature_store_report.json`
+17. `task103_feature_lineage.json`
+18. `task103_market_regime_report.json`
+19. `task103_sector_report.json`
+20. `task103_trade_label_integrity.json`
+21. `task103_feature_ablation_report.json`
+22. `task103_model_coverage.json`
+23. `task103_validation_protocol.json`
+24. `task103_prediction_metrics.json`
+25. `task103_trading_metrics.json`
+26. `task103_strategy_comparison.json`
+27. `task103_cost_parity_report.json`
+28. `task103_paper_trading_integrity.json`
+29. `task103_forward_validation_status.json`
+30. `task103_model_promotion_decisions.json`
+31. `task103_api_validation.json`
+32. `task103_production_readiness.json`
+33. `task103_security_audit.json`
+34. `task103_test_summary.json`
+35. `task103_remaining_blockers.json`
+36. `task103_final_summary.json`
+
+Every report must contain:
+
+- Status.
+- Generation timestamp.
+- Source references.
+- Coverage.
+- Sample count.
+- Validation state.
+- Errors.
+- Known limitations.
+
+If something is not applicable, include a reason.
+
+If something requires provider access, mark it blocked with the exact missing requirement.
+
+Never create an empty success report.
+
+## Required documentation
+
+Create or update:
+
+- `docs/task103-final-data-readiness.md`
+- `docs/task103-provider-onboarding.md`
+- `docs/task103-operational-runbook.md`
+- `docs/task103-forward-validation.md`
+- `docs/task103-final-evaluation.md`
+- `docs/investment-simulator-metrics.md`
+- `docs/point-in-time-fundamentals.md`
+- `docs/task102-intraday-data-readiness.md`
+
+---
+
+# PART R — FINAL DECISION
+
+## PHASE 23 — ANSWER THE FOLLOWING WITH VERIFIED EVIDENCE
+
+1. What is the current actual Git HEAD?
+2. Is the working tree clean?
+3. Which external providers are genuinely accessible?
+4. Is genuine historical KSE-100 data now available?
+5. How many symbols have valid daily history?
+6. How many have complete and reliable point-in-time fundamentals?
+7. How many filings have actual publication timestamps?
+8. Is corporate-action history verified?
+9. Is real intraday data available?
+10. Which data feeds are operating automatically?
+11. What is the last successful ingestion date?
+12. Which new feature groups are genuinely verified?
+13. Do verified new features beat the technical-only baseline?
+14. Does any model beat the zero-return baseline?
+15. Does any model beat the training-only mean baseline?
+16. Does any strategy show positive net expectancy after PSX costs?
+17. Is any result based on genuinely untouched observations?
+18. How many forward paper-trading decisions have been made?
+19. How many forward trades have fully matured?
+20. Are outcomes statistically sufficient to evaluate?
+21. Is cost parity still proven across all screens?
+22. Are all old reports and paper-trading records unchanged?
+23. Which model, if any, satisfies every production promotion gate?
+24. What remaining blockers require actual user-supplied files, credentials, provider subscription or future market observations?
+25. What is the real production-readiness status?
+
+Use exact statuses:
+
+- `completed`
+- `completed_with_limitations`
+- `blocked_external_data`
+- `blocked_credentials`
+- `blocked_license`
+- `blocked_resource_limit`
+- `awaiting_future_observations`
+- `insufficient_evidence`
+- `failed`
+- `not_applicable`
+
+## FINAL PROMOTION RULE
+
+A model can only be promoted if it has:
+
+- Verified point-in-time inputs.
+- Leakage-free evaluation.
+- Genuine new out-of-sample observations.
+- Positive net expectancy after real costs.
+- Sufficient matured outcomes.
+- More than one meaningful market regime.
+- Stable performance across symbols and sectors.
+- Acceptable drawdown.
+- Reliable calibration.
+- Reproducible results.
+- All production quality gates passing.
+
+Best-among-negative models must never be promoted.
+
+If no candidate passes, keep the production model/consensus unchanged.
+
+## FINAL DELIVERY REQUIREMENTS
+
+- Complete every technically feasible phase in this single task.
+- Do not stop at planning.
+- Do not stop after making adapters; complete importers, validators, integration and tests.
+- Use all already available data before declaring a blocker.
+- Do not claim provider access that was not verified.
+- Do not manufacture KSE-100, fundamentals, corporate actions or intraday observations.
+- Do not claim future paper-trading validation has completed before real sessions and matured trades exist.
+- Do not rerun expensive old campaigns without a specific scientific reason.
+- Do not change the frozen historical evaluation results.
+- Do not overwrite prior Task 54/100/101/102 artifacts.
+- Do not alter existing prospective paper-trading records.
+- Do not promote an unprofitable model.
+- Do not push to GitHub unless explicitly authorized.
+- If local commits are created, preserve a clean, reviewable history and report their hashes.
+- Give exact test results and exact artifact paths.
+
+# SUCCESS DEFINITION
+
+Task 103 succeeds when:
+
+1. Every possible historical data source has been investigated honestly.
+2. All available legitimate datasets have a safe, reproducible ingestion path.
+3. Missing licensed data can be supplied without rewriting application code.
+4. Data quality, provenance and point-in-time availability are enforceable.
+5. The full feature-to-prediction-to-shadow-outcome pipeline is operational.
+6. The forward-validation process is frozen and ready to collect genuine new evidence.
+7. Costs and simulator execution remain consistent.
+8. Existing historic results and lifecycle data remain safe.
+9. UI, APIs, documentation and quality gates agree with actual system behavior.
+10. Every remaining external dependency and future-observation requirement is explicitly documented.
+
+**Do not force a profitable conclusion. Do not manufacture data. Finish every feasible part now, preserve honest limitations, and leave Latent.pk ready to evaluate genuine new PSX information as soon as that information is lawfully available.**
+
+This is a comprehensive final remaining-work campaign. Do not unnecessarily defer feasible work into another task.

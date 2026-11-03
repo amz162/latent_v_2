@@ -1,0 +1,31 @@
+{
+ "report": "task107_paper_trade_monitoring",
+ "generated_at": "2026-11-03T13:33:11+0000",
+ "status": "completed",
+ "cycle_id": "cycle_20261103T133311Z",
+ "window_status": "post_window",
+ "snapshots": {
+  "new": 0,
+  "total": 24
+ },
+ "summary": {
+  "n_active": 59,
+  "by_status": {
+   "open": 53,
+   "target_touched": 4,
+   "pending_data": 2
+  },
+  "by_symbol_count": 22,
+  "estimated_unrealized_net_pnl_total_pkr": -35151.75,
+  "separate_from_realized": "realized P&L lives in the maturity ledger (-PKR 75,548.35); MTM here is never counted as realized"
+ },
+ "provider_errors": [
+  {
+   "symbol": "HASCOL",
+   "status": 404,
+   "error": "HTTP 404"
+  }
+ ],
+ "processing": "each newly received snapshot is processed immediately on arrival (no extra 15-minute wait); duplicates suppressed by the unique key",
+ "verdict": "completed"
+}

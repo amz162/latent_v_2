@@ -1,0 +1,30 @@
+{
+ "report": "task107_task106_reconciliation",
+ "generated_at": "2026-11-03T13:02:19+0000",
+ "status": "completed",
+ "verified": {
+  "frontier_task106": "2026-11-02 (now advanced to 2026-11-03 by Task 107 ingestion)",
+  "provider_identity": "psxdata-api.fastapicloud.dev (approved 'psxdata' source; key-free)",
+  "overlap_validation_48_48": "Task 106 verified 48/48 byte-equal overlap bars; Task 107 re-verified overlap after DB restore",
+  "bars_imported_task106": 44,
+  "gen1_observations": 12,
+  "gen2_observations": 22,
+  "gen2_all_no_trade": true,
+  "matured_strategy_outcomes": 12,
+  "matured_unique_trades": 4,
+  "pending_outcomes": 24,
+  "realized_total_pkr": -75548.35,
+  "unrealized_total_pkr": -35674.53,
+  "promotion_gates": "1/9 (leakage only); all models not_promotable"
+ },
+ "pkr_75548_reconciliation": {
+  "stored": -75548.35,
+  "expected_approx": -75548,
+  "match": true,
+  "method": "recomputed by task106_mature.ts from immutable bars (see maturity audit)",
+  "original_records_modified": false
+ },
+ "no_pending_counted_as_win": "pending strategy-outcomes carry status=pending_mtm and are excluded from realized sums",
+ "regenerated_old_observations": false,
+ "runtime_seconds": 0.1
+}

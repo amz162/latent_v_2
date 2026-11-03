@@ -1,0 +1,27 @@
+{
+ "report": "task107_intraday_normalization",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "mode": "delayed_snapshot_only",
+ "blocker": "provider has NO candle/intraday endpoint (OpenAPI-verified) \u2014 no 15-minute OHLC bars can be normalized",
+ "snapshot_store": {
+  "path": "data/external_imports/psx_eod/task107_snapshots.db",
+  "unique_key": "(symbol, estimated_source_ts, price, provider)",
+  "new_observation_rule": "price changed since last stored snapshot",
+  "total_snapshots": 24
+ },
+ "never_manufactured": "no OHLC values are created around snapshots; no synthetic candles; test fixtures never mixed into real observations",
+ "required_fields_present": [
+  "symbol",
+  "market_date",
+  "retrieved_at",
+  "estimated_source_ts",
+  "price",
+  "provider",
+  "provider_delay_minutes",
+  "timestamp_quality",
+  "data_interval"
+ ],
+ "daily_dataset_untouched": "snapshots live in a SEPARATE store; db/custom.db OhlcvBar daily dataset unchanged",
+ "verdict": "completed"
+}

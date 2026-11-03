@@ -1,0 +1,17 @@
+{
+ "report": "task107_api_validation",
+ "generated_at": "2026-11-03T13:11:51+0000",
+ "status": "completed",
+ "dev_server": "bun run dev (port 3000)",
+ "endpoints": {
+  "GET /": 200,
+  "GET /api/data-readiness": 200,
+  "GET /api/ai-model-signals/LUCK": 200,
+  "GET /api/models/registry": 200
+ },
+ "data_readiness": {
+  "latestVerifiedTradingDate": "2026-11-03",
+  "note": "freshness field advanced by the Task 107 ingestion job on each successful run"
+ },
+ "verdict": "PASS"
+}

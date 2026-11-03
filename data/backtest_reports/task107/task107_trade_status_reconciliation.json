@@ -1,0 +1,31 @@
+{
+ "report": "task107_trade_status_reconciliation",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "active_positions": 59,
+ "by_status": {
+  "open": 53,
+  "target_touched": 4,
+  "pending_data": 2
+ },
+ "maturity_engine": {
+  "matured_outcomes": 43,
+  "pending_outcomes": 59,
+  "realized_total_pkr": -102348.02,
+  "unrealized_total_pkr": -53867.96
+ },
+ "consistency": "monitor active positions == engine pending outcomes (59); realized vs unrealized kept in separate ledgers",
+ "status_vocabulary": [
+  "open",
+  "target_touched",
+  "partially_exited",
+  "stop_loss_observed",
+  "target_exit_simulated",
+  "ambiguous_same_bar",
+  "pending_data",
+  "stale_data",
+  "time_up",
+  "closed"
+ ],
+ "verdict": "PASS"
+}

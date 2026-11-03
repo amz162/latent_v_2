@@ -1,0 +1,13 @@
+{
+ "report": "task107_snapshot_limitations",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "limitations": [
+  "a price may cross SL/TP and recover between snapshots \u2014 the app cannot know (crossed_and_recovered_possible=true)",
+  "no intraperiod high/low; no volume on snapshots; no OHLC",
+  "market timestamp is ESTIMATED (retrieved \u2212 15 min); provider publishes no source timestamp",
+  "HASCOL quote unavailable (404) \u2014 positions marked pending_data, never fabricated"
+ ],
+ "resolution_label": "observation_resolution_limited",
+ "verdict": "completed"
+}

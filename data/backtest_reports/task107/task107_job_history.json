@@ -1,0 +1,74 @@
+{
+ "report": "task107_job_history",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "poll_cycles": [
+  {
+   "cycle_id": "cycle_20261103T132925Z",
+   "started_at": "2026-11-03T13:29:25+0000",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 24,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T132936Z",
+   "started_at": "2026-11-03T13:29:36+0000",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T133049Z",
+   "started_at": "2026-11-03T13:30:49+0000",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  },
+  {
+   "cycle_id": "cycle_20261103T133311Z",
+   "started_at": "2026-11-03T13:33:11+0000",
+   "window_status": "post_window",
+   "symbols_polled": 24,
+   "snapshots_new": 0,
+   "snapshots_total": 24,
+   "provider_errors": 1
+  }
+ ],
+ "run_log_tail": [
+  {
+   "started_at": "2026-11-03T12:53:38Z",
+   "kind": "ingest",
+   "status": "success",
+   "reason": "crashed_after_promotion_reconstructed",
+   "note": "first run of task107_daily_ingest.py promoted the bars then crashed at artifact write (missing T107 dir); run 2 verified idempotency (no_new_data, overlap byte-equal); 69 bars = 23 symbols x 3 sessions (2026-10-30, 2026-11-02, 2026-11-03)",
+   "frontier_after": "2026-11-03",
+   "bars_promoted": 69,
+   "drop_file": "data/external_imports/psx_eod/task107_daily_20261103T125358Z.csv"
+  },
+  {
+   "started_at": "2026-11-03T12:54:26Z",
+   "kind": "ingest",
+   "status": "success",
+   "reason": "no_new_data",
+   "frontier_after": "2026-11-03",
+   "overlap_checked": 46,
+   "mismatches": 0
+  },
+  {
+   "started_at": "2026-11-03T13:06:00Z",
+   "kind": "ingest",
+   "status": "success",
+   "frontier_after": "2026-11-03",
+   "bars_promoted": 0,
+   "overlap_checked": 46,
+   "mismatches": 0
+  }
+ ],
+ "verdict": "completed"
+}

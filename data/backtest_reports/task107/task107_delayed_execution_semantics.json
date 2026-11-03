@@ -1,0 +1,15 @@
+{
+ "report": "task107_delayed_execution_semantics",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "modes": {
+  "delayed_observation_shadow": "this monitor \u2014 uses only information actually received; detected_at recorded; observed price + delay recorded; no nominal-level fills when the only observation is already beyond the level",
+  "intraday_bar_backtest": "hypothetical execution on verified historical bars with documented fill assumptions (daily approximation today; true 15m bars unavailable)"
+ },
+ "never_claimed": [
+  "actual stop execution at the nominal level",
+  "intraperiod high/low touches invisible to snapshots",
+  "provider delay as evidence of 15m candles"
+ ],
+ "verdict": "completed"
+}

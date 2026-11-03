@@ -1,0 +1,36 @@
+{
+ "report": "task107_final_summary",
+ "generated_at": "2026-11-03T13:10:06+0000",
+ "status": "completed",
+ "outcome_state": "collecting (reliable daily pipeline established; genuine observations only; nothing fabricated or promoted)",
+ "final_questions": {
+  "Q1_git_head": "2f029843 (pre-commit; Task 107 commit created at delivery)",
+  "Q2_tree_clean": "Task 107 additions only; unrelated user files untouched",
+  "Q3_provider_available": "YES \u2014 psxdata-api.fastapicloud.dev (probe 200)",
+  "Q4_latest_verified_date": "2026-11-03 (frontier after Task 107 ingestion)",
+  "Q5_new_bars_imported": "69 (23 symbols x 2026-10-30/11-02/11-03; includes re-import of the 44 Task 106 bars after the sandbox recycle)",
+  "Q6_symbols": "23 pilot-25 symbols (BOP, CNERGY, FCCL, KEL, LOTCHEM, LUCK, MEBL, MLCF, PAEL, PIBTL, SYS, TRG, ANL, HASCOL, HUMNL, OGDC, PRL, PSO, TELE, UNITY, WTL + 2 more; see task107_symbol_freshness.csv)",
+  "Q7_overlap_checks": "YES \u2014 48/48 (Task 106) and 46/46 (Task 107 rerun) byte-equal; 0 mismatches",
+  "Q8_scheduler": "DEPLOYMENT-READY ONLY (GitHub Actions workflow built; no scheduled run has executed yet \u2014 honest)",
+  "Q9_forward_observations": "57 total: 12 gen1 + 22 gen2 + 23 gen3",
+  "Q10_trades_matured": "4 unique trades (12 strategy-outcomes; all SL exits)",
+  "Q11_positions_pending": "90 strategy-outcomes pending MTM (0 unfilled)",
+  "Q12_realized_net": "PKR -75,548.35 (verified twice by deterministic engine recompute)",
+  "Q13_mtm_separate": "PKR -53,867.98 unrealized (never counted as realized or wins)",
+  "Q14_horizons": "5/10/21 NOT matured for any cohort yet (21-session earliest ~2026-12-01); terminal-SL early maturities only",
+  "Q15_store_duplicate_free": "YES (unique decision_ids across generations; 0 duplicate symbol/date bars)",
+  "Q16_models": "all research/shadow-only, not_promotable, gates 1/9",
+  "Q17_short_entries": "still blocked (compliance_unverified)",
+  "Q18_confidence_labels": "truthful (canonical names; 'Probability calibration not established')",
+  "Q19_capital_protection": "active (policy defaults verified; bypass scan zero)",
+  "Q20_unavailable_data": "KSE-100 history, corporate actions, dated filings, intraday, official holiday calendar, licensed vendors (credential_required)",
+  "Q21_tests": "python 28/28 (2 declared skips), tsc 1 pre-existing error in untracked user file, build exit 0, APIs 200, browser PASS",
+  "Q22_next_milestone": "first real scheduled workflow run + sessions 4..21 after 2026-10-30 (21-session maturity ~2026-12-01); \u2265100 matured trades for any review eligibility"
+ },
+ "scheduler": {
+  "tests": "9/10",
+  "status": "deployment_ready_not_verified"
+ },
+ "artifacts_complete": true,
+ "decision_rule": "collecting; awaiting future sessions; nothing forced"
+}

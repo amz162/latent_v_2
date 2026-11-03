@@ -1,0 +1,14 @@
+{
+ "report": "task107_recovery_report",
+ "generated_at": "2026-11-03T13:04:45+0000",
+ "status": "completed",
+ "recovery_guidance": {
+  "healthy": "no action",
+  "delayed": "run: python3 scripts/task107_runner.py ingest (check provider + .env)",
+  "failed": "inspect ops/run_log.jsonl + checkpoints; fix cause; rerun (idempotent)",
+  "awaiting_data": "expected between sessions; no action",
+  "partial_coverage": "expected (pilot-25 only); do not treat as full-market"
+ },
+ "environment_recovery": "sandbox recycle on 2026-11-03: tree restored from origin/main, DB rebuilt from committed drop file + provider (69 bars), .env recreated, bun install re-run",
+ "verdict": "PASS"
+}

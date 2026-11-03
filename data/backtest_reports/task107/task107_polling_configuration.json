@@ -1,0 +1,23 @@
+{
+ "report": "task107_polling_configuration",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "poll_interval_seconds": 120,
+ "allowed_range": "60-120s (provider-friend courtesy sleep 120ms between symbols)",
+ "window": {
+  "start": "09:45",
+  "end": "15:45",
+  "tz": "Asia/Karachi",
+  "note": "availability window of delayed observations; the exchange calendar is respected via data (no changed quotes \u2192 no-op)"
+ },
+ "idempotency": "unique observation = CHANGED price since the last stored snapshot for the symbol; unchanged polls are no-ops",
+ "lock": "ops/task107_monitor.lock (pid+timestamp, stale >1h ignored)",
+ "retry": "provider failures recorded per symbol and retried next cycle; cycle never aborts on a single failure",
+ "rate_limit_handling": "bounded per-request timeout + inter-request sleep; API layer caches 60s per symbol",
+ "gap_backfill": "provider supplies no historical intraday backfill (verified) \u2014 gaps remain recorded as missing",
+ "deployed_scheduler": {
+  "intraday_poll_workflow": ".github/workflows/intraday-poll.yml (*/15 04:45-10:45 UTC weekdays)",
+  "status": "deployment_ready_not_verified"
+ },
+ "verdict": "completed"
+}

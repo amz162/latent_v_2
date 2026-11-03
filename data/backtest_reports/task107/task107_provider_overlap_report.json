@@ -1,0 +1,15 @@
+{
+ "report": "task107_provider_overlap_report",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "daily_overlap": "Task 107 daily ingestion overlap checks: 48/48 (Task 106 baseline) + 46/46 (recovery rerun) byte-equal; 0 mismatches",
+ "snapshot_vs_daily_close": {
+  "session_date": "2026-11-03",
+  "checked": 22,
+  "quote_matches_close": 22,
+  "state": "eod_verified",
+  "note": "quote price equals the session daily close for matched symbols; the provider publishes no final-candle completeness flag, so completeness follows the data itself"
+ },
+ "revision_policy": "provider edits of verified daily bars are quarantined (ops/revisions/), never auto-applied",
+ "verdict": "PASS"
+}

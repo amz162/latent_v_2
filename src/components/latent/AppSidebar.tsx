@@ -26,6 +26,7 @@ import {
   Target,
   Coins,
   Activity,
+  RadioTower,
 } from "lucide-react";
 
 // 11 sidebar items (Dashboard added at the top — was previously only reachable
@@ -43,6 +44,7 @@ const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ cl
   { view: "strategy", key: "nav.strategy", icon: Target },
   { view: "dividends", key: "nav.dividends", icon: Coins },
   { view: "tracker", key: "nav.tracker", icon: Activity },
+  { view: "paper_monitor", key: "nav.paper_monitor", icon: RadioTower },
 ];
 
 export function AppSidebar() {

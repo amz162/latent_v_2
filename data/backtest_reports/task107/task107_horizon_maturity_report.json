@@ -1,0 +1,34 @@
+{
+ "report": "task107_horizon_maturity_report",
+ "generated_at": "2026-11-03T13:33:00+0000",
+ "status": "completed",
+ "horizons_sessions": [
+  5,
+  10,
+  21
+ ],
+ "counting_rule": "trading sessions from the ACTUAL OhlcvBar calendar; calendar days are never substituted; a 21-session observation does NOT close because 21 calendar days passed",
+ "cohorts": [
+  {
+   "generation": "task105-gen1",
+   "entry_date": "2026-10-30",
+   "sessions_observed_since_entry": 3,
+   "h5_complete": false,
+   "h10_complete": false,
+   "h21_complete": false,
+   "expected_h21_date_if_all_sessions_real": "unknown (depends on future genuine sessions)",
+   "latest_session": "2026-11-03"
+  },
+  {
+   "generation": "task106-gen2",
+   "entry_date": "2026-11-03",
+   "sessions_observed_since_entry": 1,
+   "h5_complete": false,
+   "h10_complete": false,
+   "h21_complete": false,
+   "expected_h21_date_if_all_sessions_real": "unknown (depends on future genuine sessions)",
+   "latest_session": "2026-11-03"
+  }
+ ],
+ "verdict": "PASS"
+}

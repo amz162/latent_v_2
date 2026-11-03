@@ -1,0 +1,32 @@
+{
+ "report": "task107_delay_verification",
+ "generated_at": "2026-11-03T13:24:51+0000",
+ "probe_at_pkt": "2026-11-03 18:24:42 PKT",
+ "user_observed_schedule": "15-minute delay, feed window 09:45-15:45 PKT (given by the user; treated as ground truth for UX)",
+ "provider_declared_delay": null,
+ "verification": {
+  "genuine_source_market_timestamp_on_quotes": false,
+  "separate_retrieval_server_timestamp": "meta.timestamp present, tz-aware ISO (UTC offset)",
+  "delay_consistently_15m": "live measurement requires an in-session probe (window 09:45-15:45 PKT); probe was outside the window",
+  "actual_15m_ohlc_candles": false,
+  "delayed_quote_snapshots": true,
+  "daily_ohlc_with_delayed_updates": true,
+  "update_continuity": "quotes served on demand (cache flag varies); daily bars appear under their session date",
+  "historical_intraday_backfill": false,
+  "timezone_aware_timestamps": true,
+  "live_measurement_possible_at_probe": false,
+  "post_session_evidence": "at 18:24 PKT the LUCK quote (400.64) equals the last verified daily close (400.64) for session 2026-11-03: True"
+ },
+ "conclusion": {
+  "quote_feed": "delayed_snapshot_only",
+  "historical_feed": "daily_ohlc_only",
+  "intraday_candles": "intraday_unavailable",
+  "provider_delay_minutes": 15,
+  "delay_basis": "user-observed (authoritative per task); provider does not declare or timestamp the lag"
+ },
+ "limitations": [
+  "no in-session live delay measurement at probe time",
+  "provider quote carries NO source market timestamp \u2014 market time must be estimated at retrieved_at-15min and labeled estimated_source_timestamp"
+ ],
+ "verdict": "completed"
+}

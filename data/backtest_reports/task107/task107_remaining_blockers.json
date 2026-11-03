@@ -1,0 +1,42 @@
+{
+ "report": "task107_remaining_blockers",
+ "generated_at": "2026-11-03T13:55:00Z",
+ "status": "completed",
+ "blockers": [
+  {
+   "id": "B1",
+   "blocker": "No 15-minute OHLC candles from the provider",
+   "detail": "delayed snapshots only; monitor built for snapshot semantics; intraday bar normalization blocked"
+  },
+  {
+   "id": "B2",
+   "blocker": "No source market timestamp on quotes",
+   "detail": "market time estimated (retrieved-15m), labeled estimated_source_timestamp; in-window live delay measurement needs a session-time probe"
+  },
+  {
+   "id": "B3",
+   "blocker": "Scheduler not production-verified",
+   "detail": "both workflows deployment-ready; requires push + Actions enabled + first real run"
+  },
+  {
+   "id": "B4",
+   "blocker": "HASCOL quote 404",
+   "detail": "positions pending_data; never fabricated"
+  },
+  {
+   "id": "B5",
+   "blocker": "True 60-120s polling needs an always-on host",
+   "detail": "GH Actions cron floor ~5-15 min; engine default is 120s locally"
+  },
+  {
+   "id": "B6",
+   "blocker": "No official holiday calendar / KSE-100 history / corporate actions / dated filings / intraday history",
+   "detail": "feature groups remain disabled; no purchases"
+  }
+ ],
+ "not_blockers": [
+  "monitor + API + UI operational",
+  "42/42 artifacts",
+  "29/29 v2 tests + 28/28 v1 suite"
+ ]
+}

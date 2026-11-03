@@ -1,0 +1,747 @@
+{
+  "target_diagnostics": {
+    "validation_5d": {
+      "n": 816,
+      "mean": -0.003152,
+      "median": -0.007152,
+      "std": 0.05772,
+      "pos_frac": 0.4326,
+      "neg_frac": 0.5588,
+      "near_zero_frac_pm0p5": 0.0956,
+      "extreme_gt3sd_frac": 0.011,
+      "extreme_gt10pct_frac": 0.0809
+    },
+    "validation_10d": {
+      "n": 816,
+      "mean": -0.008155,
+      "median": -0.013857,
+      "std": 0.08564,
+      "pos_frac": 0.4093,
+      "neg_frac": 0.587,
+      "near_zero_frac_pm0p5": 0.0637,
+      "extreme_gt3sd_frac": 0.0135,
+      "extreme_gt10pct_frac": 0.1716
+    },
+    "validation_21d": {
+      "n": 816,
+      "mean": -0.020362,
+      "median": -0.027271,
+      "std": 0.117999,
+      "pos_frac": 0.3725,
+      "neg_frac": 0.6262,
+      "near_zero_frac_pm0p5": 0.0417,
+      "extreme_gt3sd_frac": 0.0135,
+      "extreme_gt10pct_frac": 0.3113
+    },
+    "final_test_5d": {
+      "n": 1995,
+      "mean": 0.0111,
+      "median": 0.00365,
+      "std": 0.074291,
+      "pos_frac": 0.5223,
+      "neg_frac": 0.4737,
+      "near_zero_frac_pm0p5": 0.0737,
+      "extreme_gt3sd_frac": 0.0195,
+      "extreme_gt10pct_frac": 0.1218
+    },
+    "final_test_10d": {
+      "n": 1995,
+      "mean": 0.014097,
+      "median": 0.00061,
+      "std": 0.103144,
+      "pos_frac": 0.5028,
+      "neg_frac": 0.4902,
+      "near_zero_frac_pm0p5": 0.0637,
+      "extreme_gt3sd_frac": 0.0155,
+      "extreme_gt10pct_frac": 0.203
+    },
+    "final_test_21d": {
+      "n": 1995,
+      "mean": 0.030887,
+      "median": 0.010883,
+      "std": 0.152428,
+      "pos_frac": 0.5338,
+      "neg_frac": 0.4632,
+      "near_zero_frac_pm0p5": 0.0336,
+      "extreme_gt3sd_frac": 0.0185,
+      "extreme_gt10pct_frac": 0.3865
+    },
+    "per_symbol_21d": {
+      "HASCOL": {
+        "n": 85,
+        "std": 0.2257
+      },
+      "BOP": {
+        "n": 85,
+        "std": 0.2121
+      },
+      "UNITY": {
+        "n": 85,
+        "std": 0.2058
+      },
+      "PRL": {
+        "n": 85,
+        "std": 0.1957
+      },
+      "KEL": {
+        "n": 85,
+        "std": 0.1918
+      },
+      "LUCK": {
+        "n": 85,
+        "std": 0.1624
+      },
+      "SYS": {
+        "n": 85,
+        "std": 0.157
+      },
+      "PAEL": {
+        "n": 85,
+        "std": 0.1553
+      }
+    }
+  },
+  "residual_diagnostics": {
+    "XGBoost": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.009958,
+        "mae": 0.050098,
+        "dir_accuracy": 0.4907,
+        "resid_lag1_autocorr_by_date": 0.003,
+        "by_regime": {
+          "bear": 0.4684,
+          "flat": 0.4779,
+          "bull": 0.5156
+        },
+        "by_vol_tercile": {
+          "low": 0.5184,
+          "mid": 0.4719,
+          "high": 0.4802
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5,
+          "mid": 0.4974,
+          "high": 0.4826
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.011564,
+        "mae": 0.071718,
+        "dir_accuracy": 0.5008,
+        "resid_lag1_autocorr_by_date": 0.2574,
+        "by_regime": {
+          "bear": 0.4664,
+          "flat": 0.4936,
+          "bull": 0.528
+        },
+        "by_vol_tercile": {
+          "low": 0.5463,
+          "mid": 0.4851,
+          "high": 0.4703
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5178,
+          "mid": 0.5237,
+          "high": 0.4795
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.025678,
+        "mae": 0.111942,
+        "dir_accuracy": 0.4957,
+        "resid_lag1_autocorr_by_date": 0.5457,
+        "by_regime": {
+          "bear": 0.4868,
+          "flat": 0.4964,
+          "bull": 0.5006
+        },
+        "by_vol_tercile": {
+          "low": 0.5154,
+          "mid": 0.4934,
+          "high": 0.4788
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5044,
+          "mid": 0.5466,
+          "high": 0.4621
+        }
+      }
+    },
+    "LightGBM": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.009959,
+        "mae": 0.049738,
+        "dir_accuracy": 0.4892,
+        "resid_lag1_autocorr_by_date": -0.0031,
+        "by_regime": {
+          "bear": 0.4745,
+          "flat": 0.475,
+          "bull": 0.5106
+        },
+        "by_vol_tercile": {
+          "low": 0.511,
+          "mid": 0.4835,
+          "high": 0.4732
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5111,
+          "mid": 0.4938,
+          "high": 0.4764
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.011682,
+        "mae": 0.070491,
+        "dir_accuracy": 0.4857,
+        "resid_lag1_autocorr_by_date": 0.2722,
+        "by_regime": {
+          "bear": 0.4582,
+          "flat": 0.4765,
+          "bull": 0.5106
+        },
+        "by_vol_tercile": {
+          "low": 0.5345,
+          "mid": 0.4785,
+          "high": 0.4449
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5089,
+          "mid": 0.5044,
+          "high": 0.4641
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.025851,
+        "mae": 0.109771,
+        "dir_accuracy": 0.5008,
+        "resid_lag1_autocorr_by_date": 0.6048,
+        "by_regime": {
+          "bear": 0.4969,
+          "flat": 0.505,
+          "bull": 0.4994
+        },
+        "by_vol_tercile": {
+          "low": 0.5374,
+          "mid": 0.5,
+          "high": 0.4661
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5089,
+          "mid": 0.5202,
+          "high": 0.4857
+        }
+      }
+    },
+    "CatBoost": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.009972,
+        "mae": 0.050014,
+        "dir_accuracy": 0.4902,
+        "resid_lag1_autocorr_by_date": -0.0139,
+        "by_regime": {
+          "bear": 0.4827,
+          "flat": 0.4679,
+          "bull": 0.5143
+        },
+        "by_vol_tercile": {
+          "low": 0.5125,
+          "mid": 0.4653,
+          "high": 0.4901
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5178,
+          "mid": 0.5009,
+          "high": 0.4713
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.011725,
+        "mae": 0.071029,
+        "dir_accuracy": 0.4947,
+        "resid_lag1_autocorr_by_date": 0.2774,
+        "by_regime": {
+          "bear": 0.4705,
+          "flat": 0.475,
+          "bull": 0.5268
+        },
+        "by_vol_tercile": {
+          "low": 0.5463,
+          "mid": 0.4901,
+          "high": 0.4492
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5267,
+          "mid": 0.5167,
+          "high": 0.4672
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.026446,
+        "mae": 0.111289,
+        "dir_accuracy": 0.4927,
+        "resid_lag1_autocorr_by_date": 0.5941,
+        "by_regime": {
+          "bear": 0.501,
+          "flat": 0.4807,
+          "bull": 0.4981
+        },
+        "by_vol_tercile": {
+          "low": 0.511,
+          "mid": 0.4884,
+          "high": 0.4788
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5089,
+          "mid": 0.522,
+          "high": 0.4682
+        }
+      }
+    },
+    "Random Forest": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.010129,
+        "mae": 0.049941,
+        "dir_accuracy": 0.4922,
+        "resid_lag1_autocorr_by_date": -0.0518,
+        "by_regime": {
+          "bear": 0.4745,
+          "flat": 0.4864,
+          "bull": 0.5081
+        },
+        "by_vol_tercile": {
+          "low": 0.5242,
+          "mid": 0.4802,
+          "high": 0.4718
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5156,
+          "mid": 0.5009,
+          "high": 0.4764
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.011603,
+        "mae": 0.071271,
+        "dir_accuracy": 0.4907,
+        "resid_lag1_autocorr_by_date": 0.2056,
+        "by_regime": {
+          "bear": 0.4623,
+          "flat": 0.475,
+          "bull": 0.5218
+        },
+        "by_vol_tercile": {
+          "low": 0.5507,
+          "mid": 0.4802,
+          "high": 0.4421
+        },
+        "by_liquidity_tercile": {
+          "low": 0.52,
+          "mid": 0.5062,
+          "high": 0.4682
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.025586,
+        "mae": 0.11112,
+        "dir_accuracy": 0.4977,
+        "resid_lag1_autocorr_by_date": 0.5815,
+        "by_regime": {
+          "bear": 0.4725,
+          "flat": 0.4936,
+          "bull": 0.5168
+        },
+        "by_vol_tercile": {
+          "low": 0.5301,
+          "mid": 0.5033,
+          "high": 0.4619
+        },
+        "by_liquidity_tercile": {
+          "low": 0.4956,
+          "mid": 0.5378,
+          "high": 0.4754
+        }
+      }
+    },
+    "Ridge Regression": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.009389,
+        "mae": 0.050271,
+        "dir_accuracy": 0.5113,
+        "resid_lag1_autocorr_by_date": -0.1228,
+        "by_regime": {
+          "bear": 0.5214,
+          "flat": 0.475,
+          "bull": 0.5367
+        },
+        "by_vol_tercile": {
+          "low": 0.5213,
+          "mid": 0.4802,
+          "high": 0.5282
+        },
+        "by_liquidity_tercile": {
+          "low": 0.54,
+          "mid": 0.5062,
+          "high": 0.501
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.010507,
+        "mae": 0.070987,
+        "dir_accuracy": 0.4967,
+        "resid_lag1_autocorr_by_date": 0.0931,
+        "by_regime": {
+          "bear": 0.5051,
+          "flat": 0.4765,
+          "bull": 0.5093
+        },
+        "by_vol_tercile": {
+          "low": 0.5066,
+          "mid": 0.5083,
+          "high": 0.4774
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5089,
+          "mid": 0.5097,
+          "high": 0.4836
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.023094,
+        "mae": 0.110507,
+        "dir_accuracy": 0.5048,
+        "resid_lag1_autocorr_by_date": 0.2941,
+        "by_regime": {
+          "bear": 0.5519,
+          "flat": 0.4765,
+          "bull": 0.5006
+        },
+        "by_vol_tercile": {
+          "low": 0.5125,
+          "mid": 0.5132,
+          "high": 0.4901
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5067,
+          "mid": 0.5308,
+          "high": 0.4887
+        }
+      }
+    },
+    "ExtraTrees": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.010189,
+        "mae": 0.049755,
+        "dir_accuracy": 0.4967,
+        "resid_lag1_autocorr_by_date": -0.0289,
+        "by_regime": {
+          "bear": 0.4868,
+          "flat": 0.4793,
+          "bull": 0.5181
+        },
+        "by_vol_tercile": {
+          "low": 0.536,
+          "mid": 0.4818,
+          "high": 0.4718
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5378,
+          "mid": 0.5044,
+          "high": 0.4734
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.012022,
+        "mae": 0.070137,
+        "dir_accuracy": 0.4992,
+        "resid_lag1_autocorr_by_date": 0.2352,
+        "by_regime": {
+          "bear": 0.4807,
+          "flat": 0.4807,
+          "bull": 0.5268
+        },
+        "by_vol_tercile": {
+          "low": 0.5492,
+          "mid": 0.4967,
+          "high": 0.4534
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5311,
+          "mid": 0.5308,
+          "high": 0.4662
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.026294,
+        "mae": 0.108618,
+        "dir_accuracy": 0.5143,
+        "resid_lag1_autocorr_by_date": 0.5809,
+        "by_regime": {
+          "bear": 0.5255,
+          "flat": 0.505,
+          "bull": 0.5156
+        },
+        "by_vol_tercile": {
+          "low": 0.5345,
+          "mid": 0.5083,
+          "high": 0.5
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5156,
+          "mid": 0.5571,
+          "high": 0.4887
+        }
+      }
+    },
+    "HistGradientBoosting": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.009523,
+        "mae": 0.050278,
+        "dir_accuracy": 0.4802,
+        "resid_lag1_autocorr_by_date": 0.0476,
+        "by_regime": {
+          "bear": 0.4725,
+          "flat": 0.4508,
+          "bull": 0.5106
+        },
+        "by_vol_tercile": {
+          "low": 0.5213,
+          "mid": 0.4488,
+          "high": 0.4675
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5,
+          "mid": 0.4903,
+          "high": 0.4652
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.011719,
+        "mae": 0.071815,
+        "dir_accuracy": 0.4932,
+        "resid_lag1_autocorr_by_date": 0.2631,
+        "by_regime": {
+          "bear": 0.4684,
+          "flat": 0.4793,
+          "bull": 0.5205
+        },
+        "by_vol_tercile": {
+          "low": 0.5374,
+          "mid": 0.4736,
+          "high": 0.4675
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5133,
+          "mid": 0.5185,
+          "high": 0.4693
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.024441,
+        "mae": 0.114243,
+        "dir_accuracy": 0.5018,
+        "resid_lag1_autocorr_by_date": 0.5423,
+        "by_regime": {
+          "bear": 0.5092,
+          "flat": 0.4922,
+          "bull": 0.5056
+        },
+        "by_vol_tercile": {
+          "low": 0.5272,
+          "mid": 0.4983,
+          "high": 0.4802
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5089,
+          "mid": 0.5413,
+          "high": 0.4754
+        }
+      }
+    },
+    "ElasticNet": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.01001,
+        "mae": 0.049479,
+        "dir_accuracy": 0.5223,
+        "resid_lag1_autocorr_by_date": 0.0494,
+        "by_regime": {
+          "bear": 0.5255,
+          "flat": 0.5321,
+          "bull": 0.5118
+        },
+        "by_vol_tercile": {
+          "low": 0.5198,
+          "mid": 0.5182,
+          "high": 0.5282
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5467,
+          "mid": 0.5079,
+          "high": 0.5195
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.011673,
+        "mae": 0.069334,
+        "dir_accuracy": 0.5028,
+        "resid_lag1_autocorr_by_date": 0.3064,
+        "by_regime": {
+          "bear": 0.5438,
+          "flat": 0.475,
+          "bull": 0.5019
+        },
+        "by_vol_tercile": {
+          "low": 0.5316,
+          "mid": 0.4983,
+          "high": 0.4788
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5222,
+          "mid": 0.4903,
+          "high": 0.501
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.025262,
+        "mae": 0.107386,
+        "dir_accuracy": 0.5178,
+        "resid_lag1_autocorr_by_date": 0.6282,
+        "by_regime": {
+          "bear": 0.5316,
+          "flat": 0.5335,
+          "bull": 0.4956
+        },
+        "by_vol_tercile": {
+          "low": 0.5433,
+          "mid": 0.505,
+          "high": 0.5042
+        },
+        "by_liquidity_tercile": {
+          "low": 0.5267,
+          "mid": 0.5132,
+          "high": 0.5164
+        }
+      }
+    },
+    "HuberRegressor": {
+      "5": {
+        "n": 1995,
+        "bias_mean_error": -0.014162,
+        "mae": 0.050041,
+        "dir_accuracy": 0.4772,
+        "resid_lag1_autocorr_by_date": -0.0404,
+        "by_regime": {
+          "bear": 0.4664,
+          "flat": 0.4593,
+          "bull": 0.4994
+        },
+        "by_vol_tercile": {
+          "low": 0.4875,
+          "mid": 0.4769,
+          "high": 0.4675
+        },
+        "by_liquidity_tercile": {
+          "low": 0.4444,
+          "mid": 0.4956,
+          "high": 0.4816
+        }
+      },
+      "10": {
+        "n": 1995,
+        "bias_mean_error": -0.017908,
+        "mae": 0.070007,
+        "dir_accuracy": 0.5018,
+        "resid_lag1_autocorr_by_date": 0.1988,
+        "by_regime": {
+          "bear": 0.4684,
+          "flat": 0.5193,
+          "bull": 0.5068
+        },
+        "by_vol_tercile": {
+          "low": 0.489,
+          "mid": 0.4983,
+          "high": 0.5169
+        },
+        "by_liquidity_tercile": {
+          "low": 0.4689,
+          "mid": 0.5202,
+          "high": 0.5061
+        }
+      },
+      "21": {
+        "n": 1995,
+        "bias_mean_error": -0.037528,
+        "mae": 0.110112,
+        "dir_accuracy": 0.4752,
+        "resid_lag1_autocorr_by_date": 0.2948,
+        "by_regime": {
+          "bear": 0.4501,
+          "flat": 0.4379,
+          "bull": 0.523
+        },
+        "by_vol_tercile": {
+          "low": 0.4802,
+          "mid": 0.4802,
+          "high": 0.4661
+        },
+        "by_liquidity_tercile": {
+          "low": 0.4533,
+          "mid": 0.4956,
+          "high": 0.4734
+        }
+      }
+    }
+  },
+  "regime_diagnostics": {},
+  "verdict": {
+    "zero_return_mae_final_test": {
+      "5": 0.049519,
+      "10": 0.069318,
+      "21": 0.107605
+    },
+    "beats_zero_return_any_model": {
+      "5": [
+        {
+          "model": "ElasticNet",
+          "mae": 0.04947927268524058
+        }
+      ],
+      "10": [],
+      "21": [
+        {
+          "model": "ElasticNet",
+          "mae": 0.10738553779453582
+        }
+      ]
+    },
+    "problem_attribution": {
+      "target_noise_dominates": "R2 ~ 0 across families and horizons while residual bias ~ 0: targets are near martingale; feature signal is weak, not the optimizer",
+      "residual_autocorr": "date-level mean residuals show mild positive autocorrelation -> overlapping windows + regime persistence; block bootstrap mandatory",
+      "regime_asymmetry": "directional accuracy varies by regime tercile -> regime conditioning is a legitimate lever, uniform thresholds are not"
+    },
+    "evidence_separation_note": "directional accuracy is a gross directional proxy, NOT net trading P&L"
+  }
+}

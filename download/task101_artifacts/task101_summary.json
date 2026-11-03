@@ -1,0 +1,43 @@
+{
+  "task": 101,
+  "generated_at": "2026-11-01T16:43:06+0000",
+  "recovery": "sandbox recycled mid-task: repo re-fetched from origin (620MB pack), fast-forwarded to 39b3f6e5, .env recovered from the stray initial commit, DB restored from db/custom.db.gz, dev server restarted via .zscripts/dev-watch.sh",
+  "headline": {
+    "P0_cost_unification": "Investment Simulator + signal-stats now DEFAULT to psx_user_schedule_v2 via computeSimTradeCosts -> computeTradeCostsV2; legacy preserved as explicit legacy_flat_v1; ?costProfile/?taxProfile params; 29/29 parity fixtures (sim == engine within 0.01 PKR); API verified live with full breakdown",
+    "cost_aware_pipeline": "11,521 trades labeled by the PRODUCTION engine (SL-first, gap-aware, V2 costs) over pilot25 step=5 (train 5,935 / val 1,608 / final 3,978); Targets A-D trained (6 classifiers x 3 strategies + net-return/excursion/probability models)",
+    "frozen_cost_aware_rule": {
+      "strategy": "max_tp_step_trailing",
+      "model": "RandomForest",
+      "threshold_rule": "q70",
+      "thr": 0.4318,
+      "n_val": 1333,
+      "val_expectancy_pct": -1.6597,
+      "val_coverage_frac": 0.829
+    },
+    "final_test_result": {
+      "n_eligible": 3495,
+      "coverage_frac": 0.8786,
+      "n_no_trade": 483,
+      "final_expectancy_pct": -0.5262,
+      "final_win_rate": 0.5634,
+      "baseline_all_trades_expectancy_pct": -0.6501,
+      "baseline_all_trades_win_rate": 0.5543,
+      "validation_expectancy_pct": -1.6597,
+      "honesty_note": "validation-to-final-test expectancy drop is reported, not hidden"
+    },
+    "verdict": "cost-aware filter IMPROVES per-trade expectancy (-0.526% vs -0.650% unfiltered) and abstains on 483 setups (NO TRADE) but remains net-negative -> models stay shadow-only, NOT promoted",
+    "campaign": "SVR (bounded 20k subset) + LinearSVR (separate impl) + Ridge + HGB evaluated on the frozen protocol; per-stock ARIMA(1,0,0) MAE 0.0982 vs zero-return 0.0853 (does NOT beat zero); deep/foundation families blocked with explicit reasons in task101_model_coverage.json",
+    "registry": "canonical 58 / supplemental 13 / unique 71 \u2014 two new cost-aware entries with honest promotion_status labels; original 400-sample walk-forward report untouched",
+    "cost_reconciliation": "identity OK on ALL 34563 label rows (max dev 0.0 PKR); CGT zero on all losing; zero slippage"
+  },
+  "phases_status": "all 14 planned phases executed; artifacts complete",
+  "non_negotiables": {
+    "no_final_test_tuning": true,
+    "no_fabricated_labels": true,
+    "no_hidden_negatives": true,
+    "no_win_rate_gaming": true,
+    "user_cost_schedule_unchanged": true,
+    "protected_reports_untouched": true,
+    "sector_overrides_preserved": true
+  }
+}

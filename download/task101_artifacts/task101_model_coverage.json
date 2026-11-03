@@ -1,0 +1,30 @@
+{
+  "coverage": {
+    "evaluated_new_task101": [
+      "SVR_rbf_bounded (bounded subset)",
+      "LinearSVR",
+      "Ridge (reproduced)",
+      "HistGradientBoosting (reproduced)",
+      "ARIMA(1,0,0) bounded",
+      "Holt-Winters damped",
+      "psx_cost_aware_trade_classifier family",
+      "psx_net_expectancy_meta_model family"
+    ],
+    "reused_valid_oos_evidence": {
+      "9_classical_frozen_cohort": "task100/task100_model_comparison.json (identical protocol)",
+      "jw_reference_lstm/cnn_lstm": "task99/task99_summary.json (real PSX OOS, zero-return not beaten)",
+      "sample_step_50_10_5_1": "task100/task100_sample_step_comparison.json (dependence documented)",
+      "ensemble_aggregators": "task100/task100_ensemble_validation.json (+ task101 ensemble phase)"
+    },
+    "blocked_with_reasons": {
+      "PatchTST/N-BEATS/TimesNet/Informer/LSTM/GRU/CNN-LSTM/Transformer-LSTM/TabNet": "per-symbol sequence models: 2-CPU/4GB sandbox cannot retrain within 150s; no pooled-cohort OOS artifact exists; registry entries keep their trained flags and prior artifact evidence",
+      "Chronos/Lag-Llama/Moirai": "packages not installed (registry untrainedReason stands)",
+      "Time-LLM/FinGPT GPT-2 proxies": "experimental; no genuine checkpoint available offline",
+      "Prophet": "package not installed; ARIMA/Holt-Winters cover the statistical family",
+      "GARCH": "arch package not installed; EWMA(0.94) vol forecast evaluated instead as bounded proxy",
+      "Kalman Filter": "no registered implementation artifact found; pykalman absent"
+    },
+    "classifiers_tiers": "CL-2/PI/CG/X meta-labeling: existing trained artifacts serve the live production consensus (registry); their OOS trade-outcome evidence is represented by the task101 cost-aware pipeline, which retrains the same classifier families on genuine production-engine trade labels"
+  },
+  "principle": "reuse valid existing OOS evidence; generate new predictions only where feasible; report unavailable reasons explicitly; never silently claim complete coverage"
+}

@@ -1,0 +1,50 @@
+{
+  "pass": 29,
+  "fail": 0,
+  "fixtures": 5,
+  "at": "2026-11-01T16:42:47.735Z",
+  "fixtures_detail": [
+    {
+      "name": "mid-price win",
+      "qty": 1000,
+      "entry": 50,
+      "exit": 52
+    },
+    {
+      "name": "mid-price loss",
+      "qty": 1000,
+      "entry": 50,
+      "exit": 48
+    },
+    {
+      "name": "low-price fixed-commission",
+      "qty": 5000,
+      "entry": 10,
+      "exit": 10.5
+    },
+    {
+      "name": "high-price small qty",
+      "qty": 40,
+      "entry": 320,
+      "exit": 334
+    },
+    {
+      "name": "exact break-even",
+      "qty": 500,
+      "entry": 100,
+      "exit": 100
+    }
+  ],
+  "profiles": [
+    {
+      "id": "psx_user_schedule_v2",
+      "label": "PSX User Schedule v2 (0.03/share <=20 or 0.15% >20 per side, PSX+NCCPL+CDC fees, zero slippage, CGT 15% ATL / 30% NON-ATL)",
+      "defaultTaxProfile": "ATL_15"
+    },
+    {
+      "id": "legacy_flat_v1",
+      "label": "Legacy flat v1 (commission 0.15% x2, slippage 0.15%, CGT 15% flat, no ancillary fees) — historical compatibility only",
+      "defaultTaxProfile": "ATL_15"
+    }
+  ]
+}

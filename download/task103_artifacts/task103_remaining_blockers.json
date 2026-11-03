@@ -1,0 +1,47 @@
+{
+  "task": 103,
+  "generated_at": "2026-11-02T12:23:49+0000",
+  "status": "completed",
+  "blockers": [
+    {
+      "id": "genuine_kse100_history",
+      "status": "blocked_external_data",
+      "need": "official PSX EOD/KSE-100 export or a licensed vendor key; import path ready (scripts/task103_import_data.py --type kse100)"
+    },
+    {
+      "id": "corporate_action_registry",
+      "status": "blocked_external_data",
+      "need": "verified corporate-action source; ingestion pipeline ready"
+    },
+    {
+      "id": "intraday_history",
+      "status": "blocked_external_data",
+      "need": "licensed intraday vendor or PYPSX credentials; import pipeline ready"
+    },
+    {
+      "id": "fundamental_publication_timestamps",
+      "status": "blocked_external_data",
+      "need": "filing/statement publication timestamps (link filings<->statements); import schema honours publication_datetime"
+    },
+    {
+      "id": "scheduler_deployment",
+      "status": "blocked_credentials",
+      "need": "deployment host with service credentials to run scheduled ingestion; runbook provides exact configuration"
+    },
+    {
+      "id": "forward_validation_observations",
+      "status": "awaiting_future_observations",
+      "need": "genuine new market sessions ingested after the frozen protocol"
+    },
+    {
+      "id": "credential_rotation_audit",
+      "status": "blocked_credentials",
+      "need": "owner to rotate any credentials ever exposed in git history (verification impossible from the sandbox)"
+    },
+    {
+      "id": "repo_privacy",
+      "status": "owner_decision",
+      "need": "owner to set amz162/latent_v_2 private (recommended: licensed data must never enter a public repo)"
+    }
+  ]
+}

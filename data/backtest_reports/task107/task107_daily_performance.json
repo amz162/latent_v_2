@@ -1,0 +1,53 @@
+{
+ "report": "task107_daily_performance",
+ "generated_at": "2026-11-03T13:04:44+0000",
+ "status": "completed",
+ "period": {
+  "from": "2026-10-30",
+  "to": "2026-11-03"
+ },
+ "new_observations_total": 57,
+ "independent_decision_dates": 3,
+ "matured_unique_trades": 4,
+ "metrics": {
+  "signal_direction_correctness": "not computable yet (needs direction vs realized move; sample insufficient)",
+  "positive_forward_stock_return_rate": {
+   "state": "insufficient_sample",
+   "n_sessions": 3
+  },
+  "positive_completed_trade_rate": {
+   "value": 0.0,
+   "n": 12,
+   "state": "insufficient_sample"
+  },
+  "tp_before_sl_rate": {
+   "state": "insufficient_sample"
+  },
+  "net_positive_trade_rate_after_costs": {
+   "value": 0.0,
+   "state": "insufficient_sample"
+  },
+  "win_rate": {
+   "value": 0.0,
+   "state": "insufficient_sample"
+  },
+  "net_expectancy_pkr_per_trade": {
+   "value": -6295.7,
+   "state": "insufficient_sample"
+  },
+  "gross_expectancy": {
+   "state": "not separated yet (gross not stored per realized row in v1 ledger)",
+   "limitation": "add gross column in next maturity ledger version"
+  },
+  "profit_factor": {
+   "state": "insufficient_sample"
+  },
+  "drawdown": {
+   "state": "insufficient_sample"
+  },
+  "costs": "psx_user_schedule_v2 applied by the production engine",
+  "no_trade_rate": 1.0,
+  "model_agreement": "ensemble_agreement field is None for shadow generations (not computed by the frozen protocol)",
+  "calibrated_probability": "reported per observation with 'Probability calibration not established' caveat"
+ }
+}

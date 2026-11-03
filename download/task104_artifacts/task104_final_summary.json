@@ -1,0 +1,24 @@
+{
+ "task": 104,
+ "generated_at": "2026-11-02T16:37:41+0000",
+ "status": "completed_with_limitations",
+ "initial_capital_pkr": 100000,
+ "answers": {
+  "Q1_what_happens": "The account compounds toward zero under every configuration: best of 60 scenarios ends at PKR 8,796 (-91.2039%) over 2016-2026",
+  "Q2_ending_balances": "per strategy x sizing in task104_positive_net_scan.json (fixed_first_hit least bad; max_tp_step_trailing worst at loose sizing despite ~50% win rate)",
+  "Q3_roi_drawdown_winrate": "constrained-cash ROI -91.2%..-99.5%, drawdowns -92%..-99.7%, win rates 35-51% (win rate is NOT the problem; win/loss asymmetry + costs are)",
+  "Q4_comparable_accuracy": "ElasticNet 52.23%/51.78% best directional; LSTM/CNN-LSTM no edge; shadow rule AUC_test 0.5268 (reproduced)/0.5373 (reported); no model reliably above coin-flip accuracy",
+  "Q5_confidence_scores": "calibrated P(net>0) in [0,1]; validation q70 thresholds 0.2672/0.4282/0.3591 (ff/mtst/so); Brier_test 0.262-0.272",
+  "Q6_confidence_vs_winrate": "quintile analysis: monotone only weakly in validation; NOT reliable out-of-sample (see calibration artifact)",
+  "Q7_filtered_vs_unfiltered": "filter improves expectancy but stays negative (label-level) and changes ending equity only marginally (portfolio-level)",
+  "Q8_loss_attribution": "signals negative pre-cost (primary), costs add ~50%+ on top (cost drag 92-233% of gross), sizing only sets the SPEED of loss; overlap/crowding amplifies via concurrent losers",
+  "Q9_positive_net": "NO configuration positive after actual PSX costs"
+ },
+ "limitations": [
+  "development_only \u2014 all final-test periods previously consumed",
+  "probabilities reproduced deterministically (thr matches Task 101 exactly; Task 102 drift disclosed)",
+  "dividends: none verified, therefore zero in the ledger",
+  "execution realism limited by daily bars (no intraday)"
+ ],
+ "runtime_seconds": 1.1
+}

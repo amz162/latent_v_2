@@ -1,0 +1,39 @@
+{
+ "report": "task106_short_selling_compliance",
+ "generated_at": "2026-11-02T20:22:24+0000",
+ "status": "completed",
+ "compliance_status": "compliance_unverified",
+ "question": "Can the application's intended users (PSX retail) open genuine short positions?",
+ "findings": [
+  {
+   "finding": "Ready-market (cash) short selling is tightly restricted on PSX; retail investors generally cannot short shares directly in the ready market",
+   "source": "https://www.bsl.com.pk/glossary/short-selling (glossary of a licensed PSX brokerage; states 'retail investors generally cannot short shares directly in the ready market' and 'short-selling ... is tightly restricted')",
+   "verified": true
+  },
+  {
+   "finding": "A short-selling mechanism exists via Securities Lending & Borrowing (SLB): NCCPL designated SLB Eligible Securities Category A for short selling effective 2015-05-12",
+   "source": "NCCPL circular 13-4-2015 (PDF returned HTTP 403; verified from search snippet only)",
+   "verified": false,
+   "caveat": "participant eligibility for retail / this application's user base could not be verified from accessible authoritative sources"
+  },
+  {
+   "finding": "Single-stock deliverable futures can be sold short but with limited eligible contracts and broker-mediated access; not part of this application's execution model",
+   "source": "https://www.bsl.com.pk/glossary/short-selling",
+   "verified": true,
+   "caveat": "the application has no futures execution pathway"
+  },
+  {
+   "finding": "T+1 settlement makes pre-ownership selling operationally sensitive; blank (short) sales are a closely-controlled, exchange-disclosed exception",
+   "source": "https://www.bsl.com.pk/glossary/short-selling",
+   "verified": true
+  }
+ ],
+ "verdict": "SHORT_ENTRY remains DISABLED (long-only default). The application's assumed short execution model is NOT a verified executable strategy for its users; historical short-side simulation is a theoretical research experiment only.",
+ "historical_short_sides": {
+  "task100_104_cohort": "long-only (11,521 trades) \u2014 unaffected",
+  "engine_capability": "SELL direction preserved for RESEARCH simulation, labeled hypothetical",
+  "ui": "SELL badges now labeled 'SELL\u00b7R' (research-only) with policy-driven tooltip"
+ },
+ "reversal_condition": "verified eligibility documentation for the intended account type + an implemented, compliant execution pathway + explicit policy version bump",
+ "runtime_seconds": 0.0
+}

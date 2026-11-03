@@ -1,0 +1,1793 @@
+{
+ "generated_at": "2026-11-03T13:02:20.373Z",
+ "engine": "production simulateStrategy (strategy-engine.ts)",
+ "cost_profile": "psx_user_schedule_v2",
+ "summary": {
+  "n": 34,
+  "matured": 12,
+  "pending_mtm": 90,
+  "unfilled": 0,
+  "realized_total_pkr": -75548.35,
+  "unrealized_total_pkr": -80667.63,
+  "note": "MTM is hypothetical unrealized value, not evidence of edge"
+ },
+ "observations": [
+  {
+   "decision_id": "t105gen1_LUCK_2026-10-29",
+   "symbol": "LUCK",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 398,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 398,
+     "quantity": 251,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 263.55,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 398,
+     "quantity": 251,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 263.55,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 398,
+     "quantity": 251,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 404.6535714285714,
+       "qty": 125,
+       "net": 557.6919642857124
+      },
+      {
+       "exit_date": "2026-11-03",
+       "price": 400.64,
+       "qty": 126,
+       "net": 132.29999999999853
+      }
+     ],
+     "resolved_legs_pnl_pkr": 689.99,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_SYS_2026-10-29",
+   "symbol": "SYS",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 108.61,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 108.61,
+     "quantity": 920,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3514.17788571427,
+     "net_return_pct": -3.516949241716743,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 108.61,
+     "quantity": 920,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3514.17788571427,
+     "net_return_pct": -3.516949241716743,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 108.61,
+     "quantity": 920,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3514.17788571427,
+     "net_return_pct": -3.516949241716743,
+     "sessions_used": 3,
+     "hold": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_MEBL_2026-10-29",
+   "symbol": "MEBL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 527,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 527,
+     "quantity": 189,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -380.08,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 527,
+     "quantity": 189,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 519.44,
+       "qty": 189,
+       "net": -1727.6489999999897
+      }
+     ],
+     "resolved_legs_pnl_pkr": -1727.65,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 527,
+     "quantity": 189,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-02",
+       "price": 533.9628571428572,
+       "qty": 94,
+       "net": 407.7182857142871
+      },
+      {
+       "exit_date": "2026-11-03",
+       "price": 526.57,
+       "qty": 95,
+       "net": -191.04499999999524
+      }
+     ],
+     "resolved_legs_pnl_pkr": 216.67,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_KEL_2026-10-29",
+   "symbol": "KEL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 5.95,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 5.95,
+     "quantity": 16806,
+     "exit_reason": "SL",
+     "realized_net_pnl": -6566.344285714282,
+     "net_return_pct": -6.566626650660261,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 5.95,
+     "quantity": 16806,
+     "exit_reason": "SL",
+     "realized_net_pnl": -6566.344285714282,
+     "net_return_pct": -6.566626650660261,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 5.95,
+     "quantity": 16806,
+     "exit_reason": "SL",
+     "realized_net_pnl": -6566.344285714282,
+     "net_return_pct": -6.566626650660261,
+     "sessions_used": 3,
+     "hold": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_TRG_2026-10-29",
+   "symbol": "TRG",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 53,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 53,
+     "quantity": 1886,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -3185.45,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 53,
+     "quantity": 1886,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -3185.45,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 53,
+     "quantity": 1886,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 51.47,
+       "qty": 1886,
+       "net": -3185.4540000000025
+      }
+     ],
+     "resolved_legs_pnl_pkr": -3185.45,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_BOP_2026-10-29",
+   "symbol": "BOP",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 28.9,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 28.9,
+     "quantity": 3460,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -3102.58,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 28.9,
+     "quantity": 3460,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -3102.58,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 28.9,
+     "quantity": 3460,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 28.09,
+       "qty": 3460,
+       "net": -3102.5819999999953
+      }
+     ],
+     "resolved_legs_pnl_pkr": -3102.58,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_CNERGY_2026-10-29",
+   "symbol": "CNERGY",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 14.2,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 14.2,
+     "quantity": 7042,
+     "exit_reason": "SL",
+     "realized_net_pnl": -12041.81999999999,
+     "net_return_pct": -12.042253521126751,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 14.2,
+     "quantity": 7042,
+     "exit_reason": "SL",
+     "realized_net_pnl": -12041.81999999999,
+     "net_return_pct": -12.042253521126751,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 14.2,
+     "quantity": 7042,
+     "exit_reason": "SL",
+     "realized_net_pnl": -12041.81999999999,
+     "net_return_pct": -12.042253521126751,
+     "sessions_used": 3,
+     "hold": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_MLCF_2026-10-29",
+   "symbol": "MLCF",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 91.03,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 91.03,
+     "quantity": 1098,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 1520.08,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 91.03,
+     "quantity": 1098,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 1520.08,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 91.03,
+     "quantity": 1098,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 92.95714285714286,
+       "qty": 549,
+       "net": 749.374804285713
+      },
+      {
+       "exit_date": "2026-11-03",
+       "price": 92.98,
+       "qty": 549,
+       "net": 760.0410900000013
+      }
+     ],
+     "resolved_legs_pnl_pkr": 1509.42,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_PAEL_2026-10-29",
+   "symbol": "PAEL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 32.61,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 32.61,
+     "quantity": 3066,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3060.441779999999,
+     "net_return_pct": -3.060984798703289,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 32.61,
+     "quantity": 3066,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3060.441779999999,
+     "net_return_pct": -3.060984798703289,
+     "sessions_used": 3,
+     "hold": 2
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 32.61,
+     "quantity": 3066,
+     "exit_reason": "SL",
+     "realized_net_pnl": -3060.441779999999,
+     "net_return_pct": -3.060984798703289,
+     "sessions_used": 3,
+     "hold": 2
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_PIBTL_2026-10-29",
+   "symbol": "PIBTL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 13.19,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 13.19,
+     "quantity": 7581,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -3866.31,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 13.19,
+     "quantity": 7581,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -3866.31,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 13.19,
+     "quantity": 7581,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 12.74,
+       "qty": 7581,
+       "net": -3866.309999999995
+      }
+     ],
+     "resolved_legs_pnl_pkr": -3866.31,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_LOTCHEM_2026-10-29",
+   "symbol": "LOTCHEM",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 24.47,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 24.47,
+     "quantity": 4086,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2914.99,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 24.47,
+     "quantity": 4086,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2914.99,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 24.47,
+     "quantity": 4086,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 23.83,
+       "qty": 4086,
+       "net": -2914.993260000002
+      }
+     ],
+     "resolved_legs_pnl_pkr": -2914.99,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t105gen1_FCCL_2026-10-29",
+   "symbol": "FCCL",
+   "decision_date": "2026-10-29",
+   "entry_date": "2026-10-30",
+   "entry": 52.61,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 52.61,
+     "quantity": 1900,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 2687.87,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 52.61,
+     "quantity": 1900,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 2687.87,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 52.61,
+     "quantity": 1900,
+     "sessions_available": 3,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 53.92642857142857,
+       "qty": 950,
+       "net": 913.0775714285734
+      },
+      {
+       "exit_date": "2026-11-03",
+       "price": 54.46,
+       "qty": 950,
+       "net": 1343.9365000000012
+      }
+     ],
+     "resolved_legs_pnl_pkr": 2257.01,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_HUBC_2026-11-02",
+   "symbol": "HUBC",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 195.71,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 195.71,
+     "quantity": 510,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 363.82,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 195.71,
+     "quantity": 510,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 363.82,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 195.71,
+     "quantity": 510,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 197.24,
+       "qty": 510,
+       "net": 363.81870000000055
+      }
+     ],
+     "resolved_legs_pnl_pkr": 363.82,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_LUCK_2026-11-02",
+   "symbol": "LUCK",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 397,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 397,
+     "quantity": 251,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 477.65,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 397,
+     "quantity": 251,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 477.65,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 397,
+     "quantity": 251,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 403.34142857142854,
+       "qty": 125,
+       "net": 524.901785714282
+      },
+      {
+       "exit_date": "2026-11-03",
+       "price": 400.64,
+       "qty": 126,
+       "net": 239.77799999999854
+      }
+     ],
+     "resolved_legs_pnl_pkr": 764.68,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_SYS_2026-11-02",
+   "symbol": "SYS",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 109,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 109,
+     "quantity": 917,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 66.48,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 109,
+     "quantity": 917,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 66.48,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 109,
+     "quantity": 917,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 109.47,
+       "qty": 917,
+       "net": 66.48249999999916
+      }
+     ],
+     "resolved_legs_pnl_pkr": 66.48,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_MEBL_2026-11-02",
+   "symbol": "MEBL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 519.44,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 519.44,
+     "quantity": 192,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 864.42,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 519.44,
+     "quantity": 192,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 864.42,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 519.44,
+     "quantity": 192,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 526.57,
+       "qty": 192,
+       "net": 864.4185599999993
+      }
+     ],
+     "resolved_legs_pnl_pkr": 864.42,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_PSO_2026-11-02",
+   "symbol": "PSO",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 352,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 352,
+     "quantity": 284,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -896.3,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 352,
+     "quantity": 284,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -896.3,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 352,
+     "quantity": 284,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 349.9,
+       "qty": 284,
+       "net": -896.3040000000065
+      }
+     ],
+     "resolved_legs_pnl_pkr": -896.3,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_OGDC_2026-11-02",
+   "symbol": "OGDC",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 303,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 303,
+     "quantity": 330,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -123.26,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 303,
+     "quantity": 330,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -123.26,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 303,
+     "quantity": 330,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 303.63,
+       "qty": 330,
+       "net": -123.2550000000013
+      }
+     ],
+     "resolved_legs_pnl_pkr": -123.26,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_WTL_2026-11-02",
+   "symbol": "WTL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 0.95,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 0.95,
+     "quantity": 105263,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -6315.78,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 0.95,
+     "quantity": 105263,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -6315.78,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 0.95,
+     "quantity": 105263,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 0.95,
+       "qty": 105263,
+       "net": -6315.78
+      }
+     ],
+     "resolved_legs_pnl_pkr": -6315.78,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_KEL_2026-11-02",
+   "symbol": "KEL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 5.67,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 5.67,
+     "quantity": 17636,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1763.6,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 5.67,
+     "quantity": 17636,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1763.6,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 5.67,
+     "quantity": 17636,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 5.63,
+       "qty": 17636,
+       "net": -1763.6000000000004
+      }
+     ],
+     "resolved_legs_pnl_pkr": -1763.6,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_TRG_2026-11-02",
+   "symbol": "TRG",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 52,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 52,
+     "quantity": 1923,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1319.18,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 52,
+     "quantity": 1923,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1319.18,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 52,
+     "quantity": 1923,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 51.47,
+       "qty": 1923,
+       "net": -1319.1780000000022
+      }
+     ],
+     "resolved_legs_pnl_pkr": -1319.18,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_UNITY_2026-11-02",
+   "symbol": "UNITY",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 7.65,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 7.65,
+     "quantity": 13071,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1699.23,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 7.65,
+     "quantity": 13071,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1699.23,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 7.65,
+     "quantity": 13071,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 7.58,
+       "qty": 13071,
+       "net": -1699.2300000000037
+      }
+     ],
+     "resolved_legs_pnl_pkr": -1699.23,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_BOP_2026-11-02",
+   "symbol": "BOP",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 28.45,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 28.45,
+     "quantity": 3514,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1564.96,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 28.45,
+     "quantity": 3514,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1564.96,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 28.45,
+     "quantity": 3514,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 28.09,
+       "qty": 3514,
+       "net": -1564.959899999998
+      }
+     ],
+     "resolved_legs_pnl_pkr": -1564.96,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_CNERGY_2026-11-02",
+   "symbol": "CNERGY",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 12.21,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 12.21,
+     "quantity": 8190,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -4340.7,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 12.21,
+     "quantity": 8190,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -4340.7,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 12.21,
+     "quantity": 8190,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 11.74,
+       "qty": 8190,
+       "net": -4340.700000000005
+      }
+     ],
+     "resolved_legs_pnl_pkr": -4340.7,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_HASCOL_2026-11-02",
+   "symbol": "HASCOL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 15.9,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 15.9,
+     "quantity": 6289,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -628.9,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 15.9,
+     "quantity": 6289,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -628.9,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 15.9,
+     "quantity": 6289,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 15.86,
+       "qty": 6289,
+       "net": -628.9000000000058
+      }
+     ],
+     "resolved_legs_pnl_pkr": -628.9,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_MLCF_2026-11-02",
+   "symbol": "MLCF",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 92.88,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 92.88,
+     "quantity": 1076,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -208.36,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 92.88,
+     "quantity": 1076,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -208.36,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 92.88,
+     "quantity": 1076,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 93.84071428571428,
+       "qty": 538,
+       "net": 289.4263228571444
+      },
+      {
+       "exit_date": "2026-11-03",
+       "price": 92.98,
+       "qty": 538,
+       "net": -104.17831999999606
+      }
+     ],
+     "resolved_legs_pnl_pkr": 185.25,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_PAEL_2026-11-02",
+   "symbol": "PAEL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 32.01,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 32.01,
+     "quantity": 3124,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -612.4,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 32.01,
+     "quantity": 3124,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -612.4,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 32.01,
+     "quantity": 3124,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 32.48714285714286,
+       "qty": 1562,
+       "net": 483.50371142857347
+      },
+      {
+       "exit_date": "2026-11-03",
+       "price": 31.91,
+       "qty": 1562,
+       "net": -306.19885999999667
+      }
+     ],
+     "resolved_legs_pnl_pkr": 177.3,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_PIBTL_2026-11-02",
+   "symbol": "PIBTL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 12.82,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 12.82,
+     "quantity": 7800,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1092,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 12.82,
+     "quantity": 7800,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1092,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 12.82,
+     "quantity": 7800,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 12.74,
+       "qty": 7800,
+       "net": -1092.0000000000005
+      }
+     ],
+     "resolved_legs_pnl_pkr": -1092,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_LOTCHEM_2026-11-02",
+   "symbol": "LOTCHEM",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 23.5,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 23.5,
+     "quantity": 4255,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 893.55,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 23.5,
+     "quantity": 4255,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 893.55,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 23.5,
+     "quantity": 4255,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 23.83,
+       "qty": 4255,
+       "net": 893.5499999999938
+      }
+     ],
+     "resolved_legs_pnl_pkr": 893.55,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_PRL_2026-11-02",
+   "symbol": "PRL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 82.55,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 82.55,
+     "quantity": 1211,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 1542.63,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 82.55,
+     "quantity": 1211,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 1542.63,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 82.55,
+     "quantity": 1211,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 84.34,
+       "qty": 1211,
+       "net": 1542.6323500000067
+      }
+     ],
+     "resolved_legs_pnl_pkr": 1542.63,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_TELE_2026-11-02",
+   "symbol": "TELE",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 6.54,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 6.54,
+     "quantity": 15290,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1529,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 6.54,
+     "quantity": 15290,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1529,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 6.54,
+     "quantity": 15290,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 6.5,
+       "qty": 15290,
+       "net": -1529.0000000000005
+      }
+     ],
+     "resolved_legs_pnl_pkr": -1529,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_ANL_2026-11-02",
+   "symbol": "ANL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 8.65,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 8.65,
+     "quantity": 11560,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -398.82,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 8.65,
+     "quantity": 11560,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -398.82,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 8.65,
+     "quantity": 11560,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 8.68,
+       "qty": 11560,
+       "net": -398.82000000000625
+      }
+     ],
+     "resolved_legs_pnl_pkr": -398.82,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_HUMNL_2026-11-02",
+   "symbol": "HUMNL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 8.5,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 8.5,
+     "quantity": 11764,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 694.08,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 8.5,
+     "quantity": 11764,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 694.08,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 8.5,
+     "quantity": 11764,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 8.64,
+       "qty": 11764,
+       "net": 694.0760000000057
+      }
+     ],
+     "resolved_legs_pnl_pkr": 694.08,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  },
+  {
+   "decision_id": "t106gen2_FCCL_2026-11-02",
+   "symbol": "FCCL",
+   "decision_date": "2026-11-02",
+   "entry_date": "2026-11-03",
+   "entry": 54.6,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 54.6,
+     "quantity": 1831,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -556.26,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 54.6,
+     "quantity": 1831,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -556.26,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "pending_mtm",
+     "entry": 54.6,
+     "quantity": 1831,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [
+      {
+       "exit_date": "2026-11-03",
+       "price": 54.46,
+       "qty": 1831,
+       "net": -556.257800000001
+      }
+     ],
+     "resolved_legs_pnl_pkr": -556.26,
+     "unrealized_mtm_pkr": 0,
+     "mark_date": "2026-11-03",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    }
+   },
+   "maturity_evaluation_date": "2026-11-03"
+  }
+ ]
+}

@@ -18,6 +18,7 @@ export type LatentView =
   | "signal_detail"
   | "execute"
   | "ai_model_signals"
+  | "paper_monitor"
   | "calculators"
   | "pattern_finder"
   | "pattern_finder_financial"

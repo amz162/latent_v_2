@@ -1,0 +1,15 @@
+{
+ "report": "task107_cost_reconciliation",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "path": "computeSimTradeCosts \u2192 computeTradeCostsV2; PSX_USER_SCHEDULE_V2; ATL_15",
+ "estimates": "monitor estimated-exit costs use the SAME V2 engine (scripts/task107_cost_quote.ts / paperMonitor.ts)",
+ "separate_fields": [
+  "realized_net_pnl",
+  "unrealized_gross_pnl",
+  "estimated_unrealized_net_pnl",
+  "total_position_net_pnl"
+ ],
+ "no_double_charging": "scale-out legs costed per leg; CGT once per position on aggregate positive gross",
+ "verdict": "completed"
+}

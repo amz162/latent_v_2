@@ -1,0 +1,487 @@
+{
+ "report": "task104_calibration_analysis",
+ "generated_at": "2026-11-02T16:37:40+0000",
+ "status": "completed",
+ "confidence_scale": "calibrated P(net>0) from the reproduced frozen-protocol models (isotonic on validation; scores in [0,1]; q70 thresholds: {\"fixed_first_hit\": 0.2672, \"max_tp_step_trailing\": 0.4282, \"scale_out_50_25_25\": 0.3591})",
+ "deciles_note": "quintiles used (5 bins) for stable win-rate estimates per bin",
+ "by_strategy_partition": {
+  "fixed_first_hit__validation": {
+   "bins": [
+    {
+     "bin": 1,
+     "p_level": 0.0,
+     "n": 3,
+     "avg_confidence": 0.0,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 2,
+     "p_level": 0.1176,
+     "n": 17,
+     "avg_confidence": 0.1176,
+     "realized_win_rate_pct": 11.76
+    },
+    {
+     "bin": 3,
+     "p_level": 0.1475,
+     "n": 61,
+     "avg_confidence": 0.1475,
+     "realized_win_rate_pct": 14.75
+    },
+    {
+     "bin": 4,
+     "p_level": 0.2672,
+     "n": 1527,
+     "avg_confidence": 0.2672,
+     "realized_win_rate_pct": 26.72
+    }
+   ],
+   "monotonically_increasing": true,
+   "spearman_conf_vs_outcome": -0.2773
+  },
+  "fixed_first_hit__final_test": {
+   "bins": [
+    {
+     "bin": 1,
+     "p_level": 0.0,
+     "n": 9,
+     "avg_confidence": 0.0,
+     "realized_win_rate_pct": 44.44
+    },
+    {
+     "bin": 2,
+     "p_level": 0.0721,
+     "n": 1,
+     "avg_confidence": 0.0721,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 3,
+     "p_level": 0.1176,
+     "n": 8,
+     "avg_confidence": 0.1176,
+     "realized_win_rate_pct": 87.5
+    },
+    {
+     "bin": 4,
+     "p_level": 0.1271,
+     "n": 1,
+     "avg_confidence": 0.1271,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 5,
+     "p_level": 0.1475,
+     "n": 75,
+     "avg_confidence": 0.1475,
+     "realized_win_rate_pct": 48.0
+    },
+    {
+     "bin": 6,
+     "p_level": 0.2663,
+     "n": 1,
+     "avg_confidence": 0.2663,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 7,
+     "p_level": 0.2672,
+     "n": 3883,
+     "avg_confidence": 0.2672,
+     "realized_win_rate_pct": 42.31
+    }
+   ],
+   "monotonically_increasing": false,
+   "spearman_conf_vs_outcome": -0.0709
+  },
+  "max_tp_step_trailing__validation": {
+   "bins": [
+    {
+     "bin": 1,
+     "p_level": 0.2727,
+     "n": 11,
+     "avg_confidence": 0.2727,
+     "realized_win_rate_pct": 27.27
+    },
+    {
+     "bin": 2,
+     "p_level": 0.3111,
+     "n": 45,
+     "avg_confidence": 0.3111,
+     "realized_win_rate_pct": 31.11
+    },
+    {
+     "bin": 3,
+     "p_level": 0.352,
+     "n": 196,
+     "avg_confidence": 0.352,
+     "realized_win_rate_pct": 35.2
+    },
+    {
+     "bin": 4,
+     "p_level": 0.3929,
+     "n": 28,
+     "avg_confidence": 0.3929,
+     "realized_win_rate_pct": 39.29
+    },
+    {
+     "bin": 5,
+     "p_level": 0.4282,
+     "n": 1261,
+     "avg_confidence": 0.4282,
+     "realized_win_rate_pct": 42.82
+    },
+    {
+     "bin": 6,
+     "p_level": 0.5,
+     "n": 4,
+     "avg_confidence": 0.5,
+     "realized_win_rate_pct": 50.0
+    },
+    {
+     "bin": 7,
+     "p_level": 0.5714,
+     "n": 63,
+     "avg_confidence": 0.5714,
+     "realized_win_rate_pct": 57.14
+    }
+   ],
+   "monotonically_increasing": true,
+   "spearman_conf_vs_outcome": 0.0267
+  },
+  "max_tp_step_trailing__final_test": {
+   "bins": [
+    {
+     "bin": 1,
+     "p_level": 0.2727,
+     "n": 10,
+     "avg_confidence": 0.2727,
+     "realized_win_rate_pct": 70.0
+    },
+    {
+     "bin": 2,
+     "p_level": 0.2995,
+     "n": 1,
+     "avg_confidence": 0.2995,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 3,
+     "p_level": 0.3111,
+     "n": 102,
+     "avg_confidence": 0.3111,
+     "realized_win_rate_pct": 70.59
+    },
+    {
+     "bin": 4,
+     "p_level": 0.3137,
+     "n": 1,
+     "avg_confidence": 0.3137,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 5,
+     "p_level": 0.3143,
+     "n": 1,
+     "avg_confidence": 0.3143,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 6,
+     "p_level": 0.321,
+     "n": 2,
+     "avg_confidence": 0.321,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 7,
+     "p_level": 0.3261,
+     "n": 2,
+     "avg_confidence": 0.3261,
+     "realized_win_rate_pct": 50.0
+    },
+    {
+     "bin": 8,
+     "p_level": 0.3277,
+     "n": 1,
+     "avg_confidence": 0.3277,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 9,
+     "p_level": 0.3292,
+     "n": 1,
+     "avg_confidence": 0.3292,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 10,
+     "p_level": 0.3472,
+     "n": 1,
+     "avg_confidence": 0.3472,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 11,
+     "p_level": 0.3493,
+     "n": 1,
+     "avg_confidence": 0.3493,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 12,
+     "p_level": 0.352,
+     "n": 312,
+     "avg_confidence": 0.352,
+     "realized_win_rate_pct": 41.67
+    },
+    {
+     "bin": 13,
+     "p_level": 0.3531,
+     "n": 1,
+     "avg_confidence": 0.3531,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 14,
+     "p_level": 0.3673,
+     "n": 1,
+     "avg_confidence": 0.3673,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 15,
+     "p_level": 0.3742,
+     "n": 1,
+     "avg_confidence": 0.3742,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 16,
+     "p_level": 0.3916,
+     "n": 1,
+     "avg_confidence": 0.3916,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 17,
+     "p_level": 0.3929,
+     "n": 39,
+     "avg_confidence": 0.3929,
+     "realized_win_rate_pct": 41.03
+    },
+    {
+     "bin": 18,
+     "p_level": 0.3958,
+     "n": 1,
+     "avg_confidence": 0.3958,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 19,
+     "p_level": 0.4019,
+     "n": 1,
+     "avg_confidence": 0.4019,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 20,
+     "p_level": 0.4057,
+     "n": 1,
+     "avg_confidence": 0.4057,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 21,
+     "p_level": 0.4197,
+     "n": 1,
+     "avg_confidence": 0.4197,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 22,
+     "p_level": 0.4218,
+     "n": 1,
+     "avg_confidence": 0.4218,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 23,
+     "p_level": 0.4255,
+     "n": 1,
+     "avg_confidence": 0.4255,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 24,
+     "p_level": 0.4282,
+     "n": 3156,
+     "avg_confidence": 0.4282,
+     "realized_win_rate_pct": 55.45
+    },
+    {
+     "bin": 25,
+     "p_level": 0.4331,
+     "n": 1,
+     "avg_confidence": 0.4331,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 26,
+     "p_level": 0.4731,
+     "n": 1,
+     "avg_confidence": 0.4731,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 27,
+     "p_level": 0.5,
+     "n": 23,
+     "avg_confidence": 0.5,
+     "realized_win_rate_pct": 65.22
+    },
+    {
+     "bin": 28,
+     "p_level": 0.5299,
+     "n": 1,
+     "avg_confidence": 0.5299,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 29,
+     "p_level": 0.5579,
+     "n": 1,
+     "avg_confidence": 0.5579,
+     "realized_win_rate_pct": 0.0
+    },
+    {
+     "bin": 30,
+     "p_level": 0.5714,
+     "n": 311,
+     "avg_confidence": 0.5714,
+     "realized_win_rate_pct": 64.63
+    }
+   ],
+   "monotonically_increasing": false,
+   "spearman_conf_vs_outcome": -0.0015
+  },
+  "scale_out_50_25_25__validation": {
+   "bins": [
+    {
+     "bin": 1,
+     "p_level": 0.0714,
+     "n": 14,
+     "avg_confidence": 0.0714,
+     "realized_win_rate_pct": 7.14
+    },
+    {
+     "bin": 2,
+     "p_level": 0.2162,
+     "n": 74,
+     "avg_confidence": 0.2162,
+     "realized_win_rate_pct": 21.62
+    },
+    {
+     "bin": 3,
+     "p_level": 0.3299,
+     "n": 194,
+     "avg_confidence": 0.3299,
+     "realized_win_rate_pct": 32.99
+    },
+    {
+     "bin": 4,
+     "p_level": 0.3333,
+     "n": 12,
+     "avg_confidence": 0.3333,
+     "realized_win_rate_pct": 33.33
+    },
+    {
+     "bin": 5,
+     "p_level": 0.3591,
+     "n": 1309,
+     "avg_confidence": 0.3591,
+     "realized_win_rate_pct": 35.91
+    },
+    {
+     "bin": 6,
+     "p_level": 0.4,
+     "n": 5,
+     "avg_confidence": 0.4,
+     "realized_win_rate_pct": 40.0
+    }
+   ],
+   "monotonically_increasing": true,
+   "spearman_conf_vs_outcome": 0.1127
+  },
+  "scale_out_50_25_25__final_test": {
+   "bins": [
+    {
+     "bin": 1,
+     "p_level": 0.0714,
+     "n": 14,
+     "avg_confidence": 0.0714,
+     "realized_win_rate_pct": 64.29
+    },
+    {
+     "bin": 2,
+     "p_level": 0.2131,
+     "n": 1,
+     "avg_confidence": 0.2131,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 3,
+     "p_level": 0.2162,
+     "n": 101,
+     "avg_confidence": 0.2162,
+     "realized_win_rate_pct": 52.48
+    },
+    {
+     "bin": 4,
+     "p_level": 0.3299,
+     "n": 217,
+     "avg_confidence": 0.3299,
+     "realized_win_rate_pct": 47.47
+    },
+    {
+     "bin": 5,
+     "p_level": 0.3322,
+     "n": 1,
+     "avg_confidence": 0.3322,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 6,
+     "p_level": 0.3326,
+     "n": 1,
+     "avg_confidence": 0.3326,
+     "realized_win_rate_pct": 100.0
+    },
+    {
+     "bin": 7,
+     "p_level": 0.3333,
+     "n": 12,
+     "avg_confidence": 0.3333,
+     "realized_win_rate_pct": 41.67
+    },
+    {
+     "bin": 8,
+     "p_level": 0.3591,
+     "n": 3581,
+     "avg_confidence": 0.3591,
+     "realized_win_rate_pct": 49.82
+    },
+    {
+     "bin": 9,
+     "p_level": 0.4,
+     "n": 50,
+     "avg_confidence": 0.4,
+     "realized_win_rate_pct": 52.0
+    }
+   ],
+   "monotonically_increasing": false,
+   "spearman_conf_vs_outcome": 0.0076
+  }
+ },
+ "answer_Q6": "computed per strategy/partition above; monotonicity holds only weakly in validation and generally FAILS out-of-sample (final_test bins are near-flat or non-monotonic) \u2014 higher confidence does NOT reliably correspond to higher realized win rate"
+}

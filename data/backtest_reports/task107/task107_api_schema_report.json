@@ -1,0 +1,49 @@
+{
+ "report": "task107_api_schema_report",
+ "generated_at": "2026-11-03T13:24:51+0000",
+ "status": "completed",
+ "source": "https://psxdata-api.fastapicloud.dev/openapi.json (fetched 2026-11-03T13:24:51+0000)",
+ "endpoints": [
+  "/debt-market",
+  "/eligible-scrips",
+  "/health",
+  "/indices",
+  "/indices/{name}",
+  "/screener",
+  "/sectors",
+  "/sectors/{name}/stocks",
+  "/stocks",
+  "/stocks/{symbol}/fundamentals",
+  "/stocks/{symbol}/historical",
+  "/stocks/{symbol}/quote"
+ ],
+ "quote_response_fields": [
+  "change",
+  "change_1y_pct",
+  "change_pct",
+  "dividend_yield",
+  "free_float",
+  "ldcp",
+  "market_cap",
+  "pe_ratio",
+  "price",
+  "symbol",
+  "volume_avg_30d"
+ ],
+ "quote_meta_fields": [
+  "timestamp",
+  "cached"
+ ],
+ "historical_response_fields": [
+  "close",
+  "date",
+  "high",
+  "is_anomaly",
+  "low",
+  "open",
+  "volume"
+ ],
+ "quote_has_source_market_timestamp": false,
+ "fundamentals_endpoint": "GET /stocks/{symbol}/fundamentals (not used for intraday monitoring)",
+ "verdict": "completed"
+}

@@ -1,0 +1,34 @@
+{
+ "report": "task107_baseline_inventory",
+ "generated_at": "2026-11-03T13:02:19+0000",
+ "status": "completed",
+ "checks": {
+  "git_head": "2f029843",
+  "head_is_task106_push": true,
+  "unrelated_dirty_paths": [
+   ".github/workflows/daily-psx-pipeline.yml",
+   "src/app/page-original.tsx",
+   "src/app/page-original.tsx.bak"
+  ],
+  "frontier": "2026-11-03",
+  "n_bars": 1042923,
+  "trading_policy": true,
+  "short_entry_disabled": true,
+  "confidence_module": true,
+  "cost_engine_v2": true,
+  "data_readiness_api": true,
+  "task103_importer": true,
+  "task106_maturation_engine": true,
+  "task107_daily_ingest": true,
+  "scheduler_workflows": [
+   "production-build.yml",
+   "browser-tests.yml",
+   "daily-psx-pipeline.yml"
+  ]
+ },
+ "environment_note": "sandbox recycled between Task 106 and Task 107; working tree fully restored from origin/main (2f029843). The git-tracked db/custom.db.gz snapshot was PRE-refresh (2026-10-29) because Task 106 promoted bars without re-creating the snapshot; the Task 107 ingestion job re-imported the bars idempotently from the committed drop file + live provider (69 bars: 23 symbols x 2026-10-30/11-02/11-03) \u2014 recovery verified against the provider and the Task 106 manifests.",
+ "limitations": [
+  "scheduler not yet deployed (Phase 3 builds it)",
+  "db/backups/custom_pre_task106.db was local-only and lost with the sandbox; DB rebuilt from verified sources"
+ ]
+}

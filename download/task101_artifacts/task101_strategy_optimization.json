@@ -1,0 +1,87 @@
+{
+  "protocol": "cost-aware eligibility filter: isotonic-calibrated P(net>0) >= frozen validation threshold; all parameters frozen before final-test; identical trade cohort (11,521 label rows from the production engine)",
+  "frozen_rule": {
+    "strategy": "max_tp_step_trailing",
+    "model": "RandomForest",
+    "threshold_rule": "q70",
+    "thr": 0.4318,
+    "n_val": 1333,
+    "val_expectancy_pct": -1.6597,
+    "val_coverage_frac": 0.829
+  },
+  "grid_reference": "task101_trade_probability_results.json (per model x strategy x quantile)",
+  "final_test": {
+    "filtered": {
+      "nCompleted": 3495,
+      "nWinning": 1969,
+      "nLosing": 1526,
+      "grossWinRate": 58.88,
+      "netWinRate": 56.34,
+      "grossPnl": 1370504.24,
+      "totalCost": 3207763.26,
+      "netPnl": -1837259.02,
+      "costDragPctOfGross": 234.06,
+      "avgWinNet": 3464.43,
+      "avgLossNet": -5674.13,
+      "expectancyNetPerTrade": -525.68,
+      "netProfitFactor": 0.788,
+      "maxDrawdown": -1867457.97
+    },
+    "unfiltered": {
+      "nCompleted": 3978,
+      "nWinning": 2205,
+      "nLosing": 1773,
+      "grossWinRate": 59.75,
+      "netWinRate": 55.43,
+      "grossPnl": 1695087.84,
+      "totalCost": 4279426.14,
+      "netPnl": -2584338.3,
+      "costDragPctOfGross": 252.46,
+      "avgWinNet": 3370.52,
+      "avgLossNet": -5649.37,
+      "expectancyNetPerTrade": -649.66,
+      "netProfitFactor": 0.742,
+      "maxDrawdown": -2592262.98
+    },
+    "n_skipped_by_filter": 483
+  },
+  "validation": {
+    "filtered": {
+      "nCompleted": 1333,
+      "nWinning": 582,
+      "nLosing": 751,
+      "grossWinRate": 46.06,
+      "netWinRate": 43.66,
+      "grossPnl": -1127901.67,
+      "totalCost": 1083646.64,
+      "netPnl": -2211548.31,
+      "costDragPctOfGross": 96.08,
+      "avgWinNet": 3248.16,
+      "avgLossNet": -5462.02,
+      "expectancyNetPerTrade": -1659.08,
+      "netProfitFactor": 0.461,
+      "maxDrawdown": -2257065.78
+    },
+    "unfiltered": {
+      "nCompleted": 1608,
+      "nWinning": 675,
+      "nLosing": 933,
+      "grossWinRate": 45.96,
+      "netWinRate": 41.98,
+      "grossPnl": -1453495.21,
+      "totalCost": 1617667.27,
+      "netPnl": -3071162.48,
+      "costDragPctOfGross": 111.29,
+      "avgWinNet": 3153.19,
+      "avgLossNet": -5572.95,
+      "expectancyNetPerTrade": -1909.93,
+      "netProfitFactor": 0.409,
+      "maxDrawdown": -3116898.89
+    }
+  },
+  "verdict": {
+    "filter_improves_expectancy": true,
+    "still_net_negative": true,
+    "statement": "the cost-aware filter reduces losses per trade but the system remains net-negative after real PSX V2 costs; no promotion to production is justified"
+  }
+}

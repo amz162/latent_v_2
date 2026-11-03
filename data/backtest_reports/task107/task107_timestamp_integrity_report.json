@@ -1,0 +1,46 @@
+{
+ "report": "task107_timestamp_integrity_report",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "architecture": {
+  "market_timestamp": "estimated_source_timestamp = retrieved_at \u2212 15 min (labeled estimated; provider publishes NO source timestamp on quotes \u2014 verified)",
+  "retrieved_at": "actual retrieval/server time (tz-aware)",
+  "do_not_shift_decision_timestamps": true,
+  "no_hindsight_use": "a delayed observation is never treated as known at its earlier source time"
+ },
+ "verification_rows": [
+  {
+   "retrieved_at": "2026-11-04T09:45:00+05:00",
+   "estimated_market_ts": "2026-11-04T09:30:00+05:00",
+   "expected_market_time": "09:30",
+   "match": true,
+   "quality": "estimated_source_timestamp"
+  },
+  {
+   "retrieved_at": "2026-11-04T10:15:00+05:00",
+   "estimated_market_ts": "2026-11-04T10:00:00+05:00",
+   "expected_market_time": "10:00",
+   "match": true,
+   "quality": "estimated_source_timestamp"
+  },
+  {
+   "retrieved_at": "2026-11-04T15:45:00+05:00",
+   "estimated_market_ts": "2026-11-04T15:30:00+05:00",
+   "expected_market_time": "15:30",
+   "match": true,
+   "quality": "estimated_source_timestamp"
+  }
+ ],
+ "fields_required": [
+  "market_timestamp",
+  "retrieved_at",
+  "provider_delay_minutes",
+  "timestamp_quality",
+  "source_id",
+  "provider",
+  "data_interval",
+  "data_quality_status"
+ ],
+ "all_positions_carry_both_times": true,
+ "verdict": "PASS"
+}

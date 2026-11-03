@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-11-01T14:09:42+0000",
+  "checks": {
+    "api_models_registry": {
+      "http": 200,
+      "latency_s": 1.2,
+      "canonicalCount": 58,
+      "canonical_58": true,
+      "supplementalCount": 11,
+      "uniqueImplementationCount": 69
+    },
+    "api_walk_forward": {
+      "http": 200,
+      "latency_s": 0.32,
+      "n_unique_stock_date_samples": 400,
+      "original_400_preserved": true,
+      "sampling_interval_sessions": 50,
+      "n_model_fits": 6000,
+      "models": [
+        "XGBoost",
+        "LightGBM",
+        "CatBoost",
+        "Random Forest",
+        "Ridge Regression"
+      ]
+    },
+    "page_home": {
+      "http": 200,
+      "latency_s": 0.42,
+      "ok": true,
+      "bytes": 50638
+    },
+    "ai_models": {
+      "http": 200,
+      "latency_s": 0.04,
+      "ok": true,
+      "bytes": 50708
+    },
+    "portfolio": {
+      "http": 200,
+      "latency_s": 0.04,
+      "ok": true,
+      "bytes": 50721
+    }
+  },
+  "simulator_docs": {
+    "docs_investment_simulator_metrics_md": true,
+    "data_dictionary_json": true
+  }
+}

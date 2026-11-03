@@ -1,0 +1,172 @@
+{
+ "report": "task107_existing_trade_maturity_audit",
+ "generated_at": "2026-11-03T13:02:20+0000",
+ "status": "completed",
+ "engine": "task106_mature.ts -> production simulateStrategy + computeTradeCostsV2 (psx_user_schedule_v2)",
+ "stored_summary": {
+  "n": 34,
+  "matured": 12,
+  "pending_mtm": 24,
+  "unfilled": 22,
+  "realized_total_pkr": -75548.35,
+  "unrealized_total_pkr": -35674.53,
+  "note": "MTM is hypothetical unrealized value, not evidence of edge"
+ },
+ "recomputed_summary": {
+  "n": 34,
+  "matured": 12,
+  "pending_mtm": 90,
+  "unfilled": 0,
+  "realized_total_pkr": -75548.35,
+  "unrealized_total_pkr": -80667.63,
+  "note": "MTM is hypothetical unrealized value, not evidence of edge"
+ },
+ "deterministic_recompute_match": true,
+ "recompute_note": "invariants (matured strategy-outcomes=12, realized total) must match exactly; pending_mtm/unfilled legitimately change as new sessions arrive (Task 107 added 2026-11-03 bars, so gen2 entries filled and MTM refreshed: pending 24 -> 90, unfilled 22 -> 0)",
+ "sl_exits": [
+  {
+   "decision_id": "t105gen1_SYS_2026-10-29",
+   "strategy": "fixed_first_hit",
+   "exit_reason": "SL",
+   "net_pnl": -3514.17788571427
+  },
+  {
+   "decision_id": "t105gen1_SYS_2026-10-29",
+   "strategy": "max_tp_step_trailing",
+   "exit_reason": "SL",
+   "net_pnl": -3514.17788571427
+  },
+  {
+   "decision_id": "t105gen1_SYS_2026-10-29",
+   "strategy": "scale_out_50_25_25",
+   "exit_reason": "SL",
+   "net_pnl": -3514.17788571427
+  },
+  {
+   "decision_id": "t105gen1_KEL_2026-10-29",
+   "strategy": "fixed_first_hit",
+   "exit_reason": "SL",
+   "net_pnl": -6566.344285714282
+  },
+  {
+   "decision_id": "t105gen1_KEL_2026-10-29",
+   "strategy": "max_tp_step_trailing",
+   "exit_reason": "SL",
+   "net_pnl": -6566.344285714282
+  },
+  {
+   "decision_id": "t105gen1_KEL_2026-10-29",
+   "strategy": "scale_out_50_25_25",
+   "exit_reason": "SL",
+   "net_pnl": -6566.344285714282
+  },
+  {
+   "decision_id": "t105gen1_CNERGY_2026-10-29",
+   "strategy": "fixed_first_hit",
+   "exit_reason": "SL",
+   "net_pnl": -12041.81999999999
+  },
+  {
+   "decision_id": "t105gen1_CNERGY_2026-10-29",
+   "strategy": "max_tp_step_trailing",
+   "exit_reason": "SL",
+   "net_pnl": -12041.81999999999
+  },
+  {
+   "decision_id": "t105gen1_CNERGY_2026-10-29",
+   "strategy": "scale_out_50_25_25",
+   "exit_reason": "SL",
+   "net_pnl": -12041.81999999999
+  },
+  {
+   "decision_id": "t105gen1_PAEL_2026-10-29",
+   "strategy": "fixed_first_hit",
+   "exit_reason": "SL",
+   "net_pnl": -3060.441779999999
+  },
+  {
+   "decision_id": "t105gen1_PAEL_2026-10-29",
+   "strategy": "max_tp_step_trailing",
+   "exit_reason": "SL",
+   "net_pnl": -3060.441779999999
+  },
+  {
+   "decision_id": "t105gen1_PAEL_2026-10-29",
+   "strategy": "scale_out_50_25_25",
+   "exit_reason": "SL",
+   "net_pnl": -3060.441779999999
+  }
+ ],
+ "sl_exit_bar_verification": [
+  {
+   "symbol": "KEL",
+   "bars": [
+    {
+     "date": "2026-10-30",
+     "low": 5.76
+    },
+    {
+     "date": "2026-11-02",
+     "low": 5.61
+    },
+    {
+     "date": "2026-11-03",
+     "low": 5.62
+    }
+   ]
+  },
+  {
+   "symbol": "SYS",
+   "bars": [
+    {
+     "date": "2026-10-30",
+     "low": 108.46
+    },
+    {
+     "date": "2026-11-02",
+     "low": 105.05
+    },
+    {
+     "date": "2026-11-03",
+     "low": 108.6
+    }
+   ]
+  },
+  {
+   "symbol": "PAEL",
+   "bars": [
+    {
+     "date": "2026-10-30",
+     "low": 32.19
+    },
+    {
+     "date": "2026-11-02",
+     "low": 31.7
+    },
+    {
+     "date": "2026-11-03",
+     "low": 31.85
+    }
+   ]
+  },
+  {
+   "symbol": "CNERGY",
+   "bars": [
+    {
+     "date": "2026-10-30",
+     "low": 13.6
+    },
+    {
+     "date": "2026-11-02",
+     "low": 12.28
+    },
+    {
+     "date": "2026-11-03",
+     "low": 11.5
+    }
+   ]
+  }
+ ],
+ "pending_not_wins": true,
+ "verdict": "PASS"
+}

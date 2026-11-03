@@ -1,0 +1,50 @@
+{
+ "report": "task107_external_data_status",
+ "generated_at": "2026-11-03T13:04:45+0000",
+ "status": "completed",
+ "sources": [
+  {
+   "source": "PSX EOD (psxdata free API)",
+   "state": "verified",
+   "evidence": "probe 200 in 0.36s; 69 bars imported"
+  },
+  {
+   "source": "KSE-100 index history",
+   "state": "blocked_external_data",
+   "evidence": "/indices/KSE100 returns constituents (not index history); dps.psx.com.pk unreachable (Task 102/103)",
+   "note": "market-internal proxy remains labeled a proxy; NOT presented as KSE-100"
+  },
+  {
+   "source": "corporate actions",
+   "state": "blocked_external_data"
+  },
+  {
+   "source": "financial statement publication timestamps",
+   "state": "blocked_external_data",
+   "note": "accounting-period dates are never used as publication dates"
+  },
+  {
+   "source": "intraday bars",
+   "state": "blocked_external_data"
+  },
+  {
+   "source": "official trading calendar",
+   "state": "blocked_external_data",
+   "note": "session presence decided by provider data only"
+  },
+  {
+   "source": "historical instrument master",
+   "state": "blocked_external_data"
+  },
+  {
+   "source": "licensed vendors",
+   "state": "credential_required",
+   "note": "no purchase/subscription without explicit owner approval"
+  }
+ ],
+ "feature_groups_disabled": [
+  "pit_fundamental",
+  "intraday",
+  "corporate_action_exact"
+ ]
+}

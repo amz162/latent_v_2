@@ -1,0 +1,66 @@
+{
+ "report": "task104_loss_attribution",
+ "generated_at": "2026-11-02T16:37:41+0000",
+ "status": "completed",
+ "unit": "PKR at the 100,000 reference notional, all 11,521 trades x 3 strategies",
+ "signal_quality": {
+  "mean_gross_pnl_per_trade": -154.09,
+  "mean_net_pnl_per_trade": -1274.38,
+  "mean_cost_per_trade": 1120.29,
+  "gross_loss_share_of_net_loss_pct": 12.1,
+  "verdict": "signals are negative BEFORE costs \u2014 the strategy loses even with zero friction; costs then add roughly half again as much"
+ },
+ "costs": {
+  "total_cost_all_trades_pkr": 38720452.0,
+  "cost_as_pct_of_gross_loss": 727.0,
+  "components_mean": {
+   "brokerage": 688.1,
+   "cgt": 422.68,
+   "psx+nccpl+cdc": 9.508
+  }
+ },
+ "win_loss_asymmetry": {
+  "note": "win rates near 50% for max_tp_step_trailing yet deep losses: average loss per loser dwarfs average win per winner",
+  "per_strategy": {
+   "fixed_first_hit": {
+    "win_rate_pct": 36.11,
+    "avg_win_net": 7711.31,
+    "avg_loss_net": -6447.28,
+    "profit_factor": 0.676
+   },
+   "max_tp_step_trailing": {
+    "win_rate_pct": 50.33,
+    "avg_win_net": 3481.0,
+    "avg_loss_net": -5853.1,
+    "profit_factor": 0.603
+   },
+   "scale_out_50_25_25": {
+    "win_rate_pct": 43.72,
+    "avg_win_net": 3960.28,
+    "avg_loss_net": -5444.24,
+    "profit_factor": 0.565
+   }
+  }
+ },
+ "sizing_and_overlap": {
+  "method": "compare the 60 portfolio scenarios: at the SAME strategy+filter, tighter risk (C_r0_5) loses least and larger allocations (B_25, A_eq3) lose most; overlap/crowding shows up as MORE capital destroyed per trade at loose concurrency (concurrent losers compound)",
+  "roi_by_sizing_fixed_first_hit_unfiltered": [
+   {
+    "A_eq3": -97.94,
+    "A_eq5": -96.36,
+    "A_eq10": -95.7927,
+    "B_5": -95.7771,
+    "B_10": -96.033,
+    "B_20": -96.4023,
+    "B_25": -96.9336,
+    "C_r0_5": -91.2784,
+    "C_r1": -94.7237,
+    "C_r2": -96.2977
+   }
+  ],
+  "independent_vs_portfolio": {
+   "independent_sum_of_trades_roi_reference": -1.2744,
+   "note": "per-trade expectancy at 100k notional is -1.2% per trade; any account that keeps taking such trades compounds toward zero regardless of sizing \u2014 sizing only changes HOW FAST"
+  }
+ }
+}

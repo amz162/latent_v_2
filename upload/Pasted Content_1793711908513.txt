@@ -1,0 +1,1028 @@
+# TASK 107 — PSX 15-MINUTE DELAYED MARKET MONITORING, AUTOMATED PAPER-TRADE TRACKING & LIVE PAPER-TRADE DASHBOARD
+
+## MASTER OBJECTIVE
+
+Repository: `amz162/latent_v_2`
+
+Project: Latent.pk — PSX stock prediction, ML signals, backtesting, investment simulator and paper-trading.
+
+Latest reported GitHub HEAD: `2f029843` (Task 106). Verify actual HEAD and working tree before making changes.
+
+Task 106 successfully activated the approved `psxdata` provider:
+
+`psxdata-api.fastapicloud.dev`
+
+Existing observations:
+
+- Provider overlap validation: 48/48 bars matched previously verified rows.
+- 44 new daily bars imported.
+- New sessions: 2026-10-30 and 2026-11-02.
+- Latest verified data frontier: 2026-11-02.
+- Task 105 generation 1: 12 observations.
+- Task 106 generation 2: 22 observations.
+- Four forward trades matured, all stop-loss exits.
+- Twenty-four outcomes remained pending.
+- No model was promoted.
+- All model statuses remain `not_promotable`.
+- Real-money trading remains disabled.
+- Unsupported short entries remain disabled.
+
+## USER-OBSERVED MARKET-DATA TIMING — CRITICAL
+
+The user receives PSX market data with an approximately 15-minute delay.
+
+The observed schedule is:
+
+| Actual PSX market time | Data appears in the application |
+|---|---|
+| 09:30 AM — market opens | 09:45 AM |
+| 10:00 AM | 10:15 AM |
+| 10:15 AM | 10:30 AM |
+| 12:00 PM | 12:15 PM |
+| 03:15 PM | 03:30 PM |
+| 03:30 PM — market closes | 03:45 PM — final delayed update |
+
+Timezone: `Asia/Karachi`.
+
+This means the application receives delayed market information. The market timestamp and the time the application receives the information are different.
+
+**The 15-minute provider delay must be handled explicitly throughout the ingestion, monitoring, execution, APIs and UI.**
+
+Do not mistake the provider's 15-minute delay for proof that it supplies actual 15-minute OHLC candles.
+
+Verify the API's actual data type before implementation.
+
+## CORE DESIGN PRINCIPLES
+
+1. Treat the provider's 15-minute delay as an external source delay.
+2. Preserve both market timestamp and retrieval timestamp.
+3. Process each newly available observation as soon as possible.
+4. Do not add another unnecessary 15-minute waiting period.
+5. Verify whether observations are actual 15-minute OHLC candles or delayed price snapshots.
+6. Never fabricate intraday candles from daily data or snapshots.
+7. Preserve historical daily-OHLC results.
+8. Use genuine intraday information for new paper-trade monitoring where available.
+9. Never claim the precise TP/SL event order when the source cannot establish it.
+10. Show every active paper trade in the UI with its source, entry, latest price, SL, TP1/TP2/TP3, progress and P&L.
+11. No real trades or live orders.
+12. No model promotion or threshold retraining.
+13. Keep `psx_user_schedule_v2` as the default cost profile.
+14. Preserve all Task 100–106 historical artifacts and lifecycle records.
+15. Complete all feasible work in this single task.
+
+Build or extend:
+
+`scripts/task107_runner.py`
+
+Use bounded, resumable, idempotent execution with checkpoints.
+
+---
+
+# PHASE 1 — VERIFY THE REAL 15-MINUTE DELAY
+
+Inspect the actual existing PSX provider implementation and its API responses.
+
+Verify the observed timing rather than assuming it.
+
+The expected behavior based on user observations is:
+
+- First delayed observation appears around 09:45, representing market information from around 09:30.
+- Subsequent observations become available as the market session progresses.
+- Final delayed observation appears around 15:45, representing the 15:30 closing market information.
+
+Verify all of the following:
+
+1. Does the provider return a genuine source market timestamp?
+2. Does it return a separate retrieval/server timestamp?
+3. Is the delay consistently around 15 minutes?
+4. Does it supply actual 15-minute OHLC candles?
+5. Does it supply delayed quote snapshots only?
+6. Does it supply daily OHLC data with delayed updates?
+7. Are updates continuously available or only at defined intervals?
+8. Does the API provide historical intraday backfill?
+9. Which symbols have intraday support?
+10. Are market timestamps timezone-aware?
+11. What happens on exchange holidays or changed trading sessions?
+12. What is the last available update around the session close?
+
+Do not infer that an API is 15-minute OHLC simply because its data is delayed by 15 minutes.
+
+## Required distinction
+
+Maintain three separate concepts:
+
+- `provider_delay_minutes = 15`
+- `bar_interval_minutes = actual_verified_interval_or_null`
+- `poll_interval_seconds = configured_fetch_frequency`
+
+These values must never be treated as the same thing.
+
+Use statuses:
+
+- `verified_15m_ohlc`
+- `delayed_snapshot_only`
+- `daily_ohlc_only`
+- `mixed_intraday_support`
+- `intraday_unavailable`
+- `provider_unavailable`
+
+If an actual source timestamp is supplied, use it.
+
+If it is absent, preserve the retrieval timestamp and use an estimated source timestamp only when the fixed 15-minute offset is independently verified. Label it `estimated_source_timestamp`, not verified.
+
+Deliver:
+
+- `task107_delay_verification.json`
+- `task107_provider_interval_audit.json`
+- `task107_api_schema_report.json`
+- `task107_symbol_intraday_coverage.csv`
+
+---
+
+# PHASE 2 — CORRECT DATA-TIME AND RETRIEVAL-TIME ARCHITECTURE
+
+Every price observation must keep two separate times.
+
+### A. Market time
+
+When the price observation actually belongs to the PSX market.
+
+Example:
+
+`2026-11-04 09:30:00 PKT`
+
+### B. Retrieval time
+
+When the application receives the observation.
+
+Example:
+
+`2026-11-04 09:45:00 PKT`
+
+The same distinction must apply to every bar, quote, entry, exit and monitoring event.
+
+Minimum fields:
+
+- `market_timestamp`
+- `retrieved_at`
+- `provider_delay_minutes`
+- `bar_start_timestamp`
+- `bar_end_timestamp`
+- `timestamp_quality`
+- `source_id`
+- `provider`
+- `data_interval`
+- `data_quality_status`
+
+Do not shift original trade decision timestamps by 15 minutes.
+
+Do not use a delayed observation as though it were already known at its earlier source time.
+
+Historical backtesting may use the source market timestamp to describe when an event occurred, but the forward shadow monitor must also record when the application actually detected it.
+
+### Required example
+
+If a price event belongs to 10:00 AM and arrives at 10:15 AM:
+
+- `market_timestamp = 10:00`
+- `retrieved_at = 10:15`
+- `provider_delay_minutes = 15`
+
+The UI must show both.
+
+Deliver:
+
+- `task107_timestamp_integrity_report.json`
+- `task107_data_delay_reconciliation.json`
+
+---
+
+# PHASE 3 — CONFIGURE CORRECT POLLING FREQUENCY
+
+The provider delay is 15 minutes. The application must not unnecessarily add another 15-minute delay.
+
+Inspect actual API update frequency and rate limits.
+
+Recommended behavior:
+
+- Poll every 1–2 minutes during the verified feed availability window, if permitted by provider limits.
+- Process a new observation immediately when detected.
+- Never process the same source observation twice.
+- Use provider-supported update frequency if it differs from the recommendation.
+- Use a configurable polling interval.
+- Avoid unnecessary requests when the provider has not published new data.
+- Keep the market session calendar authoritative.
+
+The user's expected feed window is approximately:
+
+`09:45–15:45 PKT`
+
+This is the availability window for delayed observations corresponding to the regular market session, not the actual market opening/closing time.
+
+Use the exchange calendar and verify actual session times. Do not hardcode a permanent schedule if PSX hours or special sessions change.
+
+## Example processing
+
+| Application time | Expected action |
+|---|---|
+| 09:45 | Process first available observation, source market time around 09:30 |
+| 10:00 | Process any newly published observations |
+| 10:15 | Process new observations; do not repeat earlier bars |
+| 12:15 | Process market data received for the corresponding earlier market time |
+| 15:30 | Continue monitoring; market is at closing period |
+| 15:45 | Process final delayed market observation and update the EOD state |
+
+If the actual API publishes data at different moments, follow its verified timestamps rather than fabricating this timetable.
+
+Add:
+
+- Idempotent polling.
+- Job locking.
+- Checkpoints.
+- Retry for provider failure.
+- Rate-limit handling.
+- Missing-observation detection.
+- Gap backfill where supported.
+- Final closing-update reconciliation.
+- Provider freshness monitoring.
+
+Do not describe a local script as an active deployed scheduler.
+
+Deliver:
+
+- `task107_polling_configuration.json`
+- `task107_polling_test_report.json`
+- `task107_feed_availability_report.json`
+- `task107_ingestion_job_history.json`
+
+---
+
+# PHASE 4 — CORRECT 15-MINUTE INTRADAY NORMALIZATION
+
+If the provider supplies genuine intraday OHLC candles, store them separately from the existing daily OHLC dataset.
+
+Required fields:
+
+- Symbol.
+- Instrument ID.
+- Market date.
+- Bar interval.
+- Bar start.
+- Bar end.
+- Open.
+- High.
+- Low.
+- Close.
+- Volume.
+- Turnover, if available.
+- Provider.
+- Market timestamp.
+- Retrieval timestamp.
+- Delay.
+- Verification status.
+- Import manifest ID.
+
+Validate:
+
+- OHLC relationships.
+- Duplicates.
+- Missing intervals.
+- Out-of-order bars.
+- Session boundaries.
+- Stale prices.
+- Invalid volume.
+- Symbol identity.
+- Historical corrections.
+
+Use a unique key such as:
+
+`(symbol, interval, bar_start_timestamp, provider)`
+
+If the provider only supplies delayed quote snapshots, store them in a separate snapshot table/store. Do not manufacture open/high/low values around a snapshot.
+
+If the provider only supplies daily candles, retain daily-only mode and clearly report the blocker for intraday monitoring.
+
+Do not mix synthetic test fixtures into real market observations.
+
+Deliver:
+
+- `task107_intraday_normalization.json`
+- `task107_intraday_coverage.json`
+- `task107_data_quality_report.json`
+- `task107_provider_overlap_report.json`
+
+---
+
+# PHASE 5 — 15-MINUTE PAPER-TRADE MONITORING ENGINE
+
+This is the central operational component.
+
+On every newly received valid delayed market observation:
+
+1. Identify the corresponding stock and paper positions.
+2. Verify whether the observation is new.
+3. Verify its source market timestamp.
+4. Verify its retrieval timestamp.
+5. Calculate the actual available price.
+6. Check SL and TP levels using only the information supplied.
+7. Update paper-position status.
+8. Calculate unrealized P&L.
+9. Reconcile any completed simulated exit.
+10. Update the monitor API and UI.
+
+Do not wait an additional 15 minutes after receiving an eligible update.
+
+Do not generate a second trade because the same observation is processed twice.
+
+For every open position track:
+
+- Symbol.
+- Side.
+- Originating signal ID.
+- Model and model version.
+- Strategy.
+- Entry timestamp.
+- Entry price.
+- Quantity.
+- Current delayed price.
+- Source market timestamp.
+- Retrieval timestamp.
+- Provider delay.
+- Stop-loss.
+- TP1.
+- TP2.
+- TP3.
+- Highest target reached.
+- Realized P&L.
+- Unrealized P&L.
+- Estimated net P&L.
+- Remaining quantity.
+- Pending maturity.
+
+## Important status distinctions
+
+Use:
+
+- `open`
+- `target_touched`
+- `partially_exited`
+- `stop_loss_observed`
+- `target_exit_simulated`
+- `ambiguous_same_bar`
+- `pending_data`
+- `stale_data`
+- `time_up`
+- `closed`
+
+Do not confuse a target being touched with a realized profitable trade.
+
+For Max TP Step Trailing, a previously touched TP1/TP2 does not necessarily mean the position has locked profit.
+
+Use existing Task 57 trade semantics and existing production execution methods.
+
+Do not rewrite the strategy logic.
+
+Deliver:
+
+- `task107_paper_trade_monitoring.json`
+- `task107_open_positions.json`
+- `task107_position_event_ledger.csv`
+- `task107_trade_status_reconciliation.json`
+
+---
+
+# PHASE 6 — HANDLE THE DAILY OHLC SAME-CANDLE PROBLEM
+
+The existing historical database contains daily bars. A daily bar cannot determine whether TP or SL was hit first if both were touched.
+
+Example:
+
+- Entry 100.
+- TP 102.
+- SL 98.
+- Daily high 104.
+- Daily low 98.
+- Daily close 98.
+
+The daily record cannot prove which level was touched first.
+
+Do not treat the SL-first convention as a verified actual market sequence.
+
+## Intraday-resolution rules
+
+When genuine 15-minute OHLC bars exist:
+
+- If only SL is touched, record a simulated SL trigger.
+- If only TP is touched, record a simulated TP event according to strategy rules.
+- If neither is touched, continue monitoring.
+- If both SL and TP are touched in one 15-minute candle, mark `ambiguous_same_bar`.
+
+A 15-minute candle may still be insufficient to determine the sequence.
+
+Do not claim the candle's open/high/low/close establishes the exact path.
+
+If genuine 1-minute/tick data is not available, ambiguity remains.
+
+## Delayed observation execution semantics
+
+A critical distinction:
+
+A price event may occur at 10:00 and only become visible to the application at 10:15.
+
+Because the shadow system has not placed a real stop order at the exchange:
+
+- Do not claim that an actual stop execution happened at 10:00.
+- Record `event_market_timestamp` only if supported by the source data.
+- Record `detected_at` when the app received the observation.
+- Record the observed price.
+- Record the delay.
+- For delayed-observation simulation, use the first available observable price and applicable gap/slippage assumptions.
+- Do not automatically fill at the nominal stop price when the only actual observation is already beyond it.
+
+If a hypothetical protective stop is modelled as a resting exchange order in a historical simulation, label that as a separate assumed-order backtest, not an observed paper fill.
+
+Maintain two distinct execution modes:
+
+1. `delayed_observation_shadow` — based on actual delayed information available to the application.
+2. `intraday_bar_backtest` — hypothetical execution using verified historical intraday bars and documented fill assumptions.
+
+Never merge the results without clearly explaining the difference.
+
+## Snapshot-only limitation
+
+If the provider supplies only delayed price snapshots:
+
+- Check whether the observed price is beyond SL/TP.
+- Record the actual observed crossing when supported.
+- Do not claim that an unobserved intraperiod high/low was touched.
+- A price may cross a stop and recover between snapshots; the app cannot know that from snapshots alone.
+- Mark such outcomes `observation_resolution_limited` where appropriate.
+
+Deliver:
+
+- `task107_daily_vs_intraday_resolution.json`
+- `task107_ambiguous_same_bar_report.json`
+- `task107_delayed_execution_semantics.json`
+- `task107_snapshot_limitations.json`
+
+---
+
+# PHASE 7 — AUTOMATIC TRADE MATURITY AND P&L
+
+On each new delayed update, calculate for every open position:
+
+- Entry price.
+- Latest observable price.
+- Quantity.
+- Unrealized gross P&L.
+- Estimated exit brokerage.
+- PSX/NCCPL/CDC fees.
+- Tax treatment.
+- Slippage assumptions.
+- Estimated net P&L.
+- Stop-loss distance.
+- Target distances.
+- Remaining quantity.
+- Total realized partial-exit P&L.
+
+Use the current authoritative cost pathway:
+
+`computeSimTradeCosts` → `computeTradeCostsV2`
+
+Default:
+
+`psx_user_schedule_v2`
+
+Do not double-charge scale-out legs.
+
+Keep these metrics separate:
+
+- `realized_net_pnl`
+- `unrealized_gross_pnl`
+- `estimated_unrealized_net_pnl`
+- `total_position_net_pnl`
+
+Open positions must not count as wins or losses until their outcome is matured under the defined rules.
+
+Pending mark-to-market is not realized P&L.
+
+Continue 5/10/21 trading-session horizons using the actual exchange calendar.
+
+Do not use calendar days instead of trading sessions.
+
+Deliver:
+
+- `task107_realized_positions.csv`
+- `task107_unrealized_positions.csv`
+- `task107_position_pnl_report.json`
+- `task107_maturity_report.json`
+- `task107_cost_reconciliation.json`
+
+---
+
+# PHASE 8 — BUILD THE PAPER TRADE MONITOR UI
+
+This is a required visible product improvement.
+
+Add a dedicated `Paper Trade Monitor` page or a prominent tab inside the existing Portfolio Simulation area.
+
+The page must use real database/API data. Do not use hardcoded demonstration numbers.
+
+## A. Summary cards
+
+Display:
+
+- Open paper trades.
+- Pending signals.
+- TP touched.
+- Partial exits.
+- Stop-loss events.
+- Closed positions.
+- Ambiguous same-bar events.
+- Stale-data positions.
+
+Clearly distinguish signals from actual simulated open positions.
+
+## B. Active trade table
+
+Display every active paper position.
+
+| Field | Information |
+|---|---|
+| Stock | Symbol and company name |
+| Action | BUY, SELL_TO_CLOSE or BEARISH_RESEARCH_ONLY |
+| Status | Open/partial/ambiguous/closed |
+| Signal source | Model, technical rule, signal ID |
+| Model version | Exact model |
+| Strategy | One of the three supported strategies |
+| Signal time | Original signal time |
+| Entry time | Simulated entry time |
+| Entry price | Actual simulation entry |
+| Quantity | Simulated share quantity |
+| Latest price | Latest verified delayed price |
+| Market timestamp | Time price belongs to |
+| Retrieval timestamp | Time app received price |
+| Delay | Actual data lag |
+| SL | Stop-loss price |
+| TP1 | First target |
+| TP2 | Second target |
+| TP3 | Third target |
+| Best target | Highest verified target touched |
+| Realized P&L | Closed portion |
+| Unrealized P&L | Open portion |
+| Estimated net P&L | Costs included |
+| Interval | Actual source interval |
+| Maturity | Trading sessions remaining |
+
+Prices and money must display in PKR.
+
+Never show an old price as current.
+
+## C. Source and destination details
+
+The user wants to know where each paper trade came from and where it is expected to go.
+
+Show:
+
+**Where it came from**
+
+- Signal origin.
+- Stock symbol.
+- Model or technical-rule name.
+- Original signal timestamp.
+- Prediction horizon.
+- Strategy.
+- Entry reason.
+- Entry price.
+
+**Where it is going**
+
+- Stop-loss.
+- TP1.
+- TP2.
+- TP3.
+- Latest observed price.
+- Highest target touched.
+- Remaining distance to next target.
+- Remaining distance to stop-loss.
+- Current unrealized net P&L.
+- Position status.
+
+Do not present targets as guaranteed future price predictions.
+
+## D. Price and target visual
+
+Show the current trade levels:
+
+`SL ← ENTRY → TP1 → TP2 → TP3`
+
+Use a progress visualization showing:
+
+- Entry price.
+- Current delayed price.
+- Stop-loss.
+- All targets.
+- Highest target reached.
+
+Display the actual data timestamp beside the price.
+
+## E. Trade details
+
+On clicking a stock, show:
+
+- Full trade history.
+- Source/signal details.
+- Entry and quantity.
+- Current delayed price.
+- Target/SL levels.
+- All detected intraday events.
+- Partial-exit history.
+- Ambiguous candle events.
+- Realized and unrealized P&L.
+- Costs.
+- Data source.
+- Market timestamp.
+- Retrieval timestamp.
+
+If true 15-minute OHLC is available, show those genuine candles.
+
+If only delayed snapshots are available, show a snapshot timeline instead of fake candles.
+
+If only daily OHLC exists, label it `daily_ohlc_approximation`.
+
+## F. Required delay banner
+
+Display a permanent, clear status message:
+
+"Market data is delayed by approximately 15 minutes. The displayed price represents an earlier market timestamp, not the live exchange price."
+
+Show the actual timestamps, for example:
+
+`Market time: 09:30 PKT`
+
+`Received: 09:45 PKT`
+
+`Estimated/verified delay: 15 minutes`
+
+Use actual timestamps, not hardcoded examples.
+
+If the data arrives late or stops updating, show a stale/delayed status.
+
+Do not pretend monitoring is live.
+
+## G. Filters
+
+Support filtering by:
+
+- Open.
+- Pending.
+- Target touched.
+- Partial exit.
+- Stop-loss.
+- Ambiguous.
+- Closed.
+- Stale data.
+- Model.
+- Symbol.
+- Strategy.
+- 5/10/21-day horizon.
+
+---
+
+# PHASE 9 — PAPER-TRADE API
+
+Create or extend a documented API following existing application conventions.
+
+Suggested:
+
+`/api/paper-trading/monitor`
+
+Individual detail:
+
+`/api/paper-trading/monitor/[tradeId]`
+
+The monitor API must return:
+
+- Position identity.
+- Symbol.
+- Signal source.
+- Model/version.
+- Strategy.
+- Entry.
+- Quantity.
+- Latest delayed price.
+- Market timestamp.
+- Retrieval timestamp.
+- Provider delay.
+- SL and TP targets.
+- Highest target reached.
+- Position status.
+- Realized P&L.
+- Unrealized P&L.
+- Estimated net P&L.
+- Data interval.
+- Freshness status.
+- Maturity status.
+
+Preserve existing API compatibility.
+
+Do not expose provider credentials or unnecessary database details.
+
+Ensure every displayed value is bound to actual API data.
+
+---
+
+# PHASE 10 — DAILY CLOSE AND 03:45 FINAL UPDATE
+
+The market closes at approximately 03:30 PM according to the user's observed schedule, and the final delayed update arrives around 03:45 PM.
+
+Implement a separate end-of-session reconciliation.
+
+At the final delayed update:
+
+1. Check whether the final source-market observation belongs to approximately 03:30.
+2. Verify whether the provider published its final record.
+3. Save the last valid market snapshot/candle.
+4. Update all open paper positions.
+5. Calculate EOD MTM.
+6. Mature only outcomes whose rules and horizons are satisfied.
+7. Do not force-close an open position unless its actual strategy rules require it.
+8. Preserve positions that remain open overnight.
+9. Record missing final observations and provider delays.
+10. Create an immutable EOD report.
+
+Do not assume that receiving data at 03:45 automatically means a final candle is complete. Use the provider's source timestamp and actual response.
+
+After final reconciliation, mark the session:
+
+- `eod_verified`
+- `eod_partial`
+- `eod_provider_delayed`
+- `eod_missing`
+
+At the next verified session, resume monitoring without creating a new trade for an existing open position.
+
+Deliver:
+
+- `task107_eod_reconciliation.json`
+- `task107_final_delayed_update.json`
+- `task107_overnight_positions.json`
+
+---
+
+# PHASE 11 — SCHEDULER AND OPERATIONAL HEALTH
+
+Inspect actual deployment infrastructure.
+
+Configure an authenticated recurring process where supported.
+
+It must respect the delayed-feed window, approximately 09:45–15:45 PKT, rather than incorrectly stopping data ingestion at the actual 03:30 market close.
+
+Do not claim an active scheduler until a real production execution has been verified.
+
+Requirements:
+
+- Configurable polling interval.
+- Provider session detection.
+- No duplicate runs.
+- Lock and checkpoint.
+- Rate-limit handling.
+- Retry.
+- Job history.
+- Daily closing reconciliation.
+- Data freshness API.
+- Shadow monitor status.
+
+If deployment credentials/permissions are missing, complete the implementation and document the exact owner-side deployment requirement.
+
+Deliver:
+
+- `task107_scheduler_status.json`
+- `task107_operational_health.json`
+- `task107_job_history.json`
+- `task107_deployment_checklist.md`
+
+---
+
+# PHASE 12 — PRESERVE HISTORICAL EVIDENCE AND SAFETY
+
+Do not alter old daily-resolution backtest results.
+
+Use two separate namespaces:
+
+- `daily_ohlc_approximation`
+- `delayed_intraday_observation`
+
+Preserve:
+
+- Task 54.
+- Task 100.
+- Task 101.
+- Task 102.
+- Task 103.
+- Task 104.
+- Task 105.
+- Task 106.
+
+Do not change model weights, thresholds or historical promotion decisions.
+
+Do not start real trades or actual broker orders.
+
+Do not automatically treat the latest paper-trade result as a new training label.
+
+Keep unsupported short entries blocked.
+
+Keep ensemble agreement and calibrated probability semantically distinct.
+
+All models remain research/shadow-only unless genuinely new evidence satisfies existing promotion criteria.
+
+---
+
+# PHASE 13 — TESTING AND REGRESSION
+
+Add deterministic tests for:
+
+### Delay and timestamp
+
+- 09:30 market event received at 09:45.
+- 10:00 event received at 10:15.
+- 15:30 final market observation received at 15:45.
+- Different actual delay.
+- Missing source timestamp.
+- Incorrect timestamp timezone.
+- Provider response arrives late.
+- Old observation is reprocessed.
+
+### Intraday OHLC
+
+- Valid 15-minute bar.
+- Invalid OHLC.
+- Duplicate bar.
+- Missing candle.
+- Same-candle TP/SL.
+- Multiple candles with ordered events.
+- Provider historical correction.
+
+### Delayed snapshots
+
+- Price remains between levels.
+- Snapshot crosses SL.
+- Snapshot crosses target.
+- Price crosses and recovers between observations.
+- Stale snapshot.
+- Delayed or missing update.
+
+### Execution
+
+- SL-only candle.
+- TP-only candle.
+- Same-candle ambiguity.
+- Gap-through-stop.
+- TP on an earlier candle and SL on a later candle.
+- TP1/TP2 trailing behavior.
+- Scale-out exits.
+- Correct V2 cost accounting.
+- No false actual-fill claims.
+
+### UI and API
+
+- All open paper trades shown.
+- Correct signal source.
+- Entry price.
+- Latest delayed price.
+- SL/TP fields.
+- Actual timestamp labels.
+- Freshness banner.
+- Realized vs unrealized P&L.
+- No hardcoded demo values.
+
+### Safety
+
+- No real broker orders.
+- No unsupported short entries.
+- No model auto-promotion.
+- No duplicate shadow observations.
+- No historic artifact mutation.
+
+Run:
+
+- Python tests.
+- TypeScript compilation.
+- Production build.
+- API checks.
+- Headless browser tests.
+- Cost-parity suite.
+- Database integrity checks.
+
+Report actual passed and skipped counts separately.
+
+---
+
+# PHASE 14 — REQUIRED REPORTS
+
+Create:
+
+`data/backtest_reports/task107/`
+
+Required artifacts:
+
+1. `task107_baseline_inventory.json`
+2. `task107_delay_verification.json`
+3. `task107_provider_interval_audit.json`
+4. `task107_api_schema_report.json`
+5. `task107_symbol_intraday_coverage.csv`
+6. `task107_timestamp_integrity_report.json`
+7. `task107_data_delay_reconciliation.json`
+8. `task107_polling_configuration.json`
+9. `task107_polling_test_report.json`
+10. `task107_feed_availability_report.json`
+11. `task107_intraday_normalization.json`
+12. `task107_intraday_coverage.json`
+13. `task107_data_quality_report.json`
+14. `task107_provider_overlap_report.json`
+15. `task107_paper_trade_monitoring.json`
+16. `task107_open_positions.json`
+17. `task107_position_event_ledger.csv`
+18. `task107_trade_status_reconciliation.json`
+19. `task107_daily_vs_intraday_resolution.json`
+20. `task107_ambiguous_same_bar_report.json`
+21. `task107_delayed_execution_semantics.json`
+22. `task107_snapshot_limitations.json`
+23. `task107_realized_positions.csv`
+24. `task107_unrealized_positions.csv`
+25. `task107_position_pnl_report.json`
+26. `task107_maturity_report.json`
+27. `task107_cost_reconciliation.json`
+28. `task107_paper_trade_monitor_ui_report.json`
+29. `task107_dashboard_api_report.json`
+30. `task107_trade_detail_report.json`
+31. `task107_ui_data_freshness_report.json`
+32. `task107_eod_reconciliation.json`
+33. `task107_final_delayed_update.json`
+34. `task107_overnight_positions.json`
+35. `task107_scheduler_status.json`
+36. `task107_operational_health.json`
+37. `task107_job_history.json`
+38. `task107_cost_parity_report.json`
+39. `task107_test_summary.json`
+40. `task107_historical_integrity.json`
+41. `task107_remaining_blockers.json`
+42. `task107_final_summary.json`
+
+Documentation:
+
+- `docs/task107-15-minute-delayed-data.md`
+- `docs/task107-paper-trade-monitor.md`
+- `docs/task107-timestamp-and-delay-semantics.md`
+- `docs/task107-intraday-execution-rules.md`
+- `docs/task107-daily-vs-intraday-history.md`
+- `docs/task107-operational-runbook.md`
+
+Every report must include actual source, generated timestamp, coverage, exact status, errors and limitations.
+
+If a feature is blocked, create a blocker record. Never produce a fake success artifact.
+
+---
+
+# FINAL QUESTIONS
+
+Answer from actual implementation and provider data:
+
+1. Does the provider really deliver a 15-minute delayed feed?
+2. Does the first update arrive around 09:45 for the 09:30 market opening?
+3. Does the final delayed update arrive around 03:45 for the 03:30 market closing?
+4. Does the API provide actual 15-minute OHLC or delayed price snapshots?
+5. How frequently are new observations actually published?
+6. What polling interval is configured and what is the resulting additional application delay?
+7. Are market timestamp and retrieval timestamp separately stored?
+8. Does monitoring process each update without adding another 15-minute wait?
+9. How many valid intraday observations have been imported?
+10. How many paper trades are currently open?
+11. For every open trade, which signal/model generated it?
+12. At what price did it enter?
+13. What are SL, TP1, TP2 and TP3?
+14. What is its latest observable delayed price?
+15. What is its current unrealized net P&L?
+16. How many positions are target-touched, partial, stop-loss, ambiguous or pending?
+17. Are any TP/SL sequences ambiguous within a candle?
+18. Does the UI display data delay clearly?
+19. Are realized and unrealized P&L separate?
+20. Is 03:45 final-session reconciliation working?
+21. Are old daily historical results preserved?
+22. Is scheduler operation genuinely active or only deployment-ready?
+23. Are all tests passing?
+24. What remains unavailable because of the provider's data capability?
+
+## FINAL DECISION RULE
+
+If genuine 15-minute OHLC is available, use it for new shadow paper monitoring while preserving same-bar ambiguity.
+
+If only delayed snapshots are available, build the delayed-observation monitor. Do not claim precise target/stop sequencing between snapshots.
+
+If only daily OHLC is available for a symbol, retain the clearly labeled daily approximation for that stock.
+
+**The user must be able to open Latent.pk, see every actual open paper position, identify exactly where it originated, see where it entered, where its stop and targets are, see the latest delayed market price, and understand when that price actually belonged to the market and when it reached the application.**
+
+Do not pretend the app receives live market data. Do not claim a stop was executed at its exact level merely because delayed information shows that the market crossed it earlier.
+
+Complete every feasible phase and report the exact Git HEAD, tests, provider capability, observed delay, scheduler state, active paper positions and remaining blockers.

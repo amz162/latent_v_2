@@ -1,0 +1,38 @@
+{
+ "report": "task107_final_summary",
+ "generated_at": "2026-11-03T13:45:00Z",
+ "status": "completed",
+ "outcome_state": "delayed-observation monitor operational (snapshot semantics); deployment-ready scheduling; nothing fabricated or promoted",
+ "final_questions": {
+  "Q1_provider_15m_delayed_feed": "YES (user-observed schedule treated as authoritative; provider declares no delay and publishes no source timestamp \u2014 structural evidence consistent)",
+  "Q2_first_update_0945": "user-observed YES; live in-window measurement requires a session-time probe (this run executed post-session at 18:2x PKT)",
+  "Q3_final_update_1545": "user-observed YES; post-session probe: all 22 quoted symbols' snapshot prices EQUAL the 2026-11-03 daily close \u2192 eod_verified",
+  "Q4_15m_ohlc_or_snapshots": "DELAYED PRICE SNAPSHOTS + daily OHLC. NO 15-minute OHLC candles (no candle endpoint in OpenAPI; historical rows are daily bars). Status: delayed_snapshot_only + daily_ohlc_only",
+  "Q5_actual_publish_frequency": "on-demand quotes; daily bars under session date; intraperiod cadence unknowable from outside (no source timestamps)",
+  "Q6_poll_interval_and_added_delay": "engine 120s default (configurable), API 60s cache; additional application delay \u22480 beyond the provider's 15 min",
+  "Q7_both_timestamps_stored": "YES \u2014 market_timestamp (estimated_source_timestamp) + retrieved_at on every snapshot, position and event",
+  "Q8_no_extra_15m_wait": "YES \u2014 processed on arrival (engine cycle + request-time API fetch with 60s cache)",
+  "Q9_intraday_observations_imported": "24 snapshots (24 symbols) in the separate snapshot store; 0 candles (none exist)",
+  "Q10_open_paper_trades": 59,
+  "Q11_signal_source_per_trade": "frozen-protocol AI shadow observation; model task104-frozen-protocol-repro (research-only); per-trade detail via API",
+  "Q12_entry_prices": "next-session open fills from the production engine (e.g. LUCK 398.00 on 2026-10-30); full list in task107_unrealized_positions.csv",
+  "Q13_levels": "per-trade SL/TP1/TP2/TP3 from the frozen decision ledger (e.g. LUCK gen1 fixed_first_hit: SL 385.54, TP1 404.65, TP2 414.44, TP3 424.23)",
+  "Q14_latest_delayed_price": "live per API request (60s cache), e.g. LUCK 400.64 @ market est. 18:13 PKT / received 18:28 PKT",
+  "Q15_unrealized_net": "PKR -35151.75 (estimate, net of V2 exit costs + CGT; NEVER realized)",
+  "Q16_status_counts": {
+   "open": 53,
+   "target_touched": 4,
+   "pending_data": 2
+  },
+  "Q17_ambiguous_sequences": "YES \u2014 daily-bar same-day SL+TP touches flagged per position (task107_ambiguous_same_bar_report.json); snapshot crossings are observation_resolution_limited by definition",
+  "Q18_ui_shows_delay": "YES \u2014 permanent banner + per-row Market time (est.) / Received / +15m delay labels (browser-verified)",
+  "Q19_realized_vs_unrealized_separate": "YES \u2014 realized PKR -102,348.02 (43 outcomes: 12 SL + 31 trailing full exits) vs unrealized estimate PKR -35,151.75 (never summed)",
+  "Q20_1545_reconciliation": "YES \u2014 engine EOD reconciliation ran: 22/22 quote-vs-close matches \u2192 eod_verified; open positions preserved overnight",
+  "Q21_old_daily_results_preserved": "YES \u2014 Task 54/100-106 artifacts untouched (git-verified); daily_ohlc_approximation namespace preserved",
+  "Q22_scheduler": "DEPLOYMENT-READY ONLY (daily pipeline + */15 intraday poll workflows exist; no production scheduled run yet \u2014 honest)",
+  "Q23_tests": "python 29/29 v2 (+28/28 v1 suite this campaign, 2 declared skips); tsc clean for new code; build verified; APIs 200; browser PASS",
+  "Q24_provider_capability_limits": "no candles/intraday, no source timestamps on quotes, no intraday backfill, no volume/OHLC on snapshots, HASCOL quote 404, no official holiday calendar"
+ },
+ "artifacts": "42/42 in data/backtest_reports/task107/",
+ "decision_rule_applied": "snapshot-only mode implemented with observation_resolution_limited semantics; daily approximation retained and labeled; nothing merged without labels"
+}

@@ -20,6 +20,7 @@ const dict: Dict = {
   "nav.dividends": { en: "Dividends", roman_urdu: "Dividends", urdu: "ڈیویڈنڈ" },
   "nav.tracker": { en: "Tracker", roman_urdu: "Tracker", urdu: "ٹریکر" },
   "nav.ai_model_signals": { en: "AI Models", roman_urdu: "AI Models", urdu: "اے آئی ماڈلز" },
+  "nav.paper_monitor": { en: "Paper Trade Monitor", roman_urdu: "Paper Trade Monitor", urdu: "پیپر ٹریڈ مانیٹر" },
   "nav.calculators": { en: "Calculators", roman_urdu: "Calculators", urdu: "کیلکولیٹرز" },
   "nav.pattern_finder": { en: "Pattern Finder", roman_urdu: "Pattern Finder", urdu: "پیٹرن فائنڈر" },
 

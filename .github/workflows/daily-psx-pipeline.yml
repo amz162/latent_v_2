@@ -1,0 +1,98 @@
+name: Daily PSX pipeline
+
+# Task 107 Phase 3 — controlled daily forward-validation pipeline.
+# Runs after the regular PSX session (15:30 PKT close => 11:30 UTC) on weekdays.
+# HOLIDAYS: the pipeline itself decides session presence from PROVIDER DATA
+# (a holiday simply yields no new bars -> no-op success), never from the calendar.
+#
+# Status: DEPLOYMENT-READY, NOT yet verified in production. Do not claim active
+# scheduling until a real run has succeeded (see task107_scheduler_test_report.json).
+
+on:
+  schedule:
+    - cron: "30 11 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (fetch/validate only, no import/promotion)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: daily-psx-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check required configuration (fail visibly, never print values)
+        id: cfg
+        run: |
+          if [ -z "${{ github.token }}" ]; then
+            echo "::error::github.token unavailable — workflow cannot commit pipeline updates"
+            exit 1
+          fi
+          echo "config ok (no external credentials required: provider is key-free; DATABASE_URL is a local file path)"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Restore database snapshot
+        run: |
+          test -f db/custom.db.gz || { echo "::error::db/custom.db.gz missing"; exit 1; }
+          gunzip -kf db/custom.db.gz
+          echo "DATABASE_URL=file:$GITHUB_WORKSPACE/db/custom.db" >> "$GITHUB_ENV"
+
+      - name: Run pipeline (ingest -> shadow -> maturity -> reports)
+        run: |
+          DRY=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then DRY="--dry-run"; fi
+          python3 scripts/task107_runner.py pipeline $DRY
+
+      - name: Commit updated database snapshot and reports (only when data advanced)
+        id: commit
+        run: |
+          git config user.name "latent-pipeline-bot"
+          git config user.email "pipeline@users.noreply.github.com"
+          FRONTIER=$(python3 -c "import sqlite3;print(sqlite3.connect('db/custom.db').execute('SELECT MAX(date) FROM OhlcvBar').fetchone()[0])")
+          git add -A data/backtest_reports/task107 data/external_imports/psx_eod data/backtest_reports/task103 db/custom.db.gz src/lib/latent 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No pipeline changes to commit (run id: ${{ github.run_id }})"
+          else
+            gunzip -kf db/custom.db.gz 2>/dev/null || true
+            gzip -kf db/custom.db
+            git add db/custom.db.gz
+            git commit -m "Daily PSX pipeline: frontier $FRONTIER (run ${{ github.run_id }})"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "run_id=${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload pipeline artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task107-reports-run-${{ github.run_id }}
+          path: data/backtest_reports/task107/
+          retention-days: 30

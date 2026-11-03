@@ -1,0 +1,29 @@
+{
+ "report": "task107_scheduler_implementation",
+ "generated_at": "2026-11-03T13:04:44+0000",
+ "status": "completed",
+ "selection": {
+  "order": [
+   "hosting scheduler: unavailable",
+   "in-app scheduler: not deployed",
+   "GitHub Actions: CHOSEN (DB is in-repo; provider key-free; no secrets needed)",
+   "other: not approved"
+  ]
+ },
+ "workflow": ".github/workflows/daily-psx-pipeline.yml",
+ "requirements_met": [
+  "after-session schedule (11:30 UTC, weekdays)",
+  "holiday-safe (provider decides sessions)",
+  "concurrency group",
+  "lock + decision_id idempotency",
+  "manual dispatch",
+  "dry-run input",
+  "provider retries via checkpointed reruns",
+  "run IDs recorded",
+  "visible failure on missing config",
+  "no credentials in source",
+  "no DB backup/credential files in artifacts"
+ ],
+ "activation_status": "deployment_ready_not_verified",
+ "runtime_seconds": 0.1
+}

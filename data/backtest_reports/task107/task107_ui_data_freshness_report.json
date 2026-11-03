@@ -1,0 +1,15 @@
+{
+ "report": "task107_ui_data_freshness_report",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "freshness_states": [
+  "fresh",
+  "session_closed_data",
+  "stale_data",
+  "no_data"
+ ],
+ "banner": "permanent delayed-data banner with live window status + last poll time",
+ "stale_policy": "during-window snapshots older than 30 min \u2192 stale_data; outside window \u2192 session_closed_data (honest, not 'live')",
+ "never_old_price_as_current": "every price row shows its market (est.) + received timestamps",
+ "verdict": "completed"
+}

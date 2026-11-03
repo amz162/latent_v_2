@@ -71,14 +71,35 @@ async function main() {
         if (terminal) { matured++; entryRealized += r.netPnl; }
         else { matured++; entryRealized += r.netPnl; }
       } else {
-        allResolved = false;
-        const mtm = remainingQty > 0 ? (scanBars[scanBars.length - 1].close - entry) * remainingQty : 0;
-        outcomes[strat] = { status: "pending_mtm", entry, quantity, sessions_available: sessionsAvailable,
-          resolved_legs: r.legs.map((l) => ({ exit_date: l.exitDate, price: l.exitPrice, qty: l.quantity, net: l.netPnl })),
-          realized_net_pnl: r.legs.reduce((s, l) => s + l.netPnl, 0),
-          unrealized_mtm_pkr: Math.round(mtm * 100) / 100,
-          note: "unrealized; NEVER counted as a win; matures when sessions 10..21 arrive" };
-        pending++; entryUnrealized += mtm + r.legs.reduce((s, l) => s + l.netPnl, 0);
+        // The engine exits remaining shares at the LAST available bar (TIME_UP).
+        // That final leg is NOT a realized exit: split it out first, then decide.
+        const lastDate = scanBars[scanBars.length - 1].date;
+        const lastL = r.legs.length ? r.legs[r.legs.length - 1] : null;
+        const finalLeg = lastL && lastL.exitDate === lastDate && lastL.exitReason === "TIME_UP" ? lastL : null;
+        const genuineLegs = finalLeg ? r.legs.slice(0, -1) : r.legs;
+        const genuineRemaining = quantity - genuineLegs.reduce((s, l) => s + l.quantity, 0);
+        if (!finalLeg) {
+          // Every share exited through genuine fills (e.g. a step-trailing stop
+          // before the horizon ends): the position is complete — realized.
+          const lastLeg = r.legs[r.legs.length - 1];
+          outcomes[strat] = { status: "matured_full_exit", entry, quantity,
+            exit_reason: lastLeg ? lastLeg.exitReason : "FULL_EXIT",
+            realized_net_pnl: Math.round(r.netPnl * 100) / 100,
+            net_return_pct: r.netPnl / (entry * quantity) * 100,
+            sessions_used: sessionsAvailable, hold: r.nBarsExamined,
+            note: "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM" };
+          matured++; entryRealized += r.netPnl;
+        } else {
+          allResolved = false;
+          const mtm = finalLeg.netPnl;
+          outcomes[strat] = { status: "pending_mtm", entry, quantity, sessions_available: sessionsAvailable,
+            genuinely_resolved_legs: genuineLegs.map((l) => ({ exit_date: l.exitDate, price: l.exitPrice, qty: l.quantity, net: l.netPnl })),
+            resolved_legs_pnl_pkr: Math.round(genuineLegs.reduce((s, l) => s + l.netPnl, 0) * 100) / 100,
+            unrealized_mtm_pkr: Math.round(mtm * 100) / 100,
+            mark_date: lastDate,
+            note: "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit." };
+          pending++; entryUnrealized += mtm + genuineLegs.reduce((s, l) => s + l.netPnl, 0);
+        }
       }
     }
     unrealizedTotal += entryUnrealized; realizedTotal += entryRealized;

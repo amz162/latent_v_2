@@ -1,0 +1,58 @@
+{
+  "lifecycle": "prospective-lifecycle.ts owns the live shadow book; historical research phases never write to it; no fills are fabricated; pending -> open requires genuine next-session entry evidence",
+  "db_counts": {
+    "prospective_paper_trades_total": 114,
+    "by_status": {
+      "pending_entry": 114
+    },
+    "paper_trade_legs": 0,
+    "prediction_history": 375,
+    "prediction_outcomes": 375,
+    "latest_ohlcv_bar": "2026-10-29"
+  },
+  "by_model": {
+    "CatBoost": 30,
+    "LightGBM": 15,
+    "Random Forest": 18,
+    "Ridge Regression": 27,
+    "XGBoost": 24
+  },
+  "artifact_freshness": {
+    "status": "ACTIVE",
+    "blockReason": null,
+    "latestOhlcv": "2026-10-30",
+    "generatedAt": "2026-10-31T20:36:50.134Z",
+    "counts": {
+      "predictionsTotal": 375,
+      "buyPredictions": 38,
+      "buyPredictionsWithRiskLevels": 38,
+      "tradesTotal": 228,
+      "tradesByState": {
+        "pending_entry": 33,
+        "open": 63,
+        "closed": 18,
+        "skipped": 114
+      },
+      "tradesByStrategy": {
+        "fixed_first_hit": 76,
+        "max_tp_step_trailing": 76,
+        "scale_out_50_25_25": 76
+      },
+      "tradesGenuine": 228,
+      "tradesDemo": 0,
+      "outcomesTotal": 375,
+      "outcomesByStatus": {
+        "pending": 375,
+        "matured": 0,
+        "unavailable": 0
+      },
+      "legsTotal": 18
+    }
+  },
+  "paper_trade_legs_note": "PaperTradeLeg is empty in this environment: scale-out legs are aggregated at position level in this deployment; leg-level rows would appear only when the scale-out lifecycle writes them",
+  "integrity_checks": {
+    "no_retroactive_threshold_tuning": "Task 100 experiments use separate experiment IDs (task100_*) and versioned cohorts; prospective records untouched",
+    "latest_bar_matches_artifact": false
+  },
+  "counts_by_model_note": "modelId column mapping is best-effort via PRAGMA introspection"
+}

@@ -1,0 +1,18 @@
+{
+ "report": "task107_data_delay_reconciliation",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "provider_delay_minutes": 15,
+ "delay_basis": "user-observed schedule (authoritative per task)",
+ "bar_interval_minutes": null,
+ "poll_interval_seconds": 120,
+ "additional_application_delay": "\u22480 beyond the provider delay: snapshots are processed on arrival (engine poll \u2264120s; API serves live quotes with a 60s cache)",
+ "post_session_evidence": {
+  "session_date": "2026-11-03",
+  "checked": 22,
+  "quote_matches_close": 22,
+  "state": "eod_verified",
+  "note": "quote price equals the session daily close for matched symbols; the provider publishes no final-candle completeness flag, so completeness follows the data itself"
+ },
+ "verdict": "completed"
+}

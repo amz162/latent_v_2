@@ -18,12 +18,35 @@ interface QuoteCacheEntry { value: number | null; expiresAt: number; }
 const quoteCache = new Map<string, QuoteCacheEntry>();
 
 export async function getLiveQuote(symbol: string): Promise<number | null> {
+  const d = await getLiveQuoteDetailed(symbol);
+  return d ? d.price : null;
+}
+
+export interface DetailedQuote {
+  symbol: string;
+  price: number;
+  /** Provider server/retrieval timestamp (tz-aware ISO). The provider does NOT
+   *  supply a source market timestamp on quotes (verified, Task 107 v2). */
+  retrievedAt: string | null;
+  cached: boolean | null;
+}
+
+interface DetailedCacheEntry { value: DetailedQuote | null; expiresAt: number; }
+const detailedCache = new Map<string, DetailedCacheEntry>();
+
+/**
+ * Task 107 v2 — quote WITH its provider metadata. The provider returns no
+ * source market timestamp; callers must pair the price with
+ * `retrievedAt` (real) and an ESTIMATED market time (retrievedAt − 15 min),
+ * labeled `estimated_source_timestamp`.
+ */
+export async function getLiveQuoteDetailed(symbol: string): Promise<DetailedQuote | null> {
   const sym = symbol.toUpperCase().replace(/XD$/, "");
   const now = Date.now();
-  const hit = quoteCache.get(sym);
+  const hit = detailedCache.get(sym);
   if (hit && hit.expiresAt > now) return hit.value;
 
-  let value: number | null = null;
+  let value: DetailedQuote | null = null;
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), PER_REQ_TIMEOUT_MS);
@@ -36,12 +59,19 @@ export async function getLiveQuote(symbol: string): Promise<number | null> {
     if (res.ok) {
       const j = await res.json();
       const d = j?.data ?? j;
-      if (d && typeof d.price === "number" && d.price > 0) value = d.price;
+      if (d && typeof d.price === "number" && d.price > 0) {
+        value = {
+          symbol: sym,
+          price: d.price,
+          retrievedAt: j?.meta?.timestamp ?? null,
+          cached: j?.meta?.cached ?? null,
+        };
+      }
     }
   } catch {
     value = null;
   }
-  quoteCache.set(sym, { value, expiresAt: now + QUOTE_TTL_MS });
+  detailedCache.set(sym, { value, expiresAt: now + QUOTE_TTL_MS });
   return value;
 }
 

@@ -1,0 +1,35 @@
+{
+ "runs": [
+  {
+   "started_at": "2026-11-03T12:53:38Z",
+   "kind": "ingest",
+   "status": "success",
+   "reason": "crashed_after_promotion_reconstructed",
+   "note": "first run of task107_daily_ingest.py promoted the bars then crashed at artifact write (missing T107 dir); run 2 verified idempotency (no_new_data, overlap byte-equal); 69 bars = 23 symbols x 3 sessions (2026-10-30, 2026-11-02, 2026-11-03)",
+   "frontier_after": "2026-11-03",
+   "bars_promoted": 69,
+   "drop_file": "data/external_imports/psx_eod/task107_daily_20261103T125358Z.csv"
+  },
+  {
+   "started_at": "2026-11-03T12:54:26Z",
+   "kind": "ingest",
+   "status": "success",
+   "reason": "no_new_data",
+   "frontier_after": "2026-11-03",
+   "overlap_checked": 46,
+   "mismatches": 0
+  },
+  {
+   "started_at": "2026-11-03T13:06:00Z",
+   "kind": "ingest",
+   "status": "success",
+   "frontier_after": "2026-11-03",
+   "bars_promoted": 0,
+   "overlap_checked": 46,
+   "mismatches": 0
+  }
+ ],
+ "last_run": "2026-11-03T13:06:00Z",
+ "last_successful_run": "2026-11-03T13:06:00Z",
+ "last_frontier": "2026-11-03"
+}

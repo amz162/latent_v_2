@@ -1,0 +1,12 @@
+{
+ "report": "task107_daily_vs_intraday_resolution",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "namespaces": {
+  "daily_ohlc_approximation": "historical backtests + maturity (Task 100-106 semantics preserved; SL-first is a CONVENTION, not a verified sequence)",
+  "delayed_intraday_observation": "this monitor (snapshot semantics; observed crossings only)"
+ },
+ "same_candle_problem": "a daily bar with high\u2265TP and low\u2264SL cannot order the touches; flagged ambiguous_same_bar_dates per position",
+ "never_merged_without_labels": true,
+ "verdict": "completed"
+}

@@ -1,0 +1,74 @@
+{
+ "report": "task104_reconciliation",
+ "generated_at": "2026-11-02T16:29:07+0000",
+ "status": "completed",
+ "reconstruction_basis": "samples grid -> production engine (unchanged) -> computeTradeCostsV2; per-trade comparison against the frozen Task 102 labels",
+ "per_strategy": {
+  "fixed_first_hit": {
+   "compared": 11521,
+   "net_pnl_identical_within_0.005_pkr": 11521,
+   "max_abs_net_pnl_deviation_pkr": 0.01,
+   "max_abs_total_cost_deviation_pkr": 0.01,
+   "exit_reason_match": 11521,
+   "hold_sessions_match": 11521,
+   "verdict": "IDENTICAL",
+   "reconstructed_aggregates": {
+    "n": 11521,
+    "net_pnl_pkr": -15379386.56,
+    "total_cost_pkr": 14229355.94,
+    "gross_win_rate_pct": 36.11,
+    "expectancy_pct_per_trade": -1.3354
+   },
+   "unreconstructable": 0,
+   "note": "every historical record reconstructed through the unchanged production engine; no exclusions required"
+  },
+  "max_tp_step_trailing": {
+   "compared": 11521,
+   "net_pnl_identical_within_0.005_pkr": 11521,
+   "max_abs_net_pnl_deviation_pkr": 0.01,
+   "max_abs_total_cost_deviation_pkr": 0.01,
+   "exit_reason_match": 11521,
+   "hold_sessions_match": 11521,
+   "verdict": "IDENTICAL",
+   "reconstructed_aggregates": {
+    "n": 11521,
+    "net_pnl_pkr": -13314469.61,
+    "total_cost_pkr": 12299824.61,
+    "gross_win_rate_pct": 50.33,
+    "expectancy_pct_per_trade": -1.1561
+   },
+   "unreconstructable": 0,
+   "note": "every historical record reconstructed through the unchanged production engine; no exclusions required"
+  },
+  "scale_out_50_25_25": {
+   "compared": 11521,
+   "net_pnl_identical_within_0.005_pkr": 11521,
+   "max_abs_net_pnl_deviation_pkr": 0.01,
+   "max_abs_total_cost_deviation_pkr": 0.01,
+   "exit_reason_match": 11521,
+   "hold_sessions_match": 11521,
+   "verdict": "IDENTICAL",
+   "reconstructed_aggregates": {
+    "n": 11521,
+    "net_pnl_pkr": -15352508.07,
+    "total_cost_pkr": 12191271.7,
+    "gross_win_rate_pct": 43.72,
+    "expectancy_pct_per_trade": -1.3331
+   },
+   "unreconstructable": 0,
+   "note": "every historical record reconstructed through the unchanged production engine; no exclusions required"
+  }
+ },
+ "probabilities_reproduction": {
+  "method": "persisted Task 101 pipeline rerun (no tuning)",
+  "thr_q70_max_tp_step_trailing": 0.4282,
+  "reported_task101_thr": 0.4282,
+  "reported_task102_thr": 0.4317,
+  "auc_test_reproduced": 0.5268,
+  "auc_test_reported": 0.5373,
+  "brier_test_cal_reproduced": 0.2623,
+  "brier_test_cal_reported": 0.263498,
+  "verdict": "threshold matches Task 101 exactly; Task 102's small drift (0.4317/0.5373) attributable to its own re-run environment; the Task 104 filter uses the self-consistent reproduced values and the deltas are disclosed rather than tuned away"
+ },
+ "runtime_seconds": 0.6
+}

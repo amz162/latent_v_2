@@ -1,0 +1,18 @@
+{
+ "report": "task107_maturity_report",
+ "generated_at": "2026-11-03T13:42:09+0000",
+ "status": "completed",
+ "engine": "task106_mature.ts (simulateStrategy + computeTradeCostsV2, psx_user_schedule_v2)",
+ "summary": {
+  "n": 57,
+  "matured": 43,
+  "pending_mtm": 59,
+  "unfilled": 23,
+  "realized_total_pkr": -102348.02,
+  "unrealized_total_pkr": -53867.96,
+  "note": "MTM is hypothetical unrealized value, not evidence of edge"
+ },
+ "reclassification_note": "with 2026-11-03 bars, step-trailing full exits before the horizon are classified matured_full_exit (realized); previously they sat in pending until TIME_UP. SL-first remains a convention.",
+ "horizons": "5/10/21 session counting uses ACTUAL DB sessions; no 21-session maturity has occurred yet",
+ "verdict": "completed"
+}

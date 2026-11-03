@@ -1,0 +1,32 @@
+{
+ "report": "task107_provider_interval_audit",
+ "generated_at": "2026-11-03T13:24:51+0000",
+ "status": "completed",
+ "provider_delay_minutes": 15,
+ "provider_delay_basis": "user-observed schedule (09:45 first update .. 15:45 final update)",
+ "bar_interval_minutes": null,
+ "bar_interval_basis": "no intraday/candle endpoint exists in the provider OpenAPI; historical rows are daily bars (keys: close, date, high, is_anomaly, low, open, volume)",
+ "poll_interval_seconds": 120,
+ "poll_interval_basis": "configurable; default 120s inside the 09:45-15:45 PKT availability window",
+ "distinct_concepts_enforced": [
+  "provider_delay_minutes",
+  "bar_interval_minutes",
+  "poll_interval_seconds"
+ ],
+ "endpoints": [
+  "/debt-market",
+  "/eligible-scrips",
+  "/health",
+  "/indices",
+  "/indices/{name}",
+  "/screener",
+  "/sectors",
+  "/sectors/{name}/stocks",
+  "/stocks",
+  "/stocks/{symbol}/fundamentals",
+  "/stocks/{symbol}/historical",
+  "/stocks/{symbol}/quote"
+ ],
+ "candles_endpoint_present": false,
+ "verdict": "completed"
+}
