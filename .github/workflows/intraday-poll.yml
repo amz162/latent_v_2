@@ -45,6 +45,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Sync with origin/main (clean tree — before any writer runs)
+        run: git pull --rebase origin main
+
       - name: Restore daily DB (monitor reads daily closes + position state)
         run: |
           test -f db/custom.db.gz || { echo "::error::db/custom.db.gz missing"; exit 1; }
@@ -110,4 +113,6 @@ jobs:
           git config user.name "latent-poll-bot"
           git config user.email "poll@users.noreply.github.com"
           git add data/backtest_reports/task107/ops data/backtest_reports/task107/task107_*.json data/backtest_reports/task107/task107_*.csv 2>/dev/null || true
-          git diff --cached --quiet || { git commit -m "Intraday monitor state $(date -u +%Y-%m-%dT%H:%MZ) [rc=${{ steps.poll.outputs.rc }}]" && git fetch origin main && git rebase origin/main && git push; }
+          git diff --cached --quiet || { git commit -m "Intraday monitor state $(date -u +%Y-%m-%dT%H:%MZ) [rc=${{ steps.poll.outputs.rc }}]" && git push; }
+          # a rejected push (remote moved during the run) fails VISIBLY; the
+          # next serialized run syncs and retries — no force, no discard.
