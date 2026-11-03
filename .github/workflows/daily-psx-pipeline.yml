@@ -10,7 +10,7 @@ name: Daily PSX pipeline
 
 # Task 108 Phase 3/5: unified writer concurrency with the intraday poll —
 # both workflows mutate Task 107 state, so they share ONE serialized
-# concurrency group (task107-state-writers) and push with rebase safety.
+# concurrency group (task107-state-writers) and fast-forward/merge-only push safety.
 
 on:
   schedule:
@@ -95,7 +95,7 @@ jobs:
             gzip -kf db/custom.db
             git add db/custom.db.gz data/external_imports/psx_eod/task107_snapshots.db
             git commit -m "Daily PSX pipeline: frontier $FRONTIER (run ${{ github.run_id }})"
-            git fetch origin main && git rebase origin/main   # commit first, then rebase (index must be clean); never force, never discard
+            git fetch origin main && git merge --no-edit origin/main   # conflict-aware merge; never rebase, never force, never discard
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "run_id=${{ github.run_id }}" >> "$GITHUB_OUTPUT"

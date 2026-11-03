@@ -4,13 +4,14 @@
  "rules": [
   "no force push anywhere",
   "no reset/discard of remote commits",
-  "sync (pull --rebase) happens on a CLEAN tree before any writer runs",
-  "commit-then-push; rejected pushes fail visibly and the next serialized run retries",
-  "conflicts fail visibly (no -X ours, no silent overwrite)"
+  "NO rebase in automation (repo git-safety policy: sync is fast-forward-only)",
+  "run-start sync: fetch + merge --ff-only on a clean tree",
+  "push recovery: fetch + merge --no-edit (merge commit preserves both histories); conflicts fail visibly",
+  "no silent overwrite (-X ours is never used)"
  ],
  "evidence": {
-  "commit_order_fixed": "run 41677919816 proved commit-before-rebase necessity",
-  "workflow_push": "plain git push after commit"
+  "ci_gate": "scripts/git_safety_audit.py --fail-on-violation now passes with 0 violations after initially flagging git rebase in daily-psx-pipeline.yml:98 (caught by the Production Build run 41695542660)",
+  "design_change": "rebase-based sync replaced with ff-only/merge per project policy"
  },
  "verdict": "completed",
  "generated_at": "2026-11-03T18:36:39Z",
