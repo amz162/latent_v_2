@@ -1,0 +1,43 @@
+{
+ "report": "task108_final_summary",
+ "status": "completed_with_limitations",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "head": "ffaab3f8e1",
+ "questions": {
+  "1_task107_in_main": true,
+  "2_head": "ffaab3f8e1",
+  "3_deployed_same_revision": "yes (single-host workspace tree)",
+  "4_worker_operating": true,
+  "5_poll_interval": "120s worker (300s Actions fallback)",
+  "6_extra_delay": "none beyond provider delay; engine processes on arrival",
+  "7_delay_distribution": "not yet measurable in-session \u2014 first captures next session",
+  "8_timestamps": "still estimated (retrieved_at \u2212 15 min), labeled",
+  "9_workflows_concurrency": "unified single writer group; no races observed",
+  "10_failed_runs_visible": "yes \u2014 5 real failing dispatches proved it",
+  "11_storage_durable_shared": "workspace SQLite WAL shared by worker+website; durability floor = daily git commit",
+  "12_git_runtime_db": "no (artifact handoff + one daily commit)",
+  "13_backups_verified": "yes (gz restore + artifact upload + recycle recovery all exercised)",
+  "14_monitor_current": "yes \u2014 API-backed, browser-verified",
+  "15_counts": {
+   "open_pending": 59,
+   "matured": 43,
+   "observations": 57
+  },
+  "16_realized": -102348.02,
+  "17_unrealized": -35151.75,
+  "18_costs_v2": true,
+  "19_matured_5_10_21": "43 outcomes matured across horizon cohorts; 21-session full maturity still pending (est. ~2026-12-01, not claimed)",
+  "20_historical_unchanged": true,
+  "21_tests_browser": "all passing",
+  "22_owner_actions": "none mandatory; optional managed volume for runtime store"
+ },
+ "limitations": [
+  "in-session delay distribution pending next session",
+  "sandbox host is the production host (documented constraint)",
+  "daily pipeline's first SCHEDULED run pending"
+ ],
+ "no_fabrication": true,
+ "no_real_orders": true,
+ "models_not_promotable": true,
+ "verdict": "completed_with_limitations"
+}

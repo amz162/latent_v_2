@@ -1,0 +1,35 @@
+{
+ "report": "task108_historical_integrity",
+ "status": "completed",
+ "frozen_against": "2f029843 (Task 106 published base)",
+ "paths_checked": [
+  "data/backtest_reports/task100",
+  "data/backtest_reports/task101",
+  "data/backtest_reports/task102",
+  "data/backtest_reports/task104",
+  "data/backtest_reports/task105",
+  "data/backtest_reports/task106",
+  "data/backtest_reports/task107/shadow_observations",
+  "data/backtest_reports/task107/_matured.json",
+  "data/backtest_reports/task107/_pending_ledger.json"
+ ],
+ "unexpected_diffs": [
+  {
+   "path": "data/backtest_reports/task107/shadow_observations",
+   "diff": " 1 file changed, 788 insertions(+)"
+  },
+  {
+   "path": "data/backtest_reports/task107/_matured.json",
+   "diff": " 1 file changed, 1672 insertions(+)"
+  },
+  {
+   "path": "data/backtest_reports/task107/_pending_ledger.json",
+   "diff": " 1 file changed, 1 insertion(+)"
+  }
+ ],
+ "expected_diffs": "task107 daily-mutable reports (monitor state, EOD, positions) advance as designed; shadow generations, matured outcomes and pending ledger are untouched",
+ "realized_ledger_unchanged_value": true,
+ "verdict": "review_needed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

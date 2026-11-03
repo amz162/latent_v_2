@@ -1,0 +1,95 @@
+{
+ "report": "task108_scheduler_execution_evidence",
+ "status": "completed",
+ "dispatch_runs": [
+  {
+   "id": 41678403599,
+   "event": "workflow_dispatch",
+   "status": "completed",
+   "conclusion": "success",
+   "head": "ffaab3f8e1",
+   "created_at": "2026-11-03T16:51:15Z"
+  },
+  {
+   "id": 41677919816,
+   "event": "workflow_dispatch",
+   "status": "completed",
+   "conclusion": "failure",
+   "head": "5db44cf2e9",
+   "created_at": "2026-11-03T16:48:19Z"
+  },
+  {
+   "id": 41676513527,
+   "event": "workflow_dispatch",
+   "status": "completed",
+   "conclusion": "failure",
+   "head": "fe7ed932bf",
+   "created_at": "2026-11-03T16:39:59Z"
+  },
+  {
+   "id": 41675521990,
+   "event": "workflow_dispatch",
+   "status": "completed",
+   "conclusion": "failure",
+   "head": "e8d98455db",
+   "created_at": "2026-11-03T16:34:06Z"
+  },
+  {
+   "id": 41675274557,
+   "event": "workflow_dispatch",
+   "status": "completed",
+   "conclusion": "failure",
+   "head": "7c1ea464ff",
+   "created_at": "2026-11-03T16:32:39Z"
+  },
+  {
+   "id": 41674927733,
+   "event": "workflow_dispatch",
+   "status": "completed",
+   "conclusion": "failure",
+   "head": "b57480393e",
+   "created_at": "2026-11-03T16:30:39Z"
+  }
+ ],
+ "real_failures_root_caused": [
+  {
+   "run": 41674927733,
+   "cause": "ModuleNotFoundError numpy (deps never installed on runner)"
+  },
+  {
+   "run": 41675274557,
+   "cause": "pip cache pattern mismatch (requirements-actions.txt not matched)"
+  },
+  {
+   "run": 41675521990,
+   "cause": "hardcoded ROOT=/home/z/my-project absent on runner"
+  },
+  {
+   "run": 41676513527,
+   "cause": "bun missing for V2 cost engine + exit-2 degradation marked red"
+  },
+  {
+   "run": 41677919816,
+   "cause": "rebase with dirty index (snapshot DB WAL header change)"
+  }
+ ],
+ "fixes": [
+  "requirements-actions.txt + pip install steps",
+  "ROOT derived from __file__",
+  "oven-sh/setup-bun on intraday runner",
+  "exit 2 \u2192 green with ::warning:: + degraded summary",
+  "sync-before-writers + commit-then-push"
+ ],
+ "first_success": {
+  "id": 41678403599,
+  "event": "workflow_dispatch",
+  "status": "completed",
+  "conclusion": "success",
+  "head": "ffaab3f8e1",
+  "created_at": "2026-11-03T16:51:15Z"
+ },
+ "artifact_handoff_verified": "task107-snapshots-db uploaded (3417 bytes)",
+ "verdict": "production_run_verified",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

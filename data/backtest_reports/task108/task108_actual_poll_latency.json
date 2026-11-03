@@ -1,0 +1,38 @@
+{
+ "report": "task108_actual_poll_latency",
+ "status": "completed",
+ "measurement_source": "cycle_latency table in the durable snapshot store",
+ "cycles": [
+  {
+   "cycle_id": "cycle_20261103T162537Z",
+   "started_at": "2026-11-03T16:25:24+0000",
+   "duration_s": 13.59,
+   "interval_since_prev_s": 10333.404194,
+   "avg_symbol_ms": 426.0,
+   "max_symbol_ms": 898.0,
+   "window": "post_window"
+  },
+  {
+   "cycle_id": "cycle_20261103T162738Z",
+   "started_at": "2026-11-03T16:27:27+0000",
+   "duration_s": 10.65,
+   "interval_since_prev_s": 123.985104,
+   "avg_symbol_ms": 309.4,
+   "max_symbol_ms": 379.3,
+   "window": "post_window"
+  },
+  {
+   "cycle_id": "cycle_20261103T163656Z",
+   "started_at": "2026-11-03T16:36:45+0000",
+   "duration_s": 10.66,
+   "interval_since_prev_s": 558.942695,
+   "avg_symbol_ms": 309.7,
+   "max_symbol_ms": 381.0,
+   "window": "post_window"
+  }
+ ],
+ "interpretation": "interval_since_prev_s shows the REAL spacing between poll attempts (worker 120s; Actions runs vary \u2014 cron is not exact)",
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

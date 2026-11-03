@@ -1,0 +1,28 @@
+{
+ "report": "task108_polling_interval_audit",
+ "status": "completed",
+ "primary_worker": {
+  "interval_seconds": 120,
+  "configurable_via": "TASK108_POLL_INTERVAL_SECONDS",
+  "processing": "immediate on arrival \u2014 no extra 15-minute wait",
+  "status": "active (pid 2096)"
+ },
+ "actions_fallback": {
+  "cron": "*/5 4-10 * * 1-5",
+  "floor": "GitHub Actions minimum schedule interval is 5 minutes (verified: workflows API accepts */5; 15-min retired)",
+  "note": "Actions cron is not exact \u2014 actual spacing recorded per cycle in cycle_latency"
+ },
+ "retired": {
+  "cron_15min": "task107 */15 schedule replaced"
+ },
+ "separation": {
+  "provider_delay_minutes": 15,
+  "polling_interval_seconds": 120,
+  "distinct": true,
+  "explanation": "poll interval is application cadence; provider delay is a property of the upstream data"
+ },
+ "no_op_behavior": "unchanged provider responses are detected by price-change idempotency and become no-op cycles",
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

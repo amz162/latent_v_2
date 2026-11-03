@@ -1,0 +1,32 @@
+{
+ "report": "task108_browser_verification",
+ "status": "completed",
+ "tool": "agent-browser (headless)",
+ "url": "http://localhost:3000/ \u2192 Enter platform \u2192 Paper Trade Monitor",
+ "checks": {
+  "delay_banner": "\u26a0 Market data is delayed by approximately 15 minutes \u2026 rendered",
+  "summary_cards": [
+   "Open paper trades",
+   "Target touched",
+   "Pending data",
+   "Unrealized MTM (estimate, net of exit costs)"
+  ],
+  "realized_separation_text": "Never counted as realized P&L. Realized (separate ledger): \u2212PKR 102,348.02",
+  "table_rows": 59,
+  "columns": [
+   "Entry",
+   "SL",
+   "TP1",
+   "TP2",
+   "TP3",
+   "Realized P&L",
+   "Unrealized gross"
+  ],
+  "detail_view": "Generation: task105-gen1 rendered",
+  "legacy_group_honest_label": "Task 76-era prospective paper trades \u2026 shown separately",
+  "page_errors": "none"
+ },
+ "verdict": "passed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

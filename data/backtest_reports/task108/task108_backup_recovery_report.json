@@ -1,0 +1,25 @@
+{
+ "report": "task108_backup_recovery_report",
+ "status": "completed",
+ "backups": [
+  {
+   "what": "daily OHLCV DB",
+   "method": "db/custom.db.gz in git (restored & verified this session)",
+   "recovery": "gunzip -kf db/custom.db.gz"
+  },
+  {
+   "what": "snapshot store",
+   "method": "Actions artifact per fallback run (30d) + daily pipeline commit to git",
+   "recovery": "download artifact or checkout repo; monitor resumes idempotently"
+  },
+  {
+   "what": "whole workspace",
+   "method": "infra backup at /tmp/my-project on recycle (verified in practice during this task)",
+   "recovery": "rsync back; git rebuilt from origin/main"
+  }
+ ],
+ "recovery_verified_this_session": true,
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

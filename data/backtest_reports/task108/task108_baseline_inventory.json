@@ -1,0 +1,37 @@
+{
+ "report": "task108_baseline_inventory",
+ "status": "completed",
+ "git_head": "ffaab3f8e12019bd7864c4b9d46a7fc0f15b8fdc",
+ "branch": "main",
+ "working_tree_clean": false,
+ "task107_commits": {
+  "6bee0325": "Task 107 v1+v2 (restored)",
+  "c68d3876": "credential store",
+  "ffaab3f8": "Task 108 sync/worker/workflows"
+ },
+ "workflows": {
+  "production-build.yml": true,
+  "browser-tests.yml": true,
+  "daily-psx-pipeline.yml": true,
+  "intraday-poll.yml": true
+ },
+ "task107_files_present": {
+  "scripts/task107_monitor.py": true,
+  "scripts/task107_runner.py": true,
+  "src/app/api/paper-trading/monitor": true,
+  "src/components/latent/PaperTradeMonitor.tsx": true,
+  ".github/workflows/daily-psx-pipeline.yml": true,
+  ".github/workflows/intraday-poll.yml": true,
+  "data/backtest_reports/task107": true,
+  "docs/task107-paper-trade-monitor.md": true
+ },
+ "snapshot_store": {
+  "path": "data/external_imports/psx_eod/task107_snapshots.db",
+  "total_snapshots": 24
+ },
+ "data_frontier": "2026-11-03",
+ "latest_retrieval": "2026-11-03T21:36:56.449869+05:00",
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

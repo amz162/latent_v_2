@@ -1,0 +1,13 @@
+{
+ "report": "task108_single_writer_report",
+ "status": "completed",
+ "architecture": "one serialized Actions writer group + one host worker (local writes only) + single daily consolidator",
+ "local_locks": [
+  "task107_monitor.lock (per-cycle)",
+  "task108_worker.lock (worker identity)"
+ ],
+ "runtime_store_writes": "only the host worker writes snapshots.db in production; website reads via WAL (readers never blocked)",
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

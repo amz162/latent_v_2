@@ -1,0 +1,71 @@
+{
+ "report": "task108_provider_delay_measurements",
+ "generated_at": "2026-11-03T16:59:56Z",
+ "status": "completed",
+ "delay_status": {
+  "user_reported_delay_minutes": 15,
+  "estimated_delay_minutes": 15,
+  "provider_verified_delay_minutes": null,
+  "note": "the provider supplies NO source market timestamp on quote snapshots (verified in task107_delay_verification.json); every market timestamp is estimated as retrieved_at \u2212 15 min and labeled estimated_source_timestamp"
+ },
+ "current_probe": {
+  "window_status": "post_window",
+  "data_frontier": "2026-11-03",
+  "symbols_probed": 25,
+  "provider_errors": 1,
+  "error_symbols": [
+   "HASCOL"
+  ],
+  "quote_equals_daily_close": 22,
+  "quote_vs_close_scope": "post-session probe: quotes equal the verified daily close for matched symbols; this evidences final-capture correctness, NOT the intraday delay",
+  "avg_poll_latency_ms": 409.0,
+  "max_poll_latency_ms": 796.4
+ },
+ "observed_cadence": {
+  "note": "distinct observations per symbol so far; true publication cadence measurable only across in-session captures (worker collects from the next session)",
+  "top_symbols": [
+   {
+    "symbol": "ANL",
+    "distinct_observations": 1,
+    "span_minutes": 0
+   },
+   {
+    "symbol": "BOP",
+    "distinct_observations": 1,
+    "span_minutes": 0
+   },
+   {
+    "symbol": "BYCO",
+    "distinct_observations": 1,
+    "span_minutes": 0
+   },
+   {
+    "symbol": "CNERGY",
+    "distinct_observations": 1,
+    "span_minutes": 0
+   },
+   {
+    "symbol": "ENGRO",
+    "distinct_observations": 1,
+    "span_minutes": 0
+   }
+  ]
+ },
+ "poll_latency": {
+  "avg_cycle_seconds": 11.63,
+  "max_cycle_seconds": 13.59,
+  "avg_interval_between_cycles_seconds": 3672.11,
+  "cycles_recorded": 3,
+  "application_delay_beyond_provider": "poll cadence (120s worker / 300s Actions fallback) \u2014 engine processes each new observation immediately; no extra 15-minute wait is added"
+ },
+ "timestamp_quality_rule": {
+  "estimated": "market_timestamp = retrieved_at \u2212 15 min (labeled estimated_source_timestamp)",
+  "verified": "never claimed \u2014 provider publishes no source timestamp",
+  "retrieved": "retrieved_at is the actual fetch time (provider meta.timestamp or local UTC clock)"
+ },
+ "limitations": [
+  "today's probe ran after the 15:45 PKT window (21:5x PKT) \u2014 in-session cadence/delay distributions begin with the next session via the always-on worker",
+  "HASCOL is a structural provider gap (persistent 404)"
+ ],
+ "verdict": "completed"
+}

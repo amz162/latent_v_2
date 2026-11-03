@@ -1,0 +1,29 @@
+{
+ "report": "task108_remaining_blockers",
+ "status": "completed",
+ "blockers": [
+  {
+   "id": "in_session_delay_measurement",
+   "detail": "true provider-delay distribution requires in-session captures; first session = next trading day (worker + snapshot store already collect it)",
+   "owner_action": false
+  },
+  {
+   "id": "host_persistence",
+   "detail": "sandbox workspace is the production host; survives recycles via infra backup (proven) but is not a SLA-backed volume; git daily commit is the durability floor",
+   "owner_action": "optional: move runtime store to a managed volume/DB when available"
+  },
+  {
+   "id": "daily_pipeline_first_scheduled_run",
+   "detail": "code path verified via shared engine; the 11:30 UTC scheduled run has not fired yet (first fire = next weekday)",
+   "owner_action": false
+  },
+  {
+   "id": "scheduled_cadence_precision",
+   "detail": "Actions cron is best-effort (documented); primary cadence is the host worker at 120s",
+   "owner_action": false
+  }
+ ],
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

@@ -1,0 +1,126 @@
+{
+ "report": "task108_error_injection_tests",
+ "generated_at": "2026-11-03T17:04:23.362375+00:00",
+ "status": "completed",
+ "passed": 8,
+ "failed": 0,
+ "total": 8,
+ "results": [
+  {
+   "scenario": "provider_total_outage",
+   "expected": "degraded_provider",
+   "got": "degraded_provider",
+   "cycles": [
+    {
+     "class": "degraded_provider",
+     "new": 20,
+     "errors": 5,
+     "rejected": 0
+    }
+   ],
+   "pass": true,
+   "note": "all-symbols HTTP 503 \u2014 run must NOT look like a successful refresh"
+  },
+  {
+   "scenario": "provider_partial_outage",
+   "expected": "degraded_provider",
+   "got": "degraded_provider",
+   "cycles": [
+    {
+     "class": "degraded_provider",
+     "new": 24,
+     "errors": 1,
+     "rejected": 0
+    }
+   ],
+   "pass": true,
+   "note": "one symbol HTTP 500 \u2192 degraded, errors recorded per symbol"
+  },
+  {
+   "scenario": "malformed_price_quarantined",
+   "expected": "failed_data_integrity",
+   "got": "failed_data_integrity",
+   "pass": true,
+   "quarantine_file": true,
+   "note": "non-positive price rejected, never inserted, run fails visibly"
+  },
+  {
+   "scenario": "structural_symbol_gap",
+   "expected": "success_no_change",
+   "got": "success_no_change",
+   "cycles": [
+    {
+     "class": "degraded_provider",
+     "new": 24,
+     "errors": 1,
+     "rejected": 0
+    },
+    {
+     "class": "degraded_provider",
+     "new": 0,
+     "errors": 1,
+     "rejected": 0
+    },
+    {
+     "class": "success_no_change",
+     "new": 0,
+     "errors": 1,
+     "rejected": 0
+    },
+    {
+     "class": "success_no_change",
+     "new": 0,
+     "errors": 1,
+     "rejected": 0
+    }
+   ],
+   "pass": true,
+   "note": "after 3 consecutive 404s the symbol is a reported structural gap, not an outage"
+  },
+  {
+   "scenario": "missing_configuration",
+   "expected": "failed_configuration",
+   "got": "failed_configuration",
+   "pass": true,
+   "note": "missing _matured.json \u2192 failed_configuration (exit 3)"
+  },
+  {
+   "scenario": "unchanged_prices_noop",
+   "expected": "success_no_change",
+   "got": "success_no_change",
+   "cycles": [
+    {
+     "class": "success_with_updates",
+     "new": 25,
+     "errors": 0,
+     "rejected": 0
+    },
+    {
+     "class": "success_no_change",
+     "new": 0,
+     "errors": 0,
+     "rejected": 0
+    }
+   ],
+   "pass": true,
+   "note": "repeat poll with unchanged prices = no-op success (exit 0)"
+  },
+  {
+   "scenario": "changed_price_processed_immediately",
+   "expected": "success_with_updates",
+   "got": "success_with_updates",
+   "new_obs": 5,
+   "pass": true,
+   "note": "changed price processed on the same cycle it arrives \u2014 no extra 15-minute wait"
+  },
+  {
+   "scenario": "sqlite_concurrent_writers_wal",
+   "expected": "100 rows, ok integrity",
+   "got": "100 rows, ok",
+   "errors": [],
+   "pass": true,
+   "note": "WAL + busy_timeout: concurrent writers serialize safely; readers unblocked"
+  }
+ ],
+ "verdict": "passed"
+}

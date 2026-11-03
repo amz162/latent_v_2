@@ -1,0 +1,29 @@
+{
+ "report": "task108_documentation_audit",
+ "status": "completed",
+ "claims_checked": {
+  "ohlcv_bars": {
+   "claim": "1,042,923 (2016-10-21 \u2192 2026-11-03)",
+   "verified": true
+  },
+  "api_routes": {
+   "claim": "81",
+   "verified": true
+  },
+  "live_quotes_claim_removed": "all 'live price/quotes' claims reworded to delayed provider snapshots (~15 min)",
+  "15min_ohlc_claim": "none present (never claimed)",
+  "flat_fee_default": "cost engine documented as psx_user_schedule_v2 default",
+  "production_profitable_claim": "none \u2014 models not_promotable, realized P&L negative",
+  "workflows_active_claim": "stated precisely: fallback verified by real runs; scheduled cadence subject to Actions delay",
+  "909_equal_quality": "not claimed",
+  "paper_trade_monitor_tab": "documented as tab 11"
+ },
+ "updated_files": [
+  "README.md",
+  "docs/task107-paper-trade-monitor.md",
+  "src/components/latent/HomeV2.tsx (Ten\u2192Eleven tabs)"
+ ],
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

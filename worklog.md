@@ -4611,3 +4611,17 @@ Runner: scripts/task97_runner.py. Continuing from Task 96 HEAD 66b6cdc9.
 
 - Repo set **private**; GitHub push token stored at `.zcredentials/github_token` (committed while private, by owner's instruction) and armed locally via `scripts/gh_auth.sh` → `.git/credentials` (untracked). `AGENTS.md` at repo root documents the recovery chain: workspace copy → `/tmp/my-project` recycle backup → repo copy; token never printed or embedded in command lines.
 - Rotation contract: revoke at github.com/settings/tokens, then replace BOTH copies in the same session — revocation is the kill switch; deleting the file alone leaves it in git history.
+
+## Task 108 — Production scheduler activation, durable monitoring, reliability & forward validation (2026-11-03)
+
+- P1 verified deployed state: HEAD lineage, workflows, snapshot store (24), monitor state (59), Actions history (no intraday/daily run had ever executed).
+- P2/3: always-on host worker live (120 s, session-gated 09:45–15:45 PKT, heartbeat, duplicate-worker lock, graceful shutdown, EOD-then-idle). Actions intraday retired from */15 to */5 fallback with artifact-based snapshot handoff. SIX real dispatch runs: five failed VISIBLELY for genuine first-run defects (numpy missing, pip-cache pattern, hardcoded ROOT, bun missing for V2 cost engine, dirty-tree rebase) — all fixed; run 41678403599 completed SUCCESS end-to-end (green + summary + artifact + state commit 019fd992).
+- P4: `|| exit 0` removed; structured exits (0/2/3/4/5) with six-class step summaries; quarantine for implausible quotes (price-vs-close band); error-injection suite 8/8 (outages, quarantine, structural 404 gaps, no-op idempotency, immediate processing, WAL concurrency).
+- P5: unified `task107-state-writers` concurrency group; commit-then-push; sync before writers; no force/discard.
+- P6: Git no longer the runtime DB — shared WAL SQLite for worker+website, artifact handoff between fallback runs, one daily consolidated commit; integrity checks on both DBs.
+- P7: delay probe + observation log regenerated from the store (22/22 quote==close post-session); timestamps remain ESTIMATED; in-session distribution begins next session automatically.
+- P8: API==state consistency all-PASS; browser-verified (banner, cards, 59 rows, ladder, detail, legacy honesty, zero errors).
+- P9: README reconciled (counts→live values, all "live" claims→delayed snapshots, tabs 10→11, monitoring section, legacy paragraph replaced); HomeV2 "Eleven tabs"; task107 monitor doc reconciliation.
+- P10: maturity recalc from live store — 43 matured / 59 pending / realized −102,348.02 (identical to baseline; frozen history intact); win rate 13/43; MTM kept separate; ~2026-12-01 stays an estimate.
+- P11: v2 29/29, v1 28/0+2 explicit skips (stale realized assertion updated to published −102,348.02), tsc clean, build exit 0, YAML 4/4, historical integrity vs Task 106 base clean.
+- P12: 36/36 artifacts + 5 docs + task108_runner.py (checkpointed, resumable). Verdict: completed_with_limitations (in-session delay distribution + first scheduled daily fire pending; sandbox-host durability documented).

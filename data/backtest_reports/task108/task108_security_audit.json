@@ -1,0 +1,16 @@
+{
+ "report": "task108_security_audit",
+ "status": "completed",
+ "tracked_secret_scan": {
+  "pattern": "ghp_*/AKIA* (excluding .zcredentials/github_token by design, private repo)",
+  "hits_outside_credential_store": []
+ },
+ "note_false_positive": "task107_ui_api_tests.py contains the string 'ghp_' only as a scan assertion ('ghp_' not in yml)",
+ "broker_orders": "disabled (no execution code path; paper only)",
+ "short_entries": "disabled",
+ "delayed_labeled": "all UI/API surfaces label delay + estimated timestamps",
+ "credential_store": ".zcredentials/github_token in PRIVATE repo by owner instruction; never printed in logs",
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

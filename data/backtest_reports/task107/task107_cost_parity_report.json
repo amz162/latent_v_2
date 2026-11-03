@@ -1,13 +1,13 @@
 {
  "report": "task107_cost_parity_report",
- "generated_at": "2026-11-03T13:42:09+0000",
+ "generated_at": "2026-11-03T17:04:53+0000",
  "status": "completed",
- "fixture": "task105_parity.ts",
+ "fixture": "task105_parity.ts (computeSimTradeCosts -> computeTradeCostsV2, psx_user_schedule_v2)",
  "result": {
   "fixtures": 10,
   "failed": [],
   "verdict": "PASS"
  },
- "monitor_estimates": "same V2 engine; exit-side costs = totalCost \u2212 CGT \u2212 buy.sideTotal",
+ "scale_out_note": "scale-out legs are costed per leg by the production engine; no double charging (verified by the same fixture used in Tasks 105/106)",
  "verdict": "PASS"
 }

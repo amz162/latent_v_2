@@ -2,7 +2,7 @@
 
 > The plan-first PSX investment platform for salaried Pakistanis. Latent.pk cuts through market noise using predictive algorithms trained on PSX data — translating every signal (news, results, technicals, fundamentals) into a clear, personalized action plan in your language. No WhatsApp rumors, no TradingView overwhelm. Just here's the plan to reach your goal.
 
-**Version 0.2.1** · **909 PSX-listed stocks covered** · **1,042,846 daily OHLCV bars (2016-10-21 → 2026-10-30)** · **58 canonical + 9 supplemental + 2 aliases = 69 registry entries (67 unique implementations), 8 ensembles across 10 tiers** (reconciled in Task 94) · **61 API routes**
+**Version 0.2.1** · **909 PSX-listed stocks covered** · **1,042,923 daily OHLCV bars (2016-10-21 → 2026-11-03, data frontier 2026-11-03)** · **58 canonical + 9 supplemental + 2 aliases = 69 registry entries (67 unique implementations), 8 ensembles across 10 tiers** (reconciled in Task 94) · **81 API routes**
 
 ---
 
@@ -30,27 +30,28 @@ Latent.pk is a full-stack Next.js 16 application that turns raw Pakistan Stock E
 
 - **67 unique model implementations (58 canonical + 9 supplemental)** organized into **10 tiers**, blended via **8 ensemble aggregators** into a single final-consensus BUY/SELL signal per stock (Task 94 Phase 1 reconciliation: aliases and deterministic aggregators are not double-counted as base ML models).
 - **Real OHLCV history** for 908 PSX symbols (10 years, ~1M bars) stored locally in SQLite — no per-stock live fetch needed for backtesting.
-- **Live price overlays** + server-side TP1/TP2/TP3/SL outcome evaluation for every signal.
+- **Delayed price overlays** (provider quote snapshots, ~15-minute user-observed delay; NOT live exchange prices) + server-side TP1/TP2/TP3/SL outcome evaluation for every signal.
 - **A 10-tab platform** covering the full workflow: news interpretation → technicals → signals → AI models → tax calculators → pattern finder → portfolio → strategy → dividends → tracker.
 
 The whole experience is dark-themed, responsive (mobile → desktop), bilingual-ready (i18n), and built so a salaried investor gets a *plan*, not a chart.
 
 ---
 
-## Key Features (the 10 tabs)
+## Key Features (the 11 tabs)
 
 | # | Tab | What it does |
 |---|---|---|
 | 01 | **Fundamental News** | International + national news, company announcements & results — each interpreted in layman terms with stock-impact analysis. News-link interpreter, sector categorization, auto-redirect to signals. |
 | 02 | **Technical Analysis** | Index support/resistance, indicator matrix (Up/Down/Accumulate), AI price prediction. Each indicator explained in plain language. |
-| 03 | **Signal Section** | Per-stock BUY/SELL signals with confidence scores + layman reasoning. Fundamentals + technicals + AI model combined. Buy/Sell/Hold/Accumulate, confidence per signal, deep-dive view per stock. Final-ensemble consensus for ~361 stocks with live price + TP/SL outcome. |
+| 03 | **Signal Section** | Per-stock BUY/SELL signals with confidence scores + layman reasoning. Fundamentals + technicals + AI model combined. Buy/Sell/Hold/Accumulate, confidence per signal, deep-dive view per stock. Final-ensemble consensus for ~361 stocks with delayed provider quote snapshots + TP/SL outcome. |
 | 04 | **AI Models** | 65-model ensemble across 10 tiers with backtesting per model + ensemble. Per-model "Stocks covered" badge, backtesting report (freshness chip + win-rate/avg-return/best/worst/Sharpe/Sortino/drawdown), and a per-model **actual-vs-predicted graph view** (multi-model overlay, KSE-100/all-stocks filter, tunable decision-point cadence). Search any of 361+ PSX stocks. |
 | 05 | **Tax Calculators** | CGT (15% / 12.5% / 0% tiers), dividend tax (15% filer / 20% non-filer / 39% company), SIP compounding, position sizing — Pakistan Finance Act 2024 rates. |
 | 06 | **Pattern Finder** | Detects fundamental patterns from quarterly results (EPS growth, margin trends, dividend consistency, CAGRs). 15-rule pattern engine, multi-line chart + quarterly summary, real financial data (22 years). |
-| 07 | **Portfolio & Watchlist** | Add/remove/reorder stocks. Optional buy-price triggers P&L tracking with hold/sell/buy-more suggestions. Drag-to-reorder, P&L color coding, avg-down suggestions, live batch quotes (60s auto-refresh). |
+| 07 | **Portfolio & Watchlist** | Add/remove/reorder stocks. Optional buy-price triggers P&L tracking with hold/sell/buy-more suggestions. Drag-to-reorder, P&L color coding, avg-down suggestions, delayed provider quote snapshots (60s API cache). |
 | 08 | **Investment Strategy** | Goal-based strategy selector — dividend, yield, swing, or intraday. Goal questionnaire, strategy auto-selection, portfolio builder for income goals. |
 | 09 | **Dividends** | Top-to-bottom list of dividend announcements by PSX-listed companies — sorted by yield, ex-date, amount. Latest declarations, yield rankings, ex-date alerts. |
 | 10 | **Tracker** | Two-track accuracy dashboard: **Signal Tracker** (last-1-month reconstructed performance across all 908 DB stocks — total signals / win rate / avg return / best-worst, plus an Investment Simulator that guarantees the user's trade count with compounding + monthly SIP) and **Portfolio Tracker** (your open positions + closed-trades P&L + sector-concentration pie chart). |
+| 11 | **Paper Trade Monitor** | Live verification of the delayed paper-trade campaign: delay banner (provider snapshots ≈15 min behind the market, never presented as live), summary cards, the full open-position table with both timestamps (estimated market + actual retrieval), SL←ENTRY→TP1→TP2→TP3 ladder, per-trade detail, status filters, realized/unrealized P&L kept strictly separate. Backed by `/api/paper-trading/monitor`. |
 
 ### Investment Simulator (Tracker → Signal Tracker)
 A chronological, **realized-compounding** trade-by-trade simulator:
@@ -129,7 +130,7 @@ latent_v_2/
 │       │   ├── model-backtest.ts     # runAllBacktests() — runtime backtest engine
 │       │   ├── fallback-predictions.ts # indicator-based strategy engines (per-model signals)
 │       │   ├── investment-simulator.ts # chronological realized-compounding simulator
-│       │   ├── liveQuote.ts          # live price + TP/SL outcome evaluator
+│       │   ├── liveQuote.ts          # delayed provider quote snapshots + TP/SL outcome evaluator (never live prices)
 │       │   ├── backtest.ts           # per-symbol backtest helpers
 │       │   ├── psxClient.ts          # psxdata API client
 │       │   ├── store.ts              # Zustand store
@@ -154,7 +155,7 @@ SQLite via Prisma. Key tables:
 
 | Table | Purpose |
 |---|---|
-| `OhlcvBar` | Daily OHLCV history — 909 symbols × ~1,148 bars each = **1,042,821 rows** (2016-10-21 → 2026-10-29). Composite PK `(symbol, date)`. |
+| `OhlcvBar` | Daily OHLCV history — 909 symbols × ~1,148 bars each = **1,042,923 rows** (2016-10-21 → 2026-11-03). Composite PK `(symbol, date)`. |
 | `ModelPredictionCache` | Per-symbol predictions for stocks outside the original ML-trained universe (extended/fallback coverage). |
 | `ModelBacktestCache` | Per-model + per-ensemble backtest stats (winRate, avgReturnPct, coveredSymbols, computedAt). 78 rows (58 canonical + 9 supplemental models + 8 ensembles + legacy alias rows, reconciled in Task 94). |
 | `PricePatternCache` | Price-pattern finder output per symbol (permanent cache). |
@@ -181,7 +182,7 @@ bun run scripts/train_missing_stocks.ts   # ~15s for 908 symbols
 
 | Route | Method | Purpose |
 |---|---|---|
-| `/api/signals/all` | GET | Final-consensus signals for ~361 stocks + live price + TP/SL outcome |
+| `/api/signals/all` | GET | Final-consensus signals for ~361 stocks + delayed provider quote snapshots + TP/SL outcome |
 | `/api/ai-model-signals/[symbol]` | GET | Per-symbol 65-model predictions + tiers + ensembles + backtesting |
 | `/api/backtest/investment-simulator` | GET | Chronological compounding simulator (numTrades guarantee + SIP) |
 | `/api/backtest/ensembles` | GET | Per-ensemble portfolio simulation |
@@ -189,7 +190,7 @@ bun run scripts/train_missing_stocks.ts   # ~15s for 908 symbols
 | `/api/backtest/model-graph` | GET | Per-model actual-vs-predicted series (multi-model, step, KSE-100 filter) |
 | `/api/backtest/run` | GET | Per-symbol backtest runner |
 | `/api/psx/companies` | GET | All PSX companies (symbol + name + sector) |
-| `/api/psx/live/batch` | GET | Batched live quotes |
+| `/api/psx/live/batch` | GET | Batched delayed provider quote snapshots (~15-min delay; not live) |
 | `/api/psx/indices/[name]` | GET | Index constituents (e.g. KSE100 → 100 stocks + weights) |
 | `/api/psx/financial-results` | GET | Real quarterly results (psxdata) |
 | `/api/llm/interpret-news` | POST | LLM news interpretation with stock-impact analysis |
@@ -199,6 +200,15 @@ bun run scripts/train_missing_stocks.ts   # ~15s for 908 symbols
 | `/api/track-record` | GET | Verified track-record stats |
 
 ---
+
+## Delayed market data & paper-trade monitoring (Tasks 105–108)
+
+The market-data provider (`psxdata-api.fastapicloud.dev`) serves **delayed quote snapshots and daily OHLC only** — there is no candle/intraday endpoint and **no source market timestamp** on snapshots. Everything downstream is honest about this:
+
+- Every observation carries `estimated_source_timestamp` (retrieved_at − 15 min, labeled estimated) and `retrieved_at` (actual fetch time). The 15-minute delay is **user-observed**, never provider-verified.
+- **Monitoring architecture (Task 108):** an always-on worker (`scripts/task108_worker.py`, default 120 s cadence, session-gated 09:45–15:45 PKT, heartbeat + duplicate-worker lock + graceful shutdown) runs on the deployed host and writes the durable SQLite snapshot store (WAL) that the website API reads — one shared store, Git is not the runtime database.
+- **GitHub Actions fallback** (`intraday-poll.yml`, */5 during the window): runs the same engine with structured exit semantics (`success_with_updates` / `success_no_change` / `degraded_provider` / `failed_configuration` / `failed_internal_error` / `failed_data_integrity`); provider outages stay visible via job-summary banners, `|| exit 0` masking was removed. The snapshot store is handed between runs as an Actions artifact — it is committed to Git only once per day by the daily pipeline (both writers share one serialized concurrency group).
+- Daily pipeline (`daily-psx-pipeline.yml`, 11:30 UTC weekdays): ingest → shadow generation → maturity → reports, idempotent and resumable; holidays are decided by provider data, never assumed.
 
 ## Getting Started
 
@@ -322,7 +332,7 @@ All artifacts in `data/backtest_reports/task93/`. Read-only validation — NO pr
 - Statistical significance holds ONLY at h=5d for the Majority Vote ensemble. h=10d and h=21d CIs include 0.50.
 - Foundation models (Chronos n=232, Lag-Llama n=60) do NOT show statistically significant directional advantage on PSX data.
 - PSX cost drag is severe — Variant B (net R:R ≥2.0 filter) is essential to overcome brokerage (56.57% of cost) + CGT (42.86% of cost).
-- Prospective paper trading is live: 81 trades entered at real session opens (63 open, 18 closed — all 18 early closes were losses; NO profitability claim). 33 trades stay pending for symbols with no newer data (BYCO, ENGRO). Statistical verification requires matured outcomes.
+- Paper trading remains SIMULATION-ONLY (delayed-observation shadow; no real orders, shorts disabled). Task 105–107 frozen-protocol shadow campaign: 57 forward observations across 3 generations (all no_trade decisions), 43 matured strategy outcomes with realized net P&L −PKR 102,348.02 (13/43 winners) and 59 pending positions tracked by the delayed-snapshot monitor (unrealized MTM reported separately, never as wins). All models remain `not_promotable`.
 
 ---
 

@@ -1,0 +1,24 @@
+{
+ "report": "task108_session_gating_report",
+ "status": "completed",
+ "window": {
+  "start": "09:45 PKT",
+  "end": "15:45 PKT",
+  "basis": "user-observed delayed-feed availability; NOT a verified provider contract"
+ },
+ "gating": {
+  "pre_window": "no expected delayed observations \u2014 worker idles until 09:45",
+  "open": "poll every 120s; each new observation processed immediately",
+  "post_window": "EOD reconciliation once (quote vs daily close), then idle to next session",
+  "weekend": "weekend_closed \u2014 no polling",
+  "holidays": "data-decided only (unchanged quotes \u2192 no-op); NO invented calendar \u2014 provider publishes none",
+  "special_sessions": "not modeled (no official calendar source); unchanged-quote no-op covers them safely"
+ },
+ "evidence": {
+  "tonight": "21:19 PKT post-window run executed EOD reconciliation (22/22) then idled",
+  "classification_refusal": "pre/post-window cycles cannot fabricate observations"
+ },
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

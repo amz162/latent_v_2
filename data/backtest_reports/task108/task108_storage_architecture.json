@@ -1,0 +1,35 @@
+{
+ "report": "task108_storage_architecture",
+ "status": "completed",
+ "runtime_store": {
+  "path": "data/external_imports/psx_eod/task107_snapshots.db",
+  "size_bytes": 36864,
+  "journal_mode": "wal",
+  "integrity": "ok",
+  "tables": [
+   "snapshots",
+   "poll_log",
+   "cycle_latency",
+   "symbol_gaps"
+  ],
+  "snapshots": 24,
+  "readers_writers": "worker writes (busy_timeout 5s) + website reads (readonly) \u2014 same file, same store"
+ },
+ "daily_store": {
+  "path": "db/custom.db",
+  "size_bytes": 201588736,
+  "integrity": "ok",
+  "git_backup": "db/custom.db.gz committed once per day by the daily pipeline (40MB)"
+ },
+ "git_role": "NOT a high-frequency runtime DB: intraday fallback hands state via Actions artifacts; git receives one daily consolidated commit",
+ "preferred_order_compliance": "1) existing production DB (custom.db) for daily data \u2713 2) persistent volume = workspace filesystem shared by worker+website \u2713 3) external service: none added \u2713 4) Actions artifacts for diagnostics \u2713",
+ "app_and_monitor_share_store": true,
+ "growth_per_day_estimate": "\u2248 25 symbols \u00d7 poll-cycle observations during a 6-hour window at 120s \u2248 up to ~4,500 rows/day worst case; price-change idempotency typically reduces this to a few hundred",
+ "retention": "snapshots: append-only in store; git backup: daily gz; Actions artifacts: 30 days",
+ "blockers": [
+  "host filesystem durability depends on the sandbox infra backup (no true persistent volume product available)"
+ ],
+ "verdict": "completed_with_documented_constraint",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

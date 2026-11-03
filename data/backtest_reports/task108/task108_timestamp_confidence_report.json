@@ -1,0 +1,19 @@
+{
+ "report": "task108_timestamp_confidence_report",
+ "status": "completed",
+ "confidence_classes": {
+  "retrieved_at": "direct (actual fetch time)",
+  "provider_meta_ts": "direct but NOT a market timestamp (provider cache marker)",
+  "estimated_source_timestamp": "estimated = retrieved_at \u2212 15 min; labeled on every record",
+  "provider_verified_market_ts": "UNAVAILABLE \u2014 provider publishes no source timestamp"
+ },
+ "delay_status": {
+  "user_reported_minutes": 15,
+  "estimated_minutes": 15,
+  "provider_verified": null
+ },
+ "in_session_measurement": "deferred to next session; the worker's snapshot store + cycle_latency provide the cadence/latency log automatically",
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

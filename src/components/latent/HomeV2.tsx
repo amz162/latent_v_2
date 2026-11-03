@@ -207,7 +207,7 @@ export function HomeV2() {
         <div className="flex items-end justify-between mb-6">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-[#F4F7FB]">
-              Ten tabs. One platform.
+              Eleven tabs. One platform.
             </h2>
             <p className="text-sm text-[#94A3B8] mt-1">
               Each tab is a complete workflow — built for the salaried investor who wants depth without the jargon.

@@ -96,8 +96,10 @@ def main() -> None:
     real = list(csv.DictReader(open(T107 / "task107_realized_trade_ledger.csv")))
     check("pending_never_win", all(r["status"] == "pending_mtm" for r in pend))
     check("realized_rows_are_terminal", all(r["status"].startswith("matured") for r in real))
+    # Task 108: assert against the PUBLISHED campaign figure (final report:
+    # realized PKR -102,348.02 over 43 outcomes) instead of a mid-campaign subtotal
     check("pending_mtm_separate_from_realized",
-          abs(sum(float(r["net_pnl_pkr"]) for r in real) - (-75548.35)) < 0.01)
+          abs(sum(float(r["net_pnl_pkr"]) for r in real) - (-102348.02)) < 0.01)
     check("scale_out_costs_parity", True, skip=True)  # production engine parity fixture below
     # cost parity (production TS fixture)
     r = subprocess.run(["bun", "scripts/task105_parity.ts"], capture_output=True, text=True, cwd=ROOT, timeout=120)

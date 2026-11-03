@@ -137,7 +137,7 @@ def _quarantine(rows: list[dict]) -> None:
     OPS.mkdir(parents=True, exist_ok=True)
     p = OPS / "rejected_observations.json"
     prior = json.loads(p.read_text()) if p.exists() else []
-    p.write_text(json.dumps((prior + rows)[-500:], indent=1))
+    p.write_text(json.dumps((prior + rows)[-500:], indent=1, default=str))
 
 
 def _config_check() -> str | None:
@@ -386,7 +386,7 @@ def run_cycle() -> tuple[str, dict]:
         duration = round(time.time() - t0, 2)
         conn.execute("INSERT OR REPLACE INTO poll_log VALUES (?,?,?,?,?,?,?,?,?)",
                       (cycle_id, started, ended, window, len(LB.PILOT25) - len([e for e in errors if "symbol" in e]), new_snaps,
-                       total_after, len(errors), json.dumps(errors)[:200]))
+                       total_after, len(errors), json.dumps(errors, default=str)[:200]))
         conn.execute("INSERT OR REPLACE INTO cycle_latency VALUES (?,?,?,?,?,?,?,?)",
                       (cycle_id, started, ended, duration, interval_prev,
                        round(sum(sym_lat) / max(1, len(sym_lat)), 1) if sym_lat else None,

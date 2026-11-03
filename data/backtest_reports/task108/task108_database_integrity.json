@@ -1,0 +1,17 @@
+{
+ "report": "task108_database_integrity",
+ "status": "completed",
+ "snapshot_store": {
+  "integrity_check": "ok",
+  "journal_mode": "wal",
+  "busy_timeout_ms": 5000,
+  "quick_check": "ok"
+ },
+ "daily_db": {
+  "integrity_check": "ok"
+ },
+ "concurrency_test": "4 concurrent writers \u00d7 25 inserts under WAL \u2192 100 rows, integrity ok (task108_error_injection_tests.json)",
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

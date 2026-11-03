@@ -1,0 +1,42 @@
+{
+ "report": "task108_workflow_failure_semantics",
+ "status": "completed",
+ "removed": "python3 scripts/task107_monitor.py || exit 0 (masked all failures)",
+ "exit_codes": {
+  "0": "success_with_updates | success_no_change (legitimate no-op included)",
+  "2": "degraded_provider \u2014 green run, ::warning:: + degraded job summary (retryable)",
+  "3": "failed_configuration \u2014 red",
+  "4": "failed_internal_error \u2014 red",
+  "5": "failed_data_integrity \u2014 red (quarantined observations)"
+ },
+ "step_summary_fields": [
+  "run id",
+  "source",
+  "quotes requested/errored",
+  "new observations",
+  "unchanged (no-op)",
+  "rejected",
+  "latest timestamps",
+  "provider errors",
+  "data status",
+  "shadow records changed"
+ ],
+ "live_evidence": {
+  "green_no_change_run": {
+   "id": 41678403599,
+   "event": "workflow_dispatch",
+   "status": "completed",
+   "conclusion": "success",
+   "head": "ffaab3f8e1",
+   "created_at": "2026-11-03T16:51:15Z"
+  },
+  "red_internal_error_run": {
+   "id": 41676513527,
+   "reason": "bun missing \u2192 exit 4"
+  },
+  "summary_refusal": "summary step fails when no cycle result exists \u2014 a dataless run can never look successful"
+ },
+ "verdict": "completed",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}

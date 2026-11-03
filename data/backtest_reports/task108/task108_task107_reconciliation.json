@@ -1,0 +1,55 @@
+{
+ "report": "task108_task107_reconciliation",
+ "status": "completed",
+ "baseline": {
+  "status_completed": true,
+  "provider_delay_minutes": 15,
+  "bar_interval_minutes": null,
+  "poll_seconds_local": 120,
+  "api_cache_seconds": 60,
+  "window": [
+   "09:45",
+   "15:45"
+  ],
+  "frontier": "2026-11-03",
+  "snapshots_24": 24,
+  "open_positions": 59,
+  "realized_outcomes": 43,
+  "realized_net_pkr": -102348.02,
+  "unrealized_mtm_pkr_report_time": -35151.75,
+  "eod_matches": "22/22",
+  "models_not_promotable": true,
+  "no_real_orders": true,
+  "shorts_disabled": true
+ },
+ "live_now": {
+  "snapshots_total": 24,
+  "open_positions": 59,
+  "realized_outcomes": 43,
+  "realized_net_pkr": -102348.02,
+  "unrealized_engine_now": -53867.98,
+  "eod_recheck": "22/22 (re-verified twice this session)",
+  "frontier": "2026-11-03"
+ },
+ "differences": [
+  {
+   "field": "unrealized_mtm",
+   "baseline": -35151.75,
+   "now": -53867.98,
+   "explanation": "MTM is a point-in-time estimate recomputed per cycle/engine run from different observation times and the engine's daily marks; realized P&L (-102,348.02) is unchanged \u2014 frozen history intact"
+  }
+ ],
+ "unchanged": [
+  "snapshots 24 \u2192 24 (post-session, no new)",
+  "59 pending",
+  "43 realized",
+  "realized net",
+  "frontier",
+  "delay model",
+  "window",
+  "models not_promotable"
+ ],
+ "verdict": "reconciled",
+ "generated_at": "2026-11-03T17:09:13Z",
+ "task": "task108"
+}
