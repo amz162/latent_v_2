@@ -15,8 +15,8 @@ const CSV_FIELDS = [
   "decisionTimestamp", "dataCutoff", "provider", "model", "promptVersion",
   "evidenceSchemaVersion", "outputSchemaVersion", "evidenceHash", "validationStatus",
   "rejectionReason", "forwardCohortId", "generationId", "riskPolicyVersion",
-  "researchStatus", "provenance", "mockRecord", "staleSkipped", "llmFailureReason",
-  "finalSignalReason",
+  "researchStatus", "provenance", "recordType", "mockRecord", "staleSkipped",
+  "llmFailureReason", "finalSignalReason",
 ] as const;
 
 export async function GET(req: NextRequest) {
@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
     evidenceCompleteness: sp.get("evidenceCompleteness") || undefined,
     q: sp.get("q") || undefined,
     includeMock: sp.get("includeMock") === "1",
+    recordType: (sp.get("recordType") as "REAL_LLM_DECISION" | "MOCK_PIPELINE_CHECK" | null) || undefined,
   };
   const format = sp.get("format") === "csv" ? "csv" : "json";
   const records = applyFilter(await loadAllRecords(), filter);

@@ -36,6 +36,7 @@ def signal_id(sym: str, ts: str, evhash: str) -> str:
 def normalize(rec: dict, provenance: str, evidence_ref: str | None) -> dict:
     rr = rec.get("riskReward") or {}
     out = rec.get("llmOutput") or {}
+    is_mock = bool(rec.get("provider") == "mock" or rec.get("__mock"))
     return {
         "signalId": signal_id(rec.get("symbol", "?"), rec.get("decisionTimestamp", ""), rec.get("evidenceHash", "")),
         "symbol": rec.get("symbol"),
@@ -67,8 +68,12 @@ def normalize(rec: dict, provenance: str, evidence_ref: str | None) -> dict:
         "riskPolicyVersion": rr.get("riskPolicyVersion") or rr.get("configVersion"),
         "provenance": provenance,
         "evidenceRef": evidence_ref,
-        "mockRecord": bool(rec.get("provider") == "mock" or rec.get("__mock")),
+        "mockRecord": is_mock,
         "staleSkipped": bool(rec.get("staleSkipped")),
+        # Task 113: explicit record type. Mock pipeline-check records are
+        # MOCK_PIPELINE_CHECK and are excluded from every performance/outcome
+        # metric; only REAL_LLM_DECISION records feed metrics.
+        "recordType": "MOCK_PIPELINE_CHECK" if is_mock else "REAL_LLM_DECISION",
     }
 
 

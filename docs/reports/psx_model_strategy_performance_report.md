@@ -1,5 +1,5 @@
 # PSX Model & Strategy Performance Report (Task 112)
-Generated: 2026-11-04T15:08:13Z · git head 6daa32ec · status: completed
+Generated: 2026-11-04T17:54:10Z · git head e371b6c3 · status: completed
 
 Scope: every model and strategy actually present in repository evidence (Tasks 79-111),
 including the GLM-4.6 multi-source LLM analyst. Missing information is marked
@@ -120,6 +120,45 @@ holdout and prospective-forward results are kept strictly separate.
 - **international_news**: available 0.0% · cited 0.0%
 
 > No claim is made that any evidence category improves accuracy without a valid controlled comparison.
+
+## Model inventory dashboard (Task 113 audit)
+
+| Metric | Count |
+| --- | --- |
+| Total registry entries | 83 |
+| Implemented models | 0 |
+| Trained on PSX data | 9 |
+| Successfully evaluated | 11 |
+| Forward shadow models | 3 |
+| Rule-based strategies (NOT ML) | 20 |
+| Blocked / unavailable | 34 |
+| Duplicate / alias entries | 3 |
+| Historical experiments | 7 |
+
+> Counts come from actual audit records (task82 registry + task79/98/99/100/101/104/111/112 artifacts + DB). Not 83 trained/operational models; 83 inventory entries with mixed status.
+
+## Forward-validation dashboard (Task 113 audit — by cohort)
+
+Each cohort reconciles internally. **Total positions are NOT total decisions and NOT matured outcomes.**
+
+| Cohort | Obs | Symbols | Mat 5 | Pend 5 | Mat 10 | Pend 10 | Mat 21 | Pend 21 | Term-exits | Pend-MTM | Unfilled |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| task105-gen1 | 12 | 12 | 0 | 12 | 0 | 12 | 0 | 12 | 21 | 15 | 0 |
+| task106-gen2 | 22 | 22 | 0 | 22 | 0 | 22 | 0 | 22 | 22 | 44 | 0 |
+| task107-gen3 | 23 | 23 | 0 | 23 | 0 | 23 | 0 | 23 | 0 | 0 | 23 |
+| task111-llm-multisource-gen1 | 23 | 23 | 0 | 23 | 0 | 23 | 0 | 23 | 0 | 0 | 23 |
+| task76-77-prospective-db-layer | 375 | 25 | 0 | 375 | 0 | 375 | 0 | 375 | 0 | 0 | 114 |
+
+> 0 horizon-matured outcomes for any cohort. The 43 terminal-early-exits are SL/TP3 exits, NOT 5/10/21-session horizon maturities (earliest 21-session ~2026-12-01). MTM pending is never counted as a win. Cohorts are never added across denominators.
+
+## LLM outcome maturity (Task 113 — isolated from all other cohorts)
+
+- **Matured at 5/10/21 sessions**: 0 / 0 / 0 (zero — decisions are current-date; frontier equals decision as-of).
+- **Total real decisions**: 48 · **BUY (current)**: 2.
+- **Directional accuracy**: Not available — 0 matured LLM outcomes.
+- **Net returns (BUY)**: Not available — 0 matured BUY outcomes.
+- **Calibration**: Not available — insufficient matured LLM outcomes.
+> Never report an LLM win rate when no valid outcomes are mature. Never use general forward-cohort performance as the LLM's performance.
 
 ## General forward cohort (NOT LLM)
 

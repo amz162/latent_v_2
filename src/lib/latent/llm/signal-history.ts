@@ -1,13 +1,21 @@
 // ============================================================================
-// Task 112 — server-side access to the append-only LLM signal history.
+// Task 112/113 — server-side access to the append-only LLM signal history.
 //
 // Store: data/backtest_reports/task112/llm_signal_history/{signalId}.json
 // (append-only; one file per decision; retries/older runs kept separately and
 // distinguished by evidence hash + decision timestamp + provenance).
 // This module NEVER mutates the store — it reads, filters and paginates.
+//
+// Task 113: every record carries an explicit `recordType` so mock
+// pipeline-check records (MOCK_PIPELINE_CHECK) can never contaminate real LLM
+// performance / forward-outcome / win-rate / calibration metrics, which are all
+// derived exclusively from REAL_LLM_DECISION records. Mock records are visible
+// in the UI only when the includeMock opt-in filter is selected.
 // ============================================================================
 import { promises as fs } from "fs";
 import path from "path";
+
+export type RecordType = "REAL_LLM_DECISION" | "MOCK_PIPELINE_CHECK";
 
 export interface SignalHistoryRecord {
   signalId: string;
@@ -42,6 +50,10 @@ export interface SignalHistoryRecord {
   evidenceRef: string | null;
   mockRecord: boolean;
   staleSkipped: boolean;
+  // Task 113: explicit record type. REAL_LLM_DECISION records are the only
+  // records eligible for any performance/outcome metric. MOCK_PIPELINE_CHECK
+  // records are retained for provenance/audit and shown only via includeMock.
+  recordType: RecordType;
 }
 
 const ROOT = process.cwd();
@@ -62,6 +74,15 @@ export interface SignalFilter {
   evidenceCompleteness?: string; // complete | partial | missing
   q?: string; // symbol or company substring
   includeMock?: boolean;
+  recordType?: RecordType; // Task 113: filter by explicit record type
+}
+
+/** Derive the explicit record type from a persisted record. Records written
+ * before Task 113 lack the `recordType` field; derive it from mockRecord so
+ * every metric path can rely on a non-null value. */
+export function recordTypeOf(r: Pick<SignalHistoryRecord, "mockRecord" | "recordType">): RecordType {
+  if (r.recordType === "REAL_LLM_DECISION" || r.recordType === "MOCK_PIPELINE_CHECK") return r.recordType;
+  return r.mockRecord ? "MOCK_PIPELINE_CHECK" : "REAL_LLM_DECISION";
 }
 
 export async function loadAllRecords(): Promise<SignalHistoryRecord[]> {
@@ -70,7 +91,10 @@ export async function loadAllRecords(): Promise<SignalHistoryRecord[]> {
     const rows: SignalHistoryRecord[] = [];
     for (const f of files) {
       try {
-        rows.push(JSON.parse(await fs.readFile(path.join(HIST_DIR, f), "utf8")));
+        const r = JSON.parse(await fs.readFile(path.join(HIST_DIR, f), "utf8")) as SignalHistoryRecord;
+        // normalize pre-Task-113 records: guarantee a non-null recordType
+        if (!r.recordType) (r as SignalHistoryRecord).recordType = recordTypeOf(r);
+        rows.push(r);
       } catch {
         /* skip unreadable */
       }
@@ -99,7 +123,12 @@ function evidenceCompletenessOf(r: SignalHistoryRecord): "complete" | "partial" 
 export function applyFilter(records: SignalHistoryRecord[], f: SignalFilter, nowMs: number = Date.now()): SignalHistoryRecord[] {
   const q = (f.q ?? "").trim().toUpperCase();
   return records.filter((r) => {
-    if (!f.includeMock && r.mockRecord) return false;
+    const rt = recordTypeOf(r);
+    // Task 113: mock records are excluded from every default view and every
+    // metric path unless includeMock is opted in. This is enforced on the
+    // explicit recordType so it cannot be bypassed by a stale mockRecord flag.
+    if (rt === "MOCK_PIPELINE_CHECK" && !f.includeMock) return false;
+    if (f.recordType && rt !== f.recordType) return false;
     if (f.symbol && r.symbol !== f.symbol.toUpperCase()) return false;
     if (f.company && !(r.companyName ?? "").toUpperCase().includes(f.company.toUpperCase())) return false;
     if (f.decision && r.decision !== f.decision && r.llmState !== f.decision) return false;
@@ -129,6 +158,7 @@ export interface PagedSignals {
     promptVersions: string[];
     cohorts: string[];
     symbols: string[];
+    recordTypes: Record<string, number>;
     lastUpdatedAt: string | null;
   };
 }
@@ -165,6 +195,7 @@ export async function querySignals(f: SignalFilter, page = 1, pageSize = 25): Pr
       promptVersions: [...new Set(filtered.map((r) => r.promptVersion ?? ""))].filter(Boolean).sort(),
       cohorts: [...new Set(filtered.map((r) => r.forwardCohortId ?? ""))].filter(Boolean).sort(),
       symbols: [...new Set(filtered.map((r) => r.symbol ?? ""))].filter(Boolean).sort(),
+      recordTypes: by((r) => recordTypeOf(r)),
       lastUpdatedAt: lastTs ?? null,
     },
   };

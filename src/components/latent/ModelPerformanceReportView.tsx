@@ -59,6 +59,7 @@ interface Report {
   generated_at: string;
   git_head: string;
   status: string;
+  report_version?: string;
   inventory: Profile[];
   summary: SummaryRow[];
   account_comparison_pkr100k: AccountRow[];
@@ -68,6 +69,57 @@ interface Report {
     pending_strategy_outcomes?: number; unique_symbols?: number; warning?: string;
   };
   evidence_lineage: Record<string, unknown>;
+  task113_audit?: {
+    available: boolean;
+    data_frontier?: string;
+    session_count?: number;
+    inventory_dashboard?: InventoryDash;
+    forward_validation_dashboard?: ForwardRow[];
+    llm_outcome_maturity?: LlmMaturity;
+    explanation_57_43_59?: { conclusion?: string; what_each_number_counts?: Record<string, string> };
+  };
+}
+
+interface InventoryDash {
+  total_registry_entries?: number;
+  implemented_models?: number;
+  trained_psx_models?: number;
+  successfully_evaluated_models?: number;
+  shadow_models?: number;
+  rule_based_strategies?: number;
+  blocked_unavailable_models?: number;
+  duplicate_alias_entries?: number;
+  historical_experiments?: number;
+  by_category?: Record<string, number>;
+  note?: string;
+}
+
+interface ForwardRow {
+  cohort_id: string;
+  cohort_name?: string;
+  total_observations?: number;
+  unique_symbols?: number;
+  matured_5_session?: number | string;
+  pending_5_session?: number | string;
+  matured_10_session?: number | string;
+  pending_10_session?: number | string;
+  matured_21_session?: number | string;
+  pending_21_session?: number | string;
+  matured_terminal_exits_early?: number;
+  pending_mtm_open?: number;
+  unfilled_awaiting_entry_bar?: number;
+}
+
+interface LlmMaturity {
+  matured_5_session?: number;
+  matured_10_session?: number;
+  matured_21_session?: number;
+  total_real_decisions?: number;
+  buy_decisions_current?: number;
+  calibration_status?: string;
+  directional_accuracy?: string;
+  net_returns_buy?: string;
+  rule?: string;
 }
 
 const NA = "Not available in source evidence";
@@ -178,6 +230,103 @@ export function ModelPerformanceReportView() {
         </select>
         <span className="text-xs text-muted-foreground">{rows.length} models</span>
       </div>
+
+      {/* Task 113: model inventory dashboard */}
+      {report.task113_audit?.inventory_dashboard && (
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-base">Model inventory dashboard (Task 113 audit)</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-3 md:grid-cols-5">
+              {[
+                ["Total registry entries", report.task113_audit.inventory_dashboard.total_registry_entries],
+                ["Implemented models", report.task113_audit.inventory_dashboard.implemented_models],
+                ["Trained on PSX data", report.task113_audit.inventory_dashboard.trained_psx_models],
+                ["Successfully evaluated", report.task113_audit.inventory_dashboard.successfully_evaluated_models],
+                ["Forward shadow models", report.task113_audit.inventory_dashboard.shadow_models],
+                ["Rule-based strategies", report.task113_audit.inventory_dashboard.rule_based_strategies],
+                ["Blocked / unavailable", report.task113_audit.inventory_dashboard.blocked_unavailable_models],
+                ["Duplicate / alias", report.task113_audit.inventory_dashboard.duplicate_alias_entries],
+                ["Historical experiments", report.task113_audit.inventory_dashboard.historical_experiments],
+              ].map(([label, val]) => (
+                <div key={String(label)} className="rounded-md border p-2">
+                  <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
+                  <div className="text-lg font-semibold">{String(val ?? "—")}</div>
+                </div>
+              ))}
+            </div>
+            <p className="pt-2 text-[10px] text-muted-foreground">{report.task113_audit.inventory_dashboard.note}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Task 113: forward-validation dashboard (by cohort) */}
+      {report.task113_audit?.forward_validation_dashboard && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Forward-validation dashboard (Task 113 — by cohort)</CardTitle>
+            <p className="text-[11px] text-muted-foreground">Each cohort reconciles internally. Total positions ≠ total decisions ≠ matured outcomes.</p>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b text-muted-foreground">
+                    <th className="py-1.5 pr-2">Cohort</th><th className="pr-2">Obs</th><th className="pr-2">Symbols</th>
+                    <th className="pr-2">Mat 5</th><th className="pr-2">Pend 5</th>
+                    <th className="pr-2">Mat 10</th><th className="pr-2">Pend 10</th>
+                    <th className="pr-2">Mat 21</th><th className="pr-2">Pend 21</th>
+                    <th className="pr-2">Term-exits</th><th className="pr-2">Pend-MTM</th><th className="pr-2">Unfilled</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {report.task113_audit.forward_validation_dashboard.map((fv) => (
+                    <tr key={fv.cohort_id} className="border-b border-border/50">
+                      <td className="py-1.5 pr-2 font-medium" title={fv.cohort_name}>{fv.cohort_id}</td>
+                      <td className="pr-2">{fv.total_observations}</td>
+                      <td className="pr-2">{fv.unique_symbols}</td>
+                      <td className="pr-2">{fv.matured_5_session}</td>
+                      <td className="pr-2">{fv.pending_5_session}</td>
+                      <td className="pr-2">{fv.matured_10_session}</td>
+                      <td className="pr-2">{fv.pending_10_session}</td>
+                      <td className="pr-2">{fv.matured_21_session}</td>
+                      <td className="pr-2">{fv.pending_21_session}</td>
+                      <td className="pr-2">{fv.matured_terminal_exits_early}</td>
+                      <td className="pr-2">{fv.pending_mtm_open}</td>
+                      <td className="pr-2">{fv.unfilled_awaiting_entry_bar}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="pt-2 text-[10px] text-muted-foreground">
+              0 horizon-matured outcomes for any cohort. The 43 terminal-early-exits are SL/TP3 exits, NOT 5/10/21-session horizon maturities
+              (earliest 21-session ~2026-12-01). MTM pending is never counted as a win. Cohorts are never added across denominators.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Task 113: LLM outcome maturity (isolated) */}
+      {report.task113_audit?.llm_outcome_maturity && (
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-base">LLM outcome maturity (Task 113 — isolated from all other cohorts)</CardTitle></CardHeader>
+          <CardContent className="text-xs">
+            {(() => {
+              const l = report.task113_audit!.llm_outcome_maturity!;
+              return (
+                <div className="grid gap-1 sm:grid-cols-2">
+                  <div>Matured at 5 / 10 / 21 sessions: <b>{l.matured_5_session} / {l.matured_10_session} / {l.matured_21_session}</b> (zero — current-date decisions; frontier equals decision as-of)</div>
+                  <div>Total real decisions: <b>{l.total_real_decisions}</b> · BUY (current): <b>{l.buy_decisions_current}</b></div>
+                  <div>Directional accuracy: <span className="text-muted-foreground">{l.directional_accuracy}</span></div>
+                  <div>Net returns (BUY): <span className="text-muted-foreground">{l.net_returns_buy}</span></div>
+                  <div className="sm:col-span-2">Calibration: <span className="font-semibold text-amber-700 dark:text-amber-300">{l.calibration_status}</span></div>
+                </div>
+              );
+            })()}
+            <p className="pt-2 text-[10px] text-muted-foreground">{report.task113_audit.llm_outcome_maturity.rule}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* summary table */}
       <Card>

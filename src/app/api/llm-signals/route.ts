@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
     evidenceCompleteness: sp.get("evidenceCompleteness") || undefined,
     q: sp.get("q") || undefined,
     includeMock: sp.get("includeMock") === "1",
+    recordType: (sp.get("recordType") as "REAL_LLM_DECISION" | "MOCK_PIPELINE_CHECK" | null) || undefined,
   };
   const page = Math.max(1, Number(sp.get("page") || "1"));
   const pageSize = Math.min(200, Math.max(5, Number(sp.get("pageSize") || "25")));

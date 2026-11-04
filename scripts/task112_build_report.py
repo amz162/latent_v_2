@@ -21,6 +21,7 @@ import task110_phases_research as R  # noqa: E402
 BR = ROOT / "data" / "backtest_reports"
 T111 = LB.T111
 T112 = LB.ROOT / "data" / "backtest_reports" / "task112"
+T113 = LB.ROOT / "data" / "backtest_reports" / "task113"
 REP_DIR = ROOT / "data" / "reports"
 DOCS_DIR = ROOT / "docs" / "reports"
 N_A = "Not available in source evidence"
@@ -308,6 +309,64 @@ def load_general_forward() -> dict:
     }
 
 
+# ───────────────────────── Task 113 audit integration ───────────────────────
+def load_task113_audit() -> dict:
+    """Load the Task 113 forward-validation audit (Parts A/C/D/F/G) and surface
+    its dashboards into the model performance report. Preserves Task 112's
+    existing report structure; adds the new dashboards alongside it."""
+    audit = j(T113 / "task113_forward_validation_audit.json") or {}
+    if not audit:
+        return {"available": False, "reason": "task113 audit not generated (run scripts/task113_audit.py)"}
+    cohorts = audit.get("part_a_cohort_reconciliation") or []
+    # forward-validation dashboard: one row per cohort, impossible to mistake
+    # total positions for total decisions or matured outcomes.
+    fv_rows = []
+    for c in cohorts:
+        fv_rows.append({
+            "cohort_id": c.get("cohort_id"),
+            "cohort_name": c.get("cohort_name"),
+            "total_observations": c.get("total_decision_records"),
+            "unique_symbols": c.get("unique_symbols"),
+            "matured_5_session": c.get("matured_5_session"),
+            "pending_5_session": c.get("pending_5_session"),
+            "matured_10_session": c.get("matured_10_session"),
+            "pending_10_session": c.get("pending_10_session"),
+            "matured_21_session": c.get("matured_21_session"),
+            "pending_21_session": c.get("pending_21_session"),
+            "matured_terminal_exits_early": c.get("matured_terminal_exits_early"),
+            "pending_mtm_open": c.get("pending_mtm_open"),
+            "unfilled_awaiting_entry_bar": c.get("unfilled_awaiting_entry_bar"),
+            "excluded_records": c.get("excluded_records"),
+            "forward_sessions_elapsed": c.get("forward_sessions_elapsed_since_entry"),
+        })
+    inv = audit.get("part_d_model_inventory") or {}
+    llm = audit.get("part_c_llm_outcome_maturity") or {}
+    return {
+        "available": True,
+        "task113_git_head": audit.get("git_head"),
+        "data_frontier": audit.get("data_frontier"),
+        "session_count": audit.get("session_count"),
+        "forward_validation_dashboard": fv_rows,
+        "inventory_dashboard": inv.get("dashboard"),
+        "inventory_entries": inv.get("entries"),
+        "llm_outcome_maturity": {
+            "cohort_id": llm.get("cohort_id"),
+            "matured_5_session": llm.get("matured_5_session"),
+            "matured_10_session": llm.get("matured_10_session"),
+            "matured_21_session": llm.get("matured_21_session"),
+            "total_real_decisions": llm.get("total_real_decisions"),
+            "buy_decisions_current": llm.get("buy_decisions_current"),
+            "calibration_status": (llm.get("calibration") or {}).get("status"),
+            "directional_accuracy": llm.get("directional_accuracy"),
+            "net_returns_buy": llm.get("net_returns_buy"),
+            "rule": llm.get("rule"),
+        },
+        "explanation_57_43_59": audit.get("part_a_57_43_59_explanation"),
+        "pipeline_health": audit.get("part_f_forward_pipeline_health"),
+        "safeguards": audit.get("part_g_research_safeguards"),
+    }
+
+
 # ─────────────────────────── Part E/F/G/H/I ──────────────────────────────────
 def part_e_lineage_and_contribution():
     records = []
@@ -498,7 +557,7 @@ def part_g_combined():
                 label="development_only / insufficient_evidence — no results manufactured")
 
 
-def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], contribution: dict) -> dict:
+def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], contribution: dict, task113: dict | None = None) -> dict:
     summary_rows = []
     for m in models:
         best = N_A
@@ -520,26 +579,30 @@ def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], co
     report = {
         "report": "psx_model_strategy_performance_report",
         "task": "task112",
+        "report_version": "task113-augmented",
         "generated_at": now_iso(),
         "git_head": LB.git_head(),
         "status": "completed",
         "evidence_lineage": {
-            "sources": sorted(set(str(p) for p in BR.glob("task*/*.json"))).__len__() and "data/backtest_reports/task*/ (Tasks 79-111 committed artifacts)",
+            "sources": sorted(set(str(p) for p in BR.glob("task*/*.json"))).__len__() and "data/backtest_reports/task*/ (Tasks 79-113 committed artifacts)",
             "primary_files": ["task82_model_registry_audit.json", "task79_model_results.json",
                               "task100_model_comparison.json", "task98_metrics.json", "task99 artifacts",
                               "task101_cost_aware_training.json", "task104_portfolio_results.json",
-                              "task109_forward_performance.json", "task111 artifacts", "task112 artifacts"],
+                              "task109_forward_performance.json", "task111 artifacts", "task112 artifacts",
+                              "task113_forward_validation_audit.json (cohort reconciliation + inventory classification)"],
             "cost_schedule": "psx_user_schedule_v2 (computeTradeCostsV2) for Task 100+ strategy results; legacy experiments labeled in their own artifacts",
             "rules": ["historical development / training / validation / final-holdout / prospective forward kept separate",
                       "Task 109's 43 matured outcomes are the GENERAL cohort, never attributed to the LLM",
                       "LLM-specific cohort: 0 matured outcomes; calibration forbidden until >=100 genuine matured LLM outcomes",
-                      "missing values are marked 'Not available in source evidence'"],
+                      "missing values are marked 'Not available in source evidence'",
+                      "Task 113: mock records (MOCK_PIPELINE_CHECK) never feed any metric; cohort denominators never added across"],
         },
         "inventory": models,
         "general_forward_cohort": forward,
         "account_comparison_pkr100k": overlay_rows,
         "llm_evidence_contribution": contribution,
         "summary": summary_rows,
+        "task113_audit": task113 or {"available": False},
     }
     REP_DIR.mkdir(parents=True, exist_ok=True)
     (REP_DIR / "model_strategy_performance_latest.json").write_text(json.dumps(report, indent=1, default=str), encoding="utf-8")
@@ -601,6 +664,56 @@ def write_markdown(report: dict) -> Path:
         "",
         "> No claim is made that any evidence category improves accuracy without a valid controlled comparison.",
         "",
+        "## Model inventory dashboard (Task 113 audit)",
+        "",
+    ]
+    t113 = report.get("task113_audit") or {}
+    inv_dash = t113.get("inventory_dashboard") or {}
+    if inv_dash:
+        lines.append("| Metric | Count |")
+        lines.append("| --- | --- |")
+        lines.append(f"| Total registry entries | {inv_dash.get('total_registry_entries')} |")
+        lines.append(f"| Implemented models | {inv_dash.get('implemented_models')} |")
+        lines.append(f"| Trained on PSX data | {inv_dash.get('trained_psx_models')} |")
+        lines.append(f"| Successfully evaluated | {inv_dash.get('successfully_evaluated_models')} |")
+        lines.append(f"| Forward shadow models | {inv_dash.get('shadow_models')} |")
+        lines.append(f"| Rule-based strategies (NOT ML) | {inv_dash.get('rule_based_strategies')} |")
+        lines.append(f"| Blocked / unavailable | {inv_dash.get('blocked_unavailable_models')} |")
+        lines.append(f"| Duplicate / alias entries | {inv_dash.get('duplicate_alias_entries')} |")
+        lines.append(f"| Historical experiments | {inv_dash.get('historical_experiments')} |")
+        lines.append("")
+        lines.append(f"> {inv_dash.get('note')}")
+        lines.append("")
+    lines += [
+        "## Forward-validation dashboard (Task 113 audit — by cohort)",
+        "",
+        "Each cohort reconciles internally. **Total positions are NOT total decisions and NOT matured outcomes.**",
+        "",
+        "| Cohort | Obs | Symbols | Mat 5 | Pend 5 | Mat 10 | Pend 10 | Mat 21 | Pend 21 | Term-exits | Pend-MTM | Unfilled |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for fv in (t113.get("forward_validation_dashboard") or []):
+        lines.append(f"| {fv.get('cohort_id')} | {fv.get('total_observations')} | {fv.get('unique_symbols')} | "
+                     f"{fv.get('matured_5_session')} | {fv.get('pending_5_session')} | {fv.get('matured_10_session')} | "
+                     f"{fv.get('pending_10_session')} | {fv.get('matured_21_session')} | {fv.get('pending_21_session')} | "
+                     f"{fv.get('matured_terminal_exits_early')} | {fv.get('pending_mtm_open')} | {fv.get('unfilled_awaiting_entry_bar')} |")
+    lines += [
+        "",
+        "> 0 horizon-matured outcomes for any cohort. The 43 terminal-early-exits are SL/TP3 exits, NOT 5/10/21-session horizon maturities (earliest 21-session ~2026-12-01). MTM pending is never counted as a win. Cohorts are never added across denominators.",
+        "",
+        "## LLM outcome maturity (Task 113 — isolated from all other cohorts)",
+        "",
+    ]
+    llm = t113.get("llm_outcome_maturity") or {}
+    if llm:
+        lines.append(f"- **Matured at 5/10/21 sessions**: {llm.get('matured_5_session')} / {llm.get('matured_10_session')} / {llm.get('matured_21_session')} (zero — decisions are current-date; frontier equals decision as-of).")
+        lines.append(f"- **Total real decisions**: {llm.get('total_real_decisions')} · **BUY (current)**: {llm.get('buy_decisions_current')}.")
+        lines.append(f"- **Directional accuracy**: {llm.get('directional_accuracy')}.")
+        lines.append(f"- **Net returns (BUY)**: {llm.get('net_returns_buy')}.")
+        lines.append(f"- **Calibration**: {llm.get('calibration_status')}.")
+        lines.append(f"> {llm.get('rule')}")
+        lines.append("")
+    lines += [
         "## General forward cohort (NOT LLM)",
         "",
         f"Observations: {report['general_forward_cohort'].get('total_forward_observations')} · matured: {report['general_forward_cohort'].get('matured_positions')} (W{report['general_forward_cohort'].get('wins')}/L{report['general_forward_cohort'].get('losses')}) · pending: {report['general_forward_cohort'].get('pending_strategy_outcomes')} · symbols: {report['general_forward_cohort'].get('unique_symbols')}",
@@ -679,11 +792,12 @@ def main():
     models += load_rule_systems()
     models += load_llm()
     forward = load_general_forward()
+    task113 = load_task113_audit()
     lineage, contribution = part_e_lineage_and_contribution()
     overlay_rows = part_f_overlays()
     part_i_pipeline()
     part_g_combined()
-    report = build_report(models, forward, overlay_rows, contribution)
+    report = build_report(models, forward, overlay_rows, contribution, task113)
     md = write_markdown(report)
     pdf = write_pdf(report, md)
     print(f"models in inventory: {len(models)}")
