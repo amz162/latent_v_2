@@ -8,6 +8,7 @@
 // is an option signal; no options execution exists anywhere behind this API.
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Task111SignalPanel } from "./Task111SignalPanel";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Task110Chart } from "./Task110Chart";
@@ -96,6 +97,7 @@ export function VolatilityAnalyticsView() {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
+      <Task111SignalPanel symbol={symbol} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">Volatility &amp; Convexity Analytics</h1>

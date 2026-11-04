@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Task110Chart, type Marker } from "./Task110Chart";
+import { Task111SignalPanel } from "./Task111SignalPanel";
 
 const UNIVERSE = ["ANL", "BOP", "CNERGY", "FCCL", "HASCOL", "HUBC", "HUMNL", "KEL", "LOTCHEM", "LUCK", "MEBL", "MLCF", "OGDC", "PAEL", "PIBTL", "PPL", "PRL", "PSO", "SYS", "TELE", "TRG", "UNITY", "WTL"];
 
@@ -81,6 +82,7 @@ export function GoldenCrossView() {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
+      <Task111SignalPanel symbol={symbol} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">Golden Cross — 7/30 SMA</h1>

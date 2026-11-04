@@ -1,0 +1,26 @@
+{
+ "report": "task111_option_availability_audit",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:05:17Z",
+ "git_head": "0df3b84",
+ "status": "blocked_options_data",
+ "recheck_method": "Task 110 audit carried forward + current platform data scan (no options tables, no provider feed)",
+ "fields_required": [
+  "contract",
+  "underlying",
+  "expiry",
+  "strike",
+  "call/put",
+  "bid/ask",
+  "last",
+  "implied_volatility",
+  "open_interest",
+  "volume",
+  "multiplier",
+  "settlement",
+  "margin",
+  "permissions"
+ ],
+ "fields_available": 0,
+ "verdict": "PSX listed single-stock options data is NOT available in any authorized platform source; realized volatility is NEVER used as implied volatility"
+}

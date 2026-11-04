@@ -1,0 +1,24 @@
+{
+ "report": "task111_security_audit",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:15:57Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "scope": "platform-level security audit for the Task 111 additions (LLM-specific audit: task111_llm_security_audit.json)",
+ "credentials": {
+  "storage": "gitignored .zcredentials/github_token.local + untracked .git/credentials (armed store)",
+  "in_source_tree": false,
+  "scan_hits": [],
+  "in_frontend": "none \u2014 provider calls are server-side only",
+  "in_logs": "never printed; provider log records metadata only"
+ },
+ "external_transmission": {
+  "provider": "z-ai-web-dev-sdk (existing authorized integration)",
+  "payload": "structured evidence packages only (no DB dumps, no user PII, no broker data, no licensed-feed redistribution)"
+ },
+ "prompt_injection": "news/filings treated as untrusted evidence; sanitizer + detector + system-prompt guard; flagged items never trusted",
+ "output_validation": "strict server-side schema validation before any signal is stored or displayed",
+ "api_authorization": "new routes are read-only research endpoints; no order execution exists behind any route",
+ "rate_limits": "12h disk cache per source/symbol; bounded retrieval",
+ "retention": "artifacts committed under data/backtest_reports/task111/ for auditability"
+}

@@ -1,0 +1,14 @@
+{
+ "report": "task111_estimator_consistency",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:02:21Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "task110_92_recheck": "re-verified via task110_tests.py suite (includes volatility assertions) \u2014 62/62",
+ "python_ts_parity": "task110_parity 15/15 re-verified in phase 1",
+ "estimator_definitions": {
+  "close_to_close": "r_t = ln(C_t/C_{t-1}); rolling sample variance, window 20",
+  "parkinson": "mean[ln(H/L)^2] / (4 ln 2)",
+  "garman_klass": "mean[0.5 ln(H/L)^2 - (2 ln 2 - 1) ln(C/O)^2]"
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "report": "task111_capital_protection_scenarios",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:02:23Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "scenarios": [
+  {
+   "name": "5% drawdown alert",
+   "action": "new position budgets halved (research overlay)"
+  },
+  {
+   "name": "10% drawdown pause",
+   "action": "no new entries until recovery above alert level"
+  },
+  {
+   "name": "extreme vol expansion",
+   "action": "new budgets reduced to 25%"
+  },
+  {
+   "name": "single-position risk cap",
+   "action": "position not entered if ATR-based stop risk > 2% equity"
+  }
+ ],
+ "disclaimer": "simulated protective rules, NOT guarantees against price gaps"
+}

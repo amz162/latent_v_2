@@ -1,0 +1,26 @@
+{
+ "report": "task111_api_validation",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:15:17Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "endpoints": [
+  {
+   "route": "/api/golden-cross?symbol=HUBC",
+   "status": 200
+  },
+  {
+   "route": "/api/volatility?symbol=HUBC",
+   "status": 200
+  },
+  {
+   "route": "/api/ai-analysis/HUBC",
+   "status": 200
+  },
+  {
+   "route": "/api/ai-analysis",
+   "status": 200
+  }
+ ],
+ "browser_validation": "production build + tsc + API checks executed locally; CI runs the browser suite on push"
+}

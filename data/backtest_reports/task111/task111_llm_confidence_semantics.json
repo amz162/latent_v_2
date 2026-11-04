@@ -1,0 +1,39 @@
+{
+ "report": "task111_llm_confidence_semantics",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:52Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "fields": {
+  "llm_conviction_score": {
+   "range": "0-100",
+   "meaning": "LLM's own uncalibrated conviction in its thesis",
+   "is_win_probability": false,
+   "ui_label": "LLM conviction \u2014 uncalibrated"
+  },
+  "evidence_quality_score": {
+   "range": "0-100",
+   "meaning": "deterministic data-quality score (weights below)",
+   "computed_by": "application code, never the LLM"
+  },
+  "calibrated_net_positive_probability": {
+   "value": null,
+   "meaning": "null until genuine matured OOS outcomes allow validation-only calibration"
+  },
+  "historical_realized_win_rate": {
+   "meaning": "realized trade statistics; never mixed with the above"
+  }
+ },
+ "weights": {
+  "source_verification": 20,
+  "pit_availability": 8,
+  "data_completeness": 20,
+  "data_freshness": 15,
+  "financial_history_coverage": 10,
+  "news_corroboration": 7,
+  "technical_quality": 10,
+  "pattern_confirmation": 5,
+  "cross_source_consistency": 5
+ },
+ "rule": "80/100 conviction NEVER means 80% win probability; fields never share a label"
+}

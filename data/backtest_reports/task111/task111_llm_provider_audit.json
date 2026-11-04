@@ -1,0 +1,28 @@
+{
+ "report": "task111_llm_provider_audit",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:27Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "provider_id": "zai",
+ "sdk": "z-ai-web-dev-sdk",
+ "sdk_version": "0.0.18",
+ "model": "glm-4.6",
+ "probe": {
+  "probe": "ok",
+  "provider": "zai",
+  "model": "glm-4.6",
+  "latencyMs": 435
+ },
+ "configuration": "env-driven (LLM_PROVIDER/LLM_MODEL/LLM_TIMEOUT_MS/LLM_MAX_TOKENS); ZAI SDK manages its own approved credentials; no key material in repo",
+ "env_keys_documented": [
+  "LLM_PROVIDER",
+  "LLM_MODEL",
+  "LLM_TIMEOUT_MS",
+  "LLM_MAX_TOKENS"
+ ],
+ "credential_scan_hits": [],
+ "credentials_in_frontend": "none \u2014 provider used server-side only (scripts + route)",
+ "inference_scope": "research-only shadow signals; per-call provider log (provider_calls.jsonl)",
+ "failure_policy": "LLMUnavailableError -> record.llmState=llm_unavailable -> NO_TRADE with explicit reason; no technical-rule substitution"
+}

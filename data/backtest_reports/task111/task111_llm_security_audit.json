@@ -1,0 +1,13 @@
+{
+ "report": "task111_llm_security_audit",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:15:18Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "credential_handling": "env-only; ZAI SDK approved credentials; nothing hardcoded, nothing logged, nothing in frontend",
+ "credential_scan_hits": [],
+ "data_sent_to_provider": "structured evidence packages only (no DB dumps, no credentials, no private user data, no broker data)",
+ "provider": "z-ai-web-dev-sdk (existing authorized integration); external provider documented",
+ "prompt_injection_defense": "news text sanitized + flagged; system prompt forbids instruction-following from articles; flagged items keep dataQualityState=unverified",
+ "output_validation": "strict server-side JSON schema validation before any display"
+}

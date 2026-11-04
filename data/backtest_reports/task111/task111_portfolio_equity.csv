@@ -1,0 +1,12 @@
+strategy,initial_capital,final_equity,roi_pct,max_drawdown_pct,trades,wins,losses,win_rate_pct,profit_factor,total_costs,realized_net_pnl,unrealized_pnl,source,status,note,max_drawdown
+golden_cross_7_30_v1_baseline,100000.0,60718.23,-39.282,,363,,,27.0,0.8701,78867.55,,,task110 engine (unchanged),,,-87775.26
+overlay_A_fixed_vol_exposure,100000.0,79652.78,-20.347,-62.414,428,123,305,28.74,0.8611,,-49907.37,29560.15,,,,
+overlay_B_vol_target_10pct,100000.0,97320.37,-2.68,-23.621,428,123,305,28.74,0.8946,,-9935.01,7255.38,,,,
+overlay_B_vol_target_15pct,100000.0,92758.4,-7.242,-33.656,428,123,305,28.74,0.8736,,-17684.56,10442.96,,,,
+overlay_B_vol_target_20pct,100000.0,87418.18,-12.582,-42.54,428,123,305,28.74,0.8582,,-25901.62,13319.8,,,,
+overlay_C_expansion_protection,100000.0,79652.78,-20.347,-62.414,428,123,305,28.74,0.8611,,-49907.37,29560.15,,,,
+llm_driven_selection,,,,,,,,,,,,,,forward_only_collecting,0 symbols carry a real LLM research decision for the CURRENT date only; historical LLM portfolio simulation is FORBIDDEN (no PIT evidence packages; historical LLM output would be fabricated). LLM strategies enter the forward shadow generation instead.,
+technical_plus_llm_filter,,,,,,,,,,,,,,forward_only_collecting,0 symbols carry a real LLM research decision for the CURRENT date only; historical LLM portfolio simulation is FORBIDDEN (no PIT evidence packages; historical LLM output would be fabricated). LLM strategies enter the forward shadow generation instead.,
+llm_plus_vol_overlay,,,,,,,,,,,,,,forward_only_collecting,0 symbols carry a real LLM research decision for the CURRENT date only; historical LLM portfolio simulation is FORBIDDEN (no PIT evidence packages; historical LLM output would be fabricated). LLM strategies enter the forward shadow generation instead.,
+cash_no_trade,100000.0,100000.0,0.0,0.0,0,,,,,,,,,,"cash baseline — no market risk, no costs",
+buy_hold_equal_weight,100000.0,117499.27,17.499,,,,,,,8366.06,,,,,"equal-weight whole-share buy&hold at first common MA30-warm session, marked at frontier close, V2 costs",

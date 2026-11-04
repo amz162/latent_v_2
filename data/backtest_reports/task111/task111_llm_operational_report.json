@@ -1,0 +1,15 @@
+{
+ "report": "task111_llm_operational_report",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:05:17Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "trigger_model": "event-driven/batch runs ONLY (never the 120s quote cycle)",
+ "idempotency": "evidence-hash cache: unchanged evidence is never re-sent",
+ "runs_observed": {
+  "provider_calls": 72,
+  "ok": 23,
+  "failed": 49
+ },
+ "run_log": "data/backtest_reports/task111/ops/provider_calls.jsonl + runner_log.jsonl"
+}

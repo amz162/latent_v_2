@@ -1,0 +1,59 @@
+{
+ "report": "task111_volatility_quality_report",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:02:21Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "estimators": [
+  "close_to_close",
+  "parkinson",
+  "garman_klass"
+ ],
+ "annualization": "daily variance x 252 under the sqrt exactly once (spot: sqrt(var*252)=0.5266)",
+ "estimator_values_checked": 169151,
+ "negative_variances_found": 0,
+ "negative_policy": "recorded and reported, never silently clipped",
+ "per_symbol": [
+  {
+   "symbol": "ANL",
+   "estimator_values_checked": 7397,
+   "nonnegative_variance": true
+  },
+  {
+   "symbol": "BOP",
+   "estimator_values_checked": 7388,
+   "nonnegative_variance": true
+  },
+  {
+   "symbol": "CNERGY",
+   "estimator_values_checked": 7388,
+   "nonnegative_variance": true
+  },
+  {
+   "symbol": "FCCL",
+   "estimator_values_checked": 7388,
+   "nonnegative_variance": true
+  },
+  {
+   "symbol": "HASCOL",
+   "estimator_values_checked": 7397,
+   "nonnegative_variance": true
+  },
+  {
+   "symbol": "HUBC",
+   "estimator_values_checked": 7397,
+   "nonnegative_variance": true
+  },
+  {
+   "symbol": "HUMNL",
+   "estimator_values_checked": 7385,
+   "nonnegative_variance": true
+  },
+  {
+   "symbol": "KEL",
+   "estimator_values_checked": 7388,
+   "nonnegative_variance": true
+  }
+ ],
+ "reuse": "task110 implementation reused unmodified (task110_lib)"
+}

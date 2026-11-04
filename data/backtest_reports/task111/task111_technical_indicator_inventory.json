@@ -1,0 +1,49 @@
+{
+ "report": "task111_technical_indicator_inventory",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:52Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "authoritative_rule": "the LLM evidence package consumes the SAME local deterministic functions the dashboards use; the external technicalchart proxy is documented but never used as evidence math",
+ "indicators": [
+  {
+   "indicator": "SMA7/SMA30 + Golden/Death Cross",
+   "source": "src/lib/latent/golden-cross.ts (computeGoldenCross)",
+   "formula": "simple moving averages of raw closes; crossover = two-consecutive-observation relation flip",
+   "version": "task110-v1 (unchanged)"
+  },
+  {
+   "indicator": "ATR14 + SL/TP1-3 policy",
+   "source": "src/lib/latent/risk-levels.ts (computeRiskLevels)",
+   "formula": "ATR14 true-range average; SL=1.5xATR, TP1/2/3=1/2/3xATR",
+   "version": "task77-v1 (atr14-1.5-1-2-3)"
+  },
+  {
+   "indicator": "Close-to-close / Parkinson / Garman-Klass variance",
+   "source": "src/lib/latent/volatility-analytics.ts",
+   "formula": "documented estimators, annualized exactly once (x252)",
+   "version": "task110-v1"
+  },
+  {
+   "indicator": "Bollinger Band Width + first/second derivatives",
+   "source": "src/lib/latent/volatility-analytics.ts",
+   "formula": "20-session SMA, 2 stdev; width=(upper-lower)/mid; discrete diffs across real sessions only",
+   "version": "task110-v1"
+  },
+  {
+   "indicator": "Price patterns (trend/formations/zones/volume)",
+   "source": "src/lib/latent/price-patterns.ts (analyzePricePatterns)",
+   "formula": "deterministic statistics engine (no LLM math); PIT wrapper enforces no-future-candles",
+   "version": "existing tab engine"
+  },
+  {
+   "indicator": "External technicalchart indicators",
+   "source": "/api/psx/technical/[symbol] -> api.askanalyst.com.pk technicalchart",
+   "formula": "external values; NOT locally reproducible; EXCLUDED from evidence math (inventory only)",
+   "version": "external"
+  }
+ ],
+ "excluded": [
+  "RSI/MACD/ADX/EMA/Stochastics are NOT locally implemented (external chart values only) \u2014 they are not pretended into the evidence"
+ ]
+}

@@ -20,7 +20,7 @@ const cal = db
   .all(10);
 const sessions = cal.map((r) => r.date);
 
-const out: Record<string, unknown> = { sessions: sessions.length, symbols: {} };
+const out: { sessions: number; symbols: Record<string, unknown> } = { sessions: sessions.length, symbols: {} };
 
 for (const sym of SYMBOLS) {
   const rows = db

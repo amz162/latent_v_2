@@ -1,0 +1,174 @@
+{
+ "generationId": "task111-llm-multisource-gen1",
+ "symbol": "KEL",
+ "decisionTimestamp": "2026-11-04T14:09:18.908Z",
+ "dataCutoff": "2026-11-03",
+ "evidenceHash": "b7bd167f",
+ "evidenceSchemaVersion": "latent_psx_llm_evidence_v1",
+ "outputSchemaVersion": "task111_llm_signal_v1",
+ "promptVersion": "task111-prompt-v1",
+ "provider": "zai",
+ "model": "glm-4.6",
+ "llmState": "ok",
+ "llmFailureReason": null,
+ "parseErrors": [],
+ "llmOutput": {
+  "symbol": "KEL",
+  "decision_timestamp": "2026-11-04T14:09:18.908Z",
+  "analysis_horizon": "10d",
+  "signal": "NO_TRADE",
+  "signal_status": "research_only",
+  "fundamental_view": "mixed",
+  "financial_pattern_view": "mixed",
+  "national_news_view": "neutral",
+  "international_news_view": "neutral",
+  "company_news_view": "neutral",
+  "technical_view": "bearish",
+  "price_pattern_view": "mixed",
+  "bullish_evidence": [
+   "Revenue trend improving (13.9% YoY growth)",
+   "Revenue growth accelerating",
+   "Net margin trend improving",
+   "Gross margin expansion",
+   "Heavy-volume days with flat-to-rising price show buying pressure (41.7% success rate)"
+  ],
+  "bearish_evidence": [
+   "Price below SMA30 (5.89)",
+   "Death cross occurred 81 sessions ago",
+   "5-day price decline (-2.93%)",
+   "60-day price decline (-23.09%)",
+   "High volatility (20d ann. vol 43.9%)",
+   "Universe breadth weak (29.8% above MA30)"
+  ],
+  "conflicting_evidence": [
+   "Fundamental metrics improving (revenue, margins) but price action weak (below SMA30, death cross)",
+   "Recent heavy-volume day on 2026-10-29 showed buying pressure but price has since declined"
+  ],
+  "missing_evidence": [
+   "No information on forward guidance or analyst estimates",
+   "No dividend history beyond latest quarter",
+   "No information on debt levels or balance sheet strength",
+   "No information on sector-specific trends or competitive position"
+  ],
+  "main_risks": [
+   "High volatility (43.9% 20-day annualized)",
+   "Price below key moving averages (SMA30)",
+   "Death cross signal (bearish technical pattern)",
+   "Weak market breadth (only 29.8% of PSX above MA30)"
+  ],
+  "invalidation_conditions": [
+   "Price closes above SMA30",
+   "Death cross is reversed with a golden cross",
+   "Sustained price action above 6.00"
+  ],
+  "llm_conviction_score": 30,
+  "evidence_quality_score_note": "Fundamental data partially verified but missing forward estimates; technical data complete but bearish; news coverage neutral",
+  "calibrated_net_positive_probability": null,
+  "entry_reference": null,
+  "stop_loss": null,
+  "target_1": null,
+  "target_2": null,
+  "target_3": null,
+  "risk_reward_ratio": null,
+  "decision_reason": "Despite improving fundamentals (revenue growth, margin expansion), the technical picture is bearish with price below SMA30, a death cross 81 sessions ago, and high volatility. The recent 5-day price decline and 60-day drop of over 23% further weaken the bullish case. While there are some positive price patterns (heavy-volume buying pressure), they haven't translated into sustained price gains. The weak market breadth (only 29.8% above MA30) suggests a broader market headwind. The conflicting signals between improving fundamentals and weak price action make this a NO_TRADE situation.",
+  "source_references": [
+   "src:ohlcv_db",
+   "src:technical_local",
+   "src:price_patterns",
+   "src:volatility_local",
+   "src:financials_snapshot",
+   "src:news_company",
+   "src:news_national",
+   "src:news_international",
+   "src:market_context"
+  ],
+  "limitations": [
+   "Financial publication timestamps not point-in-time verified",
+   "Historical backtesting not allowed due to data quality flags",
+   "No implied volatility data available for PSX",
+   "Missing forward guidance and analyst estimates"
+  ]
+ },
+ "llmConvictionScore": 30,
+ "evidenceQualityScore": 85,
+ "evidenceQualityParts": {
+  "source_verification": 20,
+  "pit_availability": 8,
+  "data_completeness": 12,
+  "data_freshness": 15,
+  "financial_history_coverage": 6,
+  "news_corroboration": 4.2,
+  "technical_quality": 10,
+  "pattern_confirmation": 5,
+  "cross_source_consistency": 5
+ },
+ "calibratedNetPositiveProbability": null,
+ "finalSignal": "NO_TRADE",
+ "finalSignalReason": "Despite improving fundamentals (revenue growth, margin expansion), the technical picture is bearish with price below SMA30, a death cross 81 sessions ago, and high volatility. The recent 5-day price decline and 60-day drop of over 23% further weaken the bullish case. While there are some positive price patterns (heavy-volume buying pressure), they haven't translated into sustained price gains. The weak market breadth (only 29.8% above MA30) suggests a broader market headwind. The conflicting signals between improving fundamentals and weak price action make this a NO_TRADE situation.",
+ "riskReward": {
+  "configVersion": "task111-rr-v1",
+  "riskPolicyId": "atr14-1.5-1-2-3",
+  "riskPolicyVersion": "task77-v1",
+  "costSchedule": "psx_user_schedule_v2 (computeTradeCostsV2)",
+  "symbol": "KEL",
+  "cutoffDate": "2026-11-03",
+  "executionAssumption": "next_session_open_reference",
+  "entryReference": 5.63,
+  "atr14": 0.22714285714285712,
+  "stopLoss": 5.289285714285715,
+  "stopRule": "atr14-1.5-1-2-3: entry - 1.5 x ATR14",
+  "targets": {
+   "tp1": 5.857142857142857,
+   "tp2": 6.0842857142857145,
+   "tp3": 6.311428571428571
+  },
+  "targetRule": "atr14-1.5-1-2-3: TP1/2/3 = entry + 1/2/3 x ATR14 (platform policy, unmodified)",
+  "positionQty": 3552,
+  "positionNotional": 19997.76,
+  "netGainAtTp1": null,
+  "netGainAtTp2": null,
+  "netGainAtTp3": null,
+  "netLossAtStop": -1425.1833232731415,
+  "rr_to_tp1": 0.33029261262236703,
+  "rr_to_tp2": 0.8114597009986106,
+  "rr_to_tp3": 1.2926267893748522,
+  "risk_reward_status": "available",
+  "unavailableReason": null,
+  "costsAtTp2": {
+   "buy": {
+    "transactionValue": 19997.76,
+    "brokerage": 106.56,
+    "psxFee": 0.06999216,
+    "nccplFee": 0.161981856,
+    "cdcFee": 0.71991936,
+    "slippage": 0,
+    "sideTotal": 107.511893376
+   },
+   "totalBrokerage": 213.12,
+   "totalPSX": 0.14563199999999998,
+   "totalNCCPL": 0.33703405714285717,
+   "totalCDC": 1.4979291428571428,
+   "cgt": 242.04342857142873,
+   "slippage": 0,
+   "totalCost": 457.14402377142875,
+   "grossPnl": 1613.6228571428583,
+   "netPnl": 1156.4788333714296,
+   "taxProfile": "ATL_15",
+   "cgtRate": 0.15
+  },
+  "noTrade": true,
+  "noTradeReasons": [
+   "best_net_rr_1.29_below_min_1.5"
+  ],
+  "netGainAtTP1": 470.72752330971343,
+  "netGainAtTP2": 1156.4788333714296,
+  "netGainAtTP3": 1842.230143433143
+ },
+ "capitalProtection": {
+  "policyId": "task111-capital-protection-v1",
+  "triggered": []
+ },
+ "signalClass": "LLM_RESEARCH_SIGNAL",
+ "signalStatus": "research_only",
+ "analysisHorizon": "10d"
+}

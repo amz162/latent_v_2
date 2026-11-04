@@ -1,0 +1,1831 @@
+{
+ "symbol": "HUMNL",
+ "evidence": {
+  "schemaVersion": "latent_psx_llm_evidence_v1",
+  "symbol": "HUMNL",
+  "companyName": "HUMNL",
+  "sector": "unknown",
+  "decisionTimestamp": "2026-11-04T14:01:30.096Z",
+  "dataCutoff": "2026-11-03",
+  "priceContext": {
+   "lastClose": 8.64,
+   "lastCloseDate": "2026-11-03",
+   "change5dPct": 6.535141800246623,
+   "change20dPct": -12.284263959390854,
+   "change60dPct": -19.252336448598122,
+   "seriesTail": [
+    {
+     "date": "2026-10-16",
+     "close": 9.29
+    },
+    {
+     "date": "2026-10-19",
+     "close": 9.15
+    },
+    {
+     "date": "2026-10-20",
+     "close": 8.69
+    },
+    {
+     "date": "2026-10-21",
+     "close": 8.66
+    },
+    {
+     "date": "2026-10-27",
+     "close": 8.11
+    },
+    {
+     "date": "2026-10-28",
+     "close": 8.08
+    },
+    {
+     "date": "2026-10-29",
+     "close": 8.37
+    },
+    {
+     "date": "2026-10-30",
+     "close": 8.57
+    },
+    {
+     "date": "2026-11-02",
+     "close": 8.48
+    },
+    {
+     "date": "2026-11-03",
+     "close": 8.64
+    }
+   ]
+  },
+  "fundamentalEvidence": {
+   "status": "partially_verified",
+   "summary": "Latest verified quarter Q4 FY26 (period end 2026-06-30): revenue 1,964, PAT -290, EPS -0.26, net margin -14.8%. Filing publication timestamps are NOT point-in-time verified (Task 102/111) — usable for CURRENT research only, disabled for historical as-of backtesting.",
+   "metrics": [
+    {
+     "name": "revenue_latest",
+     "value": 1964,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "profit_after_tax_latest",
+     "value": -290,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "eps_latest",
+     "value": -0.26,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "revenue_yoy_pct",
+     "value": 5.1,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "gross_margin_pct",
+     "value": 10,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "net_margin_pct",
+     "value": -14.8,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "dividend_per_share_latest",
+     "value": 0.5,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "quarters_available",
+     "value": 72,
+     "asOf": "2026-11-03",
+     "note": "verified snapshot quarters"
+    },
+    {
+     "name": "sequential_revenue_change_pct",
+     "value": -7.402168788307402,
+     "asOf": "2026-06-30"
+    }
+   ],
+   "sources": [
+    "src:financials_snapshot"
+   ]
+  },
+  "financialPatternEvidence": {
+   "status": "partially_verified",
+   "summary": "5 deterministic pattern(s): revenue_trend(improving); revenue_growth_decelerating(deteriorating); net_margin_trend(stable); gross_margin_contraction(deteriorating); earnings_stability(mixed)",
+   "metrics": [
+    {
+     "name": "fp:revenue_trend",
+     "value": 0.11280969306543082,
+     "asOf": "2026-06-30",
+     "note": "direction=improving, n=72"
+    },
+    {
+     "name": "fp:revenue_growth_decelerating",
+     "value": 0.016708773469063666,
+     "asOf": "2026-06-30",
+     "note": "direction=deteriorating, n=72"
+    },
+    {
+     "name": "fp:net_margin_trend",
+     "value": 0.0374139816065342,
+     "asOf": "2026-06-30",
+     "note": "direction=stable, n=72"
+    },
+    {
+     "name": "fp:gross_margin_contraction",
+     "value": 0.1357715930284906,
+     "asOf": "2026-06-30",
+     "note": "direction=deteriorating, n=72"
+    },
+    {
+     "name": "fp:earnings_stability",
+     "value": 0,
+     "asOf": "2026-06-30",
+     "note": "direction=mixed, n=72"
+    }
+   ],
+   "sources": [
+    "src:financials_snapshot"
+   ]
+  },
+  "companyNewsEvidence": {
+   "status": "unavailable",
+   "summary": "No recent company news retrieved. No news found is NOT equivalent to positive news.",
+   "metrics": [
+    {
+     "name": "company_news_count",
+     "value": 0,
+     "asOf": "2026-11-04T14:01:30.096Z"
+    },
+    {
+     "name": "company_news_high_materiality",
+     "value": 0,
+     "asOf": "2026-11-04T14:01:30.096Z"
+    },
+    {
+     "name": "company_news_injection_flagged",
+     "value": 0,
+     "asOf": "2026-11-04T14:01:30.096Z",
+     "note": "untrusted text flagged; never executed"
+    }
+   ],
+   "sources": []
+  },
+  "nationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "National snapshot (8 items, 8 high-materiality): [neutral] WATCH: IMF programmes, taxes and inflation: What's holding | [neutral] Will the policy rate stay put? - Editorials | [neutral] SBP's policy rate has risen to 12%. What does this mean for",
+   "metrics": [
+    {
+     "name": "national_news_count",
+     "value": 8,
+     "asOf": "2026-11-04T14:01:30.096Z"
+    }
+   ],
+   "sources": [
+    "src:news_national"
+   ]
+  },
+  "internationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "International snapshot (8 items, 0 high-materiality): [bullish] The potential impact of high oil prices on economies - Vanguard | [neutral] Arab News Pakistan | [neutral] How do exchange rate and oil price volatility shape",
+   "metrics": [
+    {
+     "name": "international_news_count",
+     "value": 8,
+     "asOf": "2026-11-04T14:01:30.096Z"
+    }
+   ],
+   "sources": [
+    "src:news_international"
+   ]
+  },
+  "technicalEvidence": {
+   "status": "verified",
+   "summary": "Local deterministic indicators (golden-cross.ts + risk-levels.ts policy): SMA7=8.42, SMA30=9.33, price below SMA30, ATR14=0.43, BBW(20,2)=22.11%, last cross=DEATH 19 sessions ago.",
+   "metrics": [
+    {
+     "name": "sma7",
+     "value": 8.415714285714285,
+     "asOf": "2026-11-03",
+     "note": "golden-cross.ts MA_FAST=7"
+    },
+    {
+     "name": "sma30",
+     "value": 9.328333333333335,
+     "asOf": "2026-11-03",
+     "note": "golden-cross.ts MA_SLOW=30"
+    },
+    {
+     "name": "atr14",
+     "value": 0.4328571428571428,
+     "asOf": "2026-11-03",
+     "note": "risk-levels.ts atr14-1.5-1-2-3 policy"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 22.114089292252526,
+     "asOf": "2026-11-03",
+     "note": "20-session SMA, 2 stdev, width=(upper-lower)/mid"
+    },
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 42.118629731226775,
+     "asOf": "2026-11-03",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 32.088369145509965,
+     "asOf": "2026-11-03",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "change_5d_pct",
+     "value": 6.535141800246623,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "change_20d_pct",
+     "value": -12.284263959390854,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "change_60d_pct",
+     "value": -19.252336448598122,
+     "asOf": "2026-11-03"
+    }
+   ],
+   "sources": [
+    "src:ohlcv_db",
+    "src:technical_local"
+   ]
+  },
+  "pricePatternEvidence": {
+   "status": "verified",
+   "summary": "Deterministic pattern engine over 2481 bars (future excluded: 0): Gap-up openings and how often they get filled[confirmed historical]; Gap-down openings and how often they get filled[confirmed historical]; Heavy-volume days with flat-to-rising price (buying pressure)[confirmed historical]; Heavy-volume days with flat-to-falling price (selling pressure)[confirmed historical]; Unusually heavy volume days[confirmed historical]; After a heavy-volume day[confirmed historical]",
+   "metrics": [
+    {
+     "name": "pattern:gap:confirmed_historical",
+     "value": 1.76,
+     "unit": "%",
+     "asOf": "2026-10-30",
+     "note": "occurrences=1036, success_rate=76.2%, strength=high"
+    },
+    {
+     "name": "pattern:gap:confirmed_historical",
+     "value": -1.79,
+     "unit": "%",
+     "asOf": "2026-10-27",
+     "note": "occurrences=570, success_rate=64%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:confirmed_historical",
+     "value": 1.37,
+     "unit": "%",
+     "asOf": "2026-10-30",
+     "note": "occurrences=358, success_rate=41.7%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:confirmed_historical",
+     "value": -0.79,
+     "unit": "%",
+     "asOf": "2026-10-19",
+     "note": "occurrences=217, success_rate=62.2%, strength=high"
+    },
+    {
+     "name": "pattern:volume_spike:confirmed_historical",
+     "value": 2.86,
+     "unit": "%",
+     "asOf": "2026-10-30",
+     "note": "occurrences=214, success_rate=68.2%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": 1.28,
+     "unit": "%",
+     "asOf": "2026-10-30",
+     "note": "occurrences=214, success_rate=40.4%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": -0.03,
+     "unit": "%",
+     "asOf": "2026-10-28",
+     "note": "occurrences=100, success_rate=46.5%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": 5.82,
+     "unit": "%",
+     "asOf": "2025-09-11",
+     "note": "occurrences=51, success_rate=54.9%, strength=high"
+    }
+   ],
+   "sources": [
+    "src:price_patterns"
+   ]
+  },
+  "volatilityContext": {
+   "status": "verified",
+   "summary": "Realized-only research context: 20d ann. vol 42.1%, 60d 32.1%, BBW 22.11%. No implied volatility exists for PSX (no listed options market data) — realized vol is NEVER implied vol.",
+   "metrics": [
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 42.118629731226775,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 32.088369145509965,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 22.114089292252526,
+     "asOf": "2026-11-03"
+    }
+   ],
+   "sources": [
+    "src:volatility_local",
+    "src:ohlcv_db"
+   ]
+  },
+  "marketContext": {
+   "status": "verified",
+   "summary": "Universe breadth snapshot: 271/909 symbols closed above their 30-session mean price (deterministic, OhlcvBar).",
+   "metrics": [
+    {
+     "name": "universe_pct_above_ma30",
+     "value": 29.812981298129813,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "universe_size",
+     "value": 909,
+     "asOf": "2026-11-03"
+    }
+   ],
+   "sources": [
+    "src:market_context",
+    "src:ohlcv_db"
+   ]
+  },
+  "dataQualityFlags": [
+   "financial_publication_timestamps_not_pit_verified",
+   "llm_analysis_current_only_no_historical_asof_use"
+  ],
+  "missingSources": [
+   "company news"
+  ],
+  "historicalUseAllowed": false,
+  "sourceRefs": [
+   {
+    "id": "src:ohlcv_db",
+    "category": "ohlcv_db",
+    "publisher": "Latent.pk OhlcvBar (psxdata/pypsx ingest)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:technical_local",
+    "category": "technical_local",
+    "publisher": "golden-cross.ts + risk-levels.ts (deterministic, policy atr14-1.5-1-2-3)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:price_patterns",
+    "category": "price_patterns",
+    "publisher": "price-patterns.ts deterministic engine (PIT wrapper)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:volatility_local",
+    "category": "volatility_local",
+    "publisher": "realized-variance estimators (realized ONLY; no implied vol exists for PSX)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:financials_snapshot",
+    "category": "financials_snapshot",
+    "publisher": "data/financials quarterly snapshots (askanalyst results API)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_company",
+    "category": "news_company",
+    "publisher": "AskAnalyst company news API",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_national",
+    "category": "news_national",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_international",
+    "category": "news_international",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:market_context",
+    "category": "market_context",
+    "publisher": "universe breadth (OhlcvBar + golden-cross.ts)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:30.096Z",
+    "pitSafeForHistorical": true
+   }
+  ]
+ },
+ "evidenceQualityScore": 82,
+ "evidenceQualityParts": {
+  "source_verification": 20,
+  "pit_availability": 8,
+  "data_completeness": 9,
+  "data_freshness": 15,
+  "financial_history_coverage": 6,
+  "news_corroboration": 4.2,
+  "technical_quality": 10,
+  "pattern_confirmation": 5,
+  "cross_source_consistency": 5
+ },
+ "evidenceHash": "30204a11",
+ "patterns": {
+  "symbol": "HUMNL",
+  "as_of_timestamp": "2026-11-04T14:01:30.096Z",
+  "quarters_used": 72,
+  "period_range": [
+   "2008-09-30",
+   "2026-06-30"
+  ],
+  "patterns": [
+   {
+    "pattern_id": "HUMNL:revenue_trend:2008-09-30:2026-06-30",
+    "symbol": "HUMNL",
+    "pattern_type": "revenue_trend",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "improving",
+    "strength": 0.11280969306543082,
+    "source_filing_ids": [
+     "HUMNL:FINRES:2008-09-30",
+     "HUMNL:FINRES:2008-12-30",
+     "HUMNL:FINRES:2009-03-30",
+     "HUMNL:FINRES:2009-06-30",
+     "HUMNL:FINRES:2009-09-30",
+     "HUMNL:FINRES:2009-12-30",
+     "HUMNL:FINRES:2010-03-30",
+     "HUMNL:FINRES:2010-06-30",
+     "HUMNL:FINRES:2010-09-30",
+     "HUMNL:FINRES:2010-12-30",
+     "HUMNL:FINRES:2011-03-30",
+     "HUMNL:FINRES:2011-06-30",
+     "HUMNL:FINRES:2011-09-30",
+     "HUMNL:FINRES:2011-12-30",
+     "HUMNL:FINRES:2012-03-30",
+     "HUMNL:FINRES:2012-06-30",
+     "HUMNL:FINRES:2012-09-30",
+     "HUMNL:FINRES:2012-12-30",
+     "HUMNL:FINRES:2013-03-30",
+     "HUMNL:FINRES:2013-06-30",
+     "HUMNL:FINRES:2013-09-30",
+     "HUMNL:FINRES:2013-12-30",
+     "HUMNL:FINRES:2014-03-30",
+     "HUMNL:FINRES:2014-06-30",
+     "HUMNL:FINRES:2014-09-30",
+     "HUMNL:FINRES:2014-12-30",
+     "HUMNL:FINRES:2015-03-30",
+     "HUMNL:FINRES:2015-06-30",
+     "HUMNL:FINRES:2015-09-30",
+     "HUMNL:FINRES:2015-12-30",
+     "HUMNL:FINRES:2016-03-30",
+     "HUMNL:FINRES:2016-06-30",
+     "HUMNL:FINRES:2016-09-30",
+     "HUMNL:FINRES:2016-12-30",
+     "HUMNL:FINRES:2017-03-30",
+     "HUMNL:FINRES:2017-06-30",
+     "HUMNL:FINRES:2017-09-30",
+     "HUMNL:FINRES:2017-12-30",
+     "HUMNL:FINRES:2018-03-30",
+     "HUMNL:FINRES:2018-06-30",
+     "HUMNL:FINRES:2018-09-30",
+     "HUMNL:FINRES:2018-12-30",
+     "HUMNL:FINRES:2019-03-30",
+     "HUMNL:FINRES:2019-06-30",
+     "HUMNL:FINRES:2019-09-30",
+     "HUMNL:FINRES:2019-12-30",
+     "HUMNL:FINRES:2020-03-30",
+     "HUMNL:FINRES:2020-06-30",
+     "HUMNL:FINRES:2020-09-30",
+     "HUMNL:FINRES:2020-12-30",
+     "HUMNL:FINRES:2021-03-30",
+     "HUMNL:FINRES:2021-06-30",
+     "HUMNL:FINRES:2021-09-30",
+     "HUMNL:FINRES:2021-12-30",
+     "HUMNL:FINRES:2022-03-30",
+     "HUMNL:FINRES:2022-06-30",
+     "HUMNL:FINRES:2022-09-30",
+     "HUMNL:FINRES:2022-12-30",
+     "HUMNL:FINRES:2023-03-30",
+     "HUMNL:FINRES:2023-06-30",
+     "HUMNL:FINRES:2023-09-30",
+     "HUMNL:FINRES:2023-12-30",
+     "HUMNL:FINRES:2024-03-30",
+     "HUMNL:FINRES:2024-06-30",
+     "HUMNL:FINRES:2024-09-30",
+     "HUMNL:FINRES:2024-12-30",
+     "HUMNL:FINRES:2025-03-30",
+     "HUMNL:FINRES:2025-06-30",
+     "HUMNL:FINRES:2025-09-30",
+     "HUMNL:FINRES:2025-12-30",
+     "HUMNL:FINRES:2026-03-30",
+     "HUMNL:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:30.096Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window"
+    ]
+   },
+   {
+    "pattern_id": "HUMNL:revenue_growth_decelerating:2008-09-30:2026-06-30",
+    "symbol": "HUMNL",
+    "pattern_type": "revenue_growth_decelerating",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "deteriorating",
+    "strength": 0.016708773469063666,
+    "source_filing_ids": [
+     "HUMNL:FINRES:2008-09-30",
+     "HUMNL:FINRES:2008-12-30",
+     "HUMNL:FINRES:2009-03-30",
+     "HUMNL:FINRES:2009-06-30",
+     "HUMNL:FINRES:2009-09-30",
+     "HUMNL:FINRES:2009-12-30",
+     "HUMNL:FINRES:2010-03-30",
+     "HUMNL:FINRES:2010-06-30",
+     "HUMNL:FINRES:2010-09-30",
+     "HUMNL:FINRES:2010-12-30",
+     "HUMNL:FINRES:2011-03-30",
+     "HUMNL:FINRES:2011-06-30",
+     "HUMNL:FINRES:2011-09-30",
+     "HUMNL:FINRES:2011-12-30",
+     "HUMNL:FINRES:2012-03-30",
+     "HUMNL:FINRES:2012-06-30",
+     "HUMNL:FINRES:2012-09-30",
+     "HUMNL:FINRES:2012-12-30",
+     "HUMNL:FINRES:2013-03-30",
+     "HUMNL:FINRES:2013-06-30",
+     "HUMNL:FINRES:2013-09-30",
+     "HUMNL:FINRES:2013-12-30",
+     "HUMNL:FINRES:2014-03-30",
+     "HUMNL:FINRES:2014-06-30",
+     "HUMNL:FINRES:2014-09-30",
+     "HUMNL:FINRES:2014-12-30",
+     "HUMNL:FINRES:2015-03-30",
+     "HUMNL:FINRES:2015-06-30",
+     "HUMNL:FINRES:2015-09-30",
+     "HUMNL:FINRES:2015-12-30",
+     "HUMNL:FINRES:2016-03-30",
+     "HUMNL:FINRES:2016-06-30",
+     "HUMNL:FINRES:2016-09-30",
+     "HUMNL:FINRES:2016-12-30",
+     "HUMNL:FINRES:2017-03-30",
+     "HUMNL:FINRES:2017-06-30",
+     "HUMNL:FINRES:2017-09-30",
+     "HUMNL:FINRES:2017-12-30",
+     "HUMNL:FINRES:2018-03-30",
+     "HUMNL:FINRES:2018-06-30",
+     "HUMNL:FINRES:2018-09-30",
+     "HUMNL:FINRES:2018-12-30",
+     "HUMNL:FINRES:2019-03-30",
+     "HUMNL:FINRES:2019-06-30",
+     "HUMNL:FINRES:2019-09-30",
+     "HUMNL:FINRES:2019-12-30",
+     "HUMNL:FINRES:2020-03-30",
+     "HUMNL:FINRES:2020-06-30",
+     "HUMNL:FINRES:2020-09-30",
+     "HUMNL:FINRES:2020-12-30",
+     "HUMNL:FINRES:2021-03-30",
+     "HUMNL:FINRES:2021-06-30",
+     "HUMNL:FINRES:2021-09-30",
+     "HUMNL:FINRES:2021-12-30",
+     "HUMNL:FINRES:2022-03-30",
+     "HUMNL:FINRES:2022-06-30",
+     "HUMNL:FINRES:2022-09-30",
+     "HUMNL:FINRES:2022-12-30",
+     "HUMNL:FINRES:2023-03-30",
+     "HUMNL:FINRES:2023-06-30",
+     "HUMNL:FINRES:2023-09-30",
+     "HUMNL:FINRES:2023-12-30",
+     "HUMNL:FINRES:2024-03-30",
+     "HUMNL:FINRES:2024-06-30",
+     "HUMNL:FINRES:2024-09-30",
+     "HUMNL:FINRES:2024-12-30",
+     "HUMNL:FINRES:2025-03-30",
+     "HUMNL:FINRES:2025-06-30",
+     "HUMNL:FINRES:2025-09-30",
+     "HUMNL:FINRES:2025-12-30",
+     "HUMNL:FINRES:2026-03-30",
+     "HUMNL:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:30.096Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window",
+     "YoY requires 4-quarter lookback; computed on 68 YoY observations"
+    ]
+   },
+   {
+    "pattern_id": "HUMNL:net_margin_trend:2008-09-30:2026-06-30",
+    "symbol": "HUMNL",
+    "pattern_type": "net_margin_trend",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "stable",
+    "strength": 0.0374139816065342,
+    "source_filing_ids": [
+     "HUMNL:FINRES:2008-09-30",
+     "HUMNL:FINRES:2008-12-30",
+     "HUMNL:FINRES:2009-03-30",
+     "HUMNL:FINRES:2009-06-30",
+     "HUMNL:FINRES:2009-09-30",
+     "HUMNL:FINRES:2009-12-30",
+     "HUMNL:FINRES:2010-03-30",
+     "HUMNL:FINRES:2010-06-30",
+     "HUMNL:FINRES:2010-09-30",
+     "HUMNL:FINRES:2010-12-30",
+     "HUMNL:FINRES:2011-03-30",
+     "HUMNL:FINRES:2011-06-30",
+     "HUMNL:FINRES:2011-09-30",
+     "HUMNL:FINRES:2011-12-30",
+     "HUMNL:FINRES:2012-03-30",
+     "HUMNL:FINRES:2012-06-30",
+     "HUMNL:FINRES:2012-09-30",
+     "HUMNL:FINRES:2012-12-30",
+     "HUMNL:FINRES:2013-03-30",
+     "HUMNL:FINRES:2013-06-30",
+     "HUMNL:FINRES:2013-09-30",
+     "HUMNL:FINRES:2013-12-30",
+     "HUMNL:FINRES:2014-03-30",
+     "HUMNL:FINRES:2014-06-30",
+     "HUMNL:FINRES:2014-09-30",
+     "HUMNL:FINRES:2014-12-30",
+     "HUMNL:FINRES:2015-03-30",
+     "HUMNL:FINRES:2015-06-30",
+     "HUMNL:FINRES:2015-09-30",
+     "HUMNL:FINRES:2015-12-30",
+     "HUMNL:FINRES:2016-03-30",
+     "HUMNL:FINRES:2016-06-30",
+     "HUMNL:FINRES:2016-09-30",
+     "HUMNL:FINRES:2016-12-30",
+     "HUMNL:FINRES:2017-03-30",
+     "HUMNL:FINRES:2017-06-30",
+     "HUMNL:FINRES:2017-09-30",
+     "HUMNL:FINRES:2017-12-30",
+     "HUMNL:FINRES:2018-03-30",
+     "HUMNL:FINRES:2018-06-30",
+     "HUMNL:FINRES:2018-09-30",
+     "HUMNL:FINRES:2018-12-30",
+     "HUMNL:FINRES:2019-03-30",
+     "HUMNL:FINRES:2019-06-30",
+     "HUMNL:FINRES:2019-09-30",
+     "HUMNL:FINRES:2019-12-30",
+     "HUMNL:FINRES:2020-03-30",
+     "HUMNL:FINRES:2020-06-30",
+     "HUMNL:FINRES:2020-09-30",
+     "HUMNL:FINRES:2020-12-30",
+     "HUMNL:FINRES:2021-03-30",
+     "HUMNL:FINRES:2021-06-30",
+     "HUMNL:FINRES:2021-09-30",
+     "HUMNL:FINRES:2021-12-30",
+     "HUMNL:FINRES:2022-03-30",
+     "HUMNL:FINRES:2022-06-30",
+     "HUMNL:FINRES:2022-09-30",
+     "HUMNL:FINRES:2022-12-30",
+     "HUMNL:FINRES:2023-03-30",
+     "HUMNL:FINRES:2023-06-30",
+     "HUMNL:FINRES:2023-09-30",
+     "HUMNL:FINRES:2023-12-30",
+     "HUMNL:FINRES:2024-03-30",
+     "HUMNL:FINRES:2024-06-30",
+     "HUMNL:FINRES:2024-09-30",
+     "HUMNL:FINRES:2024-12-30",
+     "HUMNL:FINRES:2025-03-30",
+     "HUMNL:FINRES:2025-06-30",
+     "HUMNL:FINRES:2025-09-30",
+     "HUMNL:FINRES:2025-12-30",
+     "HUMNL:FINRES:2026-03-30",
+     "HUMNL:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:30.096Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window"
+    ]
+   },
+   {
+    "pattern_id": "HUMNL:gross_margin_contraction:2008-09-30:2026-06-30",
+    "symbol": "HUMNL",
+    "pattern_type": "gross_margin_contraction",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "deteriorating",
+    "strength": 0.1357715930284906,
+    "source_filing_ids": [
+     "HUMNL:FINRES:2008-09-30",
+     "HUMNL:FINRES:2008-12-30",
+     "HUMNL:FINRES:2009-03-30",
+     "HUMNL:FINRES:2009-06-30",
+     "HUMNL:FINRES:2009-09-30",
+     "HUMNL:FINRES:2009-12-30",
+     "HUMNL:FINRES:2010-03-30",
+     "HUMNL:FINRES:2010-06-30",
+     "HUMNL:FINRES:2010-09-30",
+     "HUMNL:FINRES:2010-12-30",
+     "HUMNL:FINRES:2011-03-30",
+     "HUMNL:FINRES:2011-06-30",
+     "HUMNL:FINRES:2011-09-30",
+     "HUMNL:FINRES:2011-12-30",
+     "HUMNL:FINRES:2012-03-30",
+     "HUMNL:FINRES:2012-06-30",
+     "HUMNL:FINRES:2012-09-30",
+     "HUMNL:FINRES:2012-12-30",
+     "HUMNL:FINRES:2013-03-30",
+     "HUMNL:FINRES:2013-06-30",
+     "HUMNL:FINRES:2013-09-30",
+     "HUMNL:FINRES:2013-12-30",
+     "HUMNL:FINRES:2014-03-30",
+     "HUMNL:FINRES:2014-06-30",
+     "HUMNL:FINRES:2014-09-30",
+     "HUMNL:FINRES:2014-12-30",
+     "HUMNL:FINRES:2015-03-30",
+     "HUMNL:FINRES:2015-06-30",
+     "HUMNL:FINRES:2015-09-30",
+     "HUMNL:FINRES:2015-12-30",
+     "HUMNL:FINRES:2016-03-30",
+     "HUMNL:FINRES:2016-06-30",
+     "HUMNL:FINRES:2016-09-30",
+     "HUMNL:FINRES:2016-12-30",
+     "HUMNL:FINRES:2017-03-30",
+     "HUMNL:FINRES:2017-06-30",
+     "HUMNL:FINRES:2017-09-30",
+     "HUMNL:FINRES:2017-12-30",
+     "HUMNL:FINRES:2018-03-30",
+     "HUMNL:FINRES:2018-06-30",
+     "HUMNL:FINRES:2018-09-30",
+     "HUMNL:FINRES:2018-12-30",
+     "HUMNL:FINRES:2019-03-30",
+     "HUMNL:FINRES:2019-06-30",
+     "HUMNL:FINRES:2019-09-30",
+     "HUMNL:FINRES:2019-12-30",
+     "HUMNL:FINRES:2020-03-30",
+     "HUMNL:FINRES:2020-06-30",
+     "HUMNL:FINRES:2020-09-30",
+     "HUMNL:FINRES:2020-12-30",
+     "HUMNL:FINRES:2021-03-30",
+     "HUMNL:FINRES:2021-06-30",
+     "HUMNL:FINRES:2021-09-30",
+     "HUMNL:FINRES:2021-12-30",
+     "HUMNL:FINRES:2022-03-30",
+     "HUMNL:FINRES:2022-06-30",
+     "HUMNL:FINRES:2022-09-30",
+     "HUMNL:FINRES:2022-12-30",
+     "HUMNL:FINRES:2023-03-30",
+     "HUMNL:FINRES:2023-06-30",
+     "HUMNL:FINRES:2023-09-30",
+     "HUMNL:FINRES:2023-12-30",
+     "HUMNL:FINRES:2024-03-30",
+     "HUMNL:FINRES:2024-06-30",
+     "HUMNL:FINRES:2024-09-30",
+     "HUMNL:FINRES:2024-12-30",
+     "HUMNL:FINRES:2025-03-30",
+     "HUMNL:FINRES:2025-06-30",
+     "HUMNL:FINRES:2025-09-30",
+     "HUMNL:FINRES:2025-12-30",
+     "HUMNL:FINRES:2026-03-30",
+     "HUMNL:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:30.096Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window"
+    ]
+   },
+   {
+    "pattern_id": "HUMNL:earnings_stability:2008-09-30:2026-06-30",
+    "symbol": "HUMNL",
+    "pattern_type": "earnings_stability",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "mixed",
+    "strength": 0,
+    "source_filing_ids": [
+     "HUMNL:FINRES:2008-09-30",
+     "HUMNL:FINRES:2008-12-30",
+     "HUMNL:FINRES:2009-03-30",
+     "HUMNL:FINRES:2009-06-30",
+     "HUMNL:FINRES:2009-09-30",
+     "HUMNL:FINRES:2009-12-30",
+     "HUMNL:FINRES:2010-03-30",
+     "HUMNL:FINRES:2010-06-30",
+     "HUMNL:FINRES:2010-09-30",
+     "HUMNL:FINRES:2010-12-30",
+     "HUMNL:FINRES:2011-03-30",
+     "HUMNL:FINRES:2011-06-30",
+     "HUMNL:FINRES:2011-09-30",
+     "HUMNL:FINRES:2011-12-30",
+     "HUMNL:FINRES:2012-03-30",
+     "HUMNL:FINRES:2012-06-30",
+     "HUMNL:FINRES:2012-09-30",
+     "HUMNL:FINRES:2012-12-30",
+     "HUMNL:FINRES:2013-03-30",
+     "HUMNL:FINRES:2013-06-30",
+     "HUMNL:FINRES:2013-09-30",
+     "HUMNL:FINRES:2013-12-30",
+     "HUMNL:FINRES:2014-03-30",
+     "HUMNL:FINRES:2014-06-30",
+     "HUMNL:FINRES:2014-09-30",
+     "HUMNL:FINRES:2014-12-30",
+     "HUMNL:FINRES:2015-03-30",
+     "HUMNL:FINRES:2015-06-30",
+     "HUMNL:FINRES:2015-09-30",
+     "HUMNL:FINRES:2015-12-30",
+     "HUMNL:FINRES:2016-03-30",
+     "HUMNL:FINRES:2016-06-30",
+     "HUMNL:FINRES:2016-09-30",
+     "HUMNL:FINRES:2016-12-30",
+     "HUMNL:FINRES:2017-03-30",
+     "HUMNL:FINRES:2017-06-30",
+     "HUMNL:FINRES:2017-09-30",
+     "HUMNL:FINRES:2017-12-30",
+     "HUMNL:FINRES:2018-03-30",
+     "HUMNL:FINRES:2018-06-30",
+     "HUMNL:FINRES:2018-09-30",
+     "HUMNL:FINRES:2018-12-30",
+     "HUMNL:FINRES:2019-03-30",
+     "HUMNL:FINRES:2019-06-30",
+     "HUMNL:FINRES:2019-09-30",
+     "HUMNL:FINRES:2019-12-30",
+     "HUMNL:FINRES:2020-03-30",
+     "HUMNL:FINRES:2020-06-30",
+     "HUMNL:FINRES:2020-09-30",
+     "HUMNL:FINRES:2020-12-30",
+     "HUMNL:FINRES:2021-03-30",
+     "HUMNL:FINRES:2021-06-30",
+     "HUMNL:FINRES:2021-09-30",
+     "HUMNL:FINRES:2021-12-30",
+     "HUMNL:FINRES:2022-03-30",
+     "HUMNL:FINRES:2022-06-30",
+     "HUMNL:FINRES:2022-09-30",
+     "HUMNL:FINRES:2022-12-30",
+     "HUMNL:FINRES:2023-03-30",
+     "HUMNL:FINRES:2023-06-30",
+     "HUMNL:FINRES:2023-09-30",
+     "HUMNL:FINRES:2023-12-30",
+     "HUMNL:FINRES:2024-03-30",
+     "HUMNL:FINRES:2024-06-30",
+     "HUMNL:FINRES:2024-09-30",
+     "HUMNL:FINRES:2024-12-30",
+     "HUMNL:FINRES:2025-03-30",
+     "HUMNL:FINRES:2025-06-30",
+     "HUMNL:FINRES:2025-09-30",
+     "HUMNL:FINRES:2025-12-30",
+     "HUMNL:FINRES:2026-03-30",
+     "HUMNL:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:30.096Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window",
+     "margin volatility proxy; not a forecast"
+    ]
+   }
+  ],
+  "insufficient_history": false,
+  "notes": [
+   "All patterns are deterministic summaries of the verified snapshot; the LLM may only restate them.",
+   "No operating cash flow / balance-sheet fields exist in the quarterly snapshot — cash-flow-quality and leverage patterns return insufficient_data."
+  ]
+ },
+ "pitPatterns": {
+  "candidates": [
+   {
+    "pattern_name": "Gap-up openings and how often they get filled",
+    "pattern_type": "gap",
+    "start_date": "2026-10-06",
+    "end_date": "2026-10-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 1.76
+     }
+    ],
+    "occurrences": 1036,
+    "avg_move_pct": 1.76,
+    "success_rate_pct": 76.2,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (gap) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-10-06",
+     "2026-10-07",
+     "2026-10-08",
+     "2026-10-09",
+     "2026-10-13",
+     "2026-10-14",
+     "2026-10-16",
+     "2026-10-21",
+     "2026-10-28",
+     "2026-10-30"
+    ]
+   },
+   {
+    "pattern_name": "Gap-down openings and how often they get filled",
+    "pattern_type": "gap",
+    "start_date": "2026-07-20",
+    "end_date": "2026-10-27",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -1.79
+     }
+    ],
+    "occurrences": 570,
+    "avg_move_pct": -1.79,
+    "success_rate_pct": 64,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (gap) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-07-20",
+     "2026-07-24",
+     "2026-09-08",
+     "2026-09-11",
+     "2026-09-21",
+     "2026-09-25",
+     "2026-10-01",
+     "2026-10-12",
+     "2026-10-20",
+     "2026-10-27"
+    ]
+   },
+   {
+    "pattern_name": "Heavy-volume days with flat-to-rising price (buying pressure)",
+    "pattern_type": "pressure",
+    "start_date": "2026-07-22",
+    "end_date": "2026-10-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 1.37
+     }
+    ],
+    "occurrences": 358,
+    "avg_move_pct": 1.37,
+    "success_rate_pct": 41.7,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (pressure) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-07-22",
+     "2026-08-03",
+     "2026-08-07",
+     "2026-08-31",
+     "2026-09-11",
+     "2026-09-25",
+     "2026-09-30",
+     "2026-10-15",
+     "2026-10-16",
+     "2026-10-30"
+    ]
+   },
+   {
+    "pattern_name": "Heavy-volume days with flat-to-falling price (selling pressure)",
+    "pattern_type": "pressure",
+    "start_date": "2026-06-24",
+    "end_date": "2026-10-19",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -0.79
+     }
+    ],
+    "occurrences": 217,
+    "avg_move_pct": -0.79,
+    "success_rate_pct": 62.2,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (pressure) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-06-24",
+     "2026-08-21",
+     "2026-08-28",
+     "2026-09-01",
+     "2026-09-14",
+     "2026-09-15",
+     "2026-09-16",
+     "2026-10-05",
+     "2026-10-14",
+     "2026-10-19"
+    ]
+   },
+   {
+    "pattern_name": "Unusually heavy volume days",
+    "pattern_type": "volume_spike",
+    "start_date": "2026-04-28",
+    "end_date": "2026-10-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 2.86
+     }
+    ],
+    "occurrences": 214,
+    "avg_move_pct": 2.86,
+    "success_rate_pct": 68.2,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (volume_spike) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-04-28",
+     "2026-04-29",
+     "2026-06-15",
+     "2026-08-28",
+     "2026-08-31",
+     "2026-09-14",
+     "2026-09-30",
+     "2026-10-15",
+     "2026-10-16",
+     "2026-10-30"
+    ]
+   },
+   {
+    "pattern_name": "After a heavy-volume day",
+    "pattern_type": "drift",
+    "start_date": "2026-04-28",
+    "end_date": "2026-10-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 1.28
+     }
+    ],
+    "occurrences": 214,
+    "avg_move_pct": 1.28,
+    "success_rate_pct": 40.4,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (drift) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-04-28",
+     "2026-04-29",
+     "2026-06-15",
+     "2026-08-28",
+     "2026-08-31",
+     "2026-09-14",
+     "2026-09-30",
+     "2026-10-15",
+     "2026-10-16",
+     "2026-10-30"
+    ]
+   },
+   {
+    "pattern_name": "After closing at a 52-week low",
+    "pattern_type": "drift",
+    "start_date": "2026-09-16",
+    "end_date": "2026-10-28",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -0.03
+     }
+    ],
+    "occurrences": 100,
+    "avg_move_pct": -0.03,
+    "success_rate_pct": 46.5,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (drift) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-09-16",
+     "2026-10-02",
+     "2026-10-05",
+     "2026-10-06",
+     "2026-10-12",
+     "2026-10-14",
+     "2026-10-20",
+     "2026-10-21",
+     "2026-10-27",
+     "2026-10-28"
+    ]
+   },
+   {
+    "pattern_name": "After closing at a 52-week high",
+    "pattern_type": "drift",
+    "start_date": "2024-10-23",
+    "end_date": "2025-09-11",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 5.82
+     }
+    ],
+    "occurrences": 51,
+    "avg_move_pct": 5.82,
+    "success_rate_pct": 54.9,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (drift) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2024-10-23",
+     "2024-10-24",
+     "2024-11-05",
+     "2024-11-07",
+     "2024-11-08",
+     "2025-09-04",
+     "2025-09-05",
+     "2025-09-08",
+     "2025-09-10",
+     "2025-09-11"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 10.49-11.17",
+    "pattern_type": "key_zone",
+    "start_date": "2026-04-20",
+    "end_date": "2026-07-31",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 6.19
+     }
+    ],
+    "occurrences": 29,
+    "avg_move_pct": 6.19,
+    "success_rate_pct": 55.2,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-04-20",
+     "2026-04-30",
+     "2026-05-11",
+     "2026-06-11",
+     "2026-06-23",
+     "2026-07-08",
+     "2026-07-22",
+     "2026-07-27",
+     "2026-07-29",
+     "2026-07-31"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 13.68-14.36",
+    "pattern_type": "key_zone",
+    "start_date": "2025-02-20",
+    "end_date": "2025-12-23",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 4.86
+     }
+    ],
+    "occurrences": 22,
+    "avg_move_pct": 4.86,
+    "success_rate_pct": 59.1,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2025-02-20",
+     "2025-02-25",
+     "2025-07-23",
+     "2025-07-30",
+     "2025-08-21",
+     "2025-10-30",
+     "2025-11-05",
+     "2025-12-10",
+     "2025-12-17",
+     "2025-12-23"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 12.77-13.45",
+    "pattern_type": "key_zone",
+    "start_date": "2025-04-10",
+    "end_date": "2026-02-16",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 6.21
+     }
+    ],
+    "occurrences": 19,
+    "avg_move_pct": 6.21,
+    "success_rate_pct": 47.4,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2025-04-10",
+     "2025-05-05",
+     "2025-05-13",
+     "2025-06-26",
+     "2025-07-04",
+     "2025-07-10",
+     "2025-07-17",
+     "2025-07-22",
+     "2026-01-14",
+     "2026-02-16"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 6.38-7.07",
+    "pattern_type": "key_zone",
+    "start_date": "2024-01-02",
+    "end_date": "2024-05-06",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 10.36
+     }
+    ],
+    "occurrences": 14,
+    "avg_move_pct": 10.36,
+    "success_rate_pct": 58.3,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2024-01-02",
+     "2024-01-23",
+     "2024-01-25",
+     "2024-02-01",
+     "2024-02-06",
+     "2024-02-14",
+     "2024-02-21",
+     "2024-04-03",
+     "2024-04-30",
+     "2024-05-06"
+    ]
+   },
+   {
+    "pattern_name": "January: historically weak month",
+    "pattern_type": "seasonality",
+    "start_date": "2017-01-31",
+    "end_date": "2026-01-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 2.74
+     }
+    ],
+    "occurrences": 10,
+    "avg_move_pct": 2.74,
+    "success_rate_pct": 40,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (seasonality) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "medium",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2017-01-31",
+     "2018-01-31",
+     "2019-01-31",
+     "2020-01-31",
+     "2021-01-29",
+     "2022-01-31",
+     "2023-01-31",
+     "2024-01-31",
+     "2025-01-31",
+     "2026-01-30"
+    ]
+   },
+   {
+    "pattern_name": "March: historically weak month",
+    "pattern_type": "seasonality",
+    "start_date": "2017-03-31",
+    "end_date": "2026-03-31",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -6.78
+     }
+    ],
+    "occurrences": 10,
+    "avg_move_pct": -6.78,
+    "success_rate_pct": 20,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (seasonality) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "medium",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2017-03-31",
+     "2018-03-30",
+     "2019-03-29",
+     "2020-03-31",
+     "2021-03-31",
+     "2022-03-31",
+     "2023-03-31",
+     "2024-03-29",
+     "2025-03-27",
+     "2026-03-31"
+    ]
+   },
+   {
+    "pattern_name": "April: historically strong month",
+    "pattern_type": "seasonality",
+    "start_date": "2017-04-28",
+    "end_date": "2026-04-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 14.34
+     }
+    ],
+    "occurrences": 10,
+    "avg_move_pct": 14.34,
+    "success_rate_pct": 60,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (seasonality) over 2481 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "medium",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2017-04-28",
+     "2018-04-30",
+     "2019-04-30",
+     "2020-04-30",
+     "2021-04-30",
+     "2022-04-28",
+     "2023-04-28",
+     "2024-04-30",
+     "2025-04-30",
+     "2026-04-30"
+    ]
+   }
+  ],
+  "keyZones": [
+   {
+    "kind": "zone",
+    "low": 10.49,
+    "high": 11.17,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 6.38,
+    "high": 7.07,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 13.68,
+    "high": 14.36,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 12.77,
+    "high": 13.45,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 9.8,
+    "high": 10.49,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 14.59,
+    "high": 15.27,
+    "note": ""
+   }
+  ],
+  "barsUsed": 2481
+ },
+ "newsCounts": {
+  "company": 0,
+  "national": 8,
+  "international": 8
+ }
+}

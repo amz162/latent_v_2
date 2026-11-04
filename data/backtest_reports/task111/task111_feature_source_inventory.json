@@ -1,0 +1,66 @@
+{
+ "report": "task111_feature_source_inventory",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:20Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "sources": {
+  "ohlcv_db": {
+   "status": "verified",
+   "rows": 1042923,
+   "pit": true,
+   "note": "daily OHLCV, raw prices, no corporate-action adjustment"
+  },
+  "technical_local": {
+   "status": "verified",
+   "pit": true,
+   "modules": [
+    "src/lib/latent/golden-cross.ts",
+    "src/lib/latent/risk-levels.ts",
+    "src/lib/latent/volatility-analytics.ts",
+    "src/lib/latent/price-patterns.ts"
+   ]
+  },
+  "technical_external": {
+   "status": "partially_verified",
+   "pit": false,
+   "note": "Technical tab proxies api.askanalyst.com.pk technicalchart (external values not locally reproducible; excluded from evidence math)"
+  },
+  "financials_snapshot": {
+   "status": "partially_verified",
+   "pit": false,
+   "symbols": 358,
+   "note": "quarterly income-statement snapshots; publication timestamps not PIT verified"
+  },
+  "filings_registry": {
+   "status": "partially_verified",
+   "pit": "day-granularity announcement dates only",
+   "records": 3319,
+   "symbols": 24
+  },
+  "news_company": {
+   "status": "partially_verified",
+   "pit": false,
+   "source": "api.askanalyst.com.pk/api/news/{symbol} (live, cached 12h)"
+  },
+  "news_national": {
+   "status": "partially_verified",
+   "pit": false,
+   "source": "z-ai web_search snapshot (retrieval-only)"
+  },
+  "news_international": {
+   "status": "partially_verified",
+   "pit": false,
+   "source": "z-ai web_search snapshot (retrieval-only)"
+  },
+  "options_market": {
+   "status": "unavailable",
+   "note": "no verified PSX listed-options data (Task 110; rechecked Phase 18)"
+  },
+  "askanalyst_ratios": {
+   "status": "partially_verified",
+   "dir": "data/askanalyst/ratios"
+  }
+ },
+ "llm": "z-ai-web-dev-sdk chat.completions (authorized existing integration) + functions.web_search (news snapshots)"
+}

@@ -1,0 +1,2444 @@
+# TASK 111 — MULTI-SOURCE LLM STOCK PREDICTION ENGINE, GOLDEN CROSS 7/30 SMA, VOLATILITY & CONVEXITY ANALYTICS, RISK MANAGEMENT AND FORWARD VALIDATION
+
+## MASTER OBJECTIVE
+
+Repository: `amz162/latent_v_2`
+
+Latest known repository state: Task 110 has been completed and pushed. Verify the actual GitHub `origin/main`, local HEAD, deployed revision and working tree before making changes.
+
+This task combines all remaining research and prediction objectives into one campaign.
+
+### NEW MAJOR OBJECTIVE — MULTI-SOURCE LLM PREDICTION ENGINE
+
+Build a new research-only LLM-powered PSX stock analysis and prediction engine.
+
+The LLM must analyze two major information groups:
+
+**A. Fundamental Intelligence**
+
+1. Company financial-result pattern finder.
+2. Company financial statements and financial ratios.
+3. International and national news affecting Pakistan's market.
+4. Company-specific news, announcements and financial results.
+
+**B. Technical Intelligence**
+
+1. Existing technical indicator data from Latent.pk's Technical tab.
+2. Price-pattern detection from historical stock OHLCV data.
+
+The engine must combine these sources into a structured, explainable stock signal containing:
+
+- BUY / HOLD / SELL_TO_CLOSE / NO_TRADE / BEARISH_RESEARCH_ONLY.
+- Entry-price reference.
+- Stop-loss.
+- TP1, TP2 and TP3.
+- Risk/reward ratio.
+- LLM assessment/confidence score.
+- Evidence-quality score.
+- Fundamental analysis.
+- News analysis.
+- Technical analysis.
+- Bullish and bearish arguments.
+- Main risks.
+- Data freshness.
+- Supporting source references.
+- Explicit reason for the final decision.
+
+The LLM must not invent missing financial information, news, technical indicator values, price levels or market facts.
+
+**C. Existing strategy and volatility objectives**
+
+Continue the Task 110 work:
+
+- 7-day and 30-day SMA.
+- Golden Cross / Death Cross.
+- Cash-constrained portfolio simulation.
+- Daily ledger and final ROI.
+- Close-to-close variance.
+- Parkinson variance.
+- Garman-Klass variance.
+- Bollinger Band Width.
+- First and second BBW derivatives.
+- Variance first and second derivatives.
+- Volatility-regime research.
+- Capital-protection overlays.
+- Separate Golden Cross and Volatility Analytics dashboards.
+- Python reference implementation audit.
+- Existing forward paper-trading validation.
+
+**The new LLM engine and all new strategies remain research/shadow-only. No real orders, no automatic promotion and no claim of guaranteed profitability.**
+
+---
+
+# PART A — EXISTING HISTORICAL BASELINE
+
+Task 110 reported:
+
+### Golden Cross 7/30 SMA
+
+- Universe: approximately 23 PSX symbols.
+- Historical period: approximately 10 years.
+- Initial capital: PKR 100,000.
+- Final equity: approximately PKR 60,718.
+- ROI: -39.3%.
+- Win rate: 27%.
+- Profit factor: 0.87.
+- Performance worse than holding cash and buy-and-hold.
+- Status: `research_only`.
+
+### Volatility analytics
+
+- Close-to-close variance implemented.
+- Parkinson variance implemented.
+- Garman-Klass variance implemented.
+- BBW and derivatives implemented.
+- Independent recalculations: 92/92 passed after correcting the Parkinson divisor.
+- No genuine PSX options-chain data available.
+- No implied-volatility data available.
+
+### Existing platform
+
+- V2 cost engine is default.
+- `computeSimTradeCosts` → `computeTradeCostsV2`.
+- Existing production monitor and paper-trading infrastructure must remain intact.
+- Historical Tasks 100–110 must remain preserved.
+- Existing predictive models have not demonstrated a reliable positive net edge.
+- No existing model is automatically approved for production promotion.
+
+Recalculate current results from source artifacts rather than assuming these approximate historical values are current.
+
+---
+
+# PART B — NON-NEGOTIABLE EXECUTION AND FINANCIAL RULES
+
+1. Inspect actual repository and source files before making changes.
+2. Do not overwrite existing historical reports.
+3. Do not alter old realized outcomes.
+4. Do not retrain existing ML models.
+5. Do not change existing model weights or prediction thresholds.
+6. Do not change the existing Golden Cross definition.
+7. Do not use previously inspected final-test periods as new untouched evidence.
+8. Do not fabricate market data, financial statements, news, index values or option contracts.
+9. Do not treat accounting-period end dates as public announcement dates.
+10. Do not send credentials or private user data to an external LLM.
+11. Do not send licensed market data to an external provider unless its terms permit that use.
+12. Do not subscribe to paid services or incur new costs without owner approval.
+13. Use existing configured provider credentials only.
+14. Keep all model outputs and new strategies research-only until genuine promotion criteria are satisfied.
+15. No real broker orders.
+16. No unsupported short-selling.
+17. No unsupported short-option selling.
+18. Use `psx_user_schedule_v2`.
+19. Keep no-leverage and cash constraints.
+20. No fake confidence probabilities.
+21. Use bounded, resumable, deterministic execution.
+22. Preserve existing paper-trading generations and data.
+23. Do not push to GitHub unless explicitly authorized.
+
+Create or extend:
+
+`scripts/task111_runner.py`
+
+The runner must support:
+
+- Phase-specific execution.
+- Checkpoints.
+- Resume.
+- Per-symbol processing.
+- Deterministic reports.
+- Provider failure handling.
+- Cached outputs.
+- Progress and failure logs.
+
+Keep individual commands within the available execution limits.
+
+Do not stop after generating a plan or writing scripts. Execute every feasible phase.
+
+---
+
+# PHASE 1 — COMPLETE REPOSITORY AND TASK 110 AUDIT
+
+Inspect:
+
+- Current Git HEAD.
+- `origin/main`.
+- Local working tree.
+- Deployed revision.
+- Task 110 artifacts.
+- Golden Cross implementation.
+- Volatility implementation.
+- Existing model registry.
+- LLM integrations, if any.
+- Technical tab API and its indicator definitions.
+- Fundamental data pipeline.
+- AskAnalyst data.
+- PSX filings and announcements.
+- Existing national/international news sources.
+- Company news ingestion.
+- Company financial result data.
+- Existing pattern finder implementation.
+- OHLCV schema.
+- Paper Trade Monitor.
+- Production execution engine.
+- V2 cost model.
+- Existing shadow stores.
+
+Reconcile the Task 110 Golden Cross result and volatility calculations.
+
+Verify the reported:
+
+- Initial capital.
+- Final capital.
+- ROI.
+- Trades.
+- Win rate.
+- Profit factor.
+- Total costs.
+- Drawdown.
+- 92/92 volatility recalculations.
+- 62/62 Python tests.
+- 15/15 parity fixtures.
+
+Preserve old reports and original data.
+
+Create:
+
+- `task111_baseline_inventory.json`
+- `task111_task110_reconciliation.json`
+- `task111_historical_integrity.json`
+- `task111_feature_source_inventory.json`
+
+---
+
+# PART C — MULTI-SOURCE LLM PREDICTION ENGINE
+
+# PHASE 2 — LLM PROVIDER AND MODEL INTEGRATION
+
+Inspect the current Latent.pk architecture to determine whether an approved LLM API or local inference system is already configured.
+
+Do not assume an API key or paid LLM service exists.
+
+Preferred approach:
+
+1. Reuse an already configured and authorized LLM provider.
+2. Build a provider-independent adapter.
+3. Make model/provider selection configurable.
+4. Keep credentials in environment variables or an approved secret manager.
+5. Never expose credentials in frontend code, source files, reports or Git.
+
+Suggested module:
+
+`src/lib/latent/llm/llm-provider.ts`
+
+Suggested provider configuration:
+
+- `LLM_PROVIDER`
+- `LLM_MODEL`
+- `LLM_API_KEY`
+- `LLM_BASE_URL`
+- `LLM_TIMEOUT_MS`
+- `LLM_MAX_TOKENS`
+
+Use actual project environment-variable conventions.
+
+If there is no existing authorized LLM integration:
+
+- Complete the provider adapter.
+- Complete the evidence pipeline.
+- Complete deterministic tests using mock model responses.
+- Document the exact configuration needed.
+- Mark real inference `blocked_credentials` until an authorized provider is configured.
+
+Do not silently substitute a different model and claim the intended model was used.
+
+## Provider logging
+
+For every inference record:
+
+- Provider ID.
+- Model ID/version.
+- Prompt version.
+- Input-schema version.
+- Output-schema version.
+- Evidence hash.
+- Decision timestamp.
+- Model-request timestamp.
+- Response timestamp.
+- Latency.
+- Token usage, if returned.
+- API cost, if returned.
+- Parsing result.
+- Validation result.
+- Failure reason.
+
+If the LLM provider is unavailable, return a controlled state rather than a fabricated prediction.
+
+---
+
+# PHASE 3 — BUILD THE MULTI-SOURCE EVIDENCE STORE
+
+Do not send raw database dumps directly to an LLM.
+
+First construct a structured, point-in-time evidence package for each stock.
+
+Suggested module:
+
+`src/lib/latent/llm/evidence-builder.ts`
+
+Each evidence package must include:
+
+- Symbol.
+- Company name.
+- Sector.
+- Decision timestamp.
+- Data cutoff.
+- Feature schema version.
+- Fundamental evidence.
+- Company financial-pattern evidence.
+- News evidence.
+- Technical indicator evidence.
+- Price-pattern evidence.
+- Market context.
+- Data-quality flags.
+- Source references.
+
+Every numeric fact must have a traceable source and timestamp.
+
+Each category must have a status:
+
+- `verified`
+- `partially_verified`
+- `stale`
+- `missing`
+- `unavailable`
+- `insufficient_history`
+
+Do not convert unavailable data into neutral evidence.
+
+For example:
+
+- No news found is not equivalent to positive news.
+- Missing fundamentals are not evidence of financial stability.
+- An incomplete indicator set is not a complete technical analysis.
+
+## Point-in-time rule
+
+An LLM analyzing a historical decision must only receive information genuinely available at that historical timestamp.
+
+Never expose:
+
+- A future filing.
+- A future announcement.
+- News published after the decision.
+- Future OHLCV.
+- A restated historical figure that was not yet publicly available.
+- Future financial results.
+
+Use the existing Task 102/103 point-in-time mechanisms.
+
+If a source lacks a reliable publication timestamp, keep it unavailable or use an explicitly documented conservative availability policy.
+
+---
+
+# PHASE 4 — FUNDAMENTAL INTELLIGENCE: COMPANY FINANCIAL-RESULT PATTERN FINDER
+
+Create or extend:
+
+`src/lib/latent/fundamentals/company-pattern-finder.ts`
+
+The fundamental pattern finder should identify recurring patterns in a company's published financial history.
+
+Evaluate, where valid data exists:
+
+### Revenue patterns
+
+- Revenue growth.
+- Sequential revenue change.
+- Year-over-year growth.
+- Accelerating growth.
+- Decelerating growth.
+- Declining revenue.
+- Recurring seasonal behavior.
+
+### Profitability patterns
+
+- Net income growth.
+- EPS growth.
+- Gross margin expansion/contraction.
+- Operating margin.
+- Net margin.
+- Repeated profits or losses.
+- Recurring quarterly deterioration.
+- Earnings stability.
+
+### Financial quality patterns
+
+- Operating cash flow versus reported earnings.
+- Debt/equity trend.
+- Current ratio.
+- Interest coverage where inputs exist.
+- Working-capital deterioration.
+- Receivables and inventory trends where verified.
+- Cash-flow consistency.
+
+### Financial-result event patterns
+
+- Consecutive earnings surprises where credible consensus estimates exist.
+- Repeated earnings beats or misses.
+- Sudden margin compression.
+- Revenue deceleration with rising costs.
+- EPS growth without corresponding operating cash flow.
+- Repeated extraordinary income effects.
+
+Do not invent earnings surprises if no historical consensus estimate exists.
+
+## Pattern-output format
+
+Each financial pattern must contain:
+
+- `pattern_id`
+- `symbol`
+- `pattern_type`
+- `period_start`
+- `period_end`
+- `observation_count`
+- `direction`
+- `strength`
+- `source_filing_ids`
+- `publication_timestamps`
+- `data_quality`
+- `as_of_timestamp`
+- `limitations`
+
+Require enough genuine historical periods to support a pattern.
+
+Default behavior:
+
+- A single quarter cannot establish a repeated pattern.
+- Insufficient consecutive quarters must return `insufficient_history`.
+- Amended statements must preserve historical versions.
+- Financial period and publication date must remain distinct.
+
+The LLM may summarize detected patterns, but calculations must be performed deterministically.
+
+Create:
+
+- `task111_company_financial_patterns.json`
+- `task111_financial_pattern_coverage.csv`
+- `task111_financial_statement_pit_audit.json`
+
+---
+
+# PHASE 5 — FUNDAMENTAL INTELLIGENCE: COMPANY FINANCIAL ANALYSIS
+
+Use verified company financial information.
+
+Inspect:
+
+- Existing AskAnalyst data.
+- Financial statements.
+- PSX filings.
+- Financial result disclosures.
+- Existing ratios.
+- Announcement timestamps.
+- Filing versions.
+- Currency and unit consistency.
+
+Calculate, where supported:
+
+- Revenue growth.
+- EPS.
+- Net income.
+- Profit margins.
+- ROE.
+- ROA.
+- Debt/equity.
+- Current ratio.
+- Operating cash flow.
+- Cash-flow quality.
+- Interest coverage.
+- Valuation ratios only when contemporaneous price data is available.
+
+Separate:
+
+- Reported facts.
+- Deterministically calculated ratios.
+- LLM interpretation.
+- Missing information.
+
+## Critical historical availability rule
+
+Task 102 previously found zero verified point-in-time statement fundamentals, while 3,319 PSX filing records had genuine announcement dates across 24 symbols.
+
+Verify current data again.
+
+Do not assume this limitation has disappeared.
+
+Do not turn reporting-period labels into historical publication timestamps.
+
+Where a fundamental field is not safe for historical as-of use:
+
+- Keep it disabled in historical prediction.
+- Allow current analysis only when its current source is verified.
+- Clearly distinguish current analysis from historical backtesting.
+
+Create:
+
+- `task111_company_financial_analysis.json`
+- `task111_financial_ratio_coverage.csv`
+- `task111_fundamental_availability_report.json`
+
+---
+
+# PHASE 6 — FUNDAMENTAL INTELLIGENCE: NATIONAL AND INTERNATIONAL NEWS
+
+Create or extend:
+
+`src/lib/latent/news/market-news-intelligence.ts`
+
+The news intelligence pipeline must cover three categories:
+
+### A. International macro and market news
+
+Where relevant to Pakistan and PSX:
+
+- Global interest rates.
+- Federal Reserve decisions.
+- Global oil prices.
+- Energy supply.
+- Commodity markets.
+- International currency movements.
+- Global risk sentiment.
+- Geopolitical events.
+- Regional economic conditions.
+- International financial developments affecting Pakistan.
+
+### B. National Pakistan news
+
+- Monetary policy.
+- State Bank of Pakistan announcements.
+- Inflation.
+- Interest rates.
+- Government fiscal measures.
+- Budget and taxation.
+- IMF developments.
+- Foreign-exchange reserves.
+- PKR currency changes.
+- Energy tariffs.
+- Circular debt.
+- Import/export restrictions.
+- Regulatory and economic policy changes.
+- National political/economic developments that can materially affect listed companies.
+
+### C. Company-specific news
+
+- PSX announcements.
+- Company financial results.
+- Board meetings.
+- Dividends.
+- Bonuses.
+- Rights issues.
+- Mergers and acquisitions.
+- Contracts.
+- New projects.
+- Regulatory issues.
+- Management changes.
+- Material litigation.
+- Production changes.
+- Debt/default information.
+- Corporate disclosures.
+
+## News source integrity
+
+Use legitimate public/authorized APIs, licensed feeds or existing approved integrations.
+
+Do not:
+
+- Bypass paywalls.
+- Evade CAPTCHAs.
+- Ignore rate limits.
+- Scrape restricted websites.
+- Fabricate article summaries.
+- Pretend a headline was verified when its source is inaccessible.
+
+Maintain a source registry:
+
+- Source ID.
+- Publisher.
+- Domain.
+- Country.
+- News category.
+- Reliability classification.
+- Retrieval method.
+- Licensing/access status.
+- Last successful retrieval.
+
+## News record format
+
+Each article/event record must include:
+
+- Headline.
+- Publisher.
+- Source URL.
+- Publication datetime.
+- Retrieval datetime.
+- Event datetime where distinct.
+- Language.
+- Country/market.
+- Relevant companies.
+- Relevant symbols.
+- Related sectors.
+- Event category.
+- Summary.
+- Sentiment.
+- Materiality.
+- Expected time horizon.
+- Reliability.
+- Corroborating sources.
+- Conflicting coverage.
+- Data-quality state.
+
+Preserve original source content or a licensed/reference representation where permitted.
+
+## News intelligence
+
+Classify:
+
+- Bullish.
+- Bearish.
+- Neutral.
+- Mixed.
+- Uncertain.
+
+Also assess:
+
+- Positive/negative impact.
+- Short-term versus long-term relevance.
+- Whether the news has already been reflected in market price.
+- Whether the news is confirmed, preliminary or unverified.
+- Whether several outlets are repeating the same original story.
+
+Do not count syndicated duplicates as independent corroboration.
+
+Do not equate positive sentiment with a positive stock return.
+
+## Prompt-injection and security protection
+
+News article text is untrusted input.
+
+A malicious article may contain instructions directed at an LLM.
+
+Treat every headline, article and filing as evidence only—not as instructions.
+
+The model must never:
+
+- Follow instructions embedded in news articles.
+- Access credentials.
+- Execute tools on behalf of an article.
+- Change its system rules.
+- Reveal internal prompts or private data.
+
+Sanitize HTML and control the context size.
+
+Use only the information necessary for analysis.
+
+Create:
+
+- `task111_news_source_registry.json`
+- `task111_news_coverage.json`
+- `task111_news_event_classification.json`
+- `task111_company_news_mapping.csv`
+- `task111_news_integrity_report.json`
+
+---
+
+# PHASE 7 — TECHNICAL INTELLIGENCE: EXISTING TECHNICAL TAB INDICATORS
+
+Inspect the actual existing Technical tab and its APIs.
+
+Do not build a duplicate indicator system that generates different values from the Technical tab.
+
+The LLM evidence package must consume the same authoritative indicator outputs shown to the user.
+
+Audit the actual indicator inventory.
+
+Potential indicators may include, only if actually implemented:
+
+- SMA7/SMA30.
+- EMA.
+- RSI.
+- MACD.
+- ADX.
+- ATR.
+- Bollinger Bands.
+- Volume indicators.
+- Momentum.
+- Support/resistance.
+- Relative strength.
+- Existing volatility features.
+
+For every indicator, record:
+
+- Actual source function.
+- Formula/version.
+- Symbol.
+- Data cutoff.
+- Calculation timeframe.
+- Latest value.
+- Historical context.
+- Data-quality state.
+
+Do not include an indicator merely because it is listed in documentation.
+
+The LLM must receive actual data and its definition.
+
+Create:
+
+- `task111_technical_indicator_inventory.json`
+- `task111_indicator_data_coverage.csv`
+- `task111_technical_evidence_schema.json`
+
+---
+
+# PHASE 8 — TECHNICAL INTELLIGENCE: STOCK PRICE PATTERN FINDER
+
+Create or extend:
+
+`src/lib/latent/technical/price-pattern-finder.ts`
+
+The stock-price pattern finder must analyze actual OHLCV sequences.
+
+Potential formations:
+
+### Trend patterns
+
+- Higher highs / higher lows.
+- Lower highs / lower lows.
+- Uptrend.
+- Downtrend.
+- Sideways consolidation.
+
+### Chart formations
+
+- Breakout.
+- Breakdown.
+- Double top.
+- Double bottom.
+- Head and shoulders.
+- Inverse head and shoulders.
+- Ascending triangle.
+- Descending triangle.
+- Symmetrical triangle.
+- Channel formation.
+- Range breakout.
+- Support/resistance retest.
+
+### Candle patterns
+
+Where sufficient OHLC evidence exists:
+
+- Engulfing patterns.
+- Doji.
+- Hammer.
+- Shooting star.
+- Inside bar.
+- Outside bar.
+- Pin bar.
+- Other documented formations.
+
+### Volume confirmation
+
+Where volume data is valid:
+
+- Breakout volume expansion.
+- Weak-volume breakout.
+- Volume contraction.
+- Unusual volume.
+- Relative volume.
+
+## Pattern detection rules
+
+Do not let the LLM invent a chart formation.
+
+The price-pattern detector must first generate structured candidate patterns with:
+
+- Pattern name.
+- Start/end date.
+- Relevant OHLC records.
+- Key prices.
+- Confirmation status.
+- Detection rule.
+- Pattern strength.
+- Data-quality state.
+
+The LLM may interpret the detected pattern and explain its implications.
+
+A candidate pattern must not be described as confirmed until the confirmation rules have been met.
+
+Never use future candles to confirm a historical pattern at an earlier decision timestamp.
+
+Create:
+
+- `task111_price_pattern_report.json`
+- `task111_price_pattern_coverage.csv`
+- `task111_pattern_confirmation_audit.json`
+
+---
+
+# PART D — LLM SIGNAL GENERATION ENGINE
+
+# PHASE 9 — BUILD THE DETERMINISTIC EVIDENCE-TO-LLM PIPELINE
+
+Create:
+
+`src/lib/latent/llm/stock-signal-engine.ts`
+
+Recommended architecture:
+
+`Verified Market Data + Fundamentals + Financial Patterns + News + Technical Indicators + Price Patterns`
+
+↓
+
+`Point-in-Time Evidence Builder`
+
+↓
+
+`Evidence Completeness and Quality Check`
+
+↓
+
+`LLM Analysis`
+
+↓
+
+`Strict Structured Output Validation`
+
+↓
+
+`Deterministic Risk/Reward Engine`
+
+↓
+
+`Capital Protection and NO-TRADE Policy`
+
+↓
+
+`Research/Shadow Signal`
+
+The LLM must not independently calculate trading costs, position quantities or portfolio equity.
+
+Those must be produced deterministically by existing application code.
+
+## Required LLM reasoning tasks
+
+The LLM must answer the following questions for every supported symbol:
+
+1. What is the fundamental condition of this company?
+2. Is its financial performance improving, deteriorating or mixed?
+3. Are there repeating positive or negative financial-result patterns?
+4. Are there material national or international developments affecting the company or sector?
+5. Is there company-specific news that changes the outlook?
+6. Do its technical indicators support the fundamental thesis?
+7. What price-pattern formations are detected?
+8. Are technical and fundamental signals aligned?
+9. Is there a disagreement between evidence sources?
+10. What are the strongest bullish arguments?
+11. What are the strongest bearish arguments?
+12. What important information is missing?
+13. What is the expected risk?
+14. Is there enough evidence to issue a research BUY/HOLD/SELL_TO_CLOSE or NO-TRADE decision?
+
+The LLM must explicitly acknowledge contradictory evidence.
+
+Do not make all signals bullish merely because a company's news sentiment is positive.
+
+---
+
+# PHASE 10 — STRICT LLM INPUT AND OUTPUT SCHEMAS
+
+## Input schema
+
+Every LLM request should use a versioned structured evidence object:
+
+`latent_psx_llm_evidence_v1`
+
+Required fields:
+
+- Symbol.
+- Company name.
+- Sector.
+- Decision timestamp.
+- Data cutoff timestamp.
+- Price context.
+- Fundamental evidence.
+- Financial pattern evidence.
+- National news evidence.
+- International news evidence.
+- Company-specific news.
+- Technical indicators.
+- Price-pattern detections.
+- Market regime.
+- Volatility context.
+- Data-quality flags.
+- Missing-source list.
+- Supporting source references.
+
+Every input must be point-in-time safe.
+
+## Output schema
+
+Use strict validated JSON.
+
+Suggested structure:
+
+{
+  "symbol": "ENGRO",
+  "decision_timestamp": "...",
+  "analysis_horizon": "5d|10d|21d",
+  "signal": "BUY|HOLD|SELL_TO_CLOSE|BEARISH_RESEARCH_ONLY|NO_TRADE",
+  "signal_status": "research_only",
+  "fundamental_view": "bullish|bearish|neutral|mixed|unknown",
+  "financial_pattern_view": "bullish|bearish|neutral|mixed|insufficient_data",
+  "national_news_view": "bullish|bearish|neutral|mixed|unavailable",
+  "international_news_view": "bullish|bearish|neutral|mixed|unavailable",
+  "company_news_view": "bullish|bearish|neutral|mixed|unavailable",
+  "technical_view": "bullish|bearish|neutral|mixed|unknown",
+  "price_pattern_view": "bullish|bearish|neutral|mixed|unknown",
+  "bullish_evidence": [],
+  "bearish_evidence": [],
+  "conflicting_evidence": [],
+  "missing_evidence": [],
+  "main_risks": [],
+  "invalidation_conditions": [],
+  "llm_conviction_score": 0,
+  "evidence_quality_score": 0,
+  "calibrated_net_positive_probability": null,
+  "entry_reference": null,
+  "stop_loss": null,
+  "target_1": null,
+  "target_2": null,
+  "target_3": null,
+  "risk_reward_ratio": null,
+  "risk_reward_status": "unavailable",
+  "decision_reason": "",
+  "source_references": [],
+  "limitations": []
+}
+
+Implement a formal JSON Schema and server-side validator.
+
+Reject:
+
+- Invalid symbols.
+- Unrecognized signals.
+- Missing evidence identifiers.
+- Unavailable price data.
+- Invalid prices.
+- Invalid stop-loss direction.
+- Invalid target direction.
+- Unsupported short-entry instructions.
+- Out-of-date evidence.
+- Fabricated source references.
+- Unsupported probability fields.
+
+Do not display invalid or incomplete LLM responses as trading signals.
+
+---
+
+# PHASE 11 — CONFIDENCE SCORE AND EVIDENCE QUALITY
+
+The user explicitly wants a confidence score.
+
+Implement multiple separate fields because they have different meanings.
+
+## A. LLM conviction score
+
+`llm_conviction_score`
+
+Range: 0–100.
+
+This is the LLM's own assessment of how strongly its evidence supports the proposed thesis.
+
+Label in UI:
+
+`LLM conviction — uncalibrated`
+
+It is NOT the probability of winning.
+
+## B. Evidence quality score
+
+`evidence_quality_score`
+
+Range: 0–100.
+
+Calculate deterministically using:
+
+- Source verification.
+- Point-in-time availability.
+- Data completeness.
+- Data freshness.
+- Financial-history coverage.
+- News corroboration.
+- Technical-data quality.
+- Price-pattern confirmation.
+- Cross-source consistency.
+
+Missing or unverified information must reduce the score.
+
+Do not let the LLM assign the evidence-quality score itself.
+
+## C. Calibrated probability
+
+`calibrated_net_positive_probability`
+
+Initially:
+
+`null`
+
+Only provide a numeric probability after the new engine has enough genuinely matured out-of-sample outcomes to justify calibration.
+
+Use validation-only calibration followed by independent forward evaluation.
+
+Do not use the historical LLM conviction score as if it were a probability.
+
+Do not make 80/100 mean 80% winning probability.
+
+## D. Score display
+
+The UI must distinguish:
+
+- LLM conviction.
+- Evidence quality.
+- Calibrated probability.
+- Historical realized win rate.
+
+These must never share the same label or meaning.
+
+Create:
+
+- `task111_llm_confidence_semantics.json`
+- `task111_evidence_quality_methodology.json`
+- `task111_probability_calibration_policy.json`
+
+---
+
+# PHASE 12 — DETERMINISTIC ENTRY, STOP, TARGET AND RISK/REWARD ENGINE
+
+Create:
+
+`src/lib/latent/llm/risk-reward-engine.ts`
+
+The LLM may explain the proposed trade setup, but final risk levels and the ratio must pass deterministic validation.
+
+Use available:
+
+- ATR.
+- Historical support/resistance.
+- Price-pattern levels.
+- Recent swing highs/lows.
+- Volatility estimates.
+- Actual executable-reference price.
+- Cost profile.
+
+Do not allow arbitrary hallucinated target/stop numbers.
+
+## Entry reference
+
+For completed daily data:
+
+- Signal after the completed session.
+- Next valid session open is the default hypothetical entry reference.
+
+For delayed snapshots:
+
+- Record actual retrieval time.
+- Use a defensible first-observable-price rule.
+- Label the result `delayed_observation_shadow`.
+- Do not backdate an entry into a period before the app received the information.
+
+Never execute a historical signal at the same close used to create it unless a documented execution mechanism genuinely supports it.
+
+## Stop-loss
+
+A long-position stop must be below the entry price.
+
+Use a documented rule based on:
+
+- ATR.
+- Verified technical support.
+- Confirmed price-pattern invalidation.
+- Existing strategy risk policy.
+
+If a defensible stop cannot be determined, return `NO_TRADE`.
+
+## Targets
+
+For a long setup:
+
+- TP1.
+- TP2.
+- TP3.
+
+Use technically defensible resistance levels or predeclared reward multiples.
+
+Targets must be above entry.
+
+Do not create targets beyond reasonable market evidence without explaining the assumptions.
+
+## Risk/reward calculation
+
+Calculate net reward and net risk using whole-share sizing and V2 trading costs.
+
+The conceptual formula is:
+
+`Risk/Reward = Expected Net Profit at Selected Target / Absolute Expected Net Loss at Stop`
+
+Include:
+
+- Entry cost.
+- Exit brokerage.
+- PSX fees.
+- NCCPL fees.
+- CDC fees.
+- Applicable taxes.
+- Slippage assumptions.
+- Position quantity.
+
+The exact calculation must use:
+
+`computeSimTradeCosts` → `computeTradeCostsV2`
+
+Do not subtract costs twice.
+
+If the denominator is zero, negative or unavailable, the ratio is unavailable and the setup is invalid.
+
+Report each target separately where useful:
+
+- `rr_to_tp1`
+- `rr_to_tp2`
+- `rr_to_tp3`
+
+Do not allow the LLM to write an attractive risk/reward ratio that differs from the deterministic calculation.
+
+## No-trade controls
+
+Use NO-TRADE when:
+
+- No valid entry reference exists.
+- No valid stop exists.
+- Targets are unsupported.
+- Net reward/risk is unacceptable.
+- Data is stale.
+- Fundamental data is not point-in-time safe.
+- Required news evidence is unavailable and the thesis depends on it.
+- Technical and fundamental evidence materially conflict.
+- Liquidity is insufficient.
+- A model's evidence quality is inadequate.
+- Capital-protection rules reject the trade.
+
+The minimum R:R rule must come from a documented configuration and be tested on validation only.
+
+Evaluate predeclared thresholds such as 1:1, 1.5:1 and 2:1 without selecting the best final-test value.
+
+The LLM must not be allowed to relax risk rules.
+
+Create:
+
+- `task111_llm_trade_levels.json`
+- `task111_risk_reward_validation.json`
+- `task111_cost_inclusive_reward_risk.csv`
+- `task111_no_trade_decision_report.json`
+
+---
+
+# PHASE 13 — MULTI-SOURCE LLM ABLATION AND EVALUATION
+
+The goal is to determine whether the new LLM adds genuine predictive value beyond existing technical strategies.
+
+Use matched samples wherever possible.
+
+Predeclare comparisons:
+
+1. Technical indicators only.
+2. Technical indicators + price patterns.
+3. Fundamental financial data only.
+4. Financial patterns + financial statements.
+5. Company news only.
+6. National/international news only.
+7. Company + national + international news.
+8. Fundamental + technical.
+9. All verified evidence combined.
+10. All verified evidence combined with volatility context.
+
+Do not run comparisons on different samples and pretend the difference is entirely due to the feature.
+
+Report:
+
+- Data coverage.
+- Missing categories.
+- Independent dates.
+- Number of symbols.
+- Number of predictions.
+- Number of valid decisions.
+- Number of abstentions.
+- Signal agreement/disagreement.
+- Prediction accuracy.
+- Net win rate.
+- Net expectancy.
+- Profit factor.
+- Drawdown.
+- Cost impact.
+
+The LLM must be compared against:
+
+- Cash/no-trade.
+- Technical-only baseline.
+- Golden Cross 7/30.
+- Existing technical-rule signals.
+- Existing frozen cost-aware shadow filter.
+- Buy-and-hold where comparable.
+
+Do not force the LLM to outperform these baselines.
+
+## Evaluation limits
+
+Historical Task 100–110 periods have already been examined.
+
+Historical LLM analysis on those periods must be labeled:
+
+`development_only`
+
+Do not call it untouched out-of-sample evidence.
+
+Do not use future news or amended filings in historical context.
+
+A genuinely new LLM forward generation must be separate and immutable.
+
+Create:
+
+- `task111_llm_ablation_report.json`
+- `task111_llm_model_evaluation.json`
+- `task111_matched_sample_comparison.json`
+- `task111_llm_vs_technical_baseline.json`
+- `task111_llm_evidence_disposition.json`
+
+---
+
+# PART E — EXISTING GOLDEN CROSS STRATEGY AND VOLATILITY ANALYTICS
+
+# PHASE 14 — VOLATILITY FEATURE QUALITY
+
+Reuse Task 110's existing implementation.
+
+Verify:
+
+### Close-to-close variance
+
+`r_t = ln(C_t / C_(t-1))`
+
+Use a documented rolling variance convention and annualize exactly once.
+
+### Parkinson variance
+
+`Var_P = Mean[ln(H/L)^2] / (4 * ln(2))`
+
+Annualize exactly once.
+
+### Garman-Klass variance
+
+`Var_GK = Mean[0.5 * ln(H/L)^2 - (2 * ln(2) - 1) * ln(C/O)^2]`
+
+Annualize exactly once.
+
+Record negative or invalid estimates.
+
+Do not silently clip invalid values and hide the diagnostics.
+
+### Bollinger Band Width
+
+Use:
+
+- 20-session SMA.
+- 2 standard deviations by default.
+- Consistent denominator and standard-deviation convention.
+
+### BBW derivatives
+
+Calculate:
+
+- First discrete difference.
+- Second discrete difference.
+
+### Variance derivatives
+
+Calculate:
+
+- Close-to-close first and second derivatives.
+- Parkinson first and second derivatives.
+- Garman-Klass first and second derivatives.
+
+Account for actual trading-session spacing.
+
+Never calculate derivatives across missing-data gaps as though observations were continuous.
+
+Create:
+
+- `task111_volatility_quality_report.json`
+- `task111_estimator_consistency.json`
+- `task111_volatility_data_coverage.csv`
+- `task111_derivative_integrity.json`
+
+---
+
+# PHASE 15 — VOLATILITY-AWARE EQUITY RISK OVERLAYS
+
+The purpose is to determine whether volatility information reduces account losses and drawdowns.
+
+Do not change original strategy entry signals.
+
+Compare:
+
+### Baseline
+
+`golden_cross_7_30_v1`
+
+### Overlay A — Fixed volatility exposure
+
+Possible predeclared multipliers:
+
+- Low volatility: 100%.
+- Normal: 75%.
+- High: 50%.
+- Extreme: 25%.
+
+### Overlay B — Volatility-targeted sizing
+
+Test fixed annualized volatility targets:
+
+- 10%.
+- 15%.
+- 20%.
+
+Never use leverage.
+
+Exposure cannot exceed 100% of available equity.
+
+### Overlay C — Volatility expansion protection
+
+Use:
+
+- BBW.
+- BBW first derivative.
+- BBW second derivative.
+- Realized variance.
+- Variance acceleration.
+
+Predeclared states:
+
+- Normal.
+- Expansion watch.
+- Extreme expansion.
+- Compression watch.
+- Unknown.
+
+### Overlay D — Mean-reversion research
+
+Mean reversion must use price-direction indicators.
+
+Use verified price z-score, moving-average distance or existing indicators.
+
+Falling BBW alone is not a mean-reversion prediction.
+
+### Overlay E — Drawdown protection
+
+Evaluate research controls:
+
+- 5% drawdown alert.
+- 10% drawdown pause.
+- Maximum per-position risk.
+- Maximum combined open risk.
+- Maximum exposure.
+
+These are simulated protective rules, not guarantees against price gaps.
+
+Create:
+
+- `task111_risk_overlay_definitions.json`
+- `task111_volatility_exposure_rules.json`
+- `task111_position_sizing_rules.json`
+- `task111_capital_protection_scenarios.json`
+
+---
+
+# PHASE 16 — CASH-CONSTRAINED PORTFOLIO BACKTEST
+
+Initial capital:
+
+`PKR 100,000`
+
+Evaluate:
+
+1. Cash/no-trade.
+2. Buy-and-hold.
+3. Golden Cross 7/30 baseline.
+4. Golden Cross with volatility exposure control.
+5. Golden Cross with volatility-targeted sizing.
+6. Golden Cross with volatility expansion control.
+7. Mean-reversion research candidate.
+8. LLM-driven stock-selection strategy.
+9. Technical-only plus LLM evidence filter.
+10. LLM plus volatility risk overlay.
+
+Use only a controlled, predeclared configuration set.
+
+No thousands of parameter combinations.
+
+All candidates must use:
+
+- Same eligible data.
+- Same applicable historical period.
+- Same cash constraints.
+- Whole shares.
+- No leverage.
+- No shorts.
+- V2 costs.
+- Same tax profile.
+- Same execution assumptions.
+
+For the LLM portfolio:
+
+- Only execute hypothetical long positions.
+- SELL_TO_CLOSE may close an existing long.
+- BEARISH_RESEARCH_ONLY cannot open short exposure.
+- NO_TRADE remains a valid result.
+- Use a deterministic entry/stop/target and risk/reward calculation.
+- Do not use the LLM's own unsupported price guesses.
+
+## Daily ledger
+
+Save a daily account-level ledger with:
+
+- Date.
+- Symbol.
+- Close.
+- MA7.
+- MA30.
+- Golden Cross signal.
+- LLM signal.
+- LLM conviction.
+- Evidence quality.
+- Calibrated probability, if available.
+- Action.
+- Entry/exit price.
+- Position quantity.
+- Cash.
+- Invested capital.
+- Realized P&L.
+- Unrealized P&L.
+- Daily costs.
+- Net P&L.
+- Equity.
+- Drawdown.
+
+## Final metrics
+
+- Initial capital.
+- Ending equity.
+- Realized P&L.
+- Unrealized P&L.
+- Net ROI.
+- Drawdown.
+- Win rate.
+- Average win.
+- Average loss.
+- Profit factor.
+- Expectancy.
+- Total fees and taxes.
+- Exposure.
+- Turnover.
+- Trade count.
+- Rejected signals.
+- Cash utilization.
+- Benchmark comparison.
+
+The account equation must reconcile:
+
+`Ending Equity = Available Cash + Open Position Market Value`
+
+Do not present average trade expectancy as account ROI.
+
+Create:
+
+- `task111_portfolio_strategy_comparison.json`
+- `task111_portfolio_equity.csv`
+- `task111_trade_ledger.csv`
+- `task111_drawdown_comparison.json`
+- `task111_cost_reconciliation.json`
+- `task111_benchmark_comparison.json`
+
+---
+
+# PHASE 17 — REALIZED VOLATILITY FORECAST QUALITY
+
+Evaluate whether volatility measures predict subsequent realized volatility.
+
+At each decision timestamp, record:
+
+- Current rolling variance.
+- BBW.
+- BBW derivatives.
+- Parkinson variance.
+- Garman-Klass variance.
+- Close-to-close variance.
+- Regime state.
+
+When future periods genuinely mature, calculate subsequent realized volatility over:
+
+- 5 sessions.
+- 10 sessions.
+- 21 sessions.
+
+Compare against simple historical volatility baselines.
+
+Metrics may include:
+
+- MAE.
+- RMSE.
+- QLIKE where statistically appropriate.
+- Rank correlation.
+- Regime classification accuracy.
+
+Do not use future observations in features.
+
+Do not score immature forecasts.
+
+Do not claim implied-volatility prediction.
+
+Create:
+
+- `task111_realized_volatility_forecast.json`
+- `task111_volatility_forecast_errors.csv`
+- `task111_volatility_regime_maturity.json`
+
+---
+
+# PHASE 18 — OPTIONS AND CONVEXITY DATA AVAILABILITY
+
+Task 110 found no verified PSX option-market data.
+
+Recheck legitimate current availability.
+
+Investigate:
+
+- Contract.
+- Underlying.
+- Expiry.
+- Strike.
+- Call/put.
+- Bid/ask.
+- Last price.
+- Implied volatility.
+- Open interest.
+- Volume.
+- Contract multiplier.
+- Settlement.
+- Margin.
+- Trading permissions.
+
+Verify actual product availability and access for the intended user/account.
+
+Do not assume PSX stocks have listed options.
+
+Do not use realized volatility as implied volatility.
+
+Do not fabricate premiums.
+
+Do not create executable short-option instructions.
+
+Without verified data, keep:
+
+- `long_vol_watch`
+- `vol_compression_watch`
+- `mean_reversion_watch`
+
+as research-only analytics.
+
+Create:
+
+- `task111_option_availability_audit.json`
+- `task111_option_data_requirements.json`
+- `task111_convexity_research_disposition.json`
+
+---
+
+# PART F — PRODUCTION UI AND USER EXPERIENCE
+
+# PHASE 19 — BUILD THE NEW LLM STOCK ANALYSIS DASHBOARD
+
+Add a separate page/tab:
+
+**AI Fundamental + Technical Analysis**
+
+Use actual application APIs and database evidence.
+
+The dashboard should let the user select a stock and view an explainable LLM research signal.
+
+## A. Main signal card
+
+Display:
+
+- Company name.
+- Symbol.
+- Signal action.
+- Signal status.
+- LLM model/provider.
+- Analysis horizon.
+- Decision timestamp.
+- Latest data timestamp.
+- LLM conviction score.
+- Evidence quality score.
+- Calibrated probability only where valid.
+- Risk/reward ratio.
+- Entry.
+- Stop-loss.
+- TP1.
+- TP2.
+- TP3.
+
+Clearly mark:
+
+`RESEARCH ONLY — NOT AN APPROVED LIVE TRADING SIGNAL`
+
+## B. Fundamental analysis panel
+
+Display:
+
+- Company financial health.
+- Revenue growth.
+- Earnings/EPS patterns.
+- Margins.
+- ROE/ROA.
+- Cash-flow quality.
+- Debt/equity.
+- Financial pattern detections.
+- Missing periods.
+- Filing publication timestamps.
+- Source references.
+
+Show `insufficient_data` where historical information is incomplete.
+
+## C. News intelligence panel
+
+Separate:
+
+- International news.
+- National Pakistan news.
+- Company-specific news.
+- Financial results and PSX disclosures.
+
+For each item:
+
+- Headline.
+- Publisher.
+- Publication date/time.
+- Retrieval date/time.
+- Relevance.
+- Sentiment.
+- Materiality.
+- Related symbols.
+- Source link.
+- Verification state.
+
+Do not display unverified AI summaries as verified facts.
+
+## D. Technical analysis panel
+
+Use the actual Technical tab's indicators.
+
+Display:
+
+- Latest indicator values.
+- Technical trend.
+- Indicator agreement/disagreement.
+- Detected price patterns.
+- Pattern confirmation state.
+- Support/resistance.
+- Volatility context.
+
+## E. LLM reasoning panel
+
+Display:
+
+- Bullish arguments.
+- Bearish arguments.
+- Conflicting evidence.
+- Main risks.
+- Missing evidence.
+- Invalidation conditions.
+- Reason for signal.
+- Source references.
+
+## F. Confidence semantics
+
+Display three separate metrics:
+
+- `LLM conviction (uncalibrated)`.
+- `Evidence quality`.
+- `Calibrated net-positive probability` only when validated.
+
+Never show LLM conviction as a win probability.
+
+## G. Filters and history
+
+Support:
+
+- Symbol.
+- Signal.
+- Model/version.
+- Decision date.
+- Analysis horizon.
+- Confidence/evidence range.
+- Research status.
+- Fundamental-data availability.
+- News availability.
+- Technical-data completeness.
+
+Show historical LLM decisions without rewriting earlier predictions.
+
+---
+
+# PHASE 20 — UPDATE VOLATILITY AND GOLDEN CROSS DASHBOARDS
+
+Keep the two existing dashboards separate.
+
+## Golden Cross — 7/30 SMA
+
+Preserve:
+
+- Price.
+- MA7.
+- MA30.
+- Golden Cross markers.
+- Death Cross markers.
+- Trade ledger.
+- Equity curve.
+- Final ROI.
+- Drawdown.
+- V2 costs.
+
+Add an optional side-by-side comparison with the new LLM research signal.
+
+Do not change the original strategy.
+
+## Volatility & Convexity Analytics
+
+Preserve:
+
+- Close-to-close variance.
+- Parkinson.
+- Garman-Klass.
+- Annualized volatility.
+- BBW.
+- First/second BBW derivatives.
+- Variance derivatives.
+- Regime states.
+
+Add volatility-aware exposure research overlays.
+
+Show option-market availability status.
+
+Do not pretend realized volatility is implied volatility.
+
+Create:
+
+- `task111_llm_dashboard_report.json`
+- `task111_golden_cross_dashboard_report.json`
+- `task111_volatility_dashboard_report.json`
+- `task111_dashboard_api_validation.json`
+
+---
+
+# PHASE 21 — LLM COST, PERFORMANCE AND RELIABILITY MANAGEMENT
+
+LLM inference must not run on every 120-second quote-monitor cycle for all stocks.
+
+Use event-triggered or scheduled analysis.
+
+Suggested triggers:
+
+- Completed daily EOD observation.
+- New verified material company filing.
+- New verified material company news.
+- New verified national/international event materially relevant to the stock.
+- A meaningful technical-pattern change.
+
+Do not re-run the LLM when the underlying evidence package has not changed.
+
+Use:
+
+- Evidence hashes.
+- Cache.
+- Idempotency keys.
+- Request batching where provider support exists.
+- Rate limits.
+- Timeout handling.
+- Token limits.
+- Cost tracking.
+- Retry policy.
+- Structured response parsing.
+
+Do not send an unchanged request repeatedly.
+
+A material event may trigger reanalysis, but it must not automatically replace an earlier signal without storing the new version and reason.
+
+Store:
+
+- Input evidence hash.
+- Old signal.
+- New signal.
+- Reason for change.
+- Model version.
+- Prompt version.
+- Data differences.
+
+A provider error must result in `llm_unavailable`, not a technical-rule signal presented as an LLM result.
+
+Create:
+
+- `task111_llm_operational_report.json`
+- `task111_llm_cost_report.json`
+- `task111_llm_cache_report.json`
+- `task111_llm_failure_report.json`
+
+---
+
+# PHASE 22 — MULTI-SOURCE SECURITY AND DATA GOVERNANCE
+
+Audit:
+
+- LLM provider credentials.
+- News sources.
+- Financial documents.
+- Market data licensing.
+- External context transmission.
+- Prompt injection.
+- Article HTML.
+- Output schema validation.
+- API authorization.
+- Rate limits.
+- Logging.
+- Data retention.
+
+Never send:
+
+- Secrets.
+- Private user account details.
+- Broker credentials.
+- Private database connection strings.
+- Unnecessary proprietary records.
+
+Only send data that the application has a right to disclose to the configured inference provider.
+
+If the provider is external, document its data-processing implications and the selected model/provider.
+
+Never allow untrusted news or filings to issue instructions to the LLM.
+
+Create:
+
+- `task111_llm_security_audit.json`
+- `task111_news_injection_tests.json`
+- `task111_data_governance_report.json`
+
+---
+
+# PHASE 23 — NEW FORWARD SHADOW GENERATION
+
+Create a separate immutable generation:
+
+`task111-llm-multisource-gen1`
+
+Preserve all older generations.
+
+For each eligible symbol:
+
+1. Build point-in-time evidence.
+2. Validate evidence completeness.
+3. Generate financial/technical/news pattern data.
+4. Call the configured LLM when authorized.
+5. Validate structured output.
+6. Calculate deterministic entry/SL/TP/R:R.
+7. Apply capital-protection policy.
+8. Emit BUY research, HOLD, SELL_TO_CLOSE, BEARISH_RESEARCH_ONLY or NO_TRADE.
+9. Record the decision.
+10. Track future outcomes.
+
+Never generate duplicate decisions from the same evidence hash.
+
+Do not alter the original production model consensus.
+
+Do not automatically trade.
+
+Do not promote the LLM.
+
+No new model may use its own historical test outcomes to tune future decisions.
+
+Keep a clear distinction between:
+
+- `LLM_RESEARCH_SIGNAL`
+- `TECHNICAL_RULE_SIGNAL`
+- `EXISTING_ML_SIGNAL`
+- `PRODUCTION_SIGNAL`
+
+Create:
+
+- `task111_llm_shadow_generation.json`
+- `task111_llm_shadow_decisions.csv`
+- `task111_llm_shadow_maturity.json`
+- `task111_llm_forward_evidence.json`
+
+---
+
+# PHASE 24 — FORWARD VALIDATION AND PROMOTION POLICY
+
+All historical Task 100–110 data has been inspected.
+
+New historical LLM runs on old periods are development-only.
+
+Only genuinely future observations may count as fresh forward evidence.
+
+Evaluate:
+
+- Directional accuracy.
+- Net-positive completed trade rate.
+- Win rate.
+- Precision.
+- Recall.
+- AUC where appropriate.
+- Brier score where calibrated probability exists.
+- Calibration.
+- Profit factor.
+- Net expectancy.
+- Drawdown.
+- Confidence intervals.
+- Evidence completeness.
+- Signal coverage.
+- NO-TRADE rate.
+- Source-category contribution.
+
+Use independent dates, not just trade counts.
+
+Do not compare an LLM strategy on one universe against technical strategies on another and claim a fair win.
+
+## Minimum promotion review gates
+
+Use the existing platform requirements, including:
+
+- At least 100 genuinely matured trades.
+- At least two calendar quarters.
+- Multiple independent symbols.
+- Multiple market regimes.
+- Positive net expectancy after V2 costs.
+- Stable confidence calibration.
+- Acceptable drawdown.
+- Evidence-source reliability.
+- No point-in-time leakage.
+- Reproducibility.
+- Operational stability.
+
+These are review prerequisites, not automatic promotion.
+
+The model must not promote simply because the other models are negative.
+
+If evidence is insufficient:
+
+`collecting`
+
+If the result is negative:
+
+`negative_edge`
+
+If the LLM cannot be evaluated due to missing evidence:
+
+`insufficient_evidence`
+
+Create:
+
+- `task111_llm_validation_protocol.json`
+- `task111_llm_forward_metrics.json`
+- `task111_llm_calibration_report.json`
+- `task111_llm_promotion_decision.json`
+
+---
+
+# PHASE 25 — CONTINUE THE EXISTING FORWARD VALIDATION
+
+Do not stop the existing Task 105–110 shadow monitoring.
+
+Continue:
+
+- Provider monitoring.
+- Daily market-data updates.
+- Worker heartbeat.
+- Delayed snapshot collection.
+- Open-position tracking.
+- 5/10/21-session maturation.
+- Daily portfolio reconciliation.
+- Cost calculations.
+- Historical artifact preservation.
+
+Recalculate:
+
+- Current data frontier.
+- Independent session count.
+- Matured forward positions.
+- Pending positions.
+- Realized net P&L.
+- Unrealized MTM separately.
+- Strategy expectancy.
+- Provider delay measurements.
+
+Keep old generations unchanged.
+
+Create:
+
+- `task111_existing_forward_reconciliation.json`
+- `task111_forward_portfolio_status.json`
+- `task111_worker_health_report.json`
+
+---
+
+# PHASE 26 — PYTHON REFERENCE IMPLEMENTATION AUDIT
+
+Task 110 found that the supplied `psx_simulator.py` was unavailable in the coding environment and therefore audited the provided specification and created a corrected reference implementation.
+
+Check whether the original file is now accessible.
+
+If it is:
+
+- Calculate SHA-256.
+- Inspect the exact source.
+- Reconcile previous findings.
+- Keep the original file unchanged.
+- Document any newly discovered differences.
+
+If it is still unavailable, do not falsely claim direct source modification.
+
+Verify the corrected reference implementation:
+
+- No artificial first MA signal.
+- No same-close execution bias.
+- Correct 7/30 crossover.
+- Correct next-session execution.
+- Correct V2 costs.
+- Correct portfolio ledger.
+- Correct Parkinson variance.
+- Correct Garman-Klass annualization.
+- Correct BBW derivatives.
+- Correct missing-session handling.
+- Correct output paths.
+- No synthetic-data profitability claims.
+
+Maintain Python/TypeScript parity.
+
+Create:
+
+- `task111_python_reference_audit.json`
+- `task111_python_ts_parity_report.json`
+- `task111_reference_regression_tests.json`
+
+---
+
+# PHASE 27 — AUTOMATED QUALITY ASSURANCE
+
+Run deterministic tests for:
+
+### Fundamental data
+
+- Point-in-time financial availability.
+- Publication timestamp.
+- Filing amendments.
+- Financial pattern calculation.
+- Missing quarters.
+- Ratio correctness.
+- Currency/unit consistency.
+
+### News
+
+- Publication timestamps.
+- Duplicate syndication.
+- Source mapping.
+- Symbol mapping.
+- Unverified news.
+- Contradictory news.
+- Prompt injection.
+- Expired relevance.
+
+### Technical
+
+- Technical tab API parity.
+- MA7/MA30.
+- Price-pattern detection.
+- Confirmation rules.
+- Missing-data gaps.
+- No future pattern confirmation.
+
+### LLM
+
+- Strict JSON validation.
+- Missing evidence.
+- Hallucinated references.
+- Conflicting evidence.
+- LLM timeout.
+- Provider outage.
+- Cache behavior.
+- Retry.
+- Prompt version.
+- Evidence hash.
+- Confidence semantics.
+- No unsupported actions.
+
+### Risk/reward
+
+- Entry.
+- SL.
+- TP1/TP2/TP3.
+- Correct direction.
+- V2 costs.
+- Tax.
+- Whole-share sizing.
+- Net R:R.
+- Zero/negative risk denominator.
+- NO-TRADE policy.
+
+### Volatility
+
+- Variance estimators.
+- Annualization.
+- Negative estimate diagnostics.
+- BBW.
+- First/second derivatives.
+- Missing sessions.
+- Regime classification.
+
+### Portfolio
+
+- Daily ledger.
+- Cash constraints.
+- Equity reconciliation.
+- P&L.
+- Costs.
+- Drawdown.
+- Win-rate denominator.
+- No short orders.
+
+### Production
+
+- APIs.
+- Dashboards.
+- LLM failure.
+- Paper Trade Monitor.
+- Capital protection.
+- Historical artifact immutability.
+
+Run:
+
+- Python tests.
+- TypeScript tests.
+- TypeScript compilation.
+- Production build.
+- API tests.
+- Browser tests.
+- Database integrity.
+- Cost parity.
+- Existing regression suite.
+
+Report actual pass/fail/skip counts.
+
+Do not classify skipped tests as passed.
+
+---
+
+# PHASE 28 — REQUIRED FINAL ARTIFACTS
+
+Create:
+
+`data/backtest_reports/task111/`
+
+## A. Baseline and source audit
+
+1. `task111_baseline_inventory.json`
+2. `task111_task110_reconciliation.json`
+3. `task111_historical_integrity.json`
+4. `task111_feature_source_inventory.json`
+
+## B. LLM infrastructure
+
+5. `task111_llm_provider_audit.json`
+6. `task111_llm_operational_report.json`
+7. `task111_llm_cost_report.json`
+8. `task111_llm_cache_report.json`
+9. `task111_llm_failure_report.json`
+
+## C. Fundamental intelligence
+
+10. `task111_company_financial_patterns.json`
+11. `task111_financial_pattern_coverage.csv`
+12. `task111_financial_statement_pit_audit.json`
+13. `task111_company_financial_analysis.json`
+14. `task111_financial_ratio_coverage.csv`
+15. `task111_fundamental_availability_report.json`
+
+## D. News intelligence
+
+16. `task111_news_source_registry.json`
+17. `task111_news_coverage.json`
+18. `task111_news_event_classification.json`
+19. `task111_company_news_mapping.csv`
+20. `task111_news_integrity_report.json`
+
+## E. Technical intelligence
+
+21. `task111_technical_indicator_inventory.json`
+22. `task111_indicator_data_coverage.csv`
+23. `task111_technical_evidence_schema.json`
+24. `task111_price_pattern_report.json`
+25. `task111_price_pattern_coverage.csv`
+26. `task111_pattern_confirmation_audit.json`
+
+## F. LLM prediction
+
+27. `task111_llm_evidence_schema.json`
+28. `task111_llm_output_validation.json`
+29. `task111_llm_confidence_semantics.json`
+30. `task111_evidence_quality_methodology.json`
+31. `task111_probability_calibration_policy.json`
+32. `task111_llm_trade_levels.json`
+33. `task111_risk_reward_validation.json`
+34. `task111_cost_inclusive_reward_risk.csv`
+35. `task111_no_trade_decision_report.json`
+36. `task111_llm_ablation_report.json`
+37. `task111_llm_model_evaluation.json`
+38. `task111_matched_sample_comparison.json`
+39. `task111_llm_vs_technical_baseline.json`
+40. `task111_llm_evidence_disposition.json`
+
+## G. Golden Cross and volatility
+
+41. `task111_volatility_quality_report.json`
+42. `task111_estimator_consistency.json`
+43. `task111_volatility_data_coverage.csv`
+44. `task111_derivative_integrity.json`
+45. `task111_risk_overlay_definitions.json`
+46. `task111_volatility_exposure_rules.json`
+47. `task111_position_sizing_rules.json`
+48. `task111_capital_protection_scenarios.json`
+49. `task111_volatility_overlay_backtest.json`
+50. `task111_portfolio_strategy_comparison.json`
+51. `task111_portfolio_equity.csv`
+52. `task111_trade_ledger.csv`
+53. `task111_drawdown_comparison.json`
+54. `task111_cost_reconciliation.json`
+55. `task111_benchmark_comparison.json`
+56. `task111_realized_volatility_forecast.json`
+57. `task111_volatility_forecast_errors.csv`
+58. `task111_volatility_regime_maturity.json`
+59. `task111_option_availability_audit.json`
+60. `task111_option_data_requirements.json`
+61. `task111_convexity_research_disposition.json`
+
+## H. Dashboards and forward research
+
+62. `task111_llm_dashboard_report.json`
+63. `task111_golden_cross_dashboard_report.json`
+64. `task111_volatility_dashboard_report.json`
+65. `task111_dashboard_api_validation.json`
+66. `task111_llm_shadow_generation.json`
+67. `task111_llm_shadow_decisions.csv`
+68. `task111_llm_shadow_maturity.json`
+69. `task111_llm_forward_evidence.json`
+70. `task111_existing_forward_reconciliation.json`
+71. `task111_forward_portfolio_status.json`
+72. `task111_worker_health_report.json`
+
+## I. Validation, safety and delivery
+
+73. `task111_validation_protocol.json`
+74. `task111_statistical_robustness.json`
+75. `task111_multiple_testing_report.json`
+76. `task111_evidence_disposition.json`
+77. `task111_llm_validation_protocol.json`
+78. `task111_llm_forward_metrics.json`
+79. `task111_llm_calibration_report.json`
+80. `task111_llm_promotion_decision.json`
+81. `task111_python_reference_audit.json`
+82. `task111_python_ts_parity_report.json`
+83. `task111_reference_regression_tests.json`
+84. `task111_llm_security_audit.json`
+85. `task111_news_injection_tests.json`
+86. `task111_data_governance_report.json`
+87. `task111_capital_protection_report.json`
+88. `task111_model_registry_audit.json`
+89. `task111_api_validation.json`
+90. `task111_test_summary.json`
+91. `task111_security_audit.json`
+92. `task111_remaining_blockers.json`
+93. `task111_final_summary.json`
+
+Every artifact must contain:
+
+- Status.
+- Generation timestamp.
+- Source.
+- Data coverage.
+- Sample count.
+- Independent date count.
+- Methodology.
+- Cost profile.
+- Limitations.
+- Errors or blockers.
+
+If an external data source is unavailable, create the report with a clear blocked status instead of a fake success.
+
+---
+
+# PHASE 29 — REQUIRED DOCUMENTATION
+
+Create or update:
+
+- `docs/task111-llm-multisource-prediction.md`
+- `docs/task111-company-financial-patterns.md`
+- `docs/task111-company-financial-analysis.md`
+- `docs/task111-national-international-news.md`
+- `docs/task111-technical-indicators-and-price-patterns.md`
+- `docs/task111-llm-confidence-and-risk-reward.md`
+- `docs/task111-golden-cross-comparison.md`
+- `docs/task111-volatility-aware-strategies.md`
+- `docs/task111-volatility-forecasting.md`
+- `docs/task111-options-data-limitations.md`
+- `docs/task111-forward-shadow-validation.md`
+- `docs/task111-python-reference-audit.md`
+- `docs/task111-capital-protection.md`
+
+Document every source limitation and every unavailable input.
+
+---
+
+# FINAL QUESTIONS THAT MUST BE ANSWERED
+
+## LLM prediction
+
+1. Is a real LLM provider configured and verified?
+2. Which model/provider actually generated the research signals?
+3. How many symbols have complete evidence packages?
+4. How many have verified company financial data?
+5. How many have point-in-time-safe financial histories?
+6. How many have usable company financial patterns?
+7. How many have national/international news coverage?
+8. How many have company-specific news coverage?
+9. How many have verified technical indicator inputs?
+10. How many have confirmed stock-price patterns?
+11. Which categories are missing or stale?
+12. How many valid LLM signals were generated?
+13. How many were NO_TRADE?
+14. What are the most common NO_TRADE reasons?
+15. What confidence score is displayed?
+16. Is it LLM conviction or calibrated probability?
+17. What is the actual deterministically calculated R:R after fees?
+18. Are stop-loss and targets based on supported market levels?
+19. Does the LLM produce traceable source references?
+20. Does it detect contradictory evidence?
+
+## Golden Cross and portfolio
+
+21. Does the original 7/30 result remain unchanged?
+22. What is the latest portfolio result?
+23. What is realized versus unrealized P&L?
+24. Are transaction costs included?
+25. Does it beat cash or matched buy-and-hold?
+
+## Volatility analytics
+
+26. Are Parkinson and Garman-Klass values correct?
+27. Is annualization applied once?
+28. Are BBW derivatives valid across the exchange calendar?
+29. Do volatility overlays improve drawdown?
+30. Do they improve net ROI?
+31. Can realized volatility forecast subsequent realized volatility?
+32. Is real option implied-volatility data available?
+33. Are long-volatility and short-volatility outputs only research watches?
+
+## Forward validation and safety
+
+34. How many genuinely new observations exist?
+35. How many outcomes have matured?
+36. What is the updated net win rate and expectancy?
+37. Have confidence scores demonstrated actual predictive value?
+38. Are the new LLM signals separate from existing production models?
+39. Are all models and strategies still correctly labeled?
+40. Are no-real-order and no-short-entry controls intact?
+41. Did all tests pass?
+42. What exact external data, API credentials or future market sessions are still required?
+
+---
+
+# FINAL DECISION POLICY
+
+Valid outcomes:
+
+- `completed`
+- `completed_with_limitations`
+- `development_only`
+- `research_only`
+- `awaiting_future_observations`
+- `insufficient_evidence`
+- `negative_edge`
+- `blocked_external_data`
+- `blocked_credentials`
+- `blocked_llm_provider`
+- `blocked_options_data`
+- `blocked_resource_limit`
+- `not_promotable`
+
+The following rules are mandatory:
+
+1. Best-performing negative model is not promotable.
+2. LLM conviction score is not a winning probability.
+3. Evidence quality is not a winning probability.
+4. Risk/reward ratio is not an expected return.
+5. Positive news sentiment is not automatically a BUY.
+6. Golden Cross is not automatically a BUY order.
+7. Volatility expansion is not automatically an options-buy opportunity.
+8. Volatility compression is not automatically a short-options opportunity.
+9. Missing fundamentals must not be fabricated.
+10. News without verified publication time must not be used in historical point-in-time testing.
+11. Historical results on previously examined test periods must remain development-only.
+12. No new strategy may enter production consensus automatically.
+13. No real capital or live broker orders may be used.
+14. Every signal must explain its evidence, risks and limitations.
+
+## FINAL SUCCESS DEFINITION
+
+Task 111 succeeds when Latent.pk has:
+
+1. A working multi-source LLM research-signal pipeline.
+2. Point-in-time-safe fundamental evidence.
+3. Company financial pattern detection.
+4. National and international news intelligence.
+5. Company announcement and financial-result analysis.
+6. Existing Technical tab indicator integration.
+7. Algorithmic stock-price pattern detection.
+8. Strict structured LLM output.
+9. Honest conviction and evidence-quality scoring.
+10. Deterministic entry, SL, targets and net R:R calculation.
+11. A complete Golden Cross portfolio ledger.
+12. Verified realized-volatility analytics.
+13. Volatility-aware capital-protection research.
+14. Separate, usable LLM, Golden Cross and Volatility dashboards.
+15. A separate immutable forward-shadow generation.
+16. Complete test, API, UI and cost-parity evidence.
+
+**The purpose is to create a genuinely evidence-based LLM stock analyst for PSX that considers company fundamentals, financial-result patterns, world and national news, company developments, technical indicators and price patterns — while openly abstaining when reliable information is insufficient.**
+
+Do not force positive signals or positive ROI.
+
+Complete all feasible work in one campaign. Report exact Git HEAD, source coverage, LLM provider, signal counts, confidence semantics, calculated risk/reward, portfolio results, tests and remaining blockers. Do not push without explicit authorization.

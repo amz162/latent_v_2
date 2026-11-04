@@ -1,0 +1,17 @@
+{
+ "report": "task111_company_financial_analysis",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:50Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "source": "data/financials/{sym}.json (askanalyst income-statement snapshots, loader: financial-results.ts)",
+ "symbols": 358,
+ "separated_layers": {
+  "reported_facts": "revenue/PAT/EPS/DPS as published in snapshot",
+  "deterministic_ratios": "YoY growth, margins, sequential change (computed in code, never by the LLM)",
+  "llm_interpretation": "verbal views only, bounded by evidence",
+  "missing_information": "balance sheet, cash flow, consensus estimates \u2014 absent"
+ },
+ "consensus_rule": "no earnings-surprise pattern is asserted because no historical consensus estimates exist",
+ "valuation_rule": "valuation ratios (P/E etc.) only when a contemporaneous same-date close exists"
+}

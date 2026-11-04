@@ -1,0 +1,25 @@
+{
+ "report": "task111_dashboard_api_validation",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:15:41Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "llm_dashboard": {
+  "view": "AiStockAnalysisView",
+  "routes": [
+   "/api/ai-analysis",
+   "/api/ai-analysis/[symbol]"
+  ],
+  "validation": "both routes return 200 against the production build (see task111_api_validation)"
+ },
+ "golden_cross_dashboard": {
+  "route": "/api/golden-cross (200, unchanged)",
+  "additive_panel": "Task111SignalPanel"
+ },
+ "volatility_dashboard": {
+  "route": "/api/volatility (200, unchanged)",
+  "additive_panel": "Task111SignalPanel + overlays/options via /api/task111-overlays"
+ },
+ "research_banner": "RESEARCH ONLY \u2014 NOT AN APPROVED LIVE TRADING SIGNAL",
+ "history_immutability": "signal records are immutable per evidence hash; the UI never rewrites earlier predictions"
+}

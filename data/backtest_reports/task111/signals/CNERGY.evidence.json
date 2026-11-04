@@ -1,0 +1,1661 @@
+{
+ "symbol": "CNERGY",
+ "evidence": {
+  "schemaVersion": "latent_psx_llm_evidence_v1",
+  "symbol": "CNERGY",
+  "companyName": "CNERGY",
+  "sector": "unknown",
+  "decisionTimestamp": "2026-11-04T14:01:29.920Z",
+  "dataCutoff": "2026-11-03",
+  "priceContext": {
+   "lastClose": 11.74,
+   "lastCloseDate": "2026-11-03",
+   "change5dPct": -7.704402515723273,
+   "change20dPct": -9.203402938901775,
+   "change60dPct": -1.675041876046895,
+   "seriesTail": [
+    {
+     "date": "2026-10-21",
+     "close": 12.52
+    },
+    {
+     "date": "2026-10-22",
+     "close": 12.35
+    },
+    {
+     "date": "2026-10-23",
+     "close": 12.4
+    },
+    {
+     "date": "2026-10-26",
+     "close": 12.3
+    },
+    {
+     "date": "2026-10-27",
+     "close": 12.72
+    },
+    {
+     "date": "2026-10-28",
+     "close": 12.8
+    },
+    {
+     "date": "2026-10-29",
+     "close": 14.08
+    },
+    {
+     "date": "2026-10-30",
+     "close": 13.64
+    },
+    {
+     "date": "2026-11-02",
+     "close": 12.28
+    },
+    {
+     "date": "2026-11-03",
+     "close": 11.74
+    }
+   ]
+  },
+  "fundamentalEvidence": {
+   "status": "partially_verified",
+   "summary": "Latest verified quarter Q4 FY26 (period end 2026-06-30): revenue 148,377, PAT -5,920, EPS -1.07, net margin -4.0%. Filing publication timestamps are NOT point-in-time verified (Task 102/111) — usable for CURRENT research only, disabled for historical as-of backtesting.",
+   "metrics": [
+    {
+     "name": "revenue_latest",
+     "value": 148377,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "profit_after_tax_latest",
+     "value": -5920,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "eps_latest",
+     "value": -1.07,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "revenue_yoy_pct",
+     "value": 88.7,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "gross_margin_pct",
+     "value": -5.2,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "net_margin_pct",
+     "value": -4,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "dividend_per_share_latest",
+     "value": 0,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "quarters_available",
+     "value": 72,
+     "asOf": "2026-11-03",
+     "note": "verified snapshot quarters"
+    },
+    {
+     "name": "sequential_revenue_change_pct",
+     "value": 28.372684564339046,
+     "asOf": "2026-06-30"
+    }
+   ],
+   "sources": [
+    "src:financials_snapshot"
+   ]
+  },
+  "financialPatternEvidence": {
+   "status": "partially_verified",
+   "summary": "4 deterministic pattern(s): revenue_trend(improving); revenue_growth_decelerating(deteriorating); net_margin_trend(improving); earnings_stability(mixed)",
+   "metrics": [
+    {
+     "name": "fp:revenue_trend",
+     "value": 0.12249353516591059,
+     "asOf": "2026-06-30",
+     "note": "direction=improving, n=72"
+    },
+    {
+     "name": "fp:revenue_growth_decelerating",
+     "value": 0.034685604091919404,
+     "asOf": "2026-06-30",
+     "note": "direction=deteriorating, n=72"
+    },
+    {
+     "name": "fp:net_margin_trend",
+     "value": 0.11608061611679207,
+     "asOf": "2026-06-30",
+     "note": "direction=improving, n=72"
+    },
+    {
+     "name": "fp:earnings_stability",
+     "value": 0,
+     "asOf": "2026-06-30",
+     "note": "direction=mixed, n=72"
+    }
+   ],
+   "sources": [
+    "src:financials_snapshot"
+   ]
+  },
+  "companyNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "7 recent company item(s) via askanalyst (publication dates 7/7 day-verified): [neutral/medium] CNERGY gets green light to export 30,000 tonnes of FO: | [neutral/medium] Cnergyico to export 60,000 tonnes of furnace oil: | [neutral/medium] Cnergyico to halt refinery operations amid petroleum glut",
+   "metrics": [
+    {
+     "name": "company_news_count",
+     "value": 7,
+     "asOf": "2026-11-04T14:01:29.920Z"
+    },
+    {
+     "name": "company_news_high_materiality",
+     "value": 0,
+     "asOf": "2026-11-04T14:01:29.920Z"
+    },
+    {
+     "name": "company_news_injection_flagged",
+     "value": 0,
+     "asOf": "2026-11-04T14:01:29.920Z",
+     "note": "untrusted text flagged; never executed"
+    }
+   ],
+   "sources": [
+    "src:news_company"
+   ]
+  },
+  "nationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "National snapshot (8 items, 8 high-materiality): [neutral] WATCH: IMF programmes, taxes and inflation: What's holding | [neutral] Will the policy rate stay put? - Editorials | [neutral] SBP's policy rate has risen to 12%. What does this mean for",
+   "metrics": [
+    {
+     "name": "national_news_count",
+     "value": 8,
+     "asOf": "2026-11-04T14:01:29.920Z"
+    }
+   ],
+   "sources": [
+    "src:news_national"
+   ]
+  },
+  "internationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "International snapshot (8 items, 0 high-materiality): [bullish] The potential impact of high oil prices on economies - Vanguard | [neutral] Arab News Pakistan | [neutral] How do exchange rate and oil price volatility shape",
+   "metrics": [
+    {
+     "name": "international_news_count",
+     "value": 8,
+     "asOf": "2026-11-04T14:01:29.920Z"
+    }
+   ],
+   "sources": [
+    "src:news_international"
+   ]
+  },
+  "technicalEvidence": {
+   "status": "verified",
+   "summary": "Local deterministic indicators (golden-cross.ts + risk-levels.ts policy): SMA7=12.79, SMA30=12.80, price below SMA30, ATR14=0.61, BBW(20,2)=14.38%, last cross=DEATH 0 sessions ago.",
+   "metrics": [
+    {
+     "name": "sma7",
+     "value": 12.794285714285715,
+     "asOf": "2026-11-03",
+     "note": "golden-cross.ts MA_FAST=7"
+    },
+    {
+     "name": "sma30",
+     "value": 12.805,
+     "asOf": "2026-11-03",
+     "note": "golden-cross.ts MA_SLOW=30"
+    },
+    {
+     "name": "atr14",
+     "value": 0.6114285714285712,
+     "asOf": "2026-11-03",
+     "note": "risk-levels.ts atr14-1.5-1-2-3 policy"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 14.384360928208029,
+     "asOf": "2026-11-03",
+     "note": "20-session SMA, 2 stdev, width=(upper-lower)/mid"
+    },
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 60.97530123808552,
+     "asOf": "2026-11-03",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 65.63049918734313,
+     "asOf": "2026-11-03",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "change_5d_pct",
+     "value": -7.704402515723273,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "change_20d_pct",
+     "value": -9.203402938901775,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "change_60d_pct",
+     "value": -1.675041876046895,
+     "asOf": "2026-11-03"
+    }
+   ],
+   "sources": [
+    "src:ohlcv_db",
+    "src:technical_local"
+   ]
+  },
+  "pricePatternEvidence": {
+   "status": "verified",
+   "summary": "Deterministic pattern engine over 2482 bars (future excluded: 0): Gap-up openings and how often they get filled[confirmed historical]; Gap-down openings and how often they get filled[unconfirmed candidate]; Heavy-volume days with flat-to-rising price (buying pressure)[confirmed historical]; Unusually heavy volume days[confirmed historical]; After a heavy-volume day[confirmed historical]; Heavy-volume days with flat-to-falling price (selling pressure)[unconfirmed candidate]",
+   "metrics": [
+    {
+     "name": "pattern:gap:confirmed_historical",
+     "value": 1.42,
+     "unit": "%",
+     "asOf": "2026-10-30",
+     "note": "occurrences=1061, success_rate=76.1%, strength=high"
+    },
+    {
+     "name": "pattern:gap:unconfirmed_candidate",
+     "value": -1.39,
+     "unit": "%",
+     "asOf": "2026-11-03",
+     "note": "occurrences=390, success_rate=65.4%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:confirmed_historical",
+     "value": 0.22,
+     "unit": "%",
+     "asOf": "2026-10-29",
+     "note": "occurrences=388, success_rate=45.5%, strength=high"
+    },
+    {
+     "name": "pattern:volume_spike:confirmed_historical",
+     "value": 3.59,
+     "unit": "%",
+     "asOf": "2026-10-29",
+     "note": "occurrences=207, success_rate=80.2%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": -0.17,
+     "unit": "%",
+     "asOf": "2026-10-29",
+     "note": "occurrences=207, success_rate=43.7%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:unconfirmed_candidate",
+     "value": 0.7,
+     "unit": "%",
+     "asOf": "2026-11-03",
+     "note": "occurrences=203, success_rate=51.5%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": 1.33,
+     "unit": "%",
+     "asOf": "2023-06-23",
+     "note": "occurrences=112, success_rate=50.9%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": 1.3,
+     "unit": "%",
+     "asOf": "2026-08-31",
+     "note": "occurrences=42, success_rate=59.5%, strength=high"
+    }
+   ],
+   "sources": [
+    "src:price_patterns"
+   ]
+  },
+  "volatilityContext": {
+   "status": "verified",
+   "summary": "Realized-only research context: 20d ann. vol 61.0%, 60d 65.6%, BBW 14.38%. No implied volatility exists for PSX (no listed options market data) — realized vol is NEVER implied vol.",
+   "metrics": [
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 60.97530123808552,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 65.63049918734313,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 14.384360928208029,
+     "asOf": "2026-11-03"
+    }
+   ],
+   "sources": [
+    "src:volatility_local",
+    "src:ohlcv_db"
+   ]
+  },
+  "marketContext": {
+   "status": "verified",
+   "summary": "Universe breadth snapshot: 271/909 symbols closed above their 30-session mean price (deterministic, OhlcvBar).",
+   "metrics": [
+    {
+     "name": "universe_pct_above_ma30",
+     "value": 29.812981298129813,
+     "asOf": "2026-11-03"
+    },
+    {
+     "name": "universe_size",
+     "value": 909,
+     "asOf": "2026-11-03"
+    }
+   ],
+   "sources": [
+    "src:market_context",
+    "src:ohlcv_db"
+   ]
+  },
+  "dataQualityFlags": [
+   "financial_publication_timestamps_not_pit_verified",
+   "llm_analysis_current_only_no_historical_asof_use"
+  ],
+  "missingSources": [],
+  "historicalUseAllowed": false,
+  "sourceRefs": [
+   {
+    "id": "src:ohlcv_db",
+    "category": "ohlcv_db",
+    "publisher": "Latent.pk OhlcvBar (psxdata/pypsx ingest)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:technical_local",
+    "category": "technical_local",
+    "publisher": "golden-cross.ts + risk-levels.ts (deterministic, policy atr14-1.5-1-2-3)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:price_patterns",
+    "category": "price_patterns",
+    "publisher": "price-patterns.ts deterministic engine (PIT wrapper)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:volatility_local",
+    "category": "volatility_local",
+    "publisher": "realized-variance estimators (realized ONLY; no implied vol exists for PSX)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:financials_snapshot",
+    "category": "financials_snapshot",
+    "publisher": "data/financials quarterly snapshots (askanalyst results API)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_company",
+    "category": "news_company",
+    "publisher": "AskAnalyst company news API",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_national",
+    "category": "news_national",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_international",
+    "category": "news_international",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:market_context",
+    "category": "market_context",
+    "publisher": "universe breadth (OhlcvBar + golden-cross.ts)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-04T14:01:29.920Z",
+    "pitSafeForHistorical": true
+   }
+  ]
+ },
+ "evidenceQualityScore": 85,
+ "evidenceQualityParts": {
+  "source_verification": 20,
+  "pit_availability": 8,
+  "data_completeness": 12,
+  "data_freshness": 15,
+  "financial_history_coverage": 6,
+  "news_corroboration": 4.2,
+  "technical_quality": 10,
+  "pattern_confirmation": 5,
+  "cross_source_consistency": 5
+ },
+ "evidenceHash": "ba9b377d",
+ "patterns": {
+  "symbol": "CNERGY",
+  "as_of_timestamp": "2026-11-04T14:01:29.920Z",
+  "quarters_used": 72,
+  "period_range": [
+   "2008-09-30",
+   "2026-06-30"
+  ],
+  "patterns": [
+   {
+    "pattern_id": "CNERGY:revenue_trend:2008-09-30:2026-06-30",
+    "symbol": "CNERGY",
+    "pattern_type": "revenue_trend",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "improving",
+    "strength": 0.12249353516591059,
+    "source_filing_ids": [
+     "CNERGY:FINRES:2008-09-30",
+     "CNERGY:FINRES:2008-12-30",
+     "CNERGY:FINRES:2009-03-30",
+     "CNERGY:FINRES:2009-06-30",
+     "CNERGY:FINRES:2009-09-30",
+     "CNERGY:FINRES:2009-12-30",
+     "CNERGY:FINRES:2010-03-30",
+     "CNERGY:FINRES:2010-06-30",
+     "CNERGY:FINRES:2010-09-30",
+     "CNERGY:FINRES:2010-12-30",
+     "CNERGY:FINRES:2011-03-30",
+     "CNERGY:FINRES:2011-06-30",
+     "CNERGY:FINRES:2011-09-30",
+     "CNERGY:FINRES:2011-12-30",
+     "CNERGY:FINRES:2012-03-30",
+     "CNERGY:FINRES:2012-06-30",
+     "CNERGY:FINRES:2012-09-30",
+     "CNERGY:FINRES:2012-12-30",
+     "CNERGY:FINRES:2013-03-30",
+     "CNERGY:FINRES:2013-06-30",
+     "CNERGY:FINRES:2013-09-30",
+     "CNERGY:FINRES:2013-12-30",
+     "CNERGY:FINRES:2014-03-30",
+     "CNERGY:FINRES:2014-06-30",
+     "CNERGY:FINRES:2014-09-30",
+     "CNERGY:FINRES:2014-12-30",
+     "CNERGY:FINRES:2015-03-30",
+     "CNERGY:FINRES:2015-06-30",
+     "CNERGY:FINRES:2015-09-30",
+     "CNERGY:FINRES:2015-12-30",
+     "CNERGY:FINRES:2016-03-30",
+     "CNERGY:FINRES:2016-06-30",
+     "CNERGY:FINRES:2016-09-30",
+     "CNERGY:FINRES:2016-12-30",
+     "CNERGY:FINRES:2017-03-30",
+     "CNERGY:FINRES:2017-06-30",
+     "CNERGY:FINRES:2017-09-30",
+     "CNERGY:FINRES:2017-12-30",
+     "CNERGY:FINRES:2018-03-30",
+     "CNERGY:FINRES:2018-06-30",
+     "CNERGY:FINRES:2018-09-30",
+     "CNERGY:FINRES:2018-12-30",
+     "CNERGY:FINRES:2019-03-30",
+     "CNERGY:FINRES:2019-06-30",
+     "CNERGY:FINRES:2019-09-30",
+     "CNERGY:FINRES:2019-12-30",
+     "CNERGY:FINRES:2020-03-30",
+     "CNERGY:FINRES:2020-06-30",
+     "CNERGY:FINRES:2020-09-30",
+     "CNERGY:FINRES:2020-12-30",
+     "CNERGY:FINRES:2021-03-30",
+     "CNERGY:FINRES:2021-06-30",
+     "CNERGY:FINRES:2021-09-30",
+     "CNERGY:FINRES:2021-12-30",
+     "CNERGY:FINRES:2022-03-30",
+     "CNERGY:FINRES:2022-06-30",
+     "CNERGY:FINRES:2022-09-30",
+     "CNERGY:FINRES:2022-12-30",
+     "CNERGY:FINRES:2023-03-30",
+     "CNERGY:FINRES:2023-06-30",
+     "CNERGY:FINRES:2023-09-30",
+     "CNERGY:FINRES:2023-12-30",
+     "CNERGY:FINRES:2024-03-30",
+     "CNERGY:FINRES:2024-06-30",
+     "CNERGY:FINRES:2024-09-30",
+     "CNERGY:FINRES:2024-12-30",
+     "CNERGY:FINRES:2025-03-30",
+     "CNERGY:FINRES:2025-06-30",
+     "CNERGY:FINRES:2025-09-30",
+     "CNERGY:FINRES:2025-12-30",
+     "CNERGY:FINRES:2026-03-30",
+     "CNERGY:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:29.920Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window"
+    ]
+   },
+   {
+    "pattern_id": "CNERGY:revenue_growth_decelerating:2008-09-30:2026-06-30",
+    "symbol": "CNERGY",
+    "pattern_type": "revenue_growth_decelerating",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "deteriorating",
+    "strength": 0.034685604091919404,
+    "source_filing_ids": [
+     "CNERGY:FINRES:2008-09-30",
+     "CNERGY:FINRES:2008-12-30",
+     "CNERGY:FINRES:2009-03-30",
+     "CNERGY:FINRES:2009-06-30",
+     "CNERGY:FINRES:2009-09-30",
+     "CNERGY:FINRES:2009-12-30",
+     "CNERGY:FINRES:2010-03-30",
+     "CNERGY:FINRES:2010-06-30",
+     "CNERGY:FINRES:2010-09-30",
+     "CNERGY:FINRES:2010-12-30",
+     "CNERGY:FINRES:2011-03-30",
+     "CNERGY:FINRES:2011-06-30",
+     "CNERGY:FINRES:2011-09-30",
+     "CNERGY:FINRES:2011-12-30",
+     "CNERGY:FINRES:2012-03-30",
+     "CNERGY:FINRES:2012-06-30",
+     "CNERGY:FINRES:2012-09-30",
+     "CNERGY:FINRES:2012-12-30",
+     "CNERGY:FINRES:2013-03-30",
+     "CNERGY:FINRES:2013-06-30",
+     "CNERGY:FINRES:2013-09-30",
+     "CNERGY:FINRES:2013-12-30",
+     "CNERGY:FINRES:2014-03-30",
+     "CNERGY:FINRES:2014-06-30",
+     "CNERGY:FINRES:2014-09-30",
+     "CNERGY:FINRES:2014-12-30",
+     "CNERGY:FINRES:2015-03-30",
+     "CNERGY:FINRES:2015-06-30",
+     "CNERGY:FINRES:2015-09-30",
+     "CNERGY:FINRES:2015-12-30",
+     "CNERGY:FINRES:2016-03-30",
+     "CNERGY:FINRES:2016-06-30",
+     "CNERGY:FINRES:2016-09-30",
+     "CNERGY:FINRES:2016-12-30",
+     "CNERGY:FINRES:2017-03-30",
+     "CNERGY:FINRES:2017-06-30",
+     "CNERGY:FINRES:2017-09-30",
+     "CNERGY:FINRES:2017-12-30",
+     "CNERGY:FINRES:2018-03-30",
+     "CNERGY:FINRES:2018-06-30",
+     "CNERGY:FINRES:2018-09-30",
+     "CNERGY:FINRES:2018-12-30",
+     "CNERGY:FINRES:2019-03-30",
+     "CNERGY:FINRES:2019-06-30",
+     "CNERGY:FINRES:2019-09-30",
+     "CNERGY:FINRES:2019-12-30",
+     "CNERGY:FINRES:2020-03-30",
+     "CNERGY:FINRES:2020-06-30",
+     "CNERGY:FINRES:2020-09-30",
+     "CNERGY:FINRES:2020-12-30",
+     "CNERGY:FINRES:2021-03-30",
+     "CNERGY:FINRES:2021-06-30",
+     "CNERGY:FINRES:2021-09-30",
+     "CNERGY:FINRES:2021-12-30",
+     "CNERGY:FINRES:2022-03-30",
+     "CNERGY:FINRES:2022-06-30",
+     "CNERGY:FINRES:2022-09-30",
+     "CNERGY:FINRES:2022-12-30",
+     "CNERGY:FINRES:2023-03-30",
+     "CNERGY:FINRES:2023-06-30",
+     "CNERGY:FINRES:2023-09-30",
+     "CNERGY:FINRES:2023-12-30",
+     "CNERGY:FINRES:2024-03-30",
+     "CNERGY:FINRES:2024-06-30",
+     "CNERGY:FINRES:2024-09-30",
+     "CNERGY:FINRES:2024-12-30",
+     "CNERGY:FINRES:2025-03-30",
+     "CNERGY:FINRES:2025-06-30",
+     "CNERGY:FINRES:2025-09-30",
+     "CNERGY:FINRES:2025-12-30",
+     "CNERGY:FINRES:2026-03-30",
+     "CNERGY:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:29.920Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window",
+     "YoY requires 4-quarter lookback; computed on 68 YoY observations"
+    ]
+   },
+   {
+    "pattern_id": "CNERGY:net_margin_trend:2008-09-30:2026-06-30",
+    "symbol": "CNERGY",
+    "pattern_type": "net_margin_trend",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "improving",
+    "strength": 0.11608061611679207,
+    "source_filing_ids": [
+     "CNERGY:FINRES:2008-09-30",
+     "CNERGY:FINRES:2008-12-30",
+     "CNERGY:FINRES:2009-03-30",
+     "CNERGY:FINRES:2009-06-30",
+     "CNERGY:FINRES:2009-09-30",
+     "CNERGY:FINRES:2009-12-30",
+     "CNERGY:FINRES:2010-03-30",
+     "CNERGY:FINRES:2010-06-30",
+     "CNERGY:FINRES:2010-09-30",
+     "CNERGY:FINRES:2010-12-30",
+     "CNERGY:FINRES:2011-03-30",
+     "CNERGY:FINRES:2011-06-30",
+     "CNERGY:FINRES:2011-09-30",
+     "CNERGY:FINRES:2011-12-30",
+     "CNERGY:FINRES:2012-03-30",
+     "CNERGY:FINRES:2012-06-30",
+     "CNERGY:FINRES:2012-09-30",
+     "CNERGY:FINRES:2012-12-30",
+     "CNERGY:FINRES:2013-03-30",
+     "CNERGY:FINRES:2013-06-30",
+     "CNERGY:FINRES:2013-09-30",
+     "CNERGY:FINRES:2013-12-30",
+     "CNERGY:FINRES:2014-03-30",
+     "CNERGY:FINRES:2014-06-30",
+     "CNERGY:FINRES:2014-09-30",
+     "CNERGY:FINRES:2014-12-30",
+     "CNERGY:FINRES:2015-03-30",
+     "CNERGY:FINRES:2015-06-30",
+     "CNERGY:FINRES:2015-09-30",
+     "CNERGY:FINRES:2015-12-30",
+     "CNERGY:FINRES:2016-03-30",
+     "CNERGY:FINRES:2016-06-30",
+     "CNERGY:FINRES:2016-09-30",
+     "CNERGY:FINRES:2016-12-30",
+     "CNERGY:FINRES:2017-03-30",
+     "CNERGY:FINRES:2017-06-30",
+     "CNERGY:FINRES:2017-09-30",
+     "CNERGY:FINRES:2017-12-30",
+     "CNERGY:FINRES:2018-03-30",
+     "CNERGY:FINRES:2018-06-30",
+     "CNERGY:FINRES:2018-09-30",
+     "CNERGY:FINRES:2018-12-30",
+     "CNERGY:FINRES:2019-03-30",
+     "CNERGY:FINRES:2019-06-30",
+     "CNERGY:FINRES:2019-09-30",
+     "CNERGY:FINRES:2019-12-30",
+     "CNERGY:FINRES:2020-03-30",
+     "CNERGY:FINRES:2020-06-30",
+     "CNERGY:FINRES:2020-09-30",
+     "CNERGY:FINRES:2020-12-30",
+     "CNERGY:FINRES:2021-03-30",
+     "CNERGY:FINRES:2021-06-30",
+     "CNERGY:FINRES:2021-09-30",
+     "CNERGY:FINRES:2021-12-30",
+     "CNERGY:FINRES:2022-03-30",
+     "CNERGY:FINRES:2022-06-30",
+     "CNERGY:FINRES:2022-09-30",
+     "CNERGY:FINRES:2022-12-30",
+     "CNERGY:FINRES:2023-03-30",
+     "CNERGY:FINRES:2023-06-30",
+     "CNERGY:FINRES:2023-09-30",
+     "CNERGY:FINRES:2023-12-30",
+     "CNERGY:FINRES:2024-03-30",
+     "CNERGY:FINRES:2024-06-30",
+     "CNERGY:FINRES:2024-09-30",
+     "CNERGY:FINRES:2024-12-30",
+     "CNERGY:FINRES:2025-03-30",
+     "CNERGY:FINRES:2025-06-30",
+     "CNERGY:FINRES:2025-09-30",
+     "CNERGY:FINRES:2025-12-30",
+     "CNERGY:FINRES:2026-03-30",
+     "CNERGY:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:29.920Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window"
+    ]
+   },
+   {
+    "pattern_id": "CNERGY:earnings_stability:2008-09-30:2026-06-30",
+    "symbol": "CNERGY",
+    "pattern_type": "earnings_stability",
+    "period_start": "2008-09-30",
+    "period_end": "2026-06-30",
+    "observation_count": 72,
+    "direction": "mixed",
+    "strength": 0,
+    "source_filing_ids": [
+     "CNERGY:FINRES:2008-09-30",
+     "CNERGY:FINRES:2008-12-30",
+     "CNERGY:FINRES:2009-03-30",
+     "CNERGY:FINRES:2009-06-30",
+     "CNERGY:FINRES:2009-09-30",
+     "CNERGY:FINRES:2009-12-30",
+     "CNERGY:FINRES:2010-03-30",
+     "CNERGY:FINRES:2010-06-30",
+     "CNERGY:FINRES:2010-09-30",
+     "CNERGY:FINRES:2010-12-30",
+     "CNERGY:FINRES:2011-03-30",
+     "CNERGY:FINRES:2011-06-30",
+     "CNERGY:FINRES:2011-09-30",
+     "CNERGY:FINRES:2011-12-30",
+     "CNERGY:FINRES:2012-03-30",
+     "CNERGY:FINRES:2012-06-30",
+     "CNERGY:FINRES:2012-09-30",
+     "CNERGY:FINRES:2012-12-30",
+     "CNERGY:FINRES:2013-03-30",
+     "CNERGY:FINRES:2013-06-30",
+     "CNERGY:FINRES:2013-09-30",
+     "CNERGY:FINRES:2013-12-30",
+     "CNERGY:FINRES:2014-03-30",
+     "CNERGY:FINRES:2014-06-30",
+     "CNERGY:FINRES:2014-09-30",
+     "CNERGY:FINRES:2014-12-30",
+     "CNERGY:FINRES:2015-03-30",
+     "CNERGY:FINRES:2015-06-30",
+     "CNERGY:FINRES:2015-09-30",
+     "CNERGY:FINRES:2015-12-30",
+     "CNERGY:FINRES:2016-03-30",
+     "CNERGY:FINRES:2016-06-30",
+     "CNERGY:FINRES:2016-09-30",
+     "CNERGY:FINRES:2016-12-30",
+     "CNERGY:FINRES:2017-03-30",
+     "CNERGY:FINRES:2017-06-30",
+     "CNERGY:FINRES:2017-09-30",
+     "CNERGY:FINRES:2017-12-30",
+     "CNERGY:FINRES:2018-03-30",
+     "CNERGY:FINRES:2018-06-30",
+     "CNERGY:FINRES:2018-09-30",
+     "CNERGY:FINRES:2018-12-30",
+     "CNERGY:FINRES:2019-03-30",
+     "CNERGY:FINRES:2019-06-30",
+     "CNERGY:FINRES:2019-09-30",
+     "CNERGY:FINRES:2019-12-30",
+     "CNERGY:FINRES:2020-03-30",
+     "CNERGY:FINRES:2020-06-30",
+     "CNERGY:FINRES:2020-09-30",
+     "CNERGY:FINRES:2020-12-30",
+     "CNERGY:FINRES:2021-03-30",
+     "CNERGY:FINRES:2021-06-30",
+     "CNERGY:FINRES:2021-09-30",
+     "CNERGY:FINRES:2021-12-30",
+     "CNERGY:FINRES:2022-03-30",
+     "CNERGY:FINRES:2022-06-30",
+     "CNERGY:FINRES:2022-09-30",
+     "CNERGY:FINRES:2022-12-30",
+     "CNERGY:FINRES:2023-03-30",
+     "CNERGY:FINRES:2023-06-30",
+     "CNERGY:FINRES:2023-09-30",
+     "CNERGY:FINRES:2023-12-30",
+     "CNERGY:FINRES:2024-03-30",
+     "CNERGY:FINRES:2024-06-30",
+     "CNERGY:FINRES:2024-09-30",
+     "CNERGY:FINRES:2024-12-30",
+     "CNERGY:FINRES:2025-03-30",
+     "CNERGY:FINRES:2025-06-30",
+     "CNERGY:FINRES:2025-09-30",
+     "CNERGY:FINRES:2025-12-30",
+     "CNERGY:FINRES:2026-03-30",
+     "CNERGY:FINRES:2026-06-30"
+    ],
+    "publication_timestamps": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "data_quality": "partially_verified",
+    "as_of_timestamp": "2026-11-04T14:01:29.920Z",
+    "limitations": [
+     "quarterly snapshot data; underlying filing publication dates are not point-in-time verified (Task 102/111)",
+     "only 72 verified quarters; annual seasonality cannot be established from this window",
+     "margin volatility proxy; not a forecast"
+    ]
+   }
+  ],
+  "insufficient_history": false,
+  "notes": [
+   "All patterns are deterministic summaries of the verified snapshot; the LLM may only restate them.",
+   "No operating cash flow / balance-sheet fields exist in the quarterly snapshot — cash-flow-quality and leverage patterns return insufficient_data."
+  ]
+ },
+ "pitPatterns": {
+  "candidates": [
+   {
+    "pattern_name": "Gap-up openings and how often they get filled",
+    "pattern_type": "gap",
+    "start_date": "2026-09-18",
+    "end_date": "2026-10-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 1.42
+     }
+    ],
+    "occurrences": 1061,
+    "avg_move_pct": 1.42,
+    "success_rate_pct": 76.1,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (gap) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-09-18",
+     "2026-09-23",
+     "2026-09-24",
+     "2026-09-30",
+     "2026-10-15",
+     "2026-10-19",
+     "2026-10-21",
+     "2026-10-28",
+     "2026-10-29",
+     "2026-10-30"
+    ]
+   },
+   {
+    "pattern_name": "Gap-down openings and how often they get filled",
+    "pattern_type": "gap",
+    "start_date": "2026-08-19",
+    "end_date": "2026-11-03",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -1.39
+     }
+    ],
+    "occurrences": 390,
+    "avg_move_pct": -1.39,
+    "success_rate_pct": 65.4,
+    "confirmation_status": "unconfirmed_candidate",
+    "detection_rule": "deterministic engine price-patterns.ts (gap) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-08-19",
+     "2026-08-20",
+     "2026-09-07",
+     "2026-09-11",
+     "2026-09-14",
+     "2026-09-25",
+     "2026-10-05",
+     "2026-10-12",
+     "2026-11-02",
+     "2026-11-03"
+    ]
+   },
+   {
+    "pattern_name": "Heavy-volume days with flat-to-rising price (buying pressure)",
+    "pattern_type": "pressure",
+    "start_date": "2026-07-20",
+    "end_date": "2026-10-29",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 0.22
+     }
+    ],
+    "occurrences": 388,
+    "avg_move_pct": 0.22,
+    "success_rate_pct": 45.5,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (pressure) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-07-20",
+     "2026-07-28",
+     "2026-08-07",
+     "2026-08-10",
+     "2026-08-13",
+     "2026-08-17",
+     "2026-08-21",
+     "2026-08-31",
+     "2026-09-23",
+     "2026-10-29"
+    ]
+   },
+   {
+    "pattern_name": "Unusually heavy volume days",
+    "pattern_type": "volume_spike",
+    "start_date": "2026-07-02",
+    "end_date": "2026-10-29",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 3.59
+     }
+    ],
+    "occurrences": 207,
+    "avg_move_pct": 3.59,
+    "success_rate_pct": 80.2,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (volume_spike) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-07-02",
+     "2026-07-08",
+     "2026-07-09",
+     "2026-07-10",
+     "2026-07-13",
+     "2026-07-21",
+     "2026-07-28",
+     "2026-08-13",
+     "2026-08-17",
+     "2026-10-29"
+    ]
+   },
+   {
+    "pattern_name": "After a heavy-volume day",
+    "pattern_type": "drift",
+    "start_date": "2026-07-02",
+    "end_date": "2026-10-29",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -0.17
+     }
+    ],
+    "occurrences": 207,
+    "avg_move_pct": -0.17,
+    "success_rate_pct": 43.7,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (drift) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-07-02",
+     "2026-07-08",
+     "2026-07-09",
+     "2026-07-10",
+     "2026-07-13",
+     "2026-07-21",
+     "2026-07-28",
+     "2026-08-13",
+     "2026-08-17",
+     "2026-10-29"
+    ]
+   },
+   {
+    "pattern_name": "Heavy-volume days with flat-to-falling price (selling pressure)",
+    "pattern_type": "pressure",
+    "start_date": "2026-07-22",
+    "end_date": "2026-11-03",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 0.7
+     }
+    ],
+    "occurrences": 203,
+    "avg_move_pct": 0.7,
+    "success_rate_pct": 51.5,
+    "confirmation_status": "unconfirmed_candidate",
+    "detection_rule": "deterministic engine price-patterns.ts (pressure) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-07-22",
+     "2026-08-11",
+     "2026-08-18",
+     "2026-08-19",
+     "2026-08-20",
+     "2026-08-24",
+     "2026-09-24",
+     "2026-10-30",
+     "2026-11-02",
+     "2026-11-03"
+    ]
+   },
+   {
+    "pattern_name": "After closing at a 52-week low",
+    "pattern_type": "drift",
+    "start_date": "2023-05-31",
+    "end_date": "2023-06-23",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 1.33
+     }
+    ],
+    "occurrences": 112,
+    "avg_move_pct": 1.33,
+    "success_rate_pct": 50.9,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (drift) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2023-05-31",
+     "2023-06-01",
+     "2023-06-02",
+     "2023-06-15",
+     "2023-06-16",
+     "2023-06-19",
+     "2023-06-20",
+     "2023-06-21",
+     "2023-06-22",
+     "2023-06-23"
+    ]
+   },
+   {
+    "pattern_name": "After closing at a 52-week high",
+    "pattern_type": "drift",
+    "start_date": "2026-07-20",
+    "end_date": "2026-08-31",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 1.3
+     }
+    ],
+    "occurrences": 42,
+    "avg_move_pct": 1.3,
+    "success_rate_pct": 59.5,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (drift) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2026-07-20",
+     "2026-07-27",
+     "2026-07-28",
+     "2026-08-03",
+     "2026-08-06",
+     "2026-08-07",
+     "2026-08-10",
+     "2026-08-13",
+     "2026-08-17",
+     "2026-08-31"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 7.44-7.85",
+    "pattern_type": "key_zone",
+    "start_date": "2025-11-11",
+    "end_date": "2026-04-15",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 5.17
+     }
+    ],
+    "occurrences": 29,
+    "avg_move_pct": 5.17,
+    "success_rate_pct": 51.7,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2025-11-11",
+     "2025-11-21",
+     "2025-12-10",
+     "2026-01-01",
+     "2026-01-16",
+     "2026-01-27",
+     "2026-02-13",
+     "2026-04-03",
+     "2026-04-09",
+     "2026-04-15"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 7.02-7.44",
+    "pattern_type": "key_zone",
+    "start_date": "2025-08-29",
+    "end_date": "2026-04-13",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 6.88
+     }
+    ],
+    "occurrences": 29,
+    "avg_move_pct": 6.88,
+    "success_rate_pct": 51.7,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2025-08-29",
+     "2025-10-29",
+     "2025-12-23",
+     "2026-01-15",
+     "2026-02-19",
+     "2026-02-25",
+     "2026-03-11",
+     "2026-03-25",
+     "2026-04-06",
+     "2026-04-13"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 3.72-4.13",
+    "pattern_type": "key_zone",
+    "start_date": "2024-02-27",
+    "end_date": "2024-10-31",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 11.22
+     }
+    ],
+    "occurrences": 14,
+    "avg_move_pct": 11.22,
+    "success_rate_pct": 80,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2024-02-27",
+     "2024-06-07",
+     "2024-06-14",
+     "2024-08-02",
+     "2024-08-21",
+     "2024-09-10",
+     "2024-09-13",
+     "2024-09-18",
+     "2024-10-21",
+     "2024-10-31"
+    ]
+   },
+   {
+    "pattern_name": "Key price zone around Rs. 4.27-4.68",
+    "pattern_type": "key_zone",
+    "start_date": "2024-01-17",
+    "end_date": "2024-11-26",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 11.21
+     }
+    ],
+    "occurrences": 13,
+    "avg_move_pct": 11.21,
+    "success_rate_pct": 76.9,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (key_zone) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "high",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2024-01-17",
+     "2024-02-28",
+     "2024-03-13",
+     "2024-03-21",
+     "2024-04-04",
+     "2024-04-16",
+     "2024-05-03",
+     "2024-05-14",
+     "2024-11-11",
+     "2024-11-26"
+    ]
+   },
+   {
+    "pattern_name": "February: historically weak month",
+    "pattern_type": "seasonality",
+    "start_date": "2017-02-28",
+    "end_date": "2026-02-27",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -6.82
+     }
+    ],
+    "occurrences": 10,
+    "avg_move_pct": -6.82,
+    "success_rate_pct": 30,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (seasonality) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "medium",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2017-02-28",
+     "2018-02-28",
+     "2019-02-28",
+     "2020-02-28",
+     "2021-02-26",
+     "2022-02-28",
+     "2023-02-28",
+     "2024-02-29",
+     "2025-02-28",
+     "2026-02-27"
+    ]
+   },
+   {
+    "pattern_name": "June: historically weak month",
+    "pattern_type": "seasonality",
+    "start_date": "2017-06-30",
+    "end_date": "2026-06-30",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": -6.11
+     }
+    ],
+    "occurrences": 10,
+    "avg_move_pct": -6.11,
+    "success_rate_pct": 10,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (seasonality) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "medium",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2017-06-30",
+     "2018-06-29",
+     "2019-06-28",
+     "2020-06-30",
+     "2021-06-30",
+     "2022-06-30",
+     "2023-06-27",
+     "2024-06-28",
+     "2025-06-30",
+     "2026-06-30"
+    ]
+   },
+   {
+    "pattern_name": "August: historically strong month",
+    "pattern_type": "seasonality",
+    "start_date": "2017-08-31",
+    "end_date": "2026-08-31",
+    "key_prices": [
+     {
+      "reference": "avg_move_pct",
+      "value": 4.07
+     }
+    ],
+    "occurrences": 10,
+    "avg_move_pct": 4.07,
+    "success_rate_pct": 60,
+    "confirmation_status": "confirmed_historical",
+    "detection_rule": "deterministic engine price-patterns.ts (seasonality) over 2482 bars ending 2026-11-03; future bars excluded: 0",
+    "strength": "medium",
+    "data_quality_state": "verified",
+    "evidence_dates": [
+     "2017-08-31",
+     "2018-08-31",
+     "2019-08-30",
+     "2020-08-31",
+     "2021-08-31",
+     "2022-08-31",
+     "2023-08-31",
+     "2024-08-30",
+     "2025-08-29",
+     "2026-08-31"
+    ]
+   }
+  ],
+  "keyZones": [
+   {
+    "kind": "zone",
+    "low": 7.44,
+    "high": 7.85,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 7.02,
+    "high": 7.44,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 3.72,
+    "high": 4.13,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 4.27,
+    "high": 4.68,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 7.85,
+    "high": 8.26,
+    "note": ""
+   },
+   {
+    "kind": "zone",
+    "low": 8.26,
+    "high": 8.54,
+    "note": ""
+   }
+  ],
+  "barsUsed": 2482
+ },
+ "newsCounts": {
+  "company": 7,
+  "national": 8,
+  "international": 8
+ }
+}

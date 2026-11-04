@@ -21,6 +21,7 @@ export type LatentView =
   | "paper_monitor"
   | "golden_cross"
   | "volatility_analytics"
+  | "ai_analysis"
   | "calculators"
   | "pattern_finder"
   | "pattern_finder_financial"

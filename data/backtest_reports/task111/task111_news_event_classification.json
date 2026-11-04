@@ -1,0 +1,27 @@
+{
+ "report": "task111_news_event_classification",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:50Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "method": "deterministic lexicon classification (bullish/bearish/neutral/mixed/uncertain) + materiality/horizon keywords; LLM may annotate but never fabricates",
+ "sentiment_counts": {
+  "company": {
+   "neutral": 42,
+   "bullish": 10,
+   "bearish": 2
+  },
+  "national": {
+   "neutral": 8
+  },
+  "international": {
+   "bullish": 1,
+   "neutral": 7
+  }
+ },
+ "rules": [
+  "no syndicated duplicate counted as independent corroboration",
+  "positive sentiment is NOT a positive-return forecast",
+  "unverified items keep dataQualityState=unverified"
+ ]
+}

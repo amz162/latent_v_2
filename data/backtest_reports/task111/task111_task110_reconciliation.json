@@ -1,0 +1,103 @@
+{
+ "report": "task111_task110_reconciliation",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:20Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "method": "independent recompute in task111 space via the same deterministic engine (task110 run_portfolio) \u2014 task110 artifacts untouched",
+ "golden_cross_portfolio_compare": {
+  "initial_capital": {
+   "recomputed": 100000.0,
+   "task110": 100000.0,
+   "match": true
+  },
+  "final_equity": {
+   "recomputed": 60718.23,
+   "task110": 60718.23,
+   "match": true
+  },
+  "roi_pct": {
+   "recomputed": -39.282,
+   "task110": -39.282,
+   "match": true
+  },
+  "trades": {
+   "recomputed": 363,
+   "task110": 363,
+   "match": true
+  },
+  "wins": {
+   "recomputed": 98,
+   "task110": 98,
+   "match": true
+  },
+  "win_rate_pct": {
+   "recomputed": 27.0,
+   "task110": 27.0,
+   "match": true
+  },
+  "profit_factor": {
+   "recomputed": 0.8701,
+   "task110": 0.8701,
+   "match": true
+  },
+  "total_costs": {
+   "recomputed": 78867.55,
+   "task110": 78867.55,
+   "match": true
+  }
+ },
+ "volatility_recheck": {
+  "symbols": [
+   "ANL",
+   "BOP",
+   "CNERGY"
+  ],
+  "estimator_values_checked": 14784,
+  "nonfinite_or_negative_recorded_not_hidden": 0,
+  "note": "task110 92/92 recheck also re-verified by rerunning task110_tests (62/62 includes vol assertions)"
+ },
+ "regression_suites": [
+  {
+   "suite": "task110_tests",
+   "exit_code": 0,
+   "passed": 62,
+   "failed": 0,
+   "skipped": 0,
+   "tail": "task110 QA: 62 passed, 0 failed, 0 skipped"
+  },
+  {
+   "suite": "task107_v2_tests",
+   "exit_code": 0,
+   "passed": 29,
+   "failed": 0,
+   "skipped": 0,
+   "tail": "task107 v2 QA: 29 passed, 0 failed, 0 skipped"
+  },
+  {
+   "suite": "task107_v1_tests",
+   "exit_code": 0,
+   "passed": 28,
+   "failed": 0,
+   "skipped": 2,
+   "tail": "task107 QA: 28 passed, 0 failed, 2 skipped"
+  },
+  {
+   "suite": "task110_parity_py_ts",
+   "exit_code": 0,
+   "passed": 15,
+   "failed": 0,
+   "skipped": 0,
+   "tail": "parity: 15/15"
+  }
+ ],
+ "verdict": "RECONCILED",
+ "reported_baseline": {
+  "initial_capital": 100000.0,
+  "final_equity": 60718.23,
+  "roi_pct": -39.282,
+  "win_rate_pct": 27.0,
+  "profit_factor": 0.8701,
+  "trades": 363
+ }
+}

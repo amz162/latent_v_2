@@ -1,0 +1,30 @@
+{
+ "report": "task111_llm_output_validation",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:11:37Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "output_schema": "task111_llm_signal_v1",
+ "validator": "schemas.ts validateSignalOutput (server-side, strict)",
+ "symbols": 23,
+ "valid_signals": 23,
+ "invalid_or_unavailable": 0,
+ "rejection_reasons": [],
+ "rejected_not_displayed": true,
+ "signal_distribution": {
+  "NO_TRADE": 19,
+  "HOLD": 2,
+  "BUY": 2
+ },
+ "checks": [
+  "symbol match",
+  "signal enum",
+  "view enums",
+  "conviction 0-100",
+  "calibrated probability null",
+  "R:R engine-computed",
+  "no fabricated source references",
+  "stop<entry<targets when present",
+  "evidence freshness <= 10 days"
+ ]
+}

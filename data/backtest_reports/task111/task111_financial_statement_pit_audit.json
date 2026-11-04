@@ -1,0 +1,41 @@
+{
+ "report": "task111_financial_statement_pit_audit",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:31Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "reverified_task102_finding": {
+  "symbols": 24,
+  "period_labels": [
+   "2003",
+   "2004",
+   "2005",
+   "2006",
+   "2007",
+   "2008",
+   "2009",
+   "2010",
+   "2011",
+   "2012",
+   "2013",
+   "2014"
+  ],
+  "period_granularity": "annual=year; quarter=year-label only",
+  "publication_timestamps": 0,
+  "verdict": "NOT point-in-time usable: accounting-period labels without publication dates; per spec rule 1 they must NOT be treated as available at period end"
+ },
+ "filings": {
+  "symbols": 24,
+  "total_records": 3319,
+  "genuine_publication_dates": 3319,
+  "financial_result_announcements": 24,
+  "time_of_day_known": false,
+  "granularity": "day (conservative 17:00 PKT availability rule applied)"
+ },
+ "current_check": {
+  "quarterly_snapshots": 358,
+  "publication_timestamps_available": 0,
+  "verdict": "NOT point-in-time usable for historical as-of analysis; current research use only with explicit freshness labeling"
+ },
+ "rule": "accounting-period end dates are NEVER treated as public announcement dates"
+}

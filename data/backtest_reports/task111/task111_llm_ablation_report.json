@@ -1,0 +1,35 @@
+{
+ "report": "task111_llm_ablation_report",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:11:40Z",
+ "git_head": "0df3b84",
+ "status": "insufficient_evidence",
+ "predeclared_configurations": [
+  "technical indicators only",
+  "technical + price patterns",
+  "fundamental financial data only",
+  "financial patterns + statements",
+  "company news only",
+  "national/international news only",
+  "company + national + international news",
+  "fundamental + technical",
+  "all verified evidence combined",
+  "all verified evidence + volatility context"
+ ],
+ "status_detail": "designed; real ablation REQUIRES historical point-in-time evidence packages, which the data does not support (no PIT fundamentals, no historical news archive)",
+ "historical_llm_runs_label": "development_only",
+ "current_run": {
+  "decision_dates": [
+   "2026-11-03"
+  ],
+  "symbols_valid": 23,
+  "independent_date_count": 1
+ },
+ "mock_pipeline_check": {
+  "symbols": 23,
+  "agreement_with_real": 19,
+  "note": "mock responses are stubs; agreement only proves plumbing determinism, NOT predictive value"
+ },
+ "matched_sample_rule": "ablations must use matched symbols/dates; different-sample comparisons are not attributed to the feature",
+ "verdict": "insufficient_evidence for any predictive-value claim"
+}

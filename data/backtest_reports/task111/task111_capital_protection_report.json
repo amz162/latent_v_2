@@ -1,0 +1,22 @@
+{
+ "report": "task111_capital_protection_report",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:00:26Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "policy_id": "task111-capital-protection-v1",
+ "rules": {
+  "maxRiskPerPositionPct": 2.0,
+  "maxOpenRiskPct": 6.0,
+  "maxExposurePct": 100.0,
+  "drawdownAlertPct": 5.0,
+  "drawdownPausePct": 10.0,
+  "minEvidenceQualityForBuy": 35,
+  "minRRDefault": 1.5,
+  "leverage": "never",
+  "shortSelling": "structurally unsupported"
+ },
+ "applied_in": "stock-signal-engine.ts (per-signal) + overlay engine (per-session)",
+ "real_orders": false,
+ "guarantees": "simulated protective rules, not guarantees against gaps"
+}

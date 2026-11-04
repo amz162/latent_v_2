@@ -1,0 +1,44 @@
+{
+ "report": "task111_llm_evidence_schema",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:15:41Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "schema_version": "latent_psx_llm_evidence_v1",
+ "implementation": "src/lib/latent/llm/schemas.ts (LLMEvidence) + evidence-builder.ts",
+ "required_fields": [
+  "symbol",
+  "companyName",
+  "sector",
+  "decisionTimestamp",
+  "dataCutoff",
+  "priceContext",
+  "fundamentalEvidence",
+  "financialPatternEvidence",
+  "companyNewsEvidence",
+  "nationalNewsEvidence",
+  "internationalNewsEvidence",
+  "technicalEvidence",
+  "pricePatternEvidence",
+  "volatilityContext",
+  "marketContext",
+  "dataQualityFlags",
+  "missingSources",
+  "sourceRefs"
+ ],
+ "statuses": [
+  "verified",
+  "partially_verified",
+  "stale",
+  "missing",
+  "unavailable",
+  "insufficient_history"
+ ],
+ "pit_rules": [
+  "every numeric fact carries a source ref + timestamp",
+  "unavailable is never converted into neutral evidence",
+  "no news found is not positive news; missing fundamentals are not stability",
+  "historical as-of LLM use disabled (historicalUseAllowed=false)"
+ ],
+ "prompt_version": "task111-prompt-v1"
+}

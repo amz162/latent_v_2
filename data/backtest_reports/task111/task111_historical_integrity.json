@@ -1,0 +1,40 @@
+{
+ "report": "task111_historical_integrity",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:20Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "historical_task_dirs": 33,
+ "total_artifacts": 680,
+ "task110_artifact_count": 64,
+ "task102_point_in_time_finding": {
+  "symbols": 24,
+  "total_records": 3319,
+  "genuine_publication_dates": 3319,
+  "financial_result_announcements": 24,
+  "time_of_day_known": false,
+  "granularity": "day (conservative 17:00 PKT availability rule applied)"
+ },
+ "task102_statements_ratios": {
+  "symbols": 24,
+  "period_labels": [
+   "2003",
+   "2004",
+   "2005",
+   "2006",
+   "2007",
+   "2008",
+   "2009",
+   "2010",
+   "2011",
+   "2012",
+   "2013",
+   "2014"
+  ],
+  "period_granularity": "annual=year; quarter=year-label only",
+  "publication_timestamps": 0,
+  "verdict": "NOT point-in-time usable: accounting-period labels without publication dates; per spec rule 1 they must NOT be treated as available at period end"
+ },
+ "preservation_policy": "no historical report overwritten; task111 artifacts live only under data/backtest_reports/task111/",
+ "original_models_status": "untouched \u2014 no retraining, no weight/threshold changes (verified by task107 suites no_real_trades/no_auto_promotion)"
+}

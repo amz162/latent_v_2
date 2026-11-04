@@ -1,0 +1,52 @@
+{
+ "report": "task111_risk_overlay_definitions",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:02:23Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "overlays": {
+  "A_fixed_volatility_exposure": {
+   "low": 1.0,
+   "normal": 0.75,
+   "high": 0.5,
+   "extreme": 0.25,
+   "bands": "40th/80th percentile of trailing 250-session universe mean realized vol (predeclared)"
+  },
+  "B_volatility_targeted_sizing": {
+   "targets_ann_pct": [
+    10,
+    15,
+    20
+   ],
+   "formula": "mult = clamp(target / realized_vol_20d, 0, 1)",
+   "leverage": "never"
+  },
+  "C_volatility_expansion_protection": {
+   "inputs": [
+    "BBW",
+    "BBW d1",
+    "BBW d2",
+    "realized variance",
+    "variance acceleration"
+   ],
+   "states": [
+    "normal",
+    "expansion_watch",
+    "extreme_expansion",
+    "compression_watch",
+    "unknown"
+   ]
+  },
+  "D_mean_reversion_research": {
+   "inputs": "price z-score (20d) + MA distance; falling BBW alone is NOT a mean-reversion signal"
+  },
+  "E_drawdown_protection": {
+   "alert_5pct": "reduce new sizing 50%",
+   "pause_10pct": "no new entries",
+   "max_per_position_risk_pct": 2.0,
+   "max_open_risk_pct": 6.0,
+   "max_exposure_pct": 100.0
+  }
+ },
+ "entry_signals": "UNCHANGED golden cross 7/30 signals (overlay contract)"
+}

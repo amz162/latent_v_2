@@ -1,0 +1,41 @@
+{
+ "report": "task111_news_source_registry",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:01:50Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "registry": [
+  {
+   "source_id": "askanalyst_company_news",
+   "publisher": "AskAnalyst",
+   "domain": "api.askanalyst.com.pk",
+   "country": "PK",
+   "category": "company",
+   "reliability": "aggregator",
+   "retrieval": "GET /api/news/{symbol} (existing integration, cached 12h)",
+   "licensing": "public API already integrated; research use"
+  },
+  {
+   "source_id": "zai_web_search_national",
+   "publisher": "web search via authorized z-ai SDK",
+   "domain": "various",
+   "country": "PK",
+   "category": "national",
+   "reliability": "unverified",
+   "retrieval": "functions.web_search snapshot (cached 12h)",
+   "licensing": "search snippets for research reference only; no paywall bypass, no scraping"
+  },
+  {
+   "source_id": "zai_web_search_international",
+   "publisher": "web search via authorized z-ai SDK",
+   "domain": "various",
+   "country": "INT",
+   "category": "international",
+   "reliability": "unverified",
+   "retrieval": "functions.web_search snapshot (cached 12h)",
+   "licensing": "search snippets for research reference only; no paywall bypass, no scraping"
+  }
+ ],
+ "paid_services_added": 0,
+ "rate_limit_policy": "12h disk cache per source/symbol; bounded retrieval"
+}

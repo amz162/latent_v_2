@@ -1,0 +1,181 @@
+{
+ "generationId": "task111-llm-multisource-gen1",
+ "symbol": "PSO",
+ "decisionTimestamp": "2026-11-04T14:10:33.298Z",
+ "dataCutoff": "2026-11-03",
+ "evidenceHash": "c4c333e5",
+ "evidenceSchemaVersion": "latent_psx_llm_evidence_v1",
+ "outputSchemaVersion": "task111_llm_signal_v1",
+ "promptVersion": "task111-prompt-v1",
+ "provider": "zai",
+ "model": "glm-4.6",
+ "llmState": "ok",
+ "llmFailureReason": null,
+ "parseErrors": [],
+ "llmOutput": {
+  "symbol": "PSO",
+  "decision_timestamp": "2026-11-04T14:10:33.298Z",
+  "analysis_horizon": "10d",
+  "signal": "BUY",
+  "signal_status": "research_only",
+  "fundamental_view": "mixed",
+  "financial_pattern_view": "bullish",
+  "national_news_view": "neutral",
+  "international_news_view": "neutral",
+  "company_news_view": "neutral",
+  "technical_view": "bullish",
+  "price_pattern_view": "mixed",
+  "bullish_evidence": [
+   "Price above SMA30 (golden cross 14 sessions ago)",
+   "Revenue trend improving",
+   "Revenue growth accelerating",
+   "Heavy-volume days with flat-to-rising price (buying pressure) confirmed historical pattern",
+   "Unusually heavy volume days confirmed historical pattern"
+  ],
+  "bearish_evidence": [
+   "Negative profit after tax (-23,050)",
+   "Negative EPS (-49.09)",
+   "Negative net margin (-2.8%)",
+   "Negative gross margin (-4.2%)",
+   "5-day price decline (-1.63%)",
+   "Gap-down openings confirmed historical pattern",
+   "Heavy-volume days with flat-to-falling price (selling pressure) confirmed historical pattern"
+  ],
+  "conflicting_evidence": [
+   "Revenue trend improving but company still reporting losses",
+   "Technical indicators bullish but fundamental metrics negative",
+   "Price pattern shows both buying and selling pressure confirmation",
+   "20-day positive change (0.62%) but 5-day negative change (-1.63%)"
+  ],
+  "missing_evidence": [
+   "Forward guidance or analyst estimates",
+   "Dividend sustainability information",
+   "Future product pipeline or strategic initiatives",
+   "Detailed competitive landscape analysis",
+   "Insider trading activity"
+  ],
+  "main_risks": [
+   "Continued negative profitability",
+   "High receivables (PKR 810bn)",
+   "Economic uncertainty affecting oil demand",
+   "Interest rate environment at 12%",
+   "Foreign exchange rate volatility"
+  ],
+  "invalidation_conditions": [
+   "Price falls below SMA30",
+   "Negative earnings trend continues",
+   "Significant deterioration in revenue growth",
+   "Major negative regulatory changes",
+   "Substantial increase in receivables without improvement in collection"
+  ],
+  "llm_conviction_score": 65,
+  "evidence_quality_score_note": "Evidence is partially complete with verified technicals and financials but lacks forward-looking guidance and analyst estimates.",
+  "calibrated_net_positive_probability": null,
+  "entry_reference": 349.9,
+  "stop_loss": 345,
+  "target_1": 365,
+  "target_2": 380,
+  "target_3": 395,
+  "risk_reward_ratio": null,
+  "decision_reason": "The technical indicators show a golden cross pattern with price above SMA30, and financial patterns indicate improving revenue trends and accelerating growth. However, the company is still reporting losses with negative margins, creating a mixed fundamental picture. The bullish technical signal suggests potential short-term momentum despite the fundamental weaknesses.",
+  "source_references": [
+   "src:ohlcv_db",
+   "src:technical_local",
+   "src:price_patterns",
+   "src:volatility_local",
+   "src:financials_snapshot",
+   "src:news_company",
+   "src:news_national",
+   "src:news_international",
+   "src:market_context"
+  ],
+  "limitations": [
+   "Financial publication timestamps not point-in-time verified",
+   "Historical as-of backtesting disabled",
+   "No implied volatility data available for PSX",
+   "Limited forward-looking information in evidence"
+  ]
+ },
+ "llmConvictionScore": 65,
+ "evidenceQualityScore": 85,
+ "evidenceQualityParts": {
+  "source_verification": 20,
+  "pit_availability": 8,
+  "data_completeness": 12,
+  "data_freshness": 15,
+  "financial_history_coverage": 6,
+  "news_corroboration": 4.2,
+  "technical_quality": 10,
+  "pattern_confirmation": 5,
+  "cross_source_consistency": 5
+ },
+ "calibratedNetPositiveProbability": null,
+ "finalSignal": "NO_TRADE",
+ "finalSignalReason": "LLM proposed BUY but the deterministic gate rejected executability (best_net_rr_1.47_below_min_1.5); downgraded to NO_TRADE. The technical indicators show a golden cross pattern with price above SMA30, and financial patterns indicate improving revenue trends and accelerating growth. However, the company is still reporting losses with negative margins, creating a mixed fundamental picture. The bullish technical signal suggests potential short-term momentum despite the fundamental weaknesses.",
+ "riskReward": {
+  "configVersion": "task111-rr-v1",
+  "riskPolicyId": "atr14-1.5-1-2-3",
+  "riskPolicyVersion": "task77-v1",
+  "costSchedule": "psx_user_schedule_v2 (computeTradeCostsV2)",
+  "symbol": "PSO",
+  "cutoffDate": "2026-11-03",
+  "executionAssumption": "next_session_open_reference",
+  "entryReference": 349.9,
+  "atr14": 7.698571428571422,
+  "stopLoss": 338.35214285714284,
+  "stopRule": "atr14-1.5-1-2-3: entry - 1.5 x ATR14",
+  "targets": {
+   "tp1": 357.5985714285714,
+   "tp2": 365.29714285714283,
+   "tp3": 372.99571428571426
+  },
+  "targetRule": "atr14-1.5-1-2-3: TP1/2/3 = entry + 1/2/3 x ATR14 (platform policy, unmodified)",
+  "positionQty": 57,
+  "positionNotional": 19944.3,
+  "netGainAtTp1": null,
+  "netGainAtTp2": null,
+  "netGainAtTp3": null,
+  "netLossAtStop": -718.9407810711426,
+  "rr_to_tp1": 0.43200369336457056,
+  "rr_to_tp2": 0.9498720350914537,
+  "rr_to_tp3": 1.4677403768183366,
+  "risk_reward_status": "available",
+  "unavailableReason": null,
+  "costsAtTp2": {
+   "buy": {
+    "transactionValue": 19944.3,
+    "brokerage": 29.91645,
+    "psxFee": 0.06980505,
+    "nccplFee": 0.16154883,
+    "cdcFee": 0.7179948,
+    "slippage": 0,
+    "sideTotal": 30.86579868
+   },
+   "totalBrokerage": 61.14935571428572,
+   "totalPSX": 0.14268183,
+   "totalNCCPL": 0.33020652085714286,
+   "totalCDC": 1.4675845371428573,
+   "cgt": 131.6455714285714,
+   "slippage": 0,
+   "totalCost": 194.73540003085714,
+   "grossPnl": 877.6371428571426,
+   "netPnl": 682.9017428262855,
+   "taxProfile": "ATL_15",
+   "cgtRate": 0.15
+  },
+  "noTrade": true,
+  "noTradeReasons": [
+   "best_net_rr_1.47_below_min_1.5"
+  ],
+  "netGainAtTP1": 310.58507273314274,
+  "netGainAtTP2": 682.9017428262855,
+  "netGainAtTP3": 1055.2184129194281
+ },
+ "capitalProtection": {
+  "policyId": "task111-capital-protection-v1",
+  "triggered": []
+ },
+ "signalClass": "LLM_RESEARCH_SIGNAL",
+ "signalStatus": "research_only",
+ "analysisHorizon": "10d"
+}

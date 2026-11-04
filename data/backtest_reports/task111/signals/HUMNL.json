@@ -1,0 +1,175 @@
+{
+ "generationId": "task111-llm-multisource-gen1",
+ "symbol": "HUMNL",
+ "decisionTimestamp": "2026-11-04T14:09:12.871Z",
+ "dataCutoff": "2026-11-03",
+ "evidenceHash": "672c6562",
+ "evidenceSchemaVersion": "latent_psx_llm_evidence_v1",
+ "outputSchemaVersion": "task111_llm_signal_v1",
+ "promptVersion": "task111-prompt-v1",
+ "provider": "zai",
+ "model": "glm-4.6",
+ "llmState": "ok",
+ "llmFailureReason": null,
+ "parseErrors": [],
+ "llmOutput": {
+  "symbol": "HUMNL",
+  "decision_timestamp": "2026-11-04T14:09:12.871Z",
+  "analysis_horizon": "10d",
+  "signal": "NO_TRADE",
+  "signal_status": "research_only",
+  "fundamental_view": "mixed",
+  "financial_pattern_view": "mixed",
+  "national_news_view": "neutral",
+  "international_news_view": "neutral",
+  "company_news_view": "unavailable",
+  "technical_view": "bearish",
+  "price_pattern_view": "mixed",
+  "bullish_evidence": [
+   "Revenue trend improving (5.1% YoY growth)",
+   "5-day price gain of 6.53%",
+   "Heavy-volume days with flat-to-rising price show 41.7% success rate",
+   "Gap-up openings have 76.2% success rate when filled"
+  ],
+  "bearish_evidence": [
+   "Price below 30-day SMA (9.33 vs 8.64)",
+   "Death cross occurred 19 sessions ago",
+   "Net margin negative (-14.8%)",
+   "Gross margin deteriorating",
+   "20-day price change negative (-12.28%)",
+   "60-day price change significantly negative (-19.25%)",
+   "High volatility (20-day annualized vol 42.1%)"
+  ],
+  "conflicting_evidence": [
+   "Revenue trend improving but growth decelerating",
+   "Price showing short-term strength (5-day gain) but below key moving average",
+   "Mixed earnings stability pattern"
+  ],
+  "missing_evidence": [
+   "Recent company news",
+   "Forward guidance or analyst estimates",
+   "Sector-specific performance data",
+   "Dividend sustainability given negative earnings"
+  ],
+  "main_risks": [
+   "High volatility environment",
+   "Negative net margins",
+   "Potential for continued margin deterioration",
+   "Death cross signal suggests further downside possible"
+  ],
+  "invalidation_conditions": [
+   "Price closes above 30-day SMA (9.33)",
+   "Sustained revenue growth acceleration",
+   "Improving net margins",
+   "Positive earnings surprise in next quarter"
+  ],
+  "llm_conviction_score": 20,
+  "evidence_quality_score_note": "Fundamental and technical data available but missing company news and forward-looking estimates",
+  "calibrated_net_positive_probability": null,
+  "entry_reference": null,
+  "stop_loss": null,
+  "target_1": null,
+  "target_2": null,
+  "target_3": null,
+  "risk_reward_ratio": null,
+  "decision_reason": "Despite recent 5-day price strength, the technical picture is bearish with price below the 30-day SMA and a death cross signal 19 sessions ago. Fundamentally, while revenue shows YoY growth, margins are deteriorating and the company is reporting losses. The high volatility environment and lack of recent company news further reduce conviction for establishing a position at this time.",
+  "source_references": [
+   "src:ohlcv_db",
+   "src:technical_local",
+   "src:price_patterns",
+   "src:volatility_local",
+   "src:financials_snapshot",
+   "src:news_national",
+   "src:news_international",
+   "src:market_context"
+  ],
+  "limitations": [
+   "No company news available",
+   "Financial publication timestamps not point-in-time verified",
+   "No implied volatility data for PSX",
+   "Historical backtesting not allowed"
+  ]
+ },
+ "llmConvictionScore": 20,
+ "evidenceQualityScore": 82,
+ "evidenceQualityParts": {
+  "source_verification": 20,
+  "pit_availability": 8,
+  "data_completeness": 9,
+  "data_freshness": 15,
+  "financial_history_coverage": 6,
+  "news_corroboration": 4.2,
+  "technical_quality": 10,
+  "pattern_confirmation": 5,
+  "cross_source_consistency": 5
+ },
+ "calibratedNetPositiveProbability": null,
+ "finalSignal": "NO_TRADE",
+ "finalSignalReason": "Despite recent 5-day price strength, the technical picture is bearish with price below the 30-day SMA and a death cross signal 19 sessions ago. Fundamentally, while revenue shows YoY growth, margins are deteriorating and the company is reporting losses. The high volatility environment and lack of recent company news further reduce conviction for establishing a position at this time.",
+ "riskReward": {
+  "configVersion": "task111-rr-v1",
+  "riskPolicyId": "atr14-1.5-1-2-3",
+  "riskPolicyVersion": "task77-v1",
+  "costSchedule": "psx_user_schedule_v2 (computeTradeCostsV2)",
+  "symbol": "HUMNL",
+  "cutoffDate": "2026-11-03",
+  "executionAssumption": "next_session_open_reference",
+  "entryReference": 8.64,
+  "atr14": 0.4328571428571428,
+  "stopLoss": 7.9907142857142865,
+  "stopRule": "atr14-1.5-1-2-3: entry - 1.5 x ATR14",
+  "targets": {
+   "tp1": 9.072857142857144,
+   "tp2": 9.505714285714285,
+   "tp3": 9.938571428571429
+  },
+  "targetRule": "atr14-1.5-1-2-3: TP1/2/3 = entry + 1/2/3 x ATR14 (platform policy, unmodified)",
+  "positionQty": 2314,
+  "positionNotional": 19992.960000000003,
+  "netGainAtTp1": null,
+  "netGainAtTp2": null,
+  "netGainAtTp3": null,
+  "netLossAtStop": -1643.1189561651424,
+  "rr_to_tp1": 0.43246759717030275,
+  "rr_to_tp2": 0.9505913966891414,
+  "rr_to_tp3": 1.468715196207982,
+  "risk_reward_status": "available",
+  "unavailableReason": null,
+  "costsAtTp2": {
+   "buy": {
+    "transactionValue": 19992.960000000003,
+    "brokerage": 69.42,
+    "psxFee": 0.06997536000000001,
+    "nccplFee": 0.16194297600000002,
+    "cdcFee": 0.7197465600000001,
+    "slippage": 0,
+    "sideTotal": 70.37166489600001
+   },
+   "totalBrokerage": 138.84,
+   "totalPSX": 0.14696214000000002,
+   "totalNCCPL": 0.34011238114285713,
+   "totalCDC": 1.5116105828571431,
+   "cgt": 300.4894285714282,
+   "slippage": 0,
+   "totalCost": 441.3281136754282,
+   "grossPnl": 2003.262857142855,
+   "netPnl": 1561.9347434674269,
+   "taxProfile": "ATL_15",
+   "cgtRate": 0.15
+  },
+  "noTrade": true,
+  "noTradeReasons": [
+   "best_net_rr_1.47_below_min_1.5"
+  ],
+  "netGainAtTP1": 710.5957068377152,
+  "netGainAtTP2": 1561.9347434674269,
+  "netGainAtTP3": 2413.2737800971418
+ },
+ "capitalProtection": {
+  "policyId": "task111-capital-protection-v1",
+  "triggered": []
+ },
+ "signalClass": "LLM_RESEARCH_SIGNAL",
+ "signalStatus": "research_only",
+ "analysisHorizon": "10d"
+}

@@ -1,0 +1,59 @@
+{
+ "report": "task111_realized_volatility_forecast",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:05:04Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "question": "does realized volatility predict subsequent realized volatility?",
+ "horizons_sessions": [
+  5,
+  10,
+  21
+ ],
+ "predictors": [
+  "close_to_close_var_20",
+  "parkinson_var_20"
+ ],
+ "metrics": {
+  "h5_pred_cc_var": {
+   "n": 55872,
+   "mae": 0.00959047,
+   "rmse": 0.01454968,
+   "spearman": 0.0008
+  },
+  "h5_pred_pk_var": {
+   "n": 55872,
+   "mae": 0.00949267,
+   "rmse": 0.01408707,
+   "spearman": -0.0071
+  },
+  "h10_pred_cc_var": {
+   "n": 55874,
+   "mae": 0.0069666,
+   "rmse": 0.01069008,
+   "spearman": 0.0093
+  },
+  "h10_pred_pk_var": {
+   "n": 55874,
+   "mae": 0.00685569,
+   "rmse": 0.01004832,
+   "spearman": 0.0055
+  },
+  "h21_pred_cc_var": {
+   "n": 55875,
+   "mae": 0.0050742,
+   "rmse": 0.00792848,
+   "spearman": 0.0064
+  },
+  "h21_pred_pk_var": {
+   "n": 55875,
+   "mae": 0.0049457,
+   "rmse": 0.00701786,
+   "spearman": 0.0137
+  }
+ },
+ "labels": "development_only (historical diagnostics; not a strategy claim)",
+ "forbidden_claims": [
+  "implied-volatility prediction (no options data exists)"
+ ]
+}

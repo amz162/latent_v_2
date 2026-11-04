@@ -1,0 +1,173 @@
+{
+ "generationId": "task111-llm-multisource-gen1",
+ "symbol": "PPL",
+ "decisionTimestamp": "2026-11-04T14:10:16.975Z",
+ "dataCutoff": "2026-11-03",
+ "evidenceHash": "71529ce0",
+ "evidenceSchemaVersion": "latent_psx_llm_evidence_v1",
+ "outputSchemaVersion": "task111_llm_signal_v1",
+ "promptVersion": "task111-prompt-v1",
+ "provider": "zai",
+ "model": "glm-4.6",
+ "llmState": "ok",
+ "llmFailureReason": null,
+ "parseErrors": [],
+ "llmOutput": {
+  "symbol": "PPL",
+  "decision_timestamp": "2026-11-04T14:10:16.975Z",
+  "analysis_horizon": "10d",
+  "signal": "BUY",
+  "signal_status": "research_only",
+  "fundamental_view": "bullish",
+  "financial_pattern_view": "mixed",
+  "national_news_view": "neutral",
+  "international_news_view": "neutral",
+  "company_news_view": "bullish",
+  "technical_view": "bearish",
+  "price_pattern_view": "mixed",
+  "bullish_evidence": [
+   "Strong revenue growth YoY of 63.3% (Q4 FY26)",
+   "Improving revenue trend (0.087)",
+   "Repeated profitability improving (0.6)",
+   "Company news shows bullish developments: PPL boosts domestic hydrocarbon output, secures development lease extension for Sui gas field",
+   "Heavy-volume days with flat-to-rising price pattern confirmed historical (45.8% success rate)"
+  ],
+  "bearish_evidence": [
+   "Price below SMA30 (221.04 vs last close 212.91)",
+   "Death cross occurred 19 sessions ago",
+   "Net margin trend deteriorating (0.061)",
+   "Revenue growth decelerating (0.0026)",
+   "Recent price performance: -1.1% 5d, -3.8% 20d, -2.2% 60d",
+   "Heavy-volume days with flat-to-falling price pattern confirmed historical"
+  ],
+  "conflicting_evidence": [
+   "Strong fundamental growth vs. weak technical indicators",
+   "Improving revenue trend vs. revenue growth decelerating",
+   "Bullish company news vs. bearish technical signals"
+  ],
+  "missing_evidence": [
+   "No forward guidance or analyst estimates",
+   "No information on debt levels or cash flow",
+   "No information on valuation multiples (P/E, P/B, etc.)",
+   "No information on sector-specific developments or competitive landscape"
+  ],
+  "main_risks": [
+   "Technical weakness continues with price below SMA30",
+   "Revenue growth deceleration could continue",
+   "Net margin deterioration could impact profitability",
+   "High volatility (20d ann. vol 15.2%, 60d 22.8%) suggests uncertainty"
+  ],
+  "invalidation_conditions": [
+   "Price breaks below 210.00 (significant support level)",
+   "SMA30 continues to decline and price remains below it",
+   "Revenue growth turns negative in next quarter",
+   "Net margin falls below 40%"
+  ],
+  "llm_conviction_score": 65,
+  "evidence_quality_score_note": "Fundamental and technical data is complete but lacks forward-looking estimates and valuation metrics",
+  "calibrated_net_positive_probability": null,
+  "entry_reference": 212.91,
+  "stop_loss": 210,
+  "target_1": 218,
+  "target_2": 225,
+  "target_3": 230,
+  "risk_reward_ratio": null,
+  "decision_reason": "Despite bearish technical signals (death cross 19 sessions ago, price below SMA30), strong fundamental performance (63.3% YoY revenue growth, improving profitability) and bullish company news developments suggest potential for a technical rebound. The mixed evidence warrants a cautious buy with tight risk management given the conflicting signals.",
+  "source_references": [
+   "src:ohlcv_db",
+   "src:technical_local",
+   "src:price_patterns",
+   "src:volatility_local",
+   "src:financials_snapshot",
+   "src:news_company"
+  ],
+  "limitations": [
+   "No forward-looking estimates available",
+   "No valuation metrics provided",
+   "No sector-specific competitive analysis",
+   "High volatility suggests uncertainty in short-term price direction"
+  ]
+ },
+ "llmConvictionScore": 65,
+ "evidenceQualityScore": 85,
+ "evidenceQualityParts": {
+  "source_verification": 20,
+  "pit_availability": 8,
+  "data_completeness": 12,
+  "data_freshness": 15,
+  "financial_history_coverage": 6,
+  "news_corroboration": 4.2,
+  "technical_quality": 10,
+  "pattern_confirmation": 5,
+  "cross_source_consistency": 5
+ },
+ "calibratedNetPositiveProbability": null,
+ "finalSignal": "NO_TRADE",
+ "finalSignalReason": "LLM proposed BUY but the deterministic gate rejected executability (best_net_rr_1.42_below_min_1.5); downgraded to NO_TRADE. Despite bearish technical signals (death cross 19 sessions ago, price below SMA30), strong fundamental performance (63.3% YoY revenue growth, improving profitability) and bullish company news developments suggest potential for a technical rebound. The mixed evidence warrants a cautious buy with tight risk management given the conflicting signals.",
+ "riskReward": {
+  "configVersion": "task111-rr-v1",
+  "riskPolicyId": "atr14-1.5-1-2-3",
+  "riskPolicyVersion": "task77-v1",
+  "costSchedule": "psx_user_schedule_v2 (computeTradeCostsV2)",
+  "symbol": "PPL",
+  "cutoffDate": "2026-11-03",
+  "executionAssumption": "next_session_open_reference",
+  "entryReference": 212.91,
+  "atr14": 3.867857142857137,
+  "stopLoss": 207.1082142857143,
+  "stopRule": "atr14-1.5-1-2-3: entry - 1.5 x ATR14",
+  "targets": {
+   "tp1": 216.77785714285713,
+   "tp2": 220.64571428571426,
+   "tp3": 224.5135714285714
+  },
+  "targetRule": "atr14-1.5-1-2-3: TP1/2/3 = entry + 1/2/3 x ATR14 (platform policy, unmodified)",
+  "positionQty": 93,
+  "positionNotional": 19800.63,
+  "netGainAtTp1": null,
+  "netGainAtTp2": null,
+  "netGainAtTp3": null,
+  "netLossAtStop": -600.0179489524271,
+  "rr_to_tp1": 0.4065053542002732,
+  "rr_to_tp2": 0.9151525027968657,
+  "rr_to_tp3": 1.4237996513934579,
+  "risk_reward_status": "available",
+  "unavailableReason": null,
+  "costsAtTp2": {
+   "buy": {
+    "transactionValue": 19800.63,
+    "brokerage": 29.700945,
+    "psxFee": 0.069302205,
+    "nccplFee": 0.16038510300000003,
+    "cdcFee": 0.71282268,
+    "slippage": 0,
+    "sideTotal": 30.643454988
+   },
+   "totalBrokerage": 60.48102214285714,
+   "totalPSX": 0.14112238500000002,
+   "totalNCCPL": 0.3265975195714286,
+   "totalCDC": 1.4515445314285715,
+   "cgt": 107.913214285714,
+   "slippage": 0,
+   "totalCost": 170.31350086457115,
+   "grossPnl": 719.4214285714268,
+   "netPnl": 549.1079277068557,
+   "taxProfile": "ATL_15",
+   "cgtRate": 0.15
+  },
+  "noTrade": true,
+  "noTradeReasons": [
+   "best_net_rr_1.42_below_min_1.5"
+  ],
+  "netGainAtTP1": 243.9105088654278,
+  "netGainAtTP2": 549.1079277068557,
+  "netGainAtTP3": 854.3053465482833
+ },
+ "capitalProtection": {
+  "policyId": "task111-capital-protection-v1",
+  "triggered": []
+ },
+ "signalClass": "LLM_RESEARCH_SIGNAL",
+ "signalStatus": "research_only",
+ "analysisHorizon": "10d"
+}

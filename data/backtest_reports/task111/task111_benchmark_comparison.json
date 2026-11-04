@@ -1,0 +1,39 @@
+{
+ "report": "task111_benchmark_comparison",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:06:54Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "benchmarks": {
+  "cash": {
+   "strategy": "cash_no_trade",
+   "initial_capital": 100000.0,
+   "final_equity": 100000.0,
+   "roi_pct": 0.0,
+   "max_drawdown_pct": 0.0,
+   "trades": 0,
+   "note": "cash baseline \u2014 no market risk, no costs"
+  },
+  "buy_hold": {
+   "strategy": "buy_hold_equal_weight",
+   "initial_capital": 100000.0,
+   "final_equity": 117499.27,
+   "roi_pct": 17.499,
+   "total_costs": 8366.06,
+   "note": "equal-weight whole-share buy&hold at first common MA30-warm session, marked at frontier close, V2 costs"
+  },
+  "golden_cross": {
+   "initial_capital": 100000.0,
+   "final_equity": 60718.23,
+   "roi_pct": -39.282,
+   "max_drawdown": -87775.26,
+   "trades": 363,
+   "win_rate_pct": 27.0,
+   "profit_factor": 0.8701,
+   "total_costs": 78867.55,
+   "source": "task110 engine (unchanged)"
+  }
+ },
+ "verdict": "golden cross does NOT beat cash (negative edge, unchanged); overlays evaluated on drawdown/ROI trade-off; LLM strategies collect forward evidence",
+ "honest_language": "no strategy is presented as profitable unless its own realized numbers are positive"
+}

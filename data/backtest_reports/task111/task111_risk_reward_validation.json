@@ -1,0 +1,22 @@
+{
+ "report": "task111_risk_reward_validation",
+ "task": "task111",
+ "generated_at": "2026-11-04T14:11:37Z",
+ "git_head": "0df3b84",
+ "status": "completed",
+ "checks": {
+  "stop_below_entry": 23,
+  "targets_above_entry": 23,
+  "rr_engine_only": 23,
+  "whole_share_sizing": 23
+ },
+ "cost_engine": "computeSimTradeCosts -> computeTradeCostsV2 (psx_user_schedule_v2): brokerage+PSX+NCCPL+CDC+slippage+CGT, never double-counted",
+ "denominator_rule": "zero/negative/unavailable denominator -> ratio unavailable and setup invalid",
+ "thresholds_predeclared": [
+  1.0,
+  1.5,
+  2.0
+ ],
+ "selected_on_final_test": "NONE (no tuning)",
+ "llm_cannot_relax_rules": true
+}
