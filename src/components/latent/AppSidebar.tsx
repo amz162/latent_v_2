@@ -29,11 +29,13 @@ import {
   RadioTower,
   TrendingUp,
   Waves,
+  ListChecks,
+  FileBarChart,
 } from "lucide-react";
 
-// 11 sidebar items (Dashboard added at the top — was previously only reachable
-// via the BrandMark logo click in the top bar). Order matches the old top tab
-// strip with Dashboard prepended for prominence.
+// Sidebar items: Dashboard prepended at the top; research tabs (LLM Signals,
+// Model Performance) appended after Volatility Analytics. Order otherwise
+// matches the old top tab strip.
 const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { view: "dashboard", key: "nav.dashboard", icon: LayoutDashboard },
   { view: "fundamental_news", key: "nav.fundamental_news", icon: Newspaper },
@@ -49,6 +51,8 @@ const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ cl
   { view: "paper_monitor", key: "nav.paper_monitor", icon: RadioTower },
   { view: "golden_cross", key: "nav.golden_cross", icon: TrendingUp },
   { view: "volatility_analytics", key: "nav.volatility_analytics", icon: Waves },
+  { view: "llm_signals", key: "nav.llm_signals", icon: ListChecks },
+  { view: "model_report", key: "nav.model_report", icon: FileBarChart },
 ];
 
 export function AppSidebar() {
