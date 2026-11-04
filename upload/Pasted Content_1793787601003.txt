@@ -1,0 +1,1586 @@
+# TASK 110 — FORWARD VALIDATION, PSX GOLDEN CROSS (7/30 SMA), VOLATILITY ANALYTICS, OPTIONS/CONVEXITY RESEARCH & PRODUCTION DASHBOARDS
+
+## MASTER OBJECTIVE
+
+Repository: `amz162/latent_v_2`
+
+Latest reported GitHub HEAD:
+
+`342f10bf`
+
+Verify the actual GitHub `origin/main`, local HEAD, deployed revision and working tree before changing anything.
+
+Task 109 completed production verification and forward-evidence auditing.
+
+This task combines the remaining forward-validation work with a new technical research module requested by the user:
+
+1. Calculate 7-day and 30-day simple moving averages.
+2. Implement a 7/30 Golden Cross / Death Cross research strategy.
+3. Generate BUY/SELL decisions using actual historical PSX data.
+4. Simulate a cash-constrained portfolio.
+5. Print a complete daily account ledger and trade ledger.
+6. Calculate final portfolio performance after actual PSX V2 costs.
+7. Create a separate Volatility Analytics window/dashboard.
+8. Calculate rolling variance using close-to-close, Parkinson and Garman-Klass estimators.
+9. Calculate Bollinger Band Width (BBW), its delta and first/second-order derivatives.
+10. Calculate first and second derivatives of the selected rolling variance estimators.
+11. Build volatility-regime indicators for long-volatility/convexity research and volatility-compression/mean-reversion analysis.
+12. Audit the user's attached Python file `psx_simulator.py`.
+13. Integrate the validated indicators and dashboards into Latent.pk.
+14. Continue the frozen forward-validation campaign.
+15. Preserve all existing historical results, portfolio safety and shadow-only model status.
+
+**This is a research and portfolio-analysis task. It is not authorization for real-money trading, option selling, short selling or model promotion.**
+
+---
+
+# PART A — FROZEN HISTORICAL BASELINE
+
+Task 109 reported:
+
+- 57 forward decisions across three frozen generations.
+- 43 matured outcomes.
+- 13 wins and 30 losses.
+- Net realized P&L: -PKR 102,348.02.
+- Win rate: 30.2%.
+- Profit factor: 0.09.
+- Only `scale_out_50_25_25` recorded wins in the reported cohort.
+- The other two strategies had zero wins.
+- Model status: `not_promotable`.
+- Provider: `psxdata-api.fastapicloud.dev`.
+- Delayed quote snapshots and daily OHLC are available.
+- The provider does not provide verified 15-minute OHLC candles.
+- Provider source timestamps are not supplied.
+- Estimated market timestamp is derived using retrieval timestamp minus the observed 15-minute delay assumption.
+- Production worker uses a 120-second polling configuration.
+- A five-minute GitHub Actions fallback exists.
+- Shared WAL SQLite storage is used by the worker and website.
+- Model promotion gates remain collecting.
+- No real broker orders are allowed.
+- Unsupported short entries remain disabled.
+
+These are historical values. Recalculate the current state from actual stored records.
+
+Do not overwrite Task 100–109 artifacts.
+
+---
+
+# PART B — EXECUTION AND SAFETY RULES
+
+## B1. Repository inspection
+
+Inspect:
+
+- Actual Git HEAD.
+- `origin/main`.
+- Branch and working tree.
+- Task 107/108/109 scripts and artifacts.
+- Actual database and OHLCV schema.
+- Symbol master.
+- Exchange calendar.
+- Corporate-action coverage.
+- Provider adapter.
+- Production cost engine.
+- Investment Simulator.
+- Strategy Engine.
+- Paper Trade Monitor.
+- Worker process and scheduler.
+- Existing model registry.
+- Existing backtesting methodology.
+- User-provided `psx_simulator.py`.
+
+Do not assume any previous summary accurately describes the current code.
+
+## B2. Execution constraints
+
+Use resumable bounded execution.
+
+Build or extend:
+
+`scripts/task110_runner.py`
+
+Every expensive step must support:
+
+- Checkpointing.
+- Resume.
+- Deterministic output.
+- Progress reporting.
+- Per-symbol execution.
+- Failure logging.
+- No unnecessary repeated computations.
+
+Keep individual commands within the sandbox's execution limits.
+
+Do not stop after creating scripts or a plan. Execute every feasible phase.
+
+## B3. Financial and safety constraints
+
+- Default initial capital for the new 7/30 SMA research portfolio: PKR 100,000.
+- Make initial capital configurable.
+- No leverage.
+- No borrowed funds.
+- No real broker orders.
+- No unsupported short positions.
+- A SELL signal only closes an existing long position.
+- No unsupported options execution.
+- Use `psx_user_schedule_v2`.
+- Use the existing `computeSimTradeCosts` → `computeTradeCostsV2` pathway.
+- Apply the configured ATL/NON-ATL profiles where applicable.
+- No double-charging on multiple exit legs.
+- Whole-share position sizing.
+- Do not hardcode an unverified PSX lot size.
+- All historical and shadow results must remain distinct.
+- Do not promote a new strategy merely because it is better than existing losing strategies.
+
+---
+
+# PHASE 1 — AUDIT THE ATTACHED PYTHON FILE
+
+## File to inspect
+
+The user attached:
+
+`psx_simulator.py`
+
+If this file is available in the working environment, inspect the exact original source, preserve its checksum and audit it before modification.
+
+If it is not present in the coding environment, do not pretend it was audited. Report that the attachment must be supplied to the coding environment and continue with independent implementation where possible.
+
+Create an unchanged audit copy before making modifications.
+
+Record:
+
+- Original SHA-256.
+- File size.
+- Python version compatibility.
+- Dependencies.
+- Entry point.
+- Functions.
+- Global configuration.
+- Output paths.
+- Existing assumptions.
+
+## A. Moving-average implementation audit
+
+Inspect:
+
+- `add_moving_averages()`
+- `golden_cross_signals()`
+- The MA7 and MA30 calculations.
+- Crossover detection.
+- Initial signal handling.
+- Signal-to-execution timing.
+
+Specific potential issue to verify:
+
+The existing code initializes `prev_above` by inverting the first valid MA relationship. This can manufacture a BUY or SELL on the first valid MA row without an actual crossover.
+
+Do not create a signal until two consecutive valid observations establish a genuine crossover.
+
+Required signal definitions:
+
+- Golden Cross: previous MA7 <= previous MA30 and current MA7 > current MA30.
+- Death Cross: previous MA7 >= previous MA30 and current MA7 < current MA30.
+
+Handle exact equality and missing values consistently.
+
+## B. Look-ahead and execution audit
+
+The supplied code executes trades at the same closing price that produced the crossover.
+
+Inspect whether this creates unrealistic execution or look-ahead bias.
+
+A daily-close signal must not be filled at that same close unless an executable decision process genuinely existed before the closing price became known.
+
+For historical daily backtests:
+
+- Generate the signal after a completed daily bar.
+- Use the next valid session's open as the default hypothetical entry/exit reference.
+- Apply documented gap and slippage assumptions.
+- If the next valid execution price is missing, do not fabricate a fill.
+
+For the delayed shadow pipeline:
+
+- Respect actual retrieval time.
+- Do not claim an estimated source timestamp is an exchange-verified timestamp.
+- Use the first subsequently observable price under an explicitly defined delayed-observation simulation rule.
+- Label the result as delayed-data shadow simulation.
+
+## C. Portfolio-engine audit
+
+Inspect:
+
+- `run_portfolio()`
+- `print_ledger()`
+- Cash management.
+- Position management.
+- NAV calculation.
+- Open-position handling.
+- Trade history.
+- Return calculation.
+
+Specific issues to investigate:
+
+1. Function annotation declares a two-item tuple but the implementation returns five values.
+2. Fixed `LOT_SIZE = 500` may not be supported for all PSX instruments.
+3. Initial capital is hardcoded at PKR 1,000,000 rather than using the user's intended portfolio configuration.
+4. Brokerage, PSX/NCCPL/CDC fees, taxes and slippage are omitted.
+5. Fixed-size trading does not account for available cash or position risk beyond the simple cash check.
+6. There is no proper separate daily account ledger printed in the terminal.
+7. Unrealized and realized P&L are not fully reconciled.
+8. Performance metrics are incomplete.
+9. There is no explicit comparison to cash and buy-and-hold benchmarks.
+
+Audit every finding rather than assuming it is present in the actual project implementation.
+
+## D. Volatility-estimator audit
+
+Inspect:
+
+- `rolling_log_ret_variance()`
+- `parkinson_variance()`
+- `garman_klass_variance()`
+- `bollinger_band_width()`
+- `add_volatility_analytics()`
+- All derivative calculations.
+- Volatility-regime classification.
+- Window 2 plot.
+
+### Important annualization check
+
+The supplied implementation annualizes `Var_GK` by multiplying daily rolling variance by 252.
+
+The plot then calculates:
+
+`sqrt(Var_GK * 252)`
+
+This appears to multiply the annualization factor twice.
+
+Check and correct the units.
+
+If `Var_GK` is already annualized daily variance, annualized volatility should be:
+
+`sqrt(Var_GK) * 100`
+
+Do not multiply by 252 again.
+
+Verify Parkinson and close-to-close units consistently.
+
+### Other audit checks
+
+- Garman-Klass can produce small negative estimates in some samples; do not silently hide invalid values through `clip()` without recording diagnostics.
+- Parkinson variance must be annualized exactly once.
+- Validate high, low, open and close before taking logarithms.
+- Verify positive prices and high >= low.
+- Verify the assumptions of each estimator.
+- Ensure first and second derivatives account for actual trading-session spacing.
+- Do not label BBW acceleration as literal implied-volatility convexity.
+- Do not claim GK versus Parkinson difference proves a directional trend.
+- Remove unsupported claims from chart annotations.
+
+## E. Synthetic-data and output audit
+
+The supplied file generates stylized OHLCV with a GARCH-like simulation.
+
+Do not present those simulated prices as actual PSX market results.
+
+Use:
+
+- Synthetic data only for isolated software tests.
+- Real verified PSX database data for performance and market conclusions.
+
+Inspect:
+
+- Hardcoded ticker.
+- 60-day history.
+- Global random number generator.
+- Weekday-only date calendar.
+- Hardcoded file paths.
+- Suppressed warnings.
+- Missing output-directory creation.
+- Multi-symbol behavior.
+- Chart rendering and memory cleanup.
+- Missing input-data validation.
+
+Do not suppress meaningful warnings silently.
+
+The production data must use the actual PSX trading calendar, not generic weekday dates.
+
+## F. Audit output
+
+Create:
+
+- `task110_python_file_audit.json`
+- `task110_python_file_findings.csv`
+- `task110_python_file_original_checksum.json`
+- `task110_python_file_test_report.json`
+
+Classify findings:
+
+- `critical`
+- `high`
+- `medium`
+- `low`
+- `informational`
+
+For each issue include:
+
+- Exact source location.
+- Existing behavior.
+- Why it matters.
+- Correct behavior.
+- Whether fixed.
+- Test demonstrating the fix.
+
+Preserve the original file and place the corrected implementation in a separate versioned module or a documented replacement.
+
+---
+
+# PHASE 2 — DATA SOURCE AND OHLCV READINESS
+
+Use the actual Latent.pk market-data database.
+
+Inspect the existing PSX OHLCV schema.
+
+Determine:
+
+- Available instruments.
+- Historical dates.
+- Valid bar counts.
+- Duplicate records.
+- Missing trading sessions.
+- Raw versus adjusted price history.
+- Provider provenance.
+- Current latest date.
+- Suspended or stale symbols.
+- Corporate-action limitations.
+
+The 7/30 indicators must use completed and valid daily observations.
+
+Use the existing instrument master and historical symbol mapping.
+
+Do not use generic `pd.bdate_range()` as the PSX exchange calendar.
+
+Use actual exchange-session dates where verified.
+
+## Price adjustment rules
+
+Prefer genuine verified adjusted closing prices where available.
+
+If adjusted close is unavailable:
+
+- Use the existing documented raw-price field.
+- Report `raw_price_series`.
+- Do not pretend it is corporate-action adjusted.
+- Detect unexplained discontinuities.
+- Flag stocks whose data quality makes indicator calculations unreliable.
+
+Never silently mix adjusted and unadjusted OHLC series.
+
+Do not generate fake missing prices.
+
+## Historical coverage requirements
+
+For each symbol report:
+
+- Valid daily observations.
+- First valid date.
+- Latest date.
+- Missing sessions.
+- Data-quality state.
+- Price-adjustment state.
+
+MA30 requires sufficient warmup history.
+
+Use longer historical coverage where possible to evaluate whether the 7/30 strategy has stability across different market conditions.
+
+Create:
+
+- `task110_market_data_inventory.json`
+- `task110_symbol_history_coverage.csv`
+- `task110_price_adjustment_report.json`
+- `task110_exchange_calendar_validation.json`
+
+---
+
+# PHASE 3 — IMPLEMENT 7-DAY AND 30-DAY MOVING AVERAGES
+
+Implement a reusable indicator module.
+
+Suggested:
+
+`src/lib/latent/indicators/moving-averages.ts`
+
+or the appropriate existing project structure.
+
+Required indicators:
+
+- `MA7`: seven completed PSX trading-session simple moving average.
+- `MA30`: thirty completed PSX trading-session simple moving average.
+
+Formula:
+
+\[
+MA_n(t)=\frac{1}{n}\sum_{i=0}^{n-1}Close_{t-i}
+\]
+
+Use only data available by the end of the decision session.
+
+Document:
+
+- Which price field is used.
+- Whether it is adjusted or raw.
+- Session-counting rules.
+- Missing-data behavior.
+- Warmup behavior.
+
+Do not fill missing prices with zero.
+
+Do not generate a signal when there are insufficient valid observations.
+
+Use a separate version if EMA is explored. The required default is SMA7/SMA30.
+
+## Output fields
+
+For every symbol and decision date:
+
+- Close.
+- MA7.
+- MA30.
+- MA7 minus MA30.
+- MA relationship.
+- Previous MA relationship.
+- Crossover signal.
+- Signal timestamp.
+- Data cutoff.
+- Price quality.
+- Indicator version.
+
+Create:
+
+`task110_ma_7_30_report.json`
+
+`task110_ma_7_30_signals.csv`
+
+Add deterministic mathematical tests for rolling averages and crossover boundaries.
+
+---
+
+# PHASE 4 — IMPLEMENT THE 7/30 GOLDEN CROSS / DEATH CROSS STRATEGY
+
+Create a separate research strategy:
+
+`golden_cross_7_30_v1`
+
+Name it:
+
+**7/30 SMA Crossover — Golden Cross Research Strategy**
+
+The user-requested periods are 7 and 30 sessions. Do not silently replace them with another MA period.
+
+Be clear in documentation that this is a 7/30 crossover configuration, not an assumption that every textbook or market convention uses these same periods.
+
+## Signal rules
+
+### BUY — Golden Cross
+
+Signal occurs when:
+
+- Previous valid MA7 <= previous valid MA30.
+- Current valid MA7 > current valid MA30.
+- Both observations use completed valid PSX sessions.
+
+### SELL — Death Cross
+
+Signal occurs when:
+
+- Previous valid MA7 >= previous valid MA30.
+- Current valid MA7 < current valid MA30.
+
+A SELL signal closes an existing long position.
+
+A SELL signal while flat does not open a short position.
+
+No short selling.
+
+## Additional rules
+
+- No artificial first-row signal.
+- No repeated BUY signal on every day MA7 remains above MA30.
+- No repeated SELL signal on every day MA7 remains below MA30.
+- Handle equality consistently.
+- Handle gaps in data.
+- Do not execute signals on incomplete candles.
+- Do not use future prices in the indicator.
+- Use the actual exchange calendar.
+
+## Execution timing
+
+For daily historical backtests:
+
+- Signal is generated after the completed daily close.
+- Next valid session's open is the default hypothetical fill reference.
+- Apply the V2 cost model and documented slippage.
+- Apply actual available position sizing.
+- Do not use same-close execution to obtain an artificial advantage.
+
+For new delayed shadow observations:
+
+- Record decision time.
+- Record retrieval time.
+- Use frozen delayed observation semantics.
+- Label hypothetical execution appropriately.
+- Never claim live fills.
+
+Use a state machine:
+
+- `flat`
+- `long`
+- `exit_pending`
+- `closed`
+
+The strategy must not create duplicate positions for one crossover event.
+
+Deliver:
+
+- `task110_golden_cross_signal_report.json`
+- `task110_golden_cross_trade_events.csv`
+- `task110_golden_cross_state_tests.json`
+
+---
+
+# PHASE 5 — BUILD CASH-CONSTRAINED PORTFOLIO SIMULATION
+
+Use default starting capital:
+
+`PKR 100,000`
+
+Make it configurable.
+
+Use the project's established portfolio-simulation conventions where possible.
+
+The Golden Cross strategy must be evaluated as a separate research candidate and must not overwrite any previous Task 104 portfolio simulations.
+
+## Position management
+
+- No leverage.
+- No negative cash.
+- No borrowing.
+- No short positions.
+- Whole shares.
+- Actual available cash.
+- Configurable maximum exposure.
+- Configurable maximum concurrent positions for the multi-symbol version.
+- Deterministic signal ordering.
+- No future-return-based ranking.
+- No hardcoded 500-share lot size unless verified for the instrument and date.
+
+## Position sizing
+
+Compare:
+
+- 5% of account equity per trade.
+- 10% per trade.
+- 20% per trade.
+- 25% per trade.
+- Equal allocation across a configurable number of simultaneous positions.
+- Existing approved risk-based sizing where supported.
+
+All position sizes must respect available cash.
+
+Do not use position sizing to hide a negative expected return.
+
+## Cost engine
+
+Use:
+
+`computeSimTradeCosts` → `computeTradeCostsV2`
+
+Default:
+
+`psx_user_schedule_v2`
+
+Include:
+
+- Brokerage.
+- PSX fees.
+- NCCPL.
+- CDC.
+- Applicable taxes.
+- Slippage assumptions.
+- Entry and exit charges.
+
+Run ATL and NON-ATL scenarios where supported.
+
+Keep gross and net returns separate.
+
+## Required daily ledger
+
+Print a daily account-level ledger.
+
+Every trading day must have a row, even when no trade occurs.
+
+Required fields:
+
+- Date.
+- Symbol or portfolio.
+- Close.
+- MA7.
+- MA30.
+- Signal.
+- Action taken.
+- Entry/exit reference.
+- Quantity.
+- Position after action.
+- Cash balance.
+- Invested capital.
+- Realized P&L.
+- Unrealized P&L.
+- Costs for the day.
+- Total net P&L.
+- Portfolio equity.
+- Current drawdown.
+
+Also produce an individual trade ledger:
+
+- Signal date.
+- Execution date.
+- Symbol.
+- BUY/SELL.
+- Signal reason.
+- Entry price.
+- Exit price.
+- Shares.
+- Gross P&L.
+- Total costs.
+- Net P&L.
+- Return percentage.
+- Holding sessions.
+- Win/loss.
+- Closing reason.
+
+The daily ledger must be printed to the CLI and saved as CSV/JSON.
+
+## Final portfolio performance
+
+Report:
+
+- Initial capital.
+- Final cash.
+- Open-position market value.
+- Final equity.
+- Total realized net P&L.
+- Unrealized P&L.
+- Total net P&L.
+- ROI.
+- CAGR only if the time horizon justifies it.
+- Maximum drawdown.
+- Number of trades.
+- Win rate.
+- Average win.
+- Average loss.
+- Profit factor.
+- Expectancy.
+- Total fees and taxes.
+- Exposure.
+- Cash utilization.
+- Turnover.
+- Longest loss streak.
+- Benchmark return.
+
+Compare against:
+
+1. Cash/no-trade.
+2. Buy-and-hold for the same eligible symbol/universe and historical period.
+3. Existing technical-only baseline.
+4. New 7/30 crossover strategy.
+
+No historical benchmark may use information from future-listed or delisted symbols incorrectly.
+
+## Return integrity
+
+Calculate:
+
+\[
+ROI=\frac{EndingEquity-InitialCapital}{InitialCapital}\times100
+\]
+
+Do not call per-trade expectancy the account ROI.
+
+Do not count pending MTM as realized profit.
+
+Create:
+
+- `task110_golden_cross_daily_ledger.csv`
+- `task110_golden_cross_trade_ledger.csv`
+- `task110_golden_cross_portfolio_results.json`
+- `task110_golden_cross_equity_curve.csv`
+- `task110_golden_cross_drawdown.json`
+- `task110_golden_cross_benchmark_comparison.json`
+
+---
+
+# PHASE 6 — VOLATILITY ANALYTICS WINDOW
+
+Create a separate Volatility Analytics screen/window within Latent.pk.
+
+It must be distinct from the Golden Cross window.
+
+The screen must use real verified OHLCV data.
+
+Do not use synthetic prices for market conclusions.
+
+Support configurable rolling windows, defaulting to:
+
+- Variance window: 10 sessions.
+- BBW window: 20 sessions.
+- Bollinger multiplier: 2.0.
+- Annualization factor: 252 trading sessions.
+
+Allow the user to choose symbol, date range and window size.
+
+## A. Close-to-close variance
+
+Calculate daily log return:
+
+\[
+r_t=\ln(C_t/C_{t-1})
+\]
+
+Calculate rolling sample variance and annualize:
+
+\[
+Var_{CC,t}=252\times Var(r_t)
+\]
+
+Show:
+
+- Daily variance.
+- Annualized variance.
+- Annualized volatility.
+- Rolling window.
+- Valid sample count.
+
+## B. Parkinson variance
+
+Use genuine high and low values.
+
+\[
+Var_{P}=
+\frac{1}{4\ln(2)}
+\operatorname{Mean}\left[\ln(H_t/L_t)^2\right]
+\]
+
+Annualize exactly once:
+
+\[
+Var_{P,ann}=252\times Var_{P}
+\]
+
+Document the estimator's assumptions and limitations, including drift and jump treatment.
+
+## C. Garman-Klass variance
+
+Use:
+
+\[
+Var_{GK}=
+\operatorname{Mean}\left[
+0.5\ln(H_t/L_t)^2
+-(2\ln(2)-1)\ln(C_t/O_t)^2
+\right]
+\]
+
+Annualize exactly once:
+
+\[
+Var_{GK,ann}=252\times Var_{GK}
+\]
+
+Verify units and report estimator limitations.
+
+Do not silently clip negative estimator values in the underlying research data.
+
+If a negative estimate occurs:
+
+- Record it.
+- Report its frequency.
+- Diagnose data or estimator assumptions.
+- Avoid taking the square root of a negative value.
+- Show volatility as unavailable for that observation where appropriate.
+
+## D. Bollinger Band Width
+
+Calculate:
+
+\[
+Middle_t=SMA_{20}(C)
+\]
+
+\[
+Upper_t=Middle_t+2\sigma_{20}
+\]
+
+\[
+Lower_t=Middle_t-2\sigma_{20}
+\]
+
+\[
+BBW_t=\frac{Upper_t-Lower_t}{Middle_t}
+\]
+
+Use consistent price basis and document the standard-deviation convention.
+
+## E. First and second BBW derivatives
+
+First difference:
+
+\[
+BBW_{d1,t}=BBW_t-BBW_{t-1}
+\]
+
+Second difference:
+
+\[
+BBW_{d2,t}=BBW_{d1,t}-BBW_{d1,t-1}
+\]
+
+These are discrete derivatives per valid trading session, not literal continuous-time derivatives.
+
+Account for missing sessions and irregular observations.
+
+Do not calculate a derivative across a missing-data gap as though one regular period passed.
+
+## F. Variance derivatives
+
+For each selected rolling variance estimator, calculate:
+
+- Close-to-close variance first difference.
+- Close-to-close variance second difference.
+- Parkinson variance first difference.
+- Parkinson variance second difference.
+- Garman-Klass variance first difference.
+- Garman-Klass variance second difference.
+
+Provide the relevant derivatives for both daily and annualized series where useful, without mixing units.
+
+Document:
+
+- First-order change.
+- Second-order change.
+- Window length.
+- Time basis.
+- Annualization.
+- Missing-value treatment.
+
+Create:
+
+- `task110_volatility_indicators_report.json`
+- `task110_volatility_series.csv`
+- `task110_volatility_derivatives.csv`
+- `task110_estimator_comparison.json`
+
+---
+
+# PHASE 7 — VOLATILITY REGIME AND STRATEGY GUIDANCE
+
+Create an interpretable volatility regime module.
+
+Possible states:
+
+- `long_vol_watch`
+- `volatility_expansion`
+- `volatility_compression`
+- `short_vol_watch`
+- `mean_reversion_watch`
+- `transition`
+- `wait`
+- `insufficient_data`
+
+## A. Long-volatility / convexity watch
+
+Potential research condition:
+
+- BBW is expanding.
+- First BBW derivative is positive.
+- Second BBW derivative is positive.
+- Parkinson/GK variance confirms expansion where reliable.
+- Signal persists beyond a single noisy observation.
+
+Output:
+
+`LONG_VOL_WATCH`
+
+This is a volatility-expansion indication, not a guarantee that buying options will be profitable.
+
+## B. Volatility-compression watch
+
+Potential research condition:
+
+- BBW is contracting.
+- First derivative is negative.
+- Second derivative is negative.
+- Realized volatility estimators support compression.
+- Signal persists beyond a single noisy observation.
+
+Output:
+
+`VOL_COMPRESSION_WATCH`
+
+## C. Mean reversion is distinct from short volatility
+
+Do not conflate:
+
+- Directional price mean reversion.
+- Volatility compression.
+- Short-option premium selling.
+
+These represent different hypotheses and risks.
+
+A price mean-reversion indication must use price/return information.
+
+A volatility-compression indication must use realized volatility measures.
+
+A short-volatility options strategy requires actual option-market evidence.
+
+## D. Critical option-market safeguards
+
+Realized variance and BBW do not measure implied volatility.
+
+An instrument may have expanding realized volatility but already be priced with expensive implied volatility.
+
+Likewise, falling realized volatility alone does not prove that option premium should be sold.
+
+Before any option-specific signal is enabled, verify current legitimate PSX instrument availability and market access.
+
+Required data where supported:
+
+- Option symbol/underlying.
+- Expiry.
+- Strike.
+- Call/put.
+- Bid.
+- Ask.
+- Last price.
+- Implied volatility.
+- Open interest.
+- Volume.
+- Contract multiplier.
+- Settlement rules.
+- Margin requirements.
+- Trading permissions.
+
+If these data are unavailable:
+
+- Display long-convexity and short-volatility regimes as research watches only.
+- Do not claim executable option opportunities.
+- Do not generate order instructions.
+- Do not assume retail access to short options.
+- Do not assume options contracts exist for every PSX stock.
+- Preserve capital-protection rules.
+
+Verify all market-product and regulatory assumptions with current authoritative sources before implementation.
+
+## E. GK versus Parkinson interpretation
+
+Do not claim that:
+
+`Garman-Klass > Parkinson`
+
+proves a positive directional trend.
+
+These estimators are realized-variance estimators with different assumptions and components; their difference is not a direct directional indicator.
+
+Any interpretation must be mathematically documented and tested.
+
+Deliver:
+
+- `task110_volatility_regimes.json`
+- `task110_strategy_guidance_rules.json`
+- `task110_option_market_availability.json`
+- `task110_volatility_signal_validation.json`
+
+---
+
+# PHASE 8 — CREATE TWO SEPARATE DASHBOARD WINDOWS
+
+The user specifically wants two distinct analytical windows.
+
+Build these inside the existing web application using its current UI architecture.
+
+Do not create an unrelated standalone desktop application unless the project already requires it.
+
+## WINDOW 1 — GOLDEN CROSS TRADING SYSTEM
+
+Name:
+
+`Golden Cross — 7/30 SMA`
+
+Display:
+
+1. Selected stock/universe.
+2. Close price.
+3. MA7.
+4. MA30.
+5. Golden Cross BUY markers.
+6. Death Cross SELL markers.
+7. Current signal state.
+8. Signal date.
+9. Hypothetical execution price.
+10. Cash balance.
+11. Current holdings.
+12. Daily portfolio equity.
+13. Drawdown.
+14. Performance summary.
+
+Below the chart, show the complete daily ledger.
+
+Show the trade ledger separately.
+
+Include:
+
+- Initial capital.
+- Final portfolio equity.
+- ROI.
+- Realized P&L.
+- Unrealized P&L.
+- Win rate.
+- Profit factor.
+- Maximum drawdown.
+- Total transaction costs.
+
+Every chart and number must come from actual API/database results.
+
+Display an explicit `RESEARCH / BACKTEST ONLY` notice.
+
+Do not give the appearance of a promoted or profitable strategy where the evidence is negative or insufficient.
+
+## WINDOW 2 — VOLATILITY ANALYTICS
+
+Name:
+
+`Volatility & Convexity Analytics`
+
+Separate visual panels for:
+
+1. Close-to-close variance.
+2. Parkinson variance.
+3. Garman-Klass variance.
+4. Annualized volatility.
+5. Bollinger Band Width.
+6. BBW first derivative.
+7. BBW second derivative.
+8. Variance first derivative.
+9. Variance second derivative.
+10. Volatility regime classification.
+11. Long-volatility research watch.
+12. Volatility-compression watch.
+13. Short-volatility research watch, if only descriptive.
+
+Show:
+
+- Symbol.
+- Current market-data date.
+- Data freshness.
+- Estimator window.
+- Annualization method.
+- Last valid measurement.
+- Latest regime.
+- Signal reason.
+- Confidence/evidence status.
+
+Clearly distinguish historical realized volatility from implied options volatility.
+
+## Navigation
+
+Add both windows to the existing AI Models/Strategy/Analytics navigation without removing or breaking the Paper Trade Monitor.
+
+Mobile and desktop layouts must remain responsive.
+
+Create:
+
+- `task110_golden_cross_ui_report.json`
+- `task110_volatility_ui_report.json`
+- `task110_dashboard_api_report.json`
+- `task110_browser_validation.json`
+
+---
+
+# PHASE 9 — TEST AND VALIDATE THE NEW STRATEGIES
+
+The 7/30 crossover is a new research candidate, not a validated production strategy.
+
+Evaluate it chronologically.
+
+Do not reuse Task 100–109 final-test observations as newly untouched evaluation data.
+
+Separate:
+
+- Historical development backtest.
+- Validation results.
+- Genuinely new forward shadow observations.
+
+Required tests:
+
+- 7-day MA mathematics.
+- 30-day MA mathematics.
+- Insufficient warmup.
+- Missing data.
+- Equal moving averages.
+- Genuine Golden Cross.
+- Genuine Death Cross.
+- No artificial first signal.
+- No repeated cross signal.
+- Signal-after-close execution.
+- Next-session execution.
+- Gap handling.
+- Cash constraints.
+- Whole-share quantity.
+- V2 costs.
+- Realized/unrealized P&L.
+- Account ledger identity.
+- No short entries.
+- Benchmark comparison.
+
+For the volatility module:
+
+- Parkinson formula.
+- Garman-Klass formula.
+- Close-to-close variance.
+- Annualization exactly once.
+- Negative/invalid estimator diagnostics.
+- BBW formula.
+- First derivative.
+- Second derivative.
+- Missing session gaps.
+- Zero/invalid prices.
+- Regime transition.
+- No option execution from realized-volatility-only data.
+
+Run the research strategy against:
+
+- Cash/no-trade.
+- Buy-and-hold.
+- Existing technical strategies where the cohort is comparable.
+
+Report:
+
+- MAE/RMSE only if prediction targets are actually involved.
+- ROI.
+- Net expectancy.
+- Win rate.
+- Profit factor.
+- Drawdown.
+- Confidence intervals where possible.
+- Number of independent dates.
+- Trade count.
+- Costs.
+- Coverage.
+
+Do not declare the strategy profitable solely because it produced a positive sample result.
+
+Deliver:
+
+- `task110_golden_cross_backtest_validation.json`
+- `task110_volatility_regime_validation.json`
+- `task110_strategy_baseline_comparison.json`
+- `task110_statistical_robustness.json`
+
+---
+
+# PHASE 10 — CONTINUE THE EXISTING FORWARD VALIDATION
+
+The Task 109 promotion evidence gate remains separate from this new indicator strategy.
+
+Inspect the original forward generations and add the new 7/30 strategy only as a separate research/shadow experiment.
+
+Do not modify old model predictions.
+
+For the new strategy:
+
+- Generate signals from completed daily bars.
+- Record the data cutoff.
+- Record MA7 and MA30.
+- Record crossover type.
+- Record decision timestamp.
+- Record hypothetical execution assumptions.
+- Track outcome maturity.
+- Use V2 costs.
+- Keep the strategy `research_only`.
+- Do not merge it with existing model predictions.
+
+For volatility research:
+
+- Record BBW.
+- Record derivative values.
+- Record variance estimators.
+- Record regime label.
+- Record market timestamp.
+- Record retrieval timestamp.
+- Record data provenance.
+- Track subsequent realized volatility for evaluation.
+
+No options positions or short-volatility trades may be simulated as executable positions without verified contract data and permissions.
+
+Do not retrain or optimize using these future outcomes.
+
+Recalculate:
+
+- Five-session evidence.
+- Ten-session evidence.
+- Twenty-one-session evidence.
+- Number of independent decision dates.
+- Number of matured observations.
+- Net results after costs.
+
+If insufficient future sessions exist, use:
+
+`awaiting_future_observations`
+
+Create:
+
+- `task110_forward_cross_signals.json`
+- `task110_forward_volatility_observations.json`
+- `task110_forward_maturity.json`
+- `task110_research_status.json`
+
+---
+
+# PHASE 11 — PRODUCTION SAFETY, REGISTRY AND PROMOTION
+
+The existing models remain `not_promotable`.
+
+The new 7/30 crossover strategy must initially be:
+
+`research_only`
+
+The volatility regime module must initially be:
+
+`research_only`
+
+Do not add either to production consensus.
+
+Do not automatically convert:
+
+- Golden Cross into a real BUY order.
+- Death Cross into a short entry.
+- LONG VOL watch into an options purchase.
+- SHORT VOL watch into a short-option order.
+
+The application must preserve:
+
+- No real orders.
+- No automatic model promotion.
+- No unsupported short entries.
+- No unverified options execution.
+- No confidence-as-win-probability claims.
+- No positive performance claims without net-of-cost evidence.
+
+Create explicit registry statuses and UI tooltips.
+
+---
+
+# PHASE 12 — CONTINUE THE ORIGINAL TASK 110 FORWARD-EVIDENCE AUDIT
+
+Complete all still-relevant items from the original Task 110 plan.
+
+Verify:
+
+1. Actual Git/deployed revision.
+2. First genuinely scheduled daily pipeline run.
+3. At least three complete in-session provider-delay measurement sessions, if they exist.
+4. Actual provider delay distribution.
+5. Actual application polling latency.
+6. Genuine new PSX sessions.
+7. Independent forward decision dates.
+8. Five-session maturity.
+9. Ten-session maturity.
+10. Twenty-one-session maturity.
+11. Forward win rate and net expectancy.
+12. Realized P&L and MTM separately.
+13. Current worker health.
+14. Scheduler execution.
+15. Paper Trade Monitor/API consistency.
+16. Backup/storage health.
+17. Historical artifact immutability.
+18. Model promotion evidence.
+
+If the required new sessions have not yet occurred, mark them pending. Do not claim a full forward validation is complete.
+
+Create:
+
+- `task110_original_forward_baseline.json`
+- `task110_provider_delay_measurements.json`
+- `task110_forward_session_coverage.json`
+- `task110_original_model_evidence.json`
+- `task110_original_promotion_decision.json`
+
+---
+
+# PHASE 13 — FINAL DOCUMENTATION AND RECONCILIATION
+
+Create or update:
+
+- `README.md`
+- `docs/task110-golden-cross-7-30.md`
+- `docs/task110-daily-portfolio-ledger.md`
+- `docs/task110-volatility-analytics.md`
+- `docs/task110-parkinson-garman-klass.md`
+- `docs/task110-volatility-regime-interpretation.md`
+- `docs/task110-python-file-audit.md`
+- `docs/task110-forward-evidence.md`
+- `docs/task110-research-only-policy.md`
+
+Ensure documentation explains:
+
+- 7/30 SMA definitions.
+- Signal timing.
+- Execution timing.
+- Daily ledger.
+- Portfolio equity.
+- Gross versus net P&L.
+- Transaction cost methodology.
+- Variance estimators.
+- Annualization units.
+- BBW derivatives.
+- Volatility regime assumptions.
+- Implied versus realized volatility.
+- Options-market data requirements.
+- Limitations of 15-minute delayed snapshots.
+- Why historical data cannot prove exact intraday execution.
+
+Do not claim options tradability or short-premium opportunities without verified market access and contract data.
+
+---
+
+# PHASE 14 — AUTOMATED QA
+
+Run:
+
+- Existing Python test suites.
+- New Python file audit tests.
+- MA7/MA30 deterministic tests.
+- Golden Cross signal tests.
+- Portfolio-ledger tests.
+- V2 cost parity.
+- Variance-estimator tests.
+- Derivative tests.
+- Volatility-regime tests.
+- No-short/no-options-execution tests.
+- TypeScript compilation.
+- Production build.
+- API tests.
+- Database integrity checks.
+- Headless browser tests.
+- Existing CI workflows.
+
+Check that:
+
+- Task 100–109 artifacts remain unchanged.
+- Historical realized P&L remains unchanged.
+- Existing shadow generations remain immutable.
+- No duplicate signal or paper position is introduced.
+- New experimental strategy is not promoted.
+- Existing Paper Trade Monitor still works.
+
+Do not claim skipped tests passed.
+
+---
+
+# PHASE 15 — REQUIRED FINAL ARTIFACTS
+
+Create:
+
+`data/backtest_reports/task110/`
+
+Required artifacts:
+
+## Existing forward evidence
+
+1. `task110_baseline_inventory.json`
+2. `task110_deployment_revision_audit.json`
+3. `task110_forward_ledger_reconciliation.json`
+4. `task110_first_scheduled_run.json`
+5. `task110_provider_delay_measurement.json`
+6. `task110_three_session_evidence.csv`
+7. `task110_poll_latency_distribution.json`
+8. `task110_forward_session_coverage.json`
+9. `task110_5_session_maturity.json`
+10. `task110_10_session_maturity.json`
+11. `task110_21_session_maturity.json`
+12. `task110_forward_performance.json`
+13. `task110_evidence_gate_review.json`
+14. `task110_promotion_decision.json`
+
+## Python file audit
+
+15. `task110_python_file_audit.json`
+16. `task110_python_file_findings.csv`
+17. `task110_python_file_original_checksum.json`
+18. `task110_python_file_test_report.json`
+
+## Moving averages and Golden Cross
+
+19. `task110_market_data_inventory.json`
+20. `task110_symbol_history_coverage.csv`
+21. `task110_price_adjustment_report.json`
+22. `task110_exchange_calendar_validation.json`
+23. `task110_ma_7_30_report.json`
+24. `task110_ma_7_30_signals.csv`
+25. `task110_golden_cross_signal_report.json`
+26. `task110_golden_cross_trade_events.csv`
+27. `task110_golden_cross_state_tests.json`
+28. `task110_golden_cross_daily_ledger.csv`
+29. `task110_golden_cross_trade_ledger.csv`
+30. `task110_golden_cross_portfolio_results.json`
+31. `task110_golden_cross_equity_curve.csv`
+32. `task110_golden_cross_drawdown.json`
+33. `task110_golden_cross_benchmark_comparison.json`
+
+## Volatility Analytics
+
+34. `task110_volatility_indicators_report.json`
+35. `task110_volatility_series.csv`
+36. `task110_volatility_derivatives.csv`
+37. `task110_estimator_comparison.json`
+38. `task110_volatility_regimes.json`
+39. `task110_strategy_guidance_rules.json`
+40. `task110_option_market_availability.json`
+41. `task110_volatility_signal_validation.json`
+
+## UI and research integration
+
+42. `task110_golden_cross_ui_report.json`
+43. `task110_volatility_ui_report.json`
+44. `task110_dashboard_api_report.json`
+45. `task110_browser_validation.json`
+46. `task110_golden_cross_backtest_validation.json`
+47. `task110_volatility_regime_validation.json`
+48. `task110_strategy_baseline_comparison.json`
+49. `task110_statistical_robustness.json`
+50. `task110_forward_cross_signals.json`
+51. `task110_forward_volatility_observations.json`
+52. `task110_forward_maturity.json`
+53. `task110_research_status.json`
+
+## Production, integrity and QA
+
+54. `task110_capital_protection_report.json`
+55. `task110_model_registry_audit.json`
+56. `task110_cost_parity_report.json`
+57. `task110_historical_integrity.json`
+58. `task110_api_validation.json`
+59. `task110_test_summary.json`
+60. `task110_security_audit.json`
+61. `task110_remaining_blockers.json`
+62. `task110_final_summary.json`
+
+If a report cannot be completed, generate a structured status with the exact blocker rather than a fake success artifact.
+
+Every report must identify its source, generation timestamp, actual sample count, calculation methodology, status and limitations.
+
+---
+
+# FINAL QUESTIONS
+
+Answer using actual verified evidence:
+
+## Existing forward evidence
+
+1. What is the latest GitHub HEAD and deployed revision?
+2. Has the daily scheduled pipeline run successfully?
+3. How many complete provider-delay measurement sessions exist?
+4. What is the actual application polling latency?
+5. What is the provider-delay distribution?
+6. How many genuinely new PSX sessions have been observed?
+7. How many forward trades have matured?
+8. What are the 5/10/21-session maturity counts?
+9. What is updated net realized P&L?
+10. What is unrealized MTM separately?
+11. Are models still not-promotable?
+
+## Python file audit
+
+12. What defects were found in `psx_simulator.py`?
+13. Was the first artificial MA signal corrected?
+14. Was same-close execution bias removed?
+15. Was the GK annualization error corrected?
+16. Are Parkinson, GK and close-to-close variance in consistent units?
+17. Are the volatility interpretations mathematically defensible?
+18. Was the daily ledger completed?
+19. Are actual PSX costs included?
+20. Is real database data used instead of simulated prices?
+
+## Golden Cross strategy
+
+21. What are the latest MA7 and MA30 values for selected symbols?
+22. Which symbols generated a genuine Golden Cross?
+23. Which symbols generated a Death Cross?
+24. How many BUY and SELL events occurred?
+25. What is the daily account ledger?
+26. What is the final PKR 100,000 portfolio equity?
+27. What is the net ROI after V2 costs?
+28. What is maximum drawdown?
+29. What is win rate?
+30. What is profit factor?
+31. How does it compare with cash and buy-and-hold?
+32. Is the strategy development-only, research-only or eligible for review?
+
+## Volatility Analytics
+
+33. What are the latest close-to-close variance values?
+34. What are Parkinson variance and Garman-Klass variance?
+35. Are all variance values correctly annualized?
+36. What is current BBW?
+37. What are BBW first and second derivatives?
+38. What are variance first and second derivatives?
+39. What volatility regime is indicated for each selected symbol?
+40. Is it only a realized-volatility watch or is genuine option implied-volatility data available?
+41. Is long-convexity or short-volatility execution actually supported?
+42. What are the limitations of each conclusion?
+
+## Production and safety
+
+43. Do the two dashboards work?
+44. Does the Golden Cross ledger use actual API/database data?
+45. Does the volatility dashboard use actual API/database data?
+46. Are costs reconciled?
+47. Are old artifacts unchanged?
+48. Are all tests passing?
+49. What exactly remains blocked?
+
+---
+
+# FINAL DECISION RULE
+
+The following outcomes are valid:
+
+- `completed`
+- `completed_with_limitations`
+- `development_only`
+- `research_only`
+- `awaiting_future_observations`
+- `insufficient_evidence`
+- `negative_edge`
+- `blocked_external_data`
+- `blocked_options_data`
+- `blocked_resource_limit`
+- `failed`
+
+Do not manufacture profitable Golden Cross results.
+
+Do not promote the 7/30 crossover strategy based only on an attractive backtest.
+
+Do not call realized volatility implied volatility.
+
+Do not treat BBW expansion as guaranteed option profitability.
+
+Do not recommend short option positions without verified contract availability, trading permission, risk limits and appropriate market data.
+
+Do not make changes to the existing production consensus.
+
+Do not alter historical Task 100–109 performance.
+
+**The purpose of Task 110 is to build a scientifically defensible 7/30 moving-average strategy research module, a cash-constrained portfolio ledger, a separate realized-volatility analytics dashboard, and a complete audit of the supplied Python prototype — while continuing the existing forward-validation process and keeping all unproven strategies in research-only mode.**
+
+Complete all feasible phases in this single campaign. Report exact Git HEAD, files changed, test counts, artifact paths, trading results and remaining blockers. Do not push unless explicitly authorized.
