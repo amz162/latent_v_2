@@ -42,3 +42,10 @@ __pycache__/
 upload/github_token.txt
 upload/github_token_README.txt
 db/backups/
+
+# GitHub credentials — the repo is PUBLIC: a token that lands in a commit is
+# world-readable and GitHub secret scanning auto-revokes it within minutes.
+# Tokens live ONLY in untracked .git/credentials (armed by scripts/gh_auth.sh).
+.zcredentials/github_token
+.zcredentials/github_token.local
+

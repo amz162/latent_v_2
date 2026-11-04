@@ -1,0 +1,24 @@
+{
+ "report": "task110_api_validation",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:50:07Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "endpoints": {
+  "/": 200,
+  "/api/paper-trading/monitor": 200,
+  "/api/golden-cross?symbol=HUBC": 200,
+  "/api/volatility?symbol=HUBC": 200
+ },
+ "golden_cross": {
+  "real_data": "2026-11-03",
+  "research_only": true,
+  "trades": 47
+ },
+ "volatility": {
+  "regime": "mean_reversion_watch",
+  "implied_vol_data": false
+ },
+ "monitor_realized_pkr": -102348.02,
+ "errors": []
+}

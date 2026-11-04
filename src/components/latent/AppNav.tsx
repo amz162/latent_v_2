@@ -14,6 +14,8 @@ import {
   Target,
   Coins,
   Activity,
+  TrendingUp,
+  Waves,
   Bell,
   LogOut,
   Languages,
@@ -43,6 +45,8 @@ const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ cl
   { view: "strategy", key: "nav.strategy", icon: Target },
   { view: "dividends", key: "nav.dividends", icon: Coins },
   { view: "tracker", key: "nav.tracker", icon: Activity },
+  { view: "golden_cross", key: "nav.golden_cross", icon: TrendingUp },
+  { view: "volatility_analytics", key: "nav.volatility_analytics", icon: Waves },
 ];
 
 const LANG_OPTIONS: { value: Language; label: string; native: string }[] = [

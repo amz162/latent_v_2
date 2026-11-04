@@ -336,6 +336,17 @@ All artifacts in `data/backtest_reports/task93/`. Read-only validation — NO pr
 
 ---
 
+## Task 110 — Golden Cross (7/30 SMA) Research + Volatility Analytics (research only)
+
+Two new research windows (research_only, never in production consensus, no order execution):
+
+- **Golden Cross — 7/30 SMA** (`golden_cross_7_30_v1`): 7/30 SMA crossover signals on real PSX daily history (raw prices, ≥10-symbol session calendar), next-session-open hypothetical fills, full V2 cost model, cash-constrained whole-share portfolio with a complete daily account ledger. 10-year verdict on the 23-symbol universe: **negative edge after costs** (PKR 100,000 → ≈60,718, ROI −39.3%, PF 0.87) — reported as-is; loses to cash and buy-and-hold.
+- **Volatility & Convexity Analytics** (`volatility_regime_v1`): close-to-close / Parkinson / Garman-Klass rolling variance (annualized exactly once), Bollinger Band Width with first/second discrete derivatives (session-gap guarded), and descriptive volatility-regime watches. Realized volatility only — the provider supplies no options/IV data (`blocked_options_data`), so no option signal exists.
+
+Engines are parity-tested (Python artifacts ↔ TS dashboards, 15/15) and unit-tested (`task110 QA: 62 passed, 0 failed`). Artifacts: `data/backtest_reports/task110/` (61 files). Docs: `docs/task110-*.md` (8). The supplied `psx_simulator.py` prototype was audited against its specification (file absent from the environment; 19 findings incl. artificial first-row signals, same-close look-ahead, double GK annualization, missing costs — all fixed in the reference implementation). The frozen Task 104–109 forward campaign is untouched and still `not_promotable` (43 matured outcomes, realized −PKR 102,348.02; 5/10/21-session maturity pending).
+
+---
+
 ## License
 
 Proprietary — © Latent.pk. All rights reserved.

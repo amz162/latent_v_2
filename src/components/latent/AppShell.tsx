@@ -19,6 +19,8 @@ import { Calculators } from "./Calculators";
 import { PatternFinder } from "./PatternFinder";
 import { PricePatternFinder } from "./PricePatternFinder";
 import { PaperTradeMonitor } from "./PaperTradeMonitor";
+import { GoldenCrossView } from "./GoldenCrossView";
+import { VolatilityAnalyticsView } from "./VolatilityAnalyticsView";
 
 export function AppShell() {
   const view = useLatentStore((s) => s.view);
@@ -59,6 +61,10 @@ export function AppShell() {
             return <AiModelSignals />;
           case "paper_monitor":
             return <PaperTradeMonitor />;
+          case "golden_cross":
+            return <GoldenCrossView />;
+          case "volatility_analytics":
+            return <VolatilityAnalyticsView />;
           case "calculators":
             return <Calculators />;
           case "pattern_finder":

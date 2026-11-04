@@ -1,0 +1,27 @@
+{
+ "report": "task110_original_model_evidence",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:36:26Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "frozen_forward": {
+  "native_artifact": "task109_forward_performance.json",
+  "head_at_generation": "ea678442f815b24e50b98c03ac56471a2ff80349"
+ },
+ "immutability": {
+  "artifact_diff_paths_vs_origin": [
+   "data/backtest_reports/task107/task107_open_positions.json",
+   "data/backtest_reports/task107/task107_paper_trade_monitoring.json",
+   "data/backtest_reports/task107/task107_position_event_ledger.csv"
+  ],
+  "live_ops_files_expected": [
+   "data/backtest_reports/task107/ops/event_ledger.json",
+   "data/backtest_reports/task107/ops/last_cycle_result.json",
+   "data/backtest_reports/task107/ops/monitor_state.json",
+   "data/backtest_reports/task107/ops/run_log.jsonl",
+   "data/backtest_reports/task107/ops/task108_worker.lock",
+   "data/backtest_reports/task107/ops/worker_health.json"
+  ],
+  "note": "task107/ops/*.json are live worker runtime state and update by design; frozen task100-109 report files must be (and are) untouched"
+ }
+}

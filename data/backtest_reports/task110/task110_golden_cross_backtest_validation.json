@@ -1,0 +1,32 @@
+{
+ "report": "task110_golden_cross_backtest_validation",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:50:07Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "method": {
+  "signal": "7/30 SMA crossover on valid raw closes",
+  "execution": "next global session open",
+  "costs": "V2 (psx_user_schedule_v2), CGT 15% ATL / 30% non-ATL",
+  "sizing": "20% equity default; 5/10/25% and equal-alloc sensitivity",
+  "constraints": "cash-constrained, whole shares, max 5 positions, no leverage/shorts"
+ },
+ "engine_parity": "15/15 checks match between Python research engine and TS dashboard engine (task110_cost_parity_report.json)",
+ "tests": "task110_tests.py 62 passed / 0 failed",
+ "verdict": "NEGATIVE EDGE after V2 costs at 10-year horizon \u2014 not eligible for promotion; forward shadow only",
+ "benchmarks": {
+  "initial_capital": 100000.0,
+  "final_cash": 5434.18,
+  "final_market_value": 125444.01,
+  "entry_costs": 232.79,
+  "final_equity": 130878.19,
+  "roi_pct": 30.878,
+  "symbols_invested": 22,
+  "note": "equal-weight whole-share basket at first strategy session open, held to frontier; V2 entry costs cash-constrained; unrealized MTM never realized"
+ },
+ "limitations": [
+  "raw prices include corporate-action distortions",
+  "next-open fills are hypothetical; real intraday execution unproven",
+  "single universe (23 liquid PILOT25 names); no delisting corrections available"
+ ]
+}

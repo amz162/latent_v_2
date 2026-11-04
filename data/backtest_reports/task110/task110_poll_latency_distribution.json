@@ -1,0 +1,52 @@
+{
+ "report": "task110_poll_latency_distribution",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:36:26Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "worker_pid": 1413,
+ "heartbeat": "2026-11-04T10:36:15Z",
+ "poll_interval_seconds": 120,
+ "prior_distribution": {
+  "report": "task109_poll_latency_distribution",
+  "task": "task109",
+  "generated_at": "2026-11-03T19:20:35Z",
+  "git_head": "ea678442f815b24e50b98c03ac56471a2ff80349",
+  "status": "completed",
+  "basis": "cycle_latency table (worker cycles recorded so far; post-window/idle cycles)",
+  "observed_poll_spacing_seconds": {
+   "n": 3,
+   "min": 10.65,
+   "median": 10.66,
+   "p95": 13.59,
+   "max": 13.59
+  },
+  "cycle_duration_seconds": {
+   "n": 0
+  },
+  "provider_symbol_latency_ms": {
+   "avg": {
+    "n": 3,
+    "min": 123.99,
+    "median": 558.94,
+    "p95": 10333.4,
+    "max": 10333.4
+   },
+   "max": {
+    "n": 3,
+    "min": 309.4,
+    "median": 309.7,
+    "p95": 426.0,
+    "max": 426.0
+   }
+  },
+  "configured_intervals": {
+   "worker_poll_seconds": 120,
+   "worker_idle_seconds": 600,
+   "actions_fallback_minutes": 5
+  },
+  "preliminary": true,
+  "in_session_distribution": "awaiting_future_observations (first in-session window: 2026-11-04 09:45-15:45 PKT)"
+ },
+ "source": "task107 ops worker_health.json + task109 artifact"
+}

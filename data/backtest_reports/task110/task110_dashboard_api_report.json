@@ -1,0 +1,22 @@
+{
+ "report": "task110_dashboard_api_report",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:52:31Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "endpoints": {
+  "/api/golden-cross": {
+   "status": 200,
+   "params": "symbol, capital, sizing, maxPos, tax",
+   "payload": "series(500), markers, portfolio account, equity curve, daily+trade ledgers, research_only status"
+  },
+  "/api/volatility": {
+   "status": 200,
+   "params": "symbol, varWindow, bbwWindow, k",
+   "payload": "series(500) with estimators+derivatives, regime+reason, freshness, estimator notes"
+  }
+ },
+ "data_integrity": "every displayed number computed server-side from OhlcvBar via the parity-tested engines; no hardcoded results",
+ "paper_monitor_unchanged": true,
+ "no_order_execution": true
+}

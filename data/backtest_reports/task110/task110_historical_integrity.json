@@ -1,0 +1,24 @@
+{
+ "report": "task110_historical_integrity",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:50:06Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "realized_pnl_unchanged": true,
+ "api_realized_equals_frozen": true,
+ "frozen_artifacts_touched": [
+  "data/backtest_reports/task107/task107_open_positions.json",
+  "data/backtest_reports/task107/task107_paper_trade_monitoring.json",
+  "data/backtest_reports/task107/task107_position_event_ledger.csv"
+ ],
+ "live_ops_files_updated": [
+  "data/backtest_reports/task107/ops/event_ledger.json",
+  "data/backtest_reports/task107/ops/last_cycle_result.json",
+  "data/backtest_reports/task107/ops/monitor_state.json",
+  "data/backtest_reports/task107/ops/run_log.jsonl",
+  "data/backtest_reports/task107/ops/task108_worker.lock",
+  "data/backtest_reports/task107/ops/worker_health.json"
+ ],
+ "task100_109_dirs_touched": [],
+ "note": "worker ops/*.json are live runtime state by design; no frozen report artifact changed"
+}

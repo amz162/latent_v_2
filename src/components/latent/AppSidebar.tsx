@@ -27,6 +27,8 @@ import {
   Coins,
   Activity,
   RadioTower,
+  TrendingUp,
+  Waves,
 } from "lucide-react";
 
 // 11 sidebar items (Dashboard added at the top — was previously only reachable
@@ -45,6 +47,8 @@ const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ cl
   { view: "dividends", key: "nav.dividends", icon: Coins },
   { view: "tracker", key: "nav.tracker", icon: Activity },
   { view: "paper_monitor", key: "nav.paper_monitor", icon: RadioTower },
+  { view: "golden_cross", key: "nav.golden_cross", icon: TrendingUp },
+  { view: "volatility_analytics", key: "nav.volatility_analytics", icon: Waves },
 ];
 
 export function AppSidebar() {

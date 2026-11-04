@@ -1,0 +1,70 @@
+{
+ "report": "task110_price_adjustment_report",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:30:18Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "price_series_status": "raw_price_series",
+ "adjusted_close_available": false,
+ "provider_fields": [
+  "open",
+  "high",
+  "low",
+  "close",
+  "volume"
+ ],
+ "corporate_action_adjustment": "NOT available \u2014 all indicators use raw provider closes",
+ "discontinuity_detection": "per-symbol >35% single-session close moves flagged below",
+ "symbol_flags": {
+  "HASCOL": [
+   {
+    "date": "2019-11-19",
+    "ret": -0.6271,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   }
+  ],
+  "LUCK": [
+   {
+    "date": "2025-04-28",
+    "ret": -0.7951,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   }
+  ],
+  "SYS": [
+   {
+    "date": "2022-03-31",
+    "ret": -0.4721,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   },
+   {
+    "date": "2025-06-02",
+    "ret": -0.81,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   }
+  ],
+  "TELE": [
+   {
+    "date": "2020-09-09",
+    "ret": 0.4474,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   }
+  ],
+  "WTL": [
+   {
+    "date": "2020-08-06",
+    "ret": 0.4158,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   },
+   {
+    "date": "2021-05-26",
+    "ret": 0.4123,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   },
+   {
+    "date": "2022-10-04",
+    "ret": 0.4685,
+    "note": "possible corporate action / data gap \u2014 raw series used as-is"
+   }
+  ]
+ }
+}

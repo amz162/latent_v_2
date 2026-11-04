@@ -1,10 +1,14 @@
 # Latent.pk — agent ops notes
 
 ## Git authentication (GitHub)
-- The repo `amz162/latent_v_2` is **private**. The push/fetch token lives at
-  `.zcredentials/github_token` (also committed in this repo as the durable backup copy).
-- NEVER print, echo, or log the token.
-- To arm git credentials in any session: `bash scripts/gh_auth.sh` (then plain
+- The repo `amz162/latent_v_2` is **PUBLIC**. A token that is committed to the
+  repo is world-readable and GitHub secret scanning **auto-revokes it within
+  minutes** (this killed both historically stored tokens).
+- Tokens live ONLY in untracked, gitignored files: `.git/credentials` (armed
+  store) and optionally `.zcredentials/github_token.local` (durable backup).
+- NEVER print, echo, or log the token; NEVER commit any token file.
+- To arm git credentials in any session: write the fresh token to
+  `.zcredentials/github_token.local`, then `bash scripts/gh_auth.sh` (then plain
   `git push origin main` / `git fetch` work).
 - Full recovery chain and rules: `.zcredentials/README.md`.
 

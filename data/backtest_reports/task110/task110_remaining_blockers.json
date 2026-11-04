@@ -1,0 +1,45 @@
+{
+ "report": "task110_remaining_blockers",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:50:08Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "blockers": [
+  {
+   "blocker": "psx_simulator.py attachment",
+   "status": "not_supplied",
+   "need": "user must upload the file to the environment for line-level audit + checksum re-verification"
+  },
+  {
+   "blocker": "in-session provider-delay distribution",
+   "status": "awaiting_future_observations",
+   "need": ">=3 genuine full-window sessions; 2026-11-04 was partial (worker started 14:52 PKT)"
+  },
+  {
+   "blocker": "first scheduled daily pipeline fire",
+   "status": "awaiting_first_scheduled_run",
+   "need": "workflow runs recorded on GitHub"
+  },
+  {
+   "blocker": "5/10/21-session cohort maturity",
+   "status": "awaiting_future_observations",
+   "need": "3/1/0 sessions elapsed; first complete 21-session evaluation projected early December 2026"
+  },
+  {
+   "blocker": "OOS probability calibration",
+   "status": "not_established",
+   "need": "isotonic remains validation-only"
+  },
+  {
+   "blocker": "options/convexity data",
+   "status": "blocked_options_data",
+   "need": "verified PSX options market data + permissions before ANY short-vol or long-convexity execution"
+  },
+  {
+   "blocker": "golden-cross forward outcomes",
+   "status": "awaiting_future_observations",
+   "need": "future sessions after the frontier decision date"
+  }
+ ],
+ "verdict": "completed_with_limitations"
+}

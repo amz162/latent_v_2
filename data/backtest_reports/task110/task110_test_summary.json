@@ -1,0 +1,55 @@
+{
+ "report": "task110_test_summary",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:53:00Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "suites": {
+  "task110_tests": {
+   "rc": 0,
+   "tail": [
+    "task110 QA: 62 passed, 0 failed, 0 skipped"
+   ]
+  },
+  "task107_v2_tests": {
+   "rc": 0,
+   "tail": [
+    "task107 v2 QA: 29 passed, 0 failed, 0 skipped"
+   ]
+  },
+  "task107_v1_tests": {
+   "rc": 0,
+   "tail": [
+    "task107 QA: 28 passed, 0 failed, 2 skipped"
+   ]
+  },
+  "tsc_no_emit": {
+   "rc": 0,
+   "clean": true
+  },
+  "production_build": {
+   "rc": 0,
+   "routes_added": [
+    "/api/golden-cross",
+    "/api/volatility"
+   ]
+  },
+  "parity_python_vs_ts": {
+   "checks": 15,
+   "matched": 15
+  },
+  "volatility_independent_recalc": {
+   "checks": 92,
+   "matched": 92
+  },
+  "browser_validation": {
+   "page_errors": 0,
+   "console_errors": 0,
+   "mobile_overflow": false
+  }
+ },
+ "frozen_evidence": "Task 100-109 report artifacts unchanged (git diff vs origin/main: only live task107/ops worker state + new task110 files)",
+ "historical_pnl_unchanged": true,
+ "no_duplicate_signals": "new strategy writes only task110 artifacts; no rows added to production shadow stores",
+ "new_strategy_promoted": false
+}

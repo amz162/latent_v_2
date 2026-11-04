@@ -19,6 +19,8 @@ export type LatentView =
   | "execute"
   | "ai_model_signals"
   | "paper_monitor"
+  | "golden_cross"
+  | "volatility_analytics"
   | "calculators"
   | "pattern_finder"
   | "pattern_finder_financial"

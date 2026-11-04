@@ -1,0 +1,35 @@
+{
+ "report": "task110_capital_protection_report",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:36:25Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "no_real_orders": true,
+ "no_broker_integration": true,
+ "no_short_entries": true,
+ "no_option_execution": true,
+ "cash_never_negative": "enforced in run_portfolio (cash constraint test)",
+ "no_leverage": true,
+ "whole_share_sizing": true,
+ "code_scan": {
+  "scripts/task110_lib.py": {
+   "order_api": false,
+   "short_entry": false,
+   "option_execution": false
+  },
+  "scripts/task110_phases_research.py": {
+   "order_api": false,
+   "short_entry": false,
+   "option_execution": false
+  }
+ },
+ "ui_guards": "both new dashboards render RESEARCH/BACKTEST ONLY notices; research_only registry statuses with tooltips",
+ "constraints": [
+  "no real broker orders",
+  "no automatic promotion",
+  "no unsupported short entries",
+  "no unverified options execution",
+  "no confidence-as-win-probability claims",
+  "no positive performance claims without net-of-cost evidence"
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "report": "task110_browser_validation",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:52:31Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "tool": "agent-browser (headless chromium), production build on :3000",
+ "checks": [
+  {
+   "check": "home loads",
+   "result": "pass"
+  },
+  {
+   "check": "sidebar shows new nav items (Golden Cross 7/30, Volatility Analytics)",
+   "result": "pass"
+  },
+  {
+   "check": "Golden Cross tab: heading + RESEARCH/BACKTEST ONLY notice",
+   "result": "pass"
+  },
+  {
+   "check": "Golden Cross tab: 2 chart SVGs (price+MA markers, equity)",
+   "result": "pass"
+  },
+  {
+   "check": "Golden Cross tab: daily+trade ledger tables (297 rows total)",
+   "result": "pass"
+  },
+  {
+   "check": "Golden Cross tab: summary stats (Final equity/Profit factor) in DOM",
+   "result": "pass"
+  },
+  {
+   "check": "Volatility tab: heading + RESEARCH WATCH ONLY notice",
+   "result": "pass"
+  },
+  {
+   "check": "Volatility tab: 6 chart SVGs (vol, BBW, d1, d2, var d1, var d2)",
+   "result": "pass"
+  },
+  {
+   "check": "Volatility tab: regime card (MEAN REVERSION WATCH for HUBC) + freshness line",
+   "result": "pass"
+  },
+  {
+   "check": "Volatility tab: annualization-exactly-once + GK-negatives methodology text",
+   "result": "pass"
+  },
+  {
+   "check": "Paper Trade Monitor regression: heading + table + delay banner",
+   "result": "pass"
+  },
+  {
+   "check": "page errors",
+   "result": "0"
+  },
+  {
+   "check": "console errors",
+   "result": "0"
+  },
+  {
+   "check": "mobile 390x844 horizontal overflow",
+   "result": "none (documentElement.scrollWidth=390)"
+  }
+ ],
+ "console_errors": 0,
+ "page_errors": 0,
+ "mobile_overflow": false,
+ "screenshots": [
+  "/tmp/task110_gc.png",
+  "/tmp/task110_vol.png"
+ ]
+}

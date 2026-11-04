@@ -1,0 +1,473 @@
+{
+ "report": "task110_estimator_comparison",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:33:39Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "annualization": "each estimator annualized exactly once (daily variance x 252); volatility = sqrt(annualized variance)",
+ "variance_window_sessions": 10,
+ "sample_variance_convention": "ddof=1",
+ "comparison": {
+  "ANL": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.2601171,
+    "median": 0.19224973
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.2665617,
+    "median": 0.23282389
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.27230247,
+    "median": 0.23777305
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "BOP": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.17860981,
+    "median": 0.09775758
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.16117366,
+    "median": 0.11807427
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.16391723,
+    "median": 0.12086691
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "CNERGY": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.24689407,
+    "median": 0.14745125
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.22180674,
+    "median": 0.16817223
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.22125354,
+    "median": 0.17710134
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "FCCL": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.15228222,
+    "median": 0.10985919
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.14068194,
+    "median": 0.1181058
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.14403617,
+    "median": 0.12172952
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "HASCOL": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.39791158,
+    "median": 0.1720381
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.25536855,
+    "median": 0.1863162
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.25704608,
+    "median": 0.19135272
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "HUBC": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.10199087,
+    "median": 0.06507989
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.08553166,
+    "median": 0.06898306
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.08846279,
+    "median": 0.07175465
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "HUMNL": {
+   "cc_annualized_var": {
+    "n": 2471,
+    "mean": 0.26466023,
+    "median": 0.14916693
+   },
+   "parkinson_annualized_var": {
+    "n": 2472,
+    "mean": 0.28477783,
+    "median": 0.19692735
+   },
+   "garman_klass_annualized_var": {
+    "n": 2472,
+    "mean": 0.29617386,
+    "median": 0.2070595
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "KEL": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.22480023,
+    "median": 0.14248585
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.21923315,
+    "median": 0.16685559
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.22829322,
+    "median": 0.17957868
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "LOTCHEM": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.16541243,
+    "median": 0.11719168
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.15715657,
+    "median": 0.13104561
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.16044032,
+    "median": 0.13451897
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "LUCK": {
+   "cc_annualized_var": {
+    "n": 2467,
+    "mean": 0.36690489,
+    "median": 0.07770411
+   },
+   "parkinson_annualized_var": {
+    "n": 2468,
+    "mean": 0.09810281,
+    "median": 0.07976495
+   },
+   "garman_klass_annualized_var": {
+    "n": 2468,
+    "mean": 0.10071463,
+    "median": 0.0822225
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "MEBL": {
+   "cc_annualized_var": {
+    "n": 2454,
+    "mean": 0.09482485,
+    "median": 0.06176042
+   },
+   "parkinson_annualized_var": {
+    "n": 2455,
+    "mean": 0.09358234,
+    "median": 0.07783556
+   },
+   "garman_klass_annualized_var": {
+    "n": 2455,
+    "mean": 0.09729336,
+    "median": 0.07829688
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "MLCF": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.18184422,
+    "median": 0.13764827
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.16191858,
+    "median": 0.13841946
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.16390858,
+    "median": 0.14002046
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "OGDC": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.10585734,
+    "median": 0.0662388
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.08342659,
+    "median": 0.0613597
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.08353441,
+    "median": 0.06236161
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "PAEL": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.20200789,
+    "median": 0.1580402
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.17917587,
+    "median": 0.15954983
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.17953732,
+    "median": 0.15797854
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "PIBTL": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.20836928,
+    "median": 0.13895744
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.19095809,
+    "median": 0.15606992
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.19239711,
+    "median": 0.16036267
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "PPL": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.12760505,
+    "median": 0.07946724
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.10077812,
+    "median": 0.07752907
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.10211933,
+    "median": 0.07925936
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "PRL": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.23547103,
+    "median": 0.17328365
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.19535688,
+    "median": 0.15940554
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.19148571,
+    "median": 0.16080126
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "PSO": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.13458747,
+    "median": 0.08328717
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.10090629,
+    "median": 0.08086974
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.10099565,
+    "median": 0.08068247
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "SYS": {
+   "cc_annualized_var": {
+    "n": 2459,
+    "mean": 0.45380789,
+    "median": 0.09433623
+   },
+   "parkinson_annualized_var": {
+    "n": 2460,
+    "mean": 0.12357257,
+    "median": 0.10473032
+   },
+   "garman_klass_annualized_var": {
+    "n": 2460,
+    "mean": 0.12791069,
+    "median": 0.10757892
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "TELE": {
+   "cc_annualized_var": {
+    "n": 2473,
+    "mean": 0.39712258,
+    "median": 0.240049
+   },
+   "parkinson_annualized_var": {
+    "n": 2474,
+    "mean": 0.44320417,
+    "median": 0.27528489
+   },
+   "garman_klass_annualized_var": {
+    "n": 2474,
+    "mean": 0.46048857,
+    "median": 0.28892574
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "TRG": {
+   "cc_annualized_var": {
+    "n": 2472,
+    "mean": 0.26923179,
+    "median": 0.22631852
+   },
+   "parkinson_annualized_var": {
+    "n": 2473,
+    "mean": 0.22067441,
+    "median": 0.20169085
+   },
+   "garman_klass_annualized_var": {
+    "n": 2473,
+    "mean": 0.2164699,
+    "median": 0.19731067
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "UNITY": {
+   "cc_annualized_var": {
+    "n": 2217,
+    "mean": 0.2429347,
+    "median": 0.18499958
+   },
+   "parkinson_annualized_var": {
+    "n": 2232,
+    "mean": 0.22088056,
+    "median": 0.19107548
+   },
+   "garman_klass_annualized_var": {
+    "n": 2232,
+    "mean": 0.22082016,
+    "median": 0.19059047
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  },
+  "WTL": {
+   "cc_annualized_var": {
+    "n": 2475,
+    "mean": 0.41125123,
+    "median": 0.22850253
+   },
+   "parkinson_annualized_var": {
+    "n": 2476,
+    "mean": 0.46131547,
+    "median": 0.34189116
+   },
+   "garman_klass_annualized_var": {
+    "n": 2476,
+    "mean": 0.48604519,
+    "median": 0.36196385
+   },
+   "gk_negative_estimates": 0,
+   "gk_negative_examples": [],
+   "note": "GK<P is common in flat/low-range sessions; GK-P difference is NOT a directional indicator"
+  }
+ },
+ "units_check": "series CSV exposes daily AND annualized variance; volatility columns are sqrt(annualized) x 100 (no double 252)"
+}

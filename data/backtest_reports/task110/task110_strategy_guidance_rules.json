@@ -1,0 +1,52 @@
+{
+ "report": "task110_strategy_guidance_rules",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:33:46Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "rules": {
+  "long_vol_watch": {
+   "condition": "BBW d1>0 & d2>0 (persisting) + Parkinson or CC variance d1>0",
+   "action": "RESEARCH WATCH ONLY",
+   "executable": false,
+   "note": "expansion of realized vol; option profitability requires implied-vol data (unavailable)"
+  },
+  "volatility_compression": {
+   "condition": "BBW d1<0 & d2<0 (persisting) + realized-variance d1<0",
+   "action": "RESEARCH WATCH ONLY",
+   "executable": false,
+   "note": "distinct from short-option premium selling; no PSX options data to validate"
+  },
+  "mean_reversion_watch": {
+   "condition": "BBW d1<0 (single observation)",
+   "action": "price/return study only",
+   "executable": false
+  },
+  "volatility_expansion": {
+   "condition": "BBW d1>0 (single observation)",
+   "action": "monitor",
+   "executable": false
+  },
+  "short_vol_watch": {
+   "condition": "NOT ASSIGNED \u2014 requires verified option contract data, implied vol, permissions",
+   "action": "never generated from realized-vol data",
+   "executable": false
+  },
+  "transition": {
+   "condition": "regime label changed between observations",
+   "action": "monitor",
+   "executable": false
+  },
+  "wait": {
+   "condition": "no condition met",
+   "action": "none",
+   "executable": false
+  },
+  "insufficient_data": {
+   "condition": "warmup/gap",
+   "action": "none",
+   "executable": false
+  }
+ },
+ "enforcement": "no module maps any regime to an order instruction; search of code paths is part of task110_tests.py (no-option-execution test)"
+}

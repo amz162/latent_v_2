@@ -1,0 +1,234 @@
+{
+ "report": "task110_python_file_audit",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:36:17Z",
+ "git_head": "3b5ad490",
+ "status": "completed_with_limitations",
+ "audit_basis": "task-specification quotes (file absent from environment)",
+ "attachment_path": "/home/z/my-project/upload/psx_simulator.py",
+ "attachment_present": false,
+ "counts": {
+  "critical": 5,
+  "high": 6,
+  "medium": 7,
+  "low": 1,
+  "informational": 0
+ },
+ "corrected_implementation": [
+  "scripts/task110_lib.py (crossover rules, cost port, estimators, derivatives, regimes)",
+  "src/lib/latent/golden-cross.ts (dashboard/TS reference)",
+  "src/lib/latent/volatility-analytics.ts (dashboard/TS reference)",
+  "scripts/task110_tests.py (demonstration tests)"
+ ],
+ "findings": [
+  {
+   "id": "F-MA-01",
+   "severity": "critical",
+   "location": "golden_cross_signals() / prev_above initialization",
+   "existing_behavior": "prev_above is initialized by inverting the first valid MA relationship, manufacturing a BUY or SELL on the first valid MA row without a real crossover",
+   "why_it_matters": "creates a phantom first trade per symbol and pollutes every downstream statistic",
+   "correct_behavior": "no signal until two consecutive valid MA observations; Golden: prev<=cur30_prev & cur7>cur30; Death: prev>=prev30 & cur7<cur30; equality handled as relationship 0",
+   "fixed_in": "task110_lib.crossovers(); src/lib/latent/golden-cross.ts detectCrossover()",
+   "test": "test_no_first_row_signal, test_equal_ma_no_signal, test_golden_death_definition",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-EX-01",
+   "severity": "critical",
+   "location": "run_portfolio() execution timing",
+   "existing_behavior": "trades execute at the same close that produced the crossover",
+   "why_it_matters": "same-close execution is look-ahead: no decision process can act on a close in the same instant it prints; inflates returns",
+   "correct_behavior": "signal generated after completed daily bar; hypothetical fill at the NEXT valid session's open; unfilled signals are never fabricated",
+   "fixed_in": "run_portfolio() in scripts/task110_phases_research.py; executeAtNextOpen() in golden-cross.ts",
+   "test": "test_next_session_open_fill, test_unfilled_signal_not_fabricated, test_no_same_close_execution",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-VOL-01",
+   "severity": "critical",
+   "location": "rolling_log_ret_variance()/plot: GK annualization",
+   "existing_behavior": "Var_GK multiplied by 252 in the estimator and sqrt(Var_GK*252) again in the plot \u2014 annualization applied twice",
+   "why_it_matters": "annualized volatility overstated by sqrt(252) \u2248 15.9x; invalidates regime thresholds",
+   "correct_behavior": "annualize exactly once: Var_ann = 252 x daily variance; vol = sqrt(Var_ann)",
+   "fixed_in": "task110_lib volatility estimators; volatility-analytics.ts annualizeOnce()",
+   "test": "test_annualization_exactly_once, test_parkinson_gk_units_consistent",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-VOL-02",
+   "severity": "high",
+   "location": "parkinson_variance()",
+   "existing_behavior": "annualization conventions inconsistent with GK (task requires each estimator annualized exactly once)",
+   "why_it_matters": "mixed units make cross-estimator comparison meaningless",
+   "correct_behavior": "all three estimators return daily variance; x252 applied once at the annualized layer",
+   "fixed_in": "task110_lib.parkinson_daily_variance + explicit _annualized layers",
+   "test": "test_parkinson_formula_hand_check, test_annualization_exactly_once",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-VOL-03",
+   "severity": "high",
+   "location": "garman_klass_variance() clip()",
+   "existing_behavior": "negative GK estimates silently clipped away",
+   "why_it_matters": "hides data/assumption diagnostics; sqrt of negative would be silently avoided instead of reported",
+   "correct_behavior": "negatives kept in research series, counted, exemplified; vol reported unavailable where sqrt undefined",
+   "fixed_in": "task110_lib.garman_klass_daily_variance (no clip) + estimator comparison artifact",
+   "test": "test_gk_negative_kept_and_reported",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-VOL-04",
+   "severity": "high",
+   "location": "add_volatility_analytics()",
+   "existing_behavior": "no validation of O/H/L/C before logarithms (zero/negative prices, high<low)",
+   "why_it_matters": "log of non-positive raises or silently poisons windows; h<l makes range estimators meaningless",
+   "correct_behavior": "bars validated (o,h,l,c>0 and h>=l); invalid bars excluded from windows and counted",
+   "fixed_in": "task110_lib.bar_is_valid/load_bars",
+   "test": "test_invalid_bars_excluded",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-VOL-05",
+   "severity": "medium",
+   "location": "derivative calculations",
+   "existing_behavior": "first/second derivatives computed across missing sessions as if spacing were regular",
+   "why_it_matters": "a gap of k sessions is treated like one period; derivatives systematically biased around gaps",
+   "correct_behavior": "differences only across global-calendar-adjacent observations; None + gap flag otherwise",
+   "fixed_in": "task110_lib.first_diff/second_diff(idx_by_pos=session index)",
+   "test": "test_derivative_gap_guard",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-VOL-06",
+   "severity": "medium",
+   "location": "chart annotations / regime claims",
+   "existing_behavior": "BBW acceleration annotated as implied-volatility convexity; GK>Parkinson read as directional trend",
+   "why_it_matters": "realized-vol measures say nothing about implied vol; GK-P is not a directional indicator \u2014 claims are unsupported",
+   "correct_behavior": "annotations limited to realized-vol statements; guardrails encoded in classify_regime and guidance rules",
+   "fixed_in": "classify_regime guardrails; task110_strategy_guidance_rules.json",
+   "test": "test_no_implied_vol_claims, test_gk_park_not_directional",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-01",
+   "severity": "medium",
+   "location": "run_portfolio() annotation",
+   "existing_behavior": "annotated to return a two-item tuple but returns five values",
+   "why_it_matters": "misleading API contract; callers unpacking per annotation crash",
+   "correct_behavior": "single dict return with named fields (Python) / typed interface (TS)",
+   "fixed_in": "run_portfolio() returns dict",
+   "test": "test_portfolio_return_contract",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-02",
+   "severity": "high",
+   "location": "LOT_SIZE = 500",
+   "existing_behavior": "hardcoded 500-share lot size",
+   "why_it_matters": "not a verified PSX convention for all instruments/dates; distorts sizing and cash constraints",
+   "correct_behavior": "whole-share sizing from price and cash (floor(budget/price)); no lot-size assumption",
+   "fixed_in": "run_portfolio() share sizing",
+   "test": "test_whole_share_sizing, test_no_hardcoded_lot_size",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-03",
+   "severity": "medium",
+   "location": "run_portfolio(initial_capital=1_000_000)",
+   "existing_behavior": "capital hardcoded at PKR 1,000,000",
+   "why_it_matters": "user's research configuration is PKR 100,000; hardcoded capital hides sensitivity",
+   "correct_behavior": "default PKR 100,000, fully configurable, sensitivity across 5/10/20/25% + equal-alloc sizing",
+   "fixed_in": "run_portfolio(initial_capital=100_000) + scenario grid",
+   "test": "test_capital_configurable",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-04",
+   "severity": "critical",
+   "location": "cost model",
+   "existing_behavior": "no brokerage, PSX/NCCPL/CDC fees, taxes or slippage",
+   "why_it_matters": "gross returns presented as tradable results; PSX round-trip costs are material at retail scale",
+   "correct_behavior": "canonical V2 schedule ported exactly (0.03/share <=20 else 0.15%, PSX 0.00035% + NCCPL 0.00081% + CDC 0.0036% per side, zero synthetic slippage, CGT 15%/30% once per position)",
+   "fixed_in": "task110_lib.trade_costs_v2 (parity-tested vs trading-costs.ts)",
+   "test": "test_cost_parity_with_ts, test_cgt_once_per_position",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-05",
+   "severity": "medium",
+   "location": "position sizing",
+   "existing_behavior": "fixed-size trades with only a simple cash check",
+   "why_it_matters": "no equity-proportional risk control; overconcentration ignored",
+   "correct_behavior": "equity-proportional and equal-alloc sizing, max-positions cap, cash-constrained, deterministic ordering",
+   "fixed_in": "run_portfolio(sizing_mode, max_positions)",
+   "test": "test_cash_constraint_never_negative, test_max_positions_respected",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-06",
+   "severity": "high",
+   "location": "print_ledger()",
+   "existing_behavior": "no proper separate daily account ledger",
+   "why_it_matters": "the user explicitly requires a daily account-level ledger with equity and drawdown per session",
+   "correct_behavior": "one portfolio row per session (even with no trade) with 18 fields incl. cash, invested, realized, unrealized, costs, equity, drawdown; saved as CSV and printed",
+   "fixed_in": "task110_golden_cross_daily_ledger.csv",
+   "test": "test_daily_ledger_every_session, test_ledger_identity",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-07",
+   "severity": "high",
+   "location": "NAV / P&L handling",
+   "existing_behavior": "unrealized and realized P&L not reconciled",
+   "why_it_matters": "MTM can silently masquerade as realized profit",
+   "correct_behavior": "identity enforced and tested: realized_net + unrealized(net of sunk entry costs) == final_equity - initial_capital; MTM never realized",
+   "fixed_in": "run_portfolio() accounting + test_ledger_identity",
+   "test": "test_ledger_identity, test_mtm_never_realized",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-08",
+   "severity": "medium",
+   "location": "performance metrics",
+   "existing_behavior": "incomplete metrics (no drawdown, PF, expectancy, exposure, turnover, streaks)",
+   "why_it_matters": "incomplete statistics invite cherry-picking",
+   "correct_behavior": "full metric set incl. ROI, CAGR (>=3y only), maxDD, win rate, avg win/loss, PF, expectancy, costs, exposure, turnover, longest loss streak",
+   "fixed_in": "account dict in run_portfolio()",
+   "test": "test_metrics_present",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-PA-09",
+   "severity": "medium",
+   "location": "benchmarks",
+   "existing_behavior": "no cash or buy-and-hold comparison",
+   "why_it_matters": "without benchmarks 'profitable' is unfalsifiable",
+   "correct_behavior": "cash benchmark + cash-constrained equal-weight buy-and-hold over the identical window",
+   "fixed_in": "task110_golden_cross_benchmark_comparison.json",
+   "test": "test_benchmarks_present",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-SYN-01",
+   "severity": "critical",
+   "location": "synthetic OHLCV generation (GARCH-like RNG)",
+   "existing_behavior": "stylized simulated prices used in the same pipeline as market analysis",
+   "why_it_matters": "simulated prices presented as market results would fabricate performance",
+   "correct_behavior": "synthetic data confined to software tests; all market conclusions from db/custom.db OhlcvBar",
+   "fixed_in": "task110_tests.py fixtures vs runner DB usage",
+   "test": "test_synthetic_only_in_tests, test_real_db_source_recorded",
+   "basis": "task-specification quote (original file not supplied)"
+  },
+  {
+   "id": "F-SYN-02",
+   "severity": "low",
+   "location": "globals: hardcoded ticker, 60-day history, global RNG, weekday calendar, hardcoded paths, suppressed warnings, missing output dir creation, no input validation",
+   "existing_behavior": "single hardcoded symbol; pd.bdate_range weekday calendar; global random state; hardcoded output paths; suppressed warnings; no makedirs; no validation",
+   "why_it_matters": "reduces reproducibility; weekday calendar misaligns with the actual PSX session calendar (holidays); silent warnings hide estimator problems",
+   "correct_behavior": "DB-driven multi-symbol universe; provider-data session calendar; local RNG seeds in tests; relative artifact paths with mkdir; warnings surfaced; input validation",
+   "fixed_in": "task110_lib/runner structure",
+   "test": "test_calendar_is_provider_data, test_output_dir_created",
+   "basis": "task-specification quote (original file not supplied)"
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "report": "task110_golden_cross_ui_report",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:52:31Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "window": "Golden Cross \u2014 7/30 SMA",
+ "route": "SPA view golden_cross (sidebar + topbar nav)",
+ "component": "src/components/latent/GoldenCrossView.tsx",
+ "api": "/api/golden-cross",
+ "displays": [
+  "symbol/universe selector",
+  "close",
+  "MA7",
+  "MA30",
+  "Golden Cross BUY markers",
+  "Death Cross SELL markers",
+  "current state (flat/long)",
+  "last signal + date",
+  "hypothetical execution at next-session open (methodology line)",
+  "cash balance",
+  "current holdings (open positions table)",
+  "daily portfolio equity chart",
+  "drawdown (stat + equity curve)",
+  "performance summary grid",
+  "complete daily ledger (scrollable, every session)",
+  "separate trade ledger",
+  "RESEARCH / BACKTEST ONLY notice"
+ ],
+ "data_source": "live /api/golden-cross from db/custom.db via production engine (parity 15/15 with research artifacts)",
+ "research_status_displayed": true
+}

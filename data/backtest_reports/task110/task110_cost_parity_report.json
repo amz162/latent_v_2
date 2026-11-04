@@ -1,0 +1,193 @@
+{
+ "report": "task110_cost_parity_report",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:45:13Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "method": "identical inputs (db bars, >=10-symbol session calendar, V2 profile) through the Python research engine and the TS dashboard engine",
+ "cost_pathways": {
+  "python": "task110_lib.trade_costs_v2 (exact port)",
+  "ts": "src/lib/latent/trading-costs.ts computeTradeCostsV2 (production engine)"
+ },
+ "checks": [
+  {
+   "kind": "indicator",
+   "name": "lastMa7",
+   "symbol": "HUBC",
+   "python": 193.7757142857143,
+   "ts": 193.7757142857143,
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastMa30",
+   "symbol": "HUBC",
+   "python": 197.61700000000002,
+   "ts": 197.61700000000005,
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastClose",
+   "symbol": "HUBC",
+   "python": 197.24,
+   "ts": 197.24,
+   "match": true
+  },
+  {
+   "kind": "portfolio",
+   "name": "p0.2_ATL_15",
+   "symbol": "HUBC",
+   "python": {
+    "finalEquity": 102915.69,
+    "trades": 47,
+    "realizedNetPnl": 2915.69
+   },
+   "ts": {
+    "finalEquity": 102915.69,
+    "trades": 47,
+    "realizedNetPnl": 2915.69
+   },
+   "match": true
+  },
+  {
+   "kind": "portfolio",
+   "name": "p0.1_NON_ATL_30",
+   "symbol": "HUBC",
+   "python": {
+    "finalEquity": 98926.81,
+    "trades": 47,
+    "realizedNetPnl": -1073.19
+   },
+   "ts": {
+    "finalEquity": 98926.81,
+    "trades": 47,
+    "realizedNetPnl": -1073.19
+   },
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastMa7",
+   "symbol": "SYS",
+   "python": 109.34714285714287,
+   "ts": 109.34714285714287,
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastMa30",
+   "symbol": "SYS",
+   "python": 114.74766666666666,
+   "ts": 114.74766666666666,
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastClose",
+   "symbol": "SYS",
+   "python": 109.47,
+   "ts": 109.47,
+   "match": true
+  },
+  {
+   "kind": "portfolio",
+   "name": "p0.2_ATL_15",
+   "symbol": "SYS",
+   "python": {
+    "finalEquity": 107901.21,
+    "trades": 50,
+    "realizedNetPnl": 7901.21
+   },
+   "ts": {
+    "finalEquity": 107901.21,
+    "trades": 50,
+    "realizedNetPnl": 7901.21
+   },
+   "match": true
+  },
+  {
+   "kind": "portfolio",
+   "name": "p0.1_NON_ATL_30",
+   "symbol": "SYS",
+   "python": {
+    "finalEquity": 99571.84,
+    "trades": 50,
+    "realizedNetPnl": -428.16
+   },
+   "ts": {
+    "finalEquity": 99571.84,
+    "trades": 50,
+    "realizedNetPnl": -428.16
+   },
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastMa7",
+   "symbol": "LUCK",
+   "python": 396.58142857142855,
+   "ts": 396.58142857142855,
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastMa30",
+   "symbol": "LUCK",
+   "python": 403.7823333333333,
+   "ts": 403.7823333333333,
+   "match": true
+  },
+  {
+   "kind": "indicator",
+   "name": "lastClose",
+   "symbol": "LUCK",
+   "python": 400.64,
+   "ts": 400.64,
+   "match": true
+  },
+  {
+   "kind": "portfolio",
+   "name": "p0.2_ATL_15",
+   "symbol": "LUCK",
+   "python": {
+    "finalEquity": 93953.74,
+    "trades": 41,
+    "realizedNetPnl": -6046.26
+   },
+   "ts": {
+    "finalEquity": 93953.74,
+    "trades": 41,
+    "realizedNetPnl": -6046.26
+   },
+   "match": true
+  },
+  {
+   "kind": "portfolio",
+   "name": "p0.1_NON_ATL_30",
+   "symbol": "LUCK",
+   "python": {
+    "finalEquity": 94128.79,
+    "trades": 41,
+    "realizedNetPnl": -5871.21
+   },
+   "ts": {
+    "finalEquity": 94128.79,
+    "trades": 41,
+    "realizedNetPnl": -5871.21
+   },
+   "match": true
+  }
+ ],
+ "all_match": true,
+ "mismatches": [],
+ "symbols": [
+  "HUBC",
+  "SYS",
+  "LUCK"
+ ],
+ "configs": [
+  "0.2_ATL_15",
+  "0.1_NON_ATL_30"
+ ]
+}

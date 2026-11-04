@@ -1,0 +1,765 @@
+{
+ "report": "task110_volatility_regimes",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:33:46Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "states": [
+  "long_vol_watch",
+  "volatility_expansion",
+  "volatility_compression",
+  "short_vol_watch",
+  "mean_reversion_watch",
+  "transition",
+  "wait",
+  "insufficient_data"
+ ],
+ "persistence_rule": "expansion/compression watches require BBW d1 AND d2 same-sign on current and previous observation + realized-variance d1 confirmation",
+ "interpretation_guardrails": [
+  "realized variance/BBW are NOT implied volatility",
+  "LONG_VOL_WATCH is an expansion indication, never an option-purchase signal",
+  "VOL_COMPRESSION_WATCH is not a short-premium signal (no verified PSX options data)",
+  "GK vs Parkinson difference is not a directional-trend indicator",
+  "price mean-reversion needs return evidence; volatility compression needs realized-vol evidence; short-vol needs option-market evidence \u2014 three separate hypotheses"
+ ],
+ "regimes_latest": {
+  "ANL": {
+   "date": "2026-11-03",
+   "regime": "mean_reversion_watch",
+   "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+  },
+  "BOP": {
+   "date": "2026-11-03",
+   "regime": "volatility_compression",
+   "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+  },
+  "CNERGY": {
+   "date": "2026-11-03",
+   "regime": "long_vol_watch",
+   "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+  },
+  "FCCL": {
+   "date": "2026-11-03",
+   "regime": "long_vol_watch",
+   "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+  },
+  "HASCOL": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "HUBC": {
+   "date": "2026-11-03",
+   "regime": "mean_reversion_watch",
+   "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+  },
+  "HUMNL": {
+   "date": "2026-11-03",
+   "regime": "mean_reversion_watch",
+   "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+  },
+  "KEL": {
+   "date": "2026-11-03",
+   "regime": "volatility_compression",
+   "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+  },
+  "LOTCHEM": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "LUCK": {
+   "date": "2026-11-03",
+   "regime": "mean_reversion_watch",
+   "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+  },
+  "MEBL": {
+   "date": "2026-11-03",
+   "regime": "volatility_compression",
+   "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+  },
+  "MLCF": {
+   "date": "2026-11-03",
+   "regime": "long_vol_watch",
+   "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+  },
+  "OGDC": {
+   "date": "2026-11-03",
+   "regime": "mean_reversion_watch",
+   "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+  },
+  "PAEL": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "PIBTL": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "PPL": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "PRL": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "PSO": {
+   "date": "2026-11-03",
+   "regime": "volatility_compression",
+   "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+  },
+  "SYS": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "TELE": {
+   "date": "2026-11-03",
+   "regime": "mean_reversion_watch",
+   "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+  },
+  "TRG": {
+   "date": "2026-11-03",
+   "regime": "long_vol_watch",
+   "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+  },
+  "UNITY": {
+   "date": "2026-11-03",
+   "regime": "volatility_expansion",
+   "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+  },
+  "WTL": {
+   "date": "2026-11-03",
+   "regime": "volatility_compression",
+   "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+  }
+ },
+ "recent_watch_events": {
+  "ANL": [
+   {
+    "date": "2026-10-20",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   }
+  ],
+  "BOP": [
+   {
+    "date": "2026-10-28",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   }
+  ],
+  "CNERGY": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   }
+  ],
+  "FCCL": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   }
+  ],
+  "HASCOL": [
+   {
+    "date": "2026-10-20",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "HUBC": [
+   {
+    "date": "2026-10-20",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   }
+  ],
+  "HUMNL": [
+   {
+    "date": "2026-10-20",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   }
+  ],
+  "KEL": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   }
+  ],
+  "LOTCHEM": [
+   {
+    "date": "2026-10-28",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "LUCK": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   }
+  ],
+  "MEBL": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   }
+  ],
+  "MLCF": [
+   {
+    "date": "2026-10-28",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   }
+  ],
+  "OGDC": [
+   {
+    "date": "2026-10-20",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   }
+  ],
+  "PAEL": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "PIBTL": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "PPL": [
+   {
+    "date": "2026-10-20",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "PRL": [
+   {
+    "date": "2026-10-20",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "PSO": [
+   {
+    "date": "2026-10-20",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   }
+  ],
+  "SYS": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "TELE": [
+   {
+    "date": "2026-10-20",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   }
+  ],
+  "TRG": [
+   {
+    "date": "2026-10-28",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-29",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   }
+  ],
+  "UNITY": [
+   {
+    "date": "2026-10-20",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   }
+  ],
+  "WTL": [
+   {
+    "date": "2026-10-20",
+    "regime": "long_vol_watch",
+    "reason": "BBW d1>0 and d2>0 with realized-variance expansion confirmation (research watch; NOT implied volatility, NOT an option signal)"
+   },
+   {
+    "date": "2026-10-21",
+    "regime": "volatility_expansion",
+    "reason": "BBW first derivative positive (single-observation; persistence not yet confirmed)"
+   },
+   {
+    "date": "2026-10-30",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-02",
+    "regime": "mean_reversion_watch",
+    "reason": "BBW contracting (d1<0); price-based mean reversion is a separate hypothesis requiring return evidence"
+   },
+   {
+    "date": "2026-11-03",
+    "regime": "volatility_compression",
+    "reason": "BBW d1<0 and d2<0 with realized-variance contraction confirmation (research watch; distinct from short-option premium selling)"
+   }
+  ]
+ }
+}

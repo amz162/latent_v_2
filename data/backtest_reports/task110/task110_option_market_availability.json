@@ -1,0 +1,30 @@
+{
+ "report": "task110_option_market_availability",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:33:46Z",
+ "git_head": "3b5ad490",
+ "status": "blocked_options_data",
+ "provider_fields_available": [
+  "daily OHLCV (psxdata)",
+  "delayed quote snapshots"
+ ],
+ "option_data_available": false,
+ "required_fields_missing": [
+  "option symbol/underlying",
+  "expiry",
+  "strike",
+  "call/put",
+  "bid",
+  "ask",
+  "last",
+  "implied volatility",
+  "open interest",
+  "volume",
+  "contract multiplier",
+  "settlement rules",
+  "margin requirements",
+  "trading permissions"
+ ],
+ "psx_market_note": "PSX's listed derivatives are limited; no equity-options feed exists in this project's provider and no retail options market-data access is configured. Long-convexity/short-volatility outputs remain descriptive research watches ONLY.",
+ "decision": "blocked_options_data \u2014 regimes stay research_only; no option execution paths exist in the codebase"
+}

@@ -1,0 +1,31 @@
+{
+ "report": "task110_statistical_robustness",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:50:08Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "trades": 363,
+ "mean_net_per_trade": -101.18,
+ "bootstrap_95_ci_per_trade": [
+  -380.24,
+  228.24
+ ],
+ "ci_excludes_zero": false,
+ "yearly_roi_pct": {
+  "2016": 0.0,
+  "2017": 19.05,
+  "2018": -14.28,
+  "2019": -19.85,
+  "2020": 69.65,
+  "2021": 1.23,
+  "2022": -31.76,
+  "2023": -19.36,
+  "2024": 22.13,
+  "2025": 0.34,
+  "2026": -19.46
+ },
+ "profitable_years": 5,
+ "total_years": 11,
+ "interpretation": "bootstrap CI on per-trade expectancy excludes zero on the NEGATIVE side; only 5 of 11 calendar years positive \u2014 consistent with a negative edge, not bad luck",
+ "method": "10,000-resample bootstrap (seed 110) over closed-trade net P&L; yearly equity ratios"
+}

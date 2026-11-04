@@ -1,0 +1,137 @@
+{
+ "report": "task110_golden_cross_signal_report",
+ "task": "task110",
+ "generated_at": "2026-11-04T10:30:22Z",
+ "git_head": "3b5ad490",
+ "status": "completed",
+ "strategy": "golden_cross_7_30_v1 \u2014 7/30 SMA Crossover \u2014 Golden Cross Research Strategy",
+ "rules": {
+  "golden": "prev MA7<=prev MA30 and cur MA7>cur MA30 (two consecutive valid observations)",
+  "death": "prev MA7>=prev MA30 and cur MA7<cur MA30",
+  "sell_closes_long_only": "no short entries",
+  "execution": "next global session open after signal close",
+  "unfilled": "signals without a valid next-session bar are never fabricated"
+ },
+ "universe": [
+  "ANL",
+  "BOP",
+  "CNERGY",
+  "FCCL",
+  "HASCOL",
+  "HUBC",
+  "HUMNL",
+  "KEL",
+  "LOTCHEM",
+  "LUCK",
+  "MEBL",
+  "MLCF",
+  "OGDC",
+  "PAEL",
+  "PIBTL",
+  "PPL",
+  "PRL",
+  "PSO",
+  "SYS",
+  "TELE",
+  "TRG",
+  "UNITY",
+  "WTL"
+ ],
+ "per_symbol": {
+  "ANL": {
+   "golden": 54,
+   "death": 55
+  },
+  "BOP": {
+   "golden": 40,
+   "death": 40
+  },
+  "CNERGY": {
+   "golden": 56,
+   "death": 57
+  },
+  "FCCL": {
+   "golden": 50,
+   "death": 50
+  },
+  "HASCOL": {
+   "golden": 48,
+   "death": 49
+  },
+  "HUBC": {
+   "golden": 48,
+   "death": 48
+  },
+  "HUMNL": {
+   "golden": 55,
+   "death": 56
+  },
+  "KEL": {
+   "golden": 47,
+   "death": 48
+  },
+  "LOTCHEM": {
+   "golden": 61,
+   "death": 62
+  },
+  "LUCK": {
+   "golden": 41,
+   "death": 42
+  },
+  "MEBL": {
+   "golden": 44,
+   "death": 45
+  },
+  "MLCF": {
+   "golden": 56,
+   "death": 56
+  },
+  "OGDC": {
+   "golden": 49,
+   "death": 50
+  },
+  "PAEL": {
+   "golden": 57,
+   "death": 57
+  },
+  "PIBTL": {
+   "golden": 50,
+   "death": 51
+  },
+  "PPL": {
+   "golden": 55,
+   "death": 56
+  },
+  "PRL": {
+   "golden": 57,
+   "death": 58
+  },
+  "PSO": {
+   "golden": 45,
+   "death": 44
+  },
+  "SYS": {
+   "golden": 51,
+   "death": 52
+  },
+  "TELE": {
+   "golden": 50,
+   "death": 51
+  },
+  "TRG": {
+   "golden": 53,
+   "death": 53
+  },
+  "UNITY": {
+   "golden": 36,
+   "death": 36
+  },
+  "WTL": {
+   "golden": 49,
+   "death": 50
+  }
+ },
+ "total_golden": 1152,
+ "total_death": 1166,
+ "note": "7/30 is the user-specified configuration, not a market convention claim"
+}
