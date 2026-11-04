@@ -3,7 +3,7 @@
 overlay-capable portfolio engine, benchmarks. Reuses task110_lib (read-only)
 for the deterministic cost schedule, MA/crossover math and variance estimators."""
 from __future__ import annotations
-import json, sys, hashlib, sqlite3
+import json, math, statistics, sys, hashlib, sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -45,18 +45,20 @@ def git_head() -> str:
         return "unknown"
 
 
-def artifact(name: str, report: str, status: str, **fields) -> dict:
-    """Write a task111 artifact with the mandatory metadata envelope."""
+def artifact(name: str, report: str, status: str, base: Path | None = None, **fields) -> dict:
+    """Write an artifact with the mandatory metadata envelope. `base` overrides
+    the destination directory (defaults to the task111 report directory)."""
     obj = {
         "report": report,
-        "task": "task111",
+        "task": "task112" if (base is not None and "task112" in str(base)) else "task111",
         "generated_at": now_iso(),
         "git_head": git_head(),
         "status": status,
         **fields,
     }
-    T111.mkdir(parents=True, exist_ok=True)
-    (T111 / name).write_text(json.dumps(obj, indent=1, default=str), encoding="utf-8")
+    dest = base or T111
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / name).write_text(json.dumps(obj, indent=1, default=str), encoding="utf-8")
     return obj
 
 
@@ -167,6 +169,8 @@ def run_portfolio_overlay(inds: dict, sizing_fn=None, pause_fn=None,
     realized = 0.0
     trades, daily = [], []
     peak, max_dd = initial_capital, 0.0
+    tot_buy_value = 0.0
+    max_concentration = 0.0
 
     def mark(sym, i):
         ind = inds[sym]
@@ -226,6 +230,7 @@ def run_portfolio_overlay(inds: dict, sizing_fn=None, pause_fn=None,
                 buy = L.side_costs(sh, px)
             cost = px * sh + buy["side_total"]
             cash -= cost
+            tot_buy_value += px * sh
             pos[s] = dict(symbol=s, entry_date=d, entry_px=px, shares=sh)
         # pending from today's closes
         for s in uni:
@@ -246,14 +251,30 @@ def run_portfolio_overlay(inds: dict, sizing_fn=None, pause_fn=None,
         peak = max(peak, equity)
         dd = (equity - peak) / peak
         max_dd = min(max_dd, dd)
+        if equity > 0 and inv > 0:
+            for pp in pos.values():
+                m2 = mark(pp["symbol"], i)
+                if m2:
+                    max_concentration = max(max_concentration, (pp["shares"] * m2) / equity)
         daily.append(dict(date=d, cash=round(cash, 2), invested=round(inv, 2), equity=round(equity, 2),
-                          drawdown_pct=round(dd * 100, 3), open_positions=len(pos)))
+                          drawdown_pct=round(dd * 100, 3), open_positions=len(pos),
+                          exposure_pct=round(100 * inv / equity, 2) if equity > 0 else 0.0))
     wins = [t for t in trades if t["net_pnl"] > 0]
     losses = [t for t in trades if t["net_pnl"] <= 0]
     gw = sum(t["net_pnl"] for t in wins)
     gl = abs(sum(t["net_pnl"] for t in losses))
     final_equity = daily[-1]["equity"] if daily else initial_capital
+    eqs = [row["equity"] for row in daily]
+    rets = [math.log(eqs[i] / eqs[i - 1]) for i in range(1, len(eqs)) if eqs[i - 1] > 0 and eqs[i] > 0]
+    ann_vol = round((statistics.pstdev(rets) * math.sqrt(252)) * 100, 3) if len(rets) >= 20 else None
+    avg_eq = sum(eqs) / len(eqs) if eqs else initial_capital
     return dict(
+        annualized_volatility_pct=ann_vol,
+        avg_exposure_pct=round(sum(r["exposure_pct"] for r in daily) / max(1, len(daily)), 2),
+        turnover=round(tot_buy_value / avg_eq, 3) if avg_eq > 0 else None,
+        max_single_position_concentration_pct=round(max_concentration * 100, 2),
+        cash_utilization_pct=round(100 - (sum(r["exposure_pct"] for r in daily) / max(1, len(daily))), 2),
+        _daily=daily,
         initial_capital=initial_capital,
         final_equity=round(final_equity, 2),
         realized_net_pnl=round(realized, 2),

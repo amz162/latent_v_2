@@ -21,6 +21,8 @@ import { PricePatternFinder } from "./PricePatternFinder";
 import { PaperTradeMonitor } from "./PaperTradeMonitor";
 import { GoldenCrossView } from "./GoldenCrossView";
 import { AiStockAnalysisView } from "./AiStockAnalysisView";
+import { LlmSignalsView } from "./LlmSignalsView";
+import { ModelPerformanceReportView } from "./ModelPerformanceReportView";
 import { VolatilityAnalyticsView } from "./VolatilityAnalyticsView";
 
 export function AppShell() {
@@ -68,6 +70,10 @@ export function AppShell() {
             return <VolatilityAnalyticsView />;
           case "ai_analysis":
             return <AiStockAnalysisView />;
+          case "llm_signals":
+            return <LlmSignalsView />;
+          case "model_report":
+            return <ModelPerformanceReportView />;
           case "calculators":
             return <Calculators />;
           case "pattern_finder":

@@ -22,6 +22,8 @@ import {
   Check,
   Brain,
   BrainCircuit,
+  ListChecks,
+  FileBarChart,
   Calculator,
   Search,
 } from "lucide-react";
@@ -49,6 +51,8 @@ const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ cl
   { view: "golden_cross", key: "nav.golden_cross", icon: TrendingUp },
   { view: "volatility_analytics", key: "nav.volatility_analytics", icon: Waves },
   { view: "ai_analysis", key: "nav.ai_analysis", icon: BrainCircuit },
+  { view: "llm_signals", key: "nav.llm_signals", icon: ListChecks },
+  { view: "model_report", key: "nav.model_report", icon: FileBarChart },
 ];
 
 const LANG_OPTIONS: { value: Language; label: string; native: string }[] = [

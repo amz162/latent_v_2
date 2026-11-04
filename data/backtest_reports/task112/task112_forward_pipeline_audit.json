@@ -1,0 +1,43 @@
+{
+ "report": "task112_forward_pipeline_audit",
+ "task": "task112",
+ "generated_at": "2026-11-04T15:08:13Z",
+ "git_head": "6daa32ec",
+ "status": "completed",
+ "worker_heartbeat": "unknown",
+ "worker_health_keys": [
+  "cycles_completed",
+  "heartbeat_at",
+  "idle_interval_seconds",
+  "last_cycle",
+  "note",
+  "pid",
+  "poll_interval_seconds",
+  "provider_delay_minutes",
+  "started_at",
+  "timestamp_quality"
+ ],
+ "monitor_state_keys": [
+  "cycle_id",
+  "disclaimers",
+  "eod",
+  "feed",
+  "generated_at",
+  "job_history",
+  "legacy_paper_trades",
+  "positions",
+  "provider_errors",
+  "rejected_observations",
+  "run_classification",
+  "snapshot_store",
+  "structural_provider_gaps",
+  "summary"
+ ],
+ "duplicate_worker_protection": "task108_worker.lock present",
+ "idempotent_processing": "task107 suite asserts repeat_cycle_no_new_snapshots (29/29 green)",
+ "data_frontier": "2026-11-03",
+ "session_count": 2488,
+ "provider_limitations": "daily bars only; delayed snapshots; NO verified intraday OHLC; provider timestamps not exchange-stamped (never fabricated)",
+ "data_readiness_visibility": "existing data-readiness limitations remain displayed in the application",
+ "cohort_separation": "general Task 105-110 cohort vs LLM task111-llm-multisource-gen1 kept separate everywhere"
+}

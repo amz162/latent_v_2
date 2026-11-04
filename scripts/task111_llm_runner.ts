@@ -41,6 +41,27 @@ async function writeJsonl(file: string, obj: unknown): Promise<void> {
   await fs.appendFile(file, JSON.stringify(obj) + "\n", "utf8");
 }
 
+// Task 112 — append-only signal history: every decision (ok, unavailable,
+// rejected, stale) is preserved under task112/llm_signal_history; existing
+// records are never overwritten, so retries stay distinguishable.
+async function appendHistory(rec: Task111SignalRecord | Record<string, unknown>): Promise<void> {
+  const r = rec as Record<string, unknown>;
+  const sym = String(r.symbol ?? "UNKNOWN");
+  const ts = String(r.decisionTimestamp ?? "unknown");
+  const h = String(r.evidenceHash ?? "nohash");
+  const id = `${sym}-${ts.slice(0, 19)}-${h.slice(0, 8)}`;
+  const dir = path.join(ROOT, "data/backtest_reports/task112/llm_signal_history");
+  await fs.mkdir(dir, { recursive: true });
+  const fp = path.join(dir, `${id}.json`);
+  try {
+    await fs.access(fp);
+    return; // append-only: identical record already stored
+  } catch {
+    /* new record */
+  }
+  await fs.writeFile(fp, JSON.stringify({ ...r, signalId: id, provenance: "runner_append" }, null, 1), "utf8");
+}
+
 async function main() {
   await fs.mkdir(OUT_DIR, { recursive: true });
   await fs.mkdir(CACHE_DIR, { recursive: true });
@@ -120,6 +141,7 @@ async function main() {
           staleSkipped: true,
         };
         await fs.writeFile(path.join(OUT_DIR, `${sym}.json`), JSON.stringify(staleRecord, null, 1), "utf8");
+        await appendHistory(staleRecord);
         await writeJsonl(path.join(OPS_DIR, "runner_log.jsonl"), { ts: new Date().toISOString(), symbol: sym, event: "stale_skipped", cutoff: bundle.evidence.dataCutoff, ageDays: Math.round(cutoffAgeDays) });
         results.push({ symbol: sym, status: "stale_skipped", finalSignal: "NO_TRADE", error: staleRecord.llmFailureReason });
         continue;
@@ -145,6 +167,7 @@ async function main() {
       }
       const record = await runStockSignal(bundle.evidence, rrBars, { client, generationId: genId });
       await fs.writeFile(path.join(OUT_DIR, `${sym}.json`), JSON.stringify(record, null, 1), "utf8");
+      await appendHistory(record);
       await fs.writeFile(cacheFile, JSON.stringify(record), "utf8");
       await writeJsonl(path.join(OPS_DIR, "provider_calls.jsonl"), {
         ts: record.decisionTimestamp,

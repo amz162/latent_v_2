@@ -1,0 +1,301 @@
+"use client";
+
+// Task 112 — "Model Performance" tab: the in-app comprehensive report over
+// every model and strategy actually present in repository evidence
+// (Tasks 79-111), including the GLM-4.6 LLM analyst. All values come from the
+// machine-readable report artifact; missing values are marked in the artifact
+// itself ("Not available in source evidence") and shown as such here.
+// Historical / validation / final-test / forward categories are never merged.
+
+import { useEffect, useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+
+interface SummaryRow {
+  model: string;
+  methodology: string;
+  best_available_result: unknown;
+  forward_outcomes_matured: string;
+  current_status: string;
+  promotion_eligibility: string;
+}
+
+interface Profile {
+  model_name: string;
+  model_family: string;
+  purpose: string;
+  methodology: string;
+  training_approach: string;
+  prediction_horizon: string;
+  universe: string;
+  transaction_cost_assumptions: string;
+  execution_assumptions: string;
+  historical_backtest_result: unknown;
+  metrics_by_category: unknown;
+  forward_validation_status: string;
+  current_disposition: string;
+  current_status_label: string;
+  promotion_eligibility: string;
+  artifact_location: string;
+  [k: string]: unknown;
+}
+
+interface AccountRow {
+  strategy: string;
+  ending_balance: number | string;
+  net_roi_pct: number | string;
+  max_drawdown_pct: number | string;
+  annualized_volatility_pct: number | string | null;
+  avg_exposure_pct: number | string | null;
+  turnover: number | string | null;
+  trades: number | string | null;
+  win_rate_pct: number | string | null;
+  profit_factor: number | string | null;
+  total_costs: number | string | null;
+}
+
+interface Report {
+  generated_at: string;
+  git_head: string;
+  status: string;
+  inventory: Profile[];
+  summary: SummaryRow[];
+  account_comparison_pkr100k: AccountRow[];
+  llm_evidence_contribution: Record<string, { available_pct?: number; cited_pct?: number; available?: number; cited?: number; note?: string }>;
+  general_forward_cohort: {
+    total_forward_observations?: number; matured_positions?: number; wins?: number; losses?: number;
+    pending_strategy_outcomes?: number; unique_symbols?: number; warning?: string;
+  };
+  evidence_lineage: Record<string, unknown>;
+}
+
+const NA = "Not available in source evidence";
+
+function statusBadge(s: string) {
+  if (s.startsWith("Shadow")) return "border-sky-500/60 bg-sky-500/10 text-sky-700 dark:text-sky-300";
+  if (s.startsWith("Research")) return "border-zinc-500/60 bg-zinc-500/10";
+  if (s.startsWith("Rule")) return "border-purple-500/60 bg-purple-500/10 text-purple-700 dark:text-purple-300";
+  if (s.startsWith("Rejected")) return "border-rose-500/60 bg-rose-500/10 text-rose-700 dark:text-rose-300";
+  return "border-amber-500/60 bg-amber-500/10";
+}
+
+function fmtVal(v: unknown): string {
+  if (v == null) return NA;
+  if (typeof v === "number") return Number.isFinite(v) ? String(Math.round(v * 1e4) / 1e4) : String(v);
+  if (typeof v === "string") return v;
+  return JSON.stringify(v);
+}
+
+export function ModelPerformanceReportView() {
+  const [report, setReport] = useState<Report | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  useEffect(() => {
+    fetch("/api/model-report", { cache: "no-store" })
+      .then(async (r) => {
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+        setReport(j);
+      })
+      .catch((e) => setErr(e instanceof Error ? e.message : String(e)))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const statuses = useMemo(
+    () => [...new Set((report?.summary ?? []).map((r) => r.current_status))].sort(),
+    [report]
+  );
+  const rows = useMemo(() => {
+    let rs = report?.summary ?? [];
+    if (statusFilter) rs = rs.filter((r) => r.current_status === statusFilter);
+    const q = filter.trim().toLowerCase();
+    if (q) rs = rs.filter((r) => r.model.toLowerCase().includes(q));
+    return rs;
+  }, [report, filter, statusFilter]);
+
+  if (loading) return <div className="p-6 text-sm text-muted-foreground">Loading model performance report…</div>;
+  if (err)
+    return (
+      <div className="space-y-3 p-6">
+        <div className="rounded-md border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
+          SHADOW / RESEARCH ONLY — NOT AN ORDER
+        </div>
+        <p className="text-sm text-rose-600">Report unavailable: {err}</p>
+      </div>
+    );
+  if (!report) return null;
+
+  const gf = report.general_forward_cohort;
+
+  return (
+    <div className="space-y-4 p-4 md:p-6">
+      <div className="rounded-md border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
+        SHADOW / RESEARCH ONLY — NOT AN ORDER
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h1 className="text-xl font-semibold">Model &amp; Strategy Performance Report</h1>
+          <p className="text-xs text-muted-foreground">
+            Every model and strategy in repository evidence (Tasks 79-111) · generated {report.generated_at} · head {report.git_head} ·
+            historical / validation / final-test / forward categories never merged.
+          </p>
+        </div>
+        <div className="flex gap-1">
+          {["pdf", "csv", "json", "md"].map((f) => (
+            <a key={f} className="rounded-md border px-3 py-1.5 text-xs uppercase hover:bg-muted" href={`/api/model-report/download?format=${f}`}>
+              {f}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* cohort separation banner */}
+      <Card>
+        <CardContent className="space-y-1 pt-4 text-xs">
+          <p className="font-semibold">Cohort separation</p>
+          <p className="text-rose-600">{gf.warning}</p>
+          <p>
+            General cohort: {gf.total_forward_observations} observations · {gf.matured_positions} matured (W{gf.wins}/L{gf.losses}) ·{" "}
+            {gf.pending_strategy_outcomes} pending · {gf.unique_symbols} symbols.
+          </p>
+          <p>
+            LLM cohort (GLM-4.6): <b>0 matured outcomes</b> — decisions are current-date only; calibrated probability is
+            “Not available — insufficient matured forward outcomes”; calibration requires ≥100 genuine matured LLM-cohort outcomes.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* filters */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Input className="h-8 w-56" placeholder="Filter models…" value={filter} onChange={(e) => setFilter(e.target.value)} />
+        <select className="h-8 rounded-md border bg-background px-2 text-sm" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="">All statuses</option>
+          {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <span className="text-xs text-muted-foreground">{rows.length} models</span>
+      </div>
+
+      {/* summary table */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-base">Summary comparison</CardTitle></CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b text-muted-foreground">
+                  <th className="py-1.5 pr-2">Model</th><th className="pr-2">Methodology</th>
+                  <th className="pr-2">Best available result</th><th className="pr-2">Forward matured</th>
+                  <th className="pr-2">Status</th><th className="pr-2">Promotion</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.model} className="border-b border-border/50">
+                    <td className="py-1.5 pr-2 font-medium">{r.model}</td>
+                    <td className="max-w-[14rem] truncate pr-2" title={r.methodology}>{r.methodology}</td>
+                    <td className="max-w-[16rem] truncate pr-2" title={fmtVal(r.best_available_result)}>{fmtVal(r.best_available_result)}</td>
+                    <td className="pr-2">{r.forward_outcomes_matured}</td>
+                    <td className="pr-2"><Badge variant="outline" className={`text-[10px] ${statusBadge(r.current_status)}`}>{r.current_status}</Badge></td>
+                    <td className="pr-2">{r.promotion_eligibility}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* account comparison */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-base">Account-level comparison (PKR 100,000 · V2 costs · whole shares · no leverage/shorts)</CardTitle></CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b text-muted-foreground">
+                  <th className="py-1.5 pr-2">Strategy</th><th className="pr-2">End balance</th><th className="pr-2">Net ROI</th>
+                  <th className="pr-2">Max DD</th><th className="pr-2">Ann. vol</th><th className="pr-2">Avg exposure</th>
+                  <th className="pr-2">Turnover</th><th className="pr-2">Trades</th><th className="pr-2">Win %</th><th className="pr-2">PF</th><th className="pr-2">Costs</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.account_comparison_pkr100k.map((r) => (
+                  <tr key={r.strategy} className="border-b border-border/50">
+                    <td className="py-1.5 pr-2 font-medium">{r.strategy}</td>
+                    <td className="pr-2">{typeof r.ending_balance === "number" ? Math.round(r.ending_balance).toLocaleString() : r.ending_balance}</td>
+                    <td className="pr-2">{r.net_roi_pct}%</td>
+                    <td className="pr-2">{r.max_drawdown_pct}%</td>
+                    <td className="pr-2">{r.annualized_volatility_pct ?? "—"}</td>
+                    <td className="pr-2">{r.avg_exposure_pct ?? "—"}%</td>
+                    <td className="pr-2">{r.turnover ?? "—"}</td>
+                    <td className="pr-2">{r.trades ?? "—"}</td>
+                    <td className="pr-2">{r.win_rate_pct ?? "—"}</td>
+                    <td className="pr-2">{r.profit_factor ?? "—"}</td>
+                    <td className="pr-2">{typeof r.total_costs === "number" ? Math.round(r.total_costs).toLocaleString() : r.total_costs}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="pt-2 text-[10px] text-muted-foreground">
+            Open positions are marked to market; realized and unrealized P&amp;L are reported separately and open
+            positions are never counted as completed trades. Drawdown reduction is not alpha; the 10% vol-target result
+            remains a research hypothesis, not a promoted strategy.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* evidence contribution */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-base">LLM evidence contribution (availability vs actual citation)</CardTitle></CardHeader>
+        <CardContent className="text-xs">
+          <div className="grid gap-2 md:grid-cols-5">
+            {Object.entries(report.llm_evidence_contribution)
+              .filter(([k]) => k !== "note")
+              .map(([k, v]) => (
+                <div key={k} className="rounded-md border p-2">
+                  <div className="font-medium">{k.replace(/_/g, " ")}</div>
+                  <div>available: {String(v.available_pct ?? "—")}%</div>
+                  <div>cited: {String(v.cited_pct ?? "—")}%</div>
+                </div>
+              ))}
+          </div>
+          <p className="pt-2 text-muted-foreground">{String(report.llm_evidence_contribution.note ?? "")}</p>
+        </CardContent>
+      </Card>
+
+      {/* full profiles */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-base">Full model profiles ({report.inventory.length})</CardTitle></CardHeader>
+        <CardContent className="space-y-3 text-xs">
+          {report.inventory
+            .filter((m) => !filter || m.model_name.toLowerCase().includes(filter.trim().toLowerCase()))
+            .map((m) => (
+              <details key={m.model_name} className="rounded-md border p-2">
+                <summary className="cursor-pointer font-medium">
+                  {m.model_name} — <span className="text-muted-foreground">{m.current_status_label}</span>
+                </summary>
+                <div className="mt-2 grid gap-x-4 gap-y-1 md:grid-cols-2">
+                  {Object.entries(m).filter(([k]) => k !== "model_name").map(([k, v]) => (
+                    <div key={k} className="min-w-0">
+                      <span className="text-muted-foreground">{k.replace(/_/g, " ")}: </span>
+                      <span className="break-words">{fmtVal(v)}</span>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            ))}
+        </CardContent>
+      </Card>
+
+      <p className="text-[10px] text-muted-foreground">
+        Downloaded artifacts are byte-identical to the versioned repository files (data/reports/ + docs/reports/).
+        No secrets or API keys are embedded in this page or the report. Nothing here places orders or promotes a model.
+      </p>
+    </div>
+  );
+}

@@ -1,0 +1,22 @@
+{
+ "report": "task112_llm_evidence_lineage_audit",
+ "task": "task112",
+ "generated_at": "2026-11-04T15:08:03Z",
+ "git_head": "6daa32ec",
+ "status": "completed",
+ "records": 48,
+ "reproducible": 24,
+ "evidence_packages_retained": 24,
+ "fields_verified": [
+  "provider/model",
+  "promptVersion",
+  "evidenceHash",
+  "schema versions",
+  "risk policy version",
+  "decision timestamp",
+  "evidence as-of",
+  "validation status"
+ ],
+ "reproduction_scope": "decision reproducible from stored evidence package + versions as far as inputs permit (news caches are 12h TTL and evolve; the evidence SNAPSHOT in the package is authoritative)",
+ "csv": "task112_llm_lineage_audit.csv"
+}

@@ -22,6 +22,8 @@ const dict: Dict = {
   "nav.golden_cross": { en: "Golden Cross 7/30", roman_urdu: "Golden Cross 7/30", urdu: "گولڈن کراس 7/30" },
   "nav.volatility_analytics": { en: "Volatility Analytics", roman_urdu: "Volatility Tajzea", urdu: "وولیٹیلٹی تجزیہ" },
   "nav.ai_analysis": { en: "AI Analysis", roman_urdu: "AI Tajzea", urdu: "اے آئی تجزیہ" },
+  "nav.llm_signals": { en: "LLM Signals", roman_urdu: "LLM Signals", urdu: "ایل ایل ایم اشارات" },
+  "nav.model_report": { en: "Model Performance", roman_urdu: "Model Performance", urdu: "ماڈل کارکردگی" },
   "nav.ai_model_signals": { en: "AI Models", roman_urdu: "AI Models", urdu: "اے آئی ماڈلز" },
   "nav.paper_monitor": { en: "Paper Trade Monitor", roman_urdu: "Paper Trade Monitor", urdu: "پیپر ٹریڈ مانیٹر" },
   "nav.calculators": { en: "Calculators", roman_urdu: "Calculators", urdu: "کیلکولیٹرز" },
