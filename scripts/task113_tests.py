@@ -130,7 +130,18 @@ def test_6_no_future_data_leakage():
     check("LLM data_cutoff <= frontier",
           str(llm["data_cutoff"]) <= str(frontier),
           f"cutoff={llm['data_cutoff']} frontier={frontier}")
-    check("LLM forward_sessions_elapsed == 0", llm["forward_sessions_elapsed"] == 0)
+    # Task 114: frontier advanced past the LLM as-of date; elapsed forward
+    # sessions must equal the ACTUAL distinct sessions after the cutoff in
+    # OhlcvBar (never calendar days, never a hardcoded snapshot value).
+    import sqlite3 as _sq
+    _conn = _sq.connect(f"file:{DB}?mode=ro", uri=True)
+    _actual = _conn.execute(
+        "SELECT COUNT(DISTINCT date) FROM OhlcvBar WHERE date > ?",
+        (llm["data_cutoff"],)).fetchone()[0]
+    _conn.close()
+    check("LLM forward_sessions_elapsed == actual sessions after data_cutoff",
+          llm["forward_sessions_elapsed"] == _actual,
+          f"audit={llm['forward_sessions_elapsed']} actual={_actual}")
     # general cohort decision dates <= frontier
     for c in audit["part_a_cohort_reconciliation"]:
         # the LLM cohort's decision_date is the generation-run timestamp
@@ -158,9 +169,23 @@ def test_7_llm_general_isolation():
     # 43 is at the STRATEGY-OUTCOME level (decision x strategy), per the
     # summary block in task107/_matured.json; the audit field is now
     # strategy-outcome-level too.
-    check("general cohort 43 terminal-exits present (strategy-outcome level, separate)",
-          sum(c["matured_terminal_exits_early"] for c in gen_cohorts) == 43,
-          f"got {sum(c['matured_terminal_exits_early'] for c in gen_cohorts)}")
+    # Task 114: the frozen engine legitimately advanced after gen3 filled on
+    # 2026-11-04 (43 → more terminal exits). The invariant is no longer a
+    # hardcoded 43 but exact reconciliation with _matured.json: the audit's
+    # per-generation terminal counts must equal the frozen ledger's
+    # (matured_terminal_exit + matured_full_exit) strategy outcomes, and
+    # terminal + pending must equal filled decisions x 3 strategies.
+    mat = jload(BR / "task107" / "_matured.json") or {}
+    obs = mat.get("observations") or []
+    filled = [o for o in obs if o.get("status") != "awaiting_entry_bar"]
+    term_expected = sum(1 for o in obs for s in (o.get("outcomes") or {}).values()
+                        if s.get("status") in ("matured_terminal_exit", "matured_full_exit"))
+    pend_expected = sum(1 for o in obs for s in (o.get("outcomes") or {}).values()
+                        if s.get("status") == "pending_mtm")
+    got_term = sum(c["matured_terminal_exits_early"] for c in gen_cohorts)
+    check("general cohort terminal-exits reconcile with frozen ledger (strategy-outcome level, separate)",
+          got_term == term_expected and term_expected + pend_expected == len(filled) * 3,
+          f"audit={got_term} ledger={term_expected} reconciliation={term_expected}+{pend_expected} vs {len(filled)}x3")
 
 
 def test_8_inventory_classification():
@@ -187,7 +212,10 @@ def test_8_inventory_classification():
 def test_9_report_reconciliation():
     print("\n[9] Report reconciliation against source artifacts")
     rep = jload(REP / "model_strategy_performance_latest.json")
-    check("report_version == task113-augmented", rep.get("report_version") == "task113-augmented")
+    # Task 114 bumped the report version (task114-augmented); the Task 113 audit
+    # block itself must remain present and reconciled — that is the preserved part.
+    check("report_version == task114-augmented (carries task113 block)",
+          rep.get("report_version") == "task114-augmented")
     check("report inventory == 83", len(rep["inventory"]) == 83)
     t113 = rep.get("task113_audit", {})
     check("report has task113_audit block", t113.get("available") is True)

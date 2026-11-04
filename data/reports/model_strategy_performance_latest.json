@@ -1,12 +1,12 @@
 {
  "report": "psx_model_strategy_performance_report",
  "task": "task112",
- "report_version": "task113-augmented",
- "generated_at": "2026-11-04T17:54:10Z",
- "git_head": "e371b6c3",
+ "report_version": "task114-augmented",
+ "generated_at": "2026-11-04T22:48:07Z",
+ "git_head": "a302c8fc",
  "status": "completed",
  "evidence_lineage": {
-  "sources": "data/backtest_reports/task*/ (Tasks 79-113 committed artifacts)",
+  "sources": "data/backtest_reports/task*/ (Tasks 79-114 committed artifacts)",
   "primary_files": [
    "task82_model_registry_audit.json",
    "task79_model_results.json",
@@ -18,7 +18,8 @@
    "task109_forward_performance.json",
    "task111 artifacts",
    "task112 artifacts",
-   "task113_forward_validation_audit.json (cohort reconciliation + inventory classification)"
+   "task113_forward_validation_audit.json (cohort reconciliation + inventory classification)",
+   "task114_forward_maturity_audit.json (first 5/10/21-session fixed-horizon maturity engine + LLM per-record outcomes)"
   ],
   "cost_schedule": "psx_user_schedule_v2 (computeTradeCostsV2) for Task 100+ strategy results; legacy experiments labeled in their own artifacts",
   "rules": [
@@ -26,7 +27,8 @@
    "Task 109's 43 matured outcomes are the GENERAL cohort, never attributed to the LLM",
    "LLM-specific cohort: 0 matured outcomes; calibration forbidden until >=100 genuine matured LLM outcomes",
    "missing values are marked 'Not available in source evidence'",
-   "Task 113: mock records (MOCK_PIPELINE_CHECK) never feed any metric; cohort denominators never added across"
+   "Task 113: mock records (MOCK_PIPELINE_CHECK) never feed any metric; cohort denominators never added across",
+   "Task 114: early SL/TP3 terminal exits are never labelled horizon-matured; pending never enters completed stats"
   ]
  },
  "inventory": [
@@ -15120,7 +15122,7 @@
    "target_definition": "Not available in source evidence",
    "prediction_horizon": "Not available in source evidence",
    "universe": "task109-consistent 23-symbol universe",
-   "evaluation_period": "~10 years to frontier 2026-11-03",
+   "evaluation_period": "~10 years to frontier 2026-11-04",
    "train_validation_test_split": "Not available in source evidence",
    "purge_embargo": "Not available in source evidence",
    "sample_counts": "Not available in source evidence",
@@ -27493,99 +27495,99 @@
  "account_comparison_pkr100k": [
   {
    "strategy": "golden_cross_baseline",
-   "ending_balance": 60718.23,
-   "net_roi_pct": -39.282,
+   "ending_balance": 62208.46,
+   "net_roi_pct": -37.792,
    "max_drawdown_pct": -87775.26,
    "annualized_volatility_pct": "Not available in source evidence",
    "avg_exposure_pct": "Not available in source evidence",
-   "turnover": 71.98,
+   "turnover": 72.14,
    "max_concentration_pct": "Not available in source evidence",
-   "trades": 363,
-   "win_rate_pct": 27.0,
-   "profit_factor": 0.8701,
-   "total_costs": 78867.55,
-   "realized_net_pnl": -36730.07,
-   "unrealized_pnl": -2551.7
+   "trades": 365,
+   "win_rate_pct": 26.85,
+   "profit_factor": 0.8637,
+   "total_costs": 78968.3,
+   "realized_net_pnl": -38844.97,
+   "unrealized_pnl": 1053.43
   },
   {
    "strategy": "overlay_B_vol_target_10pct",
-   "ending_balance": 97320.37,
-   "net_roi_pct": -2.68,
+   "ending_balance": 98060.14,
+   "net_roi_pct": -1.94,
    "max_drawdown_pct": -23.621,
-   "annualized_volatility_pct": 6.965,
+   "annualized_volatility_pct": 6.968,
    "avg_exposure_pct": 19.02,
-   "turnover": 21.826,
+   "turnover": 21.883,
    "max_concentration_pct": 13.99,
-   "trades": 428,
-   "win_rate_pct": 28.74,
-   "profit_factor": 0.8946,
+   "trades": 430,
+   "win_rate_pct": 28.6,
+   "profit_factor": 0.885,
    "total_costs": "Not available in source evidence",
-   "realized_net_pnl": -9935.01,
-   "unrealized_pnl": 7255.38
+   "realized_net_pnl": -10952.85,
+   "unrealized_pnl": 9012.99
   },
   {
    "strategy": "overlay_B_vol_target_15pct",
-   "ending_balance": 92758.4,
-   "net_roi_pct": -7.242,
+   "ending_balance": 93817.25,
+   "net_roi_pct": -6.183,
    "max_drawdown_pct": -33.656,
-   "annualized_volatility_pct": 10.367,
+   "annualized_volatility_pct": 10.371,
    "avg_exposure_pct": 28.41,
-   "turnover": 32.804,
+   "turnover": 32.89,
    "max_concentration_pct": 19.68,
-   "trades": 428,
-   "win_rate_pct": 28.74,
-   "profit_factor": 0.8736,
+   "trades": 430,
+   "win_rate_pct": 28.6,
+   "profit_factor": 0.8645,
    "total_costs": "Not available in source evidence",
-   "realized_net_pnl": -17684.56,
-   "unrealized_pnl": 10442.96
+   "realized_net_pnl": -19155.68,
+   "unrealized_pnl": 12972.93
   },
   {
    "strategy": "overlay_B_vol_target_20pct",
-   "ending_balance": 87418.18,
-   "net_roi_pct": -12.582,
+   "ending_balance": 88763.21,
+   "net_roi_pct": -11.237,
    "max_drawdown_pct": -42.54,
-   "annualized_volatility_pct": 13.723,
+   "annualized_volatility_pct": 13.729,
    "avg_exposure_pct": 37.68,
-   "turnover": 43.755,
+   "turnover": 43.866,
    "max_concentration_pct": 24.71,
-   "trades": 428,
-   "win_rate_pct": 28.74,
-   "profit_factor": 0.8582,
+   "trades": 430,
+   "win_rate_pct": 28.6,
+   "profit_factor": 0.8496,
    "total_costs": "Not available in source evidence",
-   "realized_net_pnl": -25901.62,
-   "unrealized_pnl": 13319.8
+   "realized_net_pnl": -27766.25,
+   "unrealized_pnl": 16529.46
   },
   {
    "strategy": "overlay_A_fixed_vol_exposure",
-   "ending_balance": 79652.78,
-   "net_roi_pct": -20.347,
+   "ending_balance": 81607.67,
+   "net_roi_pct": -18.392,
    "max_drawdown_pct": -62.414,
-   "annualized_volatility_pct": 27.272,
-   "avg_exposure_pct": 71.32,
-   "turnover": 80.833,
+   "annualized_volatility_pct": 27.278,
+   "avg_exposure_pct": 71.31,
+   "turnover": 81.006,
    "max_concentration_pct": 57.66,
-   "trades": 428,
-   "win_rate_pct": 28.74,
-   "profit_factor": 0.8611,
+   "trades": 430,
+   "win_rate_pct": 28.6,
+   "profit_factor": 0.8547,
    "total_costs": "Not available in source evidence",
-   "realized_net_pnl": -49907.37,
-   "unrealized_pnl": 29560.15
+   "realized_net_pnl": -52599.36,
+   "unrealized_pnl": 34207.03
   },
   {
    "strategy": "overlay_C_expansion_protection",
-   "ending_balance": 79652.78,
-   "net_roi_pct": -20.347,
+   "ending_balance": 81607.67,
+   "net_roi_pct": -18.392,
    "max_drawdown_pct": -62.414,
-   "annualized_volatility_pct": 27.272,
-   "avg_exposure_pct": 71.32,
-   "turnover": 80.833,
+   "annualized_volatility_pct": 27.278,
+   "avg_exposure_pct": 71.31,
+   "turnover": 81.006,
    "max_concentration_pct": 57.66,
-   "trades": 428,
-   "win_rate_pct": 28.74,
-   "profit_factor": 0.8611,
+   "trades": 430,
+   "win_rate_pct": 28.6,
+   "profit_factor": 0.8547,
    "total_costs": "Not available in source evidence",
-   "realized_net_pnl": -49907.37,
-   "unrealized_pnl": 29560.15
+   "realized_net_pnl": -52599.36,
+   "unrealized_pnl": 34207.03
   },
   {
    "strategy": "cash",
@@ -27605,8 +27607,8 @@
   },
   {
    "strategy": "buy_hold_equal_weight",
-   "ending_balance": 117499.27,
-   "net_roi_pct": 17.499,
+   "ending_balance": 120794.06,
+   "net_roi_pct": 20.794,
    "max_drawdown_pct": null,
    "annualized_volatility_pct": "Not available in source evidence",
    "avg_exposure_pct": "Not available in source evidence",
@@ -27615,7 +27617,7 @@
    "trades": null,
    "win_rate_pct": null,
    "profit_factor": null,
-   "total_costs": 8366.06,
+   "total_costs": 8837.65,
    "realized_net_pnl": "Not available in source evidence",
    "unrealized_pnl": "Not available in source evidence"
   }
@@ -28461,9 +28463,9 @@
  ],
  "task113_audit": {
   "available": true,
-  "task113_git_head": "e371b6c3",
-  "data_frontier": "2026-11-03",
-  "session_count": 2488,
+  "task113_git_head": "a302c8fc",
+  "data_frontier": "2026-11-04",
+  "session_count": 2489,
   "forward_validation_dashboard": [
    {
     "cohort_id": "task105-gen1",
@@ -28476,11 +28478,11 @@
     "pending_10_session": 12,
     "matured_21_session": 0,
     "pending_21_session": 12,
-    "matured_terminal_exits_early": 21,
-    "pending_mtm_open": 15,
+    "matured_terminal_exits_early": 28,
+    "pending_mtm_open": 8,
     "unfilled_awaiting_entry_bar": 0,
     "excluded_records": 0,
-    "forward_sessions_elapsed": 2
+    "forward_sessions_elapsed": 3
    },
    {
     "cohort_id": "task106-gen2",
@@ -28493,11 +28495,11 @@
     "pending_10_session": 22,
     "matured_21_session": 0,
     "pending_21_session": 22,
-    "matured_terminal_exits_early": 22,
-    "pending_mtm_open": 44,
+    "matured_terminal_exits_early": 27,
+    "pending_mtm_open": 39,
     "unfilled_awaiting_entry_bar": 0,
     "excluded_records": 0,
-    "forward_sessions_elapsed": 0
+    "forward_sessions_elapsed": 1
    },
    {
     "cohort_id": "task107-gen3",
@@ -28510,11 +28512,11 @@
     "pending_10_session": 23,
     "matured_21_session": 0,
     "pending_21_session": 23,
-    "matured_terminal_exits_early": 0,
-    "pending_mtm_open": 0,
-    "unfilled_awaiting_entry_bar": 23,
+    "matured_terminal_exits_early": 25,
+    "pending_mtm_open": 44,
+    "unfilled_awaiting_entry_bar": 0,
     "excluded_records": 0,
-    "forward_sessions_elapsed": null
+    "forward_sessions_elapsed": 0
    },
    {
     "cohort_id": "task111-llm-multisource-gen1",
@@ -28531,7 +28533,7 @@
     "pending_mtm_open": 0,
     "unfilled_awaiting_entry_bar": 23,
     "excluded_records": 0,
-    "forward_sessions_elapsed": 0
+    "forward_sessions_elapsed": 1
    },
    {
     "cohort_id": "task76-77-prospective-db-layer",
@@ -28548,7 +28550,7 @@
     "pending_mtm_open": 0,
     "unfilled_awaiting_entry_bar": 114,
     "excluded_records": 0,
-    "forward_sessions_elapsed": 3
+    "forward_sessions_elapsed": 4
    }
   ],
   "inventory_dashboard": {
@@ -30101,11 +30103,11 @@
     "source": "data/backtest_reports/task107/_matured.json (summary + observations)",
     "summary_block": {
      "n": 57,
-     "matured": 43,
-     "pending_mtm": 59,
-     "unfilled": 23,
-     "realized_total_pkr": -102348.02,
-     "unrealized_total_pkr": -53867.96,
+     "matured": 80,
+     "pending_mtm": 91,
+     "unfilled": 0,
+     "realized_total_pkr": 43673.62,
+     "unrealized_total_pkr": 115182.41,
      "note": "MTM is hypothetical unrealized value, not evidence of edge"
     },
     "general_cohort_decision_total": 57,
@@ -30132,11 +30134,11 @@
    "scheduler_execution": "task108_worker.py (120s interval, 09:45-15:45 PKT window)",
    "duplicate_worker_lock": "/home/z/my-project/data/backtest_reports/task107/ops/task108_worker.lock",
    "idempotency": "task107 suite asserts repeat_cycle_no_new_snapshots (29/29 green)",
-   "error_visibility": "ops/run_log.jsonl (13 lines) + ops/event_ledger.json",
+   "error_visibility": "ops/run_log.jsonl (15 lines) + ops/event_ledger.json",
    "provider_availability": "psxdata daily bars; delayed snapshots; provider timestamps NOT exchange-stamped",
    "last_successful_data_retrieval": "2026-11-04T11:46:28+0000",
-   "daily_ohlcv_frontier": "2026-11-03",
-   "session_count": 2488,
+   "daily_ohlcv_frontier": "2026-11-04",
+   "session_count": 2489,
    "snapshot_timestamp_quality": "estimated_source_timestamp (provider supplies no source ts)",
    "delayed_quote_limitations": "delayed snapshots labeled delayed_observation_shadow; NEVER claimed as exchange-timestamped real-time; NO intraday OHLC fabricated",
    "signal_generation_status": "general cohort frozen (57 decisions); LLM cohort frozen (23 current real decisions)",
@@ -30167,6 +30169,947 @@
     "evidence-quality checks"
    ],
    "attestation": "No model promoted merely for a large registry count, a successful build, or an attractive historical result. Everything remains research/shadow-only unless existing independent promotion gates are genuinely met \u2014 and none are met on current evidence."
+  }
+ },
+ "task114_maturity": {
+  "available": true,
+  "engine_version": "task114-maturity-v1",
+  "generated_at": "2026-11-04T22:45:21Z",
+  "data_frontier": "2026-11-04",
+  "sessions_new_since_2026_11_03": [
+   "2026-11-04"
+  ],
+  "panel": [
+   {
+    "cohort_id": "task105-gen1",
+    "total_observations": 12,
+    "unique_symbols": 12,
+    "matured_5_session": 0,
+    "pending_5_session": 12,
+    "remaining_sessions_5": [
+     1
+    ],
+    "matured_10_session": 0,
+    "pending_10_session": 12,
+    "matured_21_session": 0,
+    "pending_21_session": 12,
+    "terminal_exits_frozen_engine": 28,
+    "pending_mtm_frozen_engine": 8,
+    "unfilled_awaiting_entry_bar": 0,
+    "excluded_records": 0,
+    "policy_version": "task105-v1",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)"
+   },
+   {
+    "cohort_id": "task106-gen2",
+    "total_observations": 22,
+    "unique_symbols": 22,
+    "matured_5_session": 0,
+    "pending_5_session": 22,
+    "remaining_sessions_5": [
+     3
+    ],
+    "matured_10_session": 0,
+    "pending_10_session": 22,
+    "matured_21_session": 0,
+    "pending_21_session": 22,
+    "terminal_exits_frozen_engine": 27,
+    "pending_mtm_frozen_engine": 39,
+    "unfilled_awaiting_entry_bar": 0,
+    "excluded_records": 0,
+    "policy_version": "task105-v1",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)"
+   },
+   {
+    "cohort_id": "task107-gen3",
+    "total_observations": 23,
+    "unique_symbols": 23,
+    "matured_5_session": 0,
+    "pending_5_session": 23,
+    "remaining_sessions_5": [
+     4
+    ],
+    "matured_10_session": 0,
+    "pending_10_session": 23,
+    "matured_21_session": 0,
+    "pending_21_session": 23,
+    "terminal_exits_frozen_engine": 25,
+    "pending_mtm_frozen_engine": 44,
+    "unfilled_awaiting_entry_bar": 0,
+    "excluded_records": 0,
+    "policy_version": "task105-v1",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)"
+   },
+   {
+    "cohort_id": "task111-llm-multisource-gen1",
+    "total_observations": 23,
+    "unique_symbols": 23,
+    "matured_5_session": 0,
+    "pending_5_session": 23,
+    "remaining_sessions_5": [
+     4
+    ],
+    "matured_10_session": 0,
+    "pending_10_session": 23,
+    "matured_21_session": 0,
+    "pending_21_session": 23,
+    "terminal_exits_frozen_engine": null,
+    "pending_mtm_frozen_engine": null,
+    "unfilled_awaiting_entry_bar": 0,
+    "excluded_records": 48,
+    "policy_version": null,
+    "cost_profile": null
+   }
+  ],
+  "llm": {
+   "genuine_universe_decisions": 23,
+   "unique_symbols": 23,
+   "decisions_buy": 2,
+   "decisions_hold": 2,
+   "decisions_no_trade": 19,
+   "excluded_count": 48,
+   "terminal_exits_llm_policy_sim": 0,
+   "calibration": {
+    "status": "Not available \u2014 insufficient matured LLM outcomes",
+    "minimum_required": 100,
+    "current_matured_llm_outcomes": 0,
+    "llm_conviction": "uncalibrated (remains uncalibrated until >=100 genuine matured LLM-cohort outcomes; conviction is never converted into a probability)"
+   },
+   "counterfactual_note": "benchmark context: the symbol's own close at the horizon endpoint vs the entry-session close (and vs the frozen decision-day close); reported as OPPORTUNITY CONTEXT ONLY \u2014 avoided losses are not wins; nothing here enters trading statistics, win rates, or promotion gates",
+   "preservation": "original GLM-4.6 decisions, prompt hash (evidenceHash), evidence as-of, generation timestamp, and source references are preserved untouched in task112/llm_signal_history; this audit reads them and never regenerates or rewrites them"
+  },
+  "idempotency": {
+   "ledger": "data/backtest_reports/task114/task114_outcome_ledger.json",
+   "outcome_key": "decision_id|hN",
+   "duplicate_processing_attempts_identical": 0,
+   "source_bar_revisions_detected": 0,
+   "policy": "recompute-fresh from immutable inputs each run; ledger records first_processed_at + source fingerprint; a fingerprint change is an auditable correction, never a silent overwrite"
+  },
+  "missing_market_data": [
+   "ENGRO: no 2026-11-04 bar (dataset shows no ENGRO bar since 2025-01-03 \u2014 long out-of-universe; its only LLM record is the stale excluded one, so NO pending decision is affected)",
+   "BYCO: no 2026-11-04 bar (no bars since 2021-12-20; no frozen decision pending on it)",
+   "Neither symbol is in any active cohort denominator: all 57 general decisions and all 23 genuine LLM decisions are on symbols that traded on 2026-11-04"
+  ],
+  "drill_down": {
+   "task105-gen1": [
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_BOP_2026-10-29",
+     "symbol": "BOP",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_CNERGY_2026-10-29",
+     "symbol": "CNERGY",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_FCCL_2026-10-29",
+     "symbol": "FCCL",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_KEL_2026-10-29",
+     "symbol": "KEL",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_LOTCHEM_2026-10-29",
+     "symbol": "LOTCHEM",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_LUCK_2026-10-29",
+     "symbol": "LUCK",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_MEBL_2026-10-29",
+     "symbol": "MEBL",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_MLCF_2026-10-29",
+     "symbol": "MLCF",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_PAEL_2026-10-29",
+     "symbol": "PAEL",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_PIBTL_2026-10-29",
+     "symbol": "PIBTL",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_SYS_2026-10-29",
+     "symbol": "SYS",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    },
+    {
+     "cohort_id": "task105-gen1",
+     "decision_id": "t105gen1_TRG_2026-10-29",
+     "symbol": "TRG",
+     "decision_date": "2026-10-29",
+     "entry_status": "filled",
+     "5": "pending (\u22121 sess)",
+     "10": "pending (\u22126 sess)",
+     "21": "pending (\u221217 sess)"
+    }
+   ],
+   "task106-gen2": [
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_ANL_2026-11-02",
+     "symbol": "ANL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_BOP_2026-11-02",
+     "symbol": "BOP",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_CNERGY_2026-11-02",
+     "symbol": "CNERGY",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_FCCL_2026-11-02",
+     "symbol": "FCCL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_HASCOL_2026-11-02",
+     "symbol": "HASCOL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_HUBC_2026-11-02",
+     "symbol": "HUBC",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_HUMNL_2026-11-02",
+     "symbol": "HUMNL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_KEL_2026-11-02",
+     "symbol": "KEL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_LOTCHEM_2026-11-02",
+     "symbol": "LOTCHEM",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_LUCK_2026-11-02",
+     "symbol": "LUCK",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_MEBL_2026-11-02",
+     "symbol": "MEBL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_MLCF_2026-11-02",
+     "symbol": "MLCF",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_OGDC_2026-11-02",
+     "symbol": "OGDC",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_PAEL_2026-11-02",
+     "symbol": "PAEL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_PIBTL_2026-11-02",
+     "symbol": "PIBTL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_PRL_2026-11-02",
+     "symbol": "PRL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_PSO_2026-11-02",
+     "symbol": "PSO",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_SYS_2026-11-02",
+     "symbol": "SYS",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_TELE_2026-11-02",
+     "symbol": "TELE",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_TRG_2026-11-02",
+     "symbol": "TRG",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_UNITY_2026-11-02",
+     "symbol": "UNITY",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    },
+    {
+     "cohort_id": "task106-gen2",
+     "decision_id": "t106gen2_WTL_2026-11-02",
+     "symbol": "WTL",
+     "decision_date": "2026-11-02",
+     "entry_status": "filled",
+     "5": "pending (\u22123 sess)",
+     "10": "pending (\u22128 sess)",
+     "21": "pending (\u221219 sess)"
+    }
+   ],
+   "task107-gen3": [
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_ANL_2026-11-03",
+     "symbol": "ANL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_BOP_2026-11-03",
+     "symbol": "BOP",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_CNERGY_2026-11-03",
+     "symbol": "CNERGY",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_FCCL_2026-11-03",
+     "symbol": "FCCL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_HASCOL_2026-11-03",
+     "symbol": "HASCOL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_HUBC_2026-11-03",
+     "symbol": "HUBC",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_HUMNL_2026-11-03",
+     "symbol": "HUMNL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_KEL_2026-11-03",
+     "symbol": "KEL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_LOTCHEM_2026-11-03",
+     "symbol": "LOTCHEM",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_LUCK_2026-11-03",
+     "symbol": "LUCK",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_MEBL_2026-11-03",
+     "symbol": "MEBL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_MLCF_2026-11-03",
+     "symbol": "MLCF",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_OGDC_2026-11-03",
+     "symbol": "OGDC",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_PAEL_2026-11-03",
+     "symbol": "PAEL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_PIBTL_2026-11-03",
+     "symbol": "PIBTL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_PPL_2026-11-03",
+     "symbol": "PPL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_PRL_2026-11-03",
+     "symbol": "PRL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_PSO_2026-11-03",
+     "symbol": "PSO",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_SYS_2026-11-03",
+     "symbol": "SYS",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_TELE_2026-11-03",
+     "symbol": "TELE",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_TRG_2026-11-03",
+     "symbol": "TRG",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_UNITY_2026-11-03",
+     "symbol": "UNITY",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task107-gen3",
+     "decision_id": "t107gen3_WTL_2026-11-03",
+     "symbol": "WTL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    }
+   ],
+   "task111-llm-multisource-gen1": [
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "ANL-2026-11-04T14:08:33-9088d677",
+     "symbol": "ANL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "BOP-2026-11-04T14:08:41-6332f6fa",
+     "symbol": "BOP",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "CNERGY-2026-11-04T14:08:48-a0841177",
+     "symbol": "CNERGY",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "FCCL-2026-11-04T14:08:54-ea826696",
+     "symbol": "FCCL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "HASCOL-2026-11-04T14:09:00-6cb6ff10",
+     "symbol": "HASCOL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "HUBC-2026-11-04T14:09:06-139574e2",
+     "symbol": "HUBC",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "HUMNL-2026-11-04T14:09:12-672c6562",
+     "symbol": "HUMNL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "KEL-2026-11-04T14:09:18-b7bd167f",
+     "symbol": "KEL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "LOTCHEM-2026-11-04T14:09:27-51ec054f",
+     "symbol": "LOTCHEM",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "LUCK-2026-11-04T14:09:34-5c87897a",
+     "symbol": "LUCK",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "MEBL-2026-11-04T14:09:40-3dfed3a7",
+     "symbol": "MEBL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "MLCF-2026-11-04T14:09:46-2743cadf",
+     "symbol": "MLCF",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "OGDC-2026-11-04T14:09:53-5e1d26e6",
+     "symbol": "OGDC",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "PAEL-2026-11-04T14:10:00-ab072b1d",
+     "symbol": "PAEL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "PIBTL-2026-11-04T14:10:09-a9dbeb15",
+     "symbol": "PIBTL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "PPL-2026-11-04T14:10:16-71529ce0",
+     "symbol": "PPL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "PRL-2026-11-04T14:10:25-53ebd12e",
+     "symbol": "PRL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "PSO-2026-11-04T14:10:33-c4c333e5",
+     "symbol": "PSO",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "SYS-2026-11-04T14:10:41-c2777724",
+     "symbol": "SYS",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "TELE-2026-11-04T14:10:49-f59df703",
+     "symbol": "TELE",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "TRG-2026-11-04T14:10:58-4e1dca64",
+     "symbol": "TRG",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "UNITY-2026-11-04T14:11:09-c037e289",
+     "symbol": "UNITY",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    },
+    {
+     "cohort_id": "task111-llm-multisource-gen1",
+     "decision_id": "WTL-2026-11-04T14:11:18-44a903e7",
+     "symbol": "WTL",
+     "decision_date": "2026-11-03",
+     "entry_status": "filled",
+     "5": "pending (\u22124 sess)",
+     "10": "pending (\u22129 sess)",
+     "21": "pending (\u221220 sess)"
+    }
+   ]
+  },
+  "warnings": [
+   "Sample size before performance metrics: 0 matured horizon outcomes in every cohort \u2014 no win rate, expectancy or profitability may be reported yet (Part H).",
+   "First profitable matured trades (when they eventually arrive) must NOT be read as evidence of edge."
+  ],
+  "methodology": {
+   "session": "distinct per-symbol OhlcvBar date; weekends/holidays never counted; missing bars never advance a symbol clock",
+   "entry": "first bar strictly after decision date; fill at that bar OPEN (actual available fill)",
+   "horizon": "N sessions FROM the entry session (entry = session 1, task106_mature.ts window convention); endpoint = Nth session CLOSE",
+   "terminal_exits": "SL/TP3 first-hit early exits are a SEPARATE measurement, never a horizon maturity",
+   "costs": "psx_user_schedule_v2 via task110_lib.trade_costs_v2 (exact port of computeTradeCostsV2)"
   }
  }
 }

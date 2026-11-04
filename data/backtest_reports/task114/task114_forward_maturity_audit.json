@@ -1,0 +1,947 @@
+{
+ "report": "task114_forward_maturity_audit",
+ "task": "task114",
+ "generated_at": "2026-11-04T22:45:21Z",
+ "engine_version": "task114-maturity-v1",
+ "status": "completed",
+ "baseline": "Task 112 fix e371b6c3 (= origin/main) + Task 113 content restored as 8f32452b (original 2edc05a5 lost to a sandbox recycle; content byte-restored from the platform-preserved pre-recycle workspace and re-verified by the Task 113 QA suite)",
+ "data_frontier": "2026-11-04",
+ "sessions_new_since_2026_11_03": [
+  "2026-11-04"
+ ],
+ "session_count_total": 2489,
+ "pipeline_events": {
+  "candidate_session_defect_found_and_fixed": "task107_lib.psx_session_state returned the most recent SUNDAY as the pre-open candidate session for mid-week mornings ((wd+1)%7 formula), hiding the fully closed 2026-11-04 session from the ingest window; fixed to the previous weekday and regression-tested",
+  "ingest_result": {
+   "frontier": "2026-11-04",
+   "new_bars": 23,
+   "new_date": "2026-11-04",
+   "overlap_checked": 46,
+   "mismatches": 0
+  },
+  "missing_market_data_observations": [
+   "ENGRO: no 2026-11-04 bar (dataset shows no ENGRO bar since 2025-01-03 — long out-of-universe; its only LLM record is the stale excluded one, so NO pending decision is affected)",
+   "BYCO: no 2026-11-04 bar (no bars since 2021-12-20; no frozen decision pending on it)",
+   "Neither symbol is in any active cohort denominator: all 57 general decisions and all 23 genuine LLM decisions are on symbols that traded on 2026-11-04"
+  ]
+ },
+ "frozen_conventions": {
+  "session": "distinct per-symbol OhlcvBar date; weekends/holidays never counted; missing bars never advance a symbol clock",
+  "entry": "first bar strictly after decision date; fill at that bar OPEN (actual available fill)",
+  "horizon": "N sessions FROM the entry session (entry = session 1, task106_mature.ts window convention); endpoint = Nth session CLOSE",
+  "terminal_exits": "SL/TP3 first-hit early exits are a SEPARATE measurement, never a horizon maturity",
+  "costs": "psx_user_schedule_v2 via task110_lib.trade_costs_v2 (exact port of computeTradeCostsV2)"
+ },
+ "part_b_session_frontier": {
+  "frontier": "2026-11-04",
+  "previous_frontier": "2026-11-03",
+  "new_sessions": [
+   "2026-11-04"
+  ],
+  "provider": "psxdata-api.fastapicloud.dev (delayed EOD; no exchange-source timestamps; nothing fabricated)"
+ },
+ "part_c_d_cohort_maturity": [
+  {
+   "cohort_id": "task105-gen1",
+   "total_observations": 12,
+   "unfilled_awaiting_entry_bar": 0,
+   "unique_symbols": 12,
+   "matured_5_session": 0,
+   "pending_5_session": 12,
+   "remaining_sessions_pending_5": [
+    1
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 12,
+   "remaining_sessions_pending_10": [
+    6
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 12,
+   "remaining_sessions_pending_21": [
+    17
+   ],
+   "source_ledger": "data/backtest_reports/task105/shadow_observations/task105_shadow_observations.json",
+   "policy_version": "task105-v1",
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "terminal_exits_from_frozen_engine": 28,
+   "pending_mtm_from_frozen_engine": 8
+  },
+  {
+   "cohort_id": "task106-gen2",
+   "total_observations": 22,
+   "unfilled_awaiting_entry_bar": 0,
+   "unique_symbols": 22,
+   "matured_5_session": 0,
+   "pending_5_session": 22,
+   "remaining_sessions_pending_5": [
+    3
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 22,
+   "remaining_sessions_pending_10": [
+    8
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 22,
+   "remaining_sessions_pending_21": [
+    19
+   ],
+   "source_ledger": "data/backtest_reports/task106/shadow_observations/task106_shadow_observations.json",
+   "policy_version": "task105-v1",
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "terminal_exits_from_frozen_engine": 27,
+   "pending_mtm_from_frozen_engine": 39
+  },
+  {
+   "cohort_id": "task107-gen3",
+   "total_observations": 23,
+   "unfilled_awaiting_entry_bar": 0,
+   "unique_symbols": 23,
+   "matured_5_session": 0,
+   "pending_5_session": 23,
+   "remaining_sessions_pending_5": [
+    4
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 23,
+   "remaining_sessions_pending_10": [
+    9
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 23,
+   "remaining_sessions_pending_21": [
+    20
+   ],
+   "source_ledger": "data/backtest_reports/task107/shadow_observations/task107_shadow_observations.json",
+   "policy_version": "task105-v1",
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "terminal_exits_from_frozen_engine": 25,
+   "pending_mtm_from_frozen_engine": 44
+  },
+  {
+   "cohort_id": "task111-llm-multisource-gen1",
+   "total_observations": 23,
+   "unfilled_awaiting_entry_bar": 0,
+   "unique_symbols": 23,
+   "matured_5_session": 0,
+   "pending_5_session": 23,
+   "remaining_sessions_pending_5": [
+    4
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 23,
+   "remaining_sessions_pending_10": [
+    9
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 23,
+   "remaining_sessions_pending_21": [
+    20
+   ],
+   "genuine_universe_decisions": 23,
+   "decisions_buy": 2,
+   "decisions_hold": 2,
+   "decisions_no_trade": 19,
+   "excluded_records": [
+    {
+     "signalId": "ANL-2026-11-04T13:53:30-452ce282",
+     "symbol": "ANL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "ANL-2026-11-04T14:11:39-75b66927",
+     "symbol": "ANL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "BOP-2026-11-04T13:53:39-39459dda",
+     "symbol": "BOP",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "BOP-2026-11-04T14:11:39-027feeff",
+     "symbol": "BOP",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "CNERGY-2026-11-04T13:53:47-c6deb585",
+     "symbol": "CNERGY",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "CNERGY-2026-11-04T14:11:39-14beaff6",
+     "symbol": "CNERGY",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "ENGRO-2026-11-04T13:52:40-3e657f14",
+     "symbol": "ENGRO",
+     "reason": "stale evidence: dataCutoff=2025-01-03 != frozen 2026-11-03 (out-of-universe ENGRO record)"
+    },
+    {
+     "signalId": "FCCL-2026-11-04T13:53:56-b770749d",
+     "symbol": "FCCL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "FCCL-2026-11-04T14:11:39-58f6da68",
+     "symbol": "FCCL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HASCOL-2026-11-04T13:54:05-12f8e7ca",
+     "symbol": "HASCOL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HASCOL-2026-11-04T14:11:39-376f0caf",
+     "symbol": "HASCOL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T13:52:34-bf064ef6",
+     "symbol": "HUBC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T13:54:13-54723b82",
+     "symbol": "HUBC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T14:11:39-f1f2485e",
+     "symbol": "HUBC",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HUMNL-2026-11-04T13:54:21-2945f0f0",
+     "symbol": "HUMNL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUMNL-2026-11-04T14:11:39-1928e2e2",
+     "symbol": "HUMNL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "KEL-2026-11-04T13:54:28-028fa577",
+     "symbol": "KEL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "KEL-2026-11-04T14:11:39-174a589b",
+     "symbol": "KEL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "LOTCHEM-2026-11-04T13:54:35-c3946416",
+     "symbol": "LOTCHEM",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "LOTCHEM-2026-11-04T14:11:39-64520933",
+     "symbol": "LOTCHEM",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "LUCK-2026-11-04T13:54:44-1fad96ca",
+     "symbol": "LUCK",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "LUCK-2026-11-04T14:11:39-df798e21",
+     "symbol": "LUCK",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "MEBL-2026-11-04T13:54:54-665ce174",
+     "symbol": "MEBL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "MEBL-2026-11-04T14:11:40-9f63ab40",
+     "symbol": "MEBL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "MLCF-2026-11-04T13:55:00-8247eff1",
+     "symbol": "MLCF",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "MLCF-2026-11-04T14:11:40-474b9b17",
+     "symbol": "MLCF",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "OGDC-2026-11-04T13:55:06-edcaab72",
+     "symbol": "OGDC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "OGDC-2026-11-04T14:11:40-3e18faea",
+     "symbol": "OGDC",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PAEL-2026-11-04T13:55:11-069e3acd",
+     "symbol": "PAEL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PAEL-2026-11-04T14:11:40-3e40f0b4",
+     "symbol": "PAEL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PIBTL-2026-11-04T13:55:18-cb62ec0a",
+     "symbol": "PIBTL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PIBTL-2026-11-04T14:11:40-a0e6398f",
+     "symbol": "PIBTL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PPL-2026-11-04T13:55:24-15956ded",
+     "symbol": "PPL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PPL-2026-11-04T14:11:40-adb61858",
+     "symbol": "PPL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PRL-2026-11-04T13:55:30-8cf0967a",
+     "symbol": "PRL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PRL-2026-11-04T14:11:40-26fa64ec",
+     "symbol": "PRL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PSO-2026-11-04T13:55:37-1139d085",
+     "symbol": "PSO",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PSO-2026-11-04T14:11:40-945ccdc5",
+     "symbol": "PSO",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "SYS-2026-11-04T13:55:45-f0281aa9",
+     "symbol": "SYS",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "SYS-2026-11-04T14:11:40-13a521be",
+     "symbol": "SYS",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "TELE-2026-11-04T13:55:52-5796635d",
+     "symbol": "TELE",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "TELE-2026-11-04T14:11:40-b41a030f",
+     "symbol": "TELE",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "TRG-2026-11-04T13:56:00-b9aa7542",
+     "symbol": "TRG",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "TRG-2026-11-04T14:11:40-4679c943",
+     "symbol": "TRG",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "UNITY-2026-11-04T13:56:08-dc9d86a9",
+     "symbol": "UNITY",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "UNITY-2026-11-04T14:11:40-b9af1bbc",
+     "symbol": "UNITY",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "WTL-2026-11-04T13:56:15-2421e506",
+     "symbol": "WTL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "WTL-2026-11-04T14:11:40-312fcbcd",
+     "symbol": "WTL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    }
+   ],
+   "excluded_count": 48,
+   "record_type_counts_all_sources": {
+    "REAL_LLM_DECISION": 48,
+    "MOCK_PIPELINE_CHECK": 23
+   },
+   "terminal_exits_llm_policy_sim": 0
+  }
+ ],
+ "part_c_matured_outcomes": [],
+ "part_d_independence_rule": "5/10/21-session outcomes are computed independently from source bars; a 5-session outcome never infers a 10- or 21-session outcome; the frozen task106_mature.ts terminal ledger is referenced for early exits and never merged into horizon counts",
+ "part_e_llm_outcome_maturity": {
+  "cohort_id": "task111-llm-multisource-gen1",
+  "rollup": {
+   "cohort_id": "task111-llm-multisource-gen1",
+   "total_observations": 23,
+   "unfilled_awaiting_entry_bar": 0,
+   "unique_symbols": 23,
+   "matured_5_session": 0,
+   "pending_5_session": 23,
+   "remaining_sessions_pending_5": [
+    4
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 23,
+   "remaining_sessions_pending_10": [
+    9
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 23,
+   "remaining_sessions_pending_21": [
+    20
+   ],
+   "genuine_universe_decisions": 23,
+   "decisions_buy": 2,
+   "decisions_hold": 2,
+   "decisions_no_trade": 19,
+   "excluded_records": [
+    {
+     "signalId": "ANL-2026-11-04T13:53:30-452ce282",
+     "symbol": "ANL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "ANL-2026-11-04T14:11:39-75b66927",
+     "symbol": "ANL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "BOP-2026-11-04T13:53:39-39459dda",
+     "symbol": "BOP",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "BOP-2026-11-04T14:11:39-027feeff",
+     "symbol": "BOP",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "CNERGY-2026-11-04T13:53:47-c6deb585",
+     "symbol": "CNERGY",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "CNERGY-2026-11-04T14:11:39-14beaff6",
+     "symbol": "CNERGY",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "ENGRO-2026-11-04T13:52:40-3e657f14",
+     "symbol": "ENGRO",
+     "reason": "stale evidence: dataCutoff=2025-01-03 != frozen 2026-11-03 (out-of-universe ENGRO record)"
+    },
+    {
+     "signalId": "FCCL-2026-11-04T13:53:56-b770749d",
+     "symbol": "FCCL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "FCCL-2026-11-04T14:11:39-58f6da68",
+     "symbol": "FCCL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HASCOL-2026-11-04T13:54:05-12f8e7ca",
+     "symbol": "HASCOL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HASCOL-2026-11-04T14:11:39-376f0caf",
+     "symbol": "HASCOL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T13:52:34-bf064ef6",
+     "symbol": "HUBC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T13:54:13-54723b82",
+     "symbol": "HUBC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T14:11:39-f1f2485e",
+     "symbol": "HUBC",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HUMNL-2026-11-04T13:54:21-2945f0f0",
+     "symbol": "HUMNL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUMNL-2026-11-04T14:11:39-1928e2e2",
+     "symbol": "HUMNL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "KEL-2026-11-04T13:54:28-028fa577",
+     "symbol": "KEL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "KEL-2026-11-04T14:11:39-174a589b",
+     "symbol": "KEL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "LOTCHEM-2026-11-04T13:54:35-c3946416",
+     "symbol": "LOTCHEM",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "LOTCHEM-2026-11-04T14:11:39-64520933",
+     "symbol": "LOTCHEM",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "LUCK-2026-11-04T13:54:44-1fad96ca",
+     "symbol": "LUCK",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "LUCK-2026-11-04T14:11:39-df798e21",
+     "symbol": "LUCK",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "MEBL-2026-11-04T13:54:54-665ce174",
+     "symbol": "MEBL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "MEBL-2026-11-04T14:11:40-9f63ab40",
+     "symbol": "MEBL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "MLCF-2026-11-04T13:55:00-8247eff1",
+     "symbol": "MLCF",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "MLCF-2026-11-04T14:11:40-474b9b17",
+     "symbol": "MLCF",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "OGDC-2026-11-04T13:55:06-edcaab72",
+     "symbol": "OGDC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "OGDC-2026-11-04T14:11:40-3e18faea",
+     "symbol": "OGDC",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PAEL-2026-11-04T13:55:11-069e3acd",
+     "symbol": "PAEL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PAEL-2026-11-04T14:11:40-3e40f0b4",
+     "symbol": "PAEL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PIBTL-2026-11-04T13:55:18-cb62ec0a",
+     "symbol": "PIBTL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PIBTL-2026-11-04T14:11:40-a0e6398f",
+     "symbol": "PIBTL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PPL-2026-11-04T13:55:24-15956ded",
+     "symbol": "PPL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PPL-2026-11-04T14:11:40-adb61858",
+     "symbol": "PPL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PRL-2026-11-04T13:55:30-8cf0967a",
+     "symbol": "PRL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PRL-2026-11-04T14:11:40-26fa64ec",
+     "symbol": "PRL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PSO-2026-11-04T13:55:37-1139d085",
+     "symbol": "PSO",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PSO-2026-11-04T14:11:40-945ccdc5",
+     "symbol": "PSO",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "SYS-2026-11-04T13:55:45-f0281aa9",
+     "symbol": "SYS",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "SYS-2026-11-04T14:11:40-13a521be",
+     "symbol": "SYS",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "TELE-2026-11-04T13:55:52-5796635d",
+     "symbol": "TELE",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "TELE-2026-11-04T14:11:40-b41a030f",
+     "symbol": "TELE",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "TRG-2026-11-04T13:56:00-b9aa7542",
+     "symbol": "TRG",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "TRG-2026-11-04T14:11:40-4679c943",
+     "symbol": "TRG",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "UNITY-2026-11-04T13:56:08-dc9d86a9",
+     "symbol": "UNITY",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "UNITY-2026-11-04T14:11:40-b9af1bbc",
+     "symbol": "UNITY",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "WTL-2026-11-04T13:56:15-2421e506",
+     "symbol": "WTL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "WTL-2026-11-04T14:11:40-312fcbcd",
+     "symbol": "WTL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    }
+   ],
+   "excluded_count": 48,
+   "record_type_counts_all_sources": {
+    "REAL_LLM_DECISION": 48,
+    "MOCK_PIPELINE_CHECK": 23
+   },
+   "terminal_exits_llm_policy_sim": 0
+  },
+  "buy_outcomes": {
+   "buy_decisions": 2,
+   "matured_5_session_buys": 0,
+   "net_results_5_session": [],
+   "note": "net results reported ONLY for matured horizons; pending/unfilled never counted"
+  },
+  "counterfactual_hold_notrade": {
+   "methodology": "benchmark context: the symbol's own close at the horizon endpoint vs the entry-session close (and vs the frozen decision-day close); reported as OPPORTUNITY CONTEXT ONLY — avoided losses are not wins; nothing here enters trading statistics, win rates, or promotion gates",
+   "rows": [
+    {
+     "signal_id": "ANL-2026-11-04T14:08:33-9088d677",
+     "symbol": "ANL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 8.94,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "BOP-2026-11-04T14:08:41-6332f6fa",
+     "symbol": "BOP",
+     "decision": "HOLD",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 30.9,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "CNERGY-2026-11-04T14:08:48-a0841177",
+     "symbol": "CNERGY",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 11.97,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "FCCL-2026-11-04T14:08:54-ea826696",
+     "symbol": "FCCL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 56.78,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "HASCOL-2026-11-04T14:09:00-6cb6ff10",
+     "symbol": "HASCOL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 16.25,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "HUBC-2026-11-04T14:09:06-139574e2",
+     "symbol": "HUBC",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 204.17,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "HUMNL-2026-11-04T14:09:12-672c6562",
+     "symbol": "HUMNL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 8.65,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "KEL-2026-11-04T14:09:18-b7bd167f",
+     "symbol": "KEL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 6.0,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "LOTCHEM-2026-11-04T14:09:27-51ec054f",
+     "symbol": "LOTCHEM",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 24.37,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "LUCK-2026-11-04T14:09:34-5c87897a",
+     "symbol": "LUCK",
+     "decision": "HOLD",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 415.14,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "MEBL-2026-11-04T14:09:40-3dfed3a7",
+     "symbol": "MEBL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 538.48,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "MLCF-2026-11-04T14:09:46-2743cadf",
+     "symbol": "MLCF",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 97.49,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "OGDC-2026-11-04T14:09:53-5e1d26e6",
+     "symbol": "OGDC",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 310.47,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "PAEL-2026-11-04T14:10:00-ab072b1d",
+     "symbol": "PAEL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 33.07,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "PIBTL-2026-11-04T14:10:09-a9dbeb15",
+     "symbol": "PIBTL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 13.15,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "PPL-2026-11-04T14:10:16-71529ce0",
+     "symbol": "PPL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 217.17,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "PSO-2026-11-04T14:10:33-c4c333e5",
+     "symbol": "PSO",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 359.47,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "TELE-2026-11-04T14:10:49-f59df703",
+     "symbol": "TELE",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 6.73,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "TRG-2026-11-04T14:10:58-4e1dca64",
+     "symbol": "TRG",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 53.17,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "UNITY-2026-11-04T14:11:09-c037e289",
+     "symbol": "UNITY",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 7.77,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    },
+    {
+     "signal_id": "WTL-2026-11-04T14:11:18-44a903e7",
+     "symbol": "WTL",
+     "decision": "NO_TRADE",
+     "decision_date": "2026-11-03",
+     "entry_session": "2026-11-04",
+     "entry_session_close": 0.94,
+     "h5": "pending",
+     "h10": "pending",
+     "h21": "pending"
+    }
+   ]
+  },
+  "calibration": {
+   "status": "Not available — insufficient matured LLM outcomes",
+   "minimum_required": 100,
+   "current_matured_llm_outcomes": 0,
+   "llm_conviction": "uncalibrated (remains uncalibrated until >=100 genuine matured LLM-cohort outcomes; conviction is never converted into a probability)"
+  },
+  "per_record_preservation": "original GLM-4.6 decisions, prompt hash (evidenceHash), evidence as-of, generation timestamp, and source references are preserved untouched in task112/llm_signal_history; this audit reads them and never regenerates or rewrites them"
+ },
+ "part_f_idempotency": {
+  "ledger": "data/backtest_reports/task114/task114_outcome_ledger.json",
+  "outcome_key": "decision_id|hN",
+  "duplicate_processing_attempts_identical": 0,
+  "source_bar_revisions_detected": 0,
+  "policy": "recompute-fresh from immutable inputs each run; ledger records first_processed_at + source fingerprint; a fingerprint change is an auditable correction, never a silent overwrite"
+ },
+ "part_i_promotion_status": {
+  "GLM-4.6": "shadow only",
+  "task100 models": "research only",
+  "cost-aware filter": "shadow only",
+  "golden_cross_7_30_v1 + volatility overlays": "research only",
+  "technical/ensemble strategy": "rule strategy, not ML",
+  "blocked inventory entries": "unavailable/not promotable",
+  "automatic_promotion": "none — no model or strategy promoted in Task 114"
+ },
+ "rules": [
+  "Sample size before performance metrics; no profitability claims from a handful of observations.",
+  "Pending outcomes never enter completed-trade statistics.",
+  "Mock records never feed any metric.",
+  "LLM performance is never borrowed from the general forward cohort.",
+  "Early terminal exits are never labelled horizon-matured.",
+  "Every classification stays historical / validation / final-holdout / prospective-forward: all Task 114 outcomes are PROSPECTIVE FORWARD validation observations."
+ ]
+}

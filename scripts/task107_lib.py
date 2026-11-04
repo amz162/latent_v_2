@@ -33,11 +33,17 @@ def psx_session_state(now: datetime | None = None) -> dict:
     weekend = wd >= 5
     after_close = closed >= datetime.strptime("15:30", "%H:%M").time()
     today = now.strftime("%Y-%m-%d")
+    # Last closed candidate session strictly before today:
+    #   Mon(before close) -> Fri (-3d); Tue-Fri(before close) -> previous weekday (-1d);
+    #   Sat/Sun -> Fri ((wd-4)d). The old (wd+1)%7 formula returned the most recent
+    #   SUNDAY for mid-week mornings (e.g. Thu 03:00 PKT -> Sun), hiding the last
+    #   fully closed session from the ingest window. Defect found by Task 114 Part B.
+    back = 3 if wd == 0 else (1 if wd < 5 else (wd - 4))
     return {"now_pkt": now.strftime("%Y-%m-%d %H:%M:%S %Z"),
              "is_weekend": weekend,
              "regular_session_ended_today": (not weekend) and after_close,
              "candidate_session_date": today if (not weekend and after_close) else
-             (now - timedelta(days=(wd + 1) % 7 if wd < 5 else (wd - 4))).strftime("%Y-%m-%d"),
+             (now - timedelta(days=back)).strftime("%Y-%m-%d"),
              "note": "weekends treated as non-sessions; holidays undetectable without an official calendar — provider data decides"}
 
 

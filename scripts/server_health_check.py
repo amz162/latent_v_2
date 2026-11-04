@@ -52,15 +52,18 @@ check("GET /api/signals", "/api/signals", timeout=60)
 check("GET /api/predictions/record (expect 405)", "/api/predictions/record", expect=405, timeout=60)
 check("GET /api/portfolio/news-digest", "/api/portfolio/news-digest", timeout=60)
 
-# 3. Task 113: model report + audit block
+# 3. Task 113/114: model report + audit blocks
 def model_report(d):
     t = d.get("task113_audit") or {}
     inv = (t.get("inventory_dashboard") or {}).get("total_registry_entries")
     cohorts = len(t.get("forward_validation_dashboard") or [])
     l = t.get("llm_outcome_maturity") or {}
-    return (f"v={d.get('report_version')} avail={t.get('available')} "
-            f"inv={inv} cohorts={cohorts} "
-            f"LLM 5/10/21={l.get('matured_5_session')}/{l.get('matured_10_session')}/{l.get('matured_21_session')}")
+    t114 = d.get("task114_maturity") or {}
+    p114 = len(t114.get("panel") or [])
+    m114 = sum((p.get("matured_5_session") or 0) for p in (t114.get("panel") or []))
+    return (f"v={d.get('report_version')} t113={t.get('available')} inv={inv} cohorts={cohorts} "
+            f"LLM 5/10/21={l.get('matured_5_session')}/{l.get('matured_10_session')}/{l.get('matured_21_session')} "
+            f"t114={t114.get('available')} panel={p114} mat5_sum={m114} frontier={t114.get('data_frontier')}")
 
 check("GET /api/model-report (task113_audit)", "/api/model-report", timeout=90, parse=model_report)
 
@@ -106,8 +109,10 @@ ok3, s3, m3, b3 = hit("/api/model-report", timeout=90)
 if ok3:
     d = json.loads(b3)
     t = d.get("task113_audit") or {}
-    inv3 = d.get("report_version") == "task113-augmented" and t.get("available") is True
-    print(f"[{'PASS' if inv3 else 'FAIL'}] report_version=task113-augmented & audit available")
+    t114 = d.get("task114_maturity") or {}
+    inv3 = (d.get("report_version") == "task114-augmented" and t.get("available") is True
+            and t114.get("available") is True and len(t114.get("panel") or []) == 4)
+    print(f"[{'PASS' if inv3 else 'FAIL'}] report_version=task114-augmented, task113+task114 blocks available (4 cohorts)")
     (PASS if inv3 else FAIL).append("task113-block")
 else:
     print(f"[FAIL] model-report unreachable ({s3})"); FAIL.append("task113-block")

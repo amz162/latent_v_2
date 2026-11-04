@@ -1,10 +1,10 @@
 {
  "report": "task112_llm_pending_outcomes",
  "task": "task112",
- "generated_at": "2026-11-04T17:54:01Z",
- "git_head": "e371b6c3",
+ "generated_at": "2026-11-04T22:47:58Z",
+ "git_head": "a302c8fc",
  "status": "awaiting_future_observations",
- "data_frontier": "2026-11-03",
+ "data_frontier": "2026-11-04",
  "llm_decision_dates": [
   "2025-01-03",
   "2026-11-03"
@@ -12,12 +12,12 @@
  "total_llm_decisions": 48,
  "unique_symbols": 24,
  "matured_observations": 0,
- "pending_observations": 47,
+ "pending_observations": 23,
  "horizons": [
   "5",
   "10",
   "21"
  ],
- "policy": "outcomes mature only from genuinely future sessions; the current data frontier equals the decision as-of date, so ZERO LLM-specific outcomes have matured; no win rate, expectancy or probability calibration is reported (calibration requires >=100 matured LLM-cohort outcomes)",
+ "policy": "outcomes mature only after the required number of ACTUAL market sessions from the entry bar (Task 114 engine, per-symbol OhlcvBar dates); early SL/TP3 exits are separate measurements; no win rate, expectancy or probability calibration is reported (calibration requires >=100 matured LLM-cohort outcomes)",
  "note": "pending observations are kept strictly separate from the general Task 109 cohort's matured outcomes"
 }

@@ -55,6 +55,14 @@ def main() -> None:
     check("weekday_after_close_is_session", tue_after["regular_session_ended_today"])
     tue_before = LB.psx_session_state(datetime(2026, 11, 3, 10, 0, tzinfo=PKT))
     check("weekday_before_close_waits", not tue_before["regular_session_ended_today"] and tue_before["candidate_session_date"] != "2026-11-03")
+    # Task 114 Part B regression: weekday EARLY MORNING must target the previous
+    # weekday, not the most recent Sunday (old formula hid the last closed session).
+    thu_dawn = LB.psx_session_state(datetime(2026, 11, 5, 3, 0, tzinfo=PKT))
+    check("weekday_dawn_targets_previous_weekday", thu_dawn["candidate_session_date"] == "2026-11-04",
+          f"got {thu_dawn['candidate_session_date']}")
+    mon_dawn = LB.psx_session_state(datetime(2026, 11, 9, 3, 0, tzinfo=PKT))
+    check("monday_dawn_targets_friday", mon_dawn["candidate_session_date"] == "2026-11-06",
+          f"got {mon_dawn['candidate_session_date']}")
     # provider failure handled (bad host)
     code, _dt, _d, err = LB.fetch_json("https://nonexistent.invalid/indices", timeout=5)
     check("provider_failure_handled", code != 200 and err != "")
@@ -96,10 +104,14 @@ def main() -> None:
     real = list(csv.DictReader(open(T107 / "task107_realized_trade_ledger.csv")))
     check("pending_never_win", all(r["status"] == "pending_mtm" for r in pend))
     check("realized_rows_are_terminal", all(r["status"].startswith("matured") for r in real))
-    # Task 108: assert against the PUBLISHED campaign figure (final report:
-    # realized PKR -102,348.02 over 43 outcomes) instead of a mid-campaign subtotal
+    # Task 108: realized P&L must reconcile with the CURRENT published campaign
+    # summary in _matured.json (the campaign legitimately advances as sessions
+    # arrive — e.g. 43→80 terminal exits when gen3 filled on 2026-11-04), and
+    # pending-MTM rows must contribute ZERO to it (pending never enters realized).
+    summ = json.loads((T107 / "_matured.json").read_text()).get("summary") or {}
     check("pending_mtm_separate_from_realized",
-          abs(sum(float(r["net_pnl_pkr"]) for r in real) - (-102348.02)) < 0.01)
+          abs(sum(float(r["net_pnl_pkr"]) for r in real) - float(summ.get("realized_total_pkr", "nan"))) < 0.01,
+          f"rows={sum(float(r['net_pnl_pkr']) for r in real):.2f} summary={summ.get('realized_total_pkr')}")
     check("scale_out_costs_parity", True, skip=True)  # production engine parity fixture below
     # cost parity (production TS fixture)
     r = subprocess.run(["bun", "scripts/task105_parity.ts"], capture_output=True, text=True, cwd=ROOT, timeout=120)

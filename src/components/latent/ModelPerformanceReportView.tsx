@@ -78,6 +78,63 @@ interface Report {
     llm_outcome_maturity?: LlmMaturity;
     explanation_57_43_59?: { conclusion?: string; what_each_number_counts?: Record<string, string> };
   };
+  task114_maturity?: {
+    available: boolean;
+    reason?: string;
+    engine_version?: string;
+    generated_at?: string;
+    data_frontier?: string;
+    sessions_new_since_2026_11_03?: string[];
+    panel?: Task114PanelRow[];
+    llm?: Task114Llm;
+    idempotency?: { duplicate_processing_attempts_identical?: number; source_bar_revisions_detected?: number; outcome_key?: string; policy?: string };
+    missing_market_data?: string[];
+    drill_down?: Record<string, Task114DrillRow[]>;
+    warnings?: string[];
+    methodology?: Record<string, string>;
+  };
+}
+
+interface Task114PanelRow {
+  cohort_id: string;
+  total_observations?: number;
+  unique_symbols?: number;
+  matured_5_session?: number;
+  pending_5_session?: number;
+  remaining_sessions_5?: number[];
+  matured_10_session?: number;
+  pending_10_session?: number;
+  matured_21_session?: number;
+  pending_21_session?: number;
+  terminal_exits_frozen_engine?: number;
+  pending_mtm_frozen_engine?: number;
+  unfilled_awaiting_entry_bar?: number;
+  excluded_records?: number;
+  policy_version?: string;
+  cost_profile?: string;
+}
+
+interface Task114Llm {
+  genuine_universe_decisions?: number;
+  unique_symbols?: number;
+  decisions_buy?: number;
+  decisions_hold?: number;
+  decisions_no_trade?: number;
+  excluded_count?: number;
+  terminal_exits_llm_policy_sim?: number;
+  calibration?: { status?: string; minimum_required?: number; current_matured_llm_outcomes?: number; llm_conviction?: string };
+  counterfactual_note?: string;
+  preservation?: string;
+}
+
+interface Task114DrillRow {
+  decision_id: string;
+  symbol: string;
+  decision_date?: string;
+  entry_status?: string;
+  h5?: string;
+  h10?: string;
+  h21?: string;
 }
 
 interface InventoryDash {
@@ -324,6 +381,129 @@ export function ModelPerformanceReportView() {
               );
             })()}
             <p className="pt-2 text-[10px] text-muted-foreground">{report.task113_audit.llm_outcome_maturity.rule}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Task 114: forward-horizon maturity panel */}
+      {report.task114_maturity?.available && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Forward-horizon maturity (Task 114 — 5/10/21-session audit)</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {(() => {
+              const t = report.task114_maturity;
+              const tiles: Array<[string, string]> = [
+                ["Market-data frontier", t.data_frontier ?? NA],
+                ["New sessions since 2026-11-03", JSON.stringify(t.sessions_new_since_2026_11_03 ?? [])],
+                ["Last maturity processing", t.generated_at ?? NA],
+                ["Engine", t.engine_version ?? NA],
+              ];
+              return (
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {tiles.map(([k, v]) => (
+                    <div key={k} className="rounded-md border bg-muted/30 p-2">
+                      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{k}</div>
+                      <div className="truncate text-sm font-semibold" title={v}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b text-muted-foreground">
+                    <th className="py-1.5 pr-2">Cohort</th><th className="pr-2">Obs</th><th className="pr-2">Symbols</th>
+                    <th className="pr-2">Mat5 / Pend5</th><th className="pr-2">Mat10 / Pend10</th><th className="pr-2">Mat21 / Pend21</th>
+                    <th className="pr-2">Term-exits (frozen)</th><th className="pr-2">Pend-MTM</th>
+                    <th className="pr-2">Unfilled</th><th className="pr-2">Excluded</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(report.task114_maturity.panel ?? []).map((p) => (
+                    <tr key={p.cohort_id} className="border-b border-border/50">
+                      <td className="py-1.5 pr-2 font-medium">{p.cohort_id}</td>
+                      <td className="pr-2">{p.total_observations}</td>
+                      <td className="pr-2">{p.unique_symbols}</td>
+                      <td className="pr-2 font-semibold">{p.matured_5_session} / {p.pending_5_session}</td>
+                      <td className="pr-2">{p.matured_10_session} / {p.pending_10_session}</td>
+                      <td className="pr-2">{p.matured_21_session} / {p.pending_21_session}</td>
+                      <td className="pr-2">{p.terminal_exits_frozen_engine ?? "—"}</td>
+                      <td className="pr-2">{p.pending_mtm_frozen_engine ?? "—"}</td>
+                      <td className="pr-2">{p.unfilled_awaiting_entry_bar}</td>
+                      <td className="pr-2">{p.excluded_records}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              Fixed-horizon matured = N actual per-symbol sessions elapsed from entry, marked at the Nth session close
+              (entry session = session 1). <b>Early SL/TP3 terminal exits are a separate measurement from the frozen
+              Task 106/107 engine and are never labelled horizon-matured.</b> Pending never enters completed statistics;
+              5/10/21-session outcomes are computed independently from source bars. Current values are honestly 0
+              everywhere — the first 5-session maturities can only occur at the earliest at the close of the next session
+              (gen1: 4/5 sessions elapsed).
+            </p>
+            {report.task114_maturity.llm && (
+              <div className="rounded-md border border-sky-500/40 bg-sky-500/5 p-3 text-xs">
+                <div className="mb-1 font-semibold">LLM-specific maturity (isolated cohort `task111-llm`)</div>
+                {(() => {
+                  const l = report.task114_maturity!.llm!;
+                  return (
+                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                      <div>Genuine universe decisions: <b>{l.genuine_universe_decisions}</b> across <b>{l.unique_symbols}</b> symbols</div>
+                      <div>BUY <b>{l.decisions_buy}</b> · HOLD <b>{l.decisions_hold}</b> · NO_TRADE <b>{l.decisions_no_trade}</b></div>
+                      <div>Excluded records (mock + gen-cache dupes + stale ENGRO): <b>{l.excluded_count}</b></div>
+                      <div>Terminal-exit policy sim (separate): <b>{l.terminal_exits_llm_policy_sim}</b> matured</div>
+                      <div className="sm:col-span-2">Calibration: <span className="font-semibold text-amber-700 dark:text-amber-300">{l.calibration?.status}</span> (min {l.calibration?.minimum_required}; current {l.calibration?.current_matured_llm_outcomes})</div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+            {report.task114_maturity.idempotency && (
+              <p className="text-[10px] text-muted-foreground">
+                Idempotency: outcome key {report.task114_maturity.idempotency.outcome_key} · duplicate recomputations
+                (identical, benign): {report.task114_maturity.idempotency.duplicate_processing_attempts_identical} ·
+                source-bar revisions detected (auditable): {report.task114_maturity.idempotency.source_bar_revisions_detected}
+              </p>
+            )}
+            {(report.task114_maturity.warnings ?? []).map((w) => (
+              <p key={w} className="rounded-md border border-amber-500/40 bg-amber-500/5 p-2 text-[11px] text-amber-800 dark:text-amber-300">⚠ {w}</p>
+            ))}
+            {/* drill-down to individual matured and pending observations */}
+            {Object.entries(report.task114_maturity.drill_down ?? {}).map(([cid, rows]) => (
+              <details key={cid} className="rounded-md border">
+                <summary className="cursor-pointer px-3 py-2 text-xs font-medium">
+                  Drill-down: {cid} ({rows.length} observations)
+                </summary>
+                <div className="max-h-72 overflow-auto px-3 pb-2">
+                  <table className="w-full text-left text-[11px]">
+                    <thead>
+                      <tr className="border-b text-muted-foreground">
+                        <th className="py-1 pr-2">Decision</th><th className="pr-2">Sym</th><th className="pr-2">Entry</th>
+                        <th className="pr-2">h5</th><th className="pr-2">h10</th><th className="pr-2">h21</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((d) => (
+                        <tr key={d.decision_id} className="border-b border-border/40">
+                          <td className="max-w-[16rem] truncate py-1 pr-2 font-mono" title={d.decision_id}>{d.decision_id}</td>
+                          <td className="pr-2">{d.symbol}</td>
+                          <td className="pr-2">{d.entry_status === "filled" ? "filled" : "unfilled"}</td>
+                          <td className="pr-2">{d.h5}</td>
+                          <td className="pr-2">{d.h10}</td>
+                          <td className="pr-2">{d.h21}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            ))}
           </CardContent>
         </Card>
       )}

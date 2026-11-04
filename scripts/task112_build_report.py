@@ -22,6 +22,7 @@ BR = ROOT / "data" / "backtest_reports"
 T111 = LB.T111
 T112 = LB.ROOT / "data" / "backtest_reports" / "task112"
 T113 = LB.ROOT / "data" / "backtest_reports" / "task113"
+T114 = LB.ROOT / "data" / "backtest_reports" / "task114"
 REP_DIR = ROOT / "data" / "reports"
 DOCS_DIR = ROOT / "docs" / "reports"
 N_A = "Not available in source evidence"
@@ -367,6 +368,84 @@ def load_task113_audit() -> dict:
     }
 
 
+def load_task114_maturity() -> dict:
+    """Load the Task 114 forward-maturity audit (first 5/10/21-session horizon
+    engine + LLM per-record outcomes) and surface a maturity panel for the UI.
+    Read-only over validated artifacts; never invents an outcome."""
+    audit = j(T114 / "task114_forward_maturity_audit.json") or {}
+    if not audit:
+        return {"available": False,
+                "reason": "task114 maturity audit not generated (run scripts/task114_maturity.py)"}
+    rollups = audit.get("part_c_d_cohort_maturity") or []
+    panel = []
+    for r in rollups:
+        panel.append({
+            "cohort_id": r.get("cohort_id"),
+            "total_observations": r.get("total_observations"),
+            "unique_symbols": r.get("unique_symbols"),
+            "matured_5_session": r.get("matured_5_session"),
+            "pending_5_session": r.get("pending_5_session"),
+            "remaining_sessions_5": r.get("remaining_sessions_pending_5"),
+            "matured_10_session": r.get("matured_10_session"),
+            "pending_10_session": r.get("pending_10_session"),
+            "matured_21_session": r.get("matured_21_session"),
+            "pending_21_session": r.get("pending_21_session"),
+            "terminal_exits_frozen_engine": r.get("terminal_exits_from_frozen_engine"),
+            "pending_mtm_frozen_engine": r.get("pending_mtm_from_frozen_engine"),
+            "unfilled_awaiting_entry_bar": r.get("unfilled_awaiting_entry_bar"),
+            "excluded_records": r.get("excluded_count", 0),
+            "policy_version": r.get("policy_version"),
+            "cost_profile": r.get("cost_profile"),
+        })
+    llm_audit = audit.get("part_e_llm_outcome_maturity") or {}
+    llm_roll = llm_audit.get("rollup") or {}
+    # drill-down: one compact row per decision from the pending/matured CSVs
+    drill: dict[str, list[dict]] = {}
+    def _drill_row_key(d): return (d["cohort_id"], d["decision_id"])
+    pend_csv = T114 / "task114_pending_outcomes.csv"
+    if pend_csv.exists():
+        agg: dict[tuple, dict] = {}
+        with open(pend_csv, newline="", encoding="utf-8") as fh:
+            for row in csv.DictReader(fh):
+                k = _drill_row_key(row)
+                agg.setdefault(k, {"cohort_id": row["cohort_id"], "decision_id": row["decision_id"],
+                                   "symbol": row["symbol"], "decision_date": row["decision_date"],
+                                   "entry_status": row["entry_status"]})
+                rem = row["remaining_sessions"] or ""
+                agg[k][row["horizon"]] = f"{row['status']}" + (f" (−{rem} sess)" if rem else "")
+        for (cid, _did), row in sorted(agg.items()):
+            drill.setdefault(cid, []).append(row)
+    return {
+        "available": True,
+        "engine_version": audit.get("engine_version"),
+        "generated_at": audit.get("generated_at"),
+        "data_frontier": audit.get("data_frontier"),
+        "sessions_new_since_2026_11_03": audit.get("sessions_new_since_2026_11_03"),
+        "panel": panel,
+        "llm": {
+            "genuine_universe_decisions": llm_roll.get("genuine_universe_decisions"),
+            "unique_symbols": llm_roll.get("unique_symbols"),
+            "decisions_buy": llm_roll.get("decisions_buy"),
+            "decisions_hold": llm_roll.get("decisions_hold"),
+            "decisions_no_trade": llm_roll.get("decisions_no_trade"),
+            "excluded_count": llm_roll.get("excluded_count"),
+            "terminal_exits_llm_policy_sim": llm_roll.get("terminal_exits_llm_policy_sim"),
+            "calibration": llm_audit.get("calibration"),
+            "counterfactual_note": (llm_audit.get("counterfactual_hold_notrade") or {}).get("methodology"),
+            "preservation": llm_audit.get("per_record_preservation"),
+        },
+        "idempotency": audit.get("part_f_idempotency"),
+        "missing_market_data": (audit.get("pipeline_events") or {}).get("missing_market_data_observations"),
+        "drill_down": drill,
+        "warnings": [
+            "Sample size before performance metrics: 0 matured horizon outcomes in every cohort — "
+            "no win rate, expectancy or profitability may be reported yet (Part H).",
+            "First profitable matured trades (when they eventually arrive) must NOT be read as evidence of edge.",
+        ],
+        "methodology": audit.get("frozen_conventions"),
+    }
+
+
 # ─────────────────────────── Part E/F/G/H/I ──────────────────────────────────
 def part_e_lineage_and_contribution():
     records = []
@@ -449,15 +528,46 @@ def part_e_lineage_and_contribution():
                  decision=r.get("decision"), entry=(r.get("riskReward") or {}).get("entryReference"),
                  horizon_5="pending", horizon_10="pending", horizon_21="pending")
             for r in real if r.get("dataCutoff") and r.get("dataCutoff") >= frontier]
+    # Task 114: once the fixed-horizon engine has run, it is authoritative for
+    # per-horizon status. Decisions whose as-of date has fallen behind the
+    # frontier are IN their observation window (not stale): pending rows come
+    # from the Task 114 engine, and matured counts come from its rollup.
+    t114_llm = j(T114 / "task114_llm_maturity.json") or {}
+    t114_roll = t114_llm.get("rollup") or {}
+    if t114_roll.get("genuine_universe_decisions"):
+        hstat: dict[str, dict[str, str]] = {}
+        with open(T114 / "task114_pending_outcomes.csv", newline="", encoding="utf-8") as _fh:
+            for _r in csv.DictReader(_fh):
+                if _r["cohort_id"] == "task111-llm-multisource-gen1":
+                    hstat.setdefault(_r["decision_id"], {})[_r["horizon"]] = _r["status"]
+        by_sid = {}
+        for _p in sorted((T112 / "llm_signal_history").glob("*.json")):
+            _r = j(_p) or {}
+            if _r.get("signalId") in hstat:
+                by_sid[_r["signalId"]] = _r
+        pend = [dict(signalId=sid, symbol=by_sid[sid].get("symbol"),
+                     dataCutoff=by_sid[sid].get("dataCutoff"), decision=by_sid[sid].get("decision"),
+                     entry=(by_sid[sid].get("riskReward") or {}).get("entryReference"),
+                     horizon_5=st.get("5", "pending"), horizon_10=st.get("10", "pending"),
+                     horizon_21=st.get("21", "pending"))
+                for sid, st in sorted(hstat.items()) if sid in by_sid]
+        matured_n = sum(t114_roll.get(f"matured_{n}_session", 0) for n in ("5", "10", "21"))
+        policy_txt = ("outcomes mature only after the required number of ACTUAL market sessions from the "
+                      "entry bar (Task 114 engine, per-symbol OhlcvBar dates); early SL/TP3 exits are "
+                      "separate measurements; no win rate, expectancy or probability calibration is "
+                      "reported (calibration requires >=100 matured LLM-cohort outcomes)")
+    else:
+        matured_n = 0
+        policy_txt = ("outcomes mature only from genuinely future sessions; the current data frontier equals the "
+                      "decision as-of date, so ZERO LLM-specific outcomes have matured; no win rate, expectancy or "
+                      "probability calibration is reported (calibration requires >=100 matured LLM-cohort outcomes)")
     LB.artifact("task112_llm_pending_outcomes.json", "task112_llm_pending_outcomes", "awaiting_future_observations", base=T112,
                 data_frontier=frontier,
                 llm_decision_dates=sorted({r.get("dataCutoff") for r in real if r.get("dataCutoff")}),
                 total_llm_decisions=len(real), unique_symbols=len({r.get("symbol") for r in real}),
-                matured_observations=0, pending_observations=len(pend),
+                matured_observations=matured_n, pending_observations=len(pend),
                 horizons=["5", "10", "21"],
-                policy=("outcomes mature only from genuinely future sessions; the current data frontier equals the "
-                        "decision as-of date, so ZERO LLM-specific outcomes have matured; no win rate, expectancy or "
-                        "probability calibration is reported (calibration requires >=100 matured LLM-cohort outcomes)"),
+                policy=policy_txt,
                 note="pending observations are kept strictly separate from the general Task 109 cohort's matured outcomes")
     return lineage_rows, contribution
 
@@ -557,7 +667,7 @@ def part_g_combined():
                 label="development_only / insufficient_evidence — no results manufactured")
 
 
-def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], contribution: dict, task113: dict | None = None) -> dict:
+def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], contribution: dict, task113: dict | None = None, task114: dict | None = None) -> dict:
     summary_rows = []
     for m in models:
         best = N_A
@@ -579,23 +689,25 @@ def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], co
     report = {
         "report": "psx_model_strategy_performance_report",
         "task": "task112",
-        "report_version": "task113-augmented",
+        "report_version": "task114-augmented",
         "generated_at": now_iso(),
         "git_head": LB.git_head(),
         "status": "completed",
         "evidence_lineage": {
-            "sources": sorted(set(str(p) for p in BR.glob("task*/*.json"))).__len__() and "data/backtest_reports/task*/ (Tasks 79-113 committed artifacts)",
+            "sources": sorted(set(str(p) for p in BR.glob("task*/*.json"))).__len__() and "data/backtest_reports/task*/ (Tasks 79-114 committed artifacts)",
             "primary_files": ["task82_model_registry_audit.json", "task79_model_results.json",
                               "task100_model_comparison.json", "task98_metrics.json", "task99 artifacts",
                               "task101_cost_aware_training.json", "task104_portfolio_results.json",
                               "task109_forward_performance.json", "task111 artifacts", "task112 artifacts",
-                              "task113_forward_validation_audit.json (cohort reconciliation + inventory classification)"],
+                              "task113_forward_validation_audit.json (cohort reconciliation + inventory classification)",
+                              "task114_forward_maturity_audit.json (first 5/10/21-session fixed-horizon maturity engine + LLM per-record outcomes)"],
             "cost_schedule": "psx_user_schedule_v2 (computeTradeCostsV2) for Task 100+ strategy results; legacy experiments labeled in their own artifacts",
             "rules": ["historical development / training / validation / final-holdout / prospective forward kept separate",
                       "Task 109's 43 matured outcomes are the GENERAL cohort, never attributed to the LLM",
                       "LLM-specific cohort: 0 matured outcomes; calibration forbidden until >=100 genuine matured LLM outcomes",
                       "missing values are marked 'Not available in source evidence'",
-                      "Task 113: mock records (MOCK_PIPELINE_CHECK) never feed any metric; cohort denominators never added across"],
+                      "Task 113: mock records (MOCK_PIPELINE_CHECK) never feed any metric; cohort denominators never added across",
+                      "Task 114: early SL/TP3 terminal exits are never labelled horizon-matured; pending never enters completed stats"],
         },
         "inventory": models,
         "general_forward_cohort": forward,
@@ -603,6 +715,7 @@ def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], co
         "llm_evidence_contribution": contribution,
         "summary": summary_rows,
         "task113_audit": task113 or {"available": False},
+        "task114_maturity": task114 or {"available": False},
     }
     REP_DIR.mkdir(parents=True, exist_ok=True)
     (REP_DIR / "model_strategy_performance_latest.json").write_text(json.dumps(report, indent=1, default=str), encoding="utf-8")
@@ -713,6 +826,57 @@ def write_markdown(report: dict) -> Path:
         lines.append(f"- **Calibration**: {llm.get('calibration_status')}.")
         lines.append(f"> {llm.get('rule')}")
         lines.append("")
+    t114b = report.get("task114_maturity") or {}
+    if t114b.get("available"):
+        lines += [
+            "## Forward-horizon maturity panel (Task 114 — first 5/10/21-session audit)",
+            "",
+            f"Market-data frontier: **{t114b.get('data_frontier')}** · new sessions since 2026-11-03: "
+            f"{json.dumps(t114b.get('sessions_new_since_2026_11_03'))} · engine: {t114b.get('engine_version')} · "
+            f"last maturity processing: {t114b.get('generated_at')}",
+            "",
+            "| Cohort | Obs | Symbols | Mat 5 | Pend 5 | Mat 10 | Pend 10 | Mat 21 | Pend 21 | Term-exits (frozen engine) | Pend-MTM | Unfilled | Excluded |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        ]
+        for p in (t114b.get("panel") or []):
+            lines.append(f"| {p.get('cohort_id')} | {p.get('total_observations')} | {p.get('unique_symbols')} | "
+                         f"{p.get('matured_5_session')} | {p.get('pending_5_session')} | {p.get('matured_10_session')} | "
+                         f"{p.get('pending_10_session')} | {p.get('matured_21_session')} | {p.get('pending_21_session')} | "
+                         f"{p.get('terminal_exits_frozen_engine')} | {p.get('pending_mtm_frozen_engine')} | "
+                         f"{p.get('unfilled_awaiting_entry_bar')} | {p.get('excluded_records')} |")
+        lines += [
+            "",
+            "> Fixed-horizon matured / pending are counted per decision at the Nth session close from entry "
+            "(entry session = session 1); early SL/TP3 terminal exits are a SEPARATE measurement from the frozen "
+            "Task 106/107 engine and are NEVER labelled horizon-matured; pending never enters completed statistics; "
+            "5/10/21 are computed independently from source bars. All current values are 0 matured — reported honestly.",
+            "",
+        ]
+        llm114 = t114b.get("llm") or {}
+        if llm114:
+            calib = llm114.get("calibration") or {}
+            lines += [
+                "### LLM-specific maturity (isolated cohort `task111-llm`)",
+                "",
+                f"- Genuine universe decisions: {llm114.get('genuine_universe_decisions')} across {llm114.get('unique_symbols')} symbols "
+                f"(BUY {llm114.get('decisions_buy')} · HOLD {llm114.get('decisions_hold')} · NO_TRADE {llm114.get('decisions_no_trade')}).",
+                f"- Excluded records: {llm114.get('excluded_count')} (23 MOCK_PIPELINE_CHECK + 24 second-pass generation_cache duplicates + 1 stale out-of-universe ENGRO) — never evaluated.",
+                f"- LLM-policy terminal-exit simulation (SL/TP3, separate from horizons): {llm114.get('terminal_exits_llm_policy_sim')} matured.",
+                f"- Calibration: {calib.get('status')} (minimum {calib.get('minimum_required')} genuine matured LLM outcomes; current {calib.get('current_matured_llm_outcomes')}).",
+                f"- {llm114.get('preservation')}",
+                "",
+            ]
+        idem = t114b.get("idempotency") or {}
+        if idem:
+            lines += [
+                f"> Idempotency: outcome key `decision_id|hN`, {idem.get('duplicate_processing_attempts_identical')} duplicate "
+                f"recomputations (identical, benign), {idem.get('source_bar_revisions_detected')} source-bar revisions detected "
+                "(each auditable, never a silent overwrite).",
+                "",
+            ]
+        for w in (t114b.get("warnings") or []):
+            lines.append(f"> **Warning**: {w}")
+        lines.append("")
     lines += [
         "## General forward cohort (NOT LLM)",
         "",
@@ -775,6 +939,28 @@ def write_pdf(report: dict, md_path: Path) -> Path:
     t2 = Table(data2, colWidths=[200, 90, 70, 80, 60])
     t2.setStyle(TableStyle([("FONTSIZE", (0, 0), (-1, -1), 6.5), ("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
     story.append(t2)
+    t114b = report.get("task114_maturity") or {}
+    if t114b.get("available"):
+        story.append(Spacer(1, 8))
+        story.append(Paragraph(
+            f"Task 114 forward-horizon maturity — frontier {t114b.get('data_frontier')}, "
+            f"new sessions since 2026-11-03: {json.dumps(t114b.get('sessions_new_since_2026_11_03'))}; "
+            "0 matured 5/10/21-session outcomes in every cohort (reported honestly). Early SL/TP3 exits are "
+            "separate measurements, never horizon maturities. LLM calibration stays unavailable until >=100 "
+            "genuine matured LLM outcomes.", styles["Normal"]))
+        story.append(Spacer(1, 4))
+        data3 = [["Cohort", "Obs", "Mat5/Pend5", "Mat10/Pend10", "Mat21/Pend21", "Term", "Unfill", "Excl"]]
+        for p in (t114b.get("panel") or []):
+            data3.append([str(p.get("cohort_id"))[:34], str(p.get("total_observations")),
+                          f"{p.get('matured_5_session')}/{p.get('pending_5_session')}",
+                          f"{p.get('matured_10_session')}/{p.get('pending_10_session')}",
+                          f"{p.get('matured_21_session')}/{p.get('pending_21_session')}",
+                          str(p.get("terminal_exits_frozen_engine")),
+                          str(p.get("unfilled_awaiting_entry_bar")),
+                          str(p.get("excluded_records"))])
+        t3 = Table(data3, colWidths=[150, 40, 62, 70, 70, 36, 40, 36])
+        t3.setStyle(TableStyle([("FONTSIZE", (0, 0), (-1, -1), 6.5), ("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
+        story.append(t3)
     story.append(Spacer(1, 8))
     story.append(Paragraph("Full profiles, per-horizon metrics, cost assumptions and evidence lineage: see docs/reports/psx_model_strategy_performance_report.md and data/reports/model_strategy_performance_latest.json. Missing values are marked 'Not available in source evidence'.", styles["Normal"]))
     doc.build(story)
@@ -793,11 +979,12 @@ def main():
     models += load_llm()
     forward = load_general_forward()
     task113 = load_task113_audit()
+    task114 = load_task114_maturity()
     lineage, contribution = part_e_lineage_and_contribution()
     overlay_rows = part_f_overlays()
     part_i_pipeline()
     part_g_combined()
-    report = build_report(models, forward, overlay_rows, contribution, task113)
+    report = build_report(models, forward, overlay_rows, contribution, task113, task114)
     md = write_markdown(report)
     pdf = write_pdf(report, md)
     print(f"models in inventory: {len(models)}")
