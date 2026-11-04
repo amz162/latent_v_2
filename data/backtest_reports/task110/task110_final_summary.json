@@ -4,7 +4,7 @@
   "generated_at": "2026-11-04T10:56:12Z",
   "git_head": "3b5ad490",
   "status": "completed_with_limitations",
-  "pushed_to_github": false,
+  "pushed_to_github": true,
   "decision": "completed_with_limitations",
   "strategy_status": "research_only (negative edge after costs; never promoted)",
   "volatility_status": "research_only (blocked_options_data)",
@@ -199,8 +199,12 @@
     ]
   },
   "verdict": "Task 110 completed_with_limitations: golden cross is a negative-edge research candidate kept research_only; volatility analytics are realized-only watches (options blocked); original forward campaign untouched and not_promotable; all feasible phases executed and pushed.",
-  "push_status": "blocked_pending_valid_credential",
+  "push_status": "pushed",
   "push_blocker": "repo amz162/latent_v_2 is now PUBLIC; both GitHub tokens were committed to the public repo and auto-revoked by GitHub secret scanning (confirmed: the supplied token string was world-readable at raw.githubusercontent.com/amz162/latent_v_2/main/.zcredentials/github_token). Remediation committed locally (f2824e57): credential file untracked + gitignored, policy docs rewritten (tokens only in untracked .git/credentials / gitignored .local). Push executes the moment the owner supplies a token that has never been committed to the public repo.",
-  "local_commit": "3b5ad490",
-  "commits_ahead_of_origin": 6
+  "local_commit": "25cbe3830e7ce521a9778daca861707e6c5cc7fd",
+  "commits_ahead_of_origin": 0,
+  "pushed_at_utc": "2026-11-04T12:35:31Z",
+  "pushed_commit": "25cbe3830e7ce521a9778daca861707e6c5cc7fd",
+  "push_blocker_resolved": true,
+  "push_resolution_note": "Original token was auto-revoked by GitHub secret scanning (public repo exposure). Owner supplied a fresh token 2026-11-04; stored gitignored at .zcredentials/github_token.local per new policy; push succeeded as fast-forward."
 }
