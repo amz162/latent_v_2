@@ -1,5 +1,5 @@
 # PSX Model & Strategy Performance Report (Task 112)
-Generated: 2026-11-05T19:12:26Z · git head 16c749aa · status: completed
+Generated: 2026-11-05T20:21:48Z · git head b2fd2565 · status: completed
 
 Scope: every model and strategy actually present in repository evidence (Tasks 79-111),
 including the GLM-4.6 multi-source LLM analyst. Missing information is marked

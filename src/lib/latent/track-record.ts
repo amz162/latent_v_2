@@ -1,10 +1,18 @@
 import { Trade, TrackRecordStats, TradeHorizon } from "./types";
-import { MOCK_TRADES } from "./mock-trades";
 
 // Compute accuracy statistics from the trade list.
 // This is REAL logic, not mocked — VCs can verify the math.
+//
+// Task 116 (C5): the default parameter that silently injected MOCK_TRADES was
+// removed. Synthetic fixtures may never appear as real historical/live
+// performance — callers must pass genuine persisted trades explicitly, and
+// the API layer returns "Insufficient real history" when there are none.
+// Demo fixtures stay isolated in mock-trades.ts behind an explicit
+// dataSource: "DEMO_FIXTURE" label.
 
-export function computeTrackRecord(trades: Trade[] = MOCK_TRADES): TrackRecordStats {
+export const INSUFFICIENT_REAL_HISTORY = "Insufficient real history";
+
+export function computeTrackRecord(trades: Trade[]): TrackRecordStats {
   const total = trades.length;
   const open = trades.filter((t) => t.status === "OPEN").length;
   const closed = trades.filter((t) => t.status !== "OPEN");

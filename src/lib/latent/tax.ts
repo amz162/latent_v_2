@@ -1,16 +1,55 @@
 // Latent.pk — Tax calculation helpers
-// Pakistan tax law (2024-2025 Finance Act):
-//   - Capital gains on PSX securities:
-//     * Filer (active ATL): 15% on realized gains
-//     * Non-filer: 30% on realized gains
-//   - Dividend income:
-//     * Filer: 15% on gross dividend
-//     * Non-filer: 30% on gross dividend
-//   - Loss offset: Capital losses can offset capital gains within the same fiscal year (July 1 - June 30)
+//
+// Task 116 (C6): the applicable schedule is now VERSIONED and its claims are
+// separated by verification status. Verified against sources current at
+// verification time; rates that could not be independently confirmed are
+// flagged UNVERIFIED rather than silently applied as fact. All outputs are
+// ILLUSTRATIVE ESTIMATES, not professional tax advice.
+//
+// Schedule "pk-cgt-v2026-11" (verified 2026-11-05):
+//   - CGT on PSX listed securities acquired on/after 2024-07-01, seller on the
+//     Active Taxpayer List (filer): 15% — VERIFIED
+//     (PwC Worldwide Tax Summaries, Pakistan — corporate income determination,
+//     updated Aug 2026: filer on ATL at acquisition AND disposal → 15%;
+//     https://taxsummaries.pwc.com/pakistan/corporate/income-determination)
+//   - Non-filer CGT rate: UNVERIFIED — public sources disagree (30% commonly
+//     cited; holding-period-graded schedules also reported). Displayed only
+//     with an explicit unverified warning.
+//   - Dividend WHT: filer 15% — VERIFIED (same PwC source: dividends generally
+//     final tax at 15%; exceptions exist, e.g. 25% where the paying company
+//     had no tax payable). Non-filer 30% — UNVERIFIED (commonly cited).
+//   - Loss offset: capital losses may offset capital gains within the same
+//     tax year (July 1 – June 30) — carry-forward beyond that NOT modelled.
 //
 // CGT is only on REALIZED gains (when you actually sell). Unrealized/paper gains are not taxable.
 
 export type FilerStatus = "filer" | "non-filer";
+
+export const TAX_SCHEDULE = {
+  scheduleId: "pk-cgt-v2026-11",
+  effectiveFrom: "2024-07-01", // acquisition-date regime for listed securities
+  verifiedAt: "2026-11-05",
+  verification: {
+    filerCgtRate: "VERIFIED",
+    nonFilerCgtRate: "UNVERIFIED",
+    filerDividendRate: "VERIFIED",
+    nonFilerDividendRate: "UNVERIFIED",
+  } as Record<string, string>,
+  sources: [
+    "PwC Worldwide Tax Summaries — Pakistan, corporate income determination (updated Aug 2026): https://taxsummaries.pwc.com/pakistan/corporate/income-determination",
+    "FBR Withholding Tax Rates index (Tax Year cards): https://www.fbr.gov.pk/withholding-tax-rates/51147/81155",
+  ],
+  disclaimer:
+    "Illustrative estimate only — not professional tax advice. Verify current rates with a licensed tax practitioner or FBR before relying on any figure.",
+} as const;
+
+/** True when the given rate's verification status is UNVERIFIED. */
+export function isRateUnverified(kind: "cgt" | "dividend", status: FilerStatus): boolean {
+  const v: Record<string, string> = TAX_SCHEDULE.verification;
+  const key = `${kind === "cgt" ? "nonFilerCgtRate" : "nonFilerDividendRate"}`;
+  if (status === "non-filer") return v[key] === "UNVERIFIED";
+  return v[kind === "cgt" ? "filerCgtRate" : "filerDividendRate"] === "UNVERIFIED";
+}
 
 export const CGT_RATE: Record<FilerStatus, number> = {
   filer: 0.15,

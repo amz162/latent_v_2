@@ -217,8 +217,8 @@ def test_9_report_reconciliation():
     rep = jload(REP / "model_strategy_performance_latest.json")
     # Task 114 bumped the report version (task114-augmented); the Task 113 audit
     # block itself must remain present and reconciled — that is the preserved part.
-    check("report_version == task114-augmented (carries task113 block)",
-          rep.get("report_version") == "task115-augmented")
+    check("report_version == task116-beta (carries task113 block)",
+          rep.get("report_version") == "task116-beta")
     check("report inventory == 83", len(rep["inventory"]) == 83)
     t113 = rep.get("task113_audit", {})
     check("report has task113_audit block", t113.get("available") is True)

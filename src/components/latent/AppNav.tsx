@@ -26,6 +26,7 @@ import {
   FileBarChart,
   Calculator,
   Search,
+  Sparkles,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -38,6 +39,7 @@ import {
 import { toast } from "sonner";
 
 const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { view: "beta_entry" as LatentView, key: "nav.beta", icon: Sparkles }, // Task 116: routes to /beta (flag-gated)
   { view: "fundamental_news", key: "nav.fundamental_news", icon: Newspaper },
   { view: "technical_analysis", key: "nav.technical_analysis", icon: BarChart3 },
   { view: "signals_v2", key: "nav.signals", icon: Zap },
@@ -77,6 +79,16 @@ export function AppNav() {
   const setLang = useI18n((s) => s.setLang);
 
   const [notifOpen, setNotifOpen] = useState(false);
+  // Task 116: the beta entry renders only when the server-side flag allows it
+  const [betaEnabled, setBetaEnabled] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/beta/status")
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled) setBetaEnabled(!!d.betaEnabled); })
+      .catch(() => { if (!cancelled) setBetaEnabled(false); });
+    return () => { cancelled = true; };
+  }, []);
   const unread = notifications.filter((n) => !n.read).length;
 
   // In-app TP/SL polling — checks /api/cron/check-tp-sl every 5 minutes
@@ -153,6 +165,7 @@ export function AppNav() {
           <nav className="hidden lg:flex items-center gap-0.5 flex-nowrap overflow-x-auto latent-no-scrollbar flex-1 min-w-0 max-w-full scroll-smooth">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
+              if (item.view === ("beta_entry" as LatentView) && !betaEnabled) return null;
               const active = view === item.view ||
                 (view === "signal_detail" && item.view === "signals_v2") ||
                 (view === "execute" && item.view === "signals_v2");
@@ -161,7 +174,7 @@ export function AppNav() {
                   key={item.view}
                   variant="ghost"
                   size="sm"
-                  onClick={() => setView(item.view)}
+                  onClick={() => (item.view === ("beta_entry" as LatentView) ? (window.location.href = "/beta") : setView(item.view))}
                   className={`shrink-0 px-2 h-8 ${
                     active
                       ? "bg-[#00E676]/10 text-[#00E676] hover:bg-[#00E676]/15"
@@ -319,13 +332,14 @@ export function AppNav() {
       <nav className="lg:hidden flex items-center gap-0.5 flex-nowrap px-3 pb-2 overflow-x-auto latent-no-scrollbar scroll-smooth">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
+          if (item.view === ("beta_entry" as LatentView) && !betaEnabled) return null;
           const active = view === item.view;
           return (
             <Button
               key={item.view}
               variant="ghost"
               size="sm"
-              onClick={() => setView(item.view)}
+              onClick={() => (item.view === ("beta_entry" as LatentView) ? (window.location.href = "/beta") : setView(item.view))}
               className={`shrink-0 px-2 h-8 ${active ? "bg-[#00E676]/10 text-[#00E676]" : "text-[#94A3B8]"} gap-1.5 text-[10px] sm:text-xs`}
             >
               <Icon className="h-3 w-3 shrink-0" />

@@ -686,10 +686,36 @@ def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], co
             "forward_outcomes_matured": ("0 (LLM cohort)" if "GLM-4.6" in m["model_name"] else ("43 (general cohort, NOT LLM)" if "GENERAL" in m["model_name"] else N_A)),
             "current_status": m["current_status_label"], "promotion_eligibility": m["promotion_eligibility"],
         })
+    # Task 116 — beta release block (built from the Task 116 artifacts)
+    beta_block = {}
+    try:
+        _t116 = BR / "task116"
+        _inv = list(csv.DictReader(open(_t116 / "task116_strategy_inventory.csv")))
+        _sec = json.loads((_t116 / "task116_security_remediation.json").read_text())
+        _host = json.loads((_t116 / "task116_hosting_readiness.json").read_text())
+        _audit = json.loads((_t116 / "task116_beta_launch_audit.json").read_text())
+        beta_block = {
+            "release_status": _audit.get("release_status"),
+            "fusion_methodology": "beta-consensus-v1 — transparent eligible votes, family cap 2, regime gates and pair context excluded from directional consensus",
+            "eligible_directional_strategies": sum(1 for r in _inv if r["beta_status"] == "directional_eligible_vote"),
+            "regime_context_components": sum(1 for r in _inv if r["beta_status"] == "regime_gate"),
+            "pair_context_restriction": next((r["restrictions"] for r in _inv if r["strategyId"] == "pairs_kalman_hedge"), ""),
+            "glm46_role": "analyst/explanation layer only — never a 13th directional vote, never a calibrated probability; cohort maturity 0/0/0 (Task 115)",
+            "performance_limitations": [
+                "No strategy is performance-validated; all 12 are implemented + unit-tested only.",
+                "Task 115 gen1 checkpoint (n=12, net +38,064.93 PKR) is descriptive, not proof of edge.",
+                "LLM performance not available — insufficient matured outcomes; conviction uncalibrated.",
+            ],
+            "hosting": _host.get("beta_readiness"),
+            "security_remediations": len(_sec.get("remediation_matrix", [])),
+        }
+    except Exception as _e:
+        beta_block = {"error": f"task116 artifacts unavailable: {_e}"}
     report = {
         "report": "psx_model_strategy_performance_report",
         "task": "task112",
-        "report_version": "task115-augmented",
+        "report_version": "task116-beta",
+        "beta_release": beta_block,
         "generated_at": now_iso(),
         "git_head": LB.git_head(),
         "status": "completed",

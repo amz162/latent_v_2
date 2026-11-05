@@ -1,9 +1,24 @@
 {
  "report": "psx_model_strategy_performance_report",
  "task": "task112",
- "report_version": "task115-augmented",
- "generated_at": "2026-11-05T19:12:26Z",
- "git_head": "16c749aa",
+ "report_version": "task116-beta",
+ "beta_release": {
+  "release_status": "BETA_READY_WITH_LIMITATIONS",
+  "fusion_methodology": "beta-consensus-v1 \u2014 transparent eligible votes, family cap 2, regime gates and pair context excluded from directional consensus",
+  "eligible_directional_strategies": 7,
+  "regime_context_components": 4,
+  "pair_context_restriction": "CONTEXT-ONLY: a hedged pairs position may require a short leg \u2014 prohibited under the beta long-only policy. Cointegration is verified on training data; never assumed. Excluded from the executable consensus by design.",
+  "glm46_role": "analyst/explanation layer only \u2014 never a 13th directional vote, never a calibrated probability; cohort maturity 0/0/0 (Task 115)",
+  "performance_limitations": [
+   "No strategy is performance-validated; all 12 are implemented + unit-tested only.",
+   "Task 115 gen1 checkpoint (n=12, net +38,064.93 PKR) is descriptive, not proof of edge.",
+   "LLM performance not available \u2014 insufficient matured outcomes; conviction uncalibrated."
+  ],
+  "hosting": "READY_WITH_LIMITATIONS (degraded cache, single-host scale ceiling, no external Redis)",
+  "security_remediations": 10
+ },
+ "generated_at": "2026-11-05T20:21:48Z",
+ "git_head": "b2fd2565",
  "status": "completed",
  "evidence_lineage": {
   "sources": "data/backtest_reports/task*/ (Tasks 79-114 committed artifacts)",

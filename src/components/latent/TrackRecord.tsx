@@ -22,6 +22,8 @@ export function TrackRecord() {
   const [stats, setStats] = useState<TrackRecordStats | null>(null);
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dataSource, setDataSource] = useState<string>("");
+  const [emptyMessage, setEmptyMessage] = useState<string>("");
 
   useEffect(() => {
     fetch("/api/track-record")
@@ -29,6 +31,8 @@ export function TrackRecord() {
       .then((d) => {
         setStats(d.stats);
         setTrades(d.trades || []);
+        setDataSource(d.dataSource || "");
+        setEmptyMessage(d.message || "");
       })
       .finally(() => setLoading(false));
   }, []);
@@ -88,7 +92,39 @@ export function TrackRecord() {
     );
   }
 
-  if (!stats) return null;
+  if (!stats) {
+    // Task 116 (C5): no real history yet — show the honest empty state. The
+    // demo fixture stays one click away, permanently labelled SAMPLE/DEMO.
+    return (
+      <div className="min-h-screen bg-[#0A0E1A]">
+        <main className="max-w-5xl mx-auto px-4 md:px-6 py-10">
+          <h1 className="text-2xl font-bold text-[#F4F7FB]">Track record</h1>
+          <div className="mt-4 rounded-lg border border-[#8F630F]/40 bg-[#8F630F]/10 p-4 text-sm text-[#F4F7FB]">
+            <p className="font-semibold">{emptyMessage || "Insufficient real history"}</p>
+            <p className="mt-2 text-[#94A3B8]">
+              Forward shadow cohorts are tracked in the Model Performance report — the first matured
+              fixed-horizon outcomes are reported there. This page fills automatically as real
+              executions close; synthetic numbers are never shown as performance.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              fetch("/api/track-record?demo=1")
+                .then((r) => r.json())
+                .then((d) => {
+                  setStats(d.stats);
+                  setTrades(d.trades || []);
+                  setDataSource(d.dataSource || "DEMO_FIXTURE");
+                });
+            }}
+            className="mt-4 text-xs text-[#94A3B8] underline hover:text-[#F4F7FB]"
+          >
+            View SAMPLE / DEMO fixture (not real performance)
+          </button>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0A0E1A]">
@@ -98,7 +134,9 @@ export function TrackRecord() {
           <div>
             <h1 className="text-2xl font-bold text-[#F4F7FB]">Track record</h1>
             <p className="text-sm text-[#94A3B8] mt-1">
-              Every tracked signal, every win, every loss. Downloadable accuracy report.
+              {dataSource === "DEMO_FIXTURE"
+                ? "SAMPLE / DEMO DATA — synthetic fixture, not real performance."
+                : "Every tracked signal, every win, every loss. Downloadable accuracy report."}
             </p>
           </div>
           <Button

@@ -1,0 +1,1444 @@
+# TASK 116 — LATENT.PK BETA LAUNCH
+## Full Codebase Remediation + 12-Strategy Fusion + GLM-4.6 Analyst + Temporary User Onboarding + Hosting Readiness
+
+**Repository:** `amz162/latent_v_2`
+
+**Reported baseline:** Task 115, commit `3305da2c`, pushed to `origin/main`.
+
+**User-provided reference files:**
+- `Audit.md` — full architectural, security, algorithmic and design-system audit.
+- `psx_full.py` — proposed 12-strategy Kalman fusion engine.
+
+Treat these two files as audit/reference material. Inspect the actual current repository before changing code. Some audit findings may already have been fixed in Tasks 97–115. Do not reintroduce old defects or overwrite completed work.
+
+---
+
+# 1. THE PRODUCT WE ARE BUILDING
+
+Build a temporary, user-facing **Latent.pk Beta Experience** using the existing production codebase and current hosting.
+
+The beta should combine:
+
+1. The 12 strategy components described in `psx_full.py`.
+2. Existing classical ML and technical-rule outputs, where genuinely implemented and available.
+3. The existing GLM-4.6 multi-source LLM analyst.
+4. Existing deterministic risk and transaction-cost policies.
+5. The current Latent.pk UI and design system.
+6. A simplified, beginner-friendly onboarding flow.
+7. A unified beta dashboard showing the overall market view and detailed evidence.
+
+The goal is to give beta users one understandable experience instead of making them navigate disconnected model pages and technical terminology.
+
+This must be a **research and investment-intelligence beta**, not an automated trading platform.
+
+The product must never suggest that the combined system has proven profitability. The existing model and strategy evidence does not justify that claim.
+
+### Current research facts that must remain visible
+
+- Task 115 reported 12 gen1 observations at the 5-session horizon with aggregate net P&L of +PKR 38,064.93.
+- This is a descriptive result from only 12 observations, not proof of a profitable edge.
+- The GLM-4.6 cohort still has zero matured 5-, 10-, and 21-session outcomes in the Task 115 report.
+- The single SYS LLM-related TP3 exit is a terminal policy-simulation event, not a matured LLM horizon result.
+- No existing model or strategy has passed the independent promotion requirements.
+
+Do not convert these results into marketing claims or displayed win-rate promises.
+
+---
+
+# PART A — BASELINE, REPOSITORY AND AUDIT VERIFICATION
+
+## A1. Preserve the existing project
+
+Before changing anything:
+
+- Inspect current branch, HEAD, parent commits and origin/main.
+- Confirm Task 112, 113, 114 and 115 files and artifacts exist.
+- Confirm the latest LLM Signals and Model Performance pages.
+- Confirm the current worker, maturity engine, paper-trading monitor and V2 cost implementation.
+- Run the existing relevant tests and save a baseline result.
+- Identify uncommitted work before proceeding.
+
+Do not reset or reconstruct the repository from an earlier commit.
+
+Do not discard existing reports, database records, signal history, source-bar snapshots or maturity ledgers.
+
+The reported Task 115 state is the baseline, not an instruction to force the checkout to an old commit.
+
+## A2. Re-audit every finding against the real current code
+
+For every finding in `Audit.md`, classify it as:
+
+- VERIFIED_OPEN
+- ALREADY_FIXED
+- PARTIALLY_FIXED
+- NOT_REPRODUCIBLE
+- HOST_CONFIGURATION_REQUIRED
+- BLOCKED_BY_EXTERNAL_DEPENDENCY
+
+Inspect the actual relevant files and current implementation.
+
+The audit is a reference, not proof that every listed defect still exists.
+
+Pay particular attention to:
+
+- Hardcoded paths.
+- Hardcoded localhost calls.
+- Database persistence.
+- Redis/mock fallback.
+- SSRF in news extraction.
+- Historical backtest leakage.
+- Illegal or unsupported short-entry assumptions.
+- Synthetic performance data.
+- Tax assumptions.
+- Hosting compatibility.
+- User state and onboarding persistence.
+
+Create a remediation matrix with finding, actual source location, severity, status, fix, regression test and remaining risk.
+
+---
+
+# PART B — FIX THE EXISTING CODEBASE AND PRODUCTION RISKS
+
+## B1. Environment and filesystem path normalization
+
+Audit reports hardcoded paths such as:
+
+- `/home/z/my-project`
+- `/mnt/user-data/outputs`
+- Hardcoded local database locations.
+
+Search the entire repository, including Python scripts, Next.js routes, workers, PDF generators, tests and deployment scripts.
+
+Remove environment-specific absolute paths from production logic.
+
+Create or extend a central path/configuration module.
+
+Requirements:
+
+- Resolve project-relative paths from the actual repository/runtime root.
+- Use explicit environment configuration for persistent data directories.
+- Create required directories safely.
+- Verify write permission at startup where required.
+- Avoid writing runtime reports into temporary deployment directories.
+- Keep generated artifacts in the existing documented artifact locations.
+- Ensure database paths resolve consistently for Prisma and Python workers.
+
+Do not blindly replace every database URL with a relative SQLite URL. Verify Prisma's actual schema location and URL-resolution behavior.
+
+The production database must point to the intended persistent database on the actual hosting platform.
+
+Add a startup database-read/write health check that does not modify or erase production data.
+
+## B2. Remove hardcoded localhost API dependencies
+
+Audit identified this pattern in the pattern-recognition route:
+
+`http://localhost:3000/api/psx/ratio/...`
+
+Search for all equivalent hardcoded internal service URLs.
+
+Preferred implementation:
+
+- Extract shared business/data logic into reusable server-side library functions.
+- Call those functions directly from route handlers.
+- Avoid HTTP requests from a Next.js route to another route in the same application.
+
+If a genuine external service boundary requires HTTP:
+
+- Use an explicit configured service URL.
+- Validate the URL at startup.
+- Respect the current host and port.
+- Add timeout and error handling.
+- Never assume `localhost:3000`.
+
+The application must work on the existing hosting provider regardless of whether the port is 3000, dynamically assigned or behind a reverse proxy.
+
+## B3. SSRF protection for news/article fetching
+
+Audit identified an SSRF risk in `fetchArticleFromLink()`.
+
+Inspect all user-controlled URL fetching, not just one route.
+
+Implement a secure URL-fetch policy:
+
+- HTTPS only unless a specifically justified provider requires otherwise.
+- Allowlist approved public news domains.
+- Reject localhost and private/internal IP ranges.
+- Reject loopback, link-local, private, reserved and cloud metadata addresses.
+- Validate resolved IPv4 and IPv6 addresses.
+- Revalidate redirects; do not allow a trusted public URL to redirect into a private address.
+- Prevent DNS-rebinding bypasses.
+- Limit response size.
+- Limit content types.
+- Apply strict timeouts.
+- Reject unsupported schemes, credentials in URLs and malformed hosts.
+- Avoid forwarding internal cookies, authorization headers or secrets.
+- Log rejection reasons without leaking sensitive information.
+
+A rejected source should produce a controlled validation message, not an arbitrary outbound request.
+
+Add SSRF regression tests for:
+
+- `127.0.0.1`
+- `localhost`
+- `169.254.169.254`
+- Private IPv4 ranges.
+- Private IPv6 ranges.
+- Redirect to internal IP.
+- DNS resolution changes.
+- Non-HTTPS schemes.
+- Oversized responses.
+- Unsupported content types.
+
+Do not assume the audit's example domain allowlist is automatically complete or safe. Review the actual domains used by the current application.
+
+## B4. Production cache and fallback behavior
+
+Inspect the existing ioredis / ioredis-mock behavior.
+
+A single-process in-memory mock must never silently replace distributed production cache or rate-limiting behavior in a multi-instance deployment.
+
+Use the existing real Redis connection where configured.
+
+If Redis is unavailable:
+
+- Apply the documented production fallback behavior.
+- Do not silently present mock caching as reliable distributed storage.
+- Preserve safe application functionality where possible.
+- Expose an operational warning.
+- Prevent rate-limit or idempotency guarantees from depending on volatile process memory.
+
+Development/test fallback behavior may remain, but it must be explicitly environment-gated.
+
+## B5. Secrets and configuration security
+
+Scan tracked files and Git history for credentials, exposed tokens, private keys and accidentally committed `.env` files.
+
+Requirements:
+
+- Never print secrets in logs, test output or the completion report.
+- Never write credential values into source code.
+- Ensure `.env` and runtime token backups are ignored.
+- Use the actual hosting secret/environment facility.
+- Check that client bundles expose no private API keys.
+- Preserve existing authorized credentials without copying them into new files.
+
+If an exposed historical credential is found, identify the type of credential and recommend rotation. Do not print the value or automatically rewrite Git history.
+
+## B6. External data-provider resilience
+
+The audit describes AskAnalyst as the primary source and Investify as a news/announcement source.
+
+Inspect current provider implementations and existing Task 102–115 data-integrity rules.
+
+Implement or verify:
+
+- Request timeouts.
+- Schema validation.
+- Retry limits and backoff.
+- Circuit breakers where useful.
+- Rate-limit awareness.
+- Source timestamps and retrieval timestamps as separate fields.
+- Stale-data detection.
+- Provider error visibility.
+- Missing-symbol handling.
+- Duplicate-bar rejection.
+- Overlap-integrity checks.
+- Source provenance.
+
+Never fabricate a price, exchange timestamp, volume value, fundamental publication date or news source.
+
+If a provider is unavailable, display the last verified data frontier and its age.
+
+---
+
+# PART C — BACKTESTING AND FINANCIAL METHODOLOGY CORRECTIONS
+
+## C1. Long-only execution as the default
+
+The audit identifies historical ensemble backtests that calculate negative SELL signals as profitable short trades.
+
+The beta engine must use the existing long-only retail research policy.
+
+Distinguish:
+
+- BUY / hypothetical long entry.
+- SELL_TO_CLOSE / exit of an existing long.
+- SHORT_ENTRY / prohibited unless independently authorized, legally verified and technically supported for the specific product and broker.
+
+Do not turn every bearish signal into a short trade.
+
+For this beta:
+
+- Bearish signals mean negative market pressure or exit context.
+- They must not create a short position.
+- No unsupported borrowing or leverage.
+- The Pairs strategy remains context-only until a compliant, fully modeled two-leg execution method exists.
+
+Do not rely on a broad or outdated legal assertion about every possible PSX product. Verify the applicable current official rules and broker/product entitlement before enabling any short-entry functionality in a future task.
+
+## C2. Eliminate historical prediction leakage
+
+Audit all historical backtests and model evaluation scripts.
+
+Required rules:
+
+- Every signal must be generated using only information available at its decision timestamp.
+- No end-of-period prediction may be replayed over earlier dates.
+- No static latest prediction may be used retrospectively.
+- No future bar or future feature may enter the signal calculation.
+- A decision generated from session close must not be executed at that same already-observed close.
+- Use the existing documented next-session entry convention and actual source bars.
+
+Review all scripts that use rolling historical windows or saved prediction artifacts.
+
+Correct any holdout leakage.
+
+## C3. Separate training, validation and final test
+
+Audit the XGBoost early-stopping issue identified in `Audit.md`.
+
+Validation/early stopping must use training or validation data only.
+
+Final holdout/test observations must not influence:
+
+- Training duration.
+- Early stopping.
+- Threshold selection.
+- Hyperparameter choices.
+- Calibration choices.
+
+Do not retrain models in this task unless a narrowly necessary rebuild is explicitly justified and does not reuse final test information.
+
+## C4. Cost and outcome integrity
+
+Use the established V2 cost implementation:
+
+`computeTradeCostsV2` / `psx_user_schedule_v2`
+
+Use the same canonical cost implementation across all beta hypothetical trade paths.
+
+Preserve applicable:
+
+- Brokerage.
+- PSX charges.
+- NCCPL.
+- CDC.
+- Slippage.
+- CGT assumptions.
+- Whole-share rules.
+- Available exchange/broker lot constraints.
+
+Do not introduce a parallel flat-fee implementation.
+
+A trade with zero, negative or unaffordable allowed quantity must remain NO_TRADE. Never enforce a minimum one-lot position when calculated risk size is zero.
+
+## C5. Remove synthetic performance deception
+
+Audit `mock-trades.ts`, `track-record.ts` and all default performance surfaces.
+
+The audit reports a synthetic seeded 62% win rate.
+
+Ensure:
+
+- Synthetic results cannot appear as real historical or live performance.
+- Real track record uses only genuine persisted executions or explicitly valid research outcomes.
+- Demo content has a permanent SAMPLE/DEMO label.
+- No mock win rate, mock profit factor, synthetic Sharpe or artificial returns appear in live beta results.
+- Missing trade history produces "Insufficient real history", not an invented result.
+
+Do not delete historical demo fixtures. Keep them isolated from production metrics.
+
+## C6. Tax and Shariah information
+
+Audit the existing Pakistan tax engine.
+
+The uploaded audit documents a Finance Act 2024–2025 tax schedule. Do not assume it remains correct for a 2026 beta launch.
+
+Verify all displayed tax rules against current official FBR legislation, circulars and relevant authoritative material.
+
+- Version the applicable tax schedule.
+- Record its effective date.
+- Identify the source.
+- Distinguish illustrative estimates from professional tax advice.
+- If a current rate cannot be verified, mark it unavailable or unverified.
+- Do not silently apply stale rates.
+
+For Shariah screening:
+
+- Use an actual current source and as-of date.
+- Do not claim compliance based on an old constituent list.
+- Do not infer a user's religion.
+- Make the screening preference optional.
+- Explain that a screen is based on the stated methodology and source date.
+
+---
+
+# PART D — INTEGRATE THE 12 STRATEGY COMPONENTS
+
+## D1. Source-code handling
+
+`psx_full.py` is a proposed research implementation, not a production-ready strategy engine.
+
+Do not run its synthetic simulation as if it were actual PSX evidence.
+
+Do not import its global configuration or synthetic data generator into the live application.
+
+Do not hardcode:
+
+- The five example stocks.
+- ENGRO/OGDC as the only pair.
+- 60 synthetic business days.
+- PKR 1,000,000 initial capital.
+- Fixed 500-share lot size.
+- Arbitrary signal thresholds.
+- Local plotting output paths.
+
+Port the strategy logic into the existing architecture only after the corrections below.
+
+Choose one canonical calculation runtime based on the actual hosting capabilities:
+
+- Existing Python worker/batch pipeline, or
+- Existing TypeScript server-side library architecture.
+
+Do not create two independent production implementations of the same formula.
+
+If both languages must calculate the same values, add explicit parity tests.
+
+Use actual verified PSX daily OHLCV from the existing data layer.
+
+The engine must handle insufficient history, stale bars, missing bars, duplicate dates and symbol-specific trading suspensions.
+
+## D2. Strategy inventory
+
+All twelve components must be represented in the engine, UI and research report.
+
+Do not claim that they are twelve statistically independent trading strategies.
+
+### 1. Golden Cross — MA7/MA30
+
+Correct the current implementation.
+
+The uploaded code uses the continuous moving-average difference but describes it as a crossover.
+
+Separate:
+
+- Actual bullish crossover event.
+- Actual bearish crossover event.
+- Continuous trend-strength context.
+
+Calculate using trailing data only.
+
+### 2. MACD
+
+Use EMA12, EMA26 and EMA9 signal line.
+
+Remove full-dataset normalization.
+
+Use rolling or expanding normalization based only on information available at the signal timestamp.
+
+Define warm-up and missing-value rules.
+
+### 3. RSI Divergence
+
+The current sign-mismatch implementation is not a complete pivot-based divergence detector.
+
+Implement a causally confirmed bullish/bearish divergence method.
+
+Use Wilder-style RSI smoothing or the existing canonical platform RSI implementation.
+
+Pivots must only become available after their confirmation window has elapsed.
+
+Do not backdate a confirmed divergence to the original pivot date.
+
+### 4. Z-Score Mean Reversion
+
+Use a statistically defensible trailing reference series.
+
+Do not assume the raw price level is stationary.
+
+Prefer a documented rolling log-price deviation or suitable stationary residual.
+
+Ensure the rolling mean and standard deviation never include future observations.
+
+### 5. Ornstein-Uhlenbeck
+
+Fit the AR(1)/OU relationship on a trailing history.
+
+Do not clamp a non-mean-reverting fitted coefficient into a stationary range and pretend that it passed the stationarity test.
+
+Verify:
+
+- Valid coefficient range.
+- Stability.
+- Statistical evidence.
+- Residual diagnostics.
+- Mean-reversion half-life.
+- Adequate observation count.
+
+If the model does not show adequate evidence of mean reversion, return `insufficient_data` or `not_mean_reverting`.
+
+### 6. Linear Regression Channel
+
+Use a trailing regression window.
+
+Correct index alignment between historical observations and the signal timestamp.
+
+Calculate residuals and channel width without future leakage.
+
+Do not use the current unknown future close when calculating the decision.
+
+### 7. Pairs Trading — Kalman Hedge Ratio
+
+The provided file hardcodes ENGRO/OGDC and assumes a cointegrated pair.
+
+Do not assume this pair is cointegrated.
+
+Verify cointegration using historical training data only.
+
+Use a rolling hedge estimate with proper point-in-time alignment.
+
+Check synchronized source dates and missing bars.
+
+This strategy is **context-only / research-only by default** because the existing beta execution policy is long-only and a conventional hedged pairs position may require a short leg.
+
+Do not include it in an executable bullish/bearish trade vote unless a fully supported, authorized execution structure exists for both legs.
+
+Display the reason for its exclusion.
+
+### 8. Variance Ratio — Lo-MacKinlay
+
+Do not treat the simple rolling variance ratio in the supplied file as a full statistical test.
+
+Use a documented, correctly implemented statistic and the appropriate finite-sample/heteroskedasticity assumptions.
+
+Only use it as a regime or momentum/mean-reversion context gate when sample quality supports it.
+
+Report insufficient history and test validity.
+
+### 9. Hurst Exponent
+
+The supplied Hurst calculation uses price levels.
+
+Review the estimator and use an appropriate return/residual series with sufficient observations.
+
+Add estimator diagnostics and sample-size warnings.
+
+Hurst is a regime descriptor, not an independent bullish or bearish prediction.
+
+### 10. Autocorrelation Filter
+
+Calculate rolling lag-1 autocorrelation on returns using past data only.
+
+Use an adequate observation count and report uncertainty/significance.
+
+Treat it as a context or regime gate rather than an independent trade prediction when statistical support is weak.
+
+### 11. Volatility Breakout — Donchian + ATR
+
+Calculate Donchian thresholds from completed prior bars, using the appropriate shift.
+
+Use a consistent ATR method.
+
+A breakout recognized at session close must use the next eligible session's execution price for hypothetical entry.
+
+Do not execute on the same close used to discover the breakout.
+
+### 12. Bollinger Band Width Regime
+
+Calculate BBW and its derivatives with the existing platform's consistent Bollinger formula.
+
+Treat expansion and contraction as volatility-regime context.
+
+Do not automatically interpret BBW expansion as bullish or contraction as bearish.
+
+Do not describe a strategy as long volatility or short volatility without an actual supported instrument and validated methodology.
+
+No options data currently exists in the reported research infrastructure.
+
+## D3. Signal contract
+
+All strategy components must produce a common typed result.
+
+Suggested fields:
+
+- `signalId`
+- `symbol`
+- `strategyId`
+- `strategyName`
+- `decisionTimestamp`
+- `sourceBarDate`
+- `direction`
+- `rawScore`
+- `role`
+- `eligibility`
+- `reason`
+- `dataFreshness`
+- `inputCoverage`
+- `methodVersion`
+- `sourceReferences`
+- `validationStatus`
+
+Allowed roles:
+
+- `directional`
+- `regime_gate`
+- `pair_context`
+
+Allowed statuses:
+
+- `active`
+- `context_only`
+- `insufficient_data`
+- `stale`
+- `blocked`
+- `calculation_error`
+
+A missing strategy output must not silently become a neutral signal or zero-risk result.
+
+Every strategy should be traceable to its source bars and calculation version.
+
+---
+
+# PART E — BUILD ONE TRANSPARENT 12-STRATEGY FUSION ENGINE
+
+## E1. Do not blindly copy the supplied Kalman fusion
+
+The provided implementation restarts its prior state at zero and variance one on every timestep. It therefore does not implement the documented persistent state transition across time.
+
+It also treats arbitrary strategy uncertainty values as measurement variances.
+
+Furthermore, many strategy signals are derived from the same OHLC series and are correlated. Treating them as independent measurements can overstate the evidence.
+
+Do not preserve these assumptions merely because the original code labels the output Kalman fusion.
+
+## E2. Strategy independence and family grouping
+
+Inspect correlation and overlap among the 12 strategy outputs using properly separated historical periods.
+
+Group the components into meaningful families, for example:
+
+- Trend/momentum.
+- Mean reversion.
+- Statistical/regime context.
+- Volatility/breakout.
+- Pair-relative context.
+
+Do not double-count highly correlated components as independent votes.
+
+Do not give arbitrary confidence weights because one strategy has a larger signal magnitude.
+
+Do not use a strategy's own arbitrary `uncertainty` field as a calibrated probability or empirical variance.
+
+## E3. Initial beta fusion method
+
+Use a transparent and reproducible consensus method.
+
+Until out-of-sample evidence supports calibrated weights:
+
+- Use simple auditable eligible votes.
+- Apply documented family-level limits.
+- Keep regime gates separate from direction votes.
+- Exclude pair context from executable consensus.
+- Display unavailable/blocked outputs explicitly.
+- Show positive, negative and neutral counts.
+- Show the number of independent strategy families represented.
+- Show the reasons for mixed or insufficient evidence.
+
+If a stronger statistical fusion method is implemented, it must be justified by separate historical validation and a versioned methodology.
+
+Do not claim that the Kalman posterior variance is a calibrated measure of trading confidence.
+
+### Fusion result states
+
+Use clear states such as:
+
+- `BULLISH_ALIGNMENT`
+- `BEARISH_PRESSURE`
+- `MIXED_EVIDENCE`
+- `INSUFFICIENT_DATA`
+- `STALE_DATA`
+- `REGIME_UNCLEAR`
+- `PAIR_CONTEXT_ONLY`
+- `LLM_CONFLICT`
+- `LLM_UNAVAILABLE`
+
+No forced BUY or SELL result when evidence is insufficient.
+
+## E4. User-facing number
+
+Reuse the existing 270° arc visual if appropriate.
+
+Rename its measurement to something honest, such as:
+
+"Strategy Alignment"
+
+or
+
+"Eligible Strategy Agreement"
+
+It must not be called win probability or calibrated confidence.
+
+Always show the underlying numerator and denominator, for example:
+
+"5 of 7 eligible directional strategies align."
+
+Regime filters and blocked strategies must not silently inflate the denominator.
+
+---
+
+# PART F — INTEGRATE THE EXISTING GLM-4.6 LLM ANALYST
+
+## F1. Preserve the Task 111/112/113/114/115 implementation
+
+Use the existing authorized z-ai-web-dev-sdk and GLM-4.6 configuration.
+
+The older Audit.md references GLM-4-Plus. Do not replace the current Task 111 GLM-4.6 model with the stale name in the audit.
+
+Reuse:
+
+- `latent_psx_llm_evidence_v1`.
+- Existing validated evidence package.
+- Prompt versioning.
+- Source references.
+- Strict response validation.
+- Immutable signal history.
+- Existing LLM Signals UI.
+- Existing shadow cohort tracking.
+
+Do not create a second untracked LLM pipeline.
+
+## F2. Role of the LLM
+
+The LLM is an analyst and explanation layer, not a 13th directional strategy.
+
+It should:
+
+- Explain strategy agreement and disagreement.
+- Summarize actual technical evidence.
+- Explain current company fundamentals with timestamp limitations.
+- Explain relevant news using validated source references.
+- Identify conflicting evidence.
+- Identify missing or stale evidence.
+- Explain risk considerations in simple language.
+- Produce plain-English and Urdu explanations supported by the same evidence package.
+
+The LLM must not:
+
+- Override strategy calculations.
+- Invent price levels.
+- Invent source references.
+- Compute its own risk/reward.
+- Change deterministic entry, stop or target values.
+- Convert conviction into a calibrated probability.
+- Increase confidence merely because it agrees with the strategies.
+- Make up historical evidence or publication dates.
+
+## F3. Combined output
+
+Build one combined beta insight card with separate sections:
+
+1. **Strategy Fusion:** result from the 12-component engine.
+2. **LLM Analyst:** actual GLM-4.6 decision and explanation.
+3. **Evidence Quality:** source freshness and completeness.
+4. **Risk Policy:** deterministic hypothetical risk levels where valid.
+5. **Agreement/Conflict:** whether the LLM's assessment agrees with, conflicts with, or cannot assess the strategy fusion.
+
+The LLM must remain independently identifiable.
+
+Examples:
+
+- Strategy alignment positive + LLM BUY: show agreement, not proof of a winning trade.
+- Strategy alignment positive + LLM NO_TRADE: show conflict and explain the evidence.
+- Strategy alignment mixed + LLM HOLD: show mixed/neutral evidence.
+- Strategy output valid + LLM unavailable: show strategy result with an explicit missing LLM panel.
+- Strategy output unavailable + LLM BUY: do not turn the LLM response into an executable recommendation.
+
+A conflict must never be hidden by an averaged score.
+
+Do not use the LLM as an automatic veto or approval mechanism unless a separately documented deterministic policy requires a data-quality hold.
+
+## F4. LLM maturity and performance
+
+Keep the exact LLM cohort and existing maturity engine.
+
+Real LLM outcomes and mock pipeline checks remain isolated.
+
+Do not report a calibrated probability until at least 100 genuine matured observations exist for the exact cohort.
+
+Show:
+
+"LLM conviction is uncalibrated."
+
+and:
+
+"Performance not available — insufficient matured outcomes."
+
+Never assign general forward cohort performance to the LLM.
+
+---
+
+# PART G — TEMPORARY BETA USER ONBOARDING
+
+## G1. Create a dedicated beta onboarding experience
+
+Create a temporary, feature-flagged beta onboarding flow using the existing Latent.pk application design.
+
+Possible route:
+
+`/beta/onboarding`
+
+Adapt it to the existing routing and navigation conventions.
+
+Do not rebuild the entire application or replace the existing Onboarding page without verifying current usage.
+
+Provide a temporary beta entry point from the existing AppNav/AppShell.
+
+The feature must be independently switchable using a server-side flag such as:
+
+`BETA_ONBOARDING_ENABLED`
+
+Disabling the flag must restore the previous application behavior without deleting onboarding data.
+
+## G2. Onboarding experience
+
+Make the flow simple enough for a beginner.
+
+Use progressive steps, plain language and visible progress.
+
+### Step 1 — Welcome and beta disclosure
+
+Explain:
+
+- What Latent.pk does.
+- That it analyzes PSX market information.
+- That it combines technical strategies and an AI analyst.
+- That its research results are still being validated.
+- That this beta does not place broker orders.
+- That outputs are educational/research information, not guaranteed returns or personalized regulated investment advice.
+
+Require explicit acceptance of the beta notice before enabling the beta dashboard.
+
+### Step 2 — User experience
+
+Allow the user to select:
+
+- New to PSX.
+- Some investing experience.
+- Experienced investor/trader.
+
+Use this to adjust explanations and terminology, not to manufacture a risk score.
+
+### Step 3 — Investment objective
+
+Allow optional selection of:
+
+- Learn about PSX.
+- Long-term growth research.
+- Dividend/income research.
+- Swing-trading research.
+- General market monitoring.
+
+Do not promise that the platform can deliver the selected objective.
+
+### Step 4 — Time horizon and risk understanding
+
+Ask understandable questions about:
+
+- Intended time horizon.
+- How the user reacts to losses.
+- Whether capital may be needed soon.
+- Comfort with price volatility.
+- Ability to tolerate loss.
+
+Separate willingness to take risk from financial capacity to take risk.
+
+If answers conflict or are incomplete, show "Profile incomplete" rather than generating a falsely precise score.
+
+Do not reuse the simple composite equation in Audit.md without validating its suitability.
+
+### Step 5 — Optional preferences
+
+Allow optional preferences such as:
+
+- Preferred sectors.
+- Watchlist symbols.
+- Show dividend-related information.
+- Optional Shariah screening preference.
+- Optional ATL/tax assumptions for illustrative calculations.
+
+Do not ask for religious identity.
+
+Do not require exact capital amounts or sensitive personal data to access the dashboard.
+
+If capital range is useful, make it optional and explain why it is requested.
+
+### Step 6 — Profile summary
+
+Show the user a simple editable profile summary.
+
+Explain:
+
+- Selected objective.
+- Time horizon.
+- Risk understanding.
+- Chosen market preferences.
+- Limitations of the profile.
+
+The profile must not produce a guaranteed asset allocation or an instruction to purchase a particular security.
+
+Allow users to:
+
+- Go back.
+- Edit their answers.
+- Skip optional questions.
+- Restart onboarding.
+- Review their consent and profile.
+
+## G3. Persistence and privacy
+
+Inspect the actual authentication and hosting system first.
+
+If a secure existing account system exists, use its established user identity.
+
+If no account system exists:
+
+- Use an anonymous beta session only if it can be secured on the actual host.
+- Use an HttpOnly, Secure, SameSite cookie where supported.
+- Do not store sensitive profiles in publicly readable client storage.
+- Do not silently promise cloud synchronization.
+- If data is device-only, clearly label it "Saved on this device."
+- Do not introduce a new paid authentication service without authorization.
+
+Persist only the information genuinely required for the beta experience.
+
+Version onboarding consent and questionnaire definitions.
+
+Protect profile API routes against unauthorized cross-user access.
+
+Add deletion/reset behavior for the temporary profile.
+
+---
+
+# PART H — BETA HOME DASHBOARD
+
+After onboarding, the user should reach one clean dashboard built from the current application components.
+
+Do not overwhelm new users with all 12 raw strategy calculations immediately.
+
+## H1. Main dashboard layout
+
+Recommended sections:
+
+### 1. Market Overview
+
+- PSX market/data status.
+- Latest verified data frontier.
+- Data freshness.
+- Provider status.
+- Major missing-data warnings.
+
+### 2. Your Beta Research View
+
+One combined summary from:
+
+- 12-component strategy fusion.
+- GLM-4.6 analyst.
+- Existing model outputs where valid.
+- Deterministic risk policy.
+
+Show:
+
+- Overall research state.
+- Eligible strategy alignment count.
+- LLM agreement/conflict.
+- Evidence quality.
+- Last update.
+- Main risk warning.
+
+### 3. Stocks to Watch
+
+Use the user's optional watchlist preferences.
+
+Display verified company data, current market data and research status.
+
+Do not automatically recommend specific securities from profile answers.
+
+### 4. Strategy Breakdown
+
+Show all 12 components, including:
+
+- Name.
+- Current output.
+- Role.
+- Explanation.
+- Input data freshness.
+- Whether it contributes to directional consensus.
+- Why it is excluded, if applicable.
+
+### 5. LLM Analyst
+
+Show the original validated LLM decision and evidence.
+
+Link to the full LLM Signals detail view.
+
+### 6. Risk and Education
+
+Explain the relevant risk in plain language.
+
+Link to the existing calculators, tax information and education modules where available.
+
+Do not show unsupported risk figures.
+
+## H2. Progressive disclosure
+
+Default user view:
+
+- One clear overall research state.
+- One simple explanation.
+- Main risk warning.
+- Data freshness.
+
+Advanced view:
+
+- All 12 strategy outputs.
+- Technical indicators.
+- Model methodology.
+- Evidence sources.
+- Individual strategy calculations.
+- Historical research information.
+
+Preserve the principle:
+
+"One honest number beats ten confusing ones."
+
+Do not hide important warnings to simplify the interface.
+
+## H3. Existing LLM Signals and Model Performance pages
+
+Keep both existing pages available.
+
+The beta dashboard should link to the existing detailed pages instead of rebuilding their functionality.
+
+Preserve filters, history, exports, version lineage, maturity dashboard and downloadable reports.
+
+---
+
+# PART I — USE THE EXISTING LATENT DESIGN SYSTEM
+
+Preserve the existing brand identity from `Audit.md` and current codebase.
+
+### Visual principles
+
+- Calm, not exciting.
+- Professional financial-product appearance.
+- No casino-style gamification.
+- No exaggerated profit visuals.
+- No flashing green BUY indicators.
+- No artificial win-rate badges.
+- Clear, legible financial numbers.
+
+### Color system
+
+Use existing Sabz green:
+
+- `#0A4E3A`
+- `#0E6E52`
+
+Use existing Zar gold:
+
+- `#8F630F`
+- `#C68A1F`
+
+Follow the current design tokens if they differ in the actual repository.
+
+### Typography
+
+Preserve IBM Plex Mono for financial numbers and tabular data where it is currently used.
+
+Use existing typography for headings and body text.
+
+### Confidence arc
+
+Reuse the 270° confidence arc if it already exists.
+
+For this beta, label it accurately:
+
+"Strategy Alignment"
+
+It must not represent a win probability.
+
+### Language
+
+Use the current i18n system.
+
+Support the existing English/Urdu language experience.
+
+Do not create a second translation system.
+
+Ensure all new beta onboarding and dashboard strings have translations.
+
+### Responsive/accessibility
+
+- Mobile-first onboarding.
+- Clear navigation.
+- Keyboard-accessible controls.
+- Visible focus states.
+- Readable contrast.
+- Proper loading, error and empty states.
+- Financial amounts use tabular numerals.
+- No horizontal overflow on common mobile screen sizes.
+
+---
+
+# PART J — HOSTING-SPECIFIC BETA READINESS
+
+This is mandatory.
+
+The user has an existing hosting setup. Do not migrate hosting or assume a provider without inspecting the actual project.
+
+The uploaded audit describes Next.js 16, React 19, Prisma/SQLite, Zustand, Redis/cache and Python workers, but does not establish the exact cloud hosting provider.
+
+Inspect:
+
+- Deployment configuration.
+- Dockerfile or container configuration.
+- Build/start commands.
+- GitHub Actions/workflows.
+- Host-specific configuration files.
+- Environment variable names, without printing their values.
+- Runtime version.
+- Port binding.
+- Database location.
+- Persistent-volume configuration.
+- Redis connection.
+- Worker/supervisor support.
+- Scheduled job support.
+- CPU/memory/request timeouts.
+- External network access.
+- SSL and domain configuration.
+- Logs and monitoring.
+
+Create a hosting capability report documenting the actual findings.
+
+## J1. Runtime compatibility
+
+Verify:
+
+- `next build` works in production mode.
+- The start command is correct for the actual host.
+- Server binds to the configured port and host.
+- Health endpoint is available.
+- Database persists across process restarts.
+- Runtime data is not stored in a disposable build directory.
+- Worker and web application do not conflict.
+- Secrets are injected through the host configuration.
+- The app does not depend on a developer's local machine.
+
+## J2. Database and storage
+
+If current hosting supports a persistent volume and the existing SQLite architecture is valid, preserve it.
+
+If the host uses ephemeral/serverless filesystems, do not assume SQLite will remain persistent.
+
+Do not automatically migrate to PostgreSQL or another database.
+
+Instead:
+
+- Identify the limitation.
+- Determine whether the existing host already provides an appropriate managed database.
+- Recommend the smallest compatible architecture.
+- Implement only changes supported by existing approved infrastructure.
+- Report any remaining host-level migration requirement explicitly.
+
+Never silently run the beta against an in-memory or disposable production database.
+
+## J3. Worker and schedule
+
+The existing Task 107–115 pipeline uses persistent forward-processing state, a worker and scheduler-related infrastructure.
+
+Determine whether the actual host supports the required process model.
+
+Do not start a duplicate worker from every Next.js application instance.
+
+Preserve singleton locks, idempotency and event-triggered processing.
+
+Do not move expensive Python computations into request/response routes.
+
+If the host cannot run the worker, show a degraded/read-only beta state rather than pretending data updates are active.
+
+## J4. Python and chart runtime
+
+The supplied Python file uses Matplotlib and interactive `plt.show()`.
+
+Do not run interactive Matplotlib windows in hosted production.
+
+Do not rely on `/mnt/user-data/outputs` or a developer-specific output directory.
+
+Generate production data as structured JSON and display it through the existing React/chart components.
+
+If reports/images must be generated, use the actual host-supported persistent artifact location.
+
+Do not add heavy packages or CPU-intensive jobs to user-facing request paths.
+
+## J5. Hosting health and operational controls
+
+Add or verify:
+
+- Startup health.
+- Readiness checks.
+- Data-provider health.
+- Database health.
+- Worker heartbeat.
+- Cache health.
+- Error logging.
+- Beta feature-flag visibility.
+- Safe shutdown.
+- Deployment version/commit identification.
+
+Do not expose internal credentials, environment values or stack traces to beta users.
+
+---
+
+# PART K — RISK ENGINE AND TRADE POLICY
+
+Use the existing deterministic risk policy, including the appropriate version of:
+
+`atr14-1.5-1-2-3`
+
+Use the established V2 transaction-cost engine.
+
+Do not use the supplied Kelly implementation in production.
+
+The uploaded code calculates:
+
+`abs(fused_signal) / fused_variance`
+
+and treats it as a Kelly fraction. The signal and arbitrary fusion variance are not demonstrated to be the expected return and return variance required for a valid Kelly calculation.
+
+Do not use this formula for actual user capital sizing.
+
+Likewise:
+
+- Do not activate the supplied CVaR rule without a sufficiently reliable return sample and verified tail-risk methodology.
+- Do not claim the drawdown guard reduces existing positions unless it actually does.
+- Do not impose an artificial minimum one-lot position.
+- Do not use fixed 500-share lots.
+- Do not size trades from uncalibrated LLM or strategy scores.
+
+For beta, show hypothetical risk levels and cost estimates only.
+
+No real broker orders.
+
+No live execution.
+
+No leverage.
+
+No short entry.
+
+No automatic portfolio allocation.
+
+Keep the permanent warning:
+
+**SHADOW / BETA RESEARCH — NOT AN ORDER**
+
+---
+
+# PART L — REPORTING AND OBSERVABILITY
+
+Create a versioned beta launch audit.
+
+Suggested files:
+
+- `docs/reports/task116_beta_launch_audit.md`
+- `data/backtest_reports/task116/task116_beta_launch_audit.json`
+- `data/backtest_reports/task116/task116_strategy_inventory.csv`
+- `data/backtest_reports/task116/task116_hosting_readiness.json`
+- `data/backtest_reports/task116/task116_security_remediation.json`
+- `data/backtest_reports/task116/task116_strategy_validation.csv`
+
+Adapt these to existing naming and storage conventions.
+
+Update the existing Model Performance report with:
+
+- Strategy implementation status.
+- Strategy validation status.
+- Eligible directional strategy count.
+- Regime/context-only components.
+- Pair strategy restrictions.
+- GLM-4.6 role.
+- LLM cohort maturity.
+- Current research limitations.
+- Beta release status.
+
+Never state that all 12 strategies are profitable or validated merely because they execute.
+
+For every strategy report:
+
+- Source implementation.
+- Methodology.
+- Data requirements.
+- Signal role.
+- Point-in-time protection.
+- Historical evidence available.
+- Forward evidence available.
+- Current status.
+- Reason for any exclusion.
+
+Keep the existing Task 112–115 reports immutable and available.
+
+---
+
+# PART M — IMPLEMENTATION TESTS AND ACCEPTANCE CRITERIA
+
+## M1. Security and hosting
+
+- No hardcoded `/home/z/my-project` dependency remains in production paths.
+- No hardcoded `/mnt/user-data/outputs` dependency remains.
+- No hardcoded `localhost:3000` internal route dependency remains.
+- SSRF protections block private and metadata destinations.
+- Production cache does not silently become unreliable mock cache.
+- Database persistence is verified on the actual hosting setup.
+- Worker singleton/idempotency protections still work.
+- No secrets are committed or exposed in browser bundles.
+- Production start and health checks work.
+
+## M2. Strategy engine
+
+- All twelve components are registered.
+- All twelve expose an explicit status.
+- Synthetic data cannot enter production signal generation.
+- Every live signal traces to actual source bars.
+- All normalization is point-in-time safe.
+- All signals respect decision timestamps.
+- Entries use the documented next-session execution rule.
+- Missing history and missing bars are handled explicitly.
+- Hurst, variance ratio and ACF are treated according to their actual roles.
+- Pair strategy cannot silently create short exposure.
+- BBW is not treated as an options signal.
+- Fusion denominator and excluded components are visible.
+- No uncalibrated value is labelled win probability.
+
+## M3. LLM integration
+
+- GLM-4.6 uses the existing Task 111 evidence pipeline.
+- No fabricated source references.
+- No fake confidence probability.
+- LLM and strategy results remain independently inspectable.
+- Conflicts are visible.
+- Provider failure is not converted into an ordinary signal.
+- Mock records never enter performance calculations.
+- Immutable LLM history remains intact.
+
+## M4. Beta onboarding
+
+- User can complete onboarding.
+- User can skip optional questions.
+- User can edit or restart the profile.
+- Consent is versioned.
+- The dashboard is generated from actual saved preferences.
+- No unsupported allocation or guarantee is displayed.
+- Guest/session data cannot leak across users.
+- Data persistence behavior is clearly explained.
+- Beta flag can enable/disable the experience.
+- Mobile and desktop tests pass.
+
+## M5. UI
+
+- Existing design system preserved.
+- English/Urdu translations work.
+- Strategy alignment is correctly labelled.
+- All twelve strategy statuses are visible.
+- LLM analyst result is visible.
+- Data freshness and source information are visible.
+- Beta warnings are persistent and readable.
+- Existing LLM Signals and Model Performance pages still work.
+
+## M6. Research integrity
+
+- No historical test-set leakage introduced.
+- No short-selling backtest assumptions.
+- No synthetic live track record.
+- V2 costs used consistently.
+- Task 115 n=12 result remains descriptive.
+- LLM performance remains unavailable until genuine outcomes mature.
+- No model is automatically promoted.
+
+Run existing regression suites where practical, including Tasks 107–115, plus new Task 116 tests.
+
+Run:
+
+- Python tests.
+- TypeScript checks.
+- Production build.
+- API tests.
+- Browser tests.
+- SSRF/security tests.
+- Hosting readiness tests.
+- Strategy parity tests where two languages are involved.
+
+---
+
+# PART N — BETA RELEASE CONTROL
+
+Create an explicit release checklist with these states:
+
+- `BETA_READY`
+- `BETA_READY_WITH_LIMITATIONS`
+- `BLOCKED_SECURITY`
+- `BLOCKED_PERSISTENCE`
+- `BLOCKED_DATA`
+- `BLOCKED_ENGINE_VALIDATION`
+
+Do not label the beta ready if:
+
+- A critical SSRF vulnerability remains.
+- User onboarding data can leak between users.
+- Production database persistence is unverified.
+- Synthetic trades can appear as real performance.
+- Live-looking signals are generated from synthetic bars.
+- The application cannot explain stale or missing data.
+- The host cannot support a required worker and the UI falsely claims that it is running.
+
+A beta with limited strategy availability is acceptable if limitations are clear.
+
+Prefer an honest, safe beta to a feature-complete but misleading financial product.
+
+Do not add new paid hosting services, paid APIs, authentication vendors or broker integrations without authorization.
+
+Do not change hosting providers.
+
+Do not enable live trading.
+
+Do not push to GitHub unless explicitly authorized for Task 116.
+
+---
+
+# FINAL RESPONSE REQUIRED
+
+Return a complete implementation report with:
+
+1. Starting and final HEAD.
+2. Exact commit hash, if committed.
+3. GitHub push status (do not push without authorization).
+4. Audit finding matrix: fixed, already fixed, blocked or still open.
+5. Files changed.
+6. Actual hosting provider and its verified runtime capabilities.
+7. Database persistence and worker status.
+8. Security fixes and regression test results.
+9. All twelve strategy implementation statuses.
+10. Which strategies genuinely participate in directional consensus and which are context-only.
+11. Fusion methodology and its limitations.
+12. GLM-4.6 integration behavior.
+13. Beta onboarding flow and saved-profile behavior.
+14. Dashboard screenshots/browser evidence.
+15. Tests, TypeScript, production build and API status.
+16. Performance data limitations.
+17. Beta release checklist and final release status.
+18. Remaining blockers and exact required next actions.
+
+Be honest about anything not completed.
+
+**Do not report 12 strategies as 12 successful models. Do not report the LLM as profitable. Do not turn a successful build into a claim of investment performance.**
+
+The intended result is one coherent, beginner-friendly Latent.pk beta experience, built on the existing platform, with the 12 strategy components and GLM-4.6 analyst working through a transparent evidence system, current design language, correct data and risk safeguards, and the user's actual hosting environment.

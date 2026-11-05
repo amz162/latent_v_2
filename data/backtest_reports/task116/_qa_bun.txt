@@ -1,0 +1,28 @@
+bun test v1.3.14 (0d9b296a)
+
+scripts/task116_tests.ts:
+(pass) url-guard SSRF policy > rejects loopback, localhost and metadata addresses [0.38ms]
+(pass) url-guard SSRF policy > rejects private IPv4 ranges even over https [0.65ms]
+(pass) url-guard SSRF policy > rejects private/ULA/link-local IPv6 [0.48ms]
+(pass) url-guard SSRF policy > rejects non-https schemes and credentials [0.08ms]
+(pass) url-guard SSRF policy > rejects malformed and dotless/internal hosts [0.15ms]
+(pass) url-guard SSRF policy > isPrivateAddress covers 169.254.169.254 (cloud metadata) and CGNAT [0.03ms]
+(pass) 12-strategy engine > all twelve strategies registered with explicit roles [0.16ms]
+(pass) 12-strategy engine > every signal carries the full contract fields and traces to source bars [5.12ms]
+(pass) 12-strategy engine > insufficient history is explicit — never silently neutral [0.72ms]
+(pass) 12-strategy engine > point-in-time: decisions are a deterministic function of bars ≤ decision bar [7.77ms]
+(pass) 12-strategy engine > staleness is an EXPLICIT state (stale + null score), never silent neutrality [2.00ms]
+(pass) 12-strategy engine > golden cross fires only on actual crossovers (not the continuous diff) [0.87ms]
+(pass) 12-strategy engine > OU fit reports non-stationarity honestly (no clamping) [0.13ms]
+(pass) 12-strategy engine > variance ratio and hurst report insufficient data on small samples [0.29ms]
+(pass) 12-strategy engine > wilder RSI bounds [0.23ms]
+(pass) fusion > bullish consensus across >=3 votes and >=2 families -> BULLISH_ALIGNMENT [0.79ms]
+(pass) fusion > conflicting evidence -> MIXED_EVIDENCE (never averaged away) [0.06ms]
+(pass) fusion > pair context NEVER counts as a vote — pair-only input stays PAIR_CONTEXT_ONLY [0.08ms]
+(pass) fusion > family cap: 3 bullish same-family votes count as 2 [0.08ms]
+(pass) fusion > single insufficient vote set yields INSUFFICIENT_DATA with visible reasons [0.04ms]
+
+ 20 pass
+ 0 fail
+ 216 expect() calls
+Ran 20 tests across 1 file. [45.00ms]

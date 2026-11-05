@@ -323,3 +323,30 @@ model PricePatternReport {
   lastDate      String
   patternCount  Int
 }
+
+// Task 116 — temporary beta onboarding profile (Part G)
+// Keyed by an opaque random session token delivered in an HttpOnly cookie —
+// no email, no sensitive personal data, no cross-user access (every query
+// filters by the exact session token). Deletion is a hard delete (G3 reset).
+model BetaProfile {
+  id               String   @id @default(cuid())
+  sessionToken     String   @unique
+  consentVersion   String   // e.g. "beta-consent-v1"
+  consentAcceptedAt DateTime @default(now())
+  experienceLevel  String?  // new_to_psx | some_experience | experienced
+  objective        String?  // learn | growth_research | income_research | swing_research | monitoring
+  timeHorizon      String?  // short | medium | long
+  lossReaction     String?  // hold | trim | sell | unsure
+  capitalNeedSoon  Boolean?
+  volatilityComfort String? // low | medium | high
+  canTolerateLoss  Boolean?
+  preferredSectors String?  // JSON array
+  watchlistSymbols String?  // JSON array
+  showDividends    Boolean?
+  shariahScreen    Boolean?
+  atlTaxAssumption Boolean?
+  capitalRange     String?  // optional, coarse bucket only
+  profileComplete  Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

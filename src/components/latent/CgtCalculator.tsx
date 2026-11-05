@@ -8,12 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLatentStore } from "@/lib/latent/store";
-import { calculateCGT, calculateAggregatedCGT, type FilerStatus, type RealizedTrade } from "@/lib/latent/tax";
+import { calculateCGT, calculateAggregatedCGT, TAX_SCHEDULE, isRateUnverified, type FilerStatus, type RealizedTrade } from "@/lib/latent/tax";
 import { Calculator, TrendingUp, TrendingDown, Info, AlertCircle, Coins, Receipt } from "lucide-react";
 import { toast } from "sonner";
 
 export function CgtCalculator() {
-  const filerStatus = useLatentStore((s) => s.filerStatus);
+  const filerStatus = (useLatentStore((s) => s.filerStatus) ?? "filer") as FilerStatus;
   const setFilerStatus = useLatentStore((s) => s.setFilerStatus);
 
   // Single-trade mode
@@ -213,6 +213,19 @@ export function CgtCalculator() {
                 Calculate CGT
               </Button>
 
+              {/* Task 116 C6: versioned tax schedule + verification status */}
+              <div className="rounded-lg p-3 border border-[#8F630F]/30 bg-[#8F630F]/[0.06] text-xs text-[#94A3B8]">
+                <p className="font-semibold text-[#C68A1F]">
+                  Tax schedule {TAX_SCHEDULE.scheduleId} (effective from {TAX_SCHEDULE.effectiveFrom}, verified{" "}
+                  {TAX_SCHEDULE.verifiedAt})
+                </p>
+                <p className="mt-1">
+                  {isRateUnverified("cgt", filerStatus)
+                    ? "The non-filer CGT rate could not be verified against current official sources — the 30% figure shown is a commonly cited estimate. Verify with FBR or a licensed practitioner."
+                    : "Filer CGT rate (15%) verified against current published sources."}{" "}
+                  {TAX_SCHEDULE.disclaimer}
+                </p>
+              </div>
               {result && (
                 <div className="space-y-3 pt-3 border-t border-white/[0.06]">
                   {/* Headline result */}

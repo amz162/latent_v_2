@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { calculateFairValue, getDefaultFairValueInputs, type FairValueInput } from "@/lib/latent/fair-value";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import {
+  fetchAskAnalystFinancials,
+  fetchAskAnalystRatios,
+  fetchAskAnalystValuation,
+} from "@/lib/latent/askanalyst";
 
 // GET /api/fair-value/[symbol]
 // Fetches all financial data required + computes all 6 fair value methods + aggregates.
@@ -51,16 +56,31 @@ export async function GET(
     );
   }
 
-  // Fetch financials, valuation, and ratios in parallel from AskAnalyst proxies
+  // Fetch financials, valuation, and ratios in parallel from the shared
+  // AskAnalyst provider library (direct server-side calls — no route-to-route
+  // HTTP, no hardcoded localhost; Task 116 B2).
   const [financialsRes, valuationRes, ratioRes] = await Promise.allSettled([
-    fetch(`http://localhost:3000/api/psx/financials/${symbolUpper}`).then(r => r.json()),
-    fetch(`http://localhost:3000/api/psx/valuation/${symbolUpper}`).then(r => r.json()),
-    fetch(`http://localhost:3000/api/psx/ratio/${symbolUpper}`).then(r => r.json()),
+    fetchAskAnalystFinancials(symbolUpper),
+    fetchAskAnalystValuation(symbolUpper),
+    fetchAskAnalystRatios(symbolUpper),
   ]);
 
-  const financials: FinancialData = financialsRes.status === "fulfilled" ? parseFinancials(financialsRes.value) : {};
-  const valuation: ValuationData = valuationRes.status === "fulfilled" ? parseValuation(valuationRes.value) : {};
-  const ratiosParsed = ratioRes.status === "fulfilled" ? parseRatiosForFairValue(ratioRes.value) : { epsHistory: [] };
+  const financials: FinancialData =
+    financialsRes.status === "fulfilled" && financialsRes.value?.ok
+      ? parseFinancials(financialsRes.value.data)
+      : {};
+  const valuation: ValuationData =
+    valuationRes.status === "fulfilled" && valuationRes.value?.ok
+      ? parseValuation(valuationRes.value.data)
+      : {};
+  const ratiosParsed =
+    ratioRes.status === "fulfilled" && ratioRes.value?.ok
+      ? parseRatiosForFairValue({ ratios: (ratioRes.value.data ?? []).map((r) => r.raw) })
+      : { epsHistory: [] };
+  const providerErrors = [financialsRes, valuationRes, ratioRes]
+    .filter((r) => r.status === "fulfilled" && r.value && !r.value.ok)
+    .map((r) => (r as PromiseFulfilledResult<{ error?: string }>).value.error)
+    .filter(Boolean);
 
   // Build input with defaults from mock-stocks (EPS, dividend yield, etc. available there)
   const fallbackEps = stock.price / (stock.peRatio || 8); // EPS = price / P/E
@@ -112,10 +132,11 @@ export async function GET(
     summary,
     inputs: input,
     dataSources: {
-      financials: financialsRes.status === "fulfilled" ? "fetched" : "fallback",
-      valuation: valuationRes.status === "fulfilled" ? "fetched" : "fallback",
-      ratios: ratioRes.status === "fulfilled" ? "fetched" : "fallback",
+      financials: financialsRes.status === "fulfilled" && financialsRes.value?.ok ? "fetched" : "fallback",
+      valuation: valuationRes.status === "fulfilled" && valuationRes.value?.ok ? "fetched" : "fallback",
+      ratios: ratioRes.status === "fulfilled" && ratioRes.value?.ok ? "fetched" : "fallback",
     },
+    providerErrors,
     meta: {
       epsHistoryLength: ratiosParsed.epsHistory.length,
       computedGrowthRate: computedGrowthRate.toFixed(2) + "%",

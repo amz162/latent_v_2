@@ -4,6 +4,7 @@ import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
 import { parseFinancialData, parseRatiosToQuarters, detectPattern, generatePatternSummary, type PatternRecognitionResult, type QuarterData } from "@/lib/latent/patterns";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { fetchAskAnalystRatios } from "@/lib/latent/askanalyst";
 
 // GET /api/pattern-recognition/[symbol]
 // Fetches last 5 years (or max available) of quarterly financials from AskAnalyst,
@@ -92,20 +93,22 @@ export async function GET(
     });
   }
 
-  // Step 1: Fetch historical ratios (annual EPS/DPS/BVPS data) from AskAnalyst.com.pk
-  // The /api/psx/ratio/[symbol] endpoint returns REAL annual financial data going back ~10 years.
-  // This is what we use for pattern detection (instead of /financialstatement which only has metadata + PDF links).
+  // Step 1: Fetch historical ratios (annual EPS/DPS/BVPS data) directly from
+  // AskAnalyst via the shared provider library. Route-to-route HTTP over the
+  // loopback interface was removed (Task 116 B2) — direct server-side calls
+  // work on any host/port and behind reverse proxies.
   let rawRatios: unknown = null;
+  let providerError: string | undefined;
   try {
-    const res = await fetch(
-      `http://localhost:3000/api/psx/ratio/${encodeURIComponent(symbolUpper)}`,
-      { headers: { "Accept": "application/json" } }
-    );
-    if (res.ok) {
-      rawRatios = await res.json();
+    const ratiosRes = await fetchAskAnalystRatios(symbolUpper);
+    if (ratiosRes && ratiosRes.ok) {
+      rawRatios = (ratiosRes.data ?? []).map((r) => r.raw);
+    } else if (ratiosRes) {
+      providerError = ratiosRes.error;
     }
   } catch (err) {
     console.warn(`[pattern-recognition] Failed to fetch ratios for ${symbolUpper}:`, err);
+    providerError = err instanceof Error ? err.message : "network_error";
   }
 
   // Step 2: Parse + run pattern detection algorithm

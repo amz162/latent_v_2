@@ -4,6 +4,7 @@ import * as cheerio from "cheerio";
 import ZAI from "z-ai-web-dev-sdk";
 import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
+import { fetchArticleSecure } from "@/lib/latent/url-guard";
 
 // Latent.pk LLM API — News Interpretation Endpoint
 // Uses GLM-4-Plus (Z.ai's open-weights model family) — NOT ChatGPT or Claude.
@@ -107,10 +108,22 @@ export async function POST(req: NextRequest) {
     }
 
     // If only a link is provided (no headline, no rawArticleText), fetch the
-    // article HTML and extract the title + main text so the LLM has content to
-    // interpret. This fixes the "paste a link → click Interpret" flow.
+    // article through the SSRF guard and extract title + main text so the LLM
+    // has content to interpret. A rejected source is a controlled validation
+    // message — never an outbound request to an unvalidated destination.
     if (body.link && !body.headline && !body.rawArticleText) {
-      const extracted = await fetchArticleFromLink(body.link);
+      const fetched = await fetchArticleSecure(body.link);
+      if (!fetched.ok) {
+        return NextResponse.json(
+          {
+            error: "Article link rejected by the URL security policy",
+            reason: fetched.rejected ?? "fetch_error",
+            hint: "Provide the headline and article text directly, or use a public https news link.",
+          },
+          { status: 400 }
+        );
+      }
+      const extracted = extractArticle(fetched.body || "");
       if (extracted) {
         body.headline = body.headline || extracted.headline;
         body.rawArticleText = extracted.rawArticleText;
@@ -194,25 +207,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Fetch an article from a URL and extract the headline + main text content.
-// Used when the user only pastes a link (no headline/rawArticleText provided).
-async function fetchArticleFromLink(
-  link: string
-): Promise<{ headline: string; rawArticleText: string } | null> {
+// Extract headline + main text from ALREADY-FETCHED article HTML. All network
+// access lives in the SSRF guard (url-guard.ts); this function is pure.
+function extractArticle(html: string): { headline: string; rawArticleText: string } | null {
   try {
-    const res = await fetch(link, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (compatible; LatentBot/1.0; +https://latent.pk)",
-        Accept: "text/html,application/xhtml+xml",
-      },
-      cache: "no-store",
-      // Defensive timeout via AbortController — don't let slow upstreams
-      // block the whole LLM request.
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!res.ok) return null;
-    const html = await res.text();
     const $ = cheerio.load(html);
 
     // Extract headline: prefer OpenGraph/twitter title, fall back to <title>, <h1>
@@ -248,7 +246,7 @@ async function fetchArticleFromLink(
     if (!headline && !rawArticleText) return null;
     return { headline, rawArticleText };
   } catch (err) {
-    console.error("[/api/llm/interpret-news] article fetch failed:", err);
+    console.error("[/api/llm/interpret-news] article extraction failed:", err);
     return null;
   }
 }

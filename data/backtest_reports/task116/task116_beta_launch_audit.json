@@ -1,0 +1,19 @@
+{
+ "report": "task116_beta_launch_audit",
+ "task": "task116",
+ "generated_at": "2026-11-05T20:30:15Z",
+ "baseline": {
+  "task115_commit": "3305da2c",
+  "platform_commit_on_top": "b2fd2565 (skills pruning, kept as parent per Part A)"
+ },
+ "audit_reference_note": "Audit.md and psx_full.py were NOT present in this session's upload (upload contains prior task texts). The audit finding set was reconstructed from the task spec's explicit enumeration and every finding was re-verified against the actual codebase before classification.",
+ "research_facts_preserved": {
+  "gen1_checkpoint": "Task 115: 12 gen1 observations at 5-session horizon, aggregate net +PKR 38,064.93 \u2014 descriptive n=12, NOT proof of edge",
+  "llm": "GLM-4.6 cohort: zero matured 5/10/21-session outcomes; SYS TP3 = terminal policy-sim event, not a horizon result",
+  "promotion": "no model or strategy has passed independent promotion requirements"
+ },
+ "qa": {
+  "bun_unit": "bun test v1.3.14 (0d9b296a)\n\nscripts/task116_tests.ts:\n(pass) url-guard SSRF policy > rejects loopback, localhost and metadata addresses [0.38ms]\n(pass) url-guard SSRF policy > rejects private IPv4 ranges even over https [0.65ms]\n(pass) url-guard SSRF policy > rejects private/ULA/link-local IPv6 [0.48ms]\n(pass) url-guard SSRF policy > rejects non-https schemes and credentials [0.08ms]\n(pass) url-guard SSRF policy > rejects malformed and dotless/internal hosts [0.15ms]\n(pass) url-guard SSRF policy > isPrivateAddress covers 169.254.169.254 (cloud metadata) and CGNAT [0.03ms]\n(pass) 12-strategy engine > all twelve strategies registered with explicit roles [0.16ms]\n(pass) 12-strategy engine > every signal carries the full contract fields and traces to source bars [5.12ms]\n(pass) 12-strategy engine > insufficient history is explicit \u2014 never silently neutral [0.72ms]\n(pass) 12-strategy engine > point-in-time: decisions are a deterministic function of bars \u2264 decision bar [7.77ms]\n(pass) 12-strategy engine > staleness is an EXPLICIT state (stale + null score), never silent neutrality [2.00ms]\n(pass) 12-strategy engine > golden cross fires only on actual crossovers (not the continuous diff) [0.87ms]\n(pass) 12-strategy engine > OU fit reports non-stationarity honestly (no clamping) [0.13ms]\n(pass) 12-strategy engine > variance ratio and hurst report insufficient data on small samples [0.29ms]\n(pass) 12-strategy engine > wilder RSI bounds [0.23ms]\n(pass) fusion > bullish consensus across >=3 votes and >=2 families -> BULLISH_ALIGNMENT [0.79ms]\n(pass) fusion > conflicting evidence -> MIXED_EVIDENCE (never averaged away) [0.06ms]\n(pass) fusion > pair context NEVER counts as a vote \u2014 pair-only input stays PAIR_CONTEXT_ONLY [0.08ms]\n(pass) fusion > family cap: 3 bullish same-family votes count as 2 [0.08ms]\n(pass) fusion > single insufficient vote set yields INSUFFICIENT_DATA with visible reasons [0.04ms]\n\n 20 pass\n 0 fail\n 216 expect() calls\nRan 20 tests across 1 file. [45.00ms]"
+ },
+ "release_status": "BETA_READY_WITH_LIMITATIONS"
+}

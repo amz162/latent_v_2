@@ -1,0 +1,106 @@
+{
+ "report": "task116_security_remediation",
+ "generated_at": "2026-11-05T20:30:15Z",
+ "measured": {
+  "hardcoded_localhost3000_in_src": 0,
+  "hardcoded_homez_in_src": 0,
+  "hardcoded_mnt_userdata_in_src": 0,
+  "ssrf_guard_module": true,
+  "ssrf_guard_usage_sites": 2,
+  "health_endpoint": true,
+  "central_paths_module": true,
+  "cache_production_gating": true
+ },
+ "remediation_matrix": [
+  {
+   "finding": "SSRF in fetchArticleFromLink() \u2014 raw fetch of user URL",
+   "location": "src/app/api/llm/interpret-news/route.ts",
+   "severity": "critical",
+   "status": "VERIFIED_OPEN\u2192FIXED",
+   "fix": "src/lib/latent/url-guard.ts: https-only, credentials rejected, every resolved IPv4/IPv6 checked (loopback/link-local/private/ULA/metadata/CGNAT/6to4), manual redirects re-validated per hop (DNS-rebinding resistant), 2MB size cap, content-type allowlist, 10s timeout, no cookies/auth forwarded; controlled 400 with rejection reason",
+   "test": "task116_tests.ts SSRF suite (10 cases) \u2014 PASS",
+   "remaining_risk": "allowlist of approved news domains not yet curated (policy: https + IP checks enforced; allowlist recommended next)"
+  },
+  {
+   "finding": "Route-to-route HTTP over localhost:3000",
+   "location": "src/app/api/fair-value/[symbol]/route.ts (3 calls), src/app/api/pattern-recognition/[symbol]/route.ts (1)",
+   "severity": "high",
+   "status": "VERIFIED_OPEN\u2192FIXED",
+   "fix": "shared provider library src/lib/latent/askanalyst.ts (timeouts, bounded retries+backoff, schema validation, retrieval timestamps); routes call it directly",
+   "test": "grep localhost:3000 in src/ == 0 + tsc",
+   "remaining_risk": "none known"
+  },
+  {
+   "finding": "ioredis-mock can silently replace production cache",
+   "location": "src/lib/latent/cache.ts",
+   "severity": "high",
+   "status": "PARTIALLY_FIXED\u2192FIXED",
+   "fix": "production without REDIS_URL \u2192 degraded mode (no mock, no-op commands, operational warning surfaced via getCacheStatus + /api/health); Redis failure at runtime \u2192 degraded flag; dev/test mock remains explicitly environment-gated",
+   "test": "code review + health endpoint cache block",
+   "remaining_risk": "no Redis server exists on this host \u2014 cache stays degraded until REDIS_URL is provisioned (documented, not silently wrong)"
+  },
+  {
+   "finding": "Hardcoded absolute paths (/home/z/my-project, /mnt/user-data)",
+   "location": "src/ production logic",
+   "severity": "medium",
+   "status": "ALREADY_FIXED (src) + CENTRALIZED",
+   "fix": "src/lib/latent/paths.ts \u2014 runtime-root resolution (repo-anchor verified), LATENT_DATA_DIR override, safe mkdir + write probe; scripts/ (dev tooling) resolve from __file__",
+   "test": "grep /home/z/my-project in src/ == 0; /api/health paths block",
+   "remaining_risk": ".env DATABASE_URL keeps the host's absolute DB path (host configuration, documented \u2014 Prisma resolves file: URLs relative to prisma/)"
+  },
+  {
+   "finding": "Synthetic 62% win-rate track record presented as performance",
+   "location": "src/lib/latent/track-record.ts, src/app/api/track-record/route.ts, mock-trades.ts",
+   "severity": "high",
+   "status": "VERIFIED_OPEN\u2192FIXED",
+   "fix": "default MOCK_TRADES parameter removed; real route serves only closed non-demo ProspectivePaperTrade executions; no real history \u2192 'Insufficient real history'; demo fixture only via ?demo=1 with permanent SAMPLE/DEMO labels",
+   "test": "route response contract (dataSource field)",
+   "remaining_risk": "none known; /api/signals demo surfaces already mock-labelled in earlier tasks"
+  },
+  {
+   "finding": "Stale 2024-25 tax schedule presented as current",
+   "location": "src/lib/latent/tax.ts + CgtCalculator",
+   "severity": "medium",
+   "status": "PARTIALLY_FIXED\u2192VERSIONED",
+   "fix": "schedule pk-cgt-v2026-11 with effective date, verification status per rate (filer CGT 15% VERIFIED via PwC Aug-2026 update; non-filer rates UNVERIFIED \u2014 flagged in UI), explicit not-tax-advice disclaimer",
+   "test": "tsc + UI presence",
+   "remaining_risk": "non-filer rates need FBR rate-card verification before any reliance"
+  },
+  {
+   "finding": "XGBoost early stopping on final test set",
+   "location": "historical training scripts (Tasks 89-100 era)",
+   "severity": "medium",
+   "status": "NOT_REPRODUCIBLE (superseded)",
+   "fix": "superseded by Task 100+ walk-forward protocol; no retraining performed in Task 116 (per Part C3); models remain frozen",
+   "test": "n/a",
+   "remaining_risk": "historical artifacts retain old methodology metadata"
+  },
+  {
+   "finding": "Short-entry backtest assumptions",
+   "location": "legacy ensemble backtests",
+   "severity": "high",
+   "status": "ALREADY_FIXED (long-only)",
+   "fix": "production forward engine is long-only (BUY / exit only); beta fusion labels bearish output as negative pressure / exit context; pairs strategy context-only",
+   "test": "task116_tests.ts fusion pair-exclusion + inventory restrictions",
+   "remaining_risk": "none in beta surfaces"
+  },
+  {
+   "finding": "Exposed credential in repo history",
+   "location": "git history (pre-Task-110)",
+   "severity": "high",
+   "status": "ALREADY_FIXED + ROTATION ADVISED",
+   "fix": "credential file untracked since Task 110; GitHub secret scanning auto-revoked committed PATs; current tree scans clean (pattern scan this task)",
+   "test": "git grep pattern scan == clean",
+   "remaining_risk": "the uploaded github_token.txt copy was displayed in this session's transcript \u2014 ROTATE the GitHub PAT (user action; value never re-printed here)"
+  },
+  {
+   "finding": "No startup health/readiness checks",
+   "location": "app-wide",
+   "severity": "medium",
+   "status": "NOT_REPRODUCIBLE\u2192ADDED",
+   "fix": "/api/health: DB read probe + temp-table write-capability probe (rolled back \u2014 never modifies data), path/write verification, cache status, worker model, beta flag, version/commit",
+   "test": "health endpoint 200 in API suite",
+   "remaining_risk": "none known"
+  }
+ ]
+}
