@@ -19,6 +19,7 @@
 import dns from "node:dns/promises";
 type DnsLookupAddress = { address: string; family: number };
 import net from "node:net";
+import { isAllowedNewsHost, allowlistMode } from "@/lib/latent/news/allowlist";
 
 export type UrlGuardRejection =
   | "malformed_url"
@@ -26,6 +27,7 @@ export type UrlGuardRejection =
   | "credentials_in_url"
   | "private_or_reserved_address"
   | "dns_resolution_failed"
+  | "domain_not_allowed"
   | "content_type_not_allowed"
   | "response_too_large"
   | "too_many_redirects"
@@ -136,13 +138,22 @@ export async function validatePublicHttpUrl(
 /**
  * SSRF-hardened fetch for user-supplied article URLs. Manual redirect
  * handling: every hop is re-validated (scheme + DNS + private ranges), so a
- * trusted public URL cannot bounce into a private address.
+ * trusted public URL cannot bounce into a private address. Task 117 Part G:
+ * the host must ALSO be on the reviewed news-domain allowlist (exact match) —
+ * unapproved external domains are rejected by default.
  */
 export async function fetchArticleSecure(rawUrl: string): Promise<SafeFetchResult> {
   let current = rawUrl;
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
     const guard = await validatePublicHttpUrl(current);
     if (!guard.url) return { ok: false, rejected: guard.rejection };
+    if (!isAllowedNewsHost(guard.url.hostname)) {
+      if (allowlistMode() === "enforce") {
+        return { ok: false, rejected: "domain_not_allowed" };
+      }
+      // monitor mode logs for review but still proceeds (transport checks above apply)
+      console.warn(`[url-guard] NEWS_ALLOWLIST monitor: host not in allowlist: ${guard.url.hostname}`);
+    }
     let res: Response;
     try {
       res = await fetch(guard.url, {

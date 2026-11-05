@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
           {
             error: "Article link rejected by the URL security policy",
             reason: fetched.rejected ?? "fetch_error",
-            hint: "Provide the headline and article text directly, or use a public https news link.",
+            hint: "Provide the headline and article text directly, or use an https link from a reviewed news source (major Pakistani/financial outlets are accepted; unapproved domains are rejected by the security policy).",
           },
           { status: 400 }
         );

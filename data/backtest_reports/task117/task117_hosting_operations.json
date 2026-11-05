@@ -1,0 +1,122 @@
+{
+ "report": "task117_hosting_operations",
+ "generated_at": "2026-11-05T21:20:50+00:00",
+ "host": {
+  "platform": "single-host Linux VM (Debian 13) \u2014 Caddy reverse proxy :81 \u2192 app :3000, Node 24 / Bun 1.3 / Python 3.12",
+  "app_server": "Next.js dev server (bun run dev) under scripts/server_supervisor.sh (self-healing, 20s poll)",
+  "cpu_count": 2,
+  "memory": {
+   "total_mb": 4041,
+   "used_mb": 3156,
+   "available_mb": 885
+  },
+  "loadavg": [
+   "0.75",
+   "1.46",
+   "1.53"
+  ],
+  "database": {
+   "engine": "SQLite (persistent volume)",
+   "path_label": "db/custom.db (gitignored; .gz seed tracked)",
+   "ohlcv_bars": 1042969,
+   "data_frontier": "2026-11-05"
+  },
+  "cache": {
+   "type": "redis",
+   "ready": false,
+   "warning": null
+  },
+  "workers": {
+   "model": "host-supervisor (python task107/108 pipeline) \u2014 singleton locks + idempotency ledger",
+   "heartbeatSource": "/api/model-report worker_heartbeat block",
+   "heartbeat": {
+    "lastSeenAt": "2026-11-03T19:17:04Z",
+    "ageMinutes": 3003
+   },
+   "heartbeatStale": true
+  },
+  "scheduler": "host supervisor (python task107/108 pipeline) + GitHub Actions workflows (daily-psx-pipeline, intraday-poll, browser-tests, production-build)",
+  "rollback": "scripts/start_server.sh restores the full app after a host recycle; git origin/main holds the last released commit; db/backups/*.db hold pre-migration snapshots"
+ },
+ "capacity_assessment": {
+  "memory_pressure": "available 885MB of 4041MB \u2014 SINGLE-CONSTRAINED HOST: no Redis provisioning (see decision), dev server + worker must stay the only long-lived processes",
+  "redis_decision": {
+   "decision": "DO_NOT_PROVISION",
+   "evidence": [
+    "Only ~166-757MB RAM free under current load (Next dev + Python pipeline + Caddy); a Redis process + its fork overhead risks OOM-killing the app or worker \u2014 exactly the 'jeopardize the existing host' case Part F forbids.",
+    "All durable guarantees (worker singleton locks, idempotency ledgers, prediction history, beta profiles/invites) already live in SQLite \u2014 durable state does NOT depend on Redis.",
+    "Cache consumers (signals, patterns, dividends, LLM overlays) are read-through caches: a miss recomputes from verified DB data \u2014 degraded mode costs latency, not correctness.",
+    "Single-process deployment makes the Task 117 in-process rate limiter sound; multi-instance deployment is NOT supported by design and is documented as such."
+   ],
+   "revisit_when": "host RAM upgrade, or a real multi-instance deployment, or cross-process rate limiting becomes necessary",
+   "degraded_guarantees": "cache: none (recompute per request); rate limiting: per-process, resets on restart (abuse protection only, never correctness); worker locks/idempotency: FULL (SQLite, unaffected)"
+  }
+ },
+ "beta_runtime_config": {
+  "betaDisabled": false,
+  "registrationsPaused": false,
+  "operatorReason": null,
+  "invitationRequired": true,
+  "activeInvites": 1,
+  "profiles": 2,
+  "feedbackRows": 0
+ },
+ "health_snapshot": {
+  "status": "ok",
+  "version": "task117-beta",
+  "commit": "unknown",
+  "checkedAt": "2026-11-05T21:20:54.843Z",
+  "latencyMs": 307,
+  "database": {
+   "status": "ok",
+   "ohlcvBars": 1042969,
+   "writeCapable": true
+  },
+  "paths": {
+   "ok": true,
+   "dataRootLabel": "workspace-persistent",
+   "databaseExists": true,
+   "dataDirWritable": true,
+   "errors": []
+  },
+  "cache": {
+   "type": "redis",
+   "ready": false,
+   "warning": null
+  },
+  "workers": {
+   "model": "host-supervisor (python task107/108 pipeline) \u2014 singleton locks + idempotency ledger",
+   "heartbeatSource": "/api/model-report worker_heartbeat block",
+   "heartbeat": {
+    "lastSeenAt": "2026-11-03T19:17:04Z",
+    "ageMinutes": 3003
+   },
+   "heartbeatStale": true
+  },
+  "operational": {
+   "dataFrontier": "2026-11-05",
+   "frontierAgeDays": 0,
+   "lastIngestion": {
+    "generatedAt": "2026-11-05T18:50:20Z",
+    "providerAvailable": true,
+    "insertedBars": null
+   },
+   "scheduler": {
+    "status": "host-cron/github-actions (no local status file)"
+   },
+   "llm": {
+    "available": true,
+    "storedDecisions": 71,
+    "mode": "shadow/research-only, read-only"
+   },
+   "releaseState": "INVITE_ONLY_BETA_READY"
+  },
+  "beta": {
+   "enabled": true,
+   "consentVersion": "beta-consent-v1",
+   "registrationsPaused": false,
+   "invitationRequired": true,
+   "runtimeDisabledReason": null
+  }
+ }
+}

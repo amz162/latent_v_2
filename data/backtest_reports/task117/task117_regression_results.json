@@ -1,0 +1,25 @@
+{
+ "report": "task117_regression_results",
+ "generated_at": "2026-11-05T21:20:50+00:00",
+ "suites": {
+  "task107_v1": "30 passed, 0 failed, 2 skipped",
+  "task107_v2": "29 passed, 0 failed, 0 skipped",
+  "task110": "62 passed, 0 failed, 0 skipped",
+  "task111": "34 passed, 0 failed, 0 skipped",
+  "task112": "66 passed, 0 failed, 0 skipped",
+  "task113": "65 passed, 0 failed, 0 skipped",
+  "task114": "30 passed, 0 failed, 0 skipped",
+  "task115": "22 passed, 0 failed, 0 skipped",
+  "task116_python": "35 passed, 0 failed, 0 skipped (3 checks updated to Task 117 contracts: consent single-source beta-access.ts, hash-token identity invariant, re-verified tax schedule id; secret-scan self-match fixed)",
+  "task116_ts_buntest": "20 passed, 0 failed",
+  "task117_acceptance": "45 passed, 0 failed, 0 skipped"
+ },
+ "typescript": "tsc --noEmit clean (all Task 117 modules)",
+ "production_build": "bun run build \u2014 exit 0, compiled 39.2s, 17/17 pages generated",
+ "browser": {
+  "desktop_1440x900": "invite gate \u2192 redeem \u2192 onboarding (6 steps, consent-gated Next) \u2192 dashboard (banner, welcome, fusion cards, LLM agreement incl. CONFLICT display, feedback, privacy) \u2014 PASS; feedback submitted via UI persisted with acknowledgment",
+  "mobile_iphone16_393px": "gate + dashboard + how-it-works render, no horizontal overflow \u2014 PASS",
+  "how_it_works": "12 component explanations with votes/context badges + key limitations \u2014 PASS"
+ },
+ "contract_updates_note": "Task 116 suite assertions m4c/m4e/m4f/m6e updated because Task 117 centralized access logic in src/lib/latent/beta-access.ts, replaced raw-token identity with sha256 hashes, and re-verified the tax schedule (pk-tax-v2026-11-r2). No behavioural regression: the invariants they assert still hold, now stronger."
+}

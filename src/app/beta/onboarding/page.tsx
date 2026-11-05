@@ -18,6 +18,7 @@ import { ShieldCheck, ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
 interface Status {
   betaEnabled: boolean;
   consentVersion: string;
+  consentText?: { version: string; points: string[] };
 }
 
 export default function BetaOnboarding() {
@@ -46,9 +47,13 @@ export default function BetaOnboarding() {
   useEffect(() => {
     fetch("/api/beta/status").then((r) => r.json()).then((d) => setStatus(d));
     fetch("/api/beta/profile").then((r) => r.json()).then((d) => {
-      setExisting(!!d.profile);
+      // Task 117 Part C: no profile at all means the visitor has not redeemed
+      // an invitation — send them to the invite gate, not onboarding.
+      if (!d.profile) { router.push("/beta/enter"); return; }
+      setExisting(true);
       if (d.profile) setF((prev) => ({ ...prev, ...d.profile, profileComplete: undefined }));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const save = async (complete: boolean) => {
@@ -94,11 +99,15 @@ export default function BetaOnboarding() {
       body: (
         <div className="space-y-3 text-sm text-[#CBD5E1]">
           <p><b className="text-[#F4F7FB]">What Latent.pk does:</b> it analyzes Pakistan Stock Exchange market information and combines twelve technical strategy components with an AI analyst (GLM-4.6) into one research view.</p>
-          <ul className="list-disc pl-5 space-y-1">
-            <li>Research results are <b>still being validated</b> — no strategy has passed independent promotion requirements.</li>
-            <li>This beta <b>does not place broker orders</b> — it is investment-intelligence research, not automated trading.</li>
-            <li>Outputs are educational/research information, <b>not guaranteed returns</b> and not personalized regulated investment advice.</li>
-          </ul>
+          <div className="rounded-md border border-[#8F630F]/40 bg-[#8F630F]/10 p-3">
+            <p className="text-xs font-semibold text-[#F4F7FB] mb-1.5">Beta notice — facts you accept (version {status.consentVersion}):</p>
+            <ul className="list-disc pl-5 space-y-1 text-xs text-[#CBD5E1]">
+              {(status.consentText?.points ?? []).map((pt, i) => (
+                <li key={i}>{pt}</li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs font-semibold text-[#F4F7FB]">SHADOW / BETA RESEARCH — NOT AN ORDER</p>
+          </div>
           <label className="flex items-start gap-2 pt-2 cursor-pointer">
             <Checkbox checked={!!f.consentAccepted} onCheckedChange={(v) => set("consentAccepted", v)} className="mt-0.5" />
             <span className="text-[#F4F7FB]">I have read and accept the beta notice (consent version {status.consentVersion}).</span>
@@ -226,10 +235,10 @@ export default function BetaOnboarding() {
           <div>
             <Label className="text-[#94A3B8]">Optional capital range (only if you want size-aware illustrations)</Label>
             <RadioGroup value={String(f.capitalRange)} onValueChange={(v) => set("capitalRange", v)} className="mt-2 flex flex-wrap gap-2">
-              {["Under 100k", "100k–500k", "500k–1M", "1M+", ""].map((v) => (
-                <label key={v || "skip"} className="flex items-center gap-2 rounded-md border border-white/10 p-2 cursor-pointer">
+              {[["under_50k", "Under 50k"], ["50k_250k", "50k–250k"], ["250k_1m", "250k–1M"], ["over_1m", "1M+"], ["prefer_not_say", "Prefer not to say"]].map(([v, label]) => (
+                <label key={v} className="flex items-center gap-2 rounded-md border border-white/10 p-2 cursor-pointer">
                   <RadioGroupItem value={v} />
-                  <span className="text-[#F4F7FB] text-xs">{v || "Prefer not to say"}</span>
+                  <span className="text-[#F4F7FB] text-xs">{label}</span>
                 </label>
               ))}
             </RadioGroup>
@@ -283,7 +292,18 @@ export default function BetaOnboarding() {
               </Button>
               <div className="flex gap-2">
                 {existing && (
-                  <Button variant="ghost" size="sm" onClick={async () => { await fetch("/api/beta/profile", { method: "DELETE" }); setF({}); setExisting(false); setStep(0); }}>
+                  <Button variant="ghost" size="sm" onClick={async () => {
+                    // Task 117: reset = new identity (old cookie invalidated),
+                    // invite binding preserved — never a bare DELETE here.
+                    await fetch("/api/beta/profile", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action: "reset" }),
+                    });
+                    setF((p) => ({ ...p, consentAccepted: false }));
+                    setExisting(false);
+                    setStep(0);
+                  }}>
                     <RotateCcw className="h-4 w-4 mr-1" /> {t("beta.common.restart")}
                   </Button>
                 )}

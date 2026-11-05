@@ -1,0 +1,26 @@
+{
+ "report": "task117_beta_readiness",
+ "generated_at": "2026-11-05T21:20:50+00:00",
+ "release_state": "INVITE_ONLY_BETA_READY",
+ "release_state_rationale": "All Part K critical checks pass (invitation lifecycle, profile privacy/isolation, global kill switch, persistence, worker protections); credential containment verified with rotation marked operator-action-required; Redis remains documented degraded mode with durable guarantees in SQLite; tax schedule re-verified; no automated trading or promotion paths exist.",
+ "parts_status": {
+  "A_baseline": "PASS \u2014 HEAD e5e4975f == origin/main at start; all Task 116 artifacts present",
+  "B_pat_remediation": "DONE \u2014 see task117_security_status.json; credential replacement OPERATOR_ACTION_REQUIRED (least-privilege rotation + 2FA)",
+  "C_invite_only_access": "PASS \u2014 hashed server-side invitations, revocation/expiry/single-use, rate limiting, enumeration-proof failures, CLI-only admin (no admin HTTP endpoints), runtime disable/pause flags",
+  "D_profile_security": "PASS \u2014 raw tokens destroyed (sha256-only storage), Secure-cookie by request flow, origin checks, reset invalidates identity, query logging disabled by default, cookie-only identity disclosed",
+  "E_consent": "PASS \u2014 9-point explicit consent incl. all required disclosures; persistent SHADOW / BETA RESEARCH \u2014 NOT AN ORDER notice; en/roman-urdu/urdu strings",
+  "F_redis": "DO_NOT_PROVISION (evidence above); durable guarantees in SQLite",
+  "G_news_allowlist": "PASS \u2014 news-allowlist-v1 (5 reviewed domains, metadata recorded), enforced in fetchArticleSecure with domain_not_allowed default-reject; full fetch-flow harness green",
+  "H_tax_shariah": "PASS \u2014 pk-tax-v2026-11-r2; non-filer CGT rule (slab rates, 15% floor) and non-filer dividend 30% now VERIFIED; provisional labelling retained for slab dependence; Shariah optional with no compliance claims",
+  "I_beta_ux": "PASS \u2014 first-run welcome panel, how-it-works page (12 components + LLM explainer), feedback widget (validated, rate-limited, ack-after-persist), privacy panel (view/edit/reset/delete)",
+  "J_monitoring": "PASS \u2014 /api/health operational block (frontier, ingestion, heartbeat age, scheduler, LLM, release state, beta config), 10-class error taxonomy with user-safe messages, per-route rate limits",
+  "K_acceptance": "PASS \u2014 45/45 checks (scripts/task117_tests.py) incl. the 20 Task-117 acceptance criteria"
+ },
+ "limits_and_operator_actions": [
+  "OPERATOR_ACTION_REQUIRED: rotate GitHub PAT to least-privilege (Contents RW, single repo), enable 2FA, store via .zcredentials/github_token.local + scripts/gh_auth.sh",
+  "Production currently serves via next dev; switch to `next build && next start` behind Caddy for the beta cohort (build verified green this task)",
+  "Worker heartbeat age was >2900 minutes at task time \u2014 run the host pipeline to refresh data before sending invitations",
+  "Invitation distribution is manual by design \u2014 no automatic sends exist",
+  "Rate-limit counters are in-process (reset on restart) \u2014 abuse protection only, correctness never depends on them"
+ ]
+}

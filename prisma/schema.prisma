@@ -330,9 +330,13 @@ model PricePatternReport {
 // filters by the exact session token). Deletion is a hard delete (G3 reset).
 model BetaProfile {
   id               String   @id @default(cuid())
-  sessionToken     String   @unique
-  consentVersion   String   // e.g. "beta-consent-v1"
-  consentAcceptedAt DateTime @default(now())
+  // Task 117 Part D: the raw session token lives ONLY in the HttpOnly cookie.
+  // Server-side we store sha256(token) — a database leak cannot be replayed.
+  sessionTokenHash String   @unique
+  consentVersion   String   // e.g. "beta-consent-v1" (pending until accepted)
+  consentAcceptedAt DateTime?
+  inviteId         String?  // BetaInvite that granted access (null only when BETA_INVITE_REQUIRED=false)
+  accessVia        String   @default("invite") // invite | open_flag | operator
   experienceLevel  String?  // new_to_psx | some_experience | experienced
   objective        String?  // learn | growth_research | income_research | swing_research | monitoring
   timeHorizon      String?  // short | medium | long
@@ -349,4 +353,44 @@ model BetaProfile {
   profileComplete  Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+// Task 117 Part C — hashed, revocable, expiring invitations. The raw token is
+// shown to the operator exactly once at creation; only sha256 is stored. No
+// personal information is collected: no name, email, IP or device fingerprint.
+model BetaInvite {
+  id              String    @id @default(cuid())
+  tokenHash       String    @unique
+  label           String?   // operator note (cohort name) — never user data
+  status          String    @default("active") // active | revoked
+  maxRedemptions  Int       @default(1)
+  redemptionCount Int       @default(0)
+  createdAt       DateTime  @default(now())
+  expiresAt       DateTime?
+  redeemedAt      DateTime?
+  redeemedProfileIds String @default("[]") // JSON array of BetaProfile ids (audit only, no tokens)
+}
+
+// Task 117 Part C2 — runtime-controlled beta configuration (single row, id=1).
+// Lets the operator pause registrations or disable the whole beta WITHOUT a
+// redeploy. The BETA_ONBOARDING_ENABLED env var, when "false", always wins.
+model BetaConfig {
+  id                   Int      @id @default(1)
+  betaDisabled         Boolean  @default(false)
+  registrationsPaused  Boolean  @default(false)
+  reason               String?  // operator note shown to users (plain text, no internal detail)
+  updatedAt            DateTime @updatedAt
+}
+
+// Task 117 Part I4 — beta feedback. No free-form identity fields; the profile
+// link is internal (id only, never a token) and exports strip it by default.
+model BetaFeedback {
+  id         String   @id @default(cuid())
+  profileId  String?
+  category   String   // confusing_info | incorrect_company_data | stale_prices | broken_interface | missing_feature | general
+  message    String
+  route      String?  // page path where feedback was submitted
+  appVersion String?
+  status     String   @default("new") // new | triaged | resolved
+  createdAt  DateTime @default(now())
 }

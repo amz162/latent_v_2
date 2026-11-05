@@ -1,0 +1,74 @@
+{
+  "allowlistVersion": "news-allowlist-v1",
+  "reviewedAt": "2026-11-05",
+  "reviewedBy": "Task 117 Part G — operator-reviewed domain curation",
+  "policy": {
+    "default": "reject",
+    "rationale": "Only domains with a verified application purpose or a documented editorial review are fetchable. A domain appearing in an LLM-generated response is NEVER sufficient grounds for inclusion.",
+    "enforcement": "fetchArticleSecure() rejects any host not matched below BEFORE any network request; the mode can be switched to monitor-only via NEWS_ALLOWLIST_MODE=monitor for one review cycle.",
+    "globalRules": {
+      "scheme": "https only",
+      "ipChecks": "every resolved A/AAAA must be public (loopback/link-local/private/ULA/CGNAT/metadata/6to4 rejected); every redirect hop fully re-validated (DNS-rebinding resistant)",
+      "maxRedirects": 3,
+      "maxResponseBytes": 2097152,
+      "contentTypes": ["text/html", "application/xhtml+xml", "text/plain", "application/json"],
+      "pdfPolicy": "application/pdf is NOT an allowed content type — article fetches are HTML/text only; unexpected file types rejected",
+      "credentials": "never forwarded; no cookies; public User-Agent only",
+      "userProvidedUrls": "accepted only from beta participants via /api/llm/interpret-news and only when the host is allowlisted"
+    }
+  },
+  "domains": [
+    {
+      "hostname": "api.askanalyst.com.pk",
+      "purpose": "Market-data provider news API (company/national/international news feeds)",
+      "applicationUsage": "src/lib/latent/news/market-news-intelligence.ts fetches https://api.askanalyst.com.pk/api/news/<symbol> — server-to-server with a FIXED URL; this host is documented here even though the call does not route through fetchArticleSecure",
+      "httpsRequired": true,
+      "redirectPolicy": "no-redirect-expected",
+      "contentTypeRestriction": "application/json",
+      "reviewStatus": "VERIFIED — provider identity re-checked in the Task 107 ingestion report; in active production use",
+      "addedOn": "2026-11-05"
+    },
+    {
+      "hostname": "www.dawn.com",
+      "purpose": "Major Pakistani English-language daily — market/business news",
+      "applicationUsage": "eligible target for user-pasted article links in /api/llm/interpret-news article extraction",
+      "httpsRequired": true,
+      "redirectPolicy": "revalidate-every-hop",
+      "contentTypeRestriction": "text/html",
+      "reviewStatus": "REVIEWED — established publication, long-lived https host; live fetch re-check scheduled each allowlist review",
+      "addedOn": "2026-11-05"
+    },
+    {
+      "hostname": "tribune.com.pk",
+      "purpose": "Pakistani English-language daily (Express Tribune) — business/market news",
+      "applicationUsage": "eligible target for user-pasted article links in /api/llm/interpret-news",
+      "httpsRequired": true,
+      "redirectPolicy": "revalidate-every-hop",
+      "contentTypeRestriction": "text/html",
+      "reviewStatus": "REVIEWED — established publication; live fetch re-check each review",
+      "addedOn": "2026-11-05"
+    },
+    {
+      "hostname": "www.brecorder.com",
+      "purpose": "Business Recorder — Pakistan financial daily",
+      "applicationUsage": "eligible target for user-pasted article links in /api/llm/interpret-news",
+      "httpsRequired": true,
+      "redirectPolicy": "revalidate-every-hop",
+      "contentTypeRestriction": "text/html",
+      "reviewStatus": "REVIEWED — established financial publication; live fetch re-check each review",
+      "addedOn": "2026-11-05"
+    },
+    {
+      "hostname": "www.psx.com.pk",
+      "purpose": "Pakistan Stock Exchange official site — company notices and announcements",
+      "applicationUsage": "eligible target for user-pasted notice links in /api/llm/interpret-news",
+      "httpsRequired": true,
+      "redirectPolicy": "revalidate-every-hop",
+      "contentTypeRestriction": "text/html",
+      "reviewStatus": "REVIEWED — official exchange site; live fetch re-check each review",
+      "addedOn": "2026-11-05"
+    }
+  ],
+  "subdomainPolicy": "exact-host match only (no wildcard subdomains); www.<domain> is listed explicitly where that is the canonical host",
+  "reviewCadence": "re-review at each release task or at most 90 days; any domain without a live re-check keeps status REVIEWED and may be dropped at the next review"
+}

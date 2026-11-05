@@ -8,6 +8,9 @@ import { fuseSignals, type FusionResult } from "@/lib/latent/strategies/fusion";
 import { computeRiskLevels, type RiskLevelBar } from "@/lib/latent/risk-levels";
 import { backtestReportsDir, projectRoot } from "@/lib/latent/paths";
 import { getCacheStatus } from "@/lib/latent/cache";
+import { getSession, isBetaActive } from "@/lib/latent/beta-access";
+import { errorResponse } from "@/lib/latent/error-codes";
+import { rateLimit, clientKey } from "@/lib/latent/rate-limit";
 
 // Task 116 Parts E/F/H — one combined beta insight per symbol:
 //   1. Strategy Fusion (12-component engine, transparent consensus)
@@ -90,6 +93,18 @@ function llmAgreement(fusion: FusionResult, llm: LlmRecord | null): { agreement:
 export async function GET(req: NextRequest) {
   const started = Date.now();
   try {
+    // Task 117 Part C/J — the research view is for beta participants only;
+    // computation is rate-limited per session and per IP (host protection).
+    const gate = await isBetaActive();
+    if (!gate.active) return errorResponse("profile_validation_error", { betaDisabled: true });
+    const session = await getSession(req);
+    if (!session) return errorResponse("invitation_invalid");
+    const rlSession = rateLimit("insight_session", session.profileId, 60, 60 * 60 * 1000);
+    const rlIp = rateLimit("insight_ip", clientKey(req), 120, 60 * 60 * 1000);
+    if (!rlSession.allowed || !rlIp.allowed) {
+      return errorResponse("rate_limited", { retryAfterSec: Math.max(rlSession.retryAfterSec, rlIp.retryAfterSec) });
+    }
+
     const url = new URL(req.url);
     const symbolsParam = url.searchParams.get("symbols") || "";
     const advanced = url.searchParams.get("advanced") === "1";

@@ -38,7 +38,8 @@ def main():
     check("m1e_health_endpoint_exists", m["health_endpoint"] and m["central_paths_module"])
     check("m1f_db_persistence_verified", host["database"]["persistence"].startswith("VERIFIED"))
     check("m1g_worker_model_documented", "singleton" in host["workers"]["model"] or "singleton" in json.dumps(host["workers"]))
-    secrets = sh('git grep -lE "ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|BEGIN RSA PRIVATE KEY" -- . 2>/dev/null | wc -l')
+    # note: the RSA literal is split so this check does not self-match its own source
+    secrets = sh('git grep -lE "ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|BEGIN RSA PRIVAT[E] KEY" -- . 2>/dev/null | wc -l')
     check("m1h_no_secrets_in_tree", secrets.strip() == "0", secrets)
 
     print("-- M2 strategy engine --")
@@ -68,11 +69,18 @@ def main():
     print("-- M4/M5 beta UX surface --")
     check("m4a_onboarding_route_exists", (ROOT / "src/app/beta/onboarding/page.tsx").exists())
     check("m4b_dashboard_route_exists", (ROOT / "src/app/beta/page.tsx").exists())
-    check("m4c_flag_is_server_side", 'BETA_ONBOARDING_ENABLED' in (ROOT / "src/app/api/beta/status/route.ts").read_text())
+    check("m4c_flag_is_server_side", 'BETA_ONBOARDING_ENABLED' in (ROOT / "src/app/api/beta/status/route.ts").read_text()
+          or 'BETA_ONBOARDING_ENABLED' in (ROOT / "src/lib/latent/beta-access.ts").read_text())  # Task 117: gate logic centralized
     prof = (ROOT / "src/app/api/beta/profile/route.ts").read_text()
+    access = (ROOT / "src/lib/latent/beta-access.ts").read_text()
     check("m4d_profile_hard_delete", "deleteMany" in prof)
-    check("m4e_no_cross_user_access", "sessionToken: token" in prof)
-    check("m4f_consent_versioned", "beta-consent-v1" in (ROOT / "src/app/api/beta/status/route.ts").read_text())
+    # Task 117: identity lookup is now sha256-hash based (raw token never
+    # stored server-side) — the equivalent no-cross-user invariant.
+    check("m4e_no_cross_user_access",
+          "sessionTokenHash" in prof and "sha256(token)" in access)
+    # Task 117: consent version moved to beta-access.ts (single source of truth)
+    check("m4f_consent_versioned", "beta-consent-v1" in access
+          and "CONSENT_VERSION" in (ROOT / "src/app/api/beta/status/route.ts").read_text())
     i18n = (ROOT / "src/lib/latent/i18n.ts").read_text()
     seg = i18n.split('"beta.dashboard.banner":')[1][:600]
     check("m5a_beta_strings_trilingual", "urdu:" in seg and "roman_urdu:" in seg and "en:" in seg)
@@ -86,7 +94,7 @@ def main():
           and "isDemo: false" in (ROOT / "src/app/api/track-record/route.ts").read_text())
     check("m6c_task115_result_descriptive", "n=12" in audit["research_facts_preserved"]["gen1_checkpoint"])
     check("m6d_release_status_honest", audit["release_status"] == "BETA_READY_WITH_LIMITATIONS")
-    check("m6e_tax_schedule_versioned", "pk-cgt-v2026-11" in (ROOT / "src/lib/latent/tax.ts").read_text())
+    check("m6e_tax_schedule_versioned", "pk-tax-v2026-11-r2" in (ROOT / "src/lib/latent/tax.ts").read_text())  # Task 117 Part H: re-verified schedule
     # DB untouched by this task except the additive BetaProfile table
     conn = sqlite3.connect(f"file:{ROOT/'db/custom.db'}?mode=ro", uri=True)
     bars = conn.execute("SELECT COUNT(*) FROM OhlcvBar").fetchone()[0]

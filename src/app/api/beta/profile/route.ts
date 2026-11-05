@@ -1,40 +1,40 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import { cookies } from "next/headers";
 import crypto from "node:crypto";
 import { db } from "@/lib/db";
+import {
+  BETA_COOKIE,
+  CONSENT_VERSION,
+  clearSessionCookie,
+  createSession,
+  getSession,
+  inviteRequired,
+  isBetaActive,
+  sameOrigin,
+  setSessionCookie,
+  sha256,
+} from "@/lib/latent/beta-access";
+import { errorResponse } from "@/lib/latent/error-codes";
+import { rateLimit, clientKey } from "@/lib/latent/rate-limit";
 
-// Task 116 Part G3 — anonymous beta session profile.
-// Identity = opaque random session token in an HttpOnly, SameSite=Lax cookie
-// (Secure in production). No email, no sensitive personal data. Every query
-// filters by the exact session token, so cross-user access is impossible by
-// construction. DELETE hard-deletes the profile (reset behavior).
+// Task 116 Part G3 + Task 117 Parts C/D — anonymous beta session profile.
+//
+// Task 117 changes:
+//   - Server stores sha256(cookie token) only; the raw token lives solely in
+//     the HttpOnly cookie (DB leak cannot be replayed).
+//   - Cookie Secure flag follows the real request flow (x-forwarded-proto via
+//     Caddy, or COOKIE_SECURE env override) — not NODE_ENV, because this host
+//     serves through a reverse proxy in front of the app server.
+//   - Creating a profile without an existing session requires either a valid
+//     redeemed invitation (default) or BETA_INVITE_REQUIRED=false.
+//   - "reset" action: destroys the old row AND old cookie, then issues a fresh
+//     identity — the previous cookie can no longer resolve to anything.
+//   - Writes are same-origin checked and rate limited.
+//   - Sensitive values are never logged (no token/cookie values in console).
 
 export const dynamic = "force-dynamic";
 
-const COOKIE = "latent_beta_session";
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
-
-async function getSessionToken(): Promise<string | null> {
-  const store = await cookies();
-  return store.get(COOKIE)?.value ?? null;
-}
-
-async function ensureSessionToken(): Promise<string> {
-  const store = await cookies();
-  let token = store.get(COOKIE)?.value;
-  if (!token) {
-    token = crypto.randomBytes(32).toString("hex");
-    store.set(COOKIE, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: COOKIE_MAX_AGE,
-      path: "/",
-    });
-  }
-  return token;
-}
+const COOKIE = BETA_COOKIE; // kept for reference
 
 function parseJsonArray(raw: string | null): string[] {
   if (!raw) return [];
@@ -48,7 +48,7 @@ function parseJsonArray(raw: string | null): string[] {
 
 function profilePayload(p: {
   consentVersion: string;
-  consentAcceptedAt: Date;
+  consentAcceptedAt: Date | null;
   experienceLevel: string | null;
   objective: string | null;
   timeHorizon: string | null;
@@ -65,9 +65,9 @@ function profilePayload(p: {
   profileComplete: boolean;
   updatedAt: Date;
 }) {
-  // G2 Step 4: willingness vs capacity are kept as SEPARATE fields; if they
-  // conflict or are incomplete the UI shows "Profile incomplete" — no
-  // falsely precise composite risk score is ever generated.
+  // Willingness vs capacity stay SEPARATE fields; if they conflict or are
+  // incomplete the UI shows "Profile incomplete" — no falsely precise
+  // composite risk score is ever generated.
   const willingnessKnown = !!p.lossReaction && !!p.volatilityComfort;
   const capacityKnown = p.canTolerateLoss !== null && p.capitalNeedSoon !== null;
   const conflicts =
@@ -100,62 +100,146 @@ function profilePayload(p: {
     capitalRange: p.capitalRange,
     profileComplete: p.profileComplete,
     updatedAt: p.updatedAt,
+    // Part D disclosure: cookie-only anonymous profile — no account sync.
+    identityDisclosure: "Anonymous profile saved for this browser session only (cookie on this device). It is not a verified personal account and is not synced across devices.",
   };
 }
 
-export async function GET() {
-  const token = await getSessionToken();
-  if (!token) return NextResponse.json({ profile: null });
-  const p = await db.betaProfile.findUnique({ where: { sessionToken: token } });
-  if (!p) return NextResponse.json({ profile: null });
-  return NextResponse.json({ profile: profilePayload(p) });
+export async function GET(req: NextRequest) {
+  try {
+    const session = await getSession(req);
+    if (!session) return NextResponse.json({ profile: null });
+    const p = await db.betaProfile.findUnique({ where: { id: session.profileId } });
+    if (!p) return NextResponse.json({ profile: null });
+    return NextResponse.json({ profile: profilePayload(p) });
+  } catch (err) {
+    console.error("[beta/profile GET] database error (no detail emitted to client)");
+    return errorResponse("database_unavailable");
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const token = await ensureSessionToken();
-  const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
-  const str = (k: string, max = 64): string | null => {
-    const v = body[k];
-    return typeof v === "string" && v.length <= max ? v : null;
-  };
-  const bool = (k: string): boolean | null => (typeof body[k] === "boolean" ? (body[k] as boolean) : null);
-  const arr = (k: string): string | null => {
-    const v = body[k];
-    if (!Array.isArray(v)) return null;
-    const clean = v.filter((x) => typeof x === "string" && x.length <= 16).slice(0, 30);
-    return JSON.stringify(clean);
-  };
+  if (!sameOrigin(req)) return errorResponse("profile_validation_error");
+  const gate = await isBetaActive();
+  if (!gate.active) return errorResponse("profile_validation_error", { betaDisabled: true });
 
-  const data = {
-    experienceLevel: str("experienceLevel"),
-    objective: str("objective"),
-    timeHorizon: str("timeHorizon"),
-    lossReaction: str("lossReaction"),
-    volatilityComfort: str("volatilityComfort"),
-    canTolerateLoss: bool("canTolerateLoss"),
-    capitalNeedSoon: bool("capitalNeedSoon"),
-    preferredSectors: arr("preferredSectors"),
-    watchlistSymbols: arr("watchlistSymbols"),
-    showDividends: bool("showDividends"),
-    shariahScreen: bool("shariahScreen"),
-    atlTaxAssumption: bool("atlTaxAssumption"),
-    capitalRange: str("capitalRange", 32),
-    profileComplete: body.profileComplete === true,
-  };
+  const rl = rateLimit("profile_write", clientKey(req), 60, 60 * 60 * 1000);
+  if (!rl.allowed) return errorResponse("rate_limited", { retryAfterSec: rl.retryAfterSec });
 
-  const consentVersion = str("consentVersion", 32) ?? "beta-consent-v1";
-  const p = await db.betaProfile.upsert({
-    where: { sessionToken: token },
-    create: { sessionToken: token, consentVersion, ...data },
-    update: { consentVersion, ...data },
-  });
-  return NextResponse.json({ profile: profilePayload(p), savedOnDevice: true });
+  let body: Record<string, unknown> = {};
+  try {
+    body = (await req.json()) as Record<string, unknown>;
+  } catch {
+    return errorResponse("profile_validation_error");
+  }
+
+  // --- reset: new identity, old one fully invalidated ---
+  if (body.action === "reset") {
+    const session = await getSession(req);
+    if (session) {
+      // keep the access grant: the new identity inherits the invite binding
+      await db.betaProfile.deleteMany({ where: { id: session.profileId } });
+    }
+    const res = NextResponse.json({ reset: true });
+    await createSession(res, req, {
+      accessVia: session?.accessVia ?? (inviteRequired() ? "invite" : "open_flag"),
+      inviteId: session?.inviteId ?? null,
+    });
+    return res;
+  }
+
+  try {
+    let session = await getSession(req);
+
+    // first write creates the profile — access gate applies
+    if (!session) {
+      if (inviteRequired()) {
+        return errorResponse("invitation_invalid");
+      }
+      const res = NextResponse.json({ created: true });
+      const created = await createSession(res, req, { accessVia: "open_flag", inviteId: null });
+      session = {
+        profileId: created.profileId,
+        sessionTokenHash: sha256(created.token),
+        accessVia: "open_flag",
+        inviteId: null,
+        profileComplete: false,
+        consentVersion: "pending-invite-redeem",
+        consentAcceptedAt: null,
+      };
+    }
+
+    const str = (k: string, max = 64): string | null => {
+      const v = body[k];
+      return typeof v === "string" && v.length <= max ? v : null;
+    };
+    const bool = (k: string): boolean | null => (typeof body[k] === "boolean" ? (body[k] as boolean) : null);
+    const arr = (k: string): string | null => {
+      const v = body[k];
+      if (!Array.isArray(v)) return null;
+      const clean = v.filter((x) => typeof x === "string" && x.length <= 16).slice(0, 30);
+      return JSON.stringify(clean);
+    };
+
+    // server-side enum validation (Part J: profile_validation_error)
+    const ENUMS: Record<string, string[]> = {
+      experienceLevel: ["new_to_psx", "some_experience", "experienced"],
+      objective: ["learn", "growth_research", "income_research", "swing_research", "monitoring"],
+      timeHorizon: ["short", "medium", "long"],
+      lossReaction: ["hold", "trim", "sell", "unsure"],
+      volatilityComfort: ["low", "medium", "high"],
+      capitalRange: ["", "under_50k", "50k_250k", "250k_1m", "over_1m", "prefer_not_say"],
+    };
+    for (const [k, allowed] of Object.entries(ENUMS)) {
+      const v = str(k, 32);
+      if (v !== null && !allowed.includes(v)) return errorResponse("profile_validation_error", { field: k });
+    }
+
+    const data = {
+      experienceLevel: str("experienceLevel"),
+      objective: str("objective"),
+      timeHorizon: str("timeHorizon"),
+      lossReaction: str("lossReaction"),
+      volatilityComfort: str("volatilityComfort"),
+      canTolerateLoss: bool("canTolerateLoss"),
+      capitalNeedSoon: bool("capitalNeedSoon"),
+      preferredSectors: arr("preferredSectors"),
+      watchlistSymbols: arr("watchlistSymbols"),
+      showDividends: bool("showDividends"),
+      shariahScreen: bool("shariahScreen"),
+      atlTaxAssumption: bool("atlTaxAssumption"),
+      capitalRange: str("capitalRange", 32),
+      profileComplete: body.profileComplete === true,
+    };
+
+    // consent: version recorded only with an explicit acceptance
+    const consentVersion = str("consentVersion", 32);
+    const consentAccepted = body.consentAccepted === true;
+    const update = {
+      ...data,
+      ...(consentAccepted && consentVersion ? { consentVersion, consentAcceptedAt: new Date() } : {}),
+    };
+
+    const p = await db.betaProfile.update({ where: { id: session.profileId }, data: update });
+    return NextResponse.json({ profile: profilePayload(p), savedOnDevice: true });
+  } catch (err) {
+    console.error("[beta/profile POST] database error (no detail emitted to client)");
+    return errorResponse("database_unavailable");
+  }
 }
 
-export async function DELETE() {
-  const token = await getSessionToken();
-  if (token) await db.betaProfile.deleteMany({ where: { sessionToken: token } });
-  const store = await cookies();
-  store.delete(COOKIE);
-  return NextResponse.json({ deleted: true });
+export async function DELETE(req: NextRequest) {
+  if (!sameOrigin(req)) return errorResponse("profile_validation_error");
+  const rl = rateLimit("profile_delete", clientKey(req), 10, 60 * 60 * 1000);
+  if (!rl.allowed) return errorResponse("rate_limited", { retryAfterSec: rl.retryAfterSec });
+  try {
+    const token = req.cookies.get(COOKIE)?.value;
+    if (token) await db.betaProfile.deleteMany({ where: { sessionTokenHash: sha256(token) } });
+    const res = NextResponse.json({ deleted: true });
+    clearSessionCookie(res, req);
+    return res;
+  } catch (err) {
+    console.error("[beta/profile DELETE] database error (no detail emitted to client)");
+    return errorResponse("database_unavailable");
+  }
 }

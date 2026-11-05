@@ -19,6 +19,7 @@ const dict: Dict = {
   "beta.common.saving": { en: "Saving…", roman_urdu: "Save ho raha hai…", urdu: "محفوظ ہو رہا ہے…" },
   "beta.onboarding.enter": { en: "Enter the beta dashboard", roman_urdu: "Beta dashboard kholein", urdu: "بیٹا ڈیش بورڈ کھولیں" },
   "beta.onboarding.disabled": { en: "The beta experience is currently disabled.", roman_urdu: "Beta experience filhaal band hai.", urdu: "بیٹا تجربہ فی الحال بند ہے۔" },
+  "beta.onboarding.app_available": { en: "The regular Latent.pk application remains fully available.", roman_urdu: "Mamooli Latent.pk app poori tarah chalta rahega.", urdu: "باہر کی باقاعدہ Latent.pk ایپلیکیشن مکمل طور پر دستیاب رہے گی۔" },
   "beta.onboarding.back_to_app": { en: "Back to Latent.pk", roman_urdu: "Latent.pk par wapas", urdu: "Latent.pk پر واپس" },
   "beta.dashboard.title": { en: "Beta research dashboard", roman_urdu: "Beta research dashboard", urdu: "بیٹا ریسرچ ڈیش بورڈ" },
   "beta.dashboard.banner": { en: "BETA RESEARCH — not an order, not guaranteed returns, not personalized regulated investment advice.", roman_urdu: "BETA RESEARCH — order nahi, guaranteed return nahi, regulated mashwara nahi.", urdu: "بیٹا ریسرچ — آرڈر نہیں، ضمانت شدہ منافع نہیں، ذاتی باقاعدہ سرمایہ کاری مشورہ نہیں۔" },
@@ -43,6 +44,61 @@ const dict: Dict = {
   "beta.dashboard.llm_uncalibrated": { en: "LLM conviction is uncalibrated.", roman_urdu: "LLM conviction uncalibrated hai.", urdu: "ایل ایل ایم لیکننگ غیر معیاری ہے۔" },
   "beta.dashboard.risk_education": { en: "Risk & education", roman_urdu: "Risk aur taleem", urdu: "رسک اور تعلیم" },
   "beta.dashboard.risk_education_body": { en: "Deterministic hypothetical risk levels come from the frozen atr14-1.5-1-2-3 policy and the V2 cost engine. They are illustrations — never orders, never leverage, never short entries.", roman_urdu: "Deterministic hypothetical risk levels frozen policy se aate hain. Ye sirf illustrations hain — order nahi, leverage nahi, short entry nahi.", urdu: "متعین مفروضہ رسک لیول منجمد پالیسی سے آتے ہیں۔ یہ محض مثالیں ہیں — آرڈر نہیں، لیوریج نہیں، شارٹ انٹری نہیں۔" },
+
+  // Task 117 Part C — invitation gate
+  "beta.enter.title": { en: "Latent.pk controlled beta — invitation required", roman_urdu: "Latent.pk beta — dawat zaroori hai", urdu: "Latent.pk بیٹا — دعوت ضروری ہے" },
+  "beta.enter.subtitle": { en: "The beta is currently invite-only. Enter the invitation code your operator gave you. Codes work a limited number of times and may expire.", roman_urdu: "Beta filhaal sirf dawat par hai. Operator ka diya hua invitation code daalein. Codes mehdood times chalte hain aur expire ho sakte hain.", urdu: "بیٹا فی الحال صرف دعوت پر ہے۔ اپنا دعوتی کوڈ درج کریں۔ کوڈز محدود تعداد میں کام کرتے ہیں اور میعاد ختم ہو سکتی ہے۔" },
+  "beta.enter.submit": { en: "Redeem invitation", roman_urdu: "Invitation istemal karein", urdu: "دعوت استعمال کریں" },
+  "beta.enter.invalid": { en: "This invitation is not valid or is no longer active. Please check the code with your operator and try again.", roman_urdu: "Ye invitation durust nahi ya ab active nahi. Operator se code check karke dobara koshish karein.", urdu: "یہ دعوت درست نہیں یا اب فعال نہیں۔ براہ کرم آپریٹر سے کوڈ چیک کر کے دوبارہ کوشش کریں۔" },
+  "beta.enter.invalid_urdu": { en: "یہ دعوت درست نہیں یا اب فعال نہیں۔", roman_urdu: "Ye invitation durust nahi.", urdu: "یہ دعوت درست نہیں یا اب فعال نہیں۔" },
+  "beta.enter.closed": { en: "The beta is currently closed. Please check back later.", roman_urdu: "Beta filhaal band hai. Baad mein dobara dekhein.", urdu: "بیٹا فی الحال بند ہے۔ براہ کرم بعد میں دوبارہ دیکھیں۔" },
+  "beta.enter.closed_title": { en: "Beta is closed", roman_urdu: "Beta band hai", urdu: "بیٹا بند ہے" },
+  "beta.enter.privacy_note": { en: "Invitations are validated on the server. Redeeming creates an anonymous profile — no name, email, phone or CNIC is collected.", roman_urdu: "Invitations server par validate hote hain. Redeem karne par anonymous profile banti hai — koi naam, email, phone ya CNIC nahi.", urdu: "دعوتیں سرور پر جانچی جاتی ہیں۔ دعوت استعمال کرنے سے گمنام پروفائل بنتا ہے — کوئی نام، ای میل، فون یا شناختی کارڈ نمبر نہیں لیا جاتا۔" },
+
+  // Task 117 Part I1 — welcome panel
+  "beta.welcome.title": { en: "Welcome — your beta at a glance", roman_urdu: "Khush aamdeed — aapka beta ek nazar mein", urdu: "خوش آمدید — آپ کا بیٹا ایک نظر میں" },
+  "beta.welcome.how_link": { en: "How Latent works (plain language)", roman_urdu: "Latent kaise kaam karta hai", urdu: "لیٹنٹ کیسے کام کرتا ہے" },
+  "beta.welcome.prefs": { en: "Your saved research preferences", roman_urdu: "Aapki mehfooz research pasand", urdu: "آپ کی محفوظ ریسرچ ترجیحات" },
+  "beta.welcome.objective": { en: "Objective", roman_urdu: "Maqsad", urdu: "مقصد" },
+  "beta.welcome.horizon": { en: "Horizon", roman_urdu: "Muddat", urdu: "مدت" },
+  "beta.welcome.watchlist": { en: "Watchlist", roman_urdu: "Watchlist", urdu: "واچ لسٹ" },
+  "beta.welcome.default_universe": { en: "default liquid universe", roman_urdu: "default liquid universe", urdu: "پہلے سے طے شدہ لیکویڈ یونیورس" },
+  "beta.welcome.shariah": { en: "Shariah screening", roman_urdu: "Shariah screening", urdu: "شریعہ اسکریننگ" },
+  "beta.welcome.data_status": { en: "Current market/data status", roman_urdu: "Moooda market/data surat-e-hal", urdu: "موجودہ مارکیٹ/ڈیٹا صورتحال" },
+  "beta.welcome.freshness_note": { en: "Every research card shows its own source bar date. Anything older than the frontier is labelled.", roman_urdu: "Har research card apni source date dikhata hai. Purana data label hota hai.", urdu: "ہر ریسرچ کارڈ اپنی ڈیٹا تاریخ دکھاتا ہے۔ پرانا ڈیٹا لیبل کیا جاتا ہے۔" },
+  "beta.welcome.risk_title": { en: "Risk facts (always true here)", roman_urdu: "Risk haqaiq (hamesha)", urdu: "رسک حقائق (ہمیشہ)" },
+  "beta.welcome.risk_body": { en: "Research only — nothing here is an order. No strategy is performance-validated; LLM conviction is uncalibrated; past results never guarantee future returns; you are responsible for your decisions.", roman_urdu: "Sirf research — yahan koi order nahi. Koi strategy performance-validated nahi; LLM conviction uncalibrated; guzrishtey results mustaqbil ki guarantee nahi; faisla aapka.", urdu: "صرف ریسرچ — یہاں کوئی آرڈر نہیں۔ کوئی حکمتِ عملی کارکردگی کی تصدیق شدہ نہیں؛ ایل ایل ایم لیکننگ غیر معیاری؛ ماضی کے نتائج مستقبل کی ضمانت نہیں؛ فیصلہ آپ کا۔" },
+
+  // Task 117 Part I3 — LLM panel additions
+  "beta.llm.cutoff": { en: "evidence cutoff", roman_urdu: "saboot cutoff", urdu: "ثبوت کی حد" },
+  "beta.llm.unavailable_note": { en: "For some watchlist symbols no stored GLM-4.6 decision exists — those panels say so instead of inventing one.", roman_urdu: "Kuch symbols ke liye koi stored GLM-4.6 faisla nahi — panel saaf likhta hai.", urdu: "کچھ علامتوں کے لیے کوئی محفوظ GLM-4.6 فیصلہ نہیں — پینل صاف بتاتا ہے۔" },
+
+  // Task 117 Part I4 — feedback
+  "beta.feedback.title": { en: "Beta feedback (goes straight to the operator)", roman_urdu: "Beta feedback (seedha operator tak)", urdu: "بیٹا فیڈبیک (براہ راست آپریٹر تک)" },
+  "beta.feedback.intro": { en: "Tell us what is confusing, wrong, stale or broken. No personal details required — please do not include CNIC, passwords or account numbers.", roman_urdu: "Bataein kya mushkil, ghalat, purana ya toota hua hai. Zaati tafseel zaroori nahi — CNIC, password ya account number na likhein.", urdu: "بتائیں کیا مشکل، غلط، پرانا یا ٹوٹا ہوا ہے۔ ذاتی تفصیل ضروری نہیں — شناختی کارڈ، پاس ورڈ یا اکاؤنٹ نمبر نہ لکھیں۔" },
+  "beta.feedback.category": { en: "Category", roman_urdu: "Category", urdu: "قسم" },
+  "beta.feedback.cat.confusing_info": { en: "Confusing information", roman_urdu: "Mushkil maloomat", urdu: "پیچیدہ معلومات" },
+  "beta.feedback.cat.incorrect_company_data": { en: "Incorrect company data", roman_urdu: "Ghalat company data", urdu: "غلط کمپنی ڈیٹا" },
+  "beta.feedback.cat.stale_prices": { en: "Stale prices / data", roman_urdu: "Purane prices / data", urdu: "پرانے ریٹس / ڈیٹا" },
+  "beta.feedback.cat.broken_interface": { en: "Broken interface", roman_urdu: "Toota hua interface", urdu: "خراب انٹرفیس" },
+  "beta.feedback.cat.missing_feature": { en: "Missing feature", roman_urdu: "Koi feature nahi", urdu: "کوئی فیچر نہیں" },
+  "beta.feedback.cat.general": { en: "General feedback", roman_urdu: "Aam raye", urdu: "عمومی رائے" },
+  "beta.feedback.message": { en: "Message", roman_urdu: "Paigham", urdu: "پیغام" },
+  "beta.feedback.placeholder": { en: "e.g. The MEBL card shows data from 3 days ago even though the frontier is newer.", roman_urdu: "Misaal: MEBL card purani data dikha raha hai.", urdu: "مثال: MEBL کارڈ پرانا ڈیٹا دکھا رہا ہے۔" },
+  "beta.feedback.send": { en: "Send feedback", roman_urdu: "Bhejein", urdu: "بھیجیں" },
+  "beta.feedback.error": { en: "Feedback could not be saved. Please try again shortly.", roman_urdu: "Feedback save nahi hua. Thori dair baad koshish karein.", urdu: "فیڈبیک محفوظ نہیں ہوا۔ براہ کرم تھوڑی دیر بعد کوشش کریں۔" },
+
+  // Task 117 Part D — privacy panel
+  "beta.privacy.title": { en: "Your data & privacy", roman_urdu: "Aapka data aur privacy", urdu: "آپ کا ڈیٹا اور پرائیویسی" },
+  "beta.privacy.disclosure": { en: "Saved on this device: your beta profile is an ANONYMOUS profile tied to a cookie in this browser only. It is not a verified personal account, it is not synced across devices, and it is never public.", roman_urdu: "Is device par mehfooz: aapki beta profile sirf is browser ke cookie se judi anonymous profile hai. Ye verified account nahi, devices par sync nahi hoti, aur public nahi hai.", urdu: "اس ڈیوائس پر محفوظ: آپ کی بیٹا پروفائل صرف اس براؤزر کے کوکی سے جڑی گمنام پروفائل ہے۔ یہ تصدیق شدہ اکاؤنٹ نہیں، ڈیوائسز پر سنک نہیں ہوتی، اور عوامی نہیں ہے۔" },
+  "beta.privacy.consent_version": { en: "Consent version you accepted", roman_urdu: "Aapka qubool kiya consent version", urdu: "آپ کا قبول کردہ کنسینٹ ورژن" },
+  "beta.privacy.consent_accepted": { en: "Consent accepted on", roman_urdu: "Consent qubool kiya", urdu: "کنسینٹ قبول کیا" },
+  "beta.privacy.collect_note": { en: "Collected: your onboarding answers only. Never collected: CNIC, broker credentials, passwords, bank details, account numbers.", roman_urdu: "Liya jata hai: sirf aapke onboarding jawabat. Kabhi nahi: CNIC, broker credentials, password, bank tafseel.", urdu: "لیا جاتا ہے: صرف آپ کے آن بورڈنگ جوابات۔ کبھی نہیں: شناختی کارڈ، بروکر اسناد، پاس ورڈ، بینک تفصیلات۔" },
+  "beta.privacy.edit": { en: "Edit answers", roman_urdu: "Jawabat badlein", urdu: "جوابات بدلیں" },
+  "beta.privacy.reset": { en: "Reset onboarding", roman_urdu: "Onboarding reset karein", urdu: "آن بورڈنگ ری سیٹ کریں" },
+  "beta.privacy.delete": { en: "Delete beta profile", roman_urdu: "Beta profile delete karein", urdu: "بیٹا پروفائل حذف کریں" },
+  "beta.privacy.reset_confirm": { en: "Reset onboarding? Your current identity is invalidated and you will get a fresh one (your invitation access is kept).", roman_urdu: "Onboarding reset? Mojooda identity khatam hogi aur nayi milegi (invitation access barqarar).", urdu: "آن بورڈنگ ری سیٹ؟ موجودہ شناخت ختم ہوگی اور نئی ملے گی (دعوتی رسائی برقرار)۔" },
+  "beta.privacy.delete_confirm": { en: "Delete your beta profile? The server-side record is removed and this browser's cookie is cleared. This cannot be undone.", roman_urdu: "Beta profile delete? Server record hat jayega aur is browser ki cookie saaf ho jayegi. Wapas nahi aayega.", urdu: "بیٹا پروفائل حذف کریں؟ سرور ریکارڈ ہٹ جائے گا اور اس براؤزر کی کوکی صاف ہو جائے گی۔ واپس نہیں آئے گا۔" },
 
   // Nav
   "nav.dashboard": { en: "Dashboard", roman_urdu: "Dashboard", urdu: "ڈیش بورڈ" },

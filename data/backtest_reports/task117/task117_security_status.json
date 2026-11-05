@@ -1,0 +1,54 @@
+{
+  "report": "task117_security_status",
+  "generated_at": "2026-11-05T21:05:00Z",
+  "task": "Task 117 Part B — GitHub PAT security remediation",
+  "policy": "No credential value, fingerprint prefix beyond class, or revocation endpoint is recorded in this file. Only credential STATUS.",
+  "compromised_credential": {
+    "identification": "The token exposed in the Task 116 session transcript via the file listing of upload/github_token.txt",
+    "fingerprint_class": "ghp_ (classic PAT)",
+    "fingerprint_sha256_16": "6856b5d825ce9bbe",
+    "identity_evidence": "Byte-identical (by sha256) to the token committed at 273eab31 as .zcredentials/github_token — the historically stored credential documented in .zcredentials/README.md",
+    "revocation_status": "REVOKED_BY_PLATFORM (presumed) — GitHub secret scanning auto-revokes classic PATs committed to public repos within minutes; the repository's own credentials README records both historical tokens as dead. Operator should visually confirm 'revoked/invalid' at github.com/settings/tokens.",
+    "operator_action": "CONFIRM_REVOCATION (visual check in GitHub UI; no further action required if confirmed)"
+  },
+  "armed_credential": {
+    "identification": "Credential currently in .git/credentials (untracked, mode 600, inside .git/)",
+    "fingerprint_class": "ghp_ (classic PAT)",
+    "fingerprint_sha256_16": "31b4a4fdb41f2620",
+    "identity_evidence": "DIFFERENT from the transcript-exposed token (fingerprint mismatch). Used successfully for the Task 116 push (3305da2c..e5e4975f). Never printed, never committed.",
+    "validity_at_check": "VALID (read-only GET /api/github.com/user returned login amz162)",
+    "scopes_observed": [
+      "admin:enterprise", "admin:gpg_key", "admin:org", "admin:org_hook",
+      "admin:public_key", "admin:repo_hook", "admin:ssh_signing_key",
+      "audit_log", "codespace", "copilot", "delete:packages", "gist",
+      "notifications", "project", "repo", "user", "workflow",
+      "write:discussion", "write:network_configurations", "write:packages"
+    ],
+    "least_privilege_assessment": "FAIL — scopes are massively over-provisioned for the actual operations (push/fetch to one public repository and optional Actions triggering). Required: fine-grained PAT with Contents: Read/Write on amz162/latent_v_2 only, or a classic token scoped to 'repo' at most.",
+    "account_observations": [
+      "Two-factor authentication is DISABLED on the owning account (observed via authenticated GET /user). Enabling 2FA is strongly recommended.",
+      "Account: amz162 (owner)"
+    ],
+    "operator_action": "OPERATOR_ACTION_REQUIRED — rotate to a least-privilege fine-grained token (Contents Read/Write, single repository), enable 2FA, then write the fresh token to .zcredentials/github_token.local (gitignored) and re-arm with scripts/gh_auth.sh. The agent did NOT attempt to create or replace the credential."
+  },
+  "containment_checks": {
+    "source_tree_scan": "CLEAN — no full-length PAT pattern in any tracked file (pattern scan ghp_[36+]/github_pat_[40+]; zero hits outside upload/).",
+    "upload_directory": "upload/github_token.txt is UNTRACKED (never committed); other upload/ files tracked are PAT-pattern-free.",
+    "git_remote_url": "No token embedded in remote URL (https://github.com/amz162/latent_v_2.git).",
+    "git_history_full_scan": "All 164 commits scanned for full-length token patterns. Exactly ONE commit ever contained a real token value: 273eab31 (.zcredentials/github_token) — the same token exposed in the transcript; presumed auto-revoked (see above). All other pattern matches are documentation strings ('ghp_' mentioned in reports), not values.",
+    "runtime_files": ".git/credentials (600) is the only file containing a live token; .zcredentials/github_token.local durable backup is currently ABSENT.",
+    "github_workflows": ".github/workflows/* reference only standard `secrets.GITHUB_TOKEN` context — no third-party secrets committed.",
+    "web_exposure": "upload/ is not served by the Next.js app (only public/ is served); no route exposes credential files."
+  },
+  "history_rewriting": "NOT PERFORMED — not authorized (Task 117 Part B rule 10) and not needed while the historical token remains revoked; if the operator revokes and confirms, no scrub is required for secrecy (only optional cosmetics).",
+  "replacement_credential": {
+    "status": "OPERATOR_ACTION_REQUIRED",
+    "note": "No replacement token was supplied through the secure credential store (.zcredentials/github_token.local absent). Per task rules the agent did not generate, paste, or use any replacement. Pushes for Task 117 are NOT authorized anyway (Part N).",
+    "approved_installation_path": "Operator writes fresh token to /home/z/my-project/.zcredentials/github_token.local (gitignored), then runs: bash scripts/gh_auth.sh"
+  },
+  "application_secret_surface": {
+    "env_file_keys": ["DATABASE_URL (host-managed DB path)"],
+    "secrets_in_client_bundle": "none known — beta invitation codes are stored server-side as sha256 hashes; admin controls are CLI-only (no admin HTTP endpoint exists)",
+    "logging_policy_fix": "Prisma query logging (which embeds parameter values) disabled by default in src/lib/db.ts as of Task 117; enable explicitly with PRISMA_QUERY_LOG=true when debugging."
+  }
+}

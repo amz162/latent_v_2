@@ -1,64 +1,94 @@
 // Latent.pk — Tax calculation helpers
 //
-// Task 116 (C6): the applicable schedule is now VERSIONED and its claims are
-// separated by verification status. Verified against sources current at
-// verification time; rates that could not be independently confirmed are
-// flagged UNVERIFIED rather than silently applied as fact. All outputs are
-// ILLUSTRATIVE ESTIMATES, not professional tax advice.
+// Task 116 (C6): the applicable schedule is VERSIONED with per-rate
+// verification status. Task 117 (Part H) re-verified against sources current
+// at execution time and RESOLVED the previously unverified non-filer rules.
+// All outputs are ILLUSTRATIVE ESTIMATES, not professional tax advice.
 //
-// Schedule "pk-cgt-v2026-11" (verified 2026-11-05):
-//   - CGT on PSX listed securities acquired on/after 2024-07-01, seller on the
-//     Active Taxpayer List (filer): 15% — VERIFIED
-//     (PwC Worldwide Tax Summaries, Pakistan — corporate income determination,
-//     updated Aug 2026: filer on ATL at acquisition AND disposal → 15%;
-//     https://taxsummaries.pwc.com/pakistan/corporate/income-determination)
-//   - Non-filer CGT rate: UNVERIFIED — public sources disagree (30% commonly
-//     cited; holding-period-graded schedules also reported). Displayed only
-//     with an explicit unverified warning.
-//   - Dividend WHT: filer 15% — VERIFIED (same PwC source: dividends generally
-//     final tax at 15%; exceptions exist, e.g. 25% where the paying company
-//     had no tax payable). Non-filer 30% — UNVERIFIED (commonly cited).
-//   - Loss offset: capital losses may offset capital gains within the same
-//     tax year (July 1 – June 30) — carry-forward beyond that NOT modelled.
+// Schedule "pk-tax-v2026-11-r2" (verified 2026-11-05 against PwC Worldwide
+// Tax Summaries, Pakistan — individual income determination, last reviewed
+// 24 Aug 2026, i.e. current for tax year 2027 / post-Finance-Act-2026 law):
+//
+//   CGT on PSX-listed securities acquired on/after 2024-07-01
+//   (tax year 2025 onward):
+//     - Seller on the Active Taxpayer List (ATL) at BOTH acquisition and
+//       disposal: flat 15% — VERIFIED.
+//     - Seller NOT on ATL (non-filer): normal personal slab rates apply,
+//       with a statutory floor of 15% — VERIFIED as a rule. The actual rate
+//       depends on the individual's total taxable income (slabs), which this
+//       calculator does not collect, so the calculator applies the 15% FLOOR
+//       and labels the non-filer result PROVISIONAL (true liability may be
+//       higher).
+//   CGT for older acquisition vintages (VERIFIED reference table; the
+//   calculator models the ≥ 2024-07-01 regime only):
+//     - acquired 2022-07-01 .. 2024-06-30, graded by holding period:
+//       <1y 15%, 1-2y 12.5%, 2-3y 10%, 3-4y 7.5%, 4-5y 5%, 5-6y 2.5%, >6y 0%
+//     - acquired on/before 2022-06-30: 12.5% flat
+//     - acquired before 2013-07-01: 0%
+//   Dividend WHT (final tax):
+//     - Filer: 15% — VERIFIED.
+//     - Resident but INACTIVE taxpayer (non-filer): rates increased by 100%
+//       → 30% — VERIFIED (PwC individual summary: "The WHT rates shall
+//       increase by 100% in case recipient of dividend is a resident but
+//       inactive taxpayer").
+//   Losses on listed securities: carry-forward against future securities
+//   gains for up to 3 tax years — VERIFIED (from tax year 2019 onward).
 //
 // CGT is only on REALIZED gains (when you actually sell). Unrealized/paper gains are not taxable.
 
 export type FilerStatus = "filer" | "non-filer";
 
 export const TAX_SCHEDULE = {
-  scheduleId: "pk-cgt-v2026-11",
-  effectiveFrom: "2024-07-01", // acquisition-date regime for listed securities
+  scheduleId: "pk-tax-v2026-11-r2",
+  effectiveFrom: "2024-07-01", // acquisition-date regime modelled by the calculator
   verifiedAt: "2026-11-05",
   verification: {
     filerCgtRate: "VERIFIED",
-    nonFilerCgtRate: "UNVERIFIED",
+    // the RULE (slab rates, 15% floor) is verified; the calculator's flat
+    // floor-only application is provisional because slabs need total income
+    nonFilerCgtRate: "VERIFIED_RULE_PROVISIONAL_APPLICATION",
     filerDividendRate: "VERIFIED",
-    nonFilerDividendRate: "UNVERIFIED",
+    nonFilerDividendRate: "VERIFIED",
   } as Record<string, string>,
+  // VERIFIED graded table for pre-2024-07-01 acquisitions (reference only)
+  gradedCgtReference: [
+    { acquired: "2022-07-01 .. 2024-06-30", holdingPeriod: "< 1 year", rate: 0.15 },
+    { acquired: "2022-07-01 .. 2024-06-30", holdingPeriod: "1-2 years", rate: 0.125 },
+    { acquired: "2022-07-01 .. 2024-06-30", holdingPeriod: "2-3 years", rate: 0.10 },
+    { acquired: "2022-07-01 .. 2024-06-30", holdingPeriod: "3-4 years", rate: 0.075 },
+    { acquired: "2022-07-01 .. 2024-06-30", holdingPeriod: "4-5 years", rate: 0.05 },
+    { acquired: "2022-07-01 .. 2024-06-30", holdingPeriod: "5-6 years", rate: 0.025 },
+    { acquired: "2022-07-01 .. 2024-06-30", holdingPeriod: "> 6 years", rate: 0.0 },
+    { acquired: "on/before 2022-06-30", holdingPeriod: "any", rate: 0.125 },
+    { acquired: "before 2013-07-01", holdingPeriod: "any", rate: 0.0 },
+  ],
   sources: [
-    "PwC Worldwide Tax Summaries — Pakistan, corporate income determination (updated Aug 2026): https://taxsummaries.pwc.com/pakistan/corporate/income-determination",
+    "PwC Worldwide Tax Summaries — Pakistan, individual income determination (last reviewed 24 Aug 2026): https://taxsummaries.pwc.com/pakistan/individual/income-determination",
+    "PwC Worldwide Tax Summaries — Pakistan, corporate income determination (last reviewed 24 Aug 2026): https://taxsummaries.pwc.com/pakistan/corporate/income-determination",
     "FBR Withholding Tax Rates index (Tax Year cards): https://www.fbr.gov.pk/withholding-tax-rates/51147/81155",
   ],
   disclaimer:
-    "Illustrative estimate only — not professional tax advice. Verify current rates with a licensed tax practitioner or FBR before relying on any figure.",
+    "Illustrative estimate only — not professional tax advice. Non-filer CGT uses the verified 15% statutory floor; actual liability follows your personal income-tax slab and may be higher. Verify current rates with a licensed tax practitioner or FBR before relying on any figure.",
 } as const;
 
-/** True when the given rate's verification status is UNVERIFIED. */
+/** True when the given rate's application should carry a provisional/unverified warning. */
 export function isRateUnverified(kind: "cgt" | "dividend", status: FilerStatus): boolean {
   const v: Record<string, string> = TAX_SCHEDULE.verification;
   const key = `${kind === "cgt" ? "nonFilerCgtRate" : "nonFilerDividendRate"}`;
-  if (status === "non-filer") return v[key] === "UNVERIFIED";
-  return v[kind === "cgt" ? "filerCgtRate" : "filerDividendRate"] === "UNVERIFIED";
+  const value = status === "non-filer" ? v[key] : v[kind === "cgt" ? "filerCgtRate" : "filerDividendRate"];
+  return value !== "VERIFIED";
 }
 
 export const CGT_RATE: Record<FilerStatus, number> = {
   filer: 0.15,
-  "non-filer": 0.30,
+  // statutory FLOOR for non-ATL sellers (slab rates apply above it — see
+  // TAX_SCHEDULE.verification.nonFilerCgtRate; result is labelled provisional)
+  "non-filer": 0.15,
 };
 
 export const DIVIDEND_TAX_RATE: Record<FilerStatus, number> = {
   filer: 0.15,
-  "non-filer": 0.30,
+  "non-filer": 0.30, // resident inactive taxpayer: 15% × (100% uplift) — VERIFIED
 };
 
 export interface CgtInput {
