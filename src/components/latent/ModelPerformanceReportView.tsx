@@ -389,7 +389,7 @@ export function ModelPerformanceReportView() {
       {report.task114_maturity?.available && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Forward-horizon maturity (Task 114 — 5/10/21-session audit)</CardTitle>
+            <CardTitle className="text-base">Forward-horizon maturity (Tasks 114/115 — 5/10/21-session audit)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {(() => {
@@ -408,6 +408,26 @@ export function ModelPerformanceReportView() {
                       <div className="truncate text-sm font-semibold" title={v}>{v}</div>
                     </div>
                   ))}
+                </div>
+              );
+            })()}
+            {/* Task 115: first 5-session maturity checkpoint banner */}
+            {(() => {
+              const panel = report.task114_maturity.panel ?? [];
+              const hit = panel.find((p) => (p.matured_5_session ?? 0) > 0);
+              if (!hit) return null;
+              return (
+                <div className="rounded-md border border-emerald-500/50 bg-emerald-500/5 p-3 text-xs">
+                  <div className="font-semibold text-emerald-800 dark:text-emerald-300">
+                    First 5-session maturity checkpoint: {hit.cohort_id} — {hit.matured_5_session} of{" "}
+                    {hit.total_observations} decisions matured at the {report.task114_maturity.data_frontier} close
+                  </div>
+                  <div className="mt-1 text-muted-foreground">
+                    Fixed-horizon marks at the 5th session close from entry (entry = session 1), PSX V2 costs
+                    applied. These are NOT strategy terminal exits — early SL/TP3 exits are counted separately in
+                    the Term-exits column. Sample size {hit.matured_5_session}: descriptive only, no inference of
+                    edge. See the drill-down below for per-decision outcomes.
+                  </div>
                 </div>
               );
             })()}
@@ -443,10 +463,14 @@ export function ModelPerformanceReportView() {
               Fixed-horizon matured = N actual per-symbol sessions elapsed from entry, marked at the Nth session close
               (entry session = session 1). <b>Early SL/TP3 terminal exits are a separate measurement from the frozen
               Task 106/107 engine and are never labelled horizon-matured.</b> Pending never enters completed statistics;
-              5/10/21-session outcomes are computed independently from source bars. Current values are honestly 0
-              everywhere — the first 5-session maturities can only occur at the earliest at the close of the next session
-              (gen1: 4/5 sessions elapsed).
+              5/10/21-session outcomes are computed independently from source bars. Counts advance only as actual
+              per-symbol sessions accrue — never by calendar days.
             </p>
+            {(report.task114_maturity.missing_market_data ?? []).length > 0 && (
+              <p className="text-[10px] text-muted-foreground">
+                Missing market data (recorded, never papered over): {report.task114_maturity.missing_market_data?.join(" · ")}
+              </p>
+            )}
             {report.task114_maturity.llm && (
               <div className="rounded-md border border-sky-500/40 bg-sky-500/5 p-3 text-xs">
                 <div className="mb-1 font-semibold">LLM-specific maturity (isolated cohort `task111-llm`)</div>

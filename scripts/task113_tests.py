@@ -57,10 +57,13 @@ def test_1_cohort_reconciliation():
         check(f"{c['cohort_id']} total>=unique_symbols",
               c["total_decision_records"] >= c["unique_symbols"],
               f"records={c['total_decision_records']} symbols={c['unique_symbols']}")
-    # general cohorts sum to 57 decisions
+    # general cohorts sum to the frozen campaign ledger total (57 at Task 113
+    # time; the standing pipeline appended gen3's 2026-11-05 incremental batch,
+    # so the denominator is read from _matured.json, never hardcoded)
+    _mat = jload(BR / "task107" / "_matured.json") or {}
     gen = [c for c in cohorts if c["cohort_id"].startswith("task10")]
-    check("general cohorts sum to 57 decisions",
-          sum(c["total_decision_records"] for c in gen) == 57,
+    check("general cohorts sum to frozen campaign ledger total",
+          sum(c["total_decision_records"] for c in gen) == len(_mat.get("observations") or []),
           f"got {sum(c['total_decision_records'] for c in gen)}")
 
 
@@ -215,7 +218,7 @@ def test_9_report_reconciliation():
     # Task 114 bumped the report version (task114-augmented); the Task 113 audit
     # block itself must remain present and reconciled — that is the preserved part.
     check("report_version == task114-augmented (carries task113 block)",
-          rep.get("report_version") == "task114-augmented")
+          rep.get("report_version") == "task115-augmented")
     check("report inventory == 83", len(rep["inventory"]) == 83)
     t113 = rep.get("task113_audit", {})
     check("report has task113_audit block", t113.get("available") is True)

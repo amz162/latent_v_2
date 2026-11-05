@@ -1,16 +1,135 @@
 {
  "report": "task107_shadow_generation_report",
- "generated_at": "2026-11-04T22:24:49+0000",
+ "generated_at": "2026-11-05T18:50:37+0000",
  "generation": "task107-gen3",
- "frontier": "2026-11-03",
+ "frontier": "2026-11-05",
  "bars_at_frontier": 23,
- "observations_already_at_frontier": 23,
+ "observations_already_at_frontier": 0,
  "model": "task104-frozen-protocol-repro RandomForest P(net>0) + isotonic(validation) \u2014 NO retraining, NO threshold changes",
  "policy": "task105-v1 (capital protection; NO-TRADE reasons preserved)",
- "new_observations": 0,
- "skipped": [],
- "coverage": [],
+ "new_observations": 23,
+ "skipped": [
+  "ENGRO: levels=frontier_session_missing features=0",
+  "BYCO: levels=frontier_session_missing features=0"
+ ],
+ "coverage": [
+  {
+   "symbol": "HUBC",
+   "decision": "no_trade",
+   "directional_score": 0.585637
+  },
+  {
+   "symbol": "LUCK",
+   "decision": "no_trade",
+   "directional_score": 0.580301
+  },
+  {
+   "symbol": "SYS",
+   "decision": "no_trade",
+   "directional_score": 0.57714
+  },
+  {
+   "symbol": "MEBL",
+   "decision": "no_trade",
+   "directional_score": 0.581604
+  },
+  {
+   "symbol": "PSO",
+   "decision": "no_trade",
+   "directional_score": 0.578236
+  },
+  {
+   "symbol": "OGDC",
+   "decision": "no_trade",
+   "directional_score": 0.566491
+  },
+  {
+   "symbol": "PPL",
+   "decision": "no_trade",
+   "directional_score": 0.553016
+  },
+  {
+   "symbol": "WTL",
+   "decision": "no_trade",
+   "directional_score": 0.415376
+  },
+  {
+   "symbol": "KEL",
+   "decision": "no_trade",
+   "directional_score": 0.548524
+  },
+  {
+   "symbol": "TRG",
+   "decision": "no_trade",
+   "directional_score": 0.57271
+  },
+  {
+   "symbol": "UNITY",
+   "decision": "no_trade",
+   "directional_score": 0.575
+  },
+  {
+   "symbol": "BOP",
+   "decision": "no_trade",
+   "directional_score": 0.542083
+  },
+  {
+   "symbol": "CNERGY",
+   "decision": "no_trade",
+   "directional_score": 0.576361
+  },
+  {
+   "symbol": "HASCOL",
+   "decision": "no_trade",
+   "directional_score": 0.574262
+  },
+  {
+   "symbol": "MLCF",
+   "decision": "no_trade",
+   "directional_score": 0.541958
+  },
+  {
+   "symbol": "PAEL",
+   "decision": "no_trade",
+   "directional_score": 0.575854
+  },
+  {
+   "symbol": "PIBTL",
+   "decision": "no_trade",
+   "directional_score": 0.577636
+  },
+  {
+   "symbol": "LOTCHEM",
+   "decision": "no_trade",
+   "directional_score": 0.570936
+  },
+  {
+   "symbol": "PRL",
+   "decision": "no_trade",
+   "directional_score": 0.511612
+  },
+  {
+   "symbol": "TELE",
+   "decision": "no_trade",
+   "directional_score": 0.561502
+  },
+  {
+   "symbol": "ANL",
+   "decision": "no_trade",
+   "directional_score": 0.583945
+  },
+  {
+   "symbol": "HUMNL",
+   "decision": "no_trade",
+   "directional_score": 0.565705
+  },
+  {
+   "symbol": "FCCL",
+   "decision": "no_trade",
+   "directional_score": 0.553774
+  }
+ ],
  "errors": [],
- "status": "no_op_frontier_already_processed",
- "runtime_seconds": 0.0
+ "status": "generated",
+ "runtime_seconds": 8.5
 }

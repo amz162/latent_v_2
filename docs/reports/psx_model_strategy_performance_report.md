@@ -1,5 +1,5 @@
 # PSX Model & Strategy Performance Report (Task 112)
-Generated: 2026-11-04T22:48:07Z · git head a302c8fc · status: completed
+Generated: 2026-11-05T19:12:26Z · git head 16c749aa · status: completed
 
 Scope: every model and strategy actually present in repository evidence (Tasks 79-111),
 including the GLM-4.6 multi-source LLM analyst. Missing information is marked
@@ -102,14 +102,14 @@ holdout and prospective-forward results are kept strictly separate.
 
 | Strategy | Ending balance | Net ROI | Max DD | Ann. vol | Avg exposure | Turnover | Trades |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| golden_cross_baseline | 62208.46 | -37.792% | -87775.26% | Not available in source evidence | Not available in source evidence% | 72.14 | 365 |
-| overlay_B_vol_target_10pct | 98060.14 | -1.94% | -23.621% | 6.968 | 19.02% | 21.883 | 430 |
-| overlay_B_vol_target_15pct | 93817.25 | -6.183% | -33.656% | 10.371 | 28.41% | 32.89 | 430 |
-| overlay_B_vol_target_20pct | 88763.21 | -11.237% | -42.54% | 13.729 | 37.68% | 43.866 | 430 |
-| overlay_A_fixed_vol_exposure | 81607.67 | -18.392% | -62.414% | 27.278 | 71.31% | 81.006 | 430 |
-| overlay_C_expansion_protection | 81607.67 | -18.392% | -62.414% | 27.278 | 71.31% | 81.006 | 430 |
+| golden_cross_baseline | 63298.97 | -36.701% | -87775.26% | Not available in source evidence | Not available in source evidence% | 72.3 | 365 |
+| overlay_B_vol_target_10pct | 98594.31 | -1.406% | -23.621% | 6.969 | 19.02% | 21.94 | 430 |
+| overlay_B_vol_target_15pct | 94582.7 | -5.417% | -33.656% | 10.372 | 28.41% | 32.974 | 430 |
+| overlay_B_vol_target_20pct | 89731.55 | -10.268% | -42.54% | 13.73 | 37.68% | 43.976 | 430 |
+| overlay_A_fixed_vol_exposure | 83041.19 | -16.959% | -62.414% | 27.278 | 71.32% | 81.183 | 430 |
+| overlay_C_expansion_protection | 83041.19 | -16.959% | -62.414% | 27.278 | 71.32% | 81.183 | 430 |
 | cash | 100000.0 | 0.0% | 0.0% | Not available in source evidence | Not available in source evidence% | Not available in source evidence | 0 |
-| buy_hold_equal_weight | 120794.06 | 20.794% | None% | Not available in source evidence | Not available in source evidence% | Not available in source evidence | None |
+| buy_hold_equal_weight | 123504.28 | 23.504% | None% | Not available in source evidence | Not available in source evidence% | Not available in source evidence | None |
 
 ## LLM evidence contribution (availability vs actual citation)
 
@@ -143,9 +143,9 @@ Each cohort reconciles internally. **Total positions are NOT total decisions and
 
 | Cohort | Obs | Symbols | Mat 5 | Pend 5 | Mat 10 | Pend 10 | Mat 21 | Pend 21 | Term-exits | Pend-MTM | Unfilled |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| task105-gen1 | 12 | 12 | 0 | 12 | 0 | 12 | 0 | 12 | 28 | 8 | 0 |
-| task106-gen2 | 22 | 22 | 0 | 22 | 0 | 22 | 0 | 22 | 27 | 39 | 0 |
-| task107-gen3 | 23 | 23 | 0 | 23 | 0 | 23 | 0 | 23 | 25 | 44 | 0 |
+| task105-gen1 | 12 | 12 | 0 | 12 | 0 | 12 | 0 | 12 | 30 | 6 | 0 |
+| task106-gen2 | 22 | 22 | 0 | 22 | 0 | 22 | 0 | 22 | 42 | 24 | 0 |
+| task107-gen3 | 46 | 23 | 0 | 46 | 0 | 46 | 0 | 46 | 42 | 27 | 23 |
 | task111-llm-multisource-gen1 | 23 | 23 | 0 | 23 | 0 | 23 | 0 | 23 | 0 | 0 | 23 |
 | task76-77-prospective-db-layer | 375 | 25 | 0 | 375 | 0 | 375 | 0 | 375 | 0 | 0 | 114 |
 
@@ -162,13 +162,13 @@ Each cohort reconciles internally. **Total positions are NOT total decisions and
 
 ## Forward-horizon maturity panel (Task 114 — first 5/10/21-session audit)
 
-Market-data frontier: **2026-11-04** · new sessions since 2026-11-03: ["2026-11-04"] · engine: task114-maturity-v1 · last maturity processing: 2026-11-04T22:45:21Z
+Market-data frontier: **2026-11-05** · new sessions since 2026-11-03: ["2026-11-04", "2026-11-05"] · engine: task114-maturity-v1 · last maturity processing: 2026-11-05T19:12:09Z
 
 | Cohort | Obs | Symbols | Mat 5 | Pend 5 | Mat 10 | Pend 10 | Mat 21 | Pend 21 | Term-exits (frozen engine) | Pend-MTM | Unfilled | Excluded |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| task105-gen1 | 12 | 12 | 0 | 12 | 0 | 12 | 0 | 12 | 28 | 8 | 0 | 0 |
-| task106-gen2 | 22 | 22 | 0 | 22 | 0 | 22 | 0 | 22 | 27 | 39 | 0 | 0 |
-| task107-gen3 | 23 | 23 | 0 | 23 | 0 | 23 | 0 | 23 | 25 | 44 | 0 | 0 |
+| task105-gen1 | 12 | 12 | 12 | 0 | 0 | 12 | 0 | 12 | 30 | 6 | 0 | 0 |
+| task106-gen2 | 22 | 22 | 0 | 22 | 0 | 22 | 0 | 22 | 42 | 24 | 0 | 0 |
+| task107-gen3 | 46 | 23 | 0 | 23 | 0 | 23 | 0 | 23 | 42 | 27 | 23 | 0 |
 | task111-llm-multisource-gen1 | 23 | 23 | 0 | 23 | 0 | 23 | 0 | 23 | None | None | 0 | 48 |
 
 > Fixed-horizon matured / pending are counted per decision at the Nth session close from entry (entry session = session 1); early SL/TP3 terminal exits are a SEPARATE measurement from the frozen Task 106/107 engine and are NEVER labelled horizon-matured; pending never enters completed statistics; 5/10/21 are computed independently from source bars. All current values are 0 matured — reported honestly.
@@ -177,11 +177,11 @@ Market-data frontier: **2026-11-04** · new sessions since 2026-11-03: ["2026-11
 
 - Genuine universe decisions: 23 across 23 symbols (BUY 2 · HOLD 2 · NO_TRADE 19).
 - Excluded records: 48 (23 MOCK_PIPELINE_CHECK + 24 second-pass generation_cache duplicates + 1 stale out-of-universe ENGRO) — never evaluated.
-- LLM-policy terminal-exit simulation (SL/TP3, separate from horizons): 0 matured.
+- LLM-policy terminal-exit simulation (SL/TP3, separate from horizons): 1 matured.
 - Calibration: Not available — insufficient matured LLM outcomes (minimum 100 genuine matured LLM outcomes; current 0).
 - original GLM-4.6 decisions, prompt hash (evidenceHash), evidence as-of, generation timestamp, and source references are preserved untouched in task112/llm_signal_history; this audit reads them and never regenerates or rewrites them
 
-> Idempotency: outcome key `decision_id|hN`, 0 duplicate recomputations (identical, benign), 0 source-bar revisions detected (each auditable, never a silent overwrite).
+> Idempotency: outcome key `decision_id|hN`, 12 duplicate recomputations (identical, benign), 0 source-bar revisions detected (each auditable, never a silent overwrite).
 
 > **Warning**: Sample size before performance metrics: 0 matured horizon outcomes in every cohort — no win rate, expectancy or profitability may be reported yet (Part H).
 > **Warning**: First profitable matured trades (when they eventually arrive) must NOT be read as evidence of edge.
@@ -2151,7 +2151,7 @@ Observations: 57 · matured: 43 (W13/L30) · pending: 59 · symbols: 23
 - **target_definition**: Not available in source evidence
 - **prediction_horizon**: Not available in source evidence
 - **universe**: task109-consistent 23-symbol universe
-- **evaluation_period**: ~10 years to frontier 2026-11-04
+- **evaluation_period**: ~10 years to frontier 2026-11-05
 - **train_validation_test_split**: Not available in source evidence
 - **purge_embargo**: Not available in source evidence
 - **sample_counts**: Not available in source evidence

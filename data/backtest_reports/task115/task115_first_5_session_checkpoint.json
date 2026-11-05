@@ -1,0 +1,738 @@
+{
+ "report": "task115_first_5_session_checkpoint",
+ "task": "task115",
+ "generated_at": "2026-11-05T19:12:09Z",
+ "status": "completed",
+ "baseline": {
+  "task114_head": "a98f5425",
+  "housekeeping_head": "66c6c6d8",
+  "task114_frontier": "2026-11-04",
+  "restoration": "sandbox recycled again before Task 115; workspace restored from origin/main 16c749aa (poll-bot state commit on top of the pushed Task 114 history) — no Task 112-114 work lost; DB regenerated from the committed gz and re-ingested with byte-overlap validation"
+ },
+ "data_frontier": "2026-11-05",
+ "part_b_ingest": {
+  "frontier_before": "2026-11-03",
+  "frontier_after": "2026-11-05",
+  "new_dates": [
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "bars_by_date": {
+   "2026-11-04": 23,
+   "2026-11-05": 23
+  },
+  "new_bars": 46,
+  "bars_in_response": 92,
+  "in_response_duplicates": 0,
+  "duplicate_symbol_date_pairs": 0,
+  "rejected_bars": 0,
+  "revisions_quarantined": [],
+  "overlap_checked": 46,
+  "overlap_mismatches": 0,
+  "symbols_with_new_data": 23,
+  "symbols_without_new_data": [
+   "ENGRO",
+   "BYCO"
+  ],
+  "missing_symbols_reason": "ENGRO/BYCO: provider holds no bars on 2026-11-04/05 (long non-trading counters in this dataset — last bars 2025-01-03 / 2021-12-20); no fabrication, no delayed-quote substitution",
+  "provider": "approved free 'psxdata' REST API (source='psxdata')",
+  "retrieved_at": "2026-11-05T18:50:20Z",
+  "source_timestamp_note": "provider supplies delayed EOD daily bars without exchange-source timestamps; retrieval timestamps recorded, none fabricated",
+  "import_sha256": "9bfd1d275dfdfe27b0b8633c683fc58110318f65aa65cdf2fddf902e8189ac8b"
+ },
+ "part_c_gen1_checkpoint": {
+  "total_original_observations": 12,
+  "eligible_for_5_session_evaluation": 12,
+  "newly_matured_5_session": 12,
+  "still_pending_5_session": 0,
+  "missing_data_observations": 0,
+  "excluded_observations": 0,
+  "early_terminal_exits_separate": 30,
+  "frozen_engine_pending_mtm_separate": 6,
+  "maturity_rule": "5 actual per-symbol sessions from entry (entry = session 1, frozen task106_mature.ts window convention); endpoint = 5th session close; V2 costs via computeTradeCostsV2 port; entry session NOT recounted as a future session beyond the frozen convention",
+  "aggregate": {
+   "gross_return_pkr": 53082.82,
+   "net_return_pkr": 38064.93,
+   "net_positive": 11,
+   "net_negative": 1,
+   "sample_size": 12,
+   "warning": "n=12 — descriptive only; no win rate, expectancy, edge or profitability inference; no comparison against baselines is valid at this size"
+  },
+  "outcomes": [
+   {
+    "signal_id": "t105gen1_BOP_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 28.9,
+    "quantity": 3460,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 31.7,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 9688.0,
+    "v2_costs_total_pkr": 1777.6946,
+    "v2_costs_cgt_pkr": 1453.2,
+    "net_return_pkr": 7910.31,
+    "net_return_pct": 0.0791078007,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "02a4ce5b43b67a7b",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_CNERGY_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 14.2,
+    "quantity": 7042,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 12.06,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": -15069.88,
+    "v2_costs_total_pkr": 431.3223,
+    "v2_costs_cgt_pkr": 0.0,
+    "net_return_pkr": -15501.2,
+    "net_return_pct": -0.1550176039,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "72634bb52f2cc893",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_FCCL_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 52.61,
+    "quantity": 1900,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 58.71,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 11590.0,
+    "v2_costs_total_pkr": 2065.8298,
+    "v2_costs_cgt_pkr": 1738.5,
+    "net_return_pkr": 9524.17,
+    "net_return_pct": 0.0952807673,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "23d14792284b693f",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_KEL_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 5.95,
+    "quantity": 16806,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 6.14,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 3193.14,
+    "v2_costs_total_pkr": 1497.0026,
+    "v2_costs_cgt_pkr": 478.971,
+    "net_return_pkr": 1696.14,
+    "net_return_pct": 0.0169621035,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "2b89cb6c7802c2a7",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_LOTCHEM_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 24.47,
+    "quantity": 4086,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 24.82,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 1430.1,
+    "v2_costs_total_pkr": 526.2,
+    "v2_costs_cgt_pkr": 214.515,
+    "net_return_pkr": 903.9,
+    "net_return_pct": 0.0090404085,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "f6c7d9920419f6f2",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_LUCK_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 398,
+    "quantity": 251,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 434.63,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 9194.13,
+    "v2_costs_total_pkr": 1702.5526,
+    "v2_costs_cgt_pkr": 1379.1195,
+    "net_return_pkr": 7491.58,
+    "net_return_pct": 0.0749922659,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "edbfa6097f432c60",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_MEBL_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 527,
+    "quantity": 189,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 555.02,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 5295.78,
+    "v2_costs_total_pkr": 1110.854,
+    "v2_costs_cgt_pkr": 794.367,
+    "net_return_pkr": 4184.93,
+    "net_return_pct": 0.0420160642,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "4f7b75b78fbea50b",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_MLCF_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 91.03,
+    "quantity": 1098,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 102.09,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 12143.88,
+    "v2_costs_total_pkr": 2149.744,
+    "v2_costs_cgt_pkr": 1821.582,
+    "net_return_pkr": 9994.14,
+    "net_return_pct": 0.0999904151,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "b8355d22f2d61059",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_PAEL_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 32.61,
+    "quantity": 3066,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 34.02,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 4323.06,
+    "v2_costs_total_pkr": 964.6145,
+    "v2_costs_cgt_pkr": 648.459,
+    "net_return_pkr": 3358.45,
+    "net_return_pct": 0.0335904144,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "4db903e5dbf6da77",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_PIBTL_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 13.19,
+    "quantity": 7581,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 13.42,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 1743.63,
+    "v2_costs_total_pkr": 726.0069,
+    "v2_costs_cgt_pkr": 261.5445,
+    "net_return_pkr": 1017.62,
+    "net_return_pct": 0.010176904,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "dedfde6a50b7cad5",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_SYS_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 108.61,
+    "quantity": 920,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 116.88,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 7608.4,
+    "v2_costs_total_pkr": 1462.3109,
+    "v2_costs_cgt_pkr": 1141.26,
+    "net_return_pkr": 6146.09,
+    "net_return_pct": 0.0615093608,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "e24701770c951b07",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   },
+   {
+    "signal_id": "t105gen1_TRG_2026-10-29",
+    "decision_date": "2026-10-29",
+    "decision_timestamp": "2026-10-29",
+    "entry_reference_note": "gen1 cohort: entry = next-session open (frozen task106/107 engine)",
+    "entry_session": "2026-10-30",
+    "entry_fill": 53,
+    "quantity": 1886,
+    "horizon_sessions": 5,
+    "endpoint_session": "2026-11-05",
+    "endpoint_close": 54.03,
+    "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)",
+    "gross_return_pkr": 1942.58,
+    "v2_costs_total_pkr": 603.7833,
+    "v2_costs_cgt_pkr": 291.387,
+    "net_return_pkr": 1338.8,
+    "net_return_pct": 0.0133935919,
+    "outcome_status": "matured_5_session",
+    "source_bar_dates": "2026-10-30|2026-11-02|2026-11-03|2026-11-04|2026-11-05",
+    "source_fingerprint": "3d184893d19f4e31",
+    "cohort_id": "task105-gen1",
+    "policy_version": "task105-v1 (frozen)",
+    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+    "engine_version": "task114-maturity-v1"
+   }
+  ]
+ },
+ "part_d_other_cohorts": {
+  "task106-gen2": {
+   "cohort_id": "task106-gen2",
+   "total_observations": 22,
+   "unfilled_awaiting_entry_bar": 0,
+   "unique_symbols": 22,
+   "matured_5_session": 0,
+   "pending_5_session": 22,
+   "remaining_sessions_pending_5": [
+    2
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 22,
+   "remaining_sessions_pending_10": [
+    7
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 22,
+   "remaining_sessions_pending_21": [
+    18
+   ],
+   "source_ledger": "data/backtest_reports/task106/shadow_observations/task106_shadow_observations.json",
+   "policy_version": "task105-v1",
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "terminal_exits_from_frozen_engine": 42,
+   "pending_mtm_from_frozen_engine": 24
+  },
+  "task107-gen3": {
+   "cohort_id": "task107-gen3",
+   "total_observations": 46,
+   "unfilled_awaiting_entry_bar": 23,
+   "unique_symbols": 23,
+   "matured_5_session": 0,
+   "pending_5_session": 23,
+   "remaining_sessions_pending_5": [
+    3
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 23,
+   "remaining_sessions_pending_10": [
+    8
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 23,
+   "remaining_sessions_pending_21": [
+    19
+   ],
+   "source_ledger": "data/backtest_reports/task107/shadow_observations/task107_shadow_observations.json",
+   "policy_version": "task105-v1",
+   "cost_profile": "psx_user_schedule_v2 (ATL_15)",
+   "terminal_exits_from_frozen_engine": 42,
+   "pending_mtm_from_frozen_engine": 27
+  },
+  "task111-llm-multisource-gen1": {
+   "cohort_id": "task111-llm-multisource-gen1",
+   "total_observations": 23,
+   "unfilled_awaiting_entry_bar": 0,
+   "unique_symbols": 23,
+   "matured_5_session": 0,
+   "pending_5_session": 23,
+   "remaining_sessions_pending_5": [
+    3
+   ],
+   "matured_10_session": 0,
+   "pending_10_session": 23,
+   "remaining_sessions_pending_10": [
+    8
+   ],
+   "matured_21_session": 0,
+   "pending_21_session": 23,
+   "remaining_sessions_pending_21": [
+    19
+   ],
+   "genuine_universe_decisions": 23,
+   "decisions_buy": 2,
+   "decisions_hold": 2,
+   "decisions_no_trade": 19,
+   "excluded_records": [
+    {
+     "signalId": "ANL-2026-11-04T13:53:30-452ce282",
+     "symbol": "ANL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "ANL-2026-11-04T14:11:39-75b66927",
+     "symbol": "ANL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "BOP-2026-11-04T13:53:39-39459dda",
+     "symbol": "BOP",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "BOP-2026-11-04T14:11:39-027feeff",
+     "symbol": "BOP",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "CNERGY-2026-11-04T13:53:47-c6deb585",
+     "symbol": "CNERGY",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "CNERGY-2026-11-04T14:11:39-14beaff6",
+     "symbol": "CNERGY",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "ENGRO-2026-11-04T13:52:40-3e657f14",
+     "symbol": "ENGRO",
+     "reason": "stale evidence: dataCutoff=2025-01-03 != frozen 2026-11-03 (out-of-universe ENGRO record)"
+    },
+    {
+     "signalId": "FCCL-2026-11-04T13:53:56-b770749d",
+     "symbol": "FCCL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "FCCL-2026-11-04T14:11:39-58f6da68",
+     "symbol": "FCCL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HASCOL-2026-11-04T13:54:05-12f8e7ca",
+     "symbol": "HASCOL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HASCOL-2026-11-04T14:11:39-376f0caf",
+     "symbol": "HASCOL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T13:52:34-bf064ef6",
+     "symbol": "HUBC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T13:54:13-54723b82",
+     "symbol": "HUBC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUBC-2026-11-04T14:11:39-f1f2485e",
+     "symbol": "HUBC",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "HUMNL-2026-11-04T13:54:21-2945f0f0",
+     "symbol": "HUMNL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "HUMNL-2026-11-04T14:11:39-1928e2e2",
+     "symbol": "HUMNL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "KEL-2026-11-04T13:54:28-028fa577",
+     "symbol": "KEL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "KEL-2026-11-04T14:11:39-174a589b",
+     "symbol": "KEL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "LOTCHEM-2026-11-04T13:54:35-c3946416",
+     "symbol": "LOTCHEM",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "LOTCHEM-2026-11-04T14:11:39-64520933",
+     "symbol": "LOTCHEM",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "LUCK-2026-11-04T13:54:44-1fad96ca",
+     "symbol": "LUCK",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "LUCK-2026-11-04T14:11:39-df798e21",
+     "symbol": "LUCK",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "MEBL-2026-11-04T13:54:54-665ce174",
+     "symbol": "MEBL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "MEBL-2026-11-04T14:11:40-9f63ab40",
+     "symbol": "MEBL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "MLCF-2026-11-04T13:55:00-8247eff1",
+     "symbol": "MLCF",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "MLCF-2026-11-04T14:11:40-474b9b17",
+     "symbol": "MLCF",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "OGDC-2026-11-04T13:55:06-edcaab72",
+     "symbol": "OGDC",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "OGDC-2026-11-04T14:11:40-3e18faea",
+     "symbol": "OGDC",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PAEL-2026-11-04T13:55:11-069e3acd",
+     "symbol": "PAEL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PAEL-2026-11-04T14:11:40-3e40f0b4",
+     "symbol": "PAEL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PIBTL-2026-11-04T13:55:18-cb62ec0a",
+     "symbol": "PIBTL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PIBTL-2026-11-04T14:11:40-a0e6398f",
+     "symbol": "PIBTL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PPL-2026-11-04T13:55:24-15956ded",
+     "symbol": "PPL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PPL-2026-11-04T14:11:40-adb61858",
+     "symbol": "PPL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PRL-2026-11-04T13:55:30-8cf0967a",
+     "symbol": "PRL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PRL-2026-11-04T14:11:40-26fa64ec",
+     "symbol": "PRL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "PSO-2026-11-04T13:55:37-1139d085",
+     "symbol": "PSO",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "PSO-2026-11-04T14:11:40-945ccdc5",
+     "symbol": "PSO",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "SYS-2026-11-04T13:55:45-f0281aa9",
+     "symbol": "SYS",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "SYS-2026-11-04T14:11:40-13a521be",
+     "symbol": "SYS",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "TELE-2026-11-04T13:55:52-5796635d",
+     "symbol": "TELE",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "TELE-2026-11-04T14:11:40-b41a030f",
+     "symbol": "TELE",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "TRG-2026-11-04T13:56:00-b9aa7542",
+     "symbol": "TRG",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "TRG-2026-11-04T14:11:40-4679c943",
+     "symbol": "TRG",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "UNITY-2026-11-04T13:56:08-dc9d86a9",
+     "symbol": "UNITY",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "UNITY-2026-11-04T14:11:40-b9af1bbc",
+     "symbol": "UNITY",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    },
+    {
+     "signalId": "WTL-2026-11-04T13:56:15-2421e506",
+     "symbol": "WTL",
+     "reason": "generation_cache duplicate of a current_record decision (second pass); evaluated instance is the current_record row"
+    },
+    {
+     "signalId": "WTL-2026-11-04T14:11:40-312fcbcd",
+     "symbol": "WTL",
+     "reason": "recordType=MOCK_PIPELINE_CHECK (mock pipeline check — never evaluated)"
+    }
+   ],
+   "excluded_count": 48,
+   "record_type_counts_all_sources": {
+    "REAL_LLM_DECISION": 48,
+    "MOCK_PIPELINE_CHECK": 23
+   },
+   "terminal_exits_llm_policy_sim": 1
+  }
+ },
+ "part_d_new_batch_note": "the standing shadow pipeline generated the next incremental task107-gen3 batch on the 2026-11-05 session (23 decisions, market_session_date 2026-11-05, frozen protocol) — all 23 await their entry bar (next session) and are unfilled; denominators remain per immutable decision_id",
+ "part_e_llm": {
+  "unique_symbols": 23,
+  "genuine_decision_records": 23,
+  "mock_pipeline_records": 23,
+  "matured_5_session_buy_outcomes": 0,
+  "pending_5_session_buy_outcomes": 23,
+  "matured_10_session": 0,
+  "matured_21_session": 0,
+  "terminal_exit_measurements": [
+   {
+    "decision_id": "PRL-2026-11-04T14:10:25-53ebd12e",
+    "symbol": "PRL",
+    "status": "pending_terminal_window",
+    "sessions_scanned": 2,
+    "note": "no SL/TP3 hit yet inside the 21-session terminal scan window"
+   },
+   {
+    "decision_id": "SYS-2026-11-04T14:10:41-c2777724",
+    "symbol": "SYS",
+    "status": "matured_terminal_exit",
+    "exit_session": "2026-11-05",
+    "exit_price": 118.63499999999999,
+    "exit_reason": "TP3",
+    "sessions_held": 2,
+    "note": "terminal early exit — NEVER a horizon maturity"
+   }
+  ],
+  "terminal_exit_note": "SYS BUY hit TP3 at 118.635 on 2026-11-05 (raw bar high 119.99) after 2 sessions — an early terminal exit of the deterministic atr14-1.5-1-2-3 policy, reported separately and NEVER counted as a 5-session maturity; the SYS 5/10/21 fixed-horizon marks remain pending like every other record",
+  "hold_notrade_counterfactual_records": 21,
+  "unfilled_decisions": 0,
+  "missing_data_cases": "none within the LLM universe (all 23 symbols traded on both new sessions)",
+  "calibration": {
+   "status": "Not available — insufficient matured LLM outcomes",
+   "minimum_required": 100,
+   "current_matured_llm_outcomes": 0,
+   "llm_conviction": "uncalibrated (remains uncalibrated until >=100 genuine matured LLM-cohort outcomes; conviction is never converted into a probability)"
+  },
+  "performance_metrics": "none reported — 0 matured LLM horizon outcomes at every horizon; mock records excluded; general-cohort results never attributed to GLM-4.6"
+ },
+ "part_f_ui": "Model Performance dashboard: Task 115 checkpoint banner on the maturity panel (cohort, count, frontier date, terminal-vs-horizon distinction, sample-size warning), per-cohort maturity table, LLM maturity card, drill-downs; report_version task115-augmented rebuilt only from validated artifacts; Task 112-114 versions preserved",
+ "part_h_rules": [
+  "No new models trained; no historical signals changed; no thresholds tuned on new outcomes.",
+  "Fixed-horizon outcomes never mixed with early exits; MTM never mixed with realized.",
+  "No promotion; everything research/shadow-only; no live trading enabled.",
+  "LLM conviction remains uncalibrated (gate: >=100 genuine matured LLM-cohort outcomes)."
+ ]
+}

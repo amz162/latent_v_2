@@ -1,28 +1,42 @@
 {
  "report": "task114_forward_maturity_audit",
  "task": "task114",
- "generated_at": "2026-11-04T22:45:21Z",
+ "generated_at": "2026-11-05T19:12:09Z",
  "engine_version": "task114-maturity-v1",
  "status": "completed",
  "baseline": "Task 112 fix e371b6c3 (= origin/main) + Task 113 content restored as 8f32452b (original 2edc05a5 lost to a sandbox recycle; content byte-restored from the platform-preserved pre-recycle workspace and re-verified by the Task 113 QA suite)",
- "data_frontier": "2026-11-04",
+ "data_frontier": "2026-11-05",
  "sessions_new_since_2026_11_03": [
-  "2026-11-04"
+  "2026-11-04",
+  "2026-11-05"
  ],
- "session_count_total": 2489,
+ "session_count_total": 2490,
  "pipeline_events": {
   "candidate_session_defect_found_and_fixed": "task107_lib.psx_session_state returned the most recent SUNDAY as the pre-open candidate session for mid-week mornings ((wd+1)%7 formula), hiding the fully closed 2026-11-04 session from the ingest window; fixed to the previous weekday and regression-tested",
   "ingest_result": {
-   "frontier": "2026-11-04",
-   "new_bars": 23,
-   "new_date": "2026-11-04",
+   "frontier": "2026-11-05",
+   "new_bars": 46,
+   "bars_by_date": {
+    "2026-11-04": 23,
+    "2026-11-05": 23
+   },
+   "duplicate_symbol_date_pairs": 0,
+   "in_response_duplicates": 0,
+   "rejected_bars": 0,
+   "revisions_quarantined": [],
    "overlap_checked": 46,
-   "mismatches": 0
+   "mismatches": 0,
+   "symbols_without_new_data": [
+    "ENGRO",
+    "BYCO"
+   ],
+   "retrieved_at": "2026-11-05T18:50:20Z",
+   "provider": "approved free 'psxdata' REST API (source='psxdata')"
   },
   "missing_market_data_observations": [
    "ENGRO: no 2026-11-04 bar (dataset shows no ENGRO bar since 2025-01-03 — long out-of-universe; its only LLM record is the stale excluded one, so NO pending decision is affected)",
    "BYCO: no 2026-11-04 bar (no bars since 2021-12-20; no frozen decision pending on it)",
-   "Neither symbol is in any active cohort denominator: all 57 general decisions and all 23 genuine LLM decisions are on symbols that traded on 2026-11-04"
+   "Neither symbol is in any active cohort denominator: ENGRO's only LLM record is the stale excluded one and no frozen decision exists on either symbol; all genuinely pending decisions sit on symbols that traded on the ingested sessions"
   ]
  },
  "frozen_conventions": {
@@ -33,10 +47,11 @@
   "costs": "psx_user_schedule_v2 via task110_lib.trade_costs_v2 (exact port of computeTradeCostsV2)"
  },
  "part_b_session_frontier": {
-  "frontier": "2026-11-04",
+  "frontier": "2026-11-05",
   "previous_frontier": "2026-11-03",
   "new_sessions": [
-   "2026-11-04"
+   "2026-11-04",
+   "2026-11-05"
   ],
   "provider": "psxdata-api.fastapicloud.dev (delayed EOD; no exchange-source timestamps; nothing fabricated)"
  },
@@ -46,26 +61,24 @@
    "total_observations": 12,
    "unfilled_awaiting_entry_bar": 0,
    "unique_symbols": 12,
-   "matured_5_session": 0,
-   "pending_5_session": 12,
-   "remaining_sessions_pending_5": [
-    1
-   ],
+   "matured_5_session": 12,
+   "pending_5_session": 0,
+   "remaining_sessions_pending_5": [],
    "matured_10_session": 0,
    "pending_10_session": 12,
    "remaining_sessions_pending_10": [
-    6
+    5
    ],
    "matured_21_session": 0,
    "pending_21_session": 12,
    "remaining_sessions_pending_21": [
-    17
+    16
    ],
    "source_ledger": "data/backtest_reports/task105/shadow_observations/task105_shadow_observations.json",
    "policy_version": "task105-v1",
    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
-   "terminal_exits_from_frozen_engine": 28,
-   "pending_mtm_from_frozen_engine": 8
+   "terminal_exits_from_frozen_engine": 30,
+   "pending_mtm_from_frozen_engine": 6
   },
   {
    "cohort_id": "task106-gen2",
@@ -75,49 +88,49 @@
    "matured_5_session": 0,
    "pending_5_session": 22,
    "remaining_sessions_pending_5": [
-    3
+    2
    ],
    "matured_10_session": 0,
    "pending_10_session": 22,
    "remaining_sessions_pending_10": [
-    8
+    7
    ],
    "matured_21_session": 0,
    "pending_21_session": 22,
    "remaining_sessions_pending_21": [
-    19
+    18
    ],
    "source_ledger": "data/backtest_reports/task106/shadow_observations/task106_shadow_observations.json",
    "policy_version": "task105-v1",
    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
-   "terminal_exits_from_frozen_engine": 27,
-   "pending_mtm_from_frozen_engine": 39
+   "terminal_exits_from_frozen_engine": 42,
+   "pending_mtm_from_frozen_engine": 24
   },
   {
    "cohort_id": "task107-gen3",
-   "total_observations": 23,
-   "unfilled_awaiting_entry_bar": 0,
+   "total_observations": 46,
+   "unfilled_awaiting_entry_bar": 23,
    "unique_symbols": 23,
    "matured_5_session": 0,
    "pending_5_session": 23,
    "remaining_sessions_pending_5": [
-    4
+    3
    ],
    "matured_10_session": 0,
    "pending_10_session": 23,
    "remaining_sessions_pending_10": [
-    9
+    8
    ],
    "matured_21_session": 0,
    "pending_21_session": 23,
    "remaining_sessions_pending_21": [
-    20
+    19
    ],
    "source_ledger": "data/backtest_reports/task107/shadow_observations/task107_shadow_observations.json",
    "policy_version": "task105-v1",
    "cost_profile": "psx_user_schedule_v2 (ATL_15)",
-   "terminal_exits_from_frozen_engine": 25,
-   "pending_mtm_from_frozen_engine": 44
+   "terminal_exits_from_frozen_engine": 42,
+   "pending_mtm_from_frozen_engine": 27
   },
   {
    "cohort_id": "task111-llm-multisource-gen1",
@@ -127,17 +140,17 @@
    "matured_5_session": 0,
    "pending_5_session": 23,
    "remaining_sessions_pending_5": [
-    4
+    3
    ],
    "matured_10_session": 0,
    "pending_10_session": 23,
    "remaining_sessions_pending_10": [
-    9
+    8
    ],
    "matured_21_session": 0,
    "pending_21_session": 23,
    "remaining_sessions_pending_21": [
-    20
+    19
    ],
    "genuine_universe_decisions": 23,
    "decisions_buy": 2,
@@ -390,10 +403,1067 @@
     "REAL_LLM_DECISION": 48,
     "MOCK_PIPELINE_CHECK": 23
    },
-   "terminal_exits_llm_policy_sim": 0
+   "terminal_exits_llm_policy_sim": 1
   }
  ],
- "part_c_matured_outcomes": [],
+ "part_c_matured_outcomes": [
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_LUCK_2026-10-29",
+   "symbol": "LUCK",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 398,
+   "quantity": 251,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 398.0,
+    "high": 398.9,
+    "low": 390.15,
+    "close": 391.38
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 434.63,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 398.0,
+       "high": 398.9,
+       "low": 390.15,
+       "close": 391.38
+      },
+      {
+       "date": "2026-11-02",
+       "open": 391.38,
+       "high": 402.0,
+       "low": 390.51,
+       "close": 395.52
+      },
+      {
+       "date": "2026-11-03",
+       "open": 397.0,
+       "high": 405.0,
+       "low": 397.0,
+       "close": 400.64
+      },
+      {
+       "date": "2026-11-04",
+       "open": 403.8,
+       "high": 416.55,
+       "low": 403.5,
+       "close": 415.14
+      },
+      {
+       "date": "2026-11-05",
+       "open": 425.0,
+       "high": 437.77,
+       "low": 425.0,
+       "close": 434.63
+      }
+     ],
+     "source_fingerprint": "edbfa6097f432c60",
+     "gross_return_pkr": 9194.13,
+     "gross_return_pct": 0.0920351759,
+     "v2_costs_pkr": {
+      "total_brokerage": 313.4852,
+      "total_psx": 0.7315,
+      "total_nccpl": 1.6928,
+      "total_cdc": 7.5236,
+      "cgt": 1379.1195,
+      "total_cost": 1702.5526
+     },
+     "net_return_pkr": 7491.58,
+     "net_return_pct": 0.0749922659,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_SYS_2026-10-29",
+   "symbol": "SYS",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 108.61,
+   "quantity": 920,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 108.61,
+    "high": 109.91,
+    "low": 108.46,
+    "close": 109.15
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 116.88,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 108.61,
+       "high": 109.91,
+       "low": 108.46,
+       "close": 109.15
+      },
+      {
+       "date": "2026-11-02",
+       "open": 109.16,
+       "high": 115.0,
+       "low": 105.05,
+       "close": 108.4
+      },
+      {
+       "date": "2026-11-03",
+       "open": 109.0,
+       "high": 110.79,
+       "low": 108.6,
+       "close": 109.47
+      },
+      {
+       "date": "2026-11-04",
+       "open": 110.0,
+       "high": 111.4,
+       "low": 109.47,
+       "close": 110.96
+      },
+      {
+       "date": "2026-11-05",
+       "open": 114.0,
+       "high": 119.99,
+       "low": 112.0,
+       "close": 116.88
+      }
+     ],
+     "source_fingerprint": "e24701770c951b07",
+     "gross_return_pkr": 7608.4,
+     "gross_return_pct": 0.0761440015,
+     "v2_costs_pkr": {
+      "total_brokerage": 311.1762,
+      "total_psx": 0.7261,
+      "total_nccpl": 1.6804,
+      "total_cdc": 7.4682,
+      "cgt": 1141.26,
+      "total_cost": 1462.3109
+     },
+     "net_return_pkr": 6146.09,
+     "net_return_pct": 0.0615093608,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_MEBL_2026-10-29",
+   "symbol": "MEBL",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 527,
+   "quantity": 189,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 527.0,
+    "high": 530.25,
+    "low": 524.31,
+    "close": 528.61
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 555.02,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 527.0,
+       "high": 530.25,
+       "low": 524.31,
+       "close": 528.61
+      },
+      {
+       "date": "2026-11-02",
+       "open": 526.99,
+       "high": 534.44,
+       "low": 526.01,
+       "close": 527.44
+      },
+      {
+       "date": "2026-11-03",
+       "open": 519.44,
+       "high": 529.71,
+       "low": 519.44,
+       "close": 526.57
+      },
+      {
+       "date": "2026-11-04",
+       "open": 526.6,
+       "high": 541.0,
+       "low": 526.58,
+       "close": 538.48
+      },
+      {
+       "date": "2026-11-05",
+       "open": 546.05,
+       "high": 585.0,
+       "low": 546.05,
+       "close": 555.02
+      }
+     ],
+     "source_fingerprint": "4f7b75b78fbea50b",
+     "gross_return_pkr": 5295.78,
+     "gross_return_pct": 0.0531688805,
+     "v2_costs_pkr": {
+      "total_brokerage": 306.7527,
+      "total_psx": 0.7158,
+      "total_nccpl": 1.6565,
+      "total_cdc": 7.3621,
+      "cgt": 794.367,
+      "total_cost": 1110.854
+     },
+     "net_return_pkr": 4184.93,
+     "net_return_pct": 0.0420160642,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_KEL_2026-10-29",
+   "symbol": "KEL",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 5.95,
+   "quantity": 16806,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 5.95,
+    "high": 6.03,
+    "low": 5.76,
+    "close": 5.79
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 6.14,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 5.95,
+       "high": 6.03,
+       "low": 5.76,
+       "close": 5.79
+      },
+      {
+       "date": "2026-11-02",
+       "open": 5.8,
+       "high": 5.85,
+       "low": 5.61,
+       "close": 5.64
+      },
+      {
+       "date": "2026-11-03",
+       "open": 5.67,
+       "high": 5.77,
+       "low": 5.62,
+       "close": 5.63
+      },
+      {
+       "date": "2026-11-04",
+       "open": 5.7,
+       "high": 6.07,
+       "low": 5.7,
+       "close": 6.0
+      },
+      {
+       "date": "2026-11-05",
+       "open": 6.1,
+       "high": 6.22,
+       "low": 6.0,
+       "close": 6.14
+      }
+     ],
+     "source_fingerprint": "2b89cb6c7802c2a7",
+     "gross_return_pkr": 3193.14,
+     "gross_return_pct": 0.0319327731,
+     "v2_costs_pkr": {
+      "total_brokerage": 1008.36,
+      "total_psx": 0.7111,
+      "total_nccpl": 1.6458,
+      "total_cdc": 7.3146,
+      "cgt": 478.971,
+      "total_cost": 1497.0026
+     },
+     "net_return_pkr": 1696.14,
+     "net_return_pct": 0.0169621035,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_TRG_2026-10-29",
+   "symbol": "TRG",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 53,
+   "quantity": 1886,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 53.0,
+    "high": 53.1,
+    "low": 51.65,
+    "close": 51.96
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 54.03,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 53.0,
+       "high": 53.1,
+       "low": 51.65,
+       "close": 51.96
+      },
+      {
+       "date": "2026-11-02",
+       "open": 51.7,
+       "high": 52.8,
+       "low": 51.2,
+       "close": 51.87
+      },
+      {
+       "date": "2026-11-03",
+       "open": 52.0,
+       "high": 52.8,
+       "low": 51.15,
+       "close": 51.47
+      },
+      {
+       "date": "2026-11-04",
+       "open": 51.7,
+       "high": 53.5,
+       "low": 51.7,
+       "close": 53.17
+      },
+      {
+       "date": "2026-11-05",
+       "open": 53.5,
+       "high": 54.9,
+       "low": 53.2,
+       "close": 54.03
+      }
+     ],
+     "source_fingerprint": "3d184893d19f4e31",
+     "gross_return_pkr": 1942.58,
+     "gross_return_pct": 0.0194339623,
+     "v2_costs_pkr": {
+      "total_brokerage": 302.7879,
+      "total_psx": 0.7065,
+      "total_nccpl": 1.6351,
+      "total_cdc": 7.2669,
+      "cgt": 291.387,
+      "total_cost": 603.7833
+     },
+     "net_return_pkr": 1338.8,
+     "net_return_pct": 0.0133935919,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_BOP_2026-10-29",
+   "symbol": "BOP",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 28.9,
+   "quantity": 3460,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 28.9,
+    "high": 28.9,
+    "low": 28.26,
+    "close": 28.35
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 31.7,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 28.9,
+       "high": 28.9,
+       "low": 28.26,
+       "close": 28.35
+      },
+      {
+       "date": "2026-11-02",
+       "open": 28.35,
+       "high": 28.5,
+       "low": 27.85,
+       "close": 28.1
+      },
+      {
+       "date": "2026-11-03",
+       "open": 28.45,
+       "high": 28.61,
+       "low": 28.01,
+       "close": 28.09
+      },
+      {
+       "date": "2026-11-04",
+       "open": 28.39,
+       "high": 30.9,
+       "low": 28.2,
+       "close": 30.9
+      },
+      {
+       "date": "2026-11-05",
+       "open": 31.75,
+       "high": 32.62,
+       "low": 31.51,
+       "close": 31.7
+      }
+     ],
+     "source_fingerprint": "02a4ce5b43b67a7b",
+     "gross_return_pkr": 9688.0,
+     "gross_return_pct": 0.0968858131,
+     "v2_costs_pkr": {
+      "total_brokerage": 314.514,
+      "total_psx": 0.7339,
+      "total_nccpl": 1.6984,
+      "total_cdc": 7.5483,
+      "cgt": 1453.2,
+      "total_cost": 1777.6946
+     },
+     "net_return_pkr": 7910.31,
+     "net_return_pct": 0.0791078007,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_CNERGY_2026-10-29",
+   "symbol": "CNERGY",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 14.2,
+   "quantity": 7042,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 14.2,
+    "high": 14.37,
+    "low": 13.6,
+    "close": 13.64
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 12.06,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 14.2,
+       "high": 14.37,
+       "low": 13.6,
+       "close": 13.64
+      },
+      {
+       "date": "2026-11-02",
+       "open": 12.55,
+       "high": 12.59,
+       "low": 12.28,
+       "close": 12.28
+      },
+      {
+       "date": "2026-11-03",
+       "open": 12.21,
+       "high": 12.57,
+       "low": 11.5,
+       "close": 11.74
+      },
+      {
+       "date": "2026-11-04",
+       "open": 11.8,
+       "high": 12.15,
+       "low": 11.74,
+       "close": 11.97
+      },
+      {
+       "date": "2026-11-05",
+       "open": 12.09,
+       "high": 12.23,
+       "low": 11.66,
+       "close": 12.06
+      }
+     ],
+     "source_fingerprint": "72634bb52f2cc893",
+     "gross_return_pkr": -15069.88,
+     "gross_return_pct": -0.1507042254,
+     "v2_costs_pkr": {
+      "total_brokerage": 422.52,
+      "total_psx": 0.6472,
+      "total_nccpl": 1.4979,
+      "total_cdc": 6.6572,
+      "cgt": 0.0,
+      "total_cost": 431.3223
+     },
+     "net_return_pkr": -15501.2,
+     "net_return_pct": -0.1550176039,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_MLCF_2026-10-29",
+   "symbol": "MLCF",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 91.03,
+   "quantity": 1098,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 91.03,
+    "high": 91.03,
+    "low": 90.0,
+    "close": 90.51
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 102.09,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 91.03,
+       "high": 91.03,
+       "low": 90.0,
+       "close": 90.51
+      },
+      {
+       "date": "2026-11-02",
+       "open": 91.48,
+       "high": 92.3,
+       "low": 90.81,
+       "close": 91.96
+      },
+      {
+       "date": "2026-11-03",
+       "open": 92.88,
+       "high": 94.0,
+       "low": 92.55,
+       "close": 92.98
+      },
+      {
+       "date": "2026-11-04",
+       "open": 93.4,
+       "high": 98.0,
+       "low": 93.4,
+       "close": 97.49
+      },
+      {
+       "date": "2026-11-05",
+       "open": 102.0,
+       "high": 104.0,
+       "low": 100.5,
+       "close": 102.09
+      }
+     ],
+     "source_fingerprint": "b8355d22f2d61059",
+     "gross_return_pkr": 12143.88,
+     "gross_return_pct": 0.1214984071,
+     "v2_costs_pkr": {
+      "total_brokerage": 318.0686,
+      "total_psx": 0.7422,
+      "total_nccpl": 1.7176,
+      "total_cdc": 7.6336,
+      "cgt": 1821.582,
+      "total_cost": 2149.744
+     },
+     "net_return_pkr": 9994.14,
+     "net_return_pct": 0.0999904151,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_PAEL_2026-10-29",
+   "symbol": "PAEL",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 32.61,
+   "quantity": 3066,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 32.61,
+    "high": 33.0,
+    "low": 32.19,
+    "close": 32.33
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 34.02,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 32.61,
+       "high": 33.0,
+       "low": 32.19,
+       "close": 32.33
+      },
+      {
+       "date": "2026-11-02",
+       "open": 32.3,
+       "high": 32.35,
+       "low": 31.7,
+       "close": 31.81
+      },
+      {
+       "date": "2026-11-03",
+       "open": 32.01,
+       "high": 32.68,
+       "low": 31.85,
+       "close": 31.91
+      },
+      {
+       "date": "2026-11-04",
+       "open": 31.91,
+       "high": 33.29,
+       "low": 31.91,
+       "close": 33.07
+      },
+      {
+       "date": "2026-11-05",
+       "open": 34.28,
+       "high": 34.81,
+       "low": 33.65,
+       "close": 34.02
+      }
+     ],
+     "source_fingerprint": "4db903e5dbf6da77",
+     "gross_return_pkr": 4323.06,
+     "gross_return_pct": 0.0432382705,
+     "v2_costs_pkr": {
+      "total_brokerage": 306.4314,
+      "total_psx": 0.715,
+      "total_nccpl": 1.6547,
+      "total_cdc": 7.3544,
+      "cgt": 648.459,
+      "total_cost": 964.6145
+     },
+     "net_return_pkr": 3358.45,
+     "net_return_pct": 0.0335904144,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_PIBTL_2026-10-29",
+   "symbol": "PIBTL",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 13.19,
+   "quantity": 7581,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 13.19,
+    "high": 13.31,
+    "low": 12.9,
+    "close": 12.93
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 13.42,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 13.19,
+       "high": 13.31,
+       "low": 12.9,
+       "close": 12.93
+      },
+      {
+       "date": "2026-11-02",
+       "open": 12.96,
+       "high": 12.96,
+       "low": 12.68,
+       "close": 12.78
+      },
+      {
+       "date": "2026-11-03",
+       "open": 12.82,
+       "high": 13.06,
+       "low": 12.68,
+       "close": 12.74
+      },
+      {
+       "date": "2026-11-04",
+       "open": 12.8,
+       "high": 13.2,
+       "low": 12.74,
+       "close": 13.15
+      },
+      {
+       "date": "2026-11-05",
+       "open": 13.43,
+       "high": 13.64,
+       "low": 13.28,
+       "close": 13.42
+      }
+     ],
+     "source_fingerprint": "dedfde6a50b7cad5",
+     "gross_return_pkr": 1743.63,
+     "gross_return_pct": 0.0174374526,
+     "v2_costs_pkr": {
+      "total_brokerage": 454.86,
+      "total_psx": 0.7061,
+      "total_nccpl": 1.634,
+      "total_cdc": 7.2623,
+      "cgt": 261.5445,
+      "total_cost": 726.0069
+     },
+     "net_return_pkr": 1017.62,
+     "net_return_pct": 0.010176904,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_LOTCHEM_2026-10-29",
+   "symbol": "LOTCHEM",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 24.47,
+   "quantity": 4086,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 24.47,
+    "high": 24.48,
+    "low": 23.8,
+    "close": 23.89
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 24.82,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 24.47,
+       "high": 24.48,
+       "low": 23.8,
+       "close": 23.89
+      },
+      {
+       "date": "2026-11-02",
+       "open": 23.9,
+       "high": 24.0,
+       "low": 23.39,
+       "close": 23.55
+      },
+      {
+       "date": "2026-11-03",
+       "open": 23.5,
+       "high": 24.0,
+       "low": 23.5,
+       "close": 23.83
+      },
+      {
+       "date": "2026-11-04",
+       "open": 23.95,
+       "high": 24.59,
+       "low": 23.6,
+       "close": 24.37
+      },
+      {
+       "date": "2026-11-05",
+       "open": 24.6,
+       "high": 25.18,
+       "low": 24.51,
+       "close": 24.82
+      }
+     ],
+     "source_fingerprint": "f6c7d9920419f6f2",
+     "gross_return_pkr": 1430.1,
+     "gross_return_pct": 0.0143032284,
+     "v2_costs_pkr": {
+      "total_brokerage": 302.0984,
+      "total_psx": 0.7049,
+      "total_nccpl": 1.6313,
+      "total_cdc": 7.2504,
+      "cgt": 214.515,
+      "total_cost": 526.2
+     },
+     "net_return_pkr": 903.9,
+     "net_return_pct": 0.0090404085,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  },
+  {
+   "cohort_id": "task105-gen1",
+   "decision_id": "t105gen1_FCCL_2026-10-29",
+   "symbol": "FCCL",
+   "decision_date": "2026-10-29",
+   "decision_timestamp": "2026-10-29",
+   "engine_version": "task114-maturity-v1",
+   "entry_status": "filled",
+   "entry_session": "2026-10-30",
+   "entry_fill": 52.61,
+   "quantity": 1900,
+   "entry_bar": {
+    "date": "2026-10-30",
+    "open": 52.61,
+    "high": 52.61,
+    "low": 51.9,
+    "close": 52.28
+   },
+   "horizons": {
+    "h5": {
+     "status": "matured",
+     "sessions_elapsed_from_entry": 5,
+     "endpoint_session": "2026-11-05",
+     "endpoint_close": 58.71,
+     "source_bar_refs": [
+      {
+       "date": "2026-10-30",
+       "open": 52.61,
+       "high": 52.61,
+       "low": 51.9,
+       "close": 52.28
+      },
+      {
+       "date": "2026-11-02",
+       "open": 53.0,
+       "high": 53.9,
+       "low": 52.55,
+       "close": 53.81
+      },
+      {
+       "date": "2026-11-03",
+       "open": 54.6,
+       "high": 55.09,
+       "low": 54.0,
+       "close": 54.46
+      },
+      {
+       "date": "2026-11-04",
+       "open": 55.0,
+       "high": 57.0,
+       "low": 54.51,
+       "close": 56.78
+      },
+      {
+       "date": "2026-11-05",
+       "open": 60.0,
+       "high": 60.0,
+       "low": 57.63,
+       "close": 58.71
+      }
+     ],
+     "source_fingerprint": "23d14792284b693f",
+     "gross_return_pkr": 11590.0,
+     "gross_return_pct": 0.1159475385,
+     "v2_costs_pkr": {
+      "total_brokerage": 317.262,
+      "total_psx": 0.7403,
+      "total_nccpl": 1.7132,
+      "total_cdc": 7.6143,
+      "cgt": 1738.5,
+      "total_cost": 2065.8298
+     },
+     "net_return_pkr": 9524.17,
+     "net_return_pct": 0.0952807673,
+     "exit_mark_methodology": "fixed-horizon close mark at session 5 (hypothetical continuation; separate from any terminal exit)"
+    },
+    "h10": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 5
+    },
+    "h21": {
+     "status": "pending",
+     "sessions_elapsed_from_entry": 5,
+     "remaining_sessions": 16
+    }
+   }
+  }
+ ],
  "part_d_independence_rule": "5/10/21-session outcomes are computed independently from source bars; a 5-session outcome never infers a 10- or 21-session outcome; the frozen task106_mature.ts terminal ledger is referenced for early exits and never merged into horizon counts",
  "part_e_llm_outcome_maturity": {
   "cohort_id": "task111-llm-multisource-gen1",
@@ -405,17 +1475,17 @@
    "matured_5_session": 0,
    "pending_5_session": 23,
    "remaining_sessions_pending_5": [
-    4
+    3
    ],
    "matured_10_session": 0,
    "pending_10_session": 23,
    "remaining_sessions_pending_10": [
-    9
+    8
    ],
    "matured_21_session": 0,
    "pending_21_session": 23,
    "remaining_sessions_pending_21": [
-    20
+    19
    ],
    "genuine_universe_decisions": 23,
    "decisions_buy": 2,
@@ -668,7 +1738,7 @@
     "REAL_LLM_DECISION": 48,
     "MOCK_PIPELINE_CHECK": 23
    },
-   "terminal_exits_llm_policy_sim": 0
+   "terminal_exits_llm_policy_sim": 1
   },
   "buy_outcomes": {
    "buy_decisions": 2,
@@ -923,7 +1993,7 @@
  "part_f_idempotency": {
   "ledger": "data/backtest_reports/task114/task114_outcome_ledger.json",
   "outcome_key": "decision_id|hN",
-  "duplicate_processing_attempts_identical": 0,
+  "duplicate_processing_attempts_identical": 12,
   "source_bar_revisions_detected": 0,
   "policy": "recompute-fresh from immutable inputs each run; ledger records first_processed_at + source fingerprint; a fingerprint change is an auditable correction, never a silent overwrite"
  },

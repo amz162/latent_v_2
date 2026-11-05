@@ -110,9 +110,9 @@ if ok3:
     d = json.loads(b3)
     t = d.get("task113_audit") or {}
     t114 = d.get("task114_maturity") or {}
-    inv3 = (d.get("report_version") == "task114-augmented" and t.get("available") is True
+    inv3 = (d.get("report_version") == "task115-augmented" and t.get("available") is True
             and t114.get("available") is True and len(t114.get("panel") or []) == 4)
-    print(f"[{'PASS' if inv3 else 'FAIL'}] report_version=task114-augmented, task113+task114 blocks available (4 cohorts)")
+    print(f"[{'PASS' if inv3 else 'FAIL'}] report_version=task115-augmented, task113+task114 blocks available (4 cohorts)")
     (PASS if inv3 else FAIL).append("task113-block")
 else:
     print(f"[FAIL] model-report unreachable ({s3})"); FAIL.append("task113-block")

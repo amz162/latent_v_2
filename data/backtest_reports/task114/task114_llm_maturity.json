@@ -1,7 +1,7 @@
 {
  "report": "task114_llm_maturity",
  "task": "task114",
- "generated_at": "2026-11-04T22:45:21Z",
+ "generated_at": "2026-11-05T19:12:09Z",
  "engine_version": "task114-maturity-v1",
  "cohort_id": "task111-llm-multisource-gen1",
  "frozen_baseline_verified": {
@@ -19,17 +19,17 @@
   "matured_5_session": 0,
   "pending_5_session": 23,
   "remaining_sessions_pending_5": [
-   4
+   3
   ],
   "matured_10_session": 0,
   "pending_10_session": 23,
   "remaining_sessions_pending_10": [
-   9
+   8
   ],
   "matured_21_session": 0,
   "pending_21_session": 23,
   "remaining_sessions_pending_21": [
-   20
+   19
   ],
   "genuine_universe_decisions": 23,
   "decisions_buy": 2,
@@ -282,7 +282,7 @@
    "REAL_LLM_DECISION": 48,
    "MOCK_PIPELINE_CHECK": 23
   },
-  "terminal_exits_llm_policy_sim": 0
+  "terminal_exits_llm_policy_sim": 1
  },
  "buy_outcomes": {
   "buy_decisions": 2,
@@ -295,15 +295,18 @@
    "decision_id": "PRL-2026-11-04T14:10:25-53ebd12e",
    "symbol": "PRL",
    "status": "pending_terminal_window",
-   "sessions_scanned": 1,
+   "sessions_scanned": 2,
    "note": "no SL/TP3 hit yet inside the 21-session terminal scan window"
   },
   {
    "decision_id": "SYS-2026-11-04T14:10:41-c2777724",
    "symbol": "SYS",
-   "status": "pending_terminal_window",
-   "sessions_scanned": 1,
-   "note": "no SL/TP3 hit yet inside the 21-session terminal scan window"
+   "status": "matured_terminal_exit",
+   "exit_session": "2026-11-05",
+   "exit_price": 118.63499999999999,
+   "exit_reason": "TP3",
+   "sessions_held": 2,
+   "note": "terminal early exit — NEVER a horizon maturity"
   }
  ],
  "counterfactual_hold_notrade": [

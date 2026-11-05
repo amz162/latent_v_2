@@ -149,8 +149,12 @@ def general_decisions() -> tuple[list[dict], dict]:
             qty = ff.get("quantity")
             out.append({
                 "cohort_id": cohort_id, "decision_id": did, "symbol": o.get("symbol"),
-                "decision_date": o.get("decision_date") or m.get("decision_date"),
-                "decision_timestamp": o.get("decision_timestamp"),
+                # decision date: the shadow schema stores market_session_date and
+                # the frozen maturity ledger stores decision_date (None for
+                # batches still awaiting their entry bar) — fall back in order.
+                "decision_date": o.get("decision_date") or m.get("decision_date")
+                                 or o.get("market_session_date"),
+                "decision_timestamp": o.get("decision_timestamp") or o.get("prediction_timestamp"),
                 "entry_date": m.get("entry_date"), "entry_fill": m.get("entry"),
                 "quantity": qty,
                 "policy_version": o.get("policy_version"),
@@ -418,14 +422,27 @@ def main() -> None:
                 "task107_lib.psx_session_state returned the most recent SUNDAY as the pre-open candidate "
                 "session for mid-week mornings ((wd+1)%7 formula), hiding the fully closed 2026-11-04 "
                 "session from the ingest window; fixed to the previous weekday and regression-tested",
-            "ingest_result": {"frontier": frontier, "new_bars": 23, "new_date": "2026-11-04",
-                              "overlap_checked": 46, "mismatches": 0},
+            "ingest_result": (lambda ir: {
+                "frontier": ir.get("frontier_after"),
+                "new_bars": len(ir.get("new_bars") or []),
+                "bars_by_date": ((ir.get("reconcile") or {}).get("bars_by_date")),
+                "duplicate_symbol_date_pairs": (ir.get("reconcile") or {}).get("duplicate_symbol_date_pairs"),
+                "in_response_duplicates": ir.get("in_response_duplicates"),
+                "rejected_bars": len(ir.get("rejected_bars") or []),
+                "revisions_quarantined": ir.get("revisions_quarantined"),
+                "overlap_checked": ir.get("overlap_checked"),
+                "mismatches": len(ir.get("overlap_mismatches") or []),
+                "symbols_without_new_data": ir.get("symbols_without_new_data"),
+                "retrieved_at": ir.get("generated_at"),
+                "provider": (ir.get("provider") or {}).get("identity"),
+            })(j(BR / "task107" / "task107_daily_ingestion_report.json") or {}),
             "missing_market_data_observations":
                 ["ENGRO: no 2026-11-04 bar (dataset shows no ENGRO bar since 2025-01-03 — long out-of-universe; "
                  "its only LLM record is the stale excluded one, so NO pending decision is affected)",
                  "BYCO: no 2026-11-04 bar (no bars since 2021-12-20; no frozen decision pending on it)",
-                 "Neither symbol is in any active cohort denominator: all 57 general decisions and all 23 "
-                 "genuine LLM decisions are on symbols that traded on 2026-11-04"],
+                 "Neither symbol is in any active cohort denominator: ENGRO's only LLM record is the stale "
+                 "excluded one and no frozen decision exists on either symbol; all genuinely pending decisions "
+                 "sit on symbols that traded on the ingested sessions"],
         },
         "frozen_conventions": {
             "session": "distinct per-symbol OhlcvBar date; weekends/holidays never counted; missing bars never advance a symbol clock",

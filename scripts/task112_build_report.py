@@ -689,7 +689,7 @@ def build_report(models: list[dict], forward: dict, overlay_rows: list[dict], co
     report = {
         "report": "psx_model_strategy_performance_report",
         "task": "task112",
-        "report_version": "task114-augmented",
+        "report_version": "task115-augmented",
         "generated_at": now_iso(),
         "git_head": LB.git_head(),
         "status": "completed",
