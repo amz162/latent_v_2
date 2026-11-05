@@ -1,0 +1,65 @@
+# task118 deployment snapshot 2026-11-05T21:35:48Z
+## HEAD: d28231924a40689c34e86e8a772fd431d3da2a5f
+## package.json scripts:
+{
+ "dev": "NODE_OPTIONS=--max-old-space-size=1024 next dev --webpack -p 3000 2>&1 | tee dev.log",
+ "build": "next build --webpack",
+ "start": "next dev -p 3000",
+ "lint": "eslint .",
+ "db:push": "prisma db push --accept-data-loss",
+ "db:generate": "prisma generate",
+ "db:migrate": "prisma migrate dev",
+ "db:reset": "prisma migrate reset"
+}
+## Caddyfile:
+:81 {
+	@transform_port_query {
+		query XTransformPort=*
+	}
+
+	handle @transform_port_query {
+		reverse_proxy localhost:{query.XTransformPort} {
+			header_up Host {host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle {
+		reverse_proxy localhost:3000 {
+			header_up Host {host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+}
+## supervisor (first 25 lines):
+#!/usr/bin/env bash
+# Self-healing supervisor for the PSX app dev server.
+# Keeps http://localhost:3000 alive for the lifetime of the sandbox:
+# polls the port every CHECK_INTERVAL seconds and restarts the dev
+# server whenever it stops responding.
+#
+# Start it detached (survives terminal close / session sign-off):
+#   setsid nohup bash scripts/server_supervisor.sh >/dev/null 2>&1 &
+#
+# NOTE: this protects against crashes and terminal close. It CANNOT
+# survive a sandbox recycle (the platform kills every process), but
+# scripts/start_server.sh restores everything with one command.
+set -u
+APP_DIR="/home/z/my-project"
+PORT=3000
+CHECK_INTERVAL=20
+LOG="$APP_DIR/server-supervisor.log"
+DEV_LOG="$APP_DIR/dev-server.log"
+PIDFILE="$APP_DIR/.server-supervisor.pid"
+
+cd "$APP_DIR" || exit 1
+
+# resolve bun even when started from a minimal environment
+if ! command -v bun >/dev/null 2>&1; then
+  export PATH="$HOME/.bun/bin:/usr/local/bin:/usr/bin:$PATH"
+## .env keys (values withheld):
+DATABASE_URL

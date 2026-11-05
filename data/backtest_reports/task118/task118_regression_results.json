@@ -1,0 +1,35 @@
+{
+ "report": "task118_regression_results",
+ "generated_at": "2026-11-05T21:48:23+00:00",
+ "runtime": "production (next start)",
+ "suites": {
+  "task117_acceptance": "45 passed, 0 failed (run against PRODUCTION runtime)",
+  "task107_v1": "30 passed, 0 failed, 2 skipped",
+  "task107_v2": "29 passed, 0 failed, 0 skipped",
+  "task110": "62 passed, 0 failed, 0 skipped",
+  "task111": "34 passed, 0 failed, 0 skipped",
+  "task112": "66 passed, 0 failed, 0 skipped",
+  "task113": "65 passed, 0 failed",
+  "task114": "30 passed, 0 failed, 0 skipped",
+  "task115": "22 passed, 0 failed, 0 skipped",
+  "task116_python": "35 passed, 0 failed, 0 skipped",
+  "task116_ts_buntest": "20 passed, 0 failed",
+  "task101_cost_parity": "29 passed, 0 failed",
+  "task102_cost_parity": "33 passed, 0 failed",
+  "task118_invitation_dryrun": "10 passed, 0 failed (production)",
+  "api_health_check": "14 passed, 0 failed"
+ },
+ "typescript": "tsc --noEmit clean",
+ "production_build": "bun run build exit 0 (17/17 pages), then served via next start",
+ "browser_e2e_production": {
+  "desktop_1440x900": "gate \u2192 redeem \u2192 consent \u2192 onboarding \u2192 dashboard (banner/welcome/fusion/frontier/feedback/privacy all true) \u2192 advanced strategy detail \u2192 main app LLM Signals + Model Performance views (honest labels, no fake 62% win-rate) \u2192 feedback UI persisted \u2192 delete profile \u2192 identity invalidated (redirected to gate) \u2014 PASS",
+  "mobile_iphone16_393px": "gate + how-it-works (12 components) render, no horizontal overflow, 0 console errors \u2014 PASS",
+  "restart_survival": "production restart mid-E2E (rate-limiter clear) \u2014 profiles, invites, preferences and DB state intact \u2014 PASS",
+  "console_errors": 0
+ },
+ "database": {
+  "integrity": "ok",
+  "backup_restore": "MATCH (15 tables, isolated temp dir)"
+ },
+ "notes": "No assertions weakened. The only older-suite change remains Task 117's documented contract updates (m4c/m4e/m4f/m6e)."
+}

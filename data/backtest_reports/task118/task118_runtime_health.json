@@ -1,0 +1,119 @@
+{
+ "report": "task118_runtime_health",
+ "generated_at": "2026-11-05T21:48:23+00:00",
+ "runtime": {
+  "mode": "PRODUCTION (next start -p 3000 via scripts/server_supervisor.sh, LATENT_RUNTIME=prod default)",
+  "dev_server_retired": true,
+  "rollback": "LATENT_RUNTIME=dev bash scripts/start_server.sh (dev image rebuildable from source; .next build retained)",
+  "package_json_start_fixed": "'start' previously ran `next dev` \u2014 corrected to `next start -p 3000`",
+  "log_rotation": "supervisor rotates dev-server.log at 50MB to .1; startup health probe logged per start",
+  "graceful_restart": "start_server.sh clears stale processes, relaunches supervisor, waits for HTTP 200 + runs 14-check health script"
+ },
+ "caddy": {
+  "config": ":81 -> reverse_proxy localhost:3000 (Host + X-Forwarded-For/Proto/Real-IP forwarded)",
+  "verified": [
+   "proxy 200 through :81",
+   "x-forwarded-proto forwarded (Secure-cookie path)",
+   "no internal worker/db ports exposed (only :81 public app proxy, :3000 loopback-bound app)"
+  ]
+ },
+ "website_bug_fixed": {
+  "symptom": "site rendering and compiling continuously",
+  "root_cause": "dev runtime: per-request webpack compiles + HMR under 4GB host; port-3000 timeouts triggered 34 supervisor crash-restarts, each recompiling; pattern-precompute mini-service (now stopped) added LLM-429 noise",
+  "fix": "production cutover (precompiled next start), fixed 'start' script, supervisor prod default + log rotation",
+  "verification": "no dev bundles in HTML, no compile lines in logs after cutover, supervisor restart loop ended"
+ },
+ "health_snapshot": {
+  "status": "ok",
+  "version": "task117-beta",
+  "commit": "unknown",
+  "checkedAt": "2026-11-05T21:48:24.144Z",
+  "latencyMs": 180,
+  "database": {
+   "status": "ok",
+   "ohlcvBars": 1042969,
+   "writeCapable": true
+  },
+  "paths": {
+   "ok": true,
+   "dataRootLabel": "workspace-persistent",
+   "databaseExists": true,
+   "dataDirWritable": true,
+   "errors": []
+  },
+  "cache": {
+   "type": "degraded",
+   "ready": false,
+   "warning": "REDIS_URL is not configured in production \u2014 cache/rate-limit state is not persistent"
+  },
+  "workers": {
+   "model": "host-supervisor (python task107/108 pipeline) \u2014 singleton locks + idempotency ledger",
+   "heartbeatSource": "/api/model-report worker_heartbeat block",
+   "heartbeat": {
+    "lastSeenAt": "2026-11-03T19:17:04Z",
+    "ageMinutes": 3031
+   },
+   "heartbeatStale": true
+  },
+  "operational": {
+   "dataFrontier": "2026-11-05",
+   "frontierAgeDays": 0,
+   "lastIngestion": {
+    "generatedAt": "2026-11-05T18:50:20Z",
+    "providerAvailable": true,
+    "insertedBars": null
+   },
+   "scheduler": {
+    "status": "host-cron/github-actions (no local status file)"
+   },
+   "llm": {
+    "available": true,
+    "storedDecisions": 71,
+    "mode": "shadow/research-only, read-only"
+   },
+   "releaseState": "INVITE_ONLY_BETA_READY"
+  },
+  "beta": {
+   "enabled": true,
+   "consentVersion": "beta-consent-v1",
+   "registrationsPaused": false,
+   "invitationRequired": true,
+   "runtimeDisabledReason": null
+  }
+ },
+ "worker": {
+  "status_file": {
+   "pid": 11245,
+   "started_at": "2026-11-05T21:40:37Z",
+   "heartbeat_at": "2026-11-05T21:40:37Z",
+   "poll_interval_seconds": 120,
+   "idle_interval_seconds": 600,
+   "cycles_completed": 0,
+   "last_cycle": null,
+   "note": "pre_window: no delayed observations expected before 09:45 PKT \u2014 idling",
+   "provider_delay_minutes": 15,
+   "timestamp_quality": "estimated_source_timestamp (provider supplies no source ts)"
+  },
+  "process_alive": true,
+  "heartbeat_fresh": true,
+  "note": "worker started via scripts/task108_runner.py worker (normal path); fixed runner to recreate logs/ dir wiped by sandbox recycles; stale lock of dead pid 5534 was self-healed by the worker's dead-pid lock-steal guard; pre-window idling is correct at 02:40 PKT (window 09:45-15:45)",
+  "previous_stale_cause": "host worker process died 2026-11-03T19:48Z (process not restarted after workspace restore); monitor_state updates had continued via one-shot/scheduled runs, masking the dead daemon"
+ },
+ "llm_provider": {
+  "status": "DEGRADED (upstream z-ai API returns 429 rate-limit)",
+  "pipeline": "operational \u2014 frozen Task 111/112 records consumed read-only; 48/48 REAL_LLM_DECISION records carry evidenceHash + quality score; history untouched (71 files)",
+  "conviction": "uncalibrated (unchanged)"
+ },
+ "cache_rate_limit": {
+  "redis": "still NOT provisioned (Task 117 decision preserved \u2014 host memory headroom does not justify it)",
+  "degraded_mode_visible_in_health": true,
+  "durable_guarantees": "worker locks + idempotency + invites + profiles + feedback = SQLite (durable)",
+  "in_process_only": "HTTP rate limiting (documented; resets on restart; abuse-protection only, never correctness); no distributed rate-limiting is claimed",
+  "incident_note": "the 30/hour per-IP invite limiter tripped during Task 118 E2E after the acceptance suite's abuse-protection loop \u2014 protection worked as designed; supervisor restart cleared the in-memory window"
+ },
+ "host_memory": {
+  "total_mb": 4041,
+  "used_mb": 1199,
+  "available_mb": 2842
+ }
+}

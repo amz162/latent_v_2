@@ -1,0 +1,27 @@
+{
+  "report": "task118_tax_consistency",
+  "generated_at": "2026-11-05T22:05:00Z",
+  "task": "Task 118 Part H — tax schedule consistency and disclosure reconciliation",
+  "issue_found": "Task 117's report phrasing 'No rate remains unverified' could be misread as 'the calculator is fully verified', while the calculator keeps a PROVISIONAL label on non-filer CGT. Additionally the CgtCalculator UI still displayed Task 116's stale sentence ('the 30% figure shown is a commonly cited estimate') which contradicted the Task 117 schedule that applies the verified 15% statutory floor.",
+  "fixes_applied": [
+    "src/lib/latent/tax.ts — verification states restated with the precise vocabulary: filerCgtRate / filerDividendRate / nonFilerDividendRate = VERIFIED_STATUTORY_RATE; nonFilerCgtRate = VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION. isRateUnverified() still returns true for the provisional case, so the provisional warning is preserved (not silently removed).",
+    "src/components/latent/CgtCalculator.tsx — stale label replaced: non-filer now reads 'VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION: the statutory rule (personal slab rates with a 15% floor, securities acquired on/after 1 Jul 2024) is verified... calculator applies the 15% floor only — actual rate depends on total taxable income and may be higher, so treat the non-filer figure as PROVISIONAL'; filer reads 'VERIFIED_STATUTORY_RATE: 15% flat ... ATL at both acquisition and disposal'.",
+    "data/backtest_reports/task117/task117_tax_verification.json — states migrated to the same vocabulary; a task118_consistency_note explains the wording; FBR statutory-reference path documented honestly (instrument confirmed via FBR index; TY2027 rate-card PDF not fetchable from the sandbox, so rate VALUES were transcribed from PwC reviewed 24 Aug 2026)."
+  ],
+  "rule_verification_matrix": [
+    {"rule": "filer CGT (securities acquired ≥ 2024-07-01)", "value": "15% flat", "state": "VERIFIED_STATUTORY_RATE", "effective": "acquisitions from 2024-07-01", "category": "ATL at acquisition AND disposal", "source": "PwC Pakistan individual income determination (reviewed 24 Aug 2026); instrument per FBR index = Income Tax Ordinance 2001 regime as amended (Finance Act 2024 vintage boundary)"},
+    {"rule": "non-filer CGT (same vintage)", "value": "personal slab rates, statutory floor 15%", "state": "VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION", "effective": "acquisitions from 2024-07-01", "category": "non-ATL individuals", "provisional_reason": "slab rates require the individual's total taxable income; calculator collects only trade data, so it applies the 15% floor and labels output provisional", "source": "PwC Pakistan individual income determination (reviewed 24 Aug 2026)"},
+    {"rule": "dividend WHT filer", "value": "15% final", "state": "VERIFIED_STATUTORY_RATE", "source": "PwC (reviewed 24 Aug 2026)"},
+    {"rule": "dividend WHT resident inactive taxpayer", "value": "30% (100% uplift)", "state": "VERIFIED_STATUTORY_RATE", "source": "PwC (reviewed 24 Aug 2026)"},
+    {"rule": "graded CGT table 2022-07-01..2024-06-30", "value": "15/12.5/10/7.5/5/2.5/0% by holding period", "state": "VERIFIED_STATUTORY_RATE (reference table; not modelled by the calculator — the calculator models the ≥ 2024-07-01 regime and says so)", "source": "PwC (reviewed 24 Aug 2026)"},
+    {"rule": "capital losses on listed securities", "value": "carry-forward up to 3 tax years", "state": "VERIFIED_STATUTORY_RATE", "source": "PwC (reviewed 24 Aug 2026)"}
+  ],
+  "acquisition_date_treatment": "The calculator models ONLY the ≥ 2024-07-01 acquisition regime (15% filer / 15%-floor non-filer) and the schedule exposes the graded older-vintage table as clearly-labelled reference data; a user with older acquisitions is told the schedule's effectiveFrom boundary.",
+  "display_guarantees": [
+    "Schedule id, effectiveFrom and verifiedAt are rendered in the calculator UI.",
+    "PROVISIONAL label for non-filer CGT is preserved and now explains exactly WHY (slab dependence), with the applied floor stated.",
+    "Standing disclaimer: 'Illustrative estimate only — not professional tax advice.'",
+    "No output is presented as professional advice anywhere in the beta."
+  ],
+  "consistency_verdict": "RESOLVED — report wording, artifact states and UI labels now use one precise vocabulary; the provisional label is retained by design, not an inconsistency."
+}

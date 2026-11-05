@@ -220,9 +220,13 @@ export function CgtCalculator() {
                   {TAX_SCHEDULE.verifiedAt})
                 </p>
                 <p className="mt-1">
+                  {/* Task 118 H3 — precise verification states. The non-filer
+                      RULE (slab rates with a 15% statutory floor) is verified;
+                      the calculator's flat floor-only IMPLEMENTATION is
+                      provisional because slabs need total taxable income. */}
                   {isRateUnverified("cgt", filerStatus)
-                    ? "The non-filer CGT rate could not be verified against current official sources — the 30% figure shown is a commonly cited estimate. Verify with FBR or a licensed practitioner."
-                    : "Filer CGT rate (15%) verified against current published sources."}{" "}
+                    ? "Non-filer CGT — VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION: the statutory rule (personal slab rates with a 15% floor, for securities acquired on/after 1 Jul 2024) is verified against current published sources. This calculator applies the 15% floor only — your actual rate depends on your total taxable income and may be higher, so treat the non-filer figure as PROVISIONAL."
+                    : "Filer CGT — VERIFIED_STATUTORY_RATE: 15% flat for securities acquired on/after 1 July 2024 when on the Active Taxpayer List at both acquisition and disposal."}{" "}
                   {TAX_SCHEDULE.disclaimer}
                 </p>
               </div>

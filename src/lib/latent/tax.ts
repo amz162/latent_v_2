@@ -43,12 +43,12 @@ export const TAX_SCHEDULE = {
   effectiveFrom: "2024-07-01", // acquisition-date regime modelled by the calculator
   verifiedAt: "2026-11-05",
   verification: {
-    filerCgtRate: "VERIFIED",
+    filerCgtRate: "VERIFIED_STATUTORY_RATE",
     // the RULE (slab rates, 15% floor) is verified; the calculator's flat
     // floor-only application is provisional because slabs need total income
-    nonFilerCgtRate: "VERIFIED_RULE_PROVISIONAL_APPLICATION",
-    filerDividendRate: "VERIFIED",
-    nonFilerDividendRate: "VERIFIED",
+    nonFilerCgtRate: "VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION",
+    filerDividendRate: "VERIFIED_STATUTORY_RATE",
+    nonFilerDividendRate: "VERIFIED_STATUTORY_RATE",
   } as Record<string, string>,
   // VERIFIED graded table for pre-2024-07-01 acquisitions (reference only)
   gradedCgtReference: [

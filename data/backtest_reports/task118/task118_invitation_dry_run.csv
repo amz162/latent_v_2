@@ -1,0 +1,11 @@
+case,result,note
+1_valid_invitation,PASS,HTTP 200
+2_reuse_rejected,PASS,uniform 403
+3_expired_rejected,PASS,uniform 403
+4_revoked_rejected,PASS,uniform 403
+5_cap_reached_rejected,PASS,"2 redemptions ok, 3rd uniform 403"
+6_invalid_random_rejected,PASS,uniform 403
+7_global_pause_blocks_redemption,PASS,HTTP 403
+8a_beta_disabled_status,PASS,status betaEnabled=false
+8b_redeem_while_disabled_refused,PASS,HTTP 403
+8c_reenabled,PASS,flags restored

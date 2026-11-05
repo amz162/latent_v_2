@@ -1,0 +1,76 @@
+{
+ "report": "task118_data_frontier_audit",
+ "generated_at": "2026-11-05T21:48:23+00:00",
+ "latest_finalized_session": "2026-11-05",
+ "verification": {
+  "method": "task107_daily_ingest.py run at 2026-11-05T21:44Z (02:44 PKT 2026-11-06 \u2014 pre-market, next session not yet traded)",
+  "result": "no_new_data \u2014 69 overlap bars revalidated, 0 mismatches (provider live)",
+  "provider": "psxdata-api.fastapicloud.dev (delayed-snapshot provider; no candle endpoint \u2014 verified design constraint)",
+  "delayed_quotes_not_substituted": true,
+  "session_date_source": "provider-verified bars; no date assumed"
+ },
+ "counts": {
+  "bars": 1042969,
+  "frontier": "2026-11-05",
+  "frontier_day_bars": 23,
+  "distinct_symbols": 909
+ },
+ "maturity_recount": {
+  "report": "task107_horizon_maturity_report",
+  "generated_at": "2026-11-05T21:41:08+0000",
+  "status": "completed",
+  "horizons_sessions": [
+   5,
+   10,
+   21
+  ],
+  "counting_rule": "trading sessions from the ACTUAL OhlcvBar calendar; calendar days are never substituted; a 21-session observation does NOT close because 21 calendar days passed",
+  "cohorts": [
+   {
+    "generation": "task105-gen1",
+    "entry_date": "2026-10-30",
+    "sessions_observed_since_entry": 5,
+    "h5_complete": true,
+    "h10_complete": false,
+    "h21_complete": false,
+    "expected_h21_date_if_all_sessions_real": "unknown (depends on future genuine sessions)",
+    "latest_session": "2026-11-05"
+   },
+   {
+    "generation": "task106-gen2",
+    "entry_date": "2026-11-03",
+    "sessions_observed_since_entry": 3,
+    "h5_complete": false,
+    "h10_complete": false,
+    "h21_complete": false,
+    "expected_h21_date_if_all_sessions_real": "unknown (depends on future genuine sessions)",
+    "latest_session": "2026-11-05"
+   },
+   {
+    "generation": "task107-gen3",
+    "entry_date": "2026-11-04",
+    "sessions_observed_since_entry": 2,
+    "h5_complete": false,
+    "h10_complete": false,
+    "h21_complete": false,
+    "expected_h21_date_if_all_sessions_real": "unknown (depends on future genuine sessions)",
+    "latest_session": "2026-11-05"
+   }
+  ],
+  "verdict": "PASS"
+ },
+ "maturity_summary": {
+  "matured_outcomes": 114,
+  "pending": 57,
+  "realized_pkr": 251057.33,
+  "unrealized_mtm_pkr": 115928.22,
+  "horizon_cohorts": 3,
+  "integrity": "session-clock counting preserved (never calendar days); historical signals unchanged; no retraining; no threshold tuning; no fabricated P&L"
+ },
+ "llm_cohort": {
+  "stored_records": 71,
+  "real_decisions": 48,
+  "mock_excluded": true,
+  "maturity": "0 LLM-cohort outcomes matured at 5/10/21 \u2014 calibration gated (unchanged)"
+ }
+}

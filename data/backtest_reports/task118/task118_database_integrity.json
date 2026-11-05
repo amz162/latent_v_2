@@ -1,0 +1,64 @@
+{
+ "report": "task118_database_integrity",
+ "generated_at": "2026-11-05T21:41:53+00:00",
+ "source_db": "db/custom.db",
+ "integrity_check": "ok",
+ "quick_check": "ok",
+ "journal_mode": "delete",
+ "wal_checkpoint_health": "passive-ok",
+ "page_count": 50162,
+ "freelist": 1,
+ "row_counts": {
+  "OhlcvBar": 1042969,
+  "BetaProfile": 2,
+  "BetaInvite": 1,
+  "BetaFeedback": 0,
+  "BetaConfig": 1,
+  "PredictionHistory": 375,
+  "PredictionOutcome": 375,
+  "ProspectivePaperTrade": 114,
+  "PaperTradeLeg": 0,
+  "PredictionRiskLevels": 38,
+  "PricePatternReport": 236,
+  "PricePatternCache": 773,
+  "ResultPatternCache": 349,
+  "ModelPredictionCache": 8,
+  "ModelBacktestCache": 0
+ },
+ "ohlcv": {
+  "bars": 1042969,
+  "distinct_symbols": 909,
+  "frontier": "2026-11-05",
+  "frontier_bar_count": 23
+ },
+ "read_write_probe": "ok",
+ "backup": {
+  "path": "db/backups/task118-verified-20261105-214156.db",
+  "bytes": 205463552,
+  "method": "sqlite3 online backup API (consistent snapshot under live traffic)"
+ },
+ "restore_test": {
+  "location": "isolated temp dir (production untouched)",
+  "integrity": "ok",
+  "row_reconciliation": "MATCH",
+  "reconciled_tables": 15
+ },
+ "disk": {
+  "total_gb": 10.5,
+  "used_gb": 5.2,
+  "available_gb": 4.7,
+  "use_pct": "53%"
+ },
+ "backup_retention": {
+  "count": 4,
+  "oldest": "custom_pre_task107.db",
+  "newest": "task118-verified-20261105-214156.db",
+  "total_gb": 0.82
+ },
+ "task117_comparison": {
+  "task117_bars": 1042969,
+  "now": 1042969,
+  "delta": 0,
+  "explanation": "No new finalized sessions since the Task 115/116 ingestion of the 2026-11-05 bars: 2026-11-05 was the most recent completed PSX session at Task 118 execution time (2026-11-06 pre-market had not traded). Delta 0 expected; the Task 118 EOD ingest revalidated 69 overlap bars with 0 mismatches and returned no_new_data."
+ }
+}

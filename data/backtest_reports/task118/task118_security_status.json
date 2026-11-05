@@ -1,0 +1,32 @@
+{
+ "report": "task118_security_status",
+ "generated_at": "2026-11-05T21:48:23+00:00",
+ "historical_pat": {
+  "status": "REVOKED_BY_PLATFORM (presumed; Task 117 fingerprint-matched it to the auto-revoked token committed at 273eab31)",
+  "verification_limitation": "revocation cannot be proven by the agent without using the token, which is forbidden; visual confirmation at github.com/settings/tokens remains with the operator",
+  "operator_action": "CONFIRM_REVOCATION"
+ },
+ "replacement_credential": {
+  "status": "OPERATOR_ACTION_REQUIRED",
+  "note": "no fine-grained token supplied via .zcredentials/github_token.local (absent); armed classic token still over-scoped (verified live via read-only /user: admin:enterprise/admin:org/delete:packages/... present) \u2014 rotate to fine-grained, single-repo, Contents RW",
+  "current_validity": "armed token VALID (used read-only for status checks; never printed)"
+ },
+ "two_factor": {
+  "status": "OPERATOR_ACTION_REQUIRED",
+  "observed": "2FA DISABLED on account amz162 (via authenticated GET /user)"
+ },
+ "secret_scans": {
+  "tracked_files": "clean",
+  "new_commit_scan": "clean (Task 117 commit d2823192)",
+  "build_assets_and_bundles": "clean (.next, public)",
+  "runtime_logs": "clean (dev-server.log, server-supervisor.log)",
+  "credential_backup_paths": ".git/credentials (600) only; .zcredentials/github_token.local still ABSENT",
+  "workflows": "standard secrets.GITHUB_TOKEN only"
+ },
+ "application_surface": {
+  "admin_http_endpoints": 0,
+  "invitation_storage": "sha256 hashes only",
+  "cookie_tokens_in_db": false,
+  "no_secrets_in_client_bundle": "verified \u2014 production HTML contains no dev markers; secrets live in host env only"
+ }
+}

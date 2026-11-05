@@ -1,0 +1,114 @@
+{
+ "report": "task118_release_readiness",
+ "generated_at": "2026-11-05T21:48:23+00:00",
+ "final_release_state": "INVITE_ONLY_BETA_READY_WITH_OPERATOR_ACTIONS",
+ "state_rationale": "Every code/ops gate passes on the PRODUCTION runtime, but two credential gates remain operator-only (fine-grained PAT rotation, 2FA enablement) and the historical-token revocation visual confirmation is pending. Per Part L the release cannot be plain INVITE_ONLY_BETA_READY while credential actions are open; nothing else blocks the first invitation.",
+ "gates": [
+  {
+   "gate": "historical_pat_revoked",
+   "detail": "VERIFIED_BY_PLATFORM_PRESUMED \u2014 operator visual confirmation pending",
+   "status": "PASS_WITH_NOTE"
+  },
+  {
+   "gate": "replacement_fine_grained_pat",
+   "detail": "OPERATOR_ACTION_REQUIRED",
+   "status": "OPEN"
+  },
+  {
+   "gate": "github_2fa",
+   "detail": "OPERATOR_ACTION_REQUIRED (observed DISABLED)",
+   "status": "OPEN"
+  },
+  {
+   "gate": "production_runtime",
+   "detail": "VERIFIED (next start, build exit 0, no dev bundles)",
+   "status": "PASS"
+  },
+  {
+   "gate": "caddy_routing",
+   "detail": "VERIFIED",
+   "status": "PASS"
+  },
+  {
+   "gate": "database_integrity",
+   "detail": "VERIFIED (integrity_check ok)",
+   "status": "PASS"
+  },
+  {
+   "gate": "backup_restore_test",
+   "detail": "VERIFIED (isolated restore MATCH, 15 tables)",
+   "status": "PASS"
+  },
+  {
+   "gate": "worker_heartbeat",
+   "detail": "FRESH (worker pid alive, heartbeat current)",
+   "status": "PASS"
+  },
+  {
+   "gate": "fresh_data_frontier",
+   "detail": "VERIFIED (2026-11-05, 69 overlap bars revalidated 0 mismatch)",
+   "status": "PASS"
+  },
+  {
+   "gate": "scheduler",
+   "detail": "HEALTHY \u2014 host worker running; GitHub Actions schedules unchanged; pre-window idling correct",
+   "status": "PASS"
+  },
+  {
+   "gate": "llm_provider",
+   "detail": "DEGRADED \u2014 upstream 429 rate-limit; frozen records consumed read-only; history intact",
+   "status": "DEGRADED"
+  },
+  {
+   "gate": "news_source_guard",
+   "detail": "VERIFIED (news-allowlist-v1 enforced, harness green)",
+   "status": "PASS"
+  },
+  {
+   "gate": "tax_schedule",
+   "detail": "CORRECTLY CLASSIFIED (VERIFIED_STATUTORY_RATE / VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION; UI label fixed)",
+   "status": "PASS"
+  },
+  {
+   "gate": "invitation_dry_run",
+   "detail": "PASS (10/10, production, cleanup 0)",
+   "status": "PASS"
+  },
+  {
+   "gate": "profile_isolation",
+   "detail": "PASS (45-check suite incl. cross-user read/delete/reset)",
+   "status": "PASS"
+  },
+  {
+   "gate": "feedback",
+   "detail": "PASS (UI submission persisted with acknowledgment)",
+   "status": "PASS"
+  },
+  {
+   "gate": "mobile_desktop_browser",
+   "detail": "PASS (0 console errors)",
+   "status": "PASS"
+  },
+  {
+   "gate": "rollback_procedure",
+   "detail": "VERIFIED (LATENT_RUNTIME=dev path + pre-task118 DB backup + retained build; documented in runtime health)",
+   "status": "PASS"
+  }
+ ],
+ "operator_actions_before_first_invite": [
+  "1. Rotate the GitHub PAT: create a fine-grained token (only repo amz162/latent_v_2, Contents Read/Write, no org/admin/package scopes), enable 2FA on the account, write the token to .zcredentials/github_token.local (gitignored), run bash scripts/gh_auth.sh.",
+  "2. Visually confirm the historical token shows revoked at github.com/settings/tokens.",
+  "3. (Recommended) Re-run the Task 107-118 test sweep after any rotation, then authorize the Task 117+118 push.",
+  "4. Create the first real invitation ONLY when ready (see task118_production_cutover_audit.md Part G2 for the exact command) and deliver it through a private channel."
+ ],
+ "blocking_conditions_checked": {
+  "worker_stale": false,
+  "dev_runtime": false,
+  "integrity_fail": false,
+  "restore_fail": false,
+  "frontier_stale": false,
+  "security_block": false,
+  "persistence_block": false,
+  "runtime_block": false
+ }
+}

@@ -1,97 +1,99 @@
 {
-  "report": "task117_tax_verification",
-  "generated_at": "2026-11-05T21:15:00Z",
-  "task": "Task 117 Part H — tax and Shariah information verification",
-  "method": "Official/authoritative sources current at task execution time (2026-11-05). Rates were fetched, read and transcribed from the sources below — none inferred from third-party blog articles. Sources re-fetched during this task; PwC Worldwide Tax Summaries state 'last reviewed 24 August 2026' (current for tax year 2027, post-Finance-Act-2026).",
-  "schedule": {
-    "scheduleId": "pk-tax-v2026-11-r2",
-    "appliesTo": "Pakistan, tax year 2025 onward for acquisitions on/after 2024-07-01 (current law at execution time)",
-    "implementedIn": "src/lib/latent/tax.ts",
-    "lastVerificationDate": "2026-11-05"
+ "report": "task117_tax_verification",
+ "generated_at": "2026-11-05T21:15:00Z",
+ "task": "Task 117 Part H \u2014 tax and Shariah information verification",
+ "method": "Official/authoritative sources current at task execution time (2026-11-05). Rates were fetched, read and transcribed from the sources below \u2014 none inferred from third-party blog articles. Sources re-fetched during this task; PwC Worldwide Tax Summaries state 'last reviewed 24 August 2026' (current for tax year 2027, post-Finance-Act-2026).",
+ "schedule": {
+  "scheduleId": "pk-tax-v2026-11-r2",
+  "appliesTo": "Pakistan, tax year 2025 onward for acquisitions on/after 2024-07-01 (current law at execution time)",
+  "implementedIn": "src/lib/latent/tax.ts",
+  "lastVerificationDate": "2026-11-05"
+ },
+ "rules": [
+  {
+   "rule": "CGT \u2014 PSX listed securities acquired on/after 2024-07-01, seller on the Active Taxpayer List at BOTH acquisition and disposal",
+   "exactRate": "15% flat",
+   "taxpayerCategory": "ATL (filer) individual/company",
+   "effectiveDate": "acquisitions from 2024-07-01 (tax year 2025 onward)",
+   "legalInstrument": "Income Tax Ordinance 2001, capital gains on securities regime (as amended; acquisition-vintage structure implies Finance Act 2024)",
+   "officialSource": "PwC Worldwide Tax Summaries \u2014 Pakistan, individual income determination (reviewed 24 Aug 2026)",
+   "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
+   "verificationStatus": "VERIFIED_STATUTORY_RATE"
   },
-  "rules": [
-    {
-      "rule": "CGT — PSX listed securities acquired on/after 2024-07-01, seller on the Active Taxpayer List at BOTH acquisition and disposal",
-      "exactRate": "15% flat",
-      "taxpayerCategory": "ATL (filer) individual/company",
-      "effectiveDate": "acquisitions from 2024-07-01 (tax year 2025 onward)",
-      "legalInstrument": "Income Tax Ordinance 2001, capital gains on securities regime (as amended; acquisition-vintage structure implies Finance Act 2024)",
-      "officialSource": "PwC Worldwide Tax Summaries — Pakistan, individual income determination (reviewed 24 Aug 2026)",
-      "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
-      "verificationStatus": "VERIFIED"
-    },
-    {
-      "rule": "CGT — PSX listed securities acquired on/after 2024-07-01, seller NOT on the ATL (non-filer)",
-      "exactRate": "Normal personal slab rates apply, statutory floor 15% (rate cannot be less than 15%; rises with the individual's taxable income)",
-      "taxpayerCategory": "non-ATL (non-filer) individual",
-      "effectiveDate": "acquisitions from 2024-07-01",
-      "legalInstrument": "Income Tax Ordinance 2001, securities CGT regime as amended",
-      "officialSource": "PwC Worldwide Tax Summaries — Pakistan, individual income determination (reviewed 24 Aug 2026): 'the personal income tax rates are applicable ... provided that the rate of tax shall not be less than 15%'",
-      "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
-      "verificationStatus": "VERIFIED (rule) — calculator applies the 15% FLOOR only, so its non-filer OUTPUT is labelled PROVISIONAL (slabs need total income, which the calculator does not collect)"
-    },
-    {
-      "rule": "CGT — graded table, securities acquired 2022-07-01 .. 2024-06-30",
-      "exactRate": "<1y 15% · 1-2y 12.5% · 2-3y 10% · 3-4y 7.5% · 4-5y 5% · 5-6y 2.5% · >6y 0%",
-      "taxpayerCategory": "all holders of that vintage",
-      "effectiveDate": "acquisition vintage 2022-07-01..2024-06-30 (rate at disposal)",
-      "legalInstrument": "Income Tax Ordinance 2001 securities CGT regime",
-      "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026), graded table",
-      "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
-      "verificationStatus": "VERIFIED — reference table only; calculator models the ≥2024-07-01 regime"
-    },
-    {
-      "rule": "CGT — securities acquired on/before 2022-06-30",
-      "exactRate": "12.5% flat (irrespective of holding period); 0% for acquisitions before 2013-07-01",
-      "verificationStatus": "VERIFIED (reference only)",
-      "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026)"
-    },
-    {
-      "rule": "Dividend WHT — filer",
-      "exactRate": "15% final tax (companies, mutual funds, REITs); exceptions: 7.5% IPP pass-through, 25% where paying company had no tax payable, 35% SPV dividends to other persons",
-      "taxpayerCategory": "ATL (filer) recipient",
-      "officialSource": "PwC Worldwide Tax Summaries — Pakistan, individual income determination (reviewed 24 Aug 2026)",
-      "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
-      "verificationStatus": "VERIFIED"
-    },
-    {
-      "rule": "Dividend WHT — resident but INACTIVE taxpayer (non-filer)",
-      "exactRate": "15% × 2 = 30% (rates increased by 100% for resident inactive recipients)",
-      "taxpayerCategory": "resident non-ATL recipient",
-      "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026): 'The WHT rates shall increase by 100% in case recipient of dividend is a resident but inactive taxpayer'",
-      "verificationStatus": "VERIFIED (resolves Task 116's UNVERIFIED flag)"
-    },
-    {
-      "rule": "Capital losses on listed securities",
-      "exactRate": "carry-forward against future securities capital gains for up to 3 tax years (from tax year 2019 onward)",
-      "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026)",
-      "verificationStatus": "VERIFIED — the aggregated calculator reports lossCarriedForward as a data point only"
-    }
-  ],
-  "unverified_items": [
-    {
-      "item": "None of the rates above remain unverified as of 2026-11-05.",
-      "label": "The non-filer CGT calculator OUTPUT remains labelled provisional by design (slab dependence); UI shows the provisional warning via isRateUnverified()."
-    },
-    {
-      "item": "SECP/NCCPL regulator-fee components and broker-specific charges are outside this schedule (calculator models commission only).",
-      "label": "UNVERIFIED — DO NOT USE AS FINAL TAX ADVICE (explicitly out of scope, not displayed as a tax rate)"
-    }
-  ],
-  "shariah_information": {
-    "implementation": "Optional beta profile preference (shariahScreen); exposure limited to noting whether the optional screening preference is on and to provider-listed Islamic indices (e.g. KMI30) in the indices API.",
-    "sourceUsed": "Provider index list (api.askanalyst.com.pk indices incl. KMI30) — methodology and as-of date are the provider's; no independent compliance verification performed.",
-    "safeguards": [
-      "Screening is OPTIONAL (user checkbox with explicit disclosure).",
-      "The system never infers the user's religion.",
-      "No universal Shariah-compliance claim is made anywhere in the beta UI; the onboarding disclosure states the screening uses a stated methodology with a source as-of date and makes no compliance claim.",
-      "No claim that any listed security is 'Shariah compliant' is generated by Latent.pk."
-    ],
-    "verificationStatus": "VERIFIED_AS_LIMITED (optional preference + provider-listed index; no compliance claims) — an authoritative per-security compliance list (e.g. a current SECP/Meezan research desk list) would be required before any deeper claim; none is made."
+  {
+   "rule": "CGT \u2014 PSX listed securities acquired on/after 2024-07-01, seller NOT on the ATL (non-filer)",
+   "exactRate": "Normal personal slab rates apply, statutory floor 15% (rate cannot be less than 15%; rises with the individual's taxable income)",
+   "taxpayerCategory": "non-ATL (non-filer) individual",
+   "effectiveDate": "acquisitions from 2024-07-01",
+   "legalInstrument": "Income Tax Ordinance 2001, securities CGT regime as amended",
+   "officialSource": "PwC Worldwide Tax Summaries \u2014 Pakistan, individual income determination (reviewed 24 Aug 2026): 'the personal income tax rates are applicable ... provided that the rate of tax shall not be less than 15%'",
+   "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
+   "verificationStatus": "VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION"
   },
-  "presentation_guarantees": [
-    "Calculators show the schedule id, verification status and the standing disclaimer 'Illustrative estimate only — not professional tax advice'.",
-    "Non-filer CGT output keeps an explicit provisional warning in the UI (isRateUnverified() returns true).",
-    "No tax or Shariah module output is presented as professional advice anywhere in the beta."
-  ]
+  {
+   "rule": "CGT \u2014 graded table, securities acquired 2022-07-01 .. 2024-06-30",
+   "exactRate": "<1y 15% \u00b7 1-2y 12.5% \u00b7 2-3y 10% \u00b7 3-4y 7.5% \u00b7 4-5y 5% \u00b7 5-6y 2.5% \u00b7 >6y 0%",
+   "taxpayerCategory": "all holders of that vintage",
+   "effectiveDate": "acquisition vintage 2022-07-01..2024-06-30 (rate at disposal)",
+   "legalInstrument": "Income Tax Ordinance 2001 securities CGT regime",
+   "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026), graded table",
+   "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
+   "verificationStatus": "VERIFIED \u2014 reference table only; calculator models the \u22652024-07-01 regime"
+  },
+  {
+   "rule": "CGT \u2014 securities acquired on/before 2022-06-30",
+   "exactRate": "12.5% flat (irrespective of holding period); 0% for acquisitions before 2013-07-01",
+   "verificationStatus": "VERIFIED_STATUTORY_RATE (reference table; not modelled by the calculator)",
+   "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026)"
+  },
+  {
+   "rule": "Dividend WHT \u2014 filer",
+   "exactRate": "15% final tax (companies, mutual funds, REITs); exceptions: 7.5% IPP pass-through, 25% where paying company had no tax payable, 35% SPV dividends to other persons",
+   "taxpayerCategory": "ATL (filer) recipient",
+   "officialSource": "PwC Worldwide Tax Summaries \u2014 Pakistan, individual income determination (reviewed 24 Aug 2026)",
+   "sourceUrl": "https://taxsummaries.pwc.com/pakistan/individual/income-determination",
+   "verificationStatus": "VERIFIED_STATUTORY_RATE"
+  },
+  {
+   "rule": "Dividend WHT \u2014 resident but INACTIVE taxpayer (non-filer)",
+   "exactRate": "15% \u00d7 2 = 30% (rates increased by 100% for resident inactive recipients)",
+   "taxpayerCategory": "resident non-ATL recipient",
+   "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026): 'The WHT rates shall increase by 100% in case recipient of dividend is a resident but inactive taxpayer'",
+   "verificationStatus": "VERIFIED (resolves Task 116's UNVERIFIED flag)"
+  },
+  {
+   "rule": "Capital losses on listed securities",
+   "exactRate": "carry-forward against future securities capital gains for up to 3 tax years (from tax year 2019 onward)",
+   "officialSource": "PwC Worldwide Tax Summaries (reviewed 24 Aug 2026)",
+   "verificationStatus": "VERIFIED \u2014 the aggregated calculator reports lossCarriedForward as a data point only"
+  }
+ ],
+ "unverified_items": [
+  {
+   "item": "None of the rates above remain unverified as of 2026-11-05.",
+   "label": "No UNKNOWN rates remain. The non-filer CGT calculator OUTPUT remains VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION by design (slab dependence); UI shows the provisional warning via isRateUnverified()."
+  },
+  {
+   "item": "SECP/NCCPL regulator-fee components and broker-specific charges are outside this schedule (calculator models commission only).",
+   "label": "UNVERIFIED \u2014 DO NOT USE AS FINAL TAX ADVICE (explicitly out of scope, not displayed as a tax rate)"
+  }
+ ],
+ "shariah_information": {
+  "implementation": "Optional beta profile preference (shariahScreen); exposure limited to noting whether the optional screening preference is on and to provider-listed Islamic indices (e.g. KMI30) in the indices API.",
+  "sourceUsed": "Provider index list (api.askanalyst.com.pk indices incl. KMI30) \u2014 methodology and as-of date are the provider's; no independent compliance verification performed.",
+  "safeguards": [
+   "Screening is OPTIONAL (user checkbox with explicit disclosure).",
+   "The system never infers the user's religion.",
+   "No universal Shariah-compliance claim is made anywhere in the beta UI; the onboarding disclosure states the screening uses a stated methodology with a source as-of date and makes no compliance claim.",
+   "No claim that any listed security is 'Shariah compliant' is generated by Latent.pk."
+  ],
+  "verificationStatus": "VERIFIED_AS_LIMITED (optional preference + provider-listed index; no compliance claims) \u2014 an authoritative per-security compliance list (e.g. a current SECP/Meezan research desk list) would be required before any deeper claim; none is made."
+ },
+ "presentation_guarantees": [
+  "Calculators show the schedule id, verification status and the standing disclaimer 'Illustrative estimate only \u2014 not professional tax advice'.",
+  "Non-filer CGT output keeps an explicit provisional warning in the UI (isRateUnverified() returns true).",
+  "No tax or Shariah module output is presented as professional advice anywhere in the beta."
+ ],
+ "task118_consistency_note": "Task 118 Part H: verification states restated with the precise vocabulary VERIFIED_STATUTORY_RATE / VERIFIED_RULE_PROVISIONAL_IMPLEMENTATION / UNVERIFIED. The earlier phrasing 'no rate remains unverified' meant no UNKNOWN rates remain; it never meant the calculator is fully verified \u2014 the non-filer CGT output remains PROVISIONAL because the verified rule is slab-based and the calculator implements only the 15% floor. The CgtCalculator UI label (previously stale Task 116 text referencing a '30% estimate') was corrected to state the floor applied and the slab dependence.",
+ "fbr_statutory_reference_status": "FBR Withholding Tax Rate Card for Tax Year 2027 (updated up to 30-06-2026 per Finance Act 2026) is the governing instrument per the FBR index page; the card PDF could not be fetched from the execution sandbox (page serves via JS/redirect). Rates transcribed from PwC Worldwide Tax Summaries (reviewed 24 Aug 2026), which reflects that statute. Operator may download the FBR TY2027 card (PDF/XLSX on the FBR index page) for final statutory confirmation \u2014 verification-path documented, not claimed as done."
 }

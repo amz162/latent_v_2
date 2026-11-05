@@ -96,6 +96,7 @@ def _worker() -> bool:
             return True
         except OSError:
             print("  worker heartbeat stale — restarting")
+    (ROOT / "logs").mkdir(exist_ok=True)  # wiped by sandbox recycles — recreate
     r = subprocess.Popen(["nohup", sys.executable, "scripts/task108_worker.py"],
                           stdout=open(ROOT / "logs/task108_worker.log", "a"),
                           stderr=subprocess.STDOUT, cwd=ROOT,
