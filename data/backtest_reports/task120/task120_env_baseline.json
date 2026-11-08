@@ -1,0 +1,69 @@
+{
+  "report": "task120_environment_baseline",
+  "generated_at_utc": "2026-11-08T22:05:00Z",
+  "generated_at_pkt": "2026-11-09 03:05 PKT",
+  "repository": {
+    "path": "/home/z/my-project",
+    "branch": "main",
+    "local_head_at_task_start": "17142fe5 (Task 119 8adca26d + 2 local worker-heartbeat auto-commits by scripts/task108_artifacts.py, intentionally not pushed)",
+    "origin_url": "https://github.com/amz162/latent_v_2.git (public; credentials never embedded in remote URL)",
+    "historical_commits_present": {
+      "task117_d2823192": true,
+      "task118_692078ef": true,
+      "task119_8adca26d": true
+    },
+    "working_tree_at_task_start": "clean except data/backtest_reports/task107/ops/worker_health.json (worker heartbeat churn)",
+    "staged_secrets": "none (git diff --cached empty)",
+    "local_auto_commit_source": "scripts/task108_artifacts.py commits worker_health.json refreshes with UUID subjects; local-only by design"
+  },
+  "runtime": {
+    "production_server": "next start (next-server v16.1.3) on :3000, bun run start, PID live",
+    "supervisor": "scripts/server_supervisor.sh running (LATENT_RUNTIME=prod default); dev rollback path LATENT_RUNTIME=dev bash scripts/start_server.sh verified present, NOT executed (no disruptive rollback on production)",
+    "no_next_dev": "the only bun --hot process is the pattern-precompute mini-service sidecar (mini-services/pattern-precompute), not a Next dev server",
+    "caddy": "platform edge Caddy (PID 2, /app/Caddyfile) — platform-managed; app internal port 3000, no admin route exposed (/admin 404, /invite 404)",
+    "http_probes": {"/": 200, "/api/health": 200, "/beta": 200, "/api/beta/status": 200}
+  },
+  "database": {
+    "path": "db/custom.db",
+    "size_mb": 193,
+    "integrity_check": "ok (full PRAGMA integrity_check)",
+    "tables": 20,
+    "bars_total": 1042992,
+    "bar_frontier": "2026-11-06",
+    "beta_tables_present": ["BetaConfig", "BetaInvite", "BetaProfile", "BetaFeedback"],
+    "row_counts": {
+      "BetaInvite": 0, "BetaProfile": 0, "BetaFeedback": 0, "BetaConfig": 1,
+      "User": 0, "Trade": 0, "PaperTradeLeg": 0,
+      "ProspectivePaperTrade": 114, "PredictionOutcome": 375, "PredictionHistory": 375
+    },
+    "synthetic_production_users": "none (User=0, BetaProfile=0; no real invitation ever created or redeemed)",
+    "backup": {
+      "online_backup_file": "/tmp/task120/online_backup_20261108T214902Z.db (192 MB, sqlite backup API)",
+      "kept_copy": "db/backups/custom_online_20261108T214902Z.db (gitignored)",
+      "isolated_restore": "integrity ok; 19 tables compared vs source, 0 mismatches; OhlcvBar fingerprint match (0fbfff414a2a)"
+    }
+  },
+  "worker": {
+    "script": "scripts/task108_worker.py",
+    "pid": 1989,
+    "pid_lock": "task108_worker.lock contains live pid+ts (matches process)",
+    "started_at": "2026-11-08T20:43:41Z",
+    "restarts_since_start": 0,
+    "last_start_reason": "Task 119 Checkpoint A sandbox-recycle recovery",
+    "heartbeat_at_check": "2026-11-08T21:43:41Z (fresh; idle interval 600s; explicit pre_window idle note)",
+    "survives_provider_outage": "verified live (provider rate_limited flap 20:42-20:48Z with continuous heartbeat) and by task119 mocked tests"
+  },
+  "provider": {
+    "base_url": "https://psxdata-api.fastapicloud.dev",
+    "state_at_task_start": "rate_limited (12 consecutive failures; residue of the Task 119 refresh window 20:38-20:48Z)",
+    "state_at_task_end": "healthy (last success 2026-11-08T21:53:47Z)",
+    "market_window": "09:45-15:45 PKT; probe performed outside window (Sunday night PKT) — expected idle"
+  },
+  "artifacts_available": {
+    "task117": "data/backtest_reports/task117/ + docs/reports/task117_controlled_beta_readiness.md",
+    "task118": "data/backtest_reports/task118/ + docs/reports/task118_production_cutover_audit.md",
+    "task119": "data/backtest_reports/task119/ + docs/reports/task119_operational_reliability_audit.md",
+    "task120": "data/backtest_reports/task120/ + docs/reports/task120_final_release_readiness.md"
+  },
+  "previous_report_head_discrepancy": "Task 119 report header said baseline HEAD 97ca9502 and 'no GitHub push (per instructions)'; the push of 8adca26d was subsequently authorized by the operator and executed in the same session (97ca9502..8adca26d). Actual remote state verified via authenticated git in this task; Task 119 report text intentionally left unmodified (historical preservation)."
+}

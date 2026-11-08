@@ -1,6 +1,6 @@
 {
- "state": "rate_limited",
- "consecutive_failures": 12,
+ "state": "healthy",
+ "consecutive_failures": 0,
  "transitions": [
   {
    "at": "2026-11-08T20:38:31Z",
@@ -49,10 +49,22 @@
    "from": "unavailable",
    "to": "rate_limited",
    "code": 429
+  },
+  {
+   "at": "2026-11-08T21:50:39Z",
+   "from": "rate_limited",
+   "to": "unavailable",
+   "code": 0
+  },
+  {
+   "at": "2026-11-08T21:53:46Z",
+   "from": "unavailable",
+   "to": "healthy",
+   "code": 200
   }
  ],
- "last_success_at": "2026-11-08T20:46:26Z",
- "last_error": "HTTP 429",
- "last_http_code": 429,
- "last_failure_at": "2026-11-08T20:48:22Z"
+ "last_success_at": "2026-11-08T21:53:47Z",
+ "last_error": "",
+ "last_http_code": 200,
+ "last_failure_at": "2026-11-08T21:50:49Z"
 }

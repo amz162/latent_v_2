@@ -1,0 +1,192 @@
+{
+ "report": "task120_regression_results",
+ "generated_at": "2026-11-08T21:54:47Z",
+ "runtime": "production sandbox (next start :3000 where applicable); provider-failure simulations are mocked at the urlopen boundary",
+ "expected_baseline": {
+  "task119": "17 passed, 0 failed",
+  "task107_v1": "30 passed, 0 failed, 2 skipped",
+  "task107_v2": "29 passed, 0 failed",
+  "task110": "62 passed, 0 failed",
+  "task111": "34 passed, 0 failed",
+  "task112": "66 passed, 0 failed",
+  "task113": "65 passed, 0 failed (66 after Task 120 invariant split)",
+  "task114": "30 passed, 0 failed",
+  "task115": "22 passed, 0 failed",
+  "task116_py": "35 passed, 0 failed",
+  "task116_ts": "20 passed, 0 failed",
+  "task101_parity": "29 passed, 0 failed",
+  "task102_parity": "33 passed, 0 failed",
+  "api_health": "14 passed, 0 failed",
+  "git_safety_audit": "0 violations (exit 0)",
+  "invitation_dryrun": "10 passed, 0 failed (production, cleanup 0)",
+  "task117_acceptance": "45 passed, 0 failed (production)"
+ },
+ "suites": {
+  "task119": {
+   "cmd": "python3 scripts/task119_tests.py",
+   "exit": 0,
+   "seconds": 3.0,
+   "log": "/tmp/task120/logs/task119.log",
+   "result": "17 passed, 0 failed"
+  },
+  "task107_v1": {
+   "cmd": "python3 scripts/task107_tests.py",
+   "exit": 0,
+   "seconds": 10.1,
+   "log": "/tmp/task120/logs/task107_v1.log",
+   "result": "30 passed, 0 failed"
+  },
+  "task107_v2": {
+   "cmd": "python3 scripts/task107_v2_tests.py",
+   "exit": 0,
+   "seconds": 0.5,
+   "log": "/tmp/task120/logs/task107_v2.log",
+   "result": "29 passed, 0 failed"
+  },
+  "task110": {
+   "cmd": "python3 scripts/task110_tests.py",
+   "exit": 0,
+   "seconds": 0.7,
+   "log": "/tmp/task120/logs/task110.log",
+   "result": "62 passed, 0 failed"
+  },
+  "task111": {
+   "cmd": "python3 scripts/task111_tests.py",
+   "exit": 0,
+   "seconds": 1.6,
+   "log": "/tmp/task120/logs/task111.log",
+   "result": "34 passed, 0 failed"
+  },
+  "task112": {
+   "cmd": "python3 scripts/task112_tests.py",
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/tmp/task120/logs/task112.log",
+   "result": "66 passed, 0 failed"
+  },
+  "task113": {
+   "cmd": "python3 scripts/task113_tests.py",
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/tmp/task120/logs/task113.log",
+   "result": "66 passed, 0 failed",
+   "original": "63 passed, 2 failed (frontier-dynamic frozen-snapshot assertions, same class as Task 119 a6/g2/m6f)",
+   "root_cause": "audit JSON is a 2026-11-05 point-in-time snapshot; live values legitimately advanced with the verified 2026-11-06 close (forward_sessions 2->3; matured terminal 114->159)",
+   "fix": "invariant strengthened, not weakened: frozen value must equal the sessions-after-cutoff recomputed AT the audit's own frontier; live value must be >= frozen (clock only accumulates); terminal-exit reconciliation now requires the live ledger identity (terminal+pending==filled*3) AND equality with the committed point-in-time reproduction (114) AND live>=frozen",
+   "final": "66 passed, 0 failed (check count 65->66: one assertion split into two)"
+  },
+  "task114": {
+   "cmd": "python3 scripts/task114_tests.py",
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/tmp/task120/logs/task114.log",
+   "result": "30 passed, 0 failed"
+  },
+  "task115": {
+   "cmd": "python3 scripts/task115_tests.py",
+   "exit": 0,
+   "seconds": 2.2,
+   "log": "/tmp/task120/logs/task115.log",
+   "result": "22 passed, 0 failed"
+  },
+  "task116_py": {
+   "cmd": "python3 scripts/task116_tests.py",
+   "exit": 0,
+   "seconds": 3.7,
+   "log": "/tmp/task120/logs/task116_py.log",
+   "result": "35 passed, 0 failed"
+  },
+  "task116_ts": {
+   "cmd": "bun test scripts/task116_tests.ts",
+   "exit": 0,
+   "seconds": 0.2,
+   "log": "/tmp/task120/logs/task116_ts.log",
+   "original": "exit 1 \u2014 runner invocation bug (bun test path filter needs ./)",
+   "root_cause": "task120 runner passed 'scripts/task116_tests.ts' as a filter; bun requires ./scripts/... to treat it as a path",
+   "fix": "runner invocation corrected; suite file unchanged",
+   "final": "20 passed, 0 failed (216 expect() calls)",
+   "result": "20 passed, 0 failed (216 expect() calls)"
+  },
+  "task101_parity": {
+   "cmd": "bun scripts/task101_parity.ts",
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/tmp/task120/logs/task101_parity.log",
+   "result": "29 passed, 0 failed"
+  },
+  "task102_parity": {
+   "cmd": "bun scripts/task102_parity.ts",
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/tmp/task120/logs/task102_parity.log",
+   "result": "33 passed, 0 failed"
+  },
+  "api_health": {
+   "cmd": "python3 scripts/server_health_check.py",
+   "exit": 0,
+   "seconds": 25.6,
+   "log": "/tmp/task120/logs/api_health.log",
+   "result": "14 passed, 0 failed"
+  },
+  "git_safety_audit": {
+   "cmd": "python3 scripts/git_safety_audit.py --json",
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/tmp/task120/logs/git_safety_audit.log",
+   "original": "exit 2 \u2014 runner passed an unsupported --json flag",
+   "root_cause": "task120 runner invocation error, not an audit failure",
+   "fix": "rerun with documented invocation",
+   "final": "71,902 lines scanned, 0 violations (exit 0)",
+   "result": "71,902 lines scanned, 0 violations (exit 0)"
+  },
+  "invitation_dryrun": {
+   "cmd": "python3 scripts/task118_invitation_dryrun.py",
+   "exit": 0,
+   "seconds": 0.8,
+   "log": "/tmp/task120/logs/invitation_dryrun.log",
+   "result": "10 passed, 0 failed"
+  },
+  "task117_acceptance": {
+   "cmd": "python3 scripts/task117_tests.py",
+   "exit": 0,
+   "seconds": 1.9,
+   "log": "/tmp/task120/logs/task117_acceptance.log",
+   "result": "45 passed, 0 failed"
+  },
+  "reconcile_120": {
+   "cmd": "python3 scripts/task120_reconcile.py",
+   "exit": 0,
+   "seconds": 5.2,
+   "log": "/tmp/task120/logs/reconcile_120.log",
+   "result": "engine rerun + PIT reproduction: task118 numbers reproduced exactly (114/57/251057.33/115928.22/3 all match)"
+  },
+  "tsc_noemit": {
+   "cmd": "bunx tsc --noEmit",
+   "exit": 0,
+   "seconds": 17.7,
+   "log": "/tmp/task120/logs/tsc_noemit.log",
+   "result": "clean (exit 0)"
+  },
+  "prod_build": {
+   "cmd": "bun run build",
+   "exit": 0,
+   "seconds": 54.5,
+   "log": "/tmp/task120/logs/prod_build.log",
+   "result": "exit 0 in 54.5s; production restarted healthy after"
+  }
+ },
+ "restarts": {
+  "after_invitation_dryrun": {
+   "restarted": true,
+   "healthy": true
+  },
+  "after_production_build": {
+   "restarted": true,
+   "healthy": true
+  }
+ },
+ "typescript": "bunx tsc --noEmit exit 0 (clean)",
+ "production_build": "bun run build exit 0 in 54.5s; production restarted and healthy after",
+ "failed_after_reruns": [],
+ "notes": "No assertion weakened. task113's two failures were the documented frozen-snapshot-vs-live-frontier class; fixed by strengthening invariants (Task 119 precedent), original and final results recorded above."
+}

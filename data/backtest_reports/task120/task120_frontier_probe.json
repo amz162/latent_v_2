@@ -1,0 +1,45 @@
+{
+  "report": "task120_frontier_probe",
+  "generated_at_utc": "2026-11-08T22:00:00Z",
+  "generated_at_pkt": "2026-11-09 03:00 PKT (Sunday night — market closed; Monday pre-window)",
+  "method": "minimal-touch verification: ONE light provider request (single symbol) + the task119_monitor live overlap probe (3 symbols); no bulk refetch, no provider load",
+  "frontier": "2026-11-06 (Friday) — latest genuinely completed PSX session; 2026-11-07/08 = weekend; machine clock never used to infer a bar date",
+  "provider_recovery": {
+    "state_at_task_start": "rate_limited (residue of Task 119 refresh window; last failure 2026-11-08T20:48:22Z)",
+    "probe_result": "HTTP 200 on first light request (2026-11-08T21:5xZ)",
+    "state_at_task_end": "healthy (last success 2026-11-08T21:53:47Z per ops/provider_health_state.json)"
+  },
+  "byte_level_evidence": {
+    "symbol": "LUCK",
+    "endpoint": "GET /stocks/LUCK/historical?start=2026-11-06&end=2026-11-07 (end exclusive — first probe's apparent gap was parameter semantics, not data lag)",
+    "provider_row": {"date": "2026-11-06", "open": 430.0, "high": 433.0, "low": 424.0, "close": 427.23, "volume": 990631},
+    "db_row": {"date": "2026-11-06", "open": 430.0, "high": 433.0, "low": 424.0, "close": 427.23, "volume": 990631.0},
+    "match": true
+  },
+  "monitor_overlap_probe": {
+    "source": "scripts/task119_monitor.py run 2026-11-08T22:0xZ",
+    "results": [["LUCK", true], ["SYS", true], ["MEBL", true]],
+    "verdict": "VERIFIED | frontier: 2026-11-06"
+  },
+  "coverage": {
+    "frontier_day_symbol_count": 23,
+    "pilot_universe": 25,
+    "structurally_absent": [{"symbol": "ENGRO", "last_bar": "2025-01-03"}, {"symbol": "BYCO", "last_bar": "2021-12-20"}],
+    "session_gap_symbols": [],
+    "duplicate_symbol_date_pairs": 0,
+    "note": "coverage figures from the committed task119_frontier_verification.json (2026-11-08T20:46:26Z refresh) plus this task's independent byte-level and overlap re-verification"
+  },
+  "fetch_json_verification": {
+    "implementation": "scripts/task107_lib.py fetch_json",
+    "bounded_exponential_backoff": "base 1.5s x 2^n (env-tunable)",
+    "jitter": "+-30%",
+    "max_attempts": 4,
+    "total_deadline_s": 60,
+    "retry_after": "honored on 429/503 (seconds or HTTP-date), capped by remaining deadline",
+    "fail_fast": "4xx permanent errors: 1 attempt (retryable set = {429,500,502,503,504} + network errors)",
+    "single_flight": "per-URL in-process dedup; cross-process single-flight remains the durable task107 lock (no Redis)",
+    "persistence": "ops/provider_health_state.json state machine healthy/degraded/rate_limited/unavailable with transition ledger, last_success_at, consecutive failures",
+    "frontier_safety": "failures return gracefully; a 429 can never advance the frontier or create bars",
+    "behavioral_tests": "task119_tests.py provider suite 9/9 + ingest safety 2/2 + worker survival 2/2 (mocked urlopen; no real provider overload)"
+  }
+}

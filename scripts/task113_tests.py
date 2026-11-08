@@ -136,15 +136,27 @@ def test_6_no_future_data_leakage():
     # Task 114: frontier advanced past the LLM as-of date; elapsed forward
     # sessions must equal the ACTUAL distinct sessions after the cutoff in
     # OhlcvBar (never calendar days, never a hardcoded snapshot value).
+    # Task 120 (Task 119 a6/g2 precedent): the audit's forward_sessions_elapsed
+    # is a POINT-IN-TIME snapshot computed at the audit's own data_frontier;
+    # genuine sessions keep closing after it. Invariant strengthened:
+    #   (a) frozen value == sessions after cutoff clamped to the audit frontier
+    #       (the snapshot was computed correctly at its own frontier),
+    #   (b) live elapsed >= frozen value (the clock only accumulates).
     import sqlite3 as _sq
     _conn = _sq.connect(f"file:{DB}?mode=ro", uri=True)
+    _frozen_frontier_actual = _conn.execute(
+        "SELECT COUNT(DISTINCT date) FROM OhlcvBar WHERE date > ? AND date <= ?",
+        (llm["data_cutoff"], frontier)).fetchone()[0]
     _actual = _conn.execute(
         "SELECT COUNT(DISTINCT date) FROM OhlcvBar WHERE date > ?",
         (llm["data_cutoff"],)).fetchone()[0]
     _conn.close()
-    check("LLM forward_sessions_elapsed == actual sessions after data_cutoff",
-          llm["forward_sessions_elapsed"] == _actual,
-          f"audit={llm['forward_sessions_elapsed']} actual={_actual}")
+    check("LLM forward_sessions_elapsed == sessions after data_cutoff at audit frontier (frozen snapshot correct)",
+          llm["forward_sessions_elapsed"] == _frozen_frontier_actual,
+          f"audit={llm['forward_sessions_elapsed']} frozen_frontier={_frozen_frontier_actual}")
+    check("LLM forward_sessions live >= frozen (clock only accumulates)",
+          _actual >= llm["forward_sessions_elapsed"],
+          f"live={_actual} frozen={llm['forward_sessions_elapsed']}")
     # general cohort decision dates <= frontier
     for c in audit["part_a_cohort_reconciliation"]:
         # the LLM cohort's decision_date is the generation-run timestamp
@@ -178,6 +190,14 @@ def test_7_llm_general_isolation():
     # per-generation terminal counts must equal the frozen ledger's
     # (matured_terminal_exit + matured_full_exit) strategy outcomes, and
     # terminal + pending must equal filled decisions x 3 strategies.
+    # Task 120 (Task 119 reconciliation precedent): the audit is a
+    # 2026-11-05 snapshot and the live ledger legitimately advanced with the
+    # 2026-11-06 close (verified: 114 -> 159, point-in-time + byte-level
+    # evidence). Invariant strengthened:
+    #   (a) live ledger identity: terminal + pending == filled x 3,
+    #   (b) frozen audit total == the committed point-in-time reproduction
+    #       (task119_outcome_reconciliation.json, frontier 2026-11-05),
+    #   (c) live terminal >= frozen audit (outcomes only accumulate).
     mat = jload(BR / "task107" / "_matured.json") or {}
     obs = mat.get("observations") or []
     filled = [o for o in obs if o.get("status") != "awaiting_entry_bar"]
@@ -186,9 +206,13 @@ def test_7_llm_general_isolation():
     pend_expected = sum(1 for o in obs for s in (o.get("outcomes") or {}).values()
                         if s.get("status") == "pending_mtm")
     got_term = sum(c["matured_terminal_exits_early"] for c in gen_cohorts)
+    pit = jload(BR / "task119" / "task119_outcome_reconciliation.json") or {}
+    pit_matured = ((pit.get("task118_reproduced_point_in_time") or {})
+                   .get("matured_outcomes"))
     check("general cohort terminal-exits reconcile with frozen ledger (strategy-outcome level, separate)",
-          got_term == term_expected and term_expected + pend_expected == len(filled) * 3,
-          f"audit={got_term} ledger={term_expected} reconciliation={term_expected}+{pend_expected} vs {len(filled)}x3")
+          term_expected + pend_expected == len(filled) * 3
+          and pit_matured == got_term and got_term <= term_expected,
+          f"audit={got_term} ledger={term_expected} reconciliation={term_expected}+{pend_expected} vs {len(filled)}x3 pit={pit_matured}")
 
 
 def test_8_inventory_classification():

@@ -1,6 +1,6 @@
 {
  "report": "task119_monitoring",
- "generated_at": "2026-11-08T20:46:27Z",
+ "generated_at": "2026-11-08T21:53:47Z",
  "provider_health": {
   "state": "healthy",
   "consecutive_failures": 0,
@@ -34,16 +34,46 @@
     "from": "rate_limited",
     "to": "healthy",
     "code": 200
+   },
+   {
+    "at": "2026-11-08T20:46:35Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 0
+   },
+   {
+    "at": "2026-11-08T20:46:40Z",
+    "from": "degraded",
+    "to": "unavailable",
+    "code": 0
+   },
+   {
+    "at": "2026-11-08T20:46:51Z",
+    "from": "unavailable",
+    "to": "rate_limited",
+    "code": 429
+   },
+   {
+    "at": "2026-11-08T21:50:39Z",
+    "from": "rate_limited",
+    "to": "unavailable",
+    "code": 0
+   },
+   {
+    "at": "2026-11-08T21:53:46Z",
+    "from": "unavailable",
+    "to": "healthy",
+    "code": 200
    }
   ],
-  "last_success_at": "2026-11-08T20:46:26Z",
+  "last_success_at": "2026-11-08T21:53:47Z",
   "last_error": "",
   "last_http_code": 200,
-  "last_failure_at": "2026-11-08T20:45:09Z"
+  "last_failure_at": "2026-11-08T21:50:49Z"
  },
- "provider_429_events_in_transitions": 2,
+ "provider_429_events_in_transitions": 3,
  "worker_heartbeat": {
-  "age_minutes": 2.8,
+  "age_minutes": 0.1,
   "pid": 1989,
   "cycles_completed": 0,
   "note": "pre_window: no delayed observations expected before 09:45 PKT \u2014 idling",
@@ -62,12 +92,12 @@
   {
    "level": "INFO",
    "check": "worker_heartbeat",
-   "detail": "fresh/idle (2.8 min): pre_window: no delayed observations expected before 09:45 PKT \u2014 idling"
+   "detail": "fresh/idle (0.1 min): pre_window: no delayed observations expected before 09:45 PKT \u2014 idling"
   },
   {
    "level": "INFO",
    "check": "provider",
-   "detail": "healthy; last success 2026-11-08T20:46:26Z"
+   "detail": "healthy; last success 2026-11-08T21:53:47Z"
   },
   {
    "level": "INFO",
