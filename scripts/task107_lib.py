@@ -2,8 +2,9 @@
 """Task 107 — shared library: PSX session awareness, lockfiles, checkpoints,
 provider access, validation, revision quarantine, coverage reporting."""
 from __future__ import annotations
-import csv, hashlib, json, os, sqlite3, subprocess, sys, time, urllib.request, urllib.error
+import csv, hashlib, json, os, random, sqlite3, subprocess, sys, threading, time, urllib.request, urllib.error
 from datetime import datetime, timezone, timedelta
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -48,16 +49,153 @@ def psx_session_state(now: datetime | None = None) -> dict:
 
 
 def fetch_json(url: str, timeout: int = 25) -> tuple[int, float, dict | None, str]:
-    t0 = time.time()
+    """Task 119 Part 2 — resilient provider fetch.
+
+    Wraps the historical single-shot call with:
+      - bounded exponential backoff with jitter (base 1.5s, factor 2, +-30%),
+      - Retry-After honored on 429/503 (seconds or HTTP-date form),
+      - max attempts (default 4) and a total request deadline (default 60s),
+      - single-flight dedup per URL within this process (no concurrent
+        duplicate requests; cross-process single-flight remains the durable
+        task107 Lock, not Redis),
+      - persistent provider-health transitions in
+        ops/provider_health_state.json (healthy / degraded / rate_limited /
+        unavailable with last-success timestamps),
+      - NO frontier implication: every failure returns gracefully like the
+        old signature, so callers record provider_unavailable and never
+        fabricate bars.
+
+    Retryable: 429 and 5xx and network errors. 4xx like 404/400 fail fast
+    (permanent). Retry delays are env-tunable for deterministic tests.
+    """
+    max_attempts = int(os.environ.get("PROVIDER_RETRY_MAX_ATTEMPTS", "4"))
+    deadline_s = float(os.environ.get("PROVIDER_RETRY_DEADLINE_S", "60"))
+    base_s = float(os.environ.get("PROVIDER_RETRY_BASE_S", "1.5"))
+    retryable_codes = {429, 500, 502, 503, 504}
+    deadline = time.time() + deadline_s
+
+    # single-flight: join an identical in-flight request instead of duplicating it
+    with _INFLIGHT_GUARD:
+        entry = _INFLIGHT.get(url)
+        if entry is None:
+            entry = {"event": threading.Event(), "result": None}
+            _INFLIGHT[url] = entry
+            owner = True
+        else:
+            owner = False
+    if not owner:
+        entry["event"].wait(timeout=max(1.0, deadline_s))
+        res = entry["result"]
+        if res is not None:
+            return res
+        return 0, 0.0, None, "single-flight wait expired"
+
+    attempt, last = 0, (0, 0.0, None, "not attempted")
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            body = r.read()
-        return r.status, time.time() - t0, json.loads(body), ""
-    except urllib.error.HTTPError as e:
-        return e.code, time.time() - t0, None, f"HTTP {e.code}"
-    except Exception as e:
-        return 0, time.time() - t0, None, str(e)[:120]
+        while attempt < max_attempts and time.time() < deadline:
+            attempt += 1
+            t0 = time.time()
+            code, payload, err, retry_after = 0, None, "", None
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=timeout) as r:
+                    body = r.read()
+                code, payload = r.status, json.loads(body)
+            except urllib.error.HTTPError as e:
+                code, err = e.code, f"HTTP {e.code}"
+                ra = (e.headers or {}).get("Retry-After") if e.headers else None
+                if ra:
+                    try:
+                        retry_after = float(ra)
+                    except ValueError:
+                        try:
+                            delta = parsedate_to_datetime(ra) - datetime.now(timezone.utc)
+                            retry_after = max(0.0, delta.total_seconds())
+                        except Exception:
+                            retry_after = None
+            except Exception as e:
+                err = str(e)[:120]
+
+            latency = time.time() - t0
+            last = (code, latency, payload, err)
+            _record_provider_outcome(code, err, retry_after)
+            if code == 200:
+                return last
+            retryable = code in retryable_codes or code == 0
+            if not retryable or attempt >= max_attempts:
+                return last
+            remaining = deadline - time.time()
+            if remaining <= 0:
+                return last
+            if retry_after is not None:
+                delay = min(retry_after, remaining)
+            else:
+                delay = min(base_s * (2 ** (attempt - 1)) * random.uniform(0.7, 1.3), remaining)
+            time.sleep(max(0.0, delay))
+        return last
+    finally:
+        # publish result to joiners, then drop the single-flight entry
+        entry["result"] = last
+        entry["event"].set()
+        with _INFLIGHT_GUARD:
+            if _INFLIGHT.get(url) is entry:
+                del _INFLIGHT[url]
+
+
+_INFLIGHT: dict[str, dict] = {}
+_INFLIGHT_GUARD = threading.Lock()
+
+
+def provider_health_state() -> dict:
+    """Current persisted provider health (Task 119 monitoring surface)."""
+    try:
+        return json.loads(PROVIDER_STATE_FILE.read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"state": "unknown", "consecutive_failures": 0,
+                "note": "no provider request recorded yet"}
+
+
+def _record_provider_outcome(code: int, err: str, retry_after: float | None) -> None:
+    """Persist provider health transitions; never raises."""
+    try:
+        OPS.mkdir(parents=True, exist_ok=True)
+        try:
+            st = json.loads(PROVIDER_STATE_FILE.read_text())
+        except (FileNotFoundError, json.JSONDecodeError):
+            st = {"state": "unknown", "consecutive_failures": 0, "transitions": []}
+        prev = st.get("state", "unknown")
+        if code == 200:
+            st["consecutive_failures"] = 0
+            st["last_success_at"] = NOW()
+            st["last_error"] = ""
+        else:
+            st["consecutive_failures"] = int(st.get("consecutive_failures", 0)) + 1
+            st["last_failure_at"] = NOW()
+            st["last_error"] = (err or "")[:200]
+        st["last_http_code"] = code
+        if retry_after is not None:
+            st["last_retry_after_s"] = retry_after
+        fails = st["consecutive_failures"]
+        if code == 200:
+            st["state"] = "healthy"
+        elif code == 429:
+            st["state"] = "rate_limited"
+        elif fails >= 3:
+            st["state"] = "unavailable"
+        else:
+            st["state"] = "degraded"
+        if st["state"] != prev:
+            st.setdefault("transitions", []).append(
+                {"at": NOW(), "from": prev, "to": st["state"], "code": code})
+            st["transitions"] = st["transitions"][-50:]
+        tmp = PROVIDER_STATE_FILE.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(st, indent=1))
+        tmp.replace(PROVIDER_STATE_FILE)
+    except Exception:
+        pass  # health bookkeeping must never break a data call
+
+
+PROVIDER_STATE_FILE = OPS / "provider_health_state.json"
 
 
 def fetch_history(symbol: str, start: str, end: str):

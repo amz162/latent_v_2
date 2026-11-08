@@ -1,0 +1,79 @@
+{
+ "report": "task119_monitoring",
+ "generated_at": "2026-11-08T20:46:27Z",
+ "provider_health": {
+  "state": "healthy",
+  "consecutive_failures": 0,
+  "transitions": [
+   {
+    "at": "2026-11-08T20:38:31Z",
+    "from": "unknown",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-08T20:42:15Z",
+    "from": "healthy",
+    "to": "rate_limited",
+    "code": 429
+   },
+   {
+    "at": "2026-11-08T20:44:18Z",
+    "from": "rate_limited",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-08T20:45:09Z",
+    "from": "healthy",
+    "to": "rate_limited",
+    "code": 429
+   },
+   {
+    "at": "2026-11-08T20:45:12Z",
+    "from": "rate_limited",
+    "to": "healthy",
+    "code": 200
+   }
+  ],
+  "last_success_at": "2026-11-08T20:46:26Z",
+  "last_error": "",
+  "last_http_code": 200,
+  "last_failure_at": "2026-11-08T20:45:09Z"
+ },
+ "provider_429_events_in_transitions": 2,
+ "worker_heartbeat": {
+  "age_minutes": 2.8,
+  "pid": 1989,
+  "cycles_completed": 0,
+  "note": "pre_window: no delayed observations expected before 09:45 PKT \u2014 idling",
+  "restarts_logged_recent": 0
+ },
+ "frontier": "2026-11-06",
+ "sqlite": {
+  "quick_check": "ok"
+ },
+ "pending_outcome_backlog": {
+  "prediction_outcome_pending": 375,
+  "strategy_pending_open": "see task119_outcome_reconciliation.json (81)"
+ },
+ "market_window_now": false,
+ "alerts": [
+  {
+   "level": "INFO",
+   "check": "worker_heartbeat",
+   "detail": "fresh/idle (2.8 min): pre_window: no delayed observations expected before 09:45 PKT \u2014 idling"
+  },
+  {
+   "level": "INFO",
+   "check": "provider",
+   "detail": "healthy; last success 2026-11-08T20:46:26Z"
+  },
+  {
+   "level": "INFO",
+   "check": "sqlite",
+   "detail": "quick_check=ok"
+  }
+ ],
+ "alert_policy": "ALERT only for real failures (stale heartbeat WITHOUT an expected-idle note, provider unavailable during market window, integrity failure). Pre-market/weekend idle and closed-session idling are INFO. 429 outside the market window is WARN (backoff protects quota; no data urgency)."
+}

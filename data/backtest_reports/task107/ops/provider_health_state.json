@@ -1,0 +1,58 @@
+{
+ "state": "rate_limited",
+ "consecutive_failures": 12,
+ "transitions": [
+  {
+   "at": "2026-11-08T20:38:31Z",
+   "from": "unknown",
+   "to": "healthy",
+   "code": 200
+  },
+  {
+   "at": "2026-11-08T20:42:15Z",
+   "from": "healthy",
+   "to": "rate_limited",
+   "code": 429
+  },
+  {
+   "at": "2026-11-08T20:44:18Z",
+   "from": "rate_limited",
+   "to": "healthy",
+   "code": 200
+  },
+  {
+   "at": "2026-11-08T20:45:09Z",
+   "from": "healthy",
+   "to": "rate_limited",
+   "code": 429
+  },
+  {
+   "at": "2026-11-08T20:45:12Z",
+   "from": "rate_limited",
+   "to": "healthy",
+   "code": 200
+  },
+  {
+   "at": "2026-11-08T20:46:35Z",
+   "from": "healthy",
+   "to": "degraded",
+   "code": 0
+  },
+  {
+   "at": "2026-11-08T20:46:40Z",
+   "from": "degraded",
+   "to": "unavailable",
+   "code": 0
+  },
+  {
+   "at": "2026-11-08T20:46:51Z",
+   "from": "unavailable",
+   "to": "rate_limited",
+   "code": 429
+  }
+ ],
+ "last_success_at": "2026-11-08T20:46:26Z",
+ "last_error": "HTTP 429",
+ "last_http_code": 429,
+ "last_failure_at": "2026-11-08T20:48:22Z"
+}

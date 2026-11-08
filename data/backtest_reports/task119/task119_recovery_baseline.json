@@ -1,0 +1,25 @@
+{
+  "checkpoint": "A_recovery_baseline",
+  "recorded_at": "2026-11-08T20:37:34Z",
+  "recycle_detected": true,
+  "evidence": {
+    "found_state": "workspace reset to ancient scaffold commit 6daa32ec; task117/118 artifacts absent; db/custom.db was pre-task115 (frontier 2026-11-03, no beta tables); dev runtime auto-started; worker dead (stale heartbeat 2026-11-03T19:48Z pid 5534)",
+    "origin_main": "97ca9502 = Task 118 push (692078ef) + 1 new Actions monitor-state commit (2026-11-06T11:42Z) — all committed work SAFE on GitHub",
+    "preserve_dir": "/tmp/my-project partial (had .env, logs; missing db/, backups, .zcredentials)",
+    "lost_unrecoverable": ["live raw DB rows written after the 2026-11-04 Actions gz snapshot: beta smoke-test profiles (2 synthetic rows, no real users ever invited), price-pattern report rows (recomputable), worker runtime state (rebuilt)"],
+    "preserved_via_git": ["all Task 112-118 source, artifacts, reports", "committed db gz snapshot (2026-11-04 Actions run)"]
+  },
+  "recovery_steps": [
+    "git reset --hard origin/main (HEAD -> 97ca9502, tree clean)",
+    "gunzip -kf db/custom.db.gz (committed 2026-11-04 snapshot: 1,042,923 bars, frontier 2026-11-03, 15 tables)",
+    "bunx prisma db push (created 4 missing beta tables; existing 15 tables + rows untouched: bars still 1,042,923, predictions 375, outcomes 375)",
+    "bunx prisma generate",
+    "task107_daily_ingest.py x2: inserted 69 bars (2026-11-04, 2026-11-05, 2026-11-06), overlap revalidated 0 mismatches, rerun no_new_data -> frontier 2026-11-06 (latest completed session; Nov 7-8 weekend)",
+    "task107_maturity.py recount at new frontier: 159 matured / 81 pending / realized 293,097.84 PKR / MTM 16,515.07 PKR / 4 cohorts",
+    "BetaConfig recreated (betaEnabled=true, registrationsPaused=false) via task117_beta_admin.py set-flag",
+    "production runtime restarted via start_server.sh (build + next start, HTTP 200)",
+    "task108 worker restarted via task108_runner.py worker (pid 1741, heartbeat fresh, pre-window idle correct)"
+  ],
+  "env_integrity": ".env keys identical to pre-recycle snapshot (DATABASE_URL only) — verified against task118_deployment_snapshot.txt",
+  "note": "Task 118 reported counts (114/57) were produced at frontier 2026-11-05; the frontier legitimately advanced to 2026-11-06 after recovery (new genuine session). Point-in-time reconciliation is Checkpoint D scope."
+}

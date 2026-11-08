@@ -101,7 +101,11 @@ def main():
     frontier = conn.execute("SELECT MAX(date) FROM OhlcvBar").fetchone()[0]
     bp = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='BetaProfile'").fetchone()
     conn.close()
-    check("m6f_db_intact_and_additive", bars == 1042969 and frontier == "2026-11-05" and bp is not None, f"bars={bars} frontier={frontier}")
+    # Task 119 update (documented): the invariant is ADDITIVITY — bars never
+    # shrink and the frontier never regresses. The 2026-11-06 session was
+    # ingested with verified provider data (task119_frontier_verification.json:
+    # 69 overlap bars revalidated 0 mismatches), so >= the Task 116 markers.
+    check("m6f_db_intact_and_additive", bars >= 1042969 and frontier >= "2026-11-05" and bp is not None, f"bars={bars} frontier={frontier}")
 
     p = sum(1 for _, ok, _ in RES if ok)
     f = len(RES) - p

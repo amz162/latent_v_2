@@ -1,0 +1,64 @@
+{
+ "report": "task119_frontier_verification",
+ "generated_at": "2026-11-08T20:46:26Z",
+ "frontier": "2026-11-06",
+ "frontier_day_symbol_count": 23,
+ "structurally_absent_symbols": [
+  {
+   "symbol": "ENGRO",
+   "last_bar": "2025-01-03"
+  },
+  {
+   "symbol": "BYCO",
+   "last_bar": "2021-12-20"
+  }
+ ],
+ "session_gap_symbols": [],
+ "coverage_note": "ENGRO (last bar 2025-01-03) and BYCO (last bar 2021-12-20) are delisted/defunct \u2014 the provider returns an empty history for them (HTTP 200, 0 rows); their absence is structural, not a 2026-11-06 data gap. 23/25 pilot symbols have verified frontier-day bars.",
+ "sessions_recovered_this_task": [
+  "2026-11-04",
+  "2026-11-05",
+  "2026-11-06"
+ ],
+ "total_bars": 1042992,
+ "duplicate_symbol_date_pairs": 0,
+ "session_calendar_check": {
+  "candidate_session_date_by_convention": "2026-11-06",
+  "note": "frontier equals the last fully closed session with provider data; the machine clock is never used to infer a bar date"
+ },
+ "live_overlap_probe": [
+  {
+   "symbol": "LUCK",
+   "http": 200,
+   "error": null,
+   "overlap_match": true
+  },
+  {
+   "symbol": "SYS",
+   "http": 200,
+   "error": null,
+   "overlap_match": true
+  },
+  {
+   "symbol": "MEBL",
+   "http": 200,
+   "error": null,
+   "overlap_match": true
+  }
+ ],
+ "ingest_evidence": {
+  "status": "no_new_data",
+  "new_bars": 69,
+  "inserted": 0,
+  "overlap_checked": 69,
+  "mismatches": 0,
+  "rejected_bars": 0,
+  "revisions_quarantined": 0,
+  "provider_errors": [],
+  "window": {
+   "from": "2026-11-04",
+   "to": "2026-11-06"
+  }
+ },
+ "verdict": "VERIFIED"
+}

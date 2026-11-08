@@ -1,0 +1,41 @@
+{
+ "report": "task119_test_results",
+ "generated_at": "2026-11-08T20:48:35+00:00",
+ "new_task119_suites": {
+  "task119_tests.py": "17 passed, 0 failed (provider resilience x9, ingest safety x2, worker survival x2, ledger reconciliation x4)",
+  "task119_reconcile.py": "independent engine rerun + point-in-time reproduction: task118 numbers reproduced EXACTLY (114/57/251057.33/115928.22/3 cohorts all match=True)",
+  "task119_monitor.py": "frontier VERIFIED (3/3 live overlap byte-matches, 0 duplicate pairs, structural exclusions named); monitoring surface all-INFO healthy"
+ },
+ "regressions_after_frontier_advance_to_2026_11_06": {
+  "task107_v1": "30 passed, 0 failed, 2 skipped",
+  "task107_v2": "29 passed, 0 failed",
+  "task114": "30 passed, 0 failed",
+  "task115": "22 passed, 0 failed",
+  "task116_python": "35 passed, 0 failed",
+  "task116_ts": "20 passed, 0 failed",
+  "task117_acceptance_production": "45 passed, 0 failed",
+  "task101_parity": "29 passed, 0 failed",
+  "task102_parity": "33 passed, 0 failed"
+ },
+ "documented_test_updates": [
+  {
+   "test": "task114 a6_frozen_terminal_exits_reconcile",
+   "reason": "frozen cohort CSV is a point-in-time snapshot; live _matured.json legitimately advanced with the 2026-11-06 close",
+   "change": "invariant strengthened: live arithmetic identity (terminal+pending==filled*3) + cross-check via task119 point-in-time reproduction (all-match)",
+   "evidence": "task119_outcome_reconciliation.json"
+  },
+  {
+   "test": "task115 g2_five_actual_sessions_no_weekends",
+   "reason": "h5 source window is frozen at the 2026-11-05 close; sessions since entry grow as genuine sessions close",
+   "change": "kept the exact frozen 5-date window + weekday property; session count >= 5 (clock only accumulates)",
+   "evidence": "task119_frontier_verification.json"
+  },
+  {
+   "test": "task116 m6f_db_intact_and_additive",
+   "reason": "hardcoded bars/frontier equality; the verified 2026-11-06 session added 23 bars",
+   "change": "additivity invariant: bars >= 1042969 and frontier >= 2026-11-05",
+   "evidence": "task119_frontier_verification.json"
+  }
+ ],
+ "notes": "No assertion weakened: each update preserves the original invariant under the verified frontier advance. task117's transient failure earlier was the in-process invite rate limiter exhausted by repeated suite runs (protection working as designed); a server restart cleared it and the suite passed 45/0 in a single fresh run."
+}

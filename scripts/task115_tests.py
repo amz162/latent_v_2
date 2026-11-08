@@ -66,10 +66,15 @@ def main() -> None:
     print("-- 2. correct PSX session counting --")
     dates = [o["horizons"]["h5"]["source_bar_refs"][i]["date"] for o in mat[:1] for i in range(5)]
     wd = [datetime.strptime(d, "%Y-%m-%d").weekday() for d in dates]
+    # Task 119 update (documented): the h5 source window is FROZEN at the
+    # 2026-11-05 close (source_bar_refs), so those exact five dates and their
+    # weekday property remain the invariant; sessions since entry may grow as
+    # new genuine sessions close (frontier 2026-11-06 verified in
+    # task119_frontier_verification.json) — the clock only ever accumulates.
     check("g2_five_actual_sessions_no_weekends",
           dates == ["2026-10-30", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05"]
           and all(w < 5 for w in wd)
-          and len(sessions_of("LUCK", "2026-10-29")) == 5)
+          and len(sessions_of("LUCK", "2026-10-29")) >= 5)
 
     print("-- 3. entry-session treatment (frozen convention: entry = session 1) --")
     conn = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)

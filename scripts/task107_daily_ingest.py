@@ -250,6 +250,10 @@ def main() -> int:
     LB.append_run_log("ingest", {"status": report["status"], "frontier": new_frontier,
                                    "inserted": report["promotion"]["inserted"] if report["promotion"] else 0})
     if not new_bars:
+        # Task 119: persist the no_new_data evidence too — a clean idempotent
+        # revalidation is operational evidence (provider live, overlap intact)
+        # and overwrites any stale failure report from a previous run.
+        (T107 / "task107_daily_ingestion_report.json").write_text(json.dumps(report, indent=1))
         print(json.dumps({"status": "no_new_data", "frontier": new_frontier,
                            "overlap_checked": report["overlap_checked"],
                            "mismatches": len(report["overlap_mismatches"])}))

@@ -1,0 +1,184 @@
+{
+ "report": "task119_outcome_reconciliation",
+ "generated_at": "2026-11-08T20:41:52Z",
+ "method": "production engine (task106_mature.ts) re-invoked fresh on frozen shadow ledgers; partition + arithmetic recomputed independently from raw records; point-in-time DB clone clamped to 2026-11-05 for the Task 118 population; no historical record modified",
+ "task118_reported_at_frontier_2026_11_05": {
+  "matured_outcomes": 114,
+  "pending": 57,
+  "realized_pkr": 251057.33,
+  "unrealized_mtm_pkr": 115928.22,
+  "horizon_cohorts": 3
+ },
+ "task118_reproduced_point_in_time": {
+  "matured_outcomes": 114,
+  "pending": 57,
+  "realized_pkr": 251057.33,
+  "unrealized_mtm_pkr": 115928.22,
+  "horizon_cohorts": 3
+ },
+ "task118_reconciliation": {
+  "matured_outcomes": {
+   "reported": 114,
+   "reproduced": 114,
+   "match": true
+  },
+  "pending": {
+   "reported": 57,
+   "reproduced": 57,
+   "match": true
+  },
+  "realized_pkr": {
+   "reported": 251057.33,
+   "reproduced": 251057.33,
+   "match": true
+  },
+  "unrealized_mtm_pkr": {
+   "reported": 115928.22,
+   "reproduced": 115928.22,
+   "match": true
+  },
+  "horizon_cohorts": {
+   "reported": 3,
+   "reproduced": 3,
+   "match": true
+  }
+ },
+ "current_frontier": "2026-11-06",
+ "current_summary": {
+  "total_outcome_rows": 240,
+  "fixed_horizon_matured": 0,
+  "fixed_horizon_matured_by_horizon_reached": {
+   "h5": 0,
+   "h10": 0,
+   "h21": 0
+  },
+  "terminal_exits": 159,
+  "pending_fixed_horizon_outcomes": 81,
+  "pending_horizons_open": 238,
+  "pending_mtm_positions": 81,
+  "missing_data_positions": 0,
+  "unfilled": 0,
+  "unique_decisions_total": 80,
+  "unique_filled_trades": 80,
+  "cohorts": [
+   "task105-gen1",
+   "task106-gen2",
+   "task107-gen3"
+  ],
+  "realized_pkr_independent": 293097.84,
+  "mtm_pkr_independent": 16515.07
+ },
+ "horizon_layer_task114": {
+  "status": "ok",
+  "method": "independent per-symbol session-clock recount from raw bars",
+  "point_in_time_frontier": "2026-11-05",
+  "point_in_time": {
+   "h5_matured": 12,
+   "h10_matured": 0,
+   "h21_matured": 0,
+   "h5_pending": 45,
+   "h10_pending": 57,
+   "h21_pending": 57,
+   "unfilled": 23,
+   "unique_decisions": 80,
+   "no_bar_after_decision": [
+    "t107gen3_HUBC_2026-11-05",
+    "t107gen3_LUCK_2026-11-05",
+    "t107gen3_SYS_2026-11-05",
+    "t107gen3_MEBL_2026-11-05",
+    "t107gen3_PSO_2026-11-05",
+    "t107gen3_OGDC_2026-11-05",
+    "t107gen3_PPL_2026-11-05",
+    "t107gen3_WTL_2026-11-05",
+    "t107gen3_KEL_2026-11-05",
+    "t107gen3_TRG_2026-11-05",
+    "t107gen3_UNITY_2026-11-05",
+    "t107gen3_BOP_2026-11-05",
+    "t107gen3_CNERGY_2026-11-05",
+    "t107gen3_HASCOL_2026-11-05",
+    "t107gen3_MLCF_2026-11-05",
+    "t107gen3_PAEL_2026-11-05",
+    "t107gen3_PIBTL_2026-11-05",
+    "t107gen3_LOTCHEM_2026-11-05",
+    "t107gen3_PRL_2026-11-05",
+    "t107gen3_TELE_2026-11-05",
+    "t107gen3_ANL_2026-11-05",
+    "t107gen3_HUMNL_2026-11-05",
+    "t107gen3_FCCL_2026-11-05"
+   ],
+   "per_cohort": {
+    "task105-gen1": {
+     "decisions": 12,
+     "entry_date": "2026-10-30",
+     "sessions_elapsed_from_entry": 5
+    },
+    "task106-gen2": {
+     "decisions": 22,
+     "entry_date": "2026-11-03",
+     "sessions_elapsed_from_entry": 3
+    },
+    "task107-gen3": {
+     "decisions": 23,
+     "entry_date": "2026-11-04",
+     "sessions_elapsed_from_entry": 2
+    }
+   }
+  },
+  "point_in_time_cohort_comparison": [
+   {
+    "cohort": "task105-gen1",
+    "independent_entry": "2026-10-30",
+    "independent_sessions_elapsed": 5,
+    "committed_present": true,
+    "committed_total_observations": "12",
+    "independent_decisions": 12
+   },
+   {
+    "cohort": "task106-gen2",
+    "independent_entry": "2026-11-03",
+    "independent_sessions_elapsed": 3,
+    "committed_present": true,
+    "committed_total_observations": "22",
+    "independent_decisions": 22
+   },
+   {
+    "cohort": "task107-gen3",
+    "independent_entry": "2026-11-04",
+    "independent_sessions_elapsed": 2,
+    "committed_present": true,
+    "committed_total_observations": "46",
+    "independent_decisions": 23
+   }
+  ],
+  "current_frontier_recount": {
+   "h5_matured": 12,
+   "h10_matured": 0,
+   "h21_matured": 0,
+   "h5_pending": 68,
+   "h10_pending": 80,
+   "h21_pending": 80,
+   "unfilled": 0,
+   "unique_decisions": 80,
+   "no_bar_after_decision": [],
+   "per_cohort": {
+    "task105-gen1": {
+     "decisions": 12,
+     "entry_date": "2026-10-30",
+     "sessions_elapsed_from_entry": 6
+    },
+    "task106-gen2": {
+     "decisions": 22,
+     "entry_date": "2026-11-03",
+     "sessions_elapsed_from_entry": 4
+    },
+    "task107-gen3": {
+     "decisions": 46,
+     "entry_date": "2026-11-04",
+     "sessions_elapsed_from_entry": 3
+    }
+   }
+  }
+ },
+ "category_exclusivity_note": "pending fixed-horizon outcomes and pending MTM positions are two COUNTS over the same exclusive pending_open population (every open position is both an incomplete horizon observation and an MTM position); fixed-horizon maturity and terminal exit are exclusive outcome types",
+ "csv": "task119_outcome_categories.csv"
+}

@@ -1,14 +1,14 @@
 {
- "generated_at": "2026-11-05T21:41:08.755Z",
+ "generated_at": "2026-11-08T20:35:12.059Z",
  "engine": "production simulateStrategy (strategy-engine.ts)",
  "cost_profile": "psx_user_schedule_v2",
  "summary": {
   "n": 80,
-  "matured": 114,
-  "pending_mtm": 57,
-  "unfilled": 23,
-  "realized_total_pkr": 251057.3,
-  "unrealized_total_pkr": 115928.25,
+  "matured": 159,
+  "pending_mtm": 81,
+  "unfilled": 0,
+  "realized_total_pkr": 293097.82,
+  "unrealized_total_pkr": 16515.05,
   "note": "MTM is hypothetical unrealized value, not evidence of edge"
  },
  "observations": [
@@ -28,7 +28,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4381.357392857135,
      "net_return_pct": 4.385830940416359,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 5
     },
     "max_tp_step_trailing": {
@@ -38,7 +38,7 @@
      "exit_reason": "TRAILING_SL_AT_TP1",
      "realized_net_pnl": 937.74,
      "net_return_pct": 0.9386934673366858,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -49,12 +49,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2354.28,
      "net_return_pct": 2.3566860697911816,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 5,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_SYS_2026-10-29",
@@ -72,7 +72,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -3514.17788571427,
      "net_return_pct": -3.516949241716743,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -82,7 +82,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -3514.17788571427,
      "net_return_pct": -3.516949241716743,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -92,11 +92,11 @@
      "exit_reason": "SL",
      "realized_net_pnl": -3514.17788571427,
      "net_return_pct": -3.516949241716743,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_MEBL_2026-10-29",
@@ -114,7 +114,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 3352.5360000000137,
      "net_return_pct": 3.365898617511535,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 5
     },
     "max_tp_step_trailing": {
@@ -124,7 +124,7 @@
      "exit_reason": "TRAILING_SL_AT_TP1",
      "realized_net_pnl": -1727.65,
      "net_return_pct": -1.734535104364316,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -135,12 +135,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 1777.94,
      "net_return_pct": 1.7850218223490157,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 5,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_KEL_2026-10-29",
@@ -158,7 +158,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -6566.344285714282,
      "net_return_pct": -6.566626650660261,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -168,7 +168,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -6566.344285714282,
      "net_return_pct": -6.566626650660261,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -178,11 +178,11 @@
      "exit_reason": "SL",
      "realized_net_pnl": -6566.344285714282,
      "net_return_pct": -6.566626650660261,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_TRG_2026-10-29",
@@ -197,22 +197,22 @@
      "status": "pending_mtm",
      "entry": 53,
      "quantity": 1886,
-     "sessions_available": 5,
+     "sessions_available": 6,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1351.32,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 357.4,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 53,
      "quantity": 1886,
-     "sessions_available": 5,
+     "sessions_available": 6,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1351.32,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 357.4,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -220,14 +220,14 @@
      "entry": 53,
      "quantity": 1886,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 1351.32,
-     "net_return_pct": 1.351886792452832,
-     "sessions_used": 5,
-     "hold": 5,
+     "realized_net_pnl": 357.4,
+     "net_return_pct": 0.35754716981131535,
+     "sessions_used": 6,
+     "hold": 6,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_BOP_2026-10-29",
@@ -245,7 +245,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4956.005142857154,
      "net_return_pct": 4.956302521008415,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4
     },
     "max_tp_step_trailing": {
@@ -255,7 +255,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4956.005142857154,
      "net_return_pct": 4.956302521008415,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4
     },
     "scale_out_50_25_25": {
@@ -265,12 +265,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2471.91,
      "net_return_pct": 2.4720588235294167,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_CNERGY_2026-10-29",
@@ -288,7 +288,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -12041.81999999999,
      "net_return_pct": -12.042253521126751,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -298,7 +298,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -12041.81999999999,
      "net_return_pct": -12.042253521126751,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -308,11 +308,11 @@
      "exit_reason": "SL",
      "realized_net_pnl": -12041.81999999999,
      "net_return_pct": -12.042253521126751,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_MLCF_2026-10-29",
@@ -330,7 +330,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 5095.954465714278,
      "net_return_pct": 5.098455768114114,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4
     },
     "max_tp_step_trailing": {
@@ -340,7 +340,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 5095.954465714278,
      "net_return_pct": 5.098455768114114,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4
     },
     "scale_out_50_25_25": {
@@ -350,12 +350,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2848.52,
      "net_return_pct": 2.849918635797003,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_PAEL_2026-10-29",
@@ -373,7 +373,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -3060.441779999999,
      "net_return_pct": -3.060984798703289,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -383,7 +383,7 @@
      "exit_reason": "SL",
      "realized_net_pnl": -3060.441779999999,
      "net_return_pct": -3.060984798703289,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -393,11 +393,11 @@
      "exit_reason": "SL",
      "realized_net_pnl": -3060.441779999999,
      "net_return_pct": -3.060984798703289,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 2
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_PIBTL_2026-10-29",
@@ -412,37 +412,37 @@
      "status": "pending_mtm",
      "entry": 13.19,
      "quantity": 7581,
-     "sessions_available": 5,
+     "sessions_available": 6,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1027.23,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -454.86,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 13.19,
      "quantity": 7581,
-     "sessions_available": 5,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1027.23,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 253.96,
+     "net_return_pct": 0.253980288097051,
+     "sessions_used": 6,
+     "hold": 6,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 13.19,
      "quantity": 7581,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 1261.93,
-     "net_return_pct": 1.2620182051176498,
-     "sessions_used": 5,
-     "hold": 5,
+     "realized_net_pnl": 520.79,
+     "net_return_pct": 0.520828712492186,
+     "sessions_used": 6,
+     "hold": 6,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_LOTCHEM_2026-10-29",
@@ -457,22 +457,22 @@
      "status": "pending_mtm",
      "entry": 24.47,
      "quantity": 4086,
-     "sessions_available": 5,
+     "sessions_available": 6,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 915.63,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -463.39,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 24.47,
      "quantity": 4086,
-     "sessions_available": 5,
+     "sessions_available": 6,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 915.63,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -463.39,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -480,14 +480,14 @@
      "entry": 24.47,
      "quantity": 4086,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 915.63,
-     "net_return_pct": 0.9157744176542755,
-     "sessions_used": 5,
-     "hold": 5,
+     "realized_net_pnl": -463.39,
+     "net_return_pct": -0.46346546791989846,
+     "sessions_used": 6,
+     "hold": 6,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t105gen1_FCCL_2026-10-29",
@@ -505,7 +505,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 6078.2194285714295,
      "net_return_pct": 6.080712520704918,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4
     },
     "max_tp_step_trailing": {
@@ -515,7 +515,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 6078.2194285714295,
      "net_return_pct": 6.080712520704918,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4
     },
     "scale_out_50_25_25": {
@@ -525,12 +525,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 3420.68,
      "net_return_pct": 3.4220823037445363,
-     "sessions_used": 5,
+     "sessions_used": 6,
      "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_HUBC_2026-11-02",
@@ -548,7 +548,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4138.365128571429,
      "net_return_pct": 4.146155755235516,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "max_tp_step_trailing": {
@@ -558,7 +558,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4138.365128571429,
      "net_return_pct": 4.146155755235516,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "scale_out_50_25_25": {
@@ -568,12 +568,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2213.12,
      "net_return_pct": 2.2172899163242,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_LUCK_2026-11-02",
@@ -591,7 +591,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4391.406357142854,
      "net_return_pct": 4.406962936308021,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "max_tp_step_trailing": {
@@ -601,7 +601,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4391.406357142854,
      "net_return_pct": 4.406962936308021,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "scale_out_50_25_25": {
@@ -611,12 +611,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2317.16,
      "net_return_pct": 2.325372063383737,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_SYS_2026-11-02",
@@ -634,7 +634,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 6179.040750000002,
      "net_return_pct": 6.181946264744432,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "max_tp_step_trailing": {
@@ -644,7 +644,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 6179.040750000002,
      "net_return_pct": 6.181946264744432,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "scale_out_50_25_25": {
@@ -654,12 +654,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 3287.79,
      "net_return_pct": 3.289339060787143,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_MEBL_2026-11-02",
@@ -677,7 +677,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4848.363702857145,
      "net_return_pct": 4.861368836769269,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "max_tp_step_trailing": {
@@ -687,7 +687,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4848.363702857145,
      "net_return_pct": 4.861368836769269,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "scale_out_50_25_25": {
@@ -697,12 +697,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 3247.55,
      "net_return_pct": 3.256257700600649,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_PSO_2026-11-02",
@@ -717,11 +717,11 @@
      "status": "pending_mtm",
      "entry": 352,
      "quantity": 284,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 2312.04,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 448.44,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
@@ -731,7 +731,7 @@
      "exit_reason": "TRAILING_SL_AT_TP2",
      "realized_net_pnl": 2366.19,
      "net_return_pct": 2.366943993506478,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -740,14 +740,14 @@
      "entry": 352,
      "quantity": 284,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 1393.43,
-     "net_return_pct": 1.3938768262986951,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 927.53,
+     "net_return_pct": 0.9278256899350606,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_OGDC_2026-11-02",
@@ -762,37 +762,37 @@
      "status": "pending_mtm",
      "entry": 303,
      "quantity": 330,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3413.85,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2474.17,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 303,
      "quantity": 330,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3413.85,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 2255.39,
+     "net_return_pct": 2.2556105610561095,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 303,
      "quantity": 330,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2005.32,
-     "net_return_pct": 2.005515551555158,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 1768.97,
+     "net_return_pct": 1.7691494149414948,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_WTL_2026-11-02",
@@ -800,44 +800,42 @@
    "decision_date": "2026-11-02",
    "entry_date": "2026-11-03",
    "entry": 0.95,
-   "status": "pending_mtm",
+   "status": "matured",
    "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
    "outcomes": {
     "fixed_first_hit": {
-     "status": "pending_mtm",
+     "status": "matured_terminal_exit",
      "entry": 0.95,
      "quantity": 105263,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -7368.41,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TP3",
+     "realized_net_pnl": 2184.2072499999977,
+     "net_return_pct": 2.1842105263157876,
+     "sessions_used": 4,
+     "hold": 4
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_terminal_exit",
      "entry": 0.95,
      "quantity": 105263,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -7368.41,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TP3",
+     "realized_net_pnl": 2184.2072499999977,
+     "net_return_pct": 2.1842105263157876,
+     "sessions_used": 4,
+     "hold": 4
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 0.95,
      "quantity": 105263,
-     "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": -7368.41,
-     "net_return_pct": -7.368421052631581,
-     "sessions_used": 3,
-     "hold": 3,
+     "exit_reason": "TP3_REMAINDER",
+     "realized_net_pnl": -1730.21,
+     "net_return_pct": -1.730211095316641,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_KEL_2026-11-02",
@@ -852,37 +850,37 @@
      "status": "pending_mtm",
      "entry": 5.67,
      "quantity": 17636,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 5987.42,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 5537.7,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 5.67,
      "quantity": 17636,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 5987.42,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 5537.7,
+     "net_return_pct": 5.537918871252198,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 5.67,
      "quantity": 17636,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 3888.74,
-     "net_return_pct": 3.888888888888887,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 3776.31,
+     "net_return_pct": 3.7764550264550265,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_TRG_2026-11-02",
@@ -897,37 +895,37 @@
      "status": "pending_mtm",
      "entry": 52,
      "quantity": 1923,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3018.15,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2004.73,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 52,
      "quantity": 1923,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3018.15,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 3050.84,
+     "net_return_pct": 3.050961538461534,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 52,
      "quantity": 1923,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 3247.45,
-     "net_return_pct": 3.2475798674804124,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 2740.48,
+     "net_return_pct": 2.7405855877092176,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_UNITY_2026-11-02",
@@ -942,37 +940,37 @@
      "status": "pending_mtm",
      "entry": 7.65,
      "quantity": 13071,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1993.33,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 3659.88,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 7.65,
      "quantity": 13071,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1993.33,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 1993.33,
+     "net_return_pct": 1.9934640522875815,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 7.65,
      "quantity": 13071,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2747.19,
-     "net_return_pct": 2.7473746237331564,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 3580.53,
+     "net_return_pct": 3.580771711433666,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_BOP_2026-11-02",
@@ -990,7 +988,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4754.341600000004,
      "net_return_pct": 4.755611348229982,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -1000,7 +998,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4754.341600000004,
      "net_return_pct": 4.755611348229982,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -1010,12 +1008,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2213.1,
      "net_return_pct": 2.213690083823814,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_CNERGY_2026-11-02",
@@ -1030,22 +1028,22 @@
      "status": "pending_mtm",
      "entry": 12.21,
      "quantity": 8190,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -1719.9,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -1392.3,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 12.21,
      "quantity": 8190,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -1719.9,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -1392.3,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -1053,14 +1051,14 @@
      "entry": 12.21,
      "quantity": 8190,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": -1719.9,
-     "net_return_pct": -1.7199017199017226,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": -1392.3,
+     "net_return_pct": -1.3923013923014018,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_HASCOL_2026-11-02",
@@ -1075,37 +1073,37 @@
      "status": "pending_mtm",
      "entry": 15.9,
      "quantity": 6289,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 7213.48,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 3845.72,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 15.9,
      "quantity": 6289,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 7213.48,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 6037.44,
+     "net_return_pct": 6.0377358490566095,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 15.9,
      "quantity": 6289,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 4890.4,
-     "net_return_pct": 4.890643498674286,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 4048.06,
+     "net_return_pct": 4.048260721918226,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_MLCF_2026-11-02",
@@ -1123,7 +1121,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4019.0552171428567,
      "net_return_pct": 4.02151316598991,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -1133,7 +1131,7 @@
      "exit_reason": "TRAILING_SL_AT_TP1",
      "realized_net_pnl": 175.78,
      "net_return_pct": 0.17588285960379926,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -1144,12 +1142,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 1868.93,
      "net_return_pct": 1.8700715977605513,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_PAEL_2026-11-02",
@@ -1167,7 +1165,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4563.177708571437,
      "net_return_pct": 4.563212388985594,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "max_tp_step_trailing": {
@@ -1177,7 +1175,7 @@
      "exit_reason": "TRAILING_SL_AT_TP1",
      "realized_net_pnl": -612.4,
      "net_return_pct": -0.6124023742580378,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -1188,12 +1186,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2315.57,
      "net_return_pct": 2.31558887847548,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_PIBTL_2026-11-02",
@@ -1208,37 +1206,37 @@
      "status": "pending_mtm",
      "entry": 12.82,
      "quantity": 7800,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3510,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 1985.1,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 12.82,
      "quantity": 7800,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3510,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 2714.4,
+     "net_return_pct": 2.7145085803432165,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 12.82,
      "quantity": 7800,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2813.85,
-     "net_return_pct": 2.813962558502335,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 2432.62,
+     "net_return_pct": 2.43272230889235,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_LOTCHEM_2026-11-02",
@@ -1253,37 +1251,37 @@
      "status": "pending_mtm",
      "entry": 23.5,
      "quantity": 4255,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 4474.13,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 3063.6,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 23.5,
      "quantity": 4255,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 4474.13,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 3254.77,
+     "net_return_pct": 3.255015197568387,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 23.5,
      "quantity": 4255,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 3864.6,
-     "net_return_pct": 3.8648849377989056,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 3159.16,
+     "net_return_pct": 3.1594000264305526,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_PRL_2026-11-02",
@@ -1298,22 +1296,22 @@
      "status": "pending_mtm",
      "entry": 82.55,
      "quantity": 1211,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1810.26,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2788.15,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 82.55,
      "quantity": 1211,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1810.26,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2788.15,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -1321,14 +1319,14 @@
      "entry": 82.55,
      "quantity": 1211,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 1810.26,
-     "net_return_pct": 1.8108419139915173,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 2788.15,
+     "net_return_pct": 2.7890369473046634,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_TELE_2026-11-02",
@@ -1346,7 +1344,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 7780.971785714289,
      "net_return_pct": 7.781236347750112,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "max_tp_step_trailing": {
@@ -1356,7 +1354,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 7780.971785714289,
      "net_return_pct": 7.781236347750112,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "scale_out_50_25_25": {
@@ -1366,12 +1364,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 3615.24,
      "net_return_pct": 3.615361279426362,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_ANL_2026-11-02",
@@ -1386,11 +1384,11 @@
      "status": "pending_mtm",
      "entry": 8.65,
      "quantity": 11560,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3335.06,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2548.98,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
@@ -1400,7 +1398,7 @@
      "exit_reason": "TRAILING_SL_AT_TP1",
      "realized_net_pnl": 2254.2,
      "net_return_pct": 2.254335260115597,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -1409,14 +1407,14 @@
      "entry": 8.65,
      "quantity": 11560,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 3970.24,
-     "net_return_pct": 3.970478943022298,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 3577.2,
+     "net_return_pct": 3.5774153592072686,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_HUMNL_2026-11-02",
@@ -1431,37 +1429,37 @@
      "status": "pending_mtm",
      "entry": 8.5,
      "quantity": 11764,
-     "sessions_available": 3,
+     "sessions_available": 4,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1194.05,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 594.08,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 8.5,
      "quantity": 11764,
-     "sessions_available": 3,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1194.05,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 1894,
+     "net_return_pct": 1.8941176470588215,
+     "sessions_used": 4,
+     "hold": 4,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 8.5,
      "quantity": 11764,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2151.13,
-     "net_return_pct": 2.1512605042016797,
-     "sessions_used": 3,
-     "hold": 3,
+     "realized_net_pnl": 1851.15,
+     "net_return_pct": 1.8512605042016863,
+     "sessions_used": 4,
+     "hold": 4,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t106gen2_FCCL_2026-11-02",
@@ -1479,7 +1477,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4530.325592857142,
      "net_return_pct": 4.531567242281526,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "max_tp_step_trailing": {
@@ -1489,7 +1487,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4530.325592857142,
      "net_return_pct": 4.531567242281526,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3
     },
     "scale_out_50_25_25": {
@@ -1499,12 +1497,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2007.36,
      "net_return_pct": 2.007906366344377,
-     "sessions_used": 3,
+     "sessions_used": 4,
      "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_HUBC_2026-11-03",
@@ -1522,7 +1520,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4574.456857142867,
      "net_return_pct": 4.577432188065109,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -1532,7 +1530,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4574.456857142867,
      "net_return_pct": 4.577432188065109,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -1542,12 +1540,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2498.56,
      "net_return_pct": 2.5001876934293024,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_LUCK_2026-11-03",
@@ -1565,7 +1563,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4103.585664285701,
      "net_return_pct": 4.114340550484667,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -1575,7 +1573,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4103.585664285701,
      "net_return_pct": 4.114340550484667,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -1585,12 +1583,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2004.62,
      "net_return_pct": 2.009869498870041,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_SYS_2026-11-03",
@@ -1608,7 +1606,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 6371.862749999993,
      "net_return_pct": 6.372499999999993,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -1618,7 +1616,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 6371.862749999993,
      "net_return_pct": 6.372499999999993,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -1628,12 +1626,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 3424.55,
      "net_return_pct": 3.42489398939894,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_MEBL_2026-11-03",
@@ -1651,7 +1649,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 3642.7360500000054,
      "net_return_pct": 3.660033367695735,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -1661,7 +1659,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 3642.7360500000054,
      "net_return_pct": 3.660033367695735,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -1671,12 +1669,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2007.21,
      "net_return_pct": 2.0167427117701178,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PSO_2026-11-03",
@@ -1691,37 +1689,37 @@
      "status": "pending_mtm",
      "entry": 350,
      "quantity": 285,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 2806.39,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 936.23,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 350,
      "quantity": 285,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 2806.39,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 1638.75,
+     "net_return_pct": 1.6428571428571428,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 350,
      "quantity": 285,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2325.66,
-     "net_return_pct": 2.33149287504475,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 1853.2,
+     "net_return_pct": 1.8578447547439998,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_OGDC_2026-11-03",
@@ -1736,37 +1734,37 @@
      "status": "pending_mtm",
      "entry": 304,
      "quantity": 328,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3113.38,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2179.4,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 304,
      "quantity": 328,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3113.38,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 1961.93,
+     "net_return_pct": 1.9675986842105302,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 304,
      "quantity": 328,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 1922.4,
-     "net_return_pct": 1.9279546522556423,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 1688.91,
+     "net_return_pct": 1.6937852443609034,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PPL_2026-11-03",
@@ -1781,37 +1779,37 @@
      "status": "pending_mtm",
      "entry": 213,
      "quantity": 469,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3009.1,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 1677.61,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 213,
      "quantity": 469,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3009.1,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 1968.63,
+     "net_return_pct": 1.9706572769953041,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 213,
      "quantity": 469,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2044.58,
-     "net_return_pct": 2.0466891612646703,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 1709.58,
+     "net_return_pct": 1.711341753434605,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_WTL_2026-11-03",
@@ -1826,22 +1824,22 @@
      "status": "pending_mtm",
      "entry": 0.95,
      "quantity": 105263,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -7368.41,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -52.63,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 0.95,
      "quantity": 105263,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -7368.41,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -52.63,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -1849,14 +1847,14 @@
      "entry": 0.95,
      "quantity": 105263,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": -7368.41,
-     "net_return_pct": -7.368421052631581,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": -979.32,
+     "net_return_pct": -0.9793205761237189,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_KEL_2026-11-03",
@@ -1871,37 +1869,37 @@
      "status": "pending_mtm",
      "entry": 5.7,
      "quantity": 17543,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 5508.5,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 5061.16,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 5.7,
      "quantity": 17543,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 5508.5,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 4677.72,
+     "net_return_pct": 4.677944862155389,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 5.7,
      "quantity": 17543,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 3192.04,
-     "net_return_pct": 3.192198346290391,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 3080.17,
+     "net_return_pct": 3.080324364465284,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_TRG_2026-11-03",
@@ -1916,37 +1914,37 @@
      "status": "pending_mtm",
      "entry": 51.7,
      "quantity": 1934,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3530.32,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2511.11,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 51.7,
      "quantity": 1934,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3530.32,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 2837.54,
+     "net_return_pct": 2.8378833932025285,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 51.7,
      "quantity": 1934,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 3183.93,
-     "net_return_pct": 3.1843188726167373,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 2674.32,
+     "net_return_pct": 2.674647692732787,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_UNITY_2026-11-03",
@@ -1961,37 +1959,37 @@
      "status": "pending_mtm",
      "entry": 7.61,
      "quantity": 13140,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 2450.61,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 4125.96,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 7.61,
      "quantity": 13140,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 2450.61,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 2450.61,
+     "net_return_pct": 2.4507227332457298,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 7.61,
      "quantity": 13140,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2965.18,
-     "net_return_pct": 2.965318190351042,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 3802.86,
+     "net_return_pct": 3.803031725173646,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_BOP_2026-11-03",
@@ -2009,7 +2007,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4947.559688571426,
      "net_return_pct": 4.948075278015395,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 1
     },
     "max_tp_step_trailing": {
@@ -2019,7 +2017,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4947.559688571426,
      "net_return_pct": 4.948075278015395,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 1
     },
     "scale_out_50_25_25": {
@@ -2029,12 +2027,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2387.17,
      "net_return_pct": 2.3874166002383133,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 1,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_CNERGY_2026-11-03",
@@ -2049,22 +2047,22 @@
      "status": "pending_mtm",
      "entry": 11.8,
      "quantity": 8474,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1364.31,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 1652.43,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 11.8,
      "quantity": 8474,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 1364.31,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 1652.43,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -2072,14 +2070,14 @@
      "entry": 11.8,
      "quantity": 8474,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 1364.31,
-     "net_return_pct": 1.3644067796610155,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 2557.94,
+     "net_return_pct": 2.558111380145269,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_HASCOL_2026-11-03",
@@ -2094,37 +2092,37 @@
      "status": "pending_mtm",
      "entry": 15.8,
      "quantity": 6329,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 7797.33,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 4408.15,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 15.8,
      "quantity": 6329,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 7797.33,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 6613.81,
+     "net_return_pct": 6.613924050632915,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 15.8,
      "quantity": 6329,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 5411.45,
-     "net_return_pct": 5.411543407781332,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 4563.75,
+     "net_return_pct": 4.563831648969676,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_MLCF_2026-11-03",
@@ -2142,7 +2140,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4595.894571428576,
      "net_return_pct": 4.598745793820744,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -2152,7 +2150,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4595.894571428576,
      "net_return_pct": 4.598745793820744,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -2162,12 +2160,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2397.68,
      "net_return_pct": 2.399163052521131,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PAEL_2026-11-03",
@@ -2185,7 +2183,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 5161.232588571436,
      "net_return_pct": 5.162573308859747,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -2195,7 +2193,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 5161.232588571436,
      "net_return_pct": 5.162573308859747,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -2205,12 +2203,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2886.48,
      "net_return_pct": 2.8872275801454235,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PIBTL_2026-11-03",
@@ -2225,37 +2223,37 @@
      "status": "pending_mtm",
      "entry": 12.8,
      "quantity": 7812,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3648.2,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2120.96,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 12.8,
      "quantity": 7812,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3648.2,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP2",
+     "realized_net_pnl": 2851.38,
+     "net_return_pct": 2.8515625,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 12.8,
      "quantity": 7812,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2766.01,
-     "net_return_pct": 2.766183035714282,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 2384.19,
+     "net_return_pct": 2.3843470982142816,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_LOTCHEM_2026-11-03",
@@ -2270,37 +2268,37 @@
      "status": "pending_mtm",
      "entry": 23.95,
      "quantity": 4175,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 2787.44,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 1403.43,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
-     "status": "pending_mtm",
+     "status": "matured_full_exit",
      "entry": 23.95,
      "quantity": 4175,
-     "sessions_available": 2,
-     "genuinely_resolved_legs": [],
-     "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 2787.44,
-     "mark_date": "2026-11-05",
-     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+     "exit_reason": "TRAILING_SL_AT_TP1",
+     "realized_net_pnl": 2544.1,
+     "net_return_pct": 2.5443185207277006,
+     "sessions_used": 3,
+     "hold": 3,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
     "scale_out_50_25_25": {
      "status": "matured_full_exit",
      "entry": 23.95,
      "quantity": 4175,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 2665.8,
-     "net_return_pct": 2.6660297418881282,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 1973.62,
+     "net_return_pct": 1.9737971715382219,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PRL_2026-11-03",
@@ -2315,22 +2313,22 @@
      "status": "pending_mtm",
      "entry": 85.05,
      "quantity": 1175,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -828.55,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 199.57,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 85.05,
      "quantity": 1175,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -828.55,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 199.57,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -2338,14 +2336,14 @@
      "entry": 85.05,
      "quantity": 1175,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": -828.55,
-     "net_return_pct": -0.8291005291005324,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 199.57,
+     "net_return_pct": 0.19970605526161084,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_TELE_2026-11-03",
@@ -2363,7 +2361,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 9388.635428571437,
      "net_return_pct": 9.389010989010997,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -2373,7 +2371,7 @@
      "exit_reason": "TRAILING_SL_AT_TP1",
      "realized_net_pnl": 2215.3,
      "net_return_pct": 2.215384615384618,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -2384,12 +2382,12 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 5092.1,
      "net_return_pct": 5.092307692307698,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_ANL_2026-11-03",
@@ -2404,11 +2402,11 @@
      "status": "pending_mtm",
      "entry": 8.61,
      "quantity": 11614,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": 3745.52,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": 2955.76,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
@@ -2418,7 +2416,7 @@
      "exit_reason": "TRAILING_SL_AT_TP1",
      "realized_net_pnl": 2659.61,
      "net_return_pct": 2.659698025551683,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     },
@@ -2427,14 +2425,14 @@
      "entry": 8.61,
      "quantity": 11614,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": 4182.7,
-     "net_return_pct": 4.182843869255023,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": 3787.82,
+     "net_return_pct": 3.7879542060726767,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_HUMNL_2026-11-03",
@@ -2449,22 +2447,22 @@
      "status": "pending_mtm",
      "entry": 8.75,
      "quantity": 11428,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -1371.36,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -2057.04,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "max_tp_step_trailing": {
      "status": "pending_mtm",
      "entry": 8.75,
      "quantity": 11428,
-     "sessions_available": 2,
+     "sessions_available": 3,
      "genuinely_resolved_legs": [],
      "resolved_legs_pnl_pkr": 0,
-     "unrealized_mtm_pkr": -1371.36,
-     "mark_date": "2026-11-05",
+     "unrealized_mtm_pkr": -2057.04,
+     "mark_date": "2026-11-06",
      "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
     },
     "scale_out_50_25_25": {
@@ -2472,14 +2470,14 @@
      "entry": 8.75,
      "quantity": 11428,
      "exit_reason": "TIME_UP_REMAINDER",
-     "realized_net_pnl": -1371.36,
-     "net_return_pct": -1.371428571428577,
-     "sessions_used": 2,
-     "hold": 2,
+     "realized_net_pnl": -2057.04,
+     "net_return_pct": -2.057142857142848,
+     "sessions_used": 3,
+     "hold": 3,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_FCCL_2026-11-03",
@@ -2497,7 +2495,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4826.010857142854,
      "net_return_pct": 4.826493506493503,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "max_tp_step_trailing": {
@@ -2507,7 +2505,7 @@
      "exit_reason": "TP3",
      "realized_net_pnl": 4826.010857142854,
      "net_return_pct": 4.826493506493503,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2
     },
     "scale_out_50_25_25": {
@@ -2517,150 +2515,1044 @@
      "exit_reason": "TP3_REMAINDER",
      "realized_net_pnl": 2343.04,
      "net_return_pct": 2.3432737559470223,
-     "sessions_used": 2,
+     "sessions_used": 3,
      "hold": 2,
      "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
     }
    },
-   "maturity_evaluation_date": "2026-11-05"
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_HUBC_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "HUBC",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 203.05,
+   "status": "matured",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "matured_terminal_exit",
+     "entry": 203.05,
+     "quantity": 492,
+     "exit_reason": "SL",
+     "realized_net_pnl": -931.9217999999984,
+     "net_return_pct": -0.9328490519576442,
+     "sessions_used": 1,
+     "hold": 1
+    },
+    "max_tp_step_trailing": {
+     "status": "matured_terminal_exit",
+     "entry": 203.05,
+     "quantity": 492,
+     "exit_reason": "SL",
+     "realized_net_pnl": -931.9217999999984,
+     "net_return_pct": -0.9328490519576442,
+     "sessions_used": 1,
+     "hold": 1
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_terminal_exit",
+     "entry": 203.05,
+     "quantity": 492,
+     "exit_reason": "SL",
+     "realized_net_pnl": -931.9217999999984,
+     "net_return_pct": -0.9328490519576442,
+     "sessions_used": 1,
+     "hold": 1
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_LUCK_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "LUCK",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 430,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 430,
+     "quantity": 232,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -941.92,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 430,
+     "quantity": 232,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -941.92,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 430,
+     "quantity": 232,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -941.92,
+     "net_return_pct": -0.9441860465116237,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_SYS_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "SYS",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 117,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 117,
+     "quantity": 854,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2041.91,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 117,
+     "quantity": 854,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2041.91,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 117,
+     "quantity": 854,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -2041.91,
+     "net_return_pct": -2.0435897435897488,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_MEBL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "MEBL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 551.98,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 551.98,
+     "quantity": 181,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -612.86,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 551.98,
+     "quantity": 181,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -612.86,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 551.98,
+     "quantity": 181,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -612.86,
+     "net_return_pct": -0.6134171527953944,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PSO_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "PSO",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 358,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 358,
+     "quantity": 279,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1108.75,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 358,
+     "quantity": 279,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1108.75,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 358,
+     "quantity": 279,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1108.75,
+     "net_return_pct": -1.1100558659217814,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_OGDC_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "OGDC",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 312.11,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 312.11,
+     "quantity": 320,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -87.47,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 312.11,
+     "quantity": 320,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -87.47,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 312.11,
+     "quantity": 320,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -87.47,
+     "net_return_pct": -0.08757489346705433,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PPL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "PPL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 218.69,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 218.69,
+     "quantity": 457,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -633.43,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 218.69,
+     "quantity": 457,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -633.43,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 218.69,
+     "quantity": 457,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -633.43,
+     "net_return_pct": -0.6338058438886048,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_WTL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "WTL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 0.95,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 0.95,
+     "quantity": 105263,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -52.63,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 0.95,
+     "quantity": 105263,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -52.63,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 0.95,
+     "quantity": 105263,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1458.63,
+     "net_return_pct": -1.4586369022410688,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_KEL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "KEL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 6.15,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 6.15,
+     "quantity": 16260,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1626,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 6.15,
+     "quantity": 16260,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1626,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 6.15,
+     "quantity": 16260,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1626,
+     "net_return_pct": -1.626016260162602,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_TRG_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "TRG",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 54.05,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 54.05,
+     "quantity": 1850,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1483.98,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 54.05,
+     "quantity": 1850,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1483.98,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 54.05,
+     "quantity": 1850,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1483.98,
+     "net_return_pct": -1.4840888066605007,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_UNITY_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "UNITY",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 7.9,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 7.9,
+     "quantity": 12658,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 854.42,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 7.9,
+     "quantity": 12658,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 854.42,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 7.9,
+     "quantity": 12658,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": 2007.2,
+     "net_return_pct": 2.007233273056057,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_BOP_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "BOP",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 31.28,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 31.28,
+     "quantity": 3196,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1386.55,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 31.28,
+     "quantity": 3196,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1386.55,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 31.28,
+     "quantity": 3196,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1386.55,
+     "net_return_pct": -1.38695652173913,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_CNERGY_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "CNERGY",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 11.98,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 11.98,
+     "quantity": 8347,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 350.57,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 11.98,
+     "quantity": 8347,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 350.57,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 11.98,
+     "quantity": 8347,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": 350.57,
+     "net_return_pct": 0.35058430717862554,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_HASCOL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "HASCOL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 17.1,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 17.1,
+     "quantity": 5847,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2748.09,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 17.1,
+     "quantity": 5847,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2748.09,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 17.1,
+     "quantity": 5847,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -2748.09,
+     "net_return_pct": -2.7485380116959073,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_MLCF_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "MLCF",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 100.01,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 100.01,
+     "quantity": 999,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -274.26,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 100.01,
+     "quantity": 999,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -274.26,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 100.01,
+     "quantity": 999,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -274.26,
+     "net_return_pct": -0.2745025497450245,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PAEL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "PAEL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 34.02,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 34.02,
+     "quantity": 2939,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1887.01,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 34.02,
+     "quantity": 2939,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1887.01,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 34.02,
+     "quantity": 2939,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1887.01,
+     "net_return_pct": -1.8873015873016055,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PIBTL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "PIBTL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 13.3,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 13.3,
+     "quantity": 7518,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1278.06,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 13.3,
+     "quantity": 7518,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1278.06,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 13.3,
+     "quantity": 7518,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1278.06,
+     "net_return_pct": -1.2781954887218134,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_LOTCHEM_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "LOTCHEM",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 24.8,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 24.8,
+     "quantity": 4032,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1791.82,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 24.8,
+     "quantity": 4032,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -1791.82,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 24.8,
+     "quantity": 4032,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -1791.82,
+     "net_return_pct": -1.7919354838709718,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_PRL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "PRL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 83.5,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 83.5,
+     "quantity": 1197,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 1785.92,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 83.5,
+     "quantity": 1197,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 1785.92,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 83.5,
+     "quantity": 1197,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": 1785.92,
+     "net_return_pct": 1.7868263473053865,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_TELE_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "TELE",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 7,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 7,
+     "quantity": 14285,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 964.24,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 7,
+     "quantity": 14285,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": 964.24,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 7,
+     "quantity": 14285,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": 964.24,
+     "net_return_pct": 0.9642857142857185,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_ANL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "ANL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 9.19,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 9.19,
+     "quantity": 10881,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2937.87,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 9.19,
+     "quantity": 10881,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2937.87,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 9.19,
+     "quantity": 10881,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -2937.87,
+     "net_return_pct": -2.9379760609357897,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_HUMNL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "HUMNL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 8.76,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 8.76,
+     "quantity": 11415,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2168.85,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 8.76,
+     "quantity": 11415,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -2168.85,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 8.76,
+     "quantity": 11415,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -2168.85,
+     "net_return_pct": -2.1689497716894865,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   },
   {
    "decision_id": "t107gen3_FCCL_2026-11-05",
-   "status": "awaiting_entry_bar",
-   "entry": null,
-   "outcomes": {}
+   "symbol": "FCCL",
+   "decision_date": "2026-11-05",
+   "entry_date": "2026-11-06",
+   "entry": 57.99,
+   "status": "pending_mtm",
+   "data_provenance": "db/custom.db (psxdata source, Task 106 refresh)",
+   "outcomes": {
+    "fixed_first_hit": {
+     "status": "pending_mtm",
+     "entry": 57.99,
+     "quantity": 1724,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -212,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "max_tp_step_trailing": {
+     "status": "pending_mtm",
+     "entry": 57.99,
+     "quantity": 1724,
+     "sessions_available": 1,
+     "genuinely_resolved_legs": [],
+     "resolved_legs_pnl_pkr": 0,
+     "unrealized_mtm_pkr": -212,
+     "mark_date": "2026-11-06",
+     "note": "MTM = value of the open remainder at the latest verified close (final TIME_UP leg, conservative cost treatment). NEVER counted as a win; matures at 21 sessions or an earlier terminal SL/TP3 exit."
+    },
+    "scale_out_50_25_25": {
+     "status": "matured_full_exit",
+     "entry": 57.99,
+     "quantity": 1724,
+     "exit_reason": "TIME_UP_REMAINDER",
+     "realized_net_pnl": -212,
+     "net_return_pct": -0.21205380237972773,
+     "sessions_used": 1,
+     "hold": 1,
+     "note": "all shares exited before the 21-session horizon through the engine's own fills; counted as realized, never as MTM"
+    }
+   },
+   "maturity_evaluation_date": "2026-11-08"
   }
  ]
 }
