@@ -1,0 +1,811 @@
+{
+ "generatedAt": "2026-11-09T19:00:00Z",
+ "task": "task121_admin_user_access_control",
+ "totalRoutes": 117,
+ "routes": {
+  "/api/admin/audit": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/auth/login": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/auth/logout": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/auth/session": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/export/users": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/feedback": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/invitations": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/llm": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/models": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/monitoring": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/overview": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/permissions": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/plans": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/settings": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/strategies": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/tabs": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/users/[profileId]": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/admin/users": [
+   {
+    "method": "*",
+    "guard": "admin_plane",
+    "permission": null
+   }
+  ],
+  "/api/ai-analysis/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.llm_signals"
+   }
+  ],
+  "/api/ai-analysis": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.llm_signals"
+   }
+  ],
+  "/api/ai-model-signals/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.signal_data"
+   }
+  ],
+  "/api/backtest/ensembles": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.ai_model_signals"
+   }
+  ],
+  "/api/backtest/investment-simulator": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "feature.research_backtest"
+   }
+  ],
+  "/api/backtest/model-graph/ml": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.ai_model_signals"
+   }
+  ],
+  "/api/backtest/model-graph": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.ai_model_signals"
+   }
+  ],
+  "/api/backtest/per-stock-walk-forward": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/report": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/run": [
+   {
+    "method": "POST",
+    "guard": "gateUser",
+    "permission": "feature.research_backtest"
+   }
+  ],
+  "/api/backtest/signal-stats": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "tab.tracker"
+   }
+  ],
+  "/api/backtest/strategy-comparison": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.research_backtest"
+   }
+  ],
+  "/api/backtest/task79-results": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/task81-results": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/walk-forward/portfolio": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/walk-forward/prospective": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/walk-forward/robustness": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/walk-forward": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/walk-forward/status": [
+   {
+    "method": "GET",
+    "guard": "guardAdminOrInternal",
+    "permission": null
+   }
+  ],
+  "/api/backtest/walk-forward/trading-robustness": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/backtest/walk-forward/trading": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/beta/feedback": [
+   {
+    "method": "*",
+    "guard": "beta_session",
+    "permission": null
+   }
+  ],
+  "/api/beta/insight": [
+   {
+    "method": "*",
+    "guard": "beta_session",
+    "permission": null
+   }
+  ],
+  "/api/beta/invite/redeem": [
+   {
+    "method": "*",
+    "guard": "beta_session",
+    "permission": null
+   }
+  ],
+  "/api/beta/profile": [
+   {
+    "method": "*",
+    "guard": "beta_session",
+    "permission": null
+   }
+  ],
+  "/api/beta/status": [
+   {
+    "method": "*",
+    "guard": "beta_session",
+    "permission": null
+   }
+  ],
+  "/api/cron/check-tp-sl": [
+   {
+    "method": "GET",
+    "guard": "guardUserOrInternal",
+    "permission": null
+   }
+  ],
+  "/api/cron/refresh-ohlcv": [
+   {
+    "method": "GET",
+    "guard": "guardAdminOrInternal",
+    "permission": null
+   }
+  ],
+  "/api/cron/scheduler-status": [
+   {
+    "method": "GET",
+    "guard": "guardAdminOrInternal",
+    "permission": null
+   }
+  ],
+  "/api/cron/update-data": [
+   {
+    "method": "GET",
+    "guard": "machine_token",
+    "permission": null
+   }
+  ],
+  "/api/data-readiness": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.backtest_reports"
+   }
+  ],
+  "/api/dividends/all": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.dividends"
+   }
+  ],
+  "/api/execute": [],
+  "/api/fair-value/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.calculators"
+   }
+  ],
+  "/api/fair-value": [
+   {
+    "method": "POST",
+    "guard": "guardUser",
+    "permission": "tab.calculators"
+   }
+  ],
+  "/api/golden-cross": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.golden_cross"
+   }
+  ],
+  "/api/health": [
+   {
+    "method": "GET",
+    "guard": "guardAdmin",
+    "permission": null
+   }
+  ],
+  "/api/llm-signals/[id]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.llm_signals"
+   }
+  ],
+  "/api/llm-signals/export": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "feature.reports_export"
+   }
+  ],
+  "/api/llm-signals": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.llm_signals"
+   }
+  ],
+  "/api/llm/explain-signal/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "feature.llm_interact"
+   }
+  ],
+  "/api/llm/interpret-news": [
+   {
+    "method": "POST",
+    "guard": "gateUser",
+    "permission": "feature.llm_interact"
+   }
+  ],
+  "/api/me": [
+   {
+    "method": "*",
+    "guard": "session_auth",
+    "permission": null
+   }
+  ],
+  "/api/ml/signal/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.signal_data"
+   }
+  ],
+  "/api/model-report/download": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "feature.reports_export"
+   }
+  ],
+  "/api/model-report": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.model_report"
+   }
+  ],
+  "/api/models/registry": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "tab.ai_model_signals"
+   }
+  ],
+  "/api/onboarding": [],
+  "/api/paper-trading/monitor/[tradeId]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.paper_monitor"
+   }
+  ],
+  "/api/paper-trading/monitor": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.paper_monitor"
+   }
+  ],
+  "/api/pattern-recognition/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "feature.llm_interact"
+   }
+  ],
+  "/api/plan": [],
+  "/api/portfolio/news-digest": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "feature.llm_interact"
+   }
+  ],
+  "/api/predictions/record": [
+   {
+    "method": "*",
+    "guard": "session_auth",
+    "permission": null
+   }
+  ],
+  "/api/price-patterns/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.pattern_finder"
+   }
+  ],
+  "/api/price-patterns/precompute": [
+   {
+    "method": "POST",
+    "guard": "machine_token",
+    "permission": null
+   }
+  ],
+  "/api/price-patterns": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.pattern_finder"
+   }
+  ],
+  "/api/psx/bss/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/companies": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/filings/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/financial-results/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/financials/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/incomestatement/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/index-return": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/indices/[name]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/indices": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/intraday": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/iss/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/ksechart/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/live/batch": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/live": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/news/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/ohlcv/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/ratio/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/reports/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/screener": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/sectors/[name]/stocks": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/sectors": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/settlement/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/symbol-sectors": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/technical/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/psx/valuation/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/result-patterns/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.pattern_finder_financial"
+   }
+  ],
+  "/api/result-patterns": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.pattern_finder_financial"
+   }
+  ],
+  "/api/": [
+   {
+    "method": "GET",
+    "guard": "public_catalog",
+    "permission": null
+   }
+  ],
+  "/api/scrape/announcements": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/scrape/news": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/signals/[id]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": null
+   }
+  ],
+  "/api/signals/all": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.dashboard"
+   }
+  ],
+  "/api/signals": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": null
+   }
+  ],
+  "/api/simulate": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "feature.research_backtest"
+   }
+  ],
+  "/api/stock-patterns/[symbol]": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.pattern_finder"
+   }
+  ],
+  "/api/stocks": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "feature.market_data"
+   }
+  ],
+  "/api/task111-overlays": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.llm_signals"
+   }
+  ],
+  "/api/tax/cgt": [
+   {
+    "method": "POST",
+    "guard": "guardUser",
+    "permission": "tab.calculators"
+   }
+  ],
+  "/api/tax/dividend": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.calculators"
+   }
+  ],
+  "/api/track-record": [
+   {
+    "method": "GET",
+    "guard": "gateUser",
+    "permission": "tab.dashboard"
+   }
+  ],
+  "/api/user/logout": [
+   {
+    "method": "*",
+    "guard": "session_auth",
+    "permission": null
+   }
+  ],
+  "/api/volatility": [
+   {
+    "method": "GET",
+    "guard": "guardUser",
+    "permission": "tab.volatility_analytics"
+   }
+  ]
+ },
+ "unguardedRoutes": [],
+ "unguardedMutatingRoutes": [],
+ "notes": "guard values: guardUser/gateUser (user plane + permission), guardAdmin* (admin/internal), machine_token, custom_auth (health/precompute), beta_session/admin_plane (separate identity planes), public_catalog"
+}

@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { gateUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,8 @@ const FILES: Record<string, { file: string; type: string }> = {
 };
 
 export async function GET(req: NextRequest) {
+  const __task121_gate = await gateUser(req, {"permission": "feature.reports_export", "usage": "report_export"});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const fmt = req.nextUrl.searchParams.get("format") ?? "json";
   const entry = FILES[fmt];
   if (!entry) {

@@ -5,6 +5,7 @@ import ZAI from "z-ai-web-dev-sdk";
 import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
 import { fetchArticleSecure } from "@/lib/latent/url-guard";
+import { gateUser } from "@/lib/latent/access-control";
 
 // Latent.pk LLM API — News Interpretation Endpoint
 // Uses GLM-4-Plus (Z.ai's open-weights model family) — NOT ChatGPT or Claude.
@@ -94,6 +95,8 @@ Your JSON output shape:
 }`;
 
 export async function POST(req: NextRequest) {
+  const __task121_gate = await gateUser(req, {"permission": "feature.llm_interact", "usage": "llm_request", "requireSetting": "llm_requests_enabled", "respectFeaturePause": true});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const startTime = Date.now();
   try {
     const body: InterpretRequest = await req.json();

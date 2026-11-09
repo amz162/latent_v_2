@@ -6,6 +6,7 @@ import {
   fetchAskAnalystRatios,
   fetchAskAnalystValuation,
 } from "@/lib/latent/askanalyst";
+import { guardUser } from "@/lib/latent/access-control";
 
 // GET /api/fair-value/[symbol]
 // Fetches all financial data required + computes all 6 fair value methods + aggregates.
@@ -45,6 +46,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(_req, "tab.calculators");
+  if (__g) return __g;
   const { symbol } = await params;
   const symbolUpper = symbol.toUpperCase();
 

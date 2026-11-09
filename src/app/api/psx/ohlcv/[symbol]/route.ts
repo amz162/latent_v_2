@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getHistorical } from "@/lib/latent/psxClient";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -21,6 +22,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(_req, "feature.market_data");
+  if (__g) return __g;
   const { symbol } = await params;
   const sym = symbol.toUpperCase().replace(/XD$/, "");
   const start = Date.now();

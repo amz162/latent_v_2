@@ -10,6 +10,7 @@ import {
   type PricePatternAnalysis,
 } from "@/lib/latent/price-patterns";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { guardUser } from "@/lib/latent/access-control";
 
 // GET /api/price-patterns/[symbol]
 // Task 47 + Issue 3 — Price Pattern Finder:
@@ -67,6 +68,8 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(req, "tab.pattern_finder");
+  if (__g) return __g;
   const startTime = Date.now();
   const { symbol: rawSymbol } = await params;
   const symbol = rawSymbol.toUpperCase().trim();

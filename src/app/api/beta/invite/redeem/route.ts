@@ -10,6 +10,7 @@ import {
 } from "@/lib/latent/beta-access";
 import { errorResponse } from "@/lib/latent/error-codes";
 import { rateLimit, clientKey } from "@/lib/latent/rate-limit";
+import { getPlatformSettings } from "@/lib/latent/access-control";
 
 // Task 117 Part C — server-side invitation redemption.
 //
@@ -46,6 +47,15 @@ export async function POST(req: NextRequest) {
   }
 
   const check = await checkInvite(code);
+  const settings121 = await getPlatformSettings();
+  if (settings121.invitations_paused) {
+    // same generic response as every other rejection — no enumeration signal
+    return Response.json(
+      { error: "invitation_invalid", message: "This invitation is not valid or is no longer active. Please check the code with your operator and try again." },
+      { status: 403 }
+    );
+  }
+  
   if (!check.ok || !check.inviteId) {
     // uniform failure — never reveal WHICH condition failed
     return Response.json(

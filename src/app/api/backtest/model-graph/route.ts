@@ -7,6 +7,7 @@ import {
   type IndicatorSeries,
 } from "@/lib/latent/fallback-predictions";
 import { ALL_MODEL_KEYS, ALL_ENSEMBLE_KEYS, ENSEMBLE_LABELS } from "@/lib/latent/model-backtest";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -87,6 +88,8 @@ function ensembleAt(ensKey: string, modelRets: Record<string, number>, modelSign
 }
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.ai_model_signals");
+  if (__g) return __g;
   const url = new URL(req.url);
   // models: comma-separated (multi-model). Backward compat: single `model=X`.
   const modelsParam = (url.searchParams.get("models") || "").trim();

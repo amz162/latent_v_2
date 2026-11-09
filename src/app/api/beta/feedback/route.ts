@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { getSession, isBetaActive, sameOrigin } from "@/lib/latent/beta-access";
 import { errorResponse } from "@/lib/latent/error-codes";
 import { rateLimit, clientKey } from "@/lib/latent/rate-limit";
+import { gateUser } from "@/lib/latent/access-control";
 
 // Task 117 Part I4 — beta feedback.
 //
@@ -24,6 +25,10 @@ const CATEGORIES = [
 ] as const;
 
 export async function POST(req: NextRequest) {
+  // Task 121: ACTIVE session + feedback availability gate.
+  const __g = await gateUser(req, { permission: "feature.feedback", requireSetting: "feedback_enabled" });
+  if (__g instanceof Response) return __g;
+
   if (!sameOrigin(req)) return errorResponse("profile_validation_error");
   const gate = await isBetaActive();
   if (!gate.active) return errorResponse("profile_validation_error", { betaDisabled: true });

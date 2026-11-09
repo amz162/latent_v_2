@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getIndices } from "@/lib/latent/psxdata";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -13,7 +14,9 @@ export const maxDuration = 15;
  *
  * Response: { indices: ["KSE100", "KMI30", ...] }
  */
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   try {
     const indices = await getIndices();
     return NextResponse.json({

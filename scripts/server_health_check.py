@@ -9,12 +9,23 @@ import urllib.error
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:3000"
 PASS, FAIL = [], []
 
+# Task 121: protected APIs require the internal machine token (host-only
+# secret). Read from env or .env — the file is gitignored and host-side only.
+import os
+TOKEN = os.environ.get("INTERNAL_API_TOKEN", "")
+if not TOKEN and os.path.exists(".env"):
+    for line in open(".env"):
+        if line.startswith("INTERNAL_API_TOKEN="):
+            TOKEN = line.split("=", 1)[1].strip()
+            break
+HEADERS = {"User-Agent": "health-check/1.0", "x-internal-token": TOKEN}
+
 
 def hit(path, timeout=30, expect=200):
     """Return (ok, status, ms, body_or_None)."""
     t0 = time.time()
     try:
-        req = urllib.request.Request(BASE + path, headers={"User-Agent": "health-check/1.0"})
+        req = urllib.request.Request(BASE + path, headers=HEADERS)
         with urllib.request.urlopen(req, timeout=timeout) as r:
             status, body = r.status, r.read()
     except urllib.error.HTTPError as e:

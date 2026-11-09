@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { runInvestmentSimulation, type PeriodUnit } from "@/lib/latent/investment-simulator";
+import { gateUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -29,6 +30,8 @@ export const maxDuration = 60;
 // + startDate/endDate + the nested config for compatibility.
 
 export async function GET(req: Request) {
+  const __task121_gate = await gateUser(req, {"permission": "feature.research_backtest", "usage": "simulator_run", "respectFeaturePause": true});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const url = new URL(req.url);
   const capital = parseFloat(url.searchParams.get("capital") || "100000") || 100000;
   const periodValue = parseInt(url.searchParams.get("periodValue") || "3", 10) || 3;

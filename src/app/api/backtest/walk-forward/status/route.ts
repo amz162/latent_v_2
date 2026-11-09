@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardAdminOrInternal } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -35,7 +36,10 @@ interface RunProgress {
   manifest_available: boolean;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __task121_gate = await guardAdminOrInternal(req);
+  if (__task121_gate) return __task121_gate;
+
   const runsDir = path.join(process.cwd(), "data", "backtest_reports", "runs");
   try {
     const entries = await fs.readdir(runsDir, { withFileTypes: true });

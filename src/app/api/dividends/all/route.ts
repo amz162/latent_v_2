@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getScreener } from "@/lib/latent/psxdata";
 import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
+import { guardUser } from "@/lib/latent/access-control";
 
 // GET /api/dividends/all
 // Bulk source of the LATEST dividend per share for ALL PSX-listed stocks
@@ -185,7 +186,9 @@ async function mapBounded<T, R>(
 
 // ---- route handler ---------------------------------------------------------
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.dividends");
+  if (__g) return __g;
   try {
     // 1. In-memory cache (1h)
     const cached = await cacheGetJSON<{

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -132,6 +133,8 @@ function valueStock(f: Fundamentals) {
 }
 
 export async function POST(req: Request) {
+  const __g = await guardUser(req, "tab.calculators");
+  if (__g) return __g;
   try {
     const f: Fundamentals = await req.json();
     const result = valueStock(f);

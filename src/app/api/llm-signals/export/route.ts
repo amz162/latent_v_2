@@ -6,6 +6,7 @@
 // ============================================================================
 import { NextRequest, NextResponse } from "next/server";
 import { applyFilter, loadAllRecords, type SignalFilter } from "@/lib/latent/llm/signal-history";
+import { gateUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,8 @@ const CSV_FIELDS = [
 ] as const;
 
 export async function GET(req: NextRequest) {
+  const __task121_gate = await gateUser(req, {"permission": "feature.reports_export", "usage": "report_export"});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const sp = req.nextUrl.searchParams;
   const filter: SignalFilter = {
     symbol: sp.get("symbol") || undefined,

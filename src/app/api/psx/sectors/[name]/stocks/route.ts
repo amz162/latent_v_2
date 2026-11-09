@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSectorStocks } from "@/lib/latent/psxdata";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -20,6 +21,8 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ name: string }> }
 ) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   const { name } = await params;
   const sectorName = decodeURIComponent(name);
   try {

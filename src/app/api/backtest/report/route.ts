@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -69,7 +70,9 @@ async function readMultiLegacyNames(): Promise<string[]> {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.backtest_reports");
+  if (__g) return __g;
   try {
     const p = path.join(process.cwd(), "data", "backtest_report.json");
     const report = JSON.parse(await fs.readFile(p, "utf8"));

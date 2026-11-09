@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { ALL_MODELS } from "@/lib/latent/ensemble";
+import { gateUser } from "@/lib/latent/access-control";
+import { NextRequest } from "next/server";
+import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -9,7 +12,21 @@ export const maxDuration = 15;
 // GET /api/models/registry — unified model registry with verified statuses.
 // Combines ALL_MODELS (58 canonical) + Task 84 unified metrics + reconciliation.
 
-export async function GET() {
+export async function GET(req: NextRequest | Request) {
+  // Task 121: permission gate + admin-controlled visibility filtering.
+  const __g = await gateUser(req, { permission: "tab.ai_model_signals" });
+  if (__g instanceof Response) return __g;
+  const hidden = new Set((await db.modelAccessConfig.findMany({ where: { userVisible: false } })).map((c) => c.modelId));
+  const stripped = new Set((await db.modelAccessConfig.findMany({ where: { detailsVisible: false } })).map((c) => c.modelId));
+  const applyVisibility = (entry: any) => {
+    if (!entry) return entry;
+    if (hidden.has(entry.name)) return null;
+    if (stripped.has(entry.name)) {
+      const { metrics, dirAcc5d, mae5d, rmse5d, r2_5d, rocAuc, n5d, task94Evidence, task98Evidence, blockerReason, task98DataEnriched, ...rest } = entry;
+      return { ...rest, metrics: null, detailsRestricted: true };
+    }
+    return entry;
+  };
   try {
     const readJson = async (p: string) => {
       try { return JSON.parse(await fs.readFile(path.join(process.cwd(), p), "utf-8")); }
@@ -246,17 +263,20 @@ export async function GET() {
         });
       }
     }
+    const visibleCanonical = canonical94.map(applyVisibility).filter(Boolean);
+    const visibleSupplemental = supplemental.map(applyOverride).map(applyVisibility).filter(Boolean);
+    const visibleAliases = aliases.map(applyVisibility).filter(Boolean);
     return NextResponse.json({
       available: true,
-      canonicalCount: ALL_MODELS.length,
-      supplementalCount: supplemental.length,
-      aliasCount: aliases.length,
-      uniqueImplementationCount: ALL_MODELS.length + supplemental.length,
-      totalCount: ALL_MODELS.length + supplemental.length + aliases.length,
-      aliases,
+      canonicalCount: visibleCanonical.length,
+      supplementalCount: visibleSupplemental.length,
+      aliasCount: visibleAliases.length,
+      uniqueImplementationCount: visibleCanonical.length + visibleSupplemental.length,
+      totalCount: visibleCanonical.length + visibleSupplemental.length + visibleAliases.length,
+      aliases: visibleAliases,
       reconciliation: recon ? { registry: recon.registry_count, task83: recon.task83_count, inBoth: recon.in_both } : null,
-      canonical: canonical94,
-      supplemental: supplemental.map(applyOverride),
+      canonical: visibleCanonical,
+      supplemental: visibleSupplemental,
       generatedAt: new Date().toISOString(),
     });
   } catch (e: any) {

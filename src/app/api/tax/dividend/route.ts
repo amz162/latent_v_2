@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { calculateDividendTax, type FilerStatus } from "@/lib/latent/tax";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { guardUser } from "@/lib/latent/access-control";
 
 // GET /api/tax/dividend?symbol=HUBC&shares=1000&filerStatus=filer
 // Fetches latest declared dividend for the symbol, then computes tax.
@@ -32,6 +33,8 @@ const DIVIDEND_DB: Record<string, DividendInfo> = {
 };
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.calculators");
+  if (__g) return __g;
   const { searchParams } = new URL(req.url);
   const symbol = (searchParams.get("symbol") || "").toUpperCase();
   const shares = Number(searchParams.get("shares") || 0);

@@ -1,0 +1,735 @@
+{
+ "generatedAt": "2026-11-09T19:00:00Z",
+ "registry": [
+  {
+   "key": "tab.dashboard",
+   "category": "tab",
+   "label": "Dashboard",
+   "description": "Main overview: consensus signals, track record.",
+   "sortOrder": 1,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "ALLOW",
+   "isCore": 0,
+   "updatedAt": 1794247833568
+  },
+  {
+   "key": "tab.fundamental_news",
+   "category": "tab",
+   "label": "News & Fundamentals",
+   "description": "Market news feed with AI interpretation.",
+   "sortOrder": 2,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833570
+  },
+  {
+   "key": "tab.technical_analysis",
+   "category": "tab",
+   "label": "Technical Analysis",
+   "description": "Index levels and indicator matrix.",
+   "sortOrder": 3,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833571
+  },
+  {
+   "key": "tab.signals_v2",
+   "category": "tab",
+   "label": "Strategy Signals",
+   "description": "BUY/SELL signal list from the model ensemble.",
+   "sortOrder": 4,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833572
+  },
+  {
+   "key": "tab.signal_detail",
+   "category": "tab",
+   "label": "Strategy Details",
+   "description": "Per-stock deep-dive (sub-view of Strategy Signals).",
+   "sortOrder": 5,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833573
+  },
+  {
+   "key": "tab.execute",
+   "category": "tab",
+   "label": "Simulated Execution",
+   "description": "Paper execution flow (shadow only, never real money).",
+   "sortOrder": 6,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833574
+  },
+  {
+   "key": "tab.ai_model_signals",
+   "category": "tab",
+   "label": "AI Models",
+   "description": "Model inventory, ensemble signals and backtest graphs.",
+   "sortOrder": 7,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833575
+  },
+  {
+   "key": "tab.calculators",
+   "category": "tab",
+   "label": "Calculators & Tools",
+   "description": "CGT, dividend tax, SIP and position-size calculators.",
+   "sortOrder": 8,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833576
+  },
+  {
+   "key": "tab.pattern_finder",
+   "category": "tab",
+   "label": "Price Pattern Finder",
+   "description": "Technical price patterns per symbol.",
+   "sortOrder": 9,
+   "globalEnabled": 1,
+   "interactKey": "feature.llm_interact",
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833577
+  },
+  {
+   "key": "tab.pattern_finder_financial",
+   "category": "tab",
+   "label": "Results Pattern Finder",
+   "description": "Quarterly-results patterns (sub-view).",
+   "sortOrder": 10,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833578
+  },
+  {
+   "key": "tab.portfolio",
+   "category": "tab",
+   "label": "Portfolio Simulator",
+   "description": "Personal watchlist/positions simulator.",
+   "sortOrder": 11,
+   "globalEnabled": 1,
+   "interactKey": "feature.research_backtest",
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833578
+  },
+  {
+   "key": "tab.strategy",
+   "category": "tab",
+   "label": "Strategy Planner",
+   "description": "Goal-based investment planning wizard.",
+   "sortOrder": 12,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833579
+  },
+  {
+   "key": "tab.dividends",
+   "category": "tab",
+   "label": "Dividends",
+   "description": "Dividend announcements and calendar.",
+   "sortOrder": 13,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833580
+  },
+  {
+   "key": "tab.tracker",
+   "category": "tab",
+   "label": "Accuracy Tracker",
+   "description": "Signal/portfolio accuracy and simulations.",
+   "sortOrder": 14,
+   "globalEnabled": 1,
+   "interactKey": "feature.research_backtest",
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833581
+  },
+  {
+   "key": "tab.paper_monitor",
+   "category": "tab",
+   "label": "Paper Trade Monitor",
+   "description": "Shadow paper-trade lifecycle monitor (task 107).",
+   "sortOrder": 15,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833581
+  },
+  {
+   "key": "tab.golden_cross",
+   "category": "tab",
+   "label": "Golden Cross Scanner",
+   "description": "MA7/MA30 crossover scanner.",
+   "sortOrder": 16,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833582
+  },
+  {
+   "key": "tab.volatility_analytics",
+   "category": "tab",
+   "label": "Volatility Analytics",
+   "description": "Realized-vol research analytics.",
+   "sortOrder": 17,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833584
+  },
+  {
+   "key": "tab.llm_signals",
+   "category": "tab",
+   "label": "LLM Signals",
+   "description": "Frozen GLM-4.6 shadow signal history (research-only).",
+   "sortOrder": 18,
+   "globalEnabled": 1,
+   "interactKey": "feature.llm_interact",
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794250272458
+  },
+  {
+   "key": "tab.model_report",
+   "category": "tab",
+   "label": "Model Performance",
+   "description": "Model/strategy performance report (task 113/114).",
+   "sortOrder": 19,
+   "globalEnabled": 1,
+   "interactKey": "feature.reports_export",
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833586
+  },
+  {
+   "key": "feature.profile",
+   "category": "feature",
+   "label": "Manage Own Profile",
+   "description": "Self-service profile and account settings.",
+   "sortOrder": 20,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "ALLOW",
+   "isCore": 1,
+   "updatedAt": 1794247833587
+  },
+  {
+   "key": "feature.feedback",
+   "category": "feature",
+   "label": "Submit Feedback",
+   "description": "Submit own feedback to the operators.",
+   "sortOrder": 21,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "ALLOW",
+   "isCore": 0,
+   "updatedAt": 1794247833587
+  },
+  {
+   "key": "feature.market_data",
+   "category": "feature",
+   "label": "Live Market Data",
+   "description": "PSX quotes, indices, screener and company data.",
+   "sortOrder": 22,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "ALLOW",
+   "isCore": 0,
+   "updatedAt": 1794247833588
+  },
+  {
+   "key": "feature.signal_data",
+   "category": "feature",
+   "label": "Per-Symbol Signal Data",
+   "description": "Model/ensemble prediction data for individual symbols.",
+   "sortOrder": 23,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833589
+  },
+  {
+   "key": "feature.llm_interact",
+   "category": "feature",
+   "label": "AI Explanations & News Interpretation",
+   "description": "On-demand LLM analysis (daily limit applies).",
+   "sortOrder": 24,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833590
+  },
+  {
+   "key": "feature.research_backtest",
+   "category": "feature",
+   "label": "Run Backtests & Simulations",
+   "description": "On-demand backtest/simulator compute (daily limit applies).",
+   "sortOrder": 25,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833590
+  },
+  {
+   "key": "feature.backtest_reports",
+   "category": "feature",
+   "label": "View Backtesting Reports",
+   "description": "Read walk-forward and backtest research artifacts.",
+   "sortOrder": 26,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833591
+  },
+  {
+   "key": "feature.reports_export",
+   "category": "feature",
+   "label": "Export Reports",
+   "description": "Download CSV/JSON/PDF exports (daily limit applies).",
+   "sortOrder": 27,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "DENY",
+   "isCore": 0,
+   "updatedAt": 1794247833591
+  },
+  {
+   "key": "feature.beta_research",
+   "category": "feature",
+   "label": "Beta Research Dashboard",
+   "description": "The /beta research dashboard and insight API.",
+   "sortOrder": 28,
+   "globalEnabled": 1,
+   "interactKey": null,
+   "defaultEffect": "ALLOW",
+   "isCore": 0,
+   "updatedAt": 1794247833592
+  }
+ ],
+ "plans": [
+  {
+   "key": "BASIC",
+   "label": "Basic",
+   "isEnabled": 1,
+   "isDefault": 1,
+   "sortOrder": 1,
+   "limitsJson": "{\"maxDailyLlmRequests\":null,\"maxDailyReportExports\":null,\"maxDailySimulatorRuns\":null,\"maxDailyApiRequests\":null,\"accountExpiryDays\":null}",
+   "updatedAt": 1794247833593,
+   "permissions": [
+    {
+     "permissionKey": "feature.beta_research",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.feedback",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.market_data",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.profile",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.dashboard",
+     "effect": "ALLOW"
+    }
+   ]
+  },
+  {
+   "key": "STANDARD",
+   "label": "Standard",
+   "isEnabled": 1,
+   "isDefault": 0,
+   "sortOrder": 2,
+   "limitsJson": "{\"maxDailyLlmRequests\":20,\"maxDailyReportExports\":5,\"maxDailySimulatorRuns\":null,\"maxDailyApiRequests\":null,\"accountExpiryDays\":null}",
+   "updatedAt": 1794247833598,
+   "permissions": [
+    {
+     "permissionKey": "feature.backtest_reports",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.beta_research",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.feedback",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.llm_interact",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.market_data",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.profile",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.reports_export",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.signal_data",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.ai_model_signals",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.calculators",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.dashboard",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.dividends",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.fundamental_news",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.llm_signals",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.model_report",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.pattern_finder",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.pattern_finder_financial",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.signal_detail",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.signals_v2",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.strategy",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.technical_analysis",
+     "effect": "ALLOW"
+    }
+   ]
+  },
+  {
+   "key": "PREMIUM",
+   "label": "Premium",
+   "isEnabled": 1,
+   "isDefault": 0,
+   "sortOrder": 3,
+   "limitsJson": "{\"maxDailyLlmRequests\":50,\"maxDailyReportExports\":20,\"maxDailySimulatorRuns\":10,\"maxDailyApiRequests\":null,\"accountExpiryDays\":null}",
+   "updatedAt": 1794250272729,
+   "permissions": [
+    {
+     "permissionKey": "feature.backtest_reports",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.beta_research",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.feedback",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.llm_interact",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.market_data",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.profile",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.reports_export",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.research_backtest",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "feature.signal_data",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.ai_model_signals",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.calculators",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.dashboard",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.dividends",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.execute",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.fundamental_news",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.golden_cross",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.llm_signals",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.model_report",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.paper_monitor",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.pattern_finder",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.pattern_finder_financial",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.portfolio",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.signal_detail",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.signals_v2",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.strategy",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.technical_analysis",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.tracker",
+     "effect": "ALLOW"
+    },
+    {
+     "permissionKey": "tab.volatility_analytics",
+     "effect": "ALLOW"
+    }
+   ]
+  }
+ ],
+ "platformSettings": [
+  {
+   "key": "feature_pause",
+   "valueJson": "false",
+   "description": "When true, expensive on-demand compute (LLM, backtests) is paused.",
+   "updatedBy": null,
+   "updatedAt": 1794247833641
+  },
+  {
+   "key": "feedback_enabled",
+   "valueJson": "true",
+   "description": "When false, new feedback submissions are rejected.",
+   "updatedBy": null,
+   "updatedAt": 1794247833642
+  },
+  {
+   "key": "invitations_paused",
+   "valueJson": "false",
+   "description": "When true, ALL invitation redemptions are paused (superset of BetaConfig).",
+   "updatedBy": "cmw9maa7c0000maiy40850xj2",
+   "updatedAt": 1794250272770
+  },
+  {
+   "key": "llm_requests_enabled",
+   "valueJson": "true",
+   "description": "Master switch for on-demand LLM analysis endpoints.",
+   "updatedBy": null,
+   "updatedAt": 1794247833642
+  },
+  {
+   "key": "maintenance_mode",
+   "valueJson": "false",
+   "description": "When true, only admins can use the platform (503 for users).",
+   "updatedBy": "cmw9maa7c0000maiy40850xj2",
+   "updatedAt": 1794250272798
+  },
+  {
+   "key": "registration_default_plan",
+   "valueJson": "\"BASIC\"",
+   "description": "Plan assigned to newly redeemed profiles.",
+   "updatedBy": null,
+   "updatedAt": 1794247833643
+  }
+ ],
+ "strategyConfigs": [
+  {
+   "strategyId": "autocorrelation_lag1",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464150
+  },
+  {
+   "strategyId": "bollinger_width_regime",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464150
+  },
+  {
+   "strategyId": "donchian_atr_breakout_20",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464147
+  },
+  {
+   "strategyId": "golden_cross_ma7_30",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464141
+  },
+  {
+   "strategyId": "hurst_exponent_rs",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464149
+  },
+  {
+   "strategyId": "linreg_channel_60",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464146
+  },
+  {
+   "strategyId": "macd_ema12_26_9",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464143
+  },
+  {
+   "strategyId": "ou_mean_reversion_ar1",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464145
+  },
+  {
+   "strategyId": "pairs_kalman_hedge",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464148
+  },
+  {
+   "strategyId": "rsi_divergence_wilder14",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464144
+  },
+  {
+   "strategyId": "variance_ratio_lo_mackinlay",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464148
+  },
+  {
+   "strategyId": "zscore_mean_reversion_60",
+   "userVisible": 1,
+   "availabilityEnabled": 1,
+   "readOnly": 0,
+   "updatedBy": null,
+   "updatedAt": 1794250464144
+  }
+ ],
+ "modelConfigsCount": 58
+}

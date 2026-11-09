@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLiveQuote } from "@/lib/latent/liveQuote";
+import { guardUser } from "@/lib/latent/access-control";
 
 // ─── Issue 15: batched live quote endpoint for portfolio holdings ────────────
 // GET /api/psx/live/batch?symbols=PPL,ENGRO,HUBC
@@ -16,6 +17,8 @@ import { getLiveQuote } from "@/lib/latent/liveQuote";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   const url = new URL(req.url);
   const symbolsParam = url.searchParams.get("symbols") || "";
   const symbols = symbolsParam

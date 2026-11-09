@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { buildMonitorPayload } from "@/lib/latent/paperMonitor";
+import { guardUser } from "@/lib/latent/access-control";
 
 // Task 107 v2 — Paper Trade Monitor API.
 // GET /api/paper-trading/monitor
@@ -11,7 +12,9 @@ import { buildMonitorPayload } from "@/lib/latent/paperMonitor";
 // Snapshot semantics: observed crossings only (observation_resolution_limited).
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.paper_monitor");
+  if (__g) return __g;
   try {
     const payload = await buildMonitorPayload();
     return NextResponse.json(payload);

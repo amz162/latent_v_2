@@ -3,6 +3,7 @@ import ZAI from "z-ai-web-dev-sdk";
 import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { gateUser } from "@/lib/latent/access-control";
 
 // Latent.pk — Per-Stock Portfolio News Digest
 // For each stock in the user's portfolio (or all 8 covered stocks by default),
@@ -63,6 +64,8 @@ Your JSON output shape:
 }`;
 
 export async function GET(req: Request) {
+  const __task121_gate = await gateUser(req, {"permission": "feature.llm_interact", "usage": "llm_request", "requireSetting": "llm_requests_enabled", "respectFeaturePause": true});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const startTime = Date.now();
   const { searchParams } = new URL(req.url);
   const symbolsParam = searchParams.get("symbols"); // comma-separated, e.g. "ENGRO,HUBC"

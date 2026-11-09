@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { guardUser } from "@/lib/latent/access-control";
 
 // GET /api/result-patterns — bulk read of the ResultPatternCache table.
 //
@@ -33,6 +34,8 @@ interface LightRow {
 }
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.pattern_finder_financial");
+  if (__g) return __g;
   const url = new URL(req.url);
   const symbolsParam = url.searchParams.get("symbols");
   const full = url.searchParams.get("full") === "1";

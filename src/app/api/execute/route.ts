@@ -1,20 +1,32 @@
+// Task 121 security rework — previously unauthenticated with a client-chosen
+// userId (anyone could write trades to any identity). Now: requires the
+// tab.execute permission (disabled by default for users) and the trade is
+// always created for the SESSION-derived user. Paper/simulated only — this
+// endpoint never touches a real broker or real money.
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSignalById } from "@/lib/latent/mock-signals";
+import { getOrCreateSessionUser } from "@/lib/latent/user-identity";
+import { withUser } from "@/lib/latent/guard";
 
 const ExecuteSchema = z.object({
-  userId: z.string(),
+  userId: z.string().optional(), // ignored — identity is the session (mismatch rejected)
   signalId: z.string(),
-  brokerId: z.string(),
+  brokerId: z.string().max(64),
   shares: z.number().int().positive(),
   price: z.number().positive(),
 });
 
-export async function POST(req: Request) {
+export const POST = withUser("tab.execute", async (req, _segment, user) => {
   try {
     const body = await req.json();
     const parsed = ExecuteSchema.parse(body);
+
+    const sessionUser = await getOrCreateSessionUser(user);
+    if (parsed.userId && parsed.userId !== sessionUser.id) {
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    }
 
     const signal = getSignalById(parsed.signalId);
     if (!signal) {
@@ -24,7 +36,7 @@ export async function POST(req: Request) {
     // Create an OPEN trade record
     const trade = await db.trade.create({
       data: {
-        userId: parsed.userId,
+        userId: sessionUser.id,
         signalId: parsed.signalId,
         symbol: signal.symbol,
         direction: signal.direction,
@@ -59,10 +71,13 @@ export async function POST(req: Request) {
       tradeRef: `LTX-${Date.now().toString(36).toUpperCase()}`,
     });
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ error: "invalid_request" }, { status: 400 });
+    }
     console.error("Execute error:", err);
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Execution failed" },
       { status: 400 }
     );
   }
-}
+});

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { Signal, SignalDirection, TradeHorizon } from "@/lib/latent/types";
+import { guardUser } from "@/lib/latent/access-control";
 
 // ML signal endpoint — now serving REAL XGBoost predictions
 // Predictions are pre-computed by scripts/train_xgboost.py and cached in
@@ -99,6 +100,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(_req, "feature.signal_data");
+  if (__g) return __g;
   const { symbol } = await params;
   const symbolUpper = symbol.toUpperCase();
   const predictions = await loadPredictions();

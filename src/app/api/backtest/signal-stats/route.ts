@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { simulateProgressiveTpSl } from "@/lib/latent/tp-sl-engine";
 import { computeSimTradeCosts } from "@/lib/latent/investment-simulator";
+import { gateUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -136,6 +137,8 @@ function replaySignal(sig: SignalIn, bars: Bar[]): {
 }
 
 export async function GET(req: Request) {
+  const __task121_gate = await gateUser(req, {"permission": "tab.tracker"});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const url = new URL(req.url);
   const days = Math.max(1, Math.min(365, parseInt(url.searchParams.get("days") || "30", 10) || 30));
 

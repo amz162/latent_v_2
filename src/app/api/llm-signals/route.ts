@@ -6,10 +6,13 @@
 // ============================================================================
 import { NextRequest, NextResponse } from "next/server";
 import { querySignals, type SignalFilter } from "@/lib/latent/llm/signal-history";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
+  const __g = await guardUser(req, "tab.llm_signals");
+  if (__g) return __g;
   const sp = req.nextUrl.searchParams;
   const filter: SignalFilter = {
     symbol: sp.get("symbol") || undefined,

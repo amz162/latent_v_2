@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { gateUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 10;
 
 export async function GET(req: Request) {
+  const __task121_gate = await gateUser(req, {"permission": "feature.research_backtest", "usage": "simulator_run", "respectFeaturePause": true});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const url = new URL(req.url);
   const amount = parseFloat(url.searchParams.get("amount") || "100000");
   const positionPct = parseFloat(url.searchParams.get("positionPct") || "2");

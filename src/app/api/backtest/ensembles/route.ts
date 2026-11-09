@@ -11,6 +11,7 @@ import {
   type ModelPrediction,
   type EnsembleResult,
 } from "@/lib/latent/ensemble";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -145,6 +146,8 @@ async function computeTechnicalSignal(sym: string): Promise<any | null> {
 }
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.ai_model_signals");
+  if (__g) return __g;
   const url = new URL(req.url);
   const capital = parseFloat(url.searchParams.get("capital") || "100000") || 100000;
   const numTrades = Math.min(2000, Math.max(1, parseInt(url.searchParams.get("numTrades") || "40", 10) || 40));

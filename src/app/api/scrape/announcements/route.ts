@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import * as cheerio from "cheerio";
+import { guardUser } from "@/lib/latent/access-control";
 
 // Investify.pk announcements scraper (covers both company news and company results)
 // Schedule: Mon-Fri, 9:00 AM - 5:00 PM PKT
@@ -21,6 +22,8 @@ interface Announcement {
 }
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   const { searchParams } = new URL(req.url);
   const filter = searchParams.get("type"); // "news" | "result" | null = all
   try {

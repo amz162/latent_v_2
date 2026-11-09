@@ -14,12 +14,15 @@ import {
 } from "@/lib/latent/ensemble";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
 import { buildSymbolFallbackPredictions } from "@/lib/latent/fallback-predictions";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 const CK = (s: string) => `ai-model-signals:${s}`;
 
 export async function GET(req: Request, { params }: { params: Promise<{ symbol: string }> }) {
+  const __g = await guardUser(req, "feature.signal_data");
+  if (__g) return __g;
   const start = Date.now();
   const { symbol } = await params;
   const sym = symbol.toUpperCase();

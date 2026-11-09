@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { buildMonitorPayload } from "@/lib/latent/paperMonitor";
+import { guardUser } from "@/lib/latent/access-control";
 
 // Task 107 v2 — Paper Trade Monitor detail API.
 // GET /api/paper-trading/monitor/[tradeId]  (tradeId = base64url of
@@ -13,6 +14,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ tradeId: string }> }
 ) {
+  const __g = await guardUser(_req, "tab.paper_monitor");
+  if (__g) return __g;
   const { tradeId } = await params;
   let key: string;
   try {

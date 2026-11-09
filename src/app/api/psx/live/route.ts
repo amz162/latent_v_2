@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
+import { guardUser } from "@/lib/latent/access-control";
 export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   const url = new URL(req.url);
   const sym = (url.searchParams.get("symbol") || "KSE100").toUpperCase();
   try {

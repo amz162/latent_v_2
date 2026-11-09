@@ -5,6 +5,7 @@ import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
 import { parseFinancialData, parseRatiosToQuarters, detectPattern, generatePatternSummary, type PatternRecognitionResult, type QuarterData } from "@/lib/latent/patterns";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
 import { fetchAskAnalystRatios } from "@/lib/latent/askanalyst";
+import { gateUser } from "@/lib/latent/access-control";
 
 // GET /api/pattern-recognition/[symbol]
 // Fetches last 5 years (or max available) of quarterly financials from AskAnalyst,
@@ -62,6 +63,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __task121_gate = await gateUser(_req, {"permission": "feature.llm_interact", "usage": "llm_request", "requireSetting": "llm_requests_enabled", "respectFeaturePause": true});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const startTime = Date.now();
   const { symbol } = await params;
   const symbolUpper = symbol.toUpperCase();

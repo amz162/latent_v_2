@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getScreener } from "@/lib/latent/psxdata";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -15,7 +16,9 @@ export const maxDuration = 30;
  *
  * Response: { stocks: [{ symbol, sector, ... }], count, source }
  */
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   try {
     const stocks = await getScreener();
     return NextResponse.json({

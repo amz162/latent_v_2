@@ -11,6 +11,7 @@ import { getCacheStatus } from "@/lib/latent/cache";
 import { getSession, isBetaActive } from "@/lib/latent/beta-access";
 import { errorResponse } from "@/lib/latent/error-codes";
 import { rateLimit, clientKey } from "@/lib/latent/rate-limit";
+import { guardUser } from "@/lib/latent/access-control";
 
 // Task 116 Parts E/F/H — one combined beta insight per symbol:
 //   1. Strategy Fusion (12-component engine, transparent consensus)
@@ -91,6 +92,10 @@ function llmAgreement(fusion: FusionResult, llm: LlmRecord | null): { agreement:
 }
 
 export async function GET(req: NextRequest) {
+  // Task 121: account status + permission gate (ACTIVE users only).
+  const __g = await guardUser(req, "feature.beta_research");
+  if (__g) return __g;
+
   const started = Date.now();
   try {
     // Task 117 Part C/J — the research view is for beta participants only;

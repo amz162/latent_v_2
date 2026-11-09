@@ -8,6 +8,7 @@
 import { NextResponse } from "next/server";
 import * as fs from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,9 @@ function freshness(of: { status: string | null; source: string | null; last: str
   return { status: of.status ?? "unknown", source: of.source ?? null, last: of.last ?? null };
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.backtest_reports");
+  if (__g) return __g;
   const audit = readJson("task103_market_data_audit.json");
   const kse = readJson("task103_kse100_coverage.json");
   const fund = readJson("task103_fundamental_coverage.json");

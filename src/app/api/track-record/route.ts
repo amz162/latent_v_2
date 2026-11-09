@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { computeTrackRecord, INSUFFICIENT_REAL_HISTORY } from "@/lib/latent/track-record";
 import { MOCK_TRADES } from "@/lib/latent/mock-trades";
 import type { Trade, TradeStatus, TradeHorizon, SignalDirection } from "@/lib/latent/types";
+import { gateUser } from "@/lib/latent/access-control";
 
 // Task 116 (C5): the track record is built from REAL persisted executions
 // (ProspectivePaperTrade rows with state="closed" and isDemo=false — the
@@ -18,6 +19,8 @@ function pctOf(netPnl: number, entryPrice: number | null, quantity: number | nul
 }
 
 export async function GET(req: Request) {
+  const __task121_gate = await gateUser(req, {"permission": "tab.dashboard"});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const url = new URL(req.url);
   const demo = url.searchParams.get("demo") === "1";
 

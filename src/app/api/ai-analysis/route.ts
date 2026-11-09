@@ -6,12 +6,15 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
 const SIG_DIR = path.join(process.cwd(), "data", "backtest_reports", "task111", "signals");
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.llm_signals");
+  if (__g) return __g;
   try {
     const files = (await fs.readdir(SIG_DIR)).filter((f) => f.endsWith(".json") && !f.endsWith(".evidence.json"));
     const rows: Array<{

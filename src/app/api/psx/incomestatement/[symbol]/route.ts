@@ -1,6 +1,9 @@
 import{NextResponse}from"next/server";import{promises as fs}from"fs";import path from"path";
+import { guardUser } from "@/lib/latent/access-control";
 export const dynamic="force-dynamic";export const maxDuration=30;
 export async function GET(_req:Request,{params}:{params:Promise<{symbol:string}>}){
+  const __g = await guardUser(_req, "feature.market_data");
+  if (__g) return __g;
  const{symbol}=await params;const sym=symbol.toUpperCase();
  try{const data=JSON.parse(await fs.readFile(path.join(process.cwd(),"data","financials",`${sym}.json`),"utf-8"));
   return NextResponse.json({symbol:sym,source:"local-cache",annual:data.annual||[],quarter:data.quarter||[],company_name:data.company_name||sym,sector:data.sector||"",cached:true});

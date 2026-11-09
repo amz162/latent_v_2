@@ -353,6 +353,8 @@ model BetaProfile {
   profileComplete  Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+
+  access ProfileAccess? // Task 121 RBAC plane (server-only)
 }
 
 // Task 117 Part C — hashed, revocable, expiring invitations. The raw token is
@@ -393,4 +395,216 @@ model BetaFeedback {
   appVersion String?
   status     String   @default("new") // new | triaged | resolved
   createdAt  DateTime @default(now())
+}
+
+// ============================================================================
+// Task 121 — admin panel, user panel, role-based access control.
+// Additive only: every model below is NEW (no existing table is modified).
+// Authorization is deny-by-default and resolved server-side ONLY — the browser
+// never sends a role, permission, or plan value that the server trusts.
+// ============================================================================
+
+// Admin identity plane — COMPLETELY SEPARATE from BetaProfile users. There is
+// no public admin registration, no default password, and no way for a beta
+// user to become an admin. The first account is created only by the operator
+// CLI (scripts/task121_admin_bootstrap.ts) and only while this table is empty.
+// scrypt password format: "scrypt$N$r$p$saltHex$hashHex".
+model AdminAccount {
+  id               String    @id @default(cuid())
+  username         String    @unique
+  passwordHash     String    // scrypt$16384$8$1$salt$hash — never exposed via any API
+  isActive         Boolean   @default(true)
+  failedLoginCount Int       @default(0)
+  lockedUntil      DateTime? // durable brute-force lockout
+  lastLoginAt      DateTime?
+  passwordChangedAt DateTime @default(now())
+  createdAt        DateTime  @default(now())
+  sessions         AdminSession[]
+}
+
+// Admin sessions — the raw token exists ONLY in the HttpOnly admin cookie;
+// the database stores sha256(token). Short absolute TTL, revocable per admin.
+model AdminSession {
+  id         String    @id @default(cuid())
+  adminId    String
+  admin      AdminAccount @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+
+  @@index([adminId])
+}
+
+// Central permission registry — every managed tab and feature. category is
+// "tab" (a UI view / its backing API) or "feature" (a capability such as
+// feedback, LLM spend, exports). globalEnabled is the admin master switch:
+// when false the permission is denied for every user regardless of plan or
+// per-user overrides (admins bypass). defaultEffect is the fallback applied
+// when neither the plan nor the user has an explicit row (deny by default).
+model PermissionRegistry {
+  key              String  @id // "tab.dashboard" | "feature.feedback" | ...
+  category         String  // tab | feature
+  label            String
+  description      String  @default("")
+  sortOrder        Int     @default(0)
+  globalEnabled    Boolean @default(true)
+  // permissions that gate INTERACTION beyond viewing (e.g. running a
+  // simulation) are separate registry keys — this column documents the pair
+  interactKey       String? // e.g. "feature.research_backtest" for tab.portfolio
+  defaultEffect    String  @default("DENY") // ALLOW | DENY
+  isCore           Boolean @default(false) // core = identity/profile self-service, never disabled globally
+  updatedAt        DateTime @updatedAt
+}
+
+// Per-user access assignment — one row per BetaProfile (created lazily on
+// first authenticated request or first admin action). status is server-only:
+// no user-editable field can change it, and SUSPENDED/DELETED denies every
+// user API immediately (no cache to bypass).
+model ProfileAccess {
+  profileId       String    @id
+  profile         BetaProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  planKey         String    @default("BASIC")
+  plan            AccessPlan  @relation(fields: [planKey], references: [key])
+  status          String    @default("ACTIVE") // ACTIVE | SUSPENDED | DELETED
+  statusReason    String?
+  accessExpiresAt DateTime? // null = no expiry
+  lastSeenAt      DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  permissionOverrides ProfilePermission[]
+}
+
+// Per-user permission overrides. effect ALLOW/DENY wins over the plan and the
+// registry default (DENY wins over ALLOW at the same scope level).
+model ProfilePermission {
+  id            String   @id @default(cuid())
+  profileId     String
+  profile       ProfileAccess @relation(fields: [profileId], references: [profileId], onDelete: Cascade)
+  permissionKey String
+  effect        String   // ALLOW | DENY
+  setByAdminId  String?  // AdminAccount.id (audit trail also records the change)
+  updatedAt     DateTime @updatedAt
+
+  @@unique([profileId, permissionKey])
+  @@index([permissionKey])
+}
+
+// Admin-configurable access plans. limitsJson is a JSON string:
+// { maxDailyLlmRequests, maxDailyReportExports, maxDailySimulatorRuns,
+//   maxDailyApiRequests, accountExpiryDays } — null/omitted = unlimited.
+// No billing integration: plans only shape access and limits.
+model AccessPlan {
+  key        String  @id // BASIC | STANDARD | PREMIUM (renamable label, stable key)
+  label      String
+  isEnabled  Boolean @default(true)
+  isDefault  Boolean @default(false) // plan assigned to new redemptions
+  sortOrder  Int     @default(0)
+  limitsJson String  @default("{}")
+  updatedAt  DateTime @updatedAt
+
+  planPermissions PlanPermission[]
+  profiles        ProfileAccess[]
+}
+
+// Plan-level permission defaults applied to every profile on that plan.
+model PlanPermission {
+  id            String     @id @default(cuid())
+  planKey       String
+  plan          AccessPlan @relation(fields: [planKey], references: [key], onDelete: Cascade)
+  permissionKey String
+  effect        String     // ALLOW | DENY
+  updatedAt     DateTime   @updatedAt
+
+  @@unique([planKey, permissionKey])
+  @@index([permissionKey])
+}
+
+// Durable, race-safe daily usage counters. Invariant: increment only happens
+// through an atomic conditional UPDATE (count < limit check inside the UPDATE
+// WHERE clause), never through read-check-write. SQLite enforces the unique
+// key so concurrent requests cannot overshoot a limit.
+model UserUsage {
+  id        String @id @default(cuid())
+  profileId String
+  day       String // YYYY-MM-DD (Asia/Karachi)
+  kind      String // llm_request | report_export | simulator_run | api_request
+  count     Int    @default(0)
+
+  @@unique([profileId, day, kind])
+  @@index([profileId, day])
+}
+
+// Append-only administrative audit trail. Written on every admin action,
+// security event, and permission change. Rows are NEVER updated or deleted by
+// any code path and no API exposes a mutation — immutability is enforced by
+// construction and verified by tests. Secrets, tokens, cookies and passwords
+// must never be placed in before/after payloads.
+model AdminAuditLog {
+  id            String   @id @default(cuid())
+  ts            DateTime @default(now())
+  actorType     String   // admin | user | system
+  actorId       String   // AdminAccount.id | BetaProfile.id | "system"
+  action        String   // e.g. admin.login, user.suspend, permission.set
+  targetType    String?  // user | invite | plan | tab | strategy | model | setting | session
+  targetId      String?
+  beforeJson    String?
+  afterJson     String?
+  result        String   @default("ok") // ok | denied | error
+  failureReason String?
+  correlationId String?
+  route         String?
+
+  @@index([ts])
+  @@index([actorType, actorId])
+  @@index([action])
+  @@index([targetType, targetId])
+}
+
+// Centralized platform settings (single source for maintenance mode, global
+// feature pause, default plan, LLM availability, feedback availability).
+// Values are validated server-side; security-relevant beta gates stay in
+// BetaConfig/env so a setting can never weaken authentication.
+model PlatformSetting {
+  key         String   @id
+  valueJson   String
+  description String   @default("")
+  updatedBy   String?  // AdminAccount.id
+  updatedAt   DateTime @updatedAt
+}
+
+// Admin visibility control over the 9 code-registered strategies. Visibility
+// changes NEVER touch strategy calculations, validation status, or the
+// blocked pairs/Kalman short-leg policy — this table only gates what users see.
+model StrategyConfig {
+  strategyId          String   @id // engine.ts registry id (e.g. pairs_kalman_hedge)
+  userVisible         Boolean  @default(true)
+  availabilityEnabled Boolean  @default(true)
+  readOnly            Boolean  @default(false)
+  updatedBy           String?
+  updatedAt           DateTime @updatedAt
+}
+
+// Admin visibility control over AI-model inventory entries (ALL_MODELS).
+// Display-only: cannot mark a model trained/profitable and cannot promote.
+model ModelAccessConfig {
+  modelId        String   @id // ensemble.ts ALL_MODELS id
+  userVisible    Boolean  @default(true)
+  detailsVisible Boolean  @default(true)
+  updatedBy      String?
+  updatedAt      DateTime @updatedAt
+}
+
+// Invitation lifecycle events (creation, revocation, redemptions, pause).
+// Complements BetaInvite.redeemedProfileIds with a full append-only trail.
+// Retained even if the invite row is later removed (no FK by design).
+model InvitationEvent {
+  id        String   @id @default(cuid())
+  ts        DateTime @default(now())
+  inviteId  String
+  event     String   // created | revoked | redeemed | rejected | paused | resumed | deleted
+  actorType String   // admin | user | system
+  actorId   String?
+  detailJson String?
 }

@@ -14,6 +14,7 @@ import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { db } from "@/lib/db";
 import { fetchFinancialResults } from "@/lib/latent/financial-results";
 import { detectPatterns, type QuarterlyResult, type DetectedPattern } from "@/lib/latent/mock-company-results";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -59,6 +60,8 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(req, "tab.pattern_finder_financial");
+  if (__g) return __g;
   const startTime = Date.now();
   const { symbol: rawSymbol } = await params;
   const symbol = rawSymbol.toUpperCase().trim();

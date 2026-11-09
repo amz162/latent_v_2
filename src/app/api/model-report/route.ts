@@ -7,12 +7,15 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
 const REP = path.join(process.cwd(), "data", "reports", "model_strategy_performance_latest.json");
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.model_report");
+  if (__g) return __g;
   try {
     const report = JSON.parse(await fs.readFile(REP, "utf8"));
     return NextResponse.json({ ...report, notice: "SHADOW / RESEARCH ONLY — NOT AN ORDER" });

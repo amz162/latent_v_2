@@ -5,6 +5,7 @@ import path from "path";
 import { db } from "@/lib/db";
 import { MOCK_TRADES } from "@/lib/latent/mock-trades";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { guardUserOrInternal } from "@/lib/latent/access-control";
 
 // Latent.pk — TP/SL Monitor Cron
 // Checks all open trades against current PSX prices. Fires a notification
@@ -32,6 +33,8 @@ interface PriceCheck {
 }
 
 export async function GET(req: NextRequest) {
+  const __task121_gate = await guardUserOrInternal(req);
+  if (__task121_gate) return __task121_gate;
   const startTime = Date.now();
   const authHeader = req.headers.get("authorization");
   const expectedAuth = process.env.CRON_SECRET;

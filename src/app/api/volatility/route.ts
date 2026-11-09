@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { barIsValid, MIN_SESSION_SYMBOLS } from "@/lib/latent/golden-cross";
 import { computeVolatilityAnalytics } from "@/lib/latent/volatility-analytics";
 import type { Bar } from "@/lib/latent/golden-cross";
+import { guardUser } from "@/lib/latent/access-control";
 
 // Task 110 — Volatility & Convexity Analytics dashboard API.
 // Realized-volatility research over the real OhlcvBar history (close-to-close,
@@ -15,6 +16,8 @@ export const dynamic = "force-dynamic";
 const SERIES_TAIL = 500;
 
 export async function GET(req: NextRequest) {
+  const __g = await guardUser(req, "tab.volatility_analytics");
+  if (__g) return __g;
   try {
     const sp = req.nextUrl.searchParams;
     const symbol = (sp.get("symbol") || "HUBC").toUpperCase().replace(/[^A-Z0-9]/g, "");

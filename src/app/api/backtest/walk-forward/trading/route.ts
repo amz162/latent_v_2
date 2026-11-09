@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -25,7 +26,9 @@ export const maxDuration = 15;
 //   bun scripts/walk_forward_trading_evaluator.ts
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.backtest_reports");
+  if (__g) return __g;
   const artifactPath = path.join(
     process.cwd(),
     "data",

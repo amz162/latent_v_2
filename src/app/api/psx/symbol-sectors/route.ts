@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSymbolSectorMap } from "@/lib/latent/psxdata";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // cold build fans out 38 sector fetches
@@ -22,7 +23,9 @@ export const maxDuration = 60; // cold build fans out 38 sector fetches
  * Response: { map: { "ENGRO": "CONGLOMERATE", "HBL": "COMMERCIAL BANKS", ... },
  *             count, cached, computedAt }
  */
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   try {
     const map = await getSymbolSectorMap();
     return NextResponse.json({

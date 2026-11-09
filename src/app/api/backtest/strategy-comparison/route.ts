@@ -13,6 +13,7 @@ import {
   type StrategyId,
 } from "@/lib/latent/strategy-engine";
 import { STANDARD_PSX } from "@/lib/latent/trading-costs";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -39,6 +40,8 @@ const HORIZON_MAP: Record<string, number> = { "5": 5, "10": 10, "21": 21 };
 const SUPPORTED_HORIZONS = Object.keys(HORIZON_MAP);
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.research_backtest");
+  if (__g) return __g;
   try {
     const url = new URL(req.url);
     const symbol = (url.searchParams.get("symbol") || "").toUpperCase();

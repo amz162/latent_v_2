@@ -2,13 +2,16 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { reconcileCounts } from "@/lib/latent/prospective-lifecycle";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
 
 // GET /api/backtest/task79-results — Task 78 historical strategy + Task 79 new models + audit + DB counts.
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.backtest_reports");
+  if (__g) return __g;
   try {
     const readJson = async (p: string) => {
       try { return JSON.parse(await fs.readFile(path.join(process.cwd(), p), "utf-8")); }

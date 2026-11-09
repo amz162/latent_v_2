@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(_req, "tab.llm_signals");
+  if (__g) return __g;
   const { symbol: raw } = await params;
   const symbol = raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
   try {

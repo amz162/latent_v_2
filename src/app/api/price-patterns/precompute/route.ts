@@ -1,5 +1,11 @@
+// Task 121 hardening: the previous code fell back to a hardcoded default key
+// ("latent-pk-nightly") when PRECOMPUTE_KEY was unset, and compared with a
+// plain !==. Now: fail-closed (no default), constant-time compare, and the
+// internal machine token is also accepted for host-side automation.
 import { NextResponse } from "next/server";
+import crypto from "node:crypto";
 import { db } from "@/lib/db";
+import { internalTokenOk } from "@/lib/latent/access-control";
 import {
   computeAndSaveReport,
   isFreshReport,
@@ -15,9 +21,22 @@ export const maxDuration = 300;
 // one LLM explanation pass per symbol and stores everything in
 // PricePatternReport. Called repeatedly until `remaining` hits 0.
 
-const PRECOMPUTE_KEY = process.env.PRECOMPUTE_KEY || "latent-pk-nightly";
 /** Symbols that just failed are skipped for 12h so the nightly loop advances. */
 const FAIL_COOLDOWN_MS = 12 * 60 * 60 * 1000;
+
+function precomputeKeyOk(req: Request): boolean {
+  if (internalTokenOk(req)) return true;
+  const expected = process.env.PRECOMPUTE_KEY ?? "";
+  if (!expected) return false; // fail closed — no default credential
+  const provided = req.headers.get("x-precompute-key") ?? "";
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) {
+    crypto.timingSafeEqual(b, b);
+    return false;
+  }
+  return crypto.timingSafeEqual(a, b);
+}
 
 let symbolCache: { at: number; symbols: string[] } | null = null;
 const failAt = new Map<string, number>();
@@ -35,8 +54,7 @@ async function allSymbols(): Promise<string[]> {
 }
 
 export async function POST(req: Request) {
-  const key = req.headers.get("x-precompute-key");
-  if (key !== PRECOMPUTE_KEY) {
+  if (!precomputeKeyOk(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

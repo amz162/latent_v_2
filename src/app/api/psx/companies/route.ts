@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 // not a 360-stock subset.
 import { readFileSync } from "fs";
 import path from "path";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +63,9 @@ async function fetchPsxdataStocks(): Promise<{ value: string; label: string; sec
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   if (cache && cache.expiresAt > Date.now()) {
     return NextResponse.json({ companies: cache.value, source: cache.value?.[0]?.sector ? "pypsx+psxdata" : "psxdata", cached: true });
   }

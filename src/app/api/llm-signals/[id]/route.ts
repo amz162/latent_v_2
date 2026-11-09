@@ -6,6 +6,7 @@
 // ============================================================================
 import { NextResponse } from "next/server";
 import { findRecord, findEvidence, freshnessOf } from "@/lib/latent/llm/signal-history";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __g = await guardUser(_req, "tab.llm_signals");
+  if (__g) return __g;
   const { id } = await params;
   const record = await findRecord(id);
   if (!record) {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { guardAdminOrInternal } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 5;
@@ -54,7 +55,10 @@ function nextRunDescription(pkt: ReturnType<typeof pktNow>): string {
   return `Tomorrow (${dayNames[(pkt.weekday + 1) % 7]}) at 5:00 PM PKT`;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __task121_gate = await guardAdminOrInternal(req);
+  if (__task121_gate) return __task121_gate;
+
   const dataDir = path.join(process.cwd(), "data");
   const markerFile = path.join(dataDir, "scheduler_last_run.txt");
   const logFile = path.join(dataDir, "scheduler_log.txt");

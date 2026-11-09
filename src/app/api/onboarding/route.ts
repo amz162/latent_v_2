@@ -1,10 +1,18 @@
+// Task 121 security rework — previously this route trusted a client-supplied
+// email with zero auth (anyone could create users/plans for arbitrary
+// identities). Now it requires an authenticated ACTIVE session and derives
+// the User row from the session; the client email is treated as a display
+// label only, never as identity.
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { synthesizePlan, classifyRiskBucket } from "@/lib/latent/plan-synthesizer";
+import { getOrCreateSessionUser } from "@/lib/latent/user-identity";
+import { withUser } from "@/lib/latent/guard";
 
 const OnboardingSchema = z.object({
-  email: z.string().email(),
+  // display label only — NOT used for identity anymore
+  email: z.string().email().optional(),
   name: z.string().optional().default(""),
   riskTolerance: z.number().min(1).max(10),
   timeHorizon: z.number().min(1).max(40),
@@ -14,18 +22,13 @@ const OnboardingSchema = z.object({
   goalDate: z.string(),
 });
 
-export async function POST(req: Request) {
+export const POST = withUser(null, async (req, _segment, user) => {
   try {
     const body = await req.json();
     const parsed = OnboardingSchema.parse(body);
 
-    // Upsert user
-    let user = await db.user.findUnique({ where: { email: parsed.email } });
-    if (!user) {
-      user = await db.user.create({
-        data: { email: parsed.email, name: parsed.name || null },
-      });
-    }
+    // Identity is the session, never the request body.
+    const sessionUser = await getOrCreateSessionUser(user, parsed.name || null);
 
     // Upsert risk profile
     const profileBucket = classifyRiskBucket({
@@ -37,10 +40,10 @@ export async function POST(req: Request) {
       goalDate: parsed.goalDate,
     });
 
-    const existing = await db.riskProfile.findUnique({ where: { userId: user.id } });
+    const existing = await db.riskProfile.findUnique({ where: { userId: sessionUser.id } });
     if (existing) {
       await db.riskProfile.update({
-        where: { userId: user.id },
+        where: { userId: sessionUser.id },
         data: {
           riskTolerance: parsed.riskTolerance,
           timeHorizon: parsed.timeHorizon,
@@ -54,7 +57,7 @@ export async function POST(req: Request) {
     } else {
       await db.riskProfile.create({
         data: {
-          userId: user.id,
+          userId: sessionUser.id,
           riskTolerance: parsed.riskTolerance,
           timeHorizon: parsed.timeHorizon,
           monthlyContribution: parsed.monthlyContribution,
@@ -67,7 +70,7 @@ export async function POST(req: Request) {
     }
 
     // Synthesize plan
-    const plan = synthesizePlan(user.id, {
+    const plan = synthesizePlan(sessionUser.id, {
       riskTolerance: parsed.riskTolerance,
       timeHorizon: parsed.timeHorizon,
       monthlyContribution: parsed.monthlyContribution,
@@ -78,7 +81,7 @@ export async function POST(req: Request) {
 
     await db.plan.create({
       data: {
-        userId: user.id,
+        userId: sessionUser.id,
         allocation: JSON.stringify(plan.allocation),
         entryLadder: JSON.stringify(plan.entryLadder),
         rebalancingRules: JSON.stringify(plan.rebalancingRules),
@@ -86,15 +89,18 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      userId: user.id,
+      userId: sessionUser.id,
       profileBucket,
       plan,
     });
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ error: "invalid_request", details: err.issues.slice(0, 3) }, { status: 400 });
+    }
     console.error("Onboarding error:", err);
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Onboarding failed" },
       { status: 400 }
     );
   }
-}
+});

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { calculateCGT, calculateAggregatedCGT, type CgtInput, type RealizedTrade, type FilerStatus } from "@/lib/latent/tax";
+import { guardUser } from "@/lib/latent/access-control";
 
 // POST /api/tax/cgt
 // Body:
@@ -31,6 +32,8 @@ const AggregatedSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const __g = await guardUser(req, "tab.calculators");
+  if (__g) return __g;
   try {
     const body = await req.json();
 

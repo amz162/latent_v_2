@@ -16,6 +16,23 @@ import {
 } from "@/lib/latent/beta-access";
 import { errorResponse } from "@/lib/latent/error-codes";
 import { rateLimit, clientKey } from "@/lib/latent/rate-limit";
+import { getAuthContext } from "@/lib/latent/access-control";
+
+// Task 121: suspended/expired accounts must not use profile APIs. Returns the
+// auth context when the caller is an ACTIVE user; null when anonymous (the
+// POST open-access creation path still works for anonymous callers).
+async function activeUserOrAnonymous(req: NextRequest) {
+  const ctx = await getAuthContext(req);
+  if (!ctx || ctx.kind !== "user") return null;
+  if (ctx.status !== "ACTIVE") {
+    return Response.json(
+      { ok: false, error: ctx.status === "SUSPENDED" ? "account_suspended" : "account_inactive" },
+      { status: 403 }
+    );
+  }
+  return ctx;
+}
+
 
 // Task 116 Part G3 + Task 117 Parts C/D — anonymous beta session profile.
 //
@@ -106,6 +123,9 @@ function profilePayload(p: {
 }
 
 export async function GET(req: NextRequest) {
+  const __ctx = await activeUserOrAnonymous(req);
+  if (__ctx instanceof Response) return __ctx;
+
   try {
     const session = await getSession(req);
     if (!session) return NextResponse.json({ profile: null });
@@ -119,6 +139,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const __ctx = await activeUserOrAnonymous(req);
+  if (__ctx instanceof Response) return __ctx;
+
   if (!sameOrigin(req)) return errorResponse("profile_validation_error");
   const gate = await isBetaActive();
   if (!gate.active) return errorResponse("profile_validation_error", { betaDisabled: true });
@@ -229,6 +252,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const __ctx = await activeUserOrAnonymous(req);
+  if (__ctx instanceof Response) return __ctx;
+
   if (!sameOrigin(req)) return errorResponse("profile_validation_error");
   const rl = rateLimit("profile_delete", clientKey(req), 10, 60 * 60 * 1000);
   if (!rl.allowed) return errorResponse("rate_limited", { retryAfterSec: rl.retryAfterSec });

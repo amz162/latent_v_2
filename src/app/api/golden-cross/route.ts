@@ -11,6 +11,7 @@ import {
   MIN_SESSION_SYMBOLS,
 } from "@/lib/latent/golden-cross";
 import type { Bar } from "@/lib/latent/golden-cross";
+import { guardUser } from "@/lib/latent/access-control";
 
 // Task 110 — Golden Cross (7/30 SMA) research dashboard API.
 // RESEARCH / BACKTEST ONLY: single-symbol cash-constrained simulation over the
@@ -23,6 +24,8 @@ const SERIES_TAIL = 500;
 const LEDGER_TAIL = 250;
 
 export async function GET(req: NextRequest) {
+  const __g = await guardUser(req, "tab.golden_cross");
+  if (__g) return __g;
   try {
     const sp = req.nextUrl.searchParams;
     const symbol = (sp.get("symbol") || "HUBC").toUpperCase().replace(/[^A-Z0-9]/g, "");

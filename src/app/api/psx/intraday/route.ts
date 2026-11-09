@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -23,6 +24,8 @@ function toEpochMs(date: unknown): number {
 }
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   const url = new URL(req.url);
   const sym = (url.searchParams.get("symbol") || "").toUpperCase().replace(/XD$/, "");
   const interval = url.searchParams.get("interval") || "5m"; // 1m|5m|15m|30m|1h

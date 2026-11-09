@@ -1,4 +1,5 @@
 import{NextResponse}from"next/server";import{promises as fs}from"fs";import path from"path";
+import { guardUser } from "@/lib/latent/access-control";
 export const dynamic="force-dynamic";export const maxDuration=30;
 function num(v:any):number{if(v===null||v===undefined||v===""||v==="-")return 0;const n=parseFloat(String(v).replace(/,/g,""));return isNaN(n)?0:n;}
 function find(items:any[],labels:string[]):any|null{for(const item of items||[]){const l=(item.label||"").toLowerCase();if(labels.some(x=>l.includes(x.toLowerCase())))return item;}return null;}
@@ -8,6 +9,8 @@ function deriveQ(period:string):{q:number;y:number;pe:string}{
  const m=period.match(/^([A-Za-z]{3})-(\d{2})$/);if(m){const mn=m[1];const yy=parseInt(m[2]);const yr=yy>50?1900+yy:2000+yy;const mm:Record<string,{q:number;m:number}>={Jan:{q:3,m:1},Feb:{q:3,m:2},Mar:{q:3,m:3},Apr:{q:4,m:4},May:{q:4,m:5},Jun:{q:4,m:6},Jul:{q:1,m:7},Aug:{q:1,m:8},Sep:{q:1,m:9},Oct:{q:2,m:10},Nov:{q:2,m:11},Dec:{q:2,m:12}};const info=mm[mn];if(info){let fy=yr;if(info.m>=7&&info.m<=12)fy=yr+1;return{q:info.q,y:fy,pe:`${yr}-${String(info.m).padStart(2,"0")}-30`};}}
  return{q:1,y:2020,pe:"2020-01-01"};}
 export async function GET(_req:Request,{params}:{params:Promise<{symbol:string}>}){
+  const __g = await guardUser(_req, "feature.market_data");
+  if (__g) return __g;
  const{symbol}=await params;const sym=symbol.toUpperCase();
  let data:any=null;
  try{data=JSON.parse(await fs.readFile(path.join(process.cwd(),"data","financials",`${sym}.json`),"utf-8"));}catch{

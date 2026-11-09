@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getHistorical } from "@/lib/latent/psxdata";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 20;
@@ -28,6 +29,8 @@ export const revalidate = 3600; // 1h
  * SIP calculator can still ship a sane default.
  */
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.market_data");
+  if (__g) return __g;
   const url = new URL(req.url);
   const symbol = (url.searchParams.get("symbol") || "KSE100").toUpperCase();
   const FALLBACK = 15;

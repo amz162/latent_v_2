@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { getHistorical } from "@/lib/latent/psxClient";
 import { detectStockPatterns, type PriceBar } from "@/lib/latent/stock-patterns";
 import { MOCK_STOCKS } from "@/lib/latent/mock-stocks";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -20,6 +21,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(_req, "tab.pattern_finder");
+  if (__g) return __g;
   const start = Date.now();
   const { symbol } = await params;
   const sym = symbol.toUpperCase().replace(/XD$/, "");

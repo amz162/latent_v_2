@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { reconcileCounts, reconcileBooks } from "@/lib/latent/prospective-lifecycle";
 import { checkDataFreshness, checkInferenceAvailability } from "@/lib/latent/data-freshness";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -15,7 +16,9 @@ export const maxDuration = 15;
 // reconciles with direct DB counts. The JSON artifact is kept only as a cached
 // policy/provenance record (not the sole source of live state).
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __g = await guardUser(req, "feature.backtest_reports");
+  if (__g) return __g;
   try {
     const counts = await reconcileCounts();
     const books = await reconcileBooks();

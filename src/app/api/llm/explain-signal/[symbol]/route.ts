@@ -5,6 +5,7 @@ import path from "path";
 import ZAI from "z-ai-web-dev-sdk";
 import type { ChatMessage } from "z-ai-web-dev-sdk";
 import { cacheGetJSON, cacheSetJSON } from "@/lib/latent/cache";
+import { gateUser } from "@/lib/latent/access-control";
 
 // Latent.pk LLM API — Signal Explanation Enrichment
 // Takes the XGBoost signal output for a symbol and asks the LLM to generate
@@ -142,6 +143,8 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __task121_gate = await gateUser(_req, {"permission": "feature.llm_interact", "usage": "llm_request", "requireSetting": "llm_requests_enabled", "respectFeaturePause": true});
+  if (__task121_gate instanceof Response) return __task121_gate;
   const startTime = Date.now();
   const { symbol } = await params;
   const symbolUpper = symbol.toUpperCase();

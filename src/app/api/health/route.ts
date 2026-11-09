@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
 import { db } from "@/lib/db";
 import { verifyPaths, backtestReportsDir, dataRoot } from "@/lib/latent/paths";
 import { getCacheStatus } from "@/lib/latent/cache";
 import { betaConfig, inviteRequired } from "@/lib/latent/beta-access";
+import { internalTokenOk, guardAdmin } from "@/lib/latent/access-control";
 
 // Task 116 J5 + Task 117 Part J — operator-facing health snapshot.
 // Adds: data frontier, provider status, last ingestion, worker heartbeat age,
 // scheduler status, LLM provider status, runtime beta configuration.
 // Exposes operational facts only — never secrets, env values or stack traces.
+// Task 121: the DETAIL is admin/internal-token only now; anonymous callers
+// get a minimal liveness shape (probe-friendly, no internals).
 
 export const dynamic = "force-dynamic";
 
@@ -24,8 +28,10 @@ function readJsonSafe(p: string): Record<string, unknown> | null {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const started = Date.now();
+  const privileged = internalTokenOk(req) || (await guardAdmin(req)) === null;
+
   const paths = verifyPaths({ probeWrite: true });
 
   let dbStatus: "ok" | "degraded" | "down" = "down";
@@ -91,7 +97,7 @@ export async function GET() {
     }
   } catch { /* stays unavailable */ }
 
-  return NextResponse.json({
+  const body = NextResponse.json({
     status: dbStatus === "ok" ? "ok" : "degraded",
     version: APP_VERSION,
     commit: COMMIT,
@@ -128,4 +134,14 @@ export async function GET() {
       runtimeDisabledReason: cfg.betaDisabled ? cfg.reason || "operator disabled" : null,
     },
   });
+  if (!privileged) {
+    // anonymous callers: liveness only — no commit, paths, scheduler or beta internals
+    return NextResponse.json({
+      status: dbStatus === "ok" ? "ok" : "degraded",
+      checkedAt: new Date().toISOString(),
+      latencyMs: Date.now() - started,
+      detail: "restricted",
+    });
+  }
+  return body;
 }

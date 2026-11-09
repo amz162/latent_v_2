@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { runBacktest } from "@/lib/latent/backtest";
 import { db } from "@/lib/db";
+import { gateUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -12,6 +13,8 @@ export const maxDuration = 30;
 // stocks), picking numTrades signals RANDOMLY. Returns per-trade list +
 // metrics + equity curve.
 export async function POST(req: Request) {
+  const __task121_gate = await gateUser(req, {"permission": "feature.research_backtest", "usage": "simulator_run", "respectFeaturePause": true});
+  if (__task121_gate instanceof Response) return __task121_gate;
   try {
     const body = await req.json();
     const startingCapital = Number(body.startingCapital) || 100000;

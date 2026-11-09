@@ -143,6 +143,19 @@ interface LatentState {
   // Task 97: CGT filer status (null = not set; CgtCalculator treats null like unset)
   filerStatus: string | null;
 
+  // Task 121: server-resolved auth context (NOT persisted — always re-derived
+  // from the session via /api/me; the browser never supplies permissions).
+  auth: {
+    loaded: boolean;
+    authenticated: boolean;
+    isAdmin: boolean;
+    status: string | null;
+    planKey: string | null;
+    planLabel: string | null;
+    permissions: string[];
+    usage: Record<string, number> | null;
+  };
+
   setView: (v: LatentView) => void;
   setFilerStatus: (s: string | null) => void;
   selectSignal: (id: string) => void;
@@ -167,6 +180,8 @@ interface LatentState {
   markNotificationRead: (id: string) => void;
   clearNotifications: () => void;
 
+  setAuth: (a: Partial<LatentState["auth"]>) => void;
+
   reset: () => void;
 }
 
@@ -178,6 +193,17 @@ export const useLatentStore = create<LatentState>()(
       selectedSignalId: null,
       selectedSymbol: null,
       selectedBrokerId: null,
+
+      auth: {
+        loaded: false,
+        authenticated: false,
+        isAdmin: false,
+        status: null,
+        planKey: null,
+        planLabel: null,
+        permissions: [],
+        usage: null,
+      },
 
       userId: null,
       userEmail: "",
@@ -337,12 +363,24 @@ export const useLatentStore = create<LatentState>()(
         })),
       clearNotifications: () => set({ notifications: [] }),
 
+      setAuth: (a) => set((s) => ({ auth: { ...s.auth, ...a } })),
+
       reset: () =>
         set({
           view: "landing",
           selectedSignalId: null,
           selectedSymbol: null,
           selectedBrokerId: null,
+          auth: {
+            loaded: false,
+            authenticated: false,
+            isAdmin: false,
+            status: null,
+            planKey: null,
+            planLabel: null,
+            permissions: [],
+            usage: null,
+          },
           userId: null,
           userEmail: "",
           userName: "",

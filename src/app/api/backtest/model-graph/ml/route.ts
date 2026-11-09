@@ -11,6 +11,7 @@ import {
   VERIFY_TOLERANCE,
   type SampleRecord,
 } from "@/lib/latent/ml-graph-points";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -40,6 +41,8 @@ function isString(v: unknown): v is string {
 }
 
 export async function GET(req: Request) {
+  const __g = await guardUser(req, "tab.ai_model_signals");
+  if (__g) return __g;
   try {
     const url = new URL(req.url);
     const symbol = (url.searchParams.get("symbol") || "").toUpperCase();

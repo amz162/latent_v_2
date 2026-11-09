@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { guardUser } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 
@@ -7,6 +8,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ symbol: string }> }
 ) {
+  const __g = await guardUser(_req, "feature.market_data");
+  if (__g) return __g;
   const { symbol } = await params;
   // Default to last 1 year window if not provided
   const to = Date.now();

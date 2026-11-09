@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getHistorical } from "@/lib/latent/psxClient";
+import { guardAdminOrInternal } from "@/lib/latent/access-control";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // 5 min — incremental refresh of ~908 stocks
@@ -10,7 +11,10 @@ export const maxDuration = 300; // 5 min — incremental refresh of ~908 stocks
 // from the psxdata API + append only NEW bars (date > latest in DB). Idempotent
 // — re-running only adds new bars, skips up-to-date stocks. Called daily by
 // the instrumentation scheduler at 5 PM PKT (after market close).
-export async function GET() {
+export async function GET(req: Request) {
+  const __task121_gate = await guardAdminOrInternal(req);
+  if (__task121_gate) return __task121_gate;
+
   const start = Date.now();
   const symbols = await db.ohlcvBar.findMany({
     select: { symbol: true },
