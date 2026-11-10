@@ -1,0 +1,123 @@
+{
+ "generatedAt": "2026-11-10T15:30:00Z",
+ "task": "task122",
+ "note": "every row carries the concrete test that produced the evidence (all executed 2026-11-10 against the production server)",
+ "matrix": [
+  {
+   "scenario": "Anonymous user opens admin page",
+   "expected": "Denied",
+   "actual": "/admin \u2192 HTTP 307 redirect to /admin/login (final URL /admin/login)",
+   "evidence": "task122_production_matrix.py production matrix, noCookie['/admin']",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Ordinary user calls admin API",
+   "expected": "Denied",
+   "actual": "GET /api/admin/overview \u2192 403 admin_only; POST /api/admin/users \u2192 403; GET /api/admin/audit \u2192 403",
+   "evidence": "task121_security_tests.py (59 checks) rows 'user \u2192 admin API 403', 'user \u2192 admin mutation 403', 'user \u2192 audit log 403'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Admin calls admin API",
+   "expected": "Allowed if authorized",
+   "actual": "with admin session cookie: /api/admin/auth/session \u2192 200, /api/admin/overview \u2192 200, /admin \u2192 200",
+   "evidence": "throwaway-admin probe (this session) + production matrix adminCookie section",
+   "result": "PASS"
+  },
+  {
+   "scenario": "User accesses another user's data",
+   "expected": "Denied",
+   "actual": "GET /api/plan?userId=<other> \u2192 403; POST /api/execute with other's userId \u2192 403",
+   "evidence": "task121_security_tests.py rows 'IDOR: A cannot read B's plan \u2192 403', 'IDOR: A cannot execute as B \u2192 403'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Suspended user uses an existing session",
+   "expected": "Denied",
+   "actual": "GET /api/track-record \u2192 403 account_suspended; /api/me reflects status SUSPENDED",
+   "evidence": "task121_security_tests.py rows 'suspended user \u2192 403 account_suspended', 'suspended /api/me reflects status'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Deleted user uses an existing session",
+   "expected": "Denied",
+   "actual": "after admin hard-delete: /api/me \u2192 authenticated:false (session row gone, cookie dead)",
+   "evidence": "task121_security_tests.py row 'deleted user session invalidated \u2192 anonymous'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Admin revokes a permission",
+   "expected": "Immediate denial",
+   "actual": "granted tab.llm_signals \u2192 /api/llm-signals 200; reset \u2192 403 immediately (no cache between guard and DB)",
+   "evidence": "task121_security_tests.py rows 'grant takes effect immediately \u2192 200', 'revocation takes effect immediately \u2192 403'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Global feature switch is off",
+   "expected": "Denied regardless of user override",
+   "actual": "tab.llm_signals globalEnabled=false \u2192 403 even WITH an explicit per-user ALLOW override",
+   "evidence": "task121_security_tests.py row 'global disable beats per-user grant \u2192 403' (resolver precedence bug found and fixed in Task 121)",
+   "result": "PASS"
+  },
+  {
+   "scenario": "User exceeds quota",
+   "expected": "Denied server-side",
+   "actual": "export limit 2/day: 3rd export \u2192 429 usage_limit_exceeded; 6 concurrent requests all 429; counters persisted in SQLite",
+   "evidence": "task121_security_tests.py rows 'export 3 \u2192 429', 'concurrent requests cannot bypass limit', 'usage counters persisted in SQLite'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "User manipulates browser role or user ID",
+   "expected": "No privilege change",
+   "actual": "tampered admin cookie \u2192 401; IDOR userId params \u2192 403; static audit: zero code paths read role/permission/plan from request bodies; admin plane resolved only from server-side AdminSession",
+   "evidence": "task121_security_tests.py row 'tampered admin cookie \u2192 401' + route_guard_verification.json static audit (117 routes)",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Cross-origin state change (CSRF)",
+   "expected": "Blocked",
+   "actual": "POST /api/user/logout with Origin: https://evil.example \u2192 403",
+   "evidence": "task121_security_tests.py row 'cross-origin mutation blocked (CSRF)'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Admin brute force",
+   "expected": "Lockout + rate limit",
+   "actual": "5 failed logins \u2192 durable 429 account_locked; per-username 10/15min + per-IP 20/15min sliding windows",
+   "evidence": "task121_security_tests.py rows 'admin account locked after 5 failures \u2192 429', 'redemption rate limiting engages'",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Unauthenticated API access sweep (all routes)",
+   "expected": "401/403 on every protected route",
+   "actual": "124 black-box probes over 117 routes with no credentials: zero unexpected 200s",
+   "evidence": "route_guard_verification.json dynamic section (problems: none)",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Second admin bootstrap / HTTP admin creation",
+   "expected": "Refused / impossible",
+   "actual": "bootstrap run 2 \u2192 REFUSED; only 4 AdminAccount mutation sites exist in code (bootstrap CLI + login counters); no route creates admins",
+   "evidence": "bootstrap verification (this session) + code audit grep",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Admin logout revokes session",
+   "expected": "Immediate invalidation",
+   "actual": "logout \u2192 reuse of the same cookie \u2192 401",
+   "evidence": "throwaway-admin probe (this session)",
+   "result": "PASS"
+  },
+  {
+   "scenario": "Weak admin password",
+   "expected": "Rejected before account creation",
+   "actual": "'short' \u2192 'ERROR: Password must be at least 12 characters.', 0 rows created",
+   "evidence": "bootstrap policy verification (this session)",
+   "result": "PASS"
+  }
+ ],
+ "summary": {
+  "rows": 16,
+  "passed": 16
+ }
+}

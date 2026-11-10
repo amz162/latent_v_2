@@ -1,0 +1,902 @@
+{
+ "generatedAt": "2026-11-10",
+ "task": "task122",
+ "static": {
+  "routesChecked": 117,
+  "handlersChecked": 127,
+  "problems": []
+ },
+ "dynamic": {
+  "probes": 124,
+  "problems": [],
+  "detail": [
+   {
+    "method": "GET",
+    "route": "/api/admin/audit",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/auth/login",
+    "status": 400,
+    "ok": true,
+    "note": "public/auth-endpoint by design (status 400)"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/auth/logout",
+    "status": 200,
+    "ok": true,
+    "note": "public/auth-endpoint by design (status 200)"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/auth/session",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/export/users",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/feedback",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/feedback",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/invitations",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/invitations",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/llm",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/llm",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/models",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/models",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/monitoring",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/overview",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/permissions",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/permissions",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/plans",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/plans",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/settings",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/settings",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/strategies",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/strategies",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/tabs",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/tabs",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/users/[profileId]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/admin/users",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/admin/users",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/ai-analysis/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/ai-analysis",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/ai-model-signals/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/ensembles",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/investment-simulator",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/model-graph/ml",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/model-graph",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/per-stock-walk-forward",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/report",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/backtest/run",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/signal-stats",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/strategy-comparison",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/task79-results",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/task81-results",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/walk-forward/portfolio",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/walk-forward/prospective",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/walk-forward/robustness",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/walk-forward",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/walk-forward/status",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/walk-forward/trading-robustness",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/backtest/walk-forward/trading",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/beta/feedback",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/beta/insight",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/beta/invite/redeem",
+    "status": 403,
+    "ok": true,
+    "note": "public/auth-endpoint by design (status 403)"
+   },
+   {
+    "method": "POST",
+    "route": "/api/beta/profile",
+    "status": 403,
+    "ok": true,
+    "note": "public/auth-endpoint by design (status 403)"
+   },
+   {
+    "method": "GET",
+    "route": "/api/beta/status",
+    "status": 200,
+    "ok": true,
+    "note": "public by design"
+   },
+   {
+    "method": "GET",
+    "route": "/api/cron/check-tp-sl",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/cron/refresh-ohlcv",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/cron/scheduler-status",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/cron/update-data",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/data-readiness",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/dividends/all",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/fair-value/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/fair-value",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/golden-cross",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/health",
+    "status": 200,
+    "ok": true,
+    "note": "public by design"
+   },
+   {
+    "method": "GET",
+    "route": "/api/llm-signals/[id]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/llm-signals/export",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/llm-signals",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/llm/explain-signal/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/llm/interpret-news",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/me",
+    "status": 200,
+    "ok": true,
+    "note": "public by design"
+   },
+   {
+    "method": "GET",
+    "route": "/api/ml/signal/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/model-report/download",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/model-report",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/models/registry",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/paper-trading/monitor/[tradeId]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/paper-trading/monitor",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/pattern-recognition/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/portfolio/news-digest",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/predictions/record",
+    "status": 503,
+    "ok": true,
+    "note": "public/auth-endpoint by design (status 503)"
+   },
+   {
+    "method": "GET",
+    "route": "/api/price-patterns/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/price-patterns/precompute",
+    "status": 401,
+    "ok": true,
+    "note": "public/auth-endpoint by design (status 401)"
+   },
+   {
+    "method": "GET",
+    "route": "/api/price-patterns",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/bss/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/companies",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/filings/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/financial-results/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/financials/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/incomestatement/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/index-return",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/indices/[name]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/indices",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/intraday",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/iss/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/ksechart/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/live/batch",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/live",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/news/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/ohlcv/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/ratio/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/reports/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/screener",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/sectors/[name]/stocks",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/sectors",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/settlement/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/symbol-sectors",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/technical/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/psx/valuation/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/result-patterns/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/result-patterns",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/",
+    "status": 200,
+    "ok": true,
+    "note": "public by design"
+   },
+   {
+    "method": "GET",
+    "route": "/api/scrape/announcements",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/scrape/news",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/signals/[id]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/signals/all",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/signals",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/simulate",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/stock-patterns/[symbol]",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/stocks",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/task111-overlays",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/tax/cgt",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/400/405/503, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/tax/dividend",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "GET",
+    "route": "/api/track-record",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   },
+   {
+    "method": "POST",
+    "route": "/api/user/logout",
+    "status": 200,
+    "ok": true,
+    "note": "public/auth-endpoint by design (status 200)"
+   },
+   {
+    "method": "GET",
+    "route": "/api/volatility",
+    "status": 401,
+    "ok": true,
+    "note": "expected 401/403/405, got 401"
+   }
+  ]
+ },
+ "publicEndpointsRationale": {
+  "GET": [
+   "/api/",
+   "/api/beta/invite/redeem",
+   "/api/beta/status",
+   "/api/health",
+   "/api/me"
+  ],
+  "POST": [
+   "/api/admin/auth/login",
+   "/api/admin/auth/logout",
+   "/api/beta/invite/redeem",
+   "/api/beta/profile",
+   "/api/predictions/record",
+   "/api/price-patterns/precompute",
+   "/api/user/logout"
+  ],
+  "note": "public GETs return policy booleans/liveness/minimal shapes only; POSTs are auth endpoints or machine-token fail-closed endpoints"
+ }
+}

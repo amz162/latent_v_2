@@ -1,0 +1,80 @@
+{
+ "generatedAt": "2026-11-10T15:30:00Z",
+ "task": "task122",
+ "scope": "independent audit of the Task 121 implementation (code inspected, not the report)",
+ "implementationAudit": {
+  "authPlanes": {
+   "admin": "AdminAccount (scrypt$16384$8$1$salt$hash) + AdminSession (sha256(token), 12h absolute TTL, revokedAt) \u2014 src/lib/latent/admin-auth.ts verified line-by-line",
+   "user": "BetaProfile cookie session (reused Task 117 invite mechanics) + server-only ProfileAccess (plan/status/expiry) \u2014 src/lib/latent/access-control.ts verified line-by-line",
+   "separation": "separate cookies (latent_admin_session / latent_beta_session), separate tables, expired admin cookie falls through safely (never treated as user)"
+  },
+  "cookieFlagsLive": {
+   "HttpOnly": true,
+   "SameSite": "lax",
+   "Path": "/",
+   "MaxAge": 43200,
+   "Secure": "activates from X-Forwarded-Proto https behind the proxy (Caddy sets it); verified absent only on direct plain-HTTP probe"
+  },
+  "revocation": "logout \u2192 same cookie reuse \u2192 401 (verified live); admin reset-password revokes all sessions (verified live)",
+  "lockout": "durable DB-backed: 5 failures \u2192 lockedUntil 15 min; uniform invalid_credentials shape (no user enumeration)",
+  "noPublicAdminRegistration": "only 4 AdminAccount mutation sites exist (bootstrap CLI create, bootstrap reset-password, login failure counter, login success reset) \u2014 grep-verified; no route creates admins",
+  "noBrowserControlledIdentity": "zero code paths read role/permission/plan/status from request bodies (grep-verified across src/app/api)",
+  "denyByDefault": "resolution: registry.globalEnabled \u2192 per-user ProfilePermission \u2192 PlanPermission \u2192 registry defaultEffect; global switch verified to beat per-user ALLOW",
+  "immediateRevocation": "guards re-resolve permissions/status per request \u2014 no cache layer",
+  "suspendedDeletedHandling": "requireUser: SUSPENDED \u2192 403, non-ACTIVE \u2192 403, expired \u2192 403; deleted profile \u2192 session row gone \u2192 anonymous",
+  "idorProtection": "legacy identity derived from session (beta-<profileId>@users.latent.internal); client userId/email ignored or 403",
+  "csrf": "assertSameOrigin on all admin mutations + user logout; SameSite=lax cookies; absent Origin passes (server-to-server cannot carry ambient cookies)",
+  "rateLimiting": "admin login 10/15min per-username + 20/15min per-IP; invite redemption 30/h per-IP + 400/h global; in-memory sliding window (documented single-host trade-off)",
+  "auditAppendOnly": "zero update/delete/upsert on AdminAuditLog anywhere (grep-verified); secrets scan of payloads clean",
+  "usageCounters": "atomic conditional UPDATE (count < limit inside WHERE) \u2014 6-thread concurrency test cannot overshoot; persisted in SQLite (survives restarts)",
+  "healthEndpoints": "anonymous /api/health returns minimal liveness (no commit/paths/scheduler); full detail requires admin session or internal token (verified live)"
+ },
+ "routeGuardVerification": {
+  "static": {
+   "routes": 117,
+   "handlers": 127,
+   "problems": []
+  },
+  "dynamic": {
+   "probes": 124,
+   "problems": []
+  },
+  "method": "each exported handler parsed; guard call must exist and PRECEDE any side-effectful statement; alternate methods checked; 124 unauthenticated HTTP probes"
+ },
+ "bootstrapAudit": {
+  "oneTime": "refuses when AdminAccount non-empty (verified live)",
+  "passwordHandling": "stdin piped or raw-mode muted prompt; never printed; scrypt-hashed before storage; policy (>=12 chars, upper/lower/digit) enforced BEFORE create (verified: weak attempt \u2192 0 rows)",
+  "noPartialAccounts": "single-row create at the end of validation; DB-error \u2192 no row; post-create round-trip self-verification with documented recovery",
+  "resetPassword": "operator CLI only, overwrites hash + revokes all sessions (verified live, login with reset password \u2192 200)",
+  "httpBypass": "none \u2014 grep-verified",
+  "bugFoundAndFixed": "args() parser infinite loop on '--reset-password --username <name>' (flag followed by another flag decremented i, loop re-incremented \u2192 100% CPU hang). Fixed in scripts/task121_admin_bootstrap.ts; reset-password re-verified end-to-end"
+ },
+ "credentialAudit": {
+  "classicPatFound": "one classic ghp_ PAT (40 chars) in ACTIVE store .git/credentials (gitignored; credential.helper=store --file=.git/credentials in repo config)",
+  "actionTaken": "removed from active storage 2026-11-10 (store emptied, perms 0600); NOT used for any Task 122 push; validity deliberately unverified per no-use rule \u2014 operator must revoke it on GitHub",
+  "otherStores": ".zcredentials/ contains README only; no durable token copies; no shell history files exist; no token-like env vars; .git/config remote URL clean (no embedded credentials)",
+  "replacement": "fine-grained PAT required: owner amz162, repo only amz162/latent_v_2, Contents Read+Write; arm via bash scripts/gh_auth.sh (reads .zcredentials/github_token.local)",
+  "pushConsequence": "no pushes possible until operator arms the replacement (CI workflows use repo secrets and are unaffected)"
+ },
+ "productionChanges": [
+  {
+   "change": "production server bound to 127.0.0.1:3000 (was *:3000)",
+   "why": "direct origin access previously bypassed any reverse-proxy MFA layer",
+   "how": "package.json start + scripts/server_supervisor.sh: next start -p 3000 -H 127.0.0.1",
+   "verified": "localhost:3000 \u2192 200; host-IP:3000 \u2192 unreachable; health suite 14/14 after restart",
+   "rollback": "revert the -H flag in package.json start, restart (bash scripts/start_server.sh); no data impact"
+  }
+ ],
+ "postRecycleRecovery": {
+  "event": "sandbox recycle restored scaffold + stale Nov 3 DB (Beta/RBAC tables missing)",
+  "action": "git reset --hard origin/main (12d7f41c); additive prisma db push; RBAC seed + registry sync re-applied; INTERNAL_API_TOKEN regenerated; server + worker restarted",
+  "dataLoss": "none of consequence \u2014 zero real users/admins existed; paper-trade ledger lives in git-tracked state files (task107 recovery design)",
+  "newBackup": "db/backups/task122_pre_rebuild_20261110T143736Z.db"
+ },
+ "testResults": {
+  "securitySuite": "59 passed, 0 failed",
+  "healthCheck": "14 passed, 0 failed",
+  "invitationDryRun": "10 passed, 0 failed",
+  "routeVerification": "static + dynamic: zero problems"
+ }
+}

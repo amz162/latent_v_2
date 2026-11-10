@@ -26,9 +26,14 @@ function args(): Record<string, string> {
   for (let i = 0; i < a.length; i++) {
     if (a[i].startsWith("--")) {
       const key = a[i].slice(2);
-      out[key] = a[i + 1] && !a[i + 1].startsWith("--") ? a[i + 1] : "true";
-      if (out[key] === "true" && a[i + 1]?.startsWith("--")) i -= 1;
-      else if (out[key] !== "true") i += 1;
+      // flag with a value: consume the next token unless it is another flag.
+      // The old `i -= 1` adjustment looped forever on "--flag --flag2 value".
+      if (a[i + 1] && !a[i + 1].startsWith("--")) {
+        out[key] = a[i + 1];
+        i += 1;
+      } else {
+        out[key] = "true";
+      }
     }
   }
   return out;

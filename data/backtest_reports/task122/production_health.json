@@ -1,0 +1,115 @@
+{
+ "generatedAt": "2026-11-10T15:30:00Z",
+ "pages": {
+  "noCookie": {
+   "/": {
+    "status": 200,
+    "finalUrl": "/"
+   },
+   "/login": {
+    "status": 200,
+    "finalUrl": "/login"
+   },
+   "/admin/login": {
+    "status": 200,
+    "finalUrl": "/admin/login"
+   },
+   "/dashboard": {
+    "status": 200,
+    "finalUrl": "/login"
+   },
+   "/admin": {
+    "status": 200,
+    "finalUrl": "/admin/login"
+   },
+   "/api/health": {
+    "status": 200,
+    "finalUrl": "/api/health"
+   },
+   "/api/llm-signals?pageSize=2": {
+    "status": 401,
+    "finalUrl": "/api/llm-signals?pageSize=2"
+   },
+   "/api/admin/overview": {
+    "status": 401,
+    "finalUrl": "/api/admin/overview"
+   },
+   "/api/signals/all": {
+    "status": 401,
+    "finalUrl": "/api/signals/all"
+   }
+  },
+  "userCookie": {
+   "/api/me": {
+    "status": 200,
+    "finalUrl": "/api/me"
+   },
+   "/api/llm-signals?pageSize=2": {
+    "status": 403,
+    "finalUrl": "/api/llm-signals?pageSize=2"
+   },
+   "/api/admin/overview": {
+    "status": 403,
+    "finalUrl": "/api/admin/overview"
+   },
+   "/dashboard": {
+    "status": 200,
+    "finalUrl": "/dashboard"
+   },
+   "/admin": {
+    "status": 200,
+    "finalUrl": "/admin/login"
+   }
+  },
+  "adminCookie": {
+   "/api/admin/overview": {
+    "status": 200,
+    "finalUrl": "/api/admin/overview"
+   },
+   "/api/admin/auth/session": {
+    "status": 200,
+    "finalUrl": "/api/admin/auth/session"
+   },
+   "/admin": {
+    "status": 200,
+    "finalUrl": "/admin"
+   }
+  },
+  "note": "adminAccounts/betaProfiles counted 1/1 during the matrix because the throwaway probe identities were in flight; cleaned up immediately after (verified 0 remaining)"
+ },
+ "database": {
+  "integrity": "ok",
+  "ohlcvBars": 1082609,
+  "frontier": "2026-11-10",
+  "registryEntries": 28,
+  "plans": 3,
+  "adminAccounts": 0,
+  "betaProfiles": 0,
+  "betaInvites": 0,
+  "auditRows": 12,
+  "tables": 33,
+  "migrations": "additive prisma db push only; pre-change backups in db/backups/ (task121_pre_migration_20261109T180546Z.db, task122_pre_rebuild_20261110T143736Z.db)",
+  "frontierNote": "frontier brought current post-recycle: update_daily_ohlcv.py + backfill_ohlcv.ts completed 2026-11-10 (frontier 2026-11-10, +39,686 bars, 0 errors, integrity ok)"
+ },
+ "worker": {
+  "heartbeatAt": "2026-11-10T15:19:00Z",
+  "note": "post_window: EOD reconciliation done \u2014 idling until next session",
+  "fresh": true
+ },
+ "server": {
+  "binding": "127.0.0.1:3000",
+  "build": "production .next (next start)",
+  "supervisor": "server_supervisor.sh (auto-restart, health-gated)"
+ },
+ "betaFunctionality": {
+  "invitationRedemptionDryRun": "10 passed, 0 failed (test invites only \u2014 no real invitation created, no emails sent)",
+  "betaConfigRow": "ensured (id=1)",
+  "consentFlow": "untouched"
+ },
+ "suites": {
+  "security": "59/59",
+  "healthCheck": "14/14",
+  "task107Regression": "not re-run in task122 (code untouched this task except supervisor binding flag; last green run: task121)",
+  "routeGuardVerification": "zero problems"
+ }
+}

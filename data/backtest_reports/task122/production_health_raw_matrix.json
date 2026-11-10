@@ -1,0 +1,97 @@
+{
+ "noCookie": {
+  "/": {
+   "status": 200,
+   "finalUrl": "/"
+  },
+  "/login": {
+   "status": 200,
+   "finalUrl": "/login"
+  },
+  "/admin/login": {
+   "status": 200,
+   "finalUrl": "/admin/login"
+  },
+  "/dashboard": {
+   "status": 200,
+   "finalUrl": "/login"
+  },
+  "/admin": {
+   "status": 200,
+   "finalUrl": "/admin/login"
+  },
+  "/api/health": {
+   "status": 200,
+   "finalUrl": "/api/health"
+  },
+  "/api/llm-signals?pageSize=2": {
+   "status": 401,
+   "finalUrl": "/api/llm-signals?pageSize=2"
+  },
+  "/api/admin/overview": {
+   "status": 401,
+   "finalUrl": "/api/admin/overview"
+  },
+  "/api/signals/all": {
+   "status": 401,
+   "finalUrl": "/api/signals/all"
+  }
+ },
+ "userCookie": {
+  "/api/me": {
+   "status": 200,
+   "finalUrl": "/api/me"
+  },
+  "/api/llm-signals?pageSize=2": {
+   "status": 403,
+   "finalUrl": "/api/llm-signals?pageSize=2"
+  },
+  "/api/admin/overview": {
+   "status": 403,
+   "finalUrl": "/api/admin/overview"
+  },
+  "/dashboard": {
+   "status": 200,
+   "finalUrl": "/dashboard"
+  },
+  "/admin": {
+   "status": 200,
+   "finalUrl": "/admin/login"
+  }
+ },
+ "adminCookie": {
+  "/api/admin/overview": {
+   "status": 200,
+   "finalUrl": "/api/admin/overview"
+  },
+  "/api/admin/auth/session": {
+   "status": 200,
+   "finalUrl": "/api/admin/auth/session"
+  },
+  "/admin": {
+   "status": 200,
+   "finalUrl": "/admin"
+  }
+ },
+ "infra": {
+  "dbIntegrity": "ok",
+  "ohlcvBars": 1082609,
+  "frontier": "2026-11-10",
+  "registryEntries": 28,
+  "plans": 3,
+  "adminAccounts": 1,
+  "betaProfiles": 1,
+  "migrationBackup": [
+   "task122_pre_rebuild_20261110T143736Z.db"
+  ],
+  "workerHeartbeat": {
+   "at": "2026-11-10T15:19:00Z",
+   "ageMinutes": 6,
+   "fresh": true
+  },
+  "userRedeemed": true,
+  "originBinding": "127.0.0.1:3000 (loopback-only; direct-origin bypass closed in Task 122)",
+  "serverBuild": "production .next build via next start -H 127.0.0.1",
+  "healthCheckSuite": "server_health_check.py: 14 passed, 0 failed (internal token)"
+ }
+}

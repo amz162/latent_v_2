@@ -1,0 +1,60 @@
+# Task 122 — PROPOSED production Caddyfile with MFA enforcement on /admin/*.
+#
+# STATUS: NOT DEPLOYED — requires operator infrastructure access (see
+# docs/reports/task122_security_closure.md §MFA and
+# data/backtest_reports/task122/operator_actions.md). The application-level
+# admin authentication (scrypt + lockout + 12h sessions) remains fully in
+# force regardless; this layer adds MFA IN FRONT of it (defense in depth).
+#
+# Requirements satisfied by this configuration:
+#   1. MFA is enforced BEFORE any /admin/* request reaches the app —
+#      including /admin/login (task requirement).
+#   2. Direct origin access cannot bypass it: the app now binds 127.0.0.1:3000
+#      only (changed in Task 122), so the Caddy listener is the only entry.
+#   3. X-Forwarded-Proto https is forwarded, which activates the app's Secure
+#      cookie flag automatically.
+#
+# Operator steps:
+#   a. Deploy Authelia (or any OIDC provider with TOTP) reachable at
+#      auth.internal.example.com; enroll the operator with TOTP.
+#   b. Replace latent.pk and auth.* domains + secrets below with real values.
+#      Generate the session secret:  openssl rand -hex 32
+#   c. caddy validate --config Caddyfile && systemctl reload caddy
+#   d. Verify: curl -I https://latent.pk/admin → 302 to the Authelia portal;
+#      after TOTP sign-in → the Latent.pk admin login page; the app session
+#      still requires the admin username/password on top.
+#
+# Contact Caddy with the caddy-security plugin NOT required — forward_auth to
+# Authelia's /api/verify endpoint is native Caddy (no custom build).
+
+latent.pk {
+	# --- MFA gate for the ENTIRE admin plane (incl. /admin/login) ---
+	@admin path /admin/*
+	handle @admin {
+		forward_auth auth.internal.example.com:9091 {
+			remote_auth_url                 /api/verify?rd=https%3A%2F%2Fauth.internal.example.com%2F
+			copy_headers                    Remote-User Remote-Groups Remote-Email
+		}
+		reverse_proxy 127.0.0.1:3000 {
+			header_up Host {host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	# --- everything else proxies straight through (no MFA) ---
+	handle {
+		reverse_proxy 127.0.0.1:3000 {
+			header_up Host {host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+}
+
+# Authelia itself must be TLS-protected and NOT publicly list /admin paths.
+auth.internal.example.com {
+	reverse_proxy 127.0.0.1:9091
+}
