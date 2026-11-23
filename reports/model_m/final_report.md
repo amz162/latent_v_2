@@ -84,10 +84,12 @@ daemon + documented delay evidence (F11); revision quarantine (F12).
 
 `known_issues.md` tracks them: K1 CI green run pending (GitHub dropped the
 2026-11-23 window), K2 host crontab not installed in this sandbox, K3
-in-process scheduler host firing unverified, K4 full-universe backfill not
-executed; provider gaps for ENGRO/BYCO/SYS are unfixable in-repo; financial
-publication timestamps remain not-PIT-verified (disclosed on every package);
-the 0-OOS-skill platform fact is a research reality, not an operations defect.
+in-process scheduler host firing unverified; K4 (full-universe backfill) is
+now RESOLVED — 520 symbols updated with 9,964 real provider rows; provider
+gaps for ENGRO/BYCO/SYS and ~406 delisted symbols are unfixable in-repo;
+financial publication timestamps remain not-PIT-verified (disclosed on every
+package); the 0-OOS-skill platform fact is a research reality, not an
+operations defect.
 
 ## 7. Is the daily post-market scheduler implemented? YES.
 
@@ -110,17 +112,20 @@ honoring, single-flight dedup and provider-health tracking. No new source.
 
 ## 10. How many symbols were updated in the latest verified run?
 
-The latest full-pipeline E2E run (`eod_pipeline:2026-11-23`, trigger e2e):
-**1 symbol updated (COLG), 16 rows inserted, 0 rejected** — a deliberately
-single-symbol verification run. The same day's recovery run updated ABL (16
-rows). A pilot-25 `run` against the already-current frontier correctly returns
-NO_SESSION (idempotent no-op). Production-scale coverage (25 or 909 symbols)
-is config-driven (`universe`), not yet executed.
+The final full-universe run (`eod_pipeline:2026-11-23`, trigger e2e, 722 s):
+**909 symbols attempted, 520 updated, 9,964 real provider rows inserted,
+0 symbol failures, 1,163 candidate bars rejected by the canonical validator,
+31 provider-missing recorded** — all 8 downstream stages rc=0, status
+COMPLETED. Earlier the same day: single-symbol verification run (COLG, +16
+rows, all stages rc=0) and recovery run (ABL, +16 rows). `universe: "all"` is
+now the committed default config (full-universe daily updates per Phase 2.2).
 
 ## 11. What is the latest successful market-data date?
 
-**2026-11-23** — global `OhlcvBar` frontier, reached and verified by the E2E
-runs (22 pilot symbols + repaired ABL + COLG all carry the 2026-11-23 session).
+**2026-11-23** — global `OhlcvBar` frontier. After the full-universe run,
+**492 of 909 symbols carry the 2026-11-23 session** (up from 22), 11 more are
+within 3 days, and the remaining ~406 are provider-absent (delisted/renamed —
+the provider has no newer bars for them; nothing was fabricated).
 
 ## 12. Were the prices actually saved and verified in the database?
 
@@ -171,6 +176,7 @@ files under `data/backtest_reports/task129/model_m_evidence/`.
 | `bunx tsc --noEmit` | **0 errors** |
 | E2E-A recovery (real provider, ABL/ENGRO/SYS/BYCO) | COMPLETED; ABL +16 bars; SYS honestly missing |
 | E2E-B full pipeline (real provider, COLG) | COMPLETED; 8/8 stages rc=0; 16 rows; frontier 2026-11-23 |
+| E2E-C **full-universe run** (real provider, 909 symbols) | **COMPLETED; 520 symbols updated, 9,964 rows, 0 failures, 8/8 stages rc=0**; 492 symbols at frontier |
 | Real GLM-4.6 Model M decisions | MEBL BUY (quality 85/100), LUCK BUY (82/100, missing news disclosed), ENGRO blocked (STALE) |
 | Lifecycle regression | 39 books intact, no duplicates, historical costs preserved |
 | Production build + live server smoke | see §17 |
@@ -204,8 +210,9 @@ Executed after implementation (evidence: build log, HTTP probes):
 2. **Host cron installation** of the authoritative 17:30 PKT entry (template
    ready: `crontab scripts/crontab.txt`).
 3. **In-process scheduler firing** on a restarted production host.
-4. **Full-universe backfill** across the 887 frozen symbols (per-symbol proof
-   delivered; bulk run is a deliberate long job).
+4. ~~Full-universe backfill across the 887 frozen symbols~~ **RESOLVED** —
+   the full-universe run executed 2026-11-23: 520 symbols updated with 9,964
+   real provider rows, 0 failures (known_issues.md K4 closed).
 5. **First scheduled Model M cache + decision cycle on the host** (z-ai SDK
    credentials are host-side).
 

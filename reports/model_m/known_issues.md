@@ -11,7 +11,7 @@ completion. Items fixed during this task are NOT listed here (see
 | K1 | CI green run of `daily-psx-pipeline.yml` (incl. prisma generate + new lifecycle stage) still pending — no scheduled run fired since the fixes were pushed; the Mon 2026-11-23 11:30 UTC window was dropped by GitHub's scheduler | workflow run list: latest run #13 (2026-11-20, failure, pre-fix head); workflow state `active` | next scheduled/dispatch CI run, or manual `workflow_dispatch` |
 | K2 | Host crontab not installed in this sandbox (template only) — the 17:30 PKT authoritative entry exists in code but is not installed anywhere here | `crontab -l` empty in sandbox | `crontab scripts/crontab.txt` on the production host |
 | K3 | In-process scheduler (17:00 PKT) host firing never observed (no marker files); code path restored in b307e34e but unverified | Task 124 D7 | one production server restart + marker check |
-| K4 | Full-universe backfill (887 frozen symbols) supported but not executed | ABL live recovery (+16 bars) is the per-symbol proof | one deliberate `universe: "all"` run (long live job) |
+| K4 | ~~Full-universe backfill (887 frozen symbols) supported but not executed~~ **RESOLVED 2026-11-23**: full-universe run executed — 909 symbols attempted, **520 updated, 9,964 real provider rows inserted**, 0 symbol failures, 1,163 candidate bars rejected by the canonical task107 validator (count in run ledger), 492 symbols at frontier 2026-11-23, integrity clean (0 dups, quick_check ok). The remaining 417 non-frontier symbols are provider-absent (delisted/renamed — probe of 786R, AAL, AASM, ABSON, ADOS, ADTM returns no newer bars; plus 31 explicit `missing_symbols` incl. AHCLXD/APLXD/ATRLXD ex-dividend markers). Nothing was fabricated for them. | run row `eod_pipeline:2026-11-23` (trigger e2e, 722 s) | closed |
 
 ## 2. Provider-side data gaps (cannot be fixed in-repo)
 
@@ -50,6 +50,12 @@ The secondary provider (`api.askanalyst.com.pk`) remains broken for ENGRO
 - Paper-trading V2 cost transition: only NEW books use
   `psx_user_schedule_v2`; the historical cohort remains on
   `legacy_standard_psx_v1` (deliberate, per the no-silent-rewrite rule).
+- Zero-volume sessions: the canonical task107 bar validator rejects
+  volume=0 bars, so legitimate no-trade sessions for illiquid symbols are
+  not persisted by the scheduler (1,163 rejections in the 2026-11-23
+  full-universe run). The scheduler defers to the platform's canonical
+  validator on purpose; relaxing zero-volume handling is a platform-policy
+  decision for a future task, applied consistently to BOTH ingest paths.
 
 ## 5. Pre-existing issues left untouched (out of Task 129 scope)
 

@@ -41,7 +41,10 @@ persistent provider-health tracking. No new source introduced.
 
 ## 4. Symbols covered
 
-- `universe: "pilot25"` (default) — the 25-symbol shadow universe.
+- `universe: "all"` (default) — every symbol present in `OhlcvBar` (~909):
+  the Phase 2.2 requirement of full-universe daily updates; verified live
+  2026-11-23 (frontier extended across the whole stored universe).
+- `universe: "pilot25"` — the 25-symbol shadow universe (narrower fallback).
 - `universe: "all"` — every symbol present in `OhlcvBar` (~909), enabling the
   repair of the 887 symbols frozen at 2026-10-29.
 - `--symbols A,B,C` — individual-symbol recovery; `backfill --start --end`

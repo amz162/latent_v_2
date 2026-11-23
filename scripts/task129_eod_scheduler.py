@@ -467,9 +467,17 @@ def cmd_run(cfg: dict, args) -> int:
         rid, refusal = adopt_or_create_run(db, run_key, cfg.get("job_name", "eod_pipeline"),
                                            args.trigger, None)
         if refusal == "already_processed":
-            print(json.dumps({"status": run_status_note(db, run_key), "runKey": run_key,
-                              "note": "session already processed — idempotent skip"}))
-            return 0
+            if not args.force:
+                print(json.dumps({"status": run_status_note(db, run_key), "runKey": run_key,
+                                  "note": "session already processed — idempotent skip"}))
+                return 0
+            # --force: deliberate re-run — reset the run row and re-process
+            db.execute(
+                "UPDATE SchedulerRun SET status='RUNNING', startedAt=?, finishedAt=NULL, "
+                "rowsInserted=0, rowsUpdated=0, rowsSkipped=0, rowsRejected=0, updatedAt=? "
+                "WHERE runKey=?", (now_iso(), now_iso(), run_key))
+            db.commit()
+            print(f"[run] --force re-processing {run_key}")
         if refusal == "run_in_progress":
             print(json.dumps({"status": "REFUSED", "note": "another run is in progress", "runKey": run_key}))
             return 3

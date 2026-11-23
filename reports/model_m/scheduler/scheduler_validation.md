@@ -78,14 +78,31 @@ python3 -I scripts/task129_eod_scheduler.py run --symbols COLG --session 2026-11
 3. **GLM stage inside the scheduler** — default OFF in `run` mode (needs z-ai
    SDK credentials, host only); the host wrapper chains it as step 2 and the
    GLM runner itself was verified separately in this task (real decisions).
-4. **Full-universe backfill** — supported (`universe: "all"`), proven
-   per-symbol (ABL/COLG), not yet executed across all 887 frozen symbols.
+
+## 3b. E2E-C: FULL-UNIVERSE RUN (executed after the initial validation)
+
+```
+python3 -I scripts/task129_eod_scheduler.py run --session 2026-11-23 --trigger e2e --force
+  (config universe: "all" — 909 symbols)
+→ {"status":"COMPLETED","runKey":"eod_pipeline:2026-11-23","rows_inserted":9964,
+   "symbols_updated":520,"frontier":"2026-11-23",
+   "stages":{"indicators":0,"results_patterns":0,"maturity":0,"lifecycle":0,
+             "modelm_cache":0,"monitoring_reports":0,"monitoring_alerts":0,
+             "monitoring_health":0}}
+```
+- Duration 722 s · symbolsAttempted 909 · symbolsFailed **0** · rowsSkipped
+  3,826 · rowsRejected 1,163 (canonical task107 validator; zero-volume
+  policy documented in known_issues.md §4) · missing_symbols 31.
+- DB after run: 1,053,205 rows · 909 symbols · **492 symbols at frontier
+  2026-11-23** (up from 22) · 0 duplicate (symbol,date) pairs · quick_check ok.
+- The `--force` bypass of the runKey idempotency skip was exercised live
+  (unit-test + live coverage of deliberate re-processing).
 
 ## 4. Verdict
 
 `scheduler_validation: PASSED_WITH_DOCUMENTED_LIMITS` — implementation,
 persistence, validation, idempotency, crash recovery, conflict quarantine,
 partial-failure accounting and the complete downstream ordering are all
-verified by automated tests plus two live E2E runs against the real provider
-and database. Production scheduling verification remains a deployment step,
-not a code task.
+verified by automated tests plus three live E2E runs (recovery, single-symbol
+full pipeline, FULL-UNIVERSE) against the real provider and database.
+Production scheduling verification remains a deployment step, not a code task.
