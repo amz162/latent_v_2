@@ -71,18 +71,34 @@ export interface BetaSession {
 
 export async function getSession(req: NextRequest): Promise<BetaSession | null> {
   const token = req.cookies.get(BETA_COOKIE)?.value;
-  if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
-  const p = await db.betaProfile.findUnique({ where: { sessionTokenHash: sha256(token) } });
-  if (!p) return null;
-  return {
-    profileId: p.id,
-    sessionTokenHash: p.sessionTokenHash,
-    accessVia: p.accessVia,
-    inviteId: p.inviteId,
-    profileComplete: p.profileComplete,
-    consentVersion: p.consentVersion,
-    consentAcceptedAt: p.consentAcceptedAt,
-  };
+  if (token && /^[a-f0-9]{64}$/.test(token)) {
+    const p = await db.betaProfile.findUnique({ where: { sessionTokenHash: sha256(token) } });
+    if (p) {
+      return {
+        profileId: p.id,
+        sessionTokenHash: p.sessionTokenHash,
+        accessVia: p.accessVia,
+        inviteId: p.inviteId,
+        profileComplete: p.profileComplete,
+        consentVersion: p.consentVersion,
+        consentAcceptedAt: p.consentAcceptedAt,
+      };
+    }
+  }
+  // open-access mode: anonymous requests share the kiosk identity
+  const kiosk = await getKioskProfile();
+  if (kiosk) {
+    return {
+      profileId: kiosk.id,
+      sessionTokenHash: kiosk.sessionTokenHash,
+      accessVia: kiosk.accessVia,
+      inviteId: kiosk.inviteId,
+      profileComplete: kiosk.profileComplete,
+      consentVersion: kiosk.consentVersion,
+      consentAcceptedAt: kiosk.consentAcceptedAt,
+    };
+  }
+  return null;
 }
 
 /** Issue a fresh identity: new token (cookie) + new profile row. */
@@ -130,6 +146,38 @@ export function clearSessionCookie(res: NextResponse, req: NextRequest) {
     maxAge: 0,
     path: "/",
   });
+}
+
+// ---------- open-access (kiosk) mode ----------
+// Operator switch (OPEN_ACCESS_MODE=true in .env): every request without a
+// valid session cookie resolves to a shared local "kiosk" profile, and admin
+// routes resolve to the bootstrap admin account. RBAC still applies fully —
+// the kiosk profile simply holds the plan/permissions the operator granted it.
+// Reverting: remove OPEN_ACCESS_MODE from .env (no code change needed).
+
+export const KIOSK_PROFILE_TOKEN = "latent-open-access-kiosk-v1";
+export const kioskSessionTokenHash = () => sha256(KIOSK_PROFILE_TOKEN);
+
+/** The shared kiosk profile, or null when open access is disabled. */
+export async function getKioskProfile() {
+  if (process.env.OPEN_ACCESS_MODE !== "true") return null;
+  try {
+    return await db.betaProfile.findUnique({ where: { sessionTokenHash: kioskSessionTokenHash() } });
+  } catch {
+    return null;
+  }
+}
+
+/** The bootstrap admin account used for open-access admin routes, or null. */
+export async function getKioskAdmin() {
+  if (process.env.OPEN_ACCESS_MODE !== "true") return null;
+  try {
+    return await db.adminAccount.findUnique({
+      where: { username: process.env.OPEN_ACCESS_ADMIN_USERNAME ?? "admin" },
+    });
+  } catch {
+    return null;
+  }
 }
 
 // ---------- CSRF / origin ----------

@@ -21,6 +21,9 @@ next-env.d.ts
 *.tsbuildinfo
 # The raw SQLite DB (152MB) exceeds GitHub's 100MB limit — stored compressed as custom.db.gz
 db/custom.db
+# WAL/SHM sidecar files created by SQLite journal_mode=WAL
+db/custom.db-wal
+db/custom.db-shm
 # server log
 server.log
 

@@ -20,7 +20,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { db } from "@/lib/db";
-import { BETA_COOKIE, sha256 } from "./beta-access";
+import { BETA_COOKIE, sha256, getKioskProfile, getKioskAdmin } from "./beta-access";
 
 export const ADMIN_COOKIE = "latent_admin_session";
 export const ADMIN_SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12h absolute
@@ -283,9 +283,15 @@ export async function ensureProfileAccess(profileId: string): Promise<{
 }
 
 async function buildUserContext(req: NextRequest | Request, correlationId: string): Promise<UserContext | null> {
+  let profile: { id: string } | null = null;
   const token = readCookie(req, BETA_COOKIE);
-  if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
-  const profile = await db.betaProfile.findUnique({ where: { sessionTokenHash: sha256(token) } });
+  if (token && /^[a-f0-9]{64}$/.test(token)) {
+    profile = await db.betaProfile.findUnique({ where: { sessionTokenHash: sha256(token) } });
+  }
+  if (!profile) {
+    // open-access mode: anonymous requests share the kiosk identity
+    profile = await getKioskProfile();
+  }
   if (!profile) return null; // deleted profile / stale cookie → anonymous (old sessions die with the row)
   const access = await ensureProfileAccess(profile.id);
   const permissions = await resolveEffectivePermissions(profile.id, access.planKey);
@@ -362,6 +368,13 @@ export async function requireUser(
 
 export async function requireAdmin(req: NextRequest | Request): Promise<AdminContext> {
   const ctx = await getAuthContext(req);
+  if (!ctx || ctx.kind !== "admin") {
+    // open-access mode: admin routes resolve to the bootstrap admin account
+    const kiosk = await getKioskAdmin();
+    if (kiosk && kiosk.isActive) {
+      return { kind: "admin", req, adminId: kiosk.id, username: kiosk.username, correlationId: newCorrelationId() };
+    }
+  }
   if (!ctx) {
     throw new AuthError(401, "authentication_required", "Admin sign-in required.");
   }
@@ -622,10 +635,17 @@ import { redirect } from "next/navigation";
 
 export async function requireUserPageRedirect(): Promise<UserContext> {
   const store = await cookies();
+  let profile: { id: string } | null = null;
   const token = store.get(BETA_COOKIE)?.value;
-  if (!token || !/^[a-f0-9]{64}$/.test(token)) redirect("/login");
-  const profile = await db.betaProfile.findUnique({ where: { sessionTokenHash: sha256(token) } });
-  if (!profile) redirect("/login?error=session_expired");
+  if (token && /^[a-f0-9]{64}$/.test(token)) {
+    profile = await db.betaProfile.findUnique({ where: { sessionTokenHash: sha256(token) } });
+    if (!profile) redirect("/login?error=session_expired");
+  }
+  if (!profile) {
+    // open-access mode: anonymous visitors share the kiosk identity
+    profile = await getKioskProfile();
+  }
+  if (!profile) redirect("/login");
   const access = await ensureProfileAccess(profile.id);
   if (access.status === "SUSPENDED") redirect("/login?error=account_suspended");
   if (access.accessExpiresAt && access.accessExpiresAt.getTime() < Date.now()) {
@@ -650,13 +670,17 @@ export async function requireUserPageRedirect(): Promise<UserContext> {
 export async function requireAdminPageRedirect(): Promise<{ adminId: string; username: string }> {
   const store = await cookies();
   const token = store.get(ADMIN_COOKIE)?.value;
-  if (!token || !/^[a-f0-9]{64}$/.test(token)) redirect("/admin/login");
-  const session = await db.adminSession.findUnique({
-    where: { tokenHash: sha256(token) },
-    include: { admin: true },
-  });
-  if (!session || session.revokedAt || session.expiresAt.getTime() < Date.now() || !session.admin.isActive) {
-    redirect("/admin/login?error=session_expired");
+  if (token && /^[a-f0-9]{64}$/.test(token)) {
+    const session = await db.adminSession.findUnique({
+      where: { tokenHash: sha256(token) },
+      include: { admin: true },
+    });
+    if (session && !session.revokedAt && session.expiresAt.getTime() > Date.now() && session.admin.isActive) {
+      return { adminId: session.adminId, username: session.admin.username };
+    }
   }
-  return { adminId: session.adminId, username: session.admin.username };
+  // open-access mode: admin pages resolve to the bootstrap admin account
+  const kiosk = await getKioskAdmin();
+  if (kiosk && kiosk.isActive) return { adminId: kiosk.id, username: kiosk.username };
+  redirect("/admin/login");
 }

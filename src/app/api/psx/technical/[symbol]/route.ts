@@ -18,7 +18,17 @@ export async function GET(
     const url = `https://api.askanalyst.com.pk/api/technicalchart/day/${from}/${to}/${encodeURIComponent(symbol)}`;
     const res = await fetch(url, { headers: { "Accept": "application/json" }, cache: "no-store" });
     if (!res.ok) return NextResponse.json({ error: `Upstream error: ${res.status}` }, { status: res.status });
-    const data = await res.json();
+    // Upstream returns CSV text ("date,open,high,low,close,volume" rows) —
+    // res.json() throws on it and the route 502'd. Pass the body through
+    // verbatim (JSON object when upstream returns JSON, raw CSV text
+    // otherwise); RealChart.tsx parses both shapes client-side.
+    const text = await res.text();
+    let data: unknown;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
     return NextResponse.json({ technical: data });
   } catch (err) {
     console.error(`[/api/psx/technical/${symbol}] error:`, err);
