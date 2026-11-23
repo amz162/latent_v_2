@@ -1,0 +1,188 @@
+{
+ "audit": "LATENT_COMPLETE_PERFORMANCE_AUDIT",
+ "generated_at_utc": "2026-11-23T20:48:49.624500+00:00",
+ "recovery_note": "Original audit workspace (commit 97328538, extracted 2026-11-23T02:15Z) was lost in a sandbox recycle before push. This manifest and the report set were rebuilt from the re-cloned repository (same committed sources; market-data repair + ledger processing of Task 123 applied in between). Narrative reports keep their original snapshot numbers; ledger-derived figures reflect the post-Task-123 state and are labeled as such.",
+ "git_head": "eacf6e84e3c03563314f4fd5bd6a64a8a1c9ec3e",
+ "git_branch": "main",
+ "extraction": {
+  "script": "scripts/audit_extract.py",
+  "extracted_at_utc": "2026-11-23T20:43:13.248949+00:00Z",
+  "extracted_at_pkt_note": "PKT = UTC+5",
+  "git_head": "eacf6e84e3c03563314f4fd5bd6a64a8a1c9ec3e",
+  "git_branch": "main",
+  "note": "Re-extracted after workspace recycle + Task 123 repair; supersedes the 2026-11-23T02:15Z bundle whose workspace was lost (commit 97328538 never pushed)."
+ },
+ "freshness": {
+  "ohlcv_bar_max_date": "2026-11-23",
+  "ohlcv_bar_min_date": "2016-10-21",
+  "ohlcv_bars": 1043209,
+  "db_file_mtime": "2026-11-23T20:40:24.101092",
+  "db_restored_from": "db/custom.db.gz (49,746,709 bytes) + task107 ingest repair 2026-11-23 (+286 bars, frontier 2026-11-23)",
+  "worker_heartbeat_last_seen": "2026-11-23T13:53:38Z (production poll bot, healthy)",
+  "note": "DB restored from git-committed db/custom.db.gz; no separate production DB accessible from this workspace; the live app (.env DATABASE_URL) uses db/custom.db"
+ },
+ "sources": [
+  {
+   "path": "data/backtest_reports/walk_forward_latest.json",
+   "role": "walk-forward forecast-quality evaluation (5 models \u00d7 3 horizons, 25 stocks, 400 samples)",
+   "bytes": 170654,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "c7557b5cd7c20072d6af4d154ae6925364fc39faafc4c1b9fd9c5733a537a7ce"
+  },
+  {
+   "path": "data/backtest_reports/walk_forward_trading_latest.json",
+   "role": "genuine out-of-sample trading simulation (fixed-horizon + progressive TP/SL)",
+   "bytes": 27893,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "c53191b14d14d62e1f1797ae957b0d73e1ee78fa01f0d7d6694ffa8e27b14fc7"
+  },
+  {
+   "path": "data/backtest_reports/task78_strategy_results_v1.json",
+   "role": "strategy comparison (3 exit policies \u00d7 5 models \u00d7 3 horizons \u00d7 2 periods)",
+   "bytes": 74107,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "e1e26a59932309f61efaf3533bda1356b51ffecfefca5eaa56e62aebf7189420"
+  },
+  {
+   "path": "data/backtest_reports/task79_model_research_audit.json",
+   "role": "existing-model final-test trading + weaknesses/limitations",
+   "bytes": 12625,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "89724b81b71db49416ae97270d367e67aa9d66f9a22defe4f64dceae19a21ffa"
+  },
+  {
+   "path": "data/backtest_reports/task79_model_results.json",
+   "role": "new-model training results (eval=null)",
+   "bytes": 11822,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "38073ecce28547f1400b92382ba31d09742a1b2584f42984aeabeac1395a6b1c"
+  },
+  {
+   "path": "data/backtest_reports/task82_model_registry_audit.json",
+   "role": "58-entry model registry implementation audit",
+   "bytes": 18602,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "94d1550b5d078c82f25c248b391202eeacdfaaf7c207972888f913079a6e9250"
+  },
+  {
+   "path": "data/backtest_reports/task112/llm_signal_history",
+   "role": "GLM-4.6 append-only decision store (71 records)",
+   "bytes": null,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "directory"
+  },
+  {
+   "path": "data/backtest_reports/task112/task112_llm_pending_outcomes.json",
+   "role": "GLM forward-outcome tracker state",
+   "bytes": 845,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "dfbbdb33ec97c1e9e170474826891bec1e55e581716bbcb563be5298cbd8e53e"
+  },
+  {
+   "path": "data/backtest_reports/task112/task112_llm_evidence_contribution_audit.json",
+   "role": "GLM evidence availability/citation audit (store-side evidenceRef=null)",
+   "bytes": 965,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "40908238da42c97e90469c522556de419efc1e3368915f4080134afd2900a2ae"
+  },
+  {
+   "path": "data/backtest_reports/task112/task112_llm_decision_reconciliation.json",
+   "role": "GLM record reconciliation",
+   "bytes": 2508,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "e10533b1991cf013930f9cdbcdbc93d09d7147f69ef055d60922c01d56fac3ac"
+  },
+  {
+   "path": "data/backtest_reports/task112/task112_forward_pipeline_audit.json",
+   "role": "forward pipeline/worker state",
+   "bytes": 1285,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "eea1d79b4b17e35166c02b70929eb1adf72707c7ba6443239efb2bab992a6f7a"
+  },
+  {
+   "path": "data/backtest_reports/task111/task111_evidence_coverage.csv",
+   "role": "runner-side evidence package coverage at generation time (Task 123 correction source)",
+   "bytes": 3531,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "efe0cf950863b13080dd76b59737823a9855b4096d4cbaf817cb376e1f35c489"
+  },
+  {
+   "path": "data/backtest_reports/task111/task111_news_coverage.json",
+   "role": "news coverage snapshot at generation time",
+   "bytes": 586,
+   "mtime": "2026-11-23T20:22:01",
+   "sha256": "81eec7f958daf18ad352dba4aca133a383acfa51df1cb4738b4159a64977c3c7"
+  },
+  {
+   "path": "data/backtest_reports/prospective_predictions_latest.json",
+   "role": "live prospective predictions snapshot",
+   "bytes": 134771,
+   "mtime": "2026-11-23T20:22:00",
+   "sha256": "ae0629a086006139e3d84882c9684987ba246f4f05cf86ac5949d40fb6d984cf"
+  },
+  {
+   "path": "data/backtest_reports/prospective_paper_trading_latest.json",
+   "role": "live prospective paper-trading snapshot",
+   "bytes": 20285,
+   "mtime": "2026-11-23T20:40:25",
+   "sha256": "fb46f4cca5d59bb8448ff3d524ce16abf8a322446725cd2d90d66410328ce837"
+  },
+  {
+   "path": "db/custom.db",
+   "role": "LIVE application database (SQLite; .env DATABASE_URL)",
+   "bytes": 201682944,
+   "mtime": "2026-11-23T20:40:24",
+   "sha256": "c60f879313a6d27331a26f0581bbda38e818c3cd172de820b7c5acb13402b8c4"
+  },
+  {
+   "path": "db/custom.db.gz",
+   "role": "git-committed DB snapshot used for restore",
+   "bytes": 49746709,
+   "mtime": "2026-11-23T20:22:02",
+   "sha256": "a6970860ab72d2d770b9ed9c83cee032b3472394b70f03f8619f68aadb4bce9f"
+  },
+  {
+   "path": "data/backtest_reports/audit/evidence_bundle.json",
+   "role": "audit extraction bundle (produced by scripts/audit_extract.py)",
+   "bytes": 323936,
+   "mtime": "2026-11-23T20:43:13",
+   "sha256": "03be3abf2ded0986c64c5f70f3c3bc86f034c0c6e9cfc296022714fee7a889eb"
+  },
+  {
+   "path": "data/backtest_reports/audit/validation_results.json",
+   "role": "Phase-9 validation results (scripts/audit_validate.py)",
+   "bytes": 2470,
+   "mtime": "2026-11-23T20:48:49",
+   "sha256": "1f4016bcc6652bd8994dafe9e557d80b3045cda1a339b198c0109cfdc0fbc2f7"
+  },
+  {
+   "path": "reports/audit/paper_trading_reconciliation.csv",
+   "role": "ledger reconciliation (scripts/audit_glm_paper.py; post-Task-123 states)",
+   "bytes": 30947,
+   "mtime": "2026-11-23T20:45:47",
+   "sha256": "6bb981983bf668aa1384392eefa439e387eb73ffee9c882bfd89da4aa8dc29e8"
+  },
+  {
+   "path": "reports/audit/glm_records_table.csv",
+   "role": "Phase-4 GLM per-record table",
+   "bytes": 53156,
+   "mtime": "2026-11-23T20:45:47",
+   "sha256": "f6c9732a09d3a969f33ef5b2e798230229f81c08fbcebeb49da1b8ec15a853d8"
+  }
+ ],
+ "regression_tests": {
+  "task112_QA": "66 passed, 0 failed, 0 skipped",
+  "task107_QA": "30 passed, 0 failed, 2 skipped (environment-dependent)",
+  "task111_QA": "34 passed, 0 failed, 0 skipped",
+  "task123_regression": "22 passed, 0 failed"
+ },
+ "report_files": [
+  "LATENT_COMPLETE_PERFORMANCE_AUDIT.md",
+  "glm_deep_analysis.md",
+  "all_models_comparison.csv",
+  "all_strategies_comparison.csv",
+  "paper_trading_reconciliation.csv",
+  "glm_records_table.csv",
+  "audit_data_manifest.json"
+ ]
+}

@@ -176,7 +176,12 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
     const bars = barsBySymbol.get(pred.symbol);
     if (!bars || bars.length === 0) continue;
 
-    const cutoffIdx = resolveCutoffIdx(bars, rl.effectiveCutoff);
+    // Task 123 no-look-ahead fix: anchor entry selection on the PREDICTION's
+    // dataCutoff (the decision date). The risk-level effectiveCutoff can lag
+    // the decision for symbols whose bars were stale at generation time, which
+    // made the lifecycle fill at a session-open BEFORE the prediction existed
+    // (PRL/WTL/ANL cohort: entry 2026-10-27 for a 2026-10-29 decision).
+    const cutoffIdx = resolveCutoffIdx(bars, pred.dataCutoff);
     const entryIdx = nextSessionIdx(bars, bars[cutoffIdx].date);
     const canEnter = entryIdx >= 0;
 
@@ -188,22 +193,42 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
         where: { sourcePredictionId_strategyId_bookId: { sourcePredictionId: pred.id, strategyId: strat.id, bookId } },
       });
       if (!trade) {
-        trade = await db.prospectivePaperTrade.create({
-          data: {
-            sourcePredictionId: pred.id,
-            strategyId: strat.id,
-            policyVersion: STRATEGY_POLICY_VERSION,
-            bookId,
-            modelId: pred.modelId,
-            horizon: pred.horizon,
-            symbol: pred.symbol,
-            direction: "BUY",
-            state: "pending_entry",
-            sl: rl.sl, tp1: rl.tp1, tp2: rl.tp2, tp3: rl.tp3,
-            isDemo: false,
-          },
+        // Task 123 idempotency: a cost-profile/policy rename changes the bookId
+        // suffix, which used to duplicate the ledger (114 legacy rows stayed
+        // pending while a fresh set was created). Adopt the existing row for the
+        // same (prediction, strategy) instead of creating a twin:
+        //   - pending rows are rebooked into the current book, then enter normally;
+        //   - already entered/closed rows are adopted as-is (their history stays
+        //     under the book that owns it).
+        trade = await db.prospectivePaperTrade.findFirst({
+          where: { sourcePredictionId: pred.id, strategyId: strat.id },
+          orderBy: { createdAt: "asc" },
         });
-        tradesCreated++;
+        if (trade) {
+          if (trade.state === "pending_entry" && trade.bookId !== bookId) {
+            trade = await db.prospectivePaperTrade.update({
+              where: { id: trade.id },
+              data: { bookId },
+            });
+          }
+        } else {
+          trade = await db.prospectivePaperTrade.create({
+            data: {
+              sourcePredictionId: pred.id,
+              strategyId: strat.id,
+              policyVersion: STRATEGY_POLICY_VERSION,
+              bookId,
+              modelId: pred.modelId,
+              horizon: pred.horizon,
+              symbol: pred.symbol,
+              direction: "BUY",
+              state: "pending_entry",
+              sl: rl.sl, tp1: rl.tp1, tp2: rl.tp2, tp3: rl.tp3,
+              isDemo: false,
+            },
+          });
+          tradesCreated++;
+        }
       }
 
       // Enter if possible

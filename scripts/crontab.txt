@@ -1,17 +1,34 @@
 #!/bin/bash
 # PSX Data Update Cron Jobs
-# Install: crontab /home/z/my-project/scripts/crontab.txt
+# Install: crontab scripts/crontab.txt  (from the repository root)
+#
+# Task 123 path fix: the entries below previously pointed at /home/z/my-project
+# (the workspace root) while the repository lives at
+# /home/z/my-project/repo_latent_v_2 — a root cause of the 2026-11-03 EOD stall.
+# Adjust REPO if the repository moves again.
+
+REPO=/home/z/my-project/repo_latent_v_2
 
 # Schedule (Pakistan Standard Time = UTC+5):
-# - 5:00 PM PKT daily: Fetch and append new OHLCV data (incremental)
-# - 9:00 AM - 4:30 PM PKT (every 5 min during market hours): Live prices
-#   are fetched on-demand via /api/psx/live endpoint (no cron needed)
+# - 5:00 PM PKT Mon-Fri: incremental CSV refresh (training store)
+# - 5:10 PM PKT Mon-Fri: authoritative DB ingest (pilot-25, (symbol,date) dedup,
+#   validation + revision quarantine + automatic pre-promotion backup)
+# - 5:30 PM PKT Mon-Fri: full daily pipeline — lifecycle fills/exits/outcomes,
+#   GLM-4.6 research generation (research-only), outcome tracker, health report
+# - 9:00 AM - 4:30 PM PKT (every 5 min during market hours): live prices are
+#   fetched on-demand via /api/psx/live (no cron needed)
 
-# 5:00 PM PKT = 12:00 UTC — daily incremental data fetch
-0 12 * * 1-5 cd /home/z/my-project && python3 scripts/update_daily_ohlcv.py >> /home/z/my-project/data/update_log.txt 2>&1
+# 5:00 PM PKT = 12:00 UTC — daily incremental CSV fetch
+0 12 * * 1-5 cd $REPO && python3 scripts/update_daily_ohlcv.py >> $REPO/data/update_log.txt 2>&1
+
+# 5:10 PM PKT = 12:10 UTC — authoritative DB ingest (Task 107, idempotent)
+10 12 * * 1-5 cd $REPO && python3 scripts/task107_daily_ingest.py >> $REPO/data/task107_ingest_cron.log 2>&1
+
+# 5:30 PM PKT = 12:30 UTC — full daily pipeline (Task 123)
+30 12 * * 1-5 cd $REPO && bash scripts/task123_daily_pipeline.sh >> $REPO/data/task123_pipeline_cron.log 2>&1
 
 # 9:00 AM PKT = 4:00 AM UTC — pre-market warm-up (fetch any overnight data)
-0 4 * * 1-5 cd /home/z/my-project && python3 scripts/update_daily_ohlcv.py --symbol KSE100 >> /home/z/my-project/data/update_log.txt 2>&1
+0 4 * * 1-5 cd $REPO && python3 scripts/update_daily_ohlcv.py --symbol KSE100 >> $REPO/data/update_log.txt 2>&1
 
 # Weekly full refresh (Sunday 6 PM PKT = 13:00 UTC) — re-download all data
-0 13 * * 0 cd /home/z/my-project && python3 scripts/update_daily_ohlcv.py --full-refresh >> /home/z/my-project/data/update_log.txt 2>&1
+0 13 * * 0 cd $REPO && python3 scripts/update_daily_ohlcv.py --full-refresh >> $REPO/data/update_log.txt 2>&1

@@ -1,0 +1,116 @@
+{
+ "passed": 22,
+ "failed": 0,
+ "results": [
+  [
+   "ingest_idempotent_no_new_bars_on_rerun",
+   true,
+   "rc=2 bars 1043209->1043209"
+  ],
+  [
+   "missing_data_symbols_reported",
+   true,
+   "symbols_without_new_data=['ENGRO', 'SYS', 'BYCO']"
+  ],
+  [
+   "worker_heartbeat_observable",
+   true,
+   "monitor=2026-11-23T13:53:38+0000 cycle=2026-11-23T13:53:38+0000 provider=healthy"
+  ],
+  [
+   "health_report_covers_all_sections",
+   true,
+   "sections=['failures', 'generated_at', 'glm', 'market_data', 'paper_trading', 'queue', 'report', 'worker']"
+  ],
+  [
+   "lifecycle_processed_114",
+   true,
+   "states={'closed': 78, 'open': 3, 'pending_entry': 33}"
+  ],
+  [
+   "lifecycle_no_invented_prices",
+   true,
+   "all fills/exits match real OhlcvBar sessions"
+  ],
+  [
+   "no_duplicate_prediction_strategy_rows",
+   true,
+   "duplicate pairs=0"
+  ],
+  [
+   "lifecycle_second_run_zero_delta",
+   true,
+   "runStats={'tradesCreated': 0, 'tradesEntered': 0, 'tradesClosed': 0, 'outcomesCreated': 0, 'outcomesMatured': 0}"
+  ],
+  [
+   "exit_math_and_labels_clean",
+   true,
+   "net violations=0 label violations=0"
+  ],
+  [
+   "matured_outcomes_carry_real_closes",
+   true,
+   "matured={'matured': 220, 'pending': 155}"
+  ],
+  [
+   "glm_evidence_package_all_sources_statused",
+   true,
+   "pkgs=2 statuses_ok=True"
+  ],
+  [
+   "glm_record_carries_evidenceRef",
+   true,
+   "evidenceRef=../../../../tmp/task123_glm_test_odvt4_xm/evidence/LUCK_da32b1a8.evidence.json llmState=ok"
+  ],
+  [
+   "glm_mock_marked_pipeline_check",
+   true,
+   "recordType=MOCK_PIPELINE_CHECK"
+  ],
+  [
+   "store_research_only_enforced",
+   true,
+   "n=71"
+  ],
+  [
+   "store_no_glm_rows_in_paper_ledger",
+   true,
+   "0 GLM-attributed ledger rows"
+  ],
+  [
+   "source_timestamps_iso_or_honest_null",
+   true,
+   "retrievedAt/publishedAt ISO or null"
+  ],
+  [
+   "evidence_cutoff_matches_frontier",
+   true,
+   "cutoff vs frontier 2026-11-23"
+  ],
+  [
+   "pipeline_script_and_crontab_present",
+   true,
+   "scheduler wiring exists"
+  ],
+  [
+   "glm_duplicate_decision_prevented",
+   true,
+   "history files 2->2"
+  ],
+  [
+   "entries_strictly_after_decision_cutoff",
+   true,
+   "violations=0"
+  ],
+  [
+   "no_outcome_marked_matured_without_observation",
+   true,
+   "violations=0"
+  ],
+  [
+   "ingest_overlap_integrity_verified",
+   true,
+   "overlap=22 mismatches=0"
+  ]
+ ]
+}

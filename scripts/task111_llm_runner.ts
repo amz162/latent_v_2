@@ -44,13 +44,39 @@ async function writeJsonl(file: string, obj: unknown): Promise<void> {
 // Task 112 — append-only signal history: every decision (ok, unavailable,
 // rejected, stale) is preserved under task112/llm_signal_history; existing
 // records are never overwritten, so retries stay distinguishable.
+const seenDecisionKeys = new Set<string>();
+
+/** Task 123 duplicate-decision guard: one GLM decision per (symbol, dataCutoff)
+ * in the append-only store. Evidence hashes legitimately vary with
+ * news-retrieval metadata, so decision identity = symbol + session cutoff.
+ * Scheduled re-runs on the same day therefore never duplicate records. */
+async function decisionExists(sym: string, cutoff: string, dir: string): Promise<boolean> {
+  const key = `${sym}|${cutoff}`;
+  if (seenDecisionKeys.has(key)) return true;
+  const files = await fs.readdir(dir).catch(() => [] as string[]);
+  for (const f of files) {
+    if (!f.endsWith(".json") || !f.startsWith(`${sym}-`)) continue;
+    try {
+      const g = JSON.parse(await fs.readFile(path.join(dir, f), "utf8")) as Record<string, unknown>;
+      if (String(g.symbol ?? "") === sym && String(g.dataCutoff ?? "") === cutoff) {
+        seenDecisionKeys.add(key);
+        return true;
+      }
+    } catch {
+      /* unreadable legacy record — skip */
+    }
+  }
+  return false;
+}
+
 async function appendHistory(rec: Task111SignalRecord | Record<string, unknown>): Promise<void> {
   const r = rec as Record<string, unknown>;
   const sym = String(r.symbol ?? "UNKNOWN");
   const ts = String(r.decisionTimestamp ?? "unknown");
   const h = String(r.evidenceHash ?? "nohash");
   const id = `${sym}-${ts.slice(0, 19)}-${h.slice(0, 8)}`;
-  const dir = path.join(ROOT, "data/backtest_reports/task112/llm_signal_history");
+  const dir = process.env.LLM_SIGNAL_HISTORY_DIR
+    ?? path.join(ROOT, "data/backtest_reports/task112/llm_signal_history");
   await fs.mkdir(dir, { recursive: true });
   const fp = path.join(dir, `${id}.json`);
   try {
@@ -59,7 +85,68 @@ async function appendHistory(rec: Task111SignalRecord | Record<string, unknown>)
   } catch {
     /* new record */
   }
-  await fs.writeFile(fp, JSON.stringify({ ...r, signalId: id, provenance: "runner_append" }, null, 1), "utf8");
+  if (await decisionExists(sym, String(r.dataCutoff ?? ""), dir)) {
+    await writeJsonl(path.join(OPS_DIR, "runner_log.jsonl"), { ts: new Date().toISOString(), symbol: sym, event: "duplicate_decision_skipped", dataCutoff: r.dataCutoff });
+    return;
+  }
+  // Task 123: mock-provider runs are pipeline tests, never analyst decisions —
+  // mark them so every metrics path (recordTypeOf) excludes them.
+  const isMockProvider = String(r.provider ?? "") === "mock" || String(r.model ?? "") === "mock-v1";
+  await fs.writeFile(fp, JSON.stringify({
+    ...r,
+    signalId: id,
+    provenance: "runner_append",
+    evidenceRef: r.evidenceRef ?? null,
+    ...(isMockProvider ? { mockRecord: true, recordType: "MOCK_PIPELINE_CHECK" } : {}),
+  }, null, 1), "utf8");
+}
+
+/** Task 123: persist the per-decision evidence package next to the signal store
+ * and reference it from the record, so every stored decision carries an
+ * independently verifiable per-source evidence trail (fixes evidenceRef=null). */
+async function persistEvidencePackage(
+  sym: string,
+  evHash: string,
+  bundle: Awaited<ReturnType<typeof buildEvidenceBundle>>,
+  decisionTimestamp: string
+): Promise<string> {
+  const evDir = process.env.LLM_EVIDENCE_DIR
+    ?? path.join(ROOT, "data/backtest_reports/task112/llm_evidence_packages");
+  await fs.mkdir(evDir, { recursive: true });
+  const rel = path.relative(ROOT, path.join(evDir, `${sym}_${evHash.slice(0, 8)}.evidence.json`));
+  if ("error" in bundle) return rel;
+  const pkg = {
+    symbol: sym,
+    evidenceHash: evHash,
+    dataCutoff: bundle.evidence.dataCutoff,
+    decisionTimestamp,
+    evidenceSchemaVersion: bundle.evidence.schemaVersion,
+    sources: {
+      technical: bundle.evidence.technicalEvidence.status,
+      pricePatterns: bundle.evidence.pricePatternEvidence.status,
+      volatility: bundle.evidence.volatilityContext.status,
+      marketContext: bundle.evidence.marketContext.status,
+      fundamental: bundle.evidence.fundamentalEvidence.status,
+      financialPatterns: bundle.evidence.financialPatternEvidence.status,
+      companyNews: bundle.evidence.companyNewsEvidence.status,
+      nationalNews: bundle.evidence.nationalNewsEvidence.status,
+      internationalNews: bundle.evidence.internationalNewsEvidence.status,
+    },
+    missingSources: bundle.evidence.missingSources,
+    dataQualityFlags: bundle.evidence.dataQualityFlags,
+    newsCounts: {
+      company: bundle.news.company.length,
+      national: bundle.news.national.length,
+      international: bundle.news.international.length,
+    },
+    sourceRefs: bundle.evidence.sourceRefs.map((ref) => ({
+      category: ref.category, id: ref.id, publisher: ref.publisher,
+      retrievedAt: ref.retrievedAt, publishedAt: ref.publishedAt, url: ref.url,
+      pitSafeForHistorical: ref.pitSafeForHistorical,
+    })),
+  };
+  await fs.writeFile(path.join(ROOT, rel), JSON.stringify(pkg, null, 1), "utf8");
+  return rel;
 }
 
 async function main() {
@@ -140,6 +227,7 @@ async function main() {
           evidenceQualityScore: computeEvidenceQuality(bundle.evidence).score,
           staleSkipped: true,
         };
+        (staleRecord as Record<string, unknown>).evidenceRef = await persistEvidencePackage(sym, evHash, bundle, staleRecord.decisionTimestamp);
         await fs.writeFile(path.join(OUT_DIR, `${sym}.json`), JSON.stringify(staleRecord, null, 1), "utf8");
         await appendHistory(staleRecord);
         await writeJsonl(path.join(OPS_DIR, "runner_log.jsonl"), { ts: new Date().toISOString(), symbol: sym, event: "stale_skipped", cutoff: bundle.evidence.dataCutoff, ageDays: Math.round(cutoffAgeDays) });
@@ -166,6 +254,7 @@ async function main() {
         continue;
       }
       const record = await runStockSignal(bundle.evidence, rrBars, { client, generationId: genId });
+      record.evidenceRef = await persistEvidencePackage(sym, evHash, bundle, record.decisionTimestamp);
       await fs.writeFile(path.join(OUT_DIR, `${sym}.json`), JSON.stringify(record, null, 1), "utf8");
       await appendHistory(record);
       await fs.writeFile(cacheFile, JSON.stringify(record), "utf8");

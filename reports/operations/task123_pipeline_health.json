@@ -1,0 +1,90 @@
+{
+ "report": "task123_pipeline_health",
+ "generated_at": "2026-11-23T20:42:02.691064+00:00",
+ "market_data": {
+  "ohlcv_frontier": "2026-11-23",
+  "ohlcv_bars": 1043209,
+  "ingest_last_report": "2026-11-23",
+  "ingest_new_bars_last_run": 0,
+  "symbols_without_provider_data": [
+   "ENGRO",
+   "SYS",
+   "BYCO"
+  ]
+ },
+ "worker": {
+  "kind": "task107 intraday snapshot monitor (production poll bot)",
+  "last_cycle_at": "2026-11-23T13:53:38+0000",
+  "last_cycle_classification": "success_with_updates",
+  "monitor_state_generated_at": "2026-11-23T13:53:38+0000",
+  "provider_health": "unavailable",
+  "consecutive_failures": 4,
+  "note": "EOD ingest (step 1 of task123_daily_pipeline.sh) is the DB writer; the poll bot only feeds intraday snapshots"
+ },
+ "queue": {
+  "predictions_total": 375,
+  "predictions_pending_outcome": 155,
+  "outcomes_matured": 220
+ },
+ "paper_trading": {
+  "states": {
+   "closed": 78,
+   "open": 3,
+   "pending_entry": 33
+  },
+  "legs": 86,
+  "realized_net_pnl": -707370.9711735712,
+  "open_mtm_note": "see task123_lifecycle_verification.json open_positions_mtm",
+  "lifecycle_last_run": "2026-11-23T20:40:24.194Z"
+ },
+ "glm": {
+  "store_records": 71,
+  "real": 48,
+  "mock": 23,
+  "provenance": {
+   "mock_pipeline_check": 23,
+   "current_record": 24,
+   "generation_cache": 24
+  },
+  "decision_counts_real": {
+   "NO_TRADE": 40,
+   "HOLD": 5,
+   "BUY": 3
+  },
+  "last_generation": [
+   "2026-11-04T14:11:40.406Z",
+   "WTL"
+  ],
+  "scheduled": "scripts/task123_daily_pipeline.sh step 3 + crontab.txt (17:30 PKT Mon-Fri)",
+  "research_only_enforced": true,
+  "evidence_packages": 0,
+  "evidence_source_statuses_recent": {}
+ },
+ "failures": {
+  "ingest_errors_last_run": [],
+  "provider_errors_last_monitor_cycle": [],
+  "run_log_tail": [
+   {
+    "ts": "2026-11-23T20:40:22Z",
+    "kind": "ingest",
+    "status": "success",
+    "frontier": "2026-11-23",
+    "inserted": 286
+   },
+   {
+    "ts": "2026-11-23T20:40:39Z",
+    "kind": "ingest",
+    "status": "no_new_data",
+    "frontier": "2026-11-23",
+    "inserted": 0
+   },
+   {
+    "ts": "2026-11-23T20:41:22Z",
+    "kind": "ingest",
+    "status": "no_new_data",
+    "frontier": "2026-11-23",
+    "inserted": 0
+   }
+  ]
+ }
+}

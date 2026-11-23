@@ -1,0 +1,34 @@
+{
+ "ok": [
+  "fixed_horizon: sum(per_stock net)=1265627 vs total=1265627; avgNet%\u00d7notional\u00d7trades=1265627 (d=0.0%) \u2192 OK",
+  "progressive_tp_sl: sum(per_stock net)=205207 vs total=205207; avgNet%\u00d7notional\u00d7trades=205207 (d=0.0%) \u2192 OK",
+  "progressive_tp_sl_high_slippage_sensitivity: sum(per_stock net)=-38393 vs total=-38393; avgNet%\u00d7notional\u00d7trades=-38393 (d=0.0%) \u2192 OK",
+  "task78 validation/fixed_first_hit: gross\u2212costs\u2212net delta=0.12 \u2192 OK",
+  "task78 validation/max_tp_step_trailing: gross\u2212costs\u2212net delta=0.08 \u2192 OK",
+  "task78 validation/scale_out_50_25_25: gross\u2212costs\u2212net delta=0.17 \u2192 OK",
+  "task78 final-test/fixed_first_hit: gross\u2212costs\u2212net delta=0.21 \u2192 OK",
+  "task78 final-test/max_tp_step_trailing: gross\u2212costs\u2212net delta=0.18 \u2192 OK",
+  "task78 final-test/scale_out_50_25_25: gross\u2212costs\u2212net delta=0.08 \u2192 OK",
+  "task78 winRate recomputation matches all 6 rows",
+  "cost profile: commission 0.15%/side \u00d72, slippage 0.15% RT, CGT 15% on gains",
+  "fixed_horizon implied cost/trade = PKR 1,434 on notional 100k",
+  "task78 boundary: source=pilot25_step50_20261028, 400 samples, valEndIdx=200 \u2192 validation=first 200, final-test=last 200",
+  "walk-forward: eval 2023-04-17\u21922026-07-23, expanding window, n=400",
+  "GLM duplicates: 24 unique (symbol,cutoff); 24 extra records (append-only policy; dedup guard added in Task 123)",
+  "PredictionHistory duplicate dedupKeys: 0",
+  "ProspectivePaperTrade: 38 sourcePredictions with >1 row = 38 BUYs \u00d7 3 strategies (by design)",
+  "walk-forward trading entry convention: next_session_open_reference; forward_return_verification block present (bars unchanged, md5-checked)",
+  "task78 declares RETROSPECTIVE EXPLORATORY (post-hoc policy selection) \u2014 documented",
+  "lifecycle entries strictly after decision cutoff: violations=0 (Task 123 fixed the effectiveCutoff look-ahead)",
+  "lifecycle entry fills equal real bar opens: mismatches=0",
+  "freshness: OhlcvBar max 2026-11-23 (Task 123 ingest repair); poll bot last seen 2026-11-23T13:53Z"
+ ],
+ "warn": [],
+ "stamp": {
+  "db_file_mtime": "2026-11-23T20:40:24.101092",
+  "db_restored_from": "db/custom.db.gz (49,746,709 bytes) + task107 ingest repair 2026-11-23",
+  "ohlcv_max": "2026-11-23",
+  "poll_bot_last_seen": "2026-11-23T13:53:38Z (healthy)",
+  "extraction_utc": "2026-11-23T20:48:49.495755+00:00"
+ }
+}

@@ -91,7 +91,15 @@ export function stableStringify(obj: unknown): string {
 }
 
 export function evidenceHash(evidence: unknown): string {
-  return fnv1a(stableStringify(evidence));
+  // Task 123 fix: hash CONTENT only. decisionTimestamp is wall-clock and made
+  // the hash vary between identical-evidence runs, so unchanged evidence was
+  // re-sent to the provider and duplicate decisions accumulated in the store
+  // (the 2026-11-04 duplicate-generation pairs).
+  const clone = JSON.parse(JSON.stringify(evidence ?? {}));
+  if (clone && typeof clone === "object") {
+    delete (clone as Record<string, unknown>).decisionTimestamp;
+  }
+  return fnv1a(stableStringify(clone));
 }
 
 async function completeZAI(
@@ -133,18 +141,59 @@ async function completeZAI(
   }
 }
 
-/** Deterministic mock — used by automated tests ONLY. It echoes a compact,
- * schema-valid stub derived from the evidence hash; it is never presented as
- * a real provider response. */
+/** Deterministic mock — used by automated tests ONLY. It parses the evidence
+ * payload and echoes a SCHEMA-VALID neutral stub (Task 123 fix: the previous
+ * stub failed strict validation, so the mock path could never exercise the
+ * happy path). It is never presented as a real provider response. */
 export async function completeMock(
   _cfg: LLMConfig,
   messages: Array<{ role: string; content: string }>
 ): Promise<LLMResponse> {
   const userMsg = messages.find((m) => m.role === "user")?.content ?? "";
   const h = fnv1a(userMsg).slice(0, 4);
+  let ev: { symbol?: string; sourceRefs?: Array<{ id?: string }> } = {};
+  try {
+    const parsed = JSON.parse(userMsg) as { symbol?: string; sourceRefs?: Array<{ id?: string }> };
+    if (parsed && typeof parsed === "object") ev = parsed;
+  } catch {
+    /* non-JSON user payload → stub without symbol */
+  }
+  const refs = Array.isArray(ev.sourceRefs)
+    ? ev.sourceRefs.map((r) => String(r?.id ?? "")).filter(Boolean).slice(0, 3)
+    : [];
   const content = JSON.stringify({
     __mock: true,
     seed: h,
+    symbol: String(ev.symbol ?? "UNKNOWN"),
+    decision_timestamp: new Date().toISOString(),
+    analysis_horizon: "5d",
+    signal: "NO_TRADE",
+    signal_status: "research_only",
+    fundamental_view: "unknown",
+    financial_pattern_view: "unknown",
+    national_news_view: "unknown",
+    international_news_view: "unknown",
+    company_news_view: "unknown",
+    technical_view: "unknown",
+    price_pattern_view: "unknown",
+    bullish_evidence: [],
+    bearish_evidence: [],
+    conflicting_evidence: [],
+    missing_evidence: [],
+    main_risks: [],
+    invalidation_conditions: [],
+    limitations: ["deterministic mock response for pipeline tests only"],
+    llm_conviction_score: 0,
+    evidence_quality_score_note: "mock stub — no analysis performed",
+    calibrated_net_positive_probability: null,
+    entry_reference: null,
+    stop_loss: null,
+    target_1: null,
+    target_2: null,
+    target_3: null,
+    risk_reward_ratio: null,
+    decision_reason: "deterministic mock response for pipeline tests only",
+    source_references: refs,
     note: "deterministic mock response for pipeline tests only",
   });
   return {

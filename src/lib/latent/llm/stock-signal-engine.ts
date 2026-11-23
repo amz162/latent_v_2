@@ -104,6 +104,10 @@ export interface Task111SignalRecord {
   decisionTimestamp: string;
   dataCutoff: string;
   evidenceHash: string;
+  /** Task 123: path of the persisted per-decision evidence package
+   * (data/backtest_reports/task112/llm_evidence_packages/…) — makes the
+   * multi-source evidence independently verifiable from the store record. */
+  evidenceRef: string | null;
   evidenceSchemaVersion: typeof EVIDENCE_SCHEMA_VERSION;
   outputSchemaVersion: typeof OUTPUT_SCHEMA_VERSION;
   promptVersion: string;
@@ -172,6 +176,7 @@ export async function runStockSignal(
     decisionTimestamp: bundleEvidence.decisionTimestamp,
     dataCutoff: bundleEvidence.dataCutoff,
     evidenceHash: evHash,
+    evidenceRef: null,
     evidenceSchemaVersion: EVIDENCE_SCHEMA_VERSION,
     outputSchemaVersion: OUTPUT_SCHEMA_VERSION,
     promptVersion: PROMPT_VERSION,

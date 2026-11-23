@@ -1,0 +1,76 @@
+{
+ "report": "task123_lifecycle_verification",
+ "db": "db/custom.db",
+ "states": {
+  "closed": 78,
+  "open": 3,
+  "pending_entry": 33
+ },
+ "exit_reasons": {
+  "(none)": 36,
+  "SL": 60,
+  "TIME_UP_AFTER_PARTIALS": 7,
+  "TP3": 6,
+  "TRAILING_SL_AT_TP1": 5
+ },
+ "leg_exit_reasons": {
+  "SL": 40,
+  "SL_REMAINDER": 20,
+  "TIME_UP_REMAINDER": 7,
+  "TP1_PARTIAL": 7,
+  "TP2_PARTIAL": 1,
+  "TP3": 6,
+  "TRAILING_SL_AT_TP1": 5
+ },
+ "net_identity_violations": 0,
+ "win_label_violations": 0,
+ "realized": {
+  "grossPnl": -664000.3957142854,
+  "totalCosts": 43370.5754592857,
+  "netPnl": -707370.9711735712,
+  "avgNetPerTrade": -9068.858604789375,
+  "wins": 10,
+  "n": 78
+ },
+ "entry_fills_not_matching_real_bar_open": 0,
+ "leg_exits_without_matching_session_bar": 0,
+ "open_positions_mtm": [
+  {
+   "symbol": "ANL",
+   "entryDate": "2026-10-30",
+   "entryPrice": 8.85,
+   "quantity": 11299,
+   "lastBar": "2026-11-23",
+   "lastClose": 9.48,
+   "mtmPnl": 7118.37
+  },
+  {
+   "symbol": "ANL",
+   "entryDate": "2026-10-30",
+   "entryPrice": 8.85,
+   "quantity": 11299,
+   "lastBar": "2026-11-23",
+   "lastClose": 9.48,
+   "mtmPnl": 7118.37
+  },
+  {
+   "symbol": "LOTCHEM",
+   "entryDate": "2026-10-30",
+   "entryPrice": 24.47,
+   "quantity": 4086,
+   "lastBar": "2026-11-23",
+   "lastClose": 25.5,
+   "mtmPnl": 4208.58
+  }
+ ],
+ "pending_symbols": {
+  "BYCO": 12,
+  "ENGRO": 21
+ },
+ "outcomes": {
+  "matured": 220,
+  "pending": 155
+ },
+ "matured_without_observed_close": 0,
+ "matured_observed_close_matching_bar": 220
+}
