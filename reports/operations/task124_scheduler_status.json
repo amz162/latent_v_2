@@ -1,0 +1,85 @@
+{
+  "report": "task124_scheduler_status",
+  "generated_at": "2026-11-23T21:10:00Z",
+  "analyzer_access": "GitHub API (read-only, repository credential store) + local repo @ 7a2ba8c2 + restored local DB. Application host NOT reachable from sandbox.",
+  "schedulers": {
+    "S1_daily_psx_pipeline_actions": {
+      "workflow": ".github/workflows/daily-psx-pipeline.yml",
+      "cron": "30 11 * * 1-5",
+      "contract_time_pkt": "16:30 PKT (observed actual starts 18:46Z-21:33Z, i.e. 7-10h GitHub-side delay)",
+      "stages": ["ingest (python)", "shadow levels (bun task105_phase8_levels.ts)", "maturity (bun task106_mature.ts)", "reports (python)", "commit+push snapshot on advance"],
+      "status": "ACTIVE_BUT_FAILING",
+      "label": "FAILED_ROOT_CAUSE_FIXED_LOCAL",
+      "runs_observed": {
+        "total": 13,
+        "successful": 0,
+        "failed": 13,
+        "first": {"run": 1, "date": "2026-11-04T18:46:21Z", "conclusion": "failure"},
+        "last": {"run": 13, "date": "2026-11-20T19:12:16Z", "conclusion": "failure"},
+        "nov23_run": "not observed by 21:10Z (historical delays up to 10h; may still fire)"
+      },
+      "failure_diagnosis_run_13": {
+        "run_id": 44799943185,
+        "ingest": "rc=0 success, frontier 2026-11-20, inserted 276 bars (2026-11-04..11-20)",
+        "shadow": "rc=4 (bun, no output captured)",
+        "maturity": "rc=4 — Cannot find module '.prisma/client/default' from node_modules/@prisma/client/default.js (Bun v1.4.5)",
+        "reports": "rc=0, frontier 2026-11-20, snapshots 66, pending 81",
+        "commit_step": "skipped because job failed",
+        "root_cause": "bun install does not run prisma generate; generated client is gitignored so absent on fresh runner; both TS stages import @prisma/client",
+        "production_impact": "freshly ingested frontier discarded each day; repository DB snapshot stayed frozen at 2026-11-03 — the mechanism behind the Task 123 data stall"
+      },
+      "fix_applied_this_changeset": {
+        "change": "new workflow step 'Generate Prisma client' → bunx prisma generate, placed after bun install",
+        "validated_locally": "prisma 6.11.1 devDependency present; prisma/schema.prisma prisma-client-js generator; local node_modules/.prisma/client present proves generate output shape",
+        "production_verification_pending": "next run must reach [shadow] rc=0 and [maturity] rc=0 and commit 'Daily PSX pipeline: frontier ...'"
+      }
+    },
+    "S2_intraday_poll_actions": {
+      "workflow": ".github/workflows/intraday-poll.yml",
+      "cron_in_repo": "*/5 4-10 * * 1-5",
+      "stages": ["task107_monitor.py", "task108_workflow_summary.py"],
+      "status": "ACTIVE_SUCCESS",
+      "label": "VERIFIED",
+      "runs_observed": [
+        {"run": 21, "started": "2026-11-23T13:52:32Z", "conclusion": "success"},
+        {"run": 20, "started": "2026-11-20T12:20:38Z", "conclusion": "success"},
+        {"run": 19, "started": "2026-11-19T12:20:18Z", "conclusion": "success"},
+        {"run": 18, "started": "2026-11-18T12:29:33Z", "conclusion": "success"},
+        {"run": 17, "started": "2026-11-17T12:38:48Z", "conclusion": "success"}
+      ],
+      "discrepancy": "cron says every 5 min during market hours; observed cadence is ONE run per weekday (~12:20-13:52Z). Effective heartbeat is daily, not 5-minute. Task 127 alert thresholds use daily cadence.",
+      "latest_state": {
+        "monitor_state_generated_at": "2026-11-23T13:53:38+0000",
+        "last_cycle": {"cycle_id": "cycle_20261123T135338Z", "classification": "success_with_updates", "new": 22, "total": 301, "positions": 81},
+        "provider_health": "healthy",
+        "consecutive_failures": 0
+      }
+    },
+    "S3_inprocess_nextjs_scheduler": {
+      "entry": "src/instrumentation.ts (added by operator commit b307e34e 2026-11-23T00:47Z) delegating to src/instrumentation.node.ts",
+      "schedule": "17:00 PKT weekdays, GET /api/cron/refresh-ohlcv (daily_5pm_update.py)",
+      "markers": ["data/scheduler_last_run.txt", "data/scheduler_log.txt"],
+      "status": "CODE_ACTIVE_HOST_EXECUTION_UNPROVEN",
+      "label": "NOT_VERIFIED",
+      "correction_to_task123": "c00b1b9a did not disable the hook (3-line fetch fix on the active file); the .disabled file is a stale copy. The hook never ran because Next.js does not load instrumentation.node.ts by that name until the b307e34e entry point existed.",
+      "host_check_pending": "server process restarted after b307e34e; scheduler marker/log timestamps"
+    },
+    "S4_host_crontab": {
+      "template": "scripts/crontab.txt (17:00 CSV refresh, 17:10 DB ingest, 17:30 task123 daily pipeline)",
+      "status": "BLOCKED",
+      "label": "BLOCKED",
+      "reason": "application host not reachable from sandbox; installed crontab, executable paths and cron logs not observable",
+      "operator_commands": "reports/operations/task124_operator_commands.md"
+    }
+  },
+  "contract_gap": {
+    "statement": "The 17:30 PKT Task 123 steps (prospective lifecycle + GLM-4.6 generation + outcome tracker + health snapshot) have NO automated production executor. They exist only in the S4 template.",
+    "proposed_extension": "S1 workflow job extension provided in task124_operator_commands.md section 5 — requires owner decision (GLM calls consume API credits)",
+    "label": "NOT_VERIFIED_GAP_CONFIRMED"
+  },
+  "safety": {
+    "production_services_restarted_or_modified": false,
+    "real_order_paths_touched": false,
+    "secrets_exposed": false
+  }
+}

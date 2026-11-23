@@ -303,9 +303,15 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
         const result = simulateStrategy(strat.id as StrategyId, signal, scanBars, COST_PROFILE);
 
         // Close only on a real exit OR timeout with the full horizon examined.
-        // A TIME_UP on a partial window means the trade stays open (more bars needed).
+        // A timeout on a partial window means the trade stays open (more bars
+        // needed). Task 125 fix: the timeout family includes TIME_UP and
+        // TIME_UP_AFTER_PARTIALS (scale-out with a partial leg already booked),
+        // so the gate must use startsWith — the previous `!== "TIME_UP"` check
+        // let partial-window h21 scale_out trades close at the frontier bar
+        // (7 trades in the 2026-10-29 cohort; documented in
+        // reports/operations/task125_ledger_reconciliation.md, ledger preserved).
         const fullHorizonExamined = result.nBarsExamined >= h;
-        const shouldClose = result.exitReason !== "TIME_UP" || fullHorizonExamined;
+        const shouldClose = !result.exitReason.startsWith("TIME_UP") || fullHorizonExamined;
         if (!shouldClose) continue; // stay open
 
         await db.$transaction(async (tx) => {

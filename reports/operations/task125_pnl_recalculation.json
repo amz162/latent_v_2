@@ -1,0 +1,263 @@
+{
+ "report": "task125_pnl_recalculation",
+ "source": "db/custom.db (restored, frontier 2026-11-23)",
+ "checks": {},
+ "noted_defects": [],
+ "counts": {
+  "parent_records": 114,
+  "closed": 78,
+  "open": 3,
+  "pending_entry": 33,
+  "equation_ok": true,
+  "exit_legs_total": 86,
+  "exit_legs_on_closed": 86,
+  "exit_legs_on_open": 0,
+  "unique_trade_ids": 114,
+  "dup_trade_ids": 0,
+  "distinct_source_predictions": 38,
+  "dup_pred_strategy_pairs": 0,
+  "legs_per_closed_parent": {
+   "1": 71,
+   "2": 6,
+   "3": 1
+  }
+ },
+ "pnl_independent": {
+  "method": "sum of PaperTradeLeg rows for closed parents (recomputed from commission+slippage+cgt)",
+  "gross_pnl": -664000.4,
+  "total_costs": 43370.58,
+  "net_pnl": -707370.97,
+  "wins": 10,
+  "losses": 68,
+  "avg_net_per_closed_trade": -9068.86,
+  "leg_net_identity_violations": 0,
+  "leg_cost_component_violations": 0,
+  "parent_vs_legs_mismatches": 0,
+  "win_label_violations": 0,
+  "open_parents_with_nonnull_netpnl": 0,
+  "matches_task123_report": {
+   "reported_net": -707370.97,
+   "recomputed_net": -707370.97,
+   "delta": -0.0,
+   "reported_costs": 43370.58,
+   "recomputed_costs": 43370.58
+  }
+ },
+ "entry_verification": {
+  "filled_trades": 81,
+  "entry_price_vs_bar_open_mismatches": 0,
+  "entry_sessions_missing_bar": 0,
+  "lookahead_violations": 0,
+  "predictions_without_dataCutoff": 0,
+  "distinct_entry_dates": [
+   "2026-10-30"
+  ],
+  "examples_bad": []
+ },
+ "exit_verification": {
+  "legs_missing_session_bar": 0,
+  "sl_gap_rule_ok": 65,
+  "sl_gap_rule_violations": 0,
+  "sl_fills_at_exact_stop": 6,
+  "tp_fills_at_level_or_better": 14,
+  "tp_fill_violations": 0,
+  "tp_bad_examples": [],
+  "timeup_fills_at_window_close": 7,
+  "bars_where_sl_and_tp3_both_touchable_sl_chosen": 0
+ },
+ "pending_and_open": {
+  "pending_by_symbol": {
+   "BYCO": 12,
+   "ENGRO": 21
+  },
+  "pending_symbols_max_bar_date": {
+   "BYCO": "2021-12-20",
+   "ENGRO": "2025-01-03"
+  },
+  "pending_justified_provider_gap": true,
+  "open_positions": [
+   {
+    "trade": "cmvtzoeb5002osydq8iojihys",
+    "symbol": "ANL",
+    "strategy": "fixed_first_hit",
+    "entry": "2026-10-30",
+    "qty": 11299,
+    "latest_close": 9.48,
+    "unrealized_pnl": 7118.37
+   },
+   {
+    "trade": "cmvtzoeb6002psydqursyr2e4",
+    "symbol": "ANL",
+    "strategy": "max_tp_step_trailing",
+    "entry": "2026-10-30",
+    "qty": 11299,
+    "latest_close": 9.48,
+    "unrealized_pnl": 7118.37
+   },
+   {
+    "trade": "cmvtzoebl0030sydqz91wv6mh",
+    "symbol": "LOTCHEM",
+    "strategy": "fixed_first_hit",
+    "entry": "2026-10-30",
+    "qty": 4086,
+    "latest_close": 25.5,
+    "unrealized_pnl": 4208.58
+   }
+  ],
+  "open_unrealized_total": 18445.32
+ },
+ "premature_closure_defect": {
+  "root_cause": "prospective-lifecycle.ts gate `exitReason !== 'TIME_UP'` does not catch 'TIME_UP_AFTER_PARTIALS' (scale_out trades with a partial leg) -> h21 trades close at the last available bar of a partial 21-session window instead of staying open per the documented contract (line 14: 'Partial windows keep the trade open')",
+  "affected_trades": 7,
+  "recorded_realized_net_of_affected": 4047.99,
+  "counterfactual_realized_net_if_remarked_open": -711418.96,
+  "note": "Documented only. Historical ledger NOT rewritten (cohort-protection rule). Engine gate fix + regression test applied forward; forward re-mark policy specified in Task 127.",
+  "detail": [
+   {
+    "trade": "cmvtzoe7v000nsydqf74u20du",
+    "symbol": "WTL",
+    "model": "XGBoost",
+    "horizon": 21,
+    "strategy": "scale_out_50_25_25",
+    "exit_date_recorded": "2026-11-03",
+    "sessions_available_vs_horizon": "16/21",
+    "recorded_realized_net": -1922.74,
+    "created_at": "2026-10-29T20:21:46Z",
+    "updated_at": "2026-11-23T20:39:57Z",
+    "frontier_close": 1.24
+   },
+   {
+    "trade": "cmvtzoe8h0012sydqtodo47qp",
+    "symbol": "WTL",
+    "model": "LightGBM",
+    "horizon": 21,
+    "strategy": "scale_out_50_25_25",
+    "exit_date_recorded": "2026-11-03",
+    "sessions_available_vs_horizon": "16/21",
+    "recorded_realized_net": -1922.74,
+    "created_at": "2026-10-29T20:21:46Z",
+    "updated_at": "2026-11-23T20:39:57Z",
+    "frontier_close": 1.24
+   },
+   {
+    "trade": "cmvtzoea3001wsydqxhwbciee",
+    "symbol": "WTL",
+    "model": "CatBoost",
+    "horizon": 21,
+    "strategy": "scale_out_50_25_25",
+    "exit_date_recorded": "2026-11-03",
+    "sessions_available_vs_horizon": "16/21",
+    "recorded_realized_net": -1922.74,
+    "created_at": "2026-10-29T20:21:46Z",
+    "updated_at": "2026-11-23T20:39:58Z",
+    "frontier_close": 1.24
+   },
+   {
+    "trade": "cmvtzoeas002esydqq3nbm6r6",
+    "symbol": "WTL",
+    "model": "Random Forest",
+    "horizon": 21,
+    "strategy": "scale_out_50_25_25",
+    "exit_date_recorded": "2026-11-03",
+    "sessions_available_vs_horizon": "16/21",
+    "recorded_realized_net": -1922.74,
+    "created_at": "2026-10-29T20:21:46Z",
+    "updated_at": "2026-11-23T20:39:58Z",
+    "frontier_close": 1.24
+   },
+   {
+    "trade": "cmvtzoeb8002qsydquty4i60o",
+    "symbol": "ANL",
+    "model": "Ridge Regression",
+    "horizon": 21,
+    "strategy": "scale_out_50_25_25",
+    "exit_date_recorded": "2026-11-23",
+    "sessions_available_vs_horizon": "16/21",
+    "recorded_realized_net": 5995.05,
+    "created_at": "2026-10-29T20:21:46Z",
+    "updated_at": "2026-11-23T20:40:23Z",
+    "frontier_close": 9.48
+   },
+   {
+    "trade": "cmvtzoebg002wsydq9u12ate9",
+    "symbol": "FCCL",
+    "model": "Ridge Regression",
+    "horizon": 21,
+    "strategy": "scale_out_50_25_25",
+    "exit_date_recorded": "2026-11-03",
+    "sessions_available_vs_horizon": "16/21",
+    "recorded_realized_net": 2107.08,
+    "created_at": "2026-10-29T20:21:46Z",
+    "updated_at": "2026-11-23T20:39:58Z",
+    "frontier_close": 60.21
+   },
+   {
+    "trade": "cmvtzoebo0032sydqnzu7vmre",
+    "symbol": "LOTCHEM",
+    "model": "Ridge Regression",
+    "horizon": 21,
+    "strategy": "scale_out_50_25_25",
+    "exit_date_recorded": "2026-11-23",
+    "sessions_available_vs_horizon": "16/21",
+    "recorded_realized_net": 3636.82,
+    "created_at": "2026-10-29T20:21:46Z",
+    "updated_at": "2026-11-23T20:40:23Z",
+    "frontier_close": 25.5
+   }
+  ]
+ },
+ "outcomes": {
+  "total": 375,
+  "matured": 220,
+  "pending": 155,
+  "by_horizon": {
+   "5": {
+    "matured": 110,
+    "pending": 15
+   },
+   "10": {
+    "matured": 110,
+    "pending": 15
+   },
+   "21": {
+    "matured": 0,
+    "pending": 125
+   }
+  },
+  "matured_observed_close_not_matching_bar": 0,
+  "predictions_total": 375,
+  "traded_predictions": 38,
+  "matured_outcomes_linked_to_traded_predictions": 11,
+  "linked_matured_by_horizon": {
+   "5": 4,
+   "10": 7
+  },
+  "traded_predictions_by_horizon_parents": {
+   "5": 12,
+   "10": 30,
+   "21": 72
+  },
+  "relation_note": "Outcomes are forecast-realization observations for the whole 375-prediction shadow universe (5 models x 25 symbols x 3 horizons), one per prediction. The 114 paper trades derive from the 38 BUY predictions that had entry opportunity, x3 strategy variants. h21 (125 outcomes) matures from 2026-11-27 onward; BYCO/ENGRO/SYS lack provider data."
+ },
+ "exit_taxonomy": {
+  "authoritative_parent_exit_reasons": {
+   "SL": 60,
+   "TP3": 6,
+   "TRAILING_SL_AT_TP1": 5,
+   "TIME_UP_AFTER_PARTIALS": 7
+  },
+  "authoritative_parent_total": 78,
+  "authoritative_exit_events_legs": 86,
+  "final_exit_legs": 78,
+  "partial_exit_legs": 8,
+  "task123_report_prose_claim": {
+   "SL": 74,
+   "TP3": 2,
+   "scale_out_completion": 1,
+   "trailing": 1,
+   "TIME_UP": 1,
+   "sum": 79
+  },
+  "verdict": "The prose taxonomy in task123_recovery_report.md summed to 79 and matched neither the ledger's parent distribution (SL 60 / TIME_UP_AFTER_PARTIALS 7 / TP3 6 / TRAILING_SL_AT_TP1 5 = 78) nor its leg distribution (86 legs). It was a mis-stated summary in prose; the ledger and the machine verification artifact (task123_lifecycle_verification.json) agree exactly. No accounting defect in counts; prose corrected in task125_ledger_reconciliation.md."
+ }
+}

@@ -66,6 +66,16 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Task 124 fix: the shadow (task105_phase8_levels.ts) and maturity
+      # (task106_mature.ts) stages import @prisma/client, whose generated
+      # engine lives in node_modules/.prisma/client. `bun install` does NOT
+      # run prisma generate, so every scheduled run 2026-11-04..11-20 failed
+      # with "Cannot find module '.prisma/client/default'" (rc=4) and the
+      # advanced DB snapshot was never committed back. Generated client is
+      # gitignored, so it must be produced on the runner.
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
       - name: Restore database snapshot
         run: |
           test -f db/custom.db.gz || { echo "::error::db/custom.db.gz missing"; exit 1; }

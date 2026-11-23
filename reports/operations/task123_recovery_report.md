@@ -68,6 +68,8 @@ Run first on a **copy** of the DB, then on the live ledger; deterministic (ident
 - **Independent recomputation from raw bars:** SL and TP3 exits reproduced exactly (first-hit logic + gap-open rule); **0 fills that do not match a real bar open; 0 exit legs without a matching session bar; 0 net = gross − costs violations; 0 win-label violations** (`task123_lifecycle_verification.json`).
 - **Open positions MTM (mark-to-market, separate from realized):** ANL ×2 books (+7,118.37 each at 11-23 close 9.48), LOTCHEM (+4,208.58 at 25.50).
 
+> **Correction (Task 125, 2026-11-23):** the exit-reason buckets in the first bullet above were mis-stated in prose (they sum to 79, not 78, and do not match the ledger). Authoritative distribution for the 78 closed trades: **SL 60, TIME_UP_AFTER_PARTIALS 7, TP3 6, TRAILING_SL_AT_TP1 5**; exit **events** total **86 legs** (78 final + 8 partial). See `task125_ledger_reconciliation.md` §2. Task 125 also identified the 7 h21 scale-out trades closed on partial windows (gate defect, +4,047.99 PKR realized/unrealized classification issue) — ledger preserved, engine gate fixed forward.
+
 ### 4.6 The honest forward result
 
 **Realized net P&L: −707,370.97 PKR** on 78 closed trades (gross −664,000.40, costs 43,370.58; **10 wins / 68 losses**, avg −9,068.86/trade). The 2026-10-29 BUY cohort was overwhelmingly stopped out in the Nov 4–23 window. This is the system's **first genuine forward cohort result** and it is negative — reported exactly as measured. It strengthens the audit conclusion: **no real-money deployment is supported.**

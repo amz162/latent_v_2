@@ -1,0 +1,95 @@
+{
+ "report": "task127_daily_health",
+ "generated_at": "2026-11-23T21:32:36Z",
+ "data_pipeline": {
+  "ohlcv_frontier": "2026-11-23",
+  "ohlcv_bars": 1043209,
+  "db_integrity": "ok",
+  "ingest_last_report_frontier": "2026-11-23",
+  "ingest_new_bars_last_run": 0,
+  "symbols_without_provider_data": [
+   "ENGRO",
+   "SYS",
+   "BYCO"
+  ],
+  "worker": {
+   "kind": "intraday poll bot (Actions S2)",
+   "last_cycle_at": "2026-11-23T13:53:38+0000",
+   "classification": "success_with_updates",
+   "provider_health": "healthy",
+   "consecutive_failures": 0
+  },
+  "latest_pipeline_log": null
+ },
+ "paper_trading": {
+  "states_total": {
+   "closed": 78,
+   "pending_entry": 33,
+   "open": 3
+  },
+  "duplicate_fill_pairs": 0,
+  "realized_net_pnl_baseline_cohort": -707370.97,
+  "open_mtm_note": "unrealized MTM tracked per task125 \u00a77 (+18,445.32 at 11-23); excluded from realized",
+  "exit_reason_distribution_closed": {
+   "SL": 60,
+   "TIME_UP_AFTER_PARTIALS": 7,
+   "TP3": 6,
+   "TRAILING_SL_AT_TP1": 5
+  }
+ },
+ "glm": {
+  "store_records": 71,
+  "real": 48,
+  "mock": 23,
+  "research_only": true,
+  "last_generation": "2026-11-04T14:11:40.406Z",
+  "scheduled": "task123_daily_pipeline.sh step 3 \u2014 production execution NOT VERIFIED (task124)"
+ },
+ "cohorts": [
+  {
+   "cohort_id": "C20261029",
+   "start_cutoff": "2026-10-29",
+   "created_at": "2026-10-29T20:21:46Z",
+   "generation_source": "task107 2026-10-29 predictions (38 BUY x 3 strategies)",
+   "records": 114,
+   "protection": "FROZEN BASELINE \u2014 historical ledger preserved; never reset, re-marked or re-filled; premature-closure classification defect documented (task125 \u00a710), engine fixed forward",
+   "metrics": {
+    "records": 114,
+    "pending_entry": 33,
+    "open": 3,
+    "closed": 78,
+    "realized_net_pnl": -707370.97,
+    "trading_costs": 43370.58,
+    "wins": 10,
+    "losses": 68,
+    "win_rate": 0.1282,
+    "profit_factor": 0.0767,
+    "note": "drawdown NOT computed \u2014 no portfolio equity time series exists (book-level cash only); Sharpe/Sortino/ROI likewise not labelled (no documented equity methodology)"
+   }
+  },
+  {
+   "cohort_id": "(none yet)",
+   "start_cutoff": "",
+   "created_at": "",
+   "generation_source": "new cohorts are assigned C<signal-date> at creation and reported separately",
+   "records": 0,
+   "protection": "\u2014",
+   "metrics": {}
+  }
+ ],
+ "metrics_policy": "win_rate and profit_factor only; no Sharpe/Sortino/ROI/max-drawdown (no portfolio equity time series; none may be labelled without documented methodology)",
+ "alerts_active": [
+  {
+   "id": "glm_generation_failure",
+   "severity": "WARN",
+   "component": "GLM scheduled generation",
+   "affected": "task123 pipeline step 3",
+   "reason": "weekday 17:30 pipeline ran but produced no new GLM decision records today",
+   "action": "check provider_calls.jsonl for llm_unavailable reasons; verify GLM credentials/env on host"
+  }
+ ],
+ "alerts_suppressed": [
+  "glm_generation_failure"
+ ],
+ "alerts_recovered": []
+}

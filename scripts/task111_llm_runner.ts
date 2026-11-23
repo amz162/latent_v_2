@@ -108,14 +108,16 @@ async function persistEvidencePackage(
   sym: string,
   evHash: string,
   bundle: Awaited<ReturnType<typeof buildEvidenceBundle>>,
-  decisionTimestamp: string
+  decisionTimestamp: string,
+  hashedSnapshot?: unknown
 ): Promise<string> {
   const evDir = process.env.LLM_EVIDENCE_DIR
     ?? path.join(ROOT, "data/backtest_reports/task112/llm_evidence_packages");
   await fs.mkdir(evDir, { recursive: true });
   const rel = path.relative(ROOT, path.join(evDir, `${sym}_${evHash.slice(0, 8)}.evidence.json`));
   if ("error" in bundle) return rel;
-  const pkg = {
+  const pkg: Record<string, unknown> = {
+    hashedEvidenceSnapshot: hashedSnapshot ?? null,
     symbol: sym,
     evidenceHash: evHash,
     dataCutoff: bundle.evidence.dataCutoff,
@@ -209,6 +211,12 @@ async function main() {
         await writeJsonl(path.join(OPS_DIR, "runner_log.jsonl"), { ts: new Date().toISOString(), symbol: sym, event: "skipped", reason: bundle.error });
         continue;
       }
+      // Task 126: snapshot the evidence EXACTLY as hashed, before the record
+      // pipeline mutates it (asOfSession stamp, decision-timestamp metric
+      // stamps inside runStockSignal). Task 126 audit found the 2026-11-04
+      // package hashes cannot be recomputed from the persisted packages for
+      // exactly this reason — the snapshot makes future packages verifiable.
+      const hashedEvidenceSnapshot = JSON.parse(JSON.stringify(bundle.evidence)) as typeof bundle.evidence;
       marketContext.asOfSession = bundle.evidence.dataCutoff;
       const evHash = evidenceHash(bundle.evidence);
       // Early freshness gate: never send stale evidence to the provider.
@@ -227,7 +235,7 @@ async function main() {
           evidenceQualityScore: computeEvidenceQuality(bundle.evidence).score,
           staleSkipped: true,
         };
-        (staleRecord as Record<string, unknown>).evidenceRef = await persistEvidencePackage(sym, evHash, bundle, staleRecord.decisionTimestamp);
+        (staleRecord as Record<string, unknown>).evidenceRef = await persistEvidencePackage(sym, evHash, bundle, staleRecord.decisionTimestamp, hashedEvidenceSnapshot);
         await fs.writeFile(path.join(OUT_DIR, `${sym}.json`), JSON.stringify(staleRecord, null, 1), "utf8");
         await appendHistory(staleRecord);
         await writeJsonl(path.join(OPS_DIR, "runner_log.jsonl"), { ts: new Date().toISOString(), symbol: sym, event: "stale_skipped", cutoff: bundle.evidence.dataCutoff, ageDays: Math.round(cutoffAgeDays) });
@@ -254,7 +262,7 @@ async function main() {
         continue;
       }
       const record = await runStockSignal(bundle.evidence, rrBars, { client, generationId: genId });
-      record.evidenceRef = await persistEvidencePackage(sym, evHash, bundle, record.decisionTimestamp);
+      record.evidenceRef = await persistEvidencePackage(sym, evHash, bundle, record.decisionTimestamp, hashedEvidenceSnapshot);
       await fs.writeFile(path.join(OUT_DIR, `${sym}.json`), JSON.stringify(record, null, 1), "utf8");
       await appendHistory(record);
       await fs.writeFile(cacheFile, JSON.stringify(record), "utf8");

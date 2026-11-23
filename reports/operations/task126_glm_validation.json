@@ -1,0 +1,278 @@
+{
+ "report": "task126_glm_validation",
+ "generated_scope": "store + packages + code verification",
+ "checks": {
+  "store": {
+   "records_total": 71,
+   "real": 48,
+   "mock": 23,
+   "current_record": 24,
+   "generation_cache": 24,
+   "dup_symbol_cutoff_within_current_record": {},
+   "dup_symbol_cutoff_within_generation_cache": {
+    "HUBC|2026-11-03": 2
+   },
+   "dup_evidenceHash_across_store": {},
+   "research_only_all": true,
+   "mock_typed": true,
+   "mock_provider_model": [
+    "mock/glm-4.6"
+   ],
+   "providers_real": [
+    "zai/glm-4.6"
+   ],
+   "llm_states_real": {
+    "ok": 46,
+    "llm_unavailable": 2
+   },
+   "validation_real": {
+    "valid": 46,
+    "rejected": 2
+   },
+   "rejections": [
+    {
+     "symbol": "ENGRO",
+     "provenance": "current_record",
+     "reason": "stale_evidence"
+    },
+    {
+     "symbol": "PSO",
+     "provenance": "generation_cache",
+     "reason": "invalid_view:financial_pattern_view"
+    }
+   ],
+   "cutoffs": [
+    "2025-01-03",
+    "2026-11-03"
+   ],
+   "decision_ts_range": [
+    "2026-11-04T13:52:34.265Z",
+    "2026-11-04T14:11:40.406Z"
+   ],
+   "staleSkipped_true": 0
+  },
+  "research_only_enforcement": {
+   "paper_trade_models": [
+    "CatBoost",
+    "LightGBM",
+    "Random Forest",
+    "Ridge Regression",
+    "XGBoost"
+   ],
+   "glm_models_in_paper_trades": [],
+   "glm_models_in_predictions": [],
+   "glm_decision_signals": {
+    "HOLD": 5,
+    "NO_TRADE": 27,
+    "none": 2,
+    "BUY": 14
+   },
+   "store_research_status": {
+    "research_only": 71
+   }
+  },
+  "packages": {
+   "packages": 24,
+   "hash_content_only_match": 0,
+   "hash_with_ts_match": 0,
+   "hash_neither": 24,
+   "record_hash_matches_pkg": 0,
+   "evidence_ref_resolves": 24,
+   "source_status_totals": {
+    "verified": 96,
+    "partially_verified": 109,
+    "unavailable": 11
+   },
+   "mismatches": [
+    {
+     "pkg": "ANL",
+     "pkg_hash": "90b16d70",
+     "content": "3e993234",
+     "with_ts": "cf3d79ea",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "BOP",
+     "pkg_hash": "56e514cb",
+     "content": "ae59cfcf",
+     "with_ts": "40c63cb9",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "CNERGY",
+     "pkg_hash": "ba9b377d",
+     "content": "e686023b",
+     "with_ts": "8346d4ff",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "ENGRO",
+     "pkg_hash": "dd267f1a",
+     "content": "170fc92f",
+     "with_ts": "bd54e404",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "FCCL",
+     "pkg_hash": "8381ecad",
+     "content": "3bd0a95e",
+     "with_ts": "c53bb2cf",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "HASCOL",
+     "pkg_hash": "5d9b0a73",
+     "content": "6afe72f9",
+     "with_ts": "41d1b963",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "HUBC",
+     "pkg_hash": "d06a763b",
+     "content": "4a5be7b9",
+     "with_ts": "0c3e2dbf",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "HUMNL",
+     "pkg_hash": "30204a11",
+     "content": "130d5001",
+     "with_ts": "c6d38a2b",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "KEL",
+     "pkg_hash": "dd5181d1",
+     "content": "45974875",
+     "with_ts": "fd5d26a3",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "LOTCHEM",
+     "pkg_hash": "bb4acde4",
+     "content": "57b80554",
+     "with_ts": "21109aa2",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "LUCK",
+     "pkg_hash": "93981c8e",
+     "content": "d62fc77c",
+     "with_ts": "e10d48a6",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "MEBL",
+     "pkg_hash": "0404510d",
+     "content": "2b6bf8ed",
+     "with_ts": "e9b47c67",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "MLCF",
+     "pkg_hash": "e6486bf0",
+     "content": "ffc576e4",
+     "with_ts": "98a13c82",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "OGDC",
+     "pkg_hash": "4c5a4382",
+     "content": "2005ce85",
+     "with_ts": "d0b7a4fa",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "PAEL",
+     "pkg_hash": "4b4c5bd1",
+     "content": "d3eca0c3",
+     "with_ts": "90c085d5",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "PIBTL",
+     "pkg_hash": "2543edea",
+     "content": "5c09d0ab",
+     "with_ts": "141352aa",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "PPL",
+     "pkg_hash": "6e5e7c35",
+     "content": "23011f5c",
+     "with_ts": "ae8eba29",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "PRL",
+     "pkg_hash": "939037b3",
+     "content": "e15ee30e",
+     "with_ts": "046fbfbd",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "PSO",
+     "pkg_hash": "6b94bd31",
+     "content": "7220d2ca",
+     "with_ts": "013580a3",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "SYS",
+     "pkg_hash": "a1fbb9b7",
+     "content": "0cadd70e",
+     "with_ts": "d1baa9eb",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "TELE",
+     "pkg_hash": "20729c61",
+     "content": "359ea9a6",
+     "with_ts": "3f182d9b",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "TRG",
+     "pkg_hash": "98c30a93",
+     "content": "5a4e9e0f",
+     "with_ts": "858efdb3",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "UNITY",
+     "pkg_hash": "58c0b3ec",
+     "content": "8b8da0c4",
+     "with_ts": "d53eb7e6",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    },
+    {
+     "pkg": "WTL",
+     "pkg_hash": "c67a4543",
+     "content": "762fa20e",
+     "with_ts": "ac2e8c15",
+     "note": "legacy 2026-11-04 package: runner hashed the in-memory bundle before post-stamping; snapshot fix applied forward"
+    }
+   ]
+  },
+  "scheduled_generation": {
+   "wired_in_pipeline_script": "step 3 of scripts/task123_daily_pipeline.sh calls scripts/task111_llm_runner.ts with GLM_SYMBOLS",
+   "wired_in_crontab_template": "scripts/crontab.txt 17:30 PKT entry runs task123_daily_pipeline.sh",
+   "production_execution": "NOT VERIFIED \u2014 last store decision 2026-11-04T14:11Z; no run since; task112/llm_evidence_packages (default dir) does not exist yet because the new-format writer has never executed in production",
+   "trace_record": "provider_calls.jsonl + runner_log.jsonl in task111/ops record each call outcome",
+   "stale_gate": "cutoff age > 10 days \u2192 staleSkipped record, no provider call, honest reason (code verified)",
+   "forward_fixes_this_changeset": [
+    "task111_llm_runner.ts: evidence snapshot taken exactly as hashed and embedded as hashedEvidenceSnapshot in every new package (fixes historical hash-reproducibility gap)",
+    "store dedup guard (one decision per symbol+cutoff) verified in appendHistory; the single leftover duplicate-generation pair (HUBC 2026-11-03, two generation_cache records from the pre-guard 13:52/13:54 passes) is retained append-only and documented"
+   ],
+   "hash_reproducibility": {
+    "legacy_packages": "0/24 recomputable (post-hash mutations: asOfSession, decision-timestamp metric stamps); documented, not a fabrication \u2014 content is intact and independently verifiable per source",
+    "content_only_hash_code": "VERIFIED \u2014 evidenceHash() deletes decisionTimestamp before FNV-1a over stable-sorted JSON (llm-provider.ts:93-103)",
+    "store_dedup_dependency": "dedup uses (symbol, dataCutoff), not the hash \u2014 store uniqueness unaffected"
+   }
+  },
+  "news_cache_note": {
+   "cache_refreshed_at": "2026-11-23T20:35:50.582Z",
+   "note": "news caches were refreshed during Task 123 pipeline tests (2026-11-23); they are working caches, NOT the evidence the 2026-11-04 decisions saw. The audit therefore verifies the EMBEDDED evidence in the packages, not the current cache contents."
+  }
+ }
+}
