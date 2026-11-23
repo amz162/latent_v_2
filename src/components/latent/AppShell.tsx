@@ -26,6 +26,7 @@ import { GoldenCrossView } from "./GoldenCrossView";
 import { AiStockAnalysisView } from "./AiStockAnalysisView";
 import { LlmSignalsView } from "./LlmSignalsView";
 import { ModelPerformanceReportView } from "./ModelPerformanceReportView";
+import { ModelMView } from "./ModelMView"; // Task 129
 import { VolatilityAnalyticsView } from "./VolatilityAnalyticsView";
 import { useI18n } from "@/lib/latent/i18n";
 
@@ -164,6 +165,8 @@ export function AppShell({ initialView }: { initialView?: string }) {
         return <LlmSignalsView />;
       case "model_report":
         return <ModelPerformanceReportView />;
+      case "model_m":
+        return <ModelMView />; // Task 129
       case "calculators":
         return <Calculators />;
       case "pattern_finder":

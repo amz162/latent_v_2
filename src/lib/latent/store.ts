@@ -24,6 +24,7 @@ export type LatentView =
   | "ai_analysis"
   | "llm_signals"
   | "model_report"
+  | "model_m"
   | "calculators"
   | "pattern_finder"
   | "pattern_finder_financial"

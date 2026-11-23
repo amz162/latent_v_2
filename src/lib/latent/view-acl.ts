@@ -26,6 +26,7 @@ export const VIEW_PERMISSION: Record<LatentView, string | null> = {
   ai_analysis: "tab.llm_signals", // research view lives under the LLM Signals permission
   llm_signals: "tab.llm_signals",
   model_report: "tab.model_report",
+  model_m: "tab.model_m", // Task 129 — Model M research tab
   calculators: "tab.calculators",
   pattern_finder: "tab.pattern_finder",
   pattern_finder_financial: "tab.pattern_finder_financial",

@@ -114,6 +114,7 @@ const dict: Dict = {
   "nav.ai_analysis": { en: "AI Analysis", roman_urdu: "AI Tajzea", urdu: "اے آئی تجزیہ" },
   "nav.llm_signals": { en: "LLM Signals", roman_urdu: "LLM Signals", urdu: "ایل ایل ایم اشارات" },
   "nav.model_report": { en: "Model Performance", roman_urdu: "Model Performance", urdu: "ماڈل کارکردگی" },
+  "nav.model_m": { en: "Model M", roman_urdu: "Model M", urdu: "ماڈل ایم" },
   "nav.ai_model_signals": { en: "AI Models", roman_urdu: "AI Models", urdu: "اے آئی ماڈلز" },
   "nav.paper_monitor": { en: "Paper Trade Monitor", roman_urdu: "Paper Trade Monitor", urdu: "پیپر ٹریڈ مانیٹر" },
   "nav.calculators": { en: "Calculators", roman_urdu: "Calculators", urdu: "کیلکولیٹرز" },

@@ -40,14 +40,31 @@ import {
   type StrategyBar,
   type StrategySignal,
 } from "./strategy-engine";
-import { STANDARD_PSX } from "./trading-costs";
+import { STANDARD_PSX, PSX_USER_SCHEDULE_V2, COST_PROFILES, type CostProfile } from "./trading-costs";
 
 // ─── Portfolio config (matches portfolio-config.ts + the prospective policy) ──
 const INITIAL_CAPITAL = 1_000_000;
 const MAX_POSITION_FRACTION = 0.10;
 const ALLOCATION = INITIAL_CAPITAL * MAX_POSITION_FRACTION; // PKR 100,000 per position
 const MAX_CONCURRENT_POSITIONS = 10;
-const COST_PROFILE = STANDARD_PSX;
+
+// Task 129 cost-profile transition: NEW books are booked under the canonical
+// V2 user schedule (psx_user_schedule_v2 — zero synthetic slippage, fixed
+// commission floor, PSX/NCCPL/CDC ancillary fees). Trades created before this
+// change KEEP the cost profile encoded in their bookId suffix
+// (legacy_standard_psx_v1) — the historical ledger is never re-costed and
+// pending entries from the old cohort continue under their original profile.
+const NEW_BOOK_COST_PROFILE = PSX_USER_SCHEDULE_V2;
+const LEGACY_BOOK_COST_PROFILE = STANDARD_PSX; // legacy_standard_psx_v1
+
+/** Map a bookId to the cost profile encoded in its suffix (Task 129). */
+function profileForBookId(bookId: string): CostProfile {
+  for (const p of Object.values(COST_PROFILES)) {
+    if (bookId.endsWith(`_${p.id}`)) return p;
+  }
+  // Unknown suffix (oldest "book_standard_psx_*" ids) → legacy profile.
+  return LEGACY_BOOK_COST_PROFILE;
+}
 
 export type LifecycleStatus = "BLOCKED" | "READY" | "ACTIVE" | "EVALUATING" | "COMPLETED";
 
@@ -186,32 +203,25 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
     const canEnter = entryIdx >= 0;
 
     for (const strat of STRATEGIES) {
-      const bookId = `book_${pred.modelId}_${pred.horizon}d_${strat.id}_${COST_PROFILE.id}`;
+      // Task 129: the cost profile is resolved PER TRADE. An existing trade
+      // (any state) keeps the profile encoded in its own bookId — it is never
+      // re-costed. Only a genuinely NEW trade is booked under the V2 schedule.
+      // Adoption (Task 123) still finds a pre-existing row for the same
+      // (prediction, strategy) regardless of its bookId.
+      const existing = await db.prospectivePaperTrade.findFirst({
+        where: { sourcePredictionId: pred.id, strategyId: strat.id },
+        orderBy: { createdAt: "asc" },
+      });
+      const tradeProfile: CostProfile = existing ? profileForBookId(existing.bookId) : NEW_BOOK_COST_PROFILE;
+      const bookId = `book_${pred.modelId}_${pred.horizon}d_${strat.id}_${tradeProfile.id}`;
 
-      // Idempotent: find or create
+      // Idempotent: find or create (unique constraint is the final guard)
       let trade = await db.prospectivePaperTrade.findUnique({
         where: { sourcePredictionId_strategyId_bookId: { sourcePredictionId: pred.id, strategyId: strat.id, bookId } },
       });
+      if (!trade) trade = existing; // adopt the pre-existing row (Task 123)
       if (!trade) {
-        // Task 123 idempotency: a cost-profile/policy rename changes the bookId
-        // suffix, which used to duplicate the ledger (114 legacy rows stayed
-        // pending while a fresh set was created). Adopt the existing row for the
-        // same (prediction, strategy) instead of creating a twin:
-        //   - pending rows are rebooked into the current book, then enter normally;
-        //   - already entered/closed rows are adopted as-is (their history stays
-        //     under the book that owns it).
-        trade = await db.prospectivePaperTrade.findFirst({
-          where: { sourcePredictionId: pred.id, strategyId: strat.id },
-          orderBy: { createdAt: "asc" },
-        });
-        if (trade) {
-          if (trade.state === "pending_entry" && trade.bookId !== bookId) {
-            trade = await db.prospectivePaperTrade.update({
-              where: { id: trade.id },
-              data: { bookId },
-            });
-          }
-        } else {
+        try {
           trade = await db.prospectivePaperTrade.create({
             data: {
               sourcePredictionId: pred.id,
@@ -228,7 +238,24 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
             },
           });
           tradesCreated++;
+        } catch (e: unknown) {
+          // Concurrent-run race: the composite unique constraint rejected a
+          // duplicate create — re-read the winner instead of failing the run.
+          const code = (e as { code?: string })?.code;
+          if (code !== "P2002") throw e;
+          trade = await db.prospectivePaperTrade.findUnique({
+            where: { sourcePredictionId_strategyId_bookId: { sourcePredictionId: pred.id, strategyId: strat.id, bookId } },
+          });
+          if (!trade) throw e;
         }
+      } else if (trade.state === "pending_entry" && trade.bookId !== bookId) {
+        // Defensive identity normalization for oldest bookId formats: pending
+        // rows may be rebooked under the profile their own bookId encodes.
+        // Entered/closed rows are adopted as-is (history stays with its book).
+        trade = await db.prospectivePaperTrade.update({
+          where: { id: trade.id },
+          data: { bookId },
+        });
       }
 
       // Enter if possible
@@ -300,7 +327,9 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
           tp3: trade.tp3!,
           quantity: trade.quantity,
         };
-        const result = simulateStrategy(strat.id as StrategyId, signal, scanBars, COST_PROFILE);
+        // Task 129: simulate with THIS trade's own cost profile (legacy books
+        // keep legacy costs; new books use the V2 schedule).
+        const result = simulateStrategy(strat.id as StrategyId, signal, scanBars, tradeProfile);
 
         // Close only on a real exit OR timeout with the full horizon examined.
         // A timeout on a partial window means the trade stays open (more bars
@@ -432,7 +461,9 @@ export async function runLifecycle(opts: { dryRun?: boolean } = {}): Promise<Lif
       direction: "long_only",
       strategies: STRATEGIES.map((s) => s.id),
       strategyPolicyVersion: STRATEGY_POLICY_VERSION,
-      costProfile: COST_PROFILE.id,
+      // Task 129: new books use psx_user_schedule_v2; pre-existing books keep
+      // the profile encoded in their bookId (historical ledger preserved).
+      costProfile: `new_books: ${NEW_BOOK_COST_PROFILE.id}; existing_books: keep encoded profile (legacy_standard_psx_v1)`,
       initialCapital: INITIAL_CAPITAL,
       maxConcurrentPositions: MAX_CONCURRENT_POSITIONS,
       maxPositionSizeFraction: MAX_POSITION_FRACTION,

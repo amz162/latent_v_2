@@ -1,5 +1,5 @@
 # PSX Model & Strategy Performance Report (Task 112)
-Generated: 2026-11-05T20:21:48Z · git head b2fd2565 · status: completed
+Generated: 2026-11-23T22:57:08Z · git head 53c5ceb3 · status: completed
 
 Scope: every model and strategy actually present in repository evidence (Tasks 79-111),
 including the GLM-4.6 multi-source LLM analyst. Missing information is marked
@@ -102,14 +102,14 @@ holdout and prospective-forward results are kept strictly separate.
 
 | Strategy | Ending balance | Net ROI | Max DD | Ann. vol | Avg exposure | Turnover | Trades |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| golden_cross_baseline | 63298.97 | -36.701% | -87775.26% | Not available in source evidence | Not available in source evidence% | 72.3 | 365 |
-| overlay_B_vol_target_10pct | 98594.31 | -1.406% | -23.621% | 6.969 | 19.02% | 21.94 | 430 |
-| overlay_B_vol_target_15pct | 94582.7 | -5.417% | -33.656% | 10.372 | 28.41% | 32.974 | 430 |
-| overlay_B_vol_target_20pct | 89731.55 | -10.268% | -42.54% | 13.73 | 37.68% | 43.976 | 430 |
-| overlay_A_fixed_vol_exposure | 83041.19 | -16.959% | -62.414% | 27.278 | 71.32% | 81.183 | 430 |
-| overlay_C_expansion_protection | 83041.19 | -16.959% | -62.414% | 27.278 | 71.32% | 81.183 | 430 |
+| golden_cross_baseline | 97856.14 | -2.144% | -91505.15% | Not available in source evidence | Not available in source evidence% | 68.06 | 344 |
+| overlay_B_vol_target_10pct | 104883.45 | 4.883% | -21.751% | 6.875 | 18.92% | 21.532 | 421 |
+| overlay_B_vol_target_15pct | 103211.59 | 3.212% | -31.006% | 10.311 | 28.24% | 32.341 | 421 |
+| overlay_B_vol_target_20pct | 101242.24 | 1.242% | -39.273% | 13.565 | 37.45% | 43.152 | 421 |
+| overlay_A_fixed_vol_exposure | 124777.43 | 24.777% | -56.912% | 26.272 | 70.62% | 79.622 | 421 |
+| overlay_C_expansion_protection | 124777.43 | 24.777% | -56.912% | 26.272 | 70.62% | 79.622 | 421 |
 | cash | 100000.0 | 0.0% | 0.0% | Not available in source evidence | Not available in source evidence% | Not available in source evidence | 0 |
-| buy_hold_equal_weight | 123504.28 | 23.504% | None% | Not available in source evidence | Not available in source evidence% | Not available in source evidence | None |
+| buy_hold_equal_weight | 123763.09 | 23.763% | None% | Not available in source evidence | Not available in source evidence% | Not available in source evidence | None |
 
 ## LLM evidence contribution (availability vs actual citation)
 
@@ -2151,7 +2151,7 @@ Observations: 57 · matured: 43 (W13/L30) · pending: 59 · symbols: 23
 - **target_definition**: Not available in source evidence
 - **prediction_horizon**: Not available in source evidence
 - **universe**: task109-consistent 23-symbol universe
-- **evaluation_period**: ~10 years to frontier 2026-11-05
+- **evaluation_period**: ~10 years to frontier 2026-11-23
 - **train_validation_test_split**: Not available in source evidence
 - **purge_embargo**: Not available in source evidence
 - **sample_counts**: Not available in source evidence

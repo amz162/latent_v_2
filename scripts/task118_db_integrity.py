@@ -12,7 +12,9 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path("/home/z/my-project")
+# Task 129 fix: was stale "/home/z/my-project" (workspace root) — resolve from
+# this script's location so the integrity audit always targets the app DB.
+ROOT = Path(__file__).resolve().parent.parent
 DB = ROOT / "db/custom.db"
 OUT = ROOT / "data/backtest_reports/task118"
 OUT.mkdir(parents=True, exist_ok=True)

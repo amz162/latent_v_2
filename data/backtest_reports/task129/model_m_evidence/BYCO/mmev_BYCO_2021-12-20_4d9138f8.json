@@ -1,0 +1,1606 @@
+{
+ "schemaVersion": "model_m_evidence_v1",
+ "symbol": "BYCO",
+ "dataCutoff": "2021-12-20",
+ "decisionTimestamp": "2026-11-23T22:56:44.090Z",
+ "evidence": {
+  "schemaVersion": "latent_psx_llm_evidence_v1",
+  "symbol": "BYCO",
+  "companyName": "BYCO",
+  "sector": "unknown",
+  "decisionTimestamp": "2026-11-23T22:56:43.446Z",
+  "dataCutoff": "2021-12-20",
+  "priceContext": {
+   "lastClose": 6.17,
+   "lastCloseDate": "2021-12-20",
+   "change5dPct": 9.20353982300884,
+   "change20dPct": -9.663250366032212,
+   "change60dPct": -18.386243386243383,
+   "seriesTail": [
+    {
+     "date": "2021-12-07",
+     "close": 6.06
+    },
+    {
+     "date": "2021-12-08",
+     "close": 5.92
+    },
+    {
+     "date": "2021-12-09",
+     "close": 5.82
+    },
+    {
+     "date": "2021-12-10",
+     "close": 5.68
+    },
+    {
+     "date": "2021-12-13",
+     "close": 5.65
+    },
+    {
+     "date": "2021-12-14",
+     "close": 5.99
+    },
+    {
+     "date": "2021-12-15",
+     "close": 6.75
+    },
+    {
+     "date": "2021-12-16",
+     "close": 6.44
+    },
+    {
+     "date": "2021-12-17",
+     "close": 6.39
+    },
+    {
+     "date": "2021-12-20",
+     "close": 6.17
+    }
+   ]
+  },
+  "fundamentalEvidence": {
+   "status": "unavailable",
+   "summary": "No verified quarterly financial-result snapshot for this symbol. Missing fundamentals are NOT evidence of stability.",
+   "metrics": [],
+   "sources": []
+  },
+  "financialPatternEvidence": {
+   "status": "insufficient_history",
+   "summary": "insufficient_history: 0 verified quarters available, 4 consecutive required",
+   "metrics": [],
+   "sources": []
+  },
+  "companyNewsEvidence": {
+   "status": "unavailable",
+   "summary": "No recent company news retrieved. No news found is NOT equivalent to positive news.",
+   "metrics": [
+    {
+     "name": "company_news_count",
+     "value": 0,
+     "asOf": "2026-11-23T22:56:43.446Z"
+    },
+    {
+     "name": "company_news_high_materiality",
+     "value": 0,
+     "asOf": "2026-11-23T22:56:43.446Z"
+    },
+    {
+     "name": "company_news_injection_flagged",
+     "value": 0,
+     "asOf": "2026-11-23T22:56:43.446Z",
+     "note": "untrusted text flagged; never executed"
+    }
+   ],
+   "sources": []
+  },
+  "nationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "National snapshot (8 items, 7 high-materiality): [neutral] The State Bank of Pakistan's decision to raise the policy rate | [neutral] SBP Monetary Policy Oct 26: Sectors to Watch in Pakistan | [neutral] Economic Data",
+   "metrics": [
+    {
+     "name": "national_news_count",
+     "value": 8,
+     "asOf": "2026-11-23T22:56:43.446Z"
+    }
+   ],
+   "sources": [
+    "src:news_national"
+   ]
+  },
+  "internationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "International snapshot (8 items, 1 high-materiality): [neutral] 2026 Market Outlook | J.P. Morgan Global Research | [neutral] Global risk appetite has helped emerging markets during | [bearish] Global Demand Shocks, Oil Futures, and Emerging",
+   "metrics": [
+    {
+     "name": "international_news_count",
+     "value": 8,
+     "asOf": "2026-11-23T22:56:43.446Z"
+    }
+   ],
+   "sources": [
+    "src:news_international"
+   ]
+  },
+  "technicalEvidence": {
+   "status": "verified",
+   "summary": "Local deterministic indicators (golden-cross.ts + risk-levels.ts policy): SMA7=6.15, SMA30=6.49, price below SMA30, ATR14=0.38, BBW(20,2)=23.97%, last cross=DEATH 26 sessions ago.",
+   "metrics": [
+    {
+     "name": "sma7",
+     "value": 6.152857142857143,
+     "asOf": "2021-12-20",
+     "note": "golden-cross.ts MA_FAST=7"
+    },
+    {
+     "name": "sma30",
+     "value": 6.494333333333333,
+     "asOf": "2021-12-20",
+     "note": "golden-cross.ts MA_SLOW=30"
+    },
+    {
+     "name": "atr14",
+     "value": 0.3835714285714286,
+     "asOf": "2021-12-20",
+     "note": "risk-levels.ts atr14-1.5-1-2-3 policy"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 23.970001303428475,
+     "asOf": "2021-12-20",
+     "note": "20-session SMA, 2 stdev, width=(upper-lower)/mid"
+    },
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 71.14712782384062,
+     "asOf": "2021-12-20",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 59.902945754210734,
+     "asOf": "2021-12-20",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "change_5d_pct",
+     "value": 9.20353982300884,
+     "asOf": "2021-12-20"
+    },
+    {
+     "name": "change_20d_pct",
+     "value": -9.663250366032212,
+     "asOf": "2021-12-20"
+    },
+    {
+     "name": "change_60d_pct",
+     "value": -18.386243386243383,
+     "asOf": "2021-12-20"
+    }
+   ],
+   "sources": [
+    "src:ohlcv_db",
+    "src:technical_local"
+   ]
+  },
+  "pricePatternEvidence": {
+   "status": "verified",
+   "summary": "Deterministic pattern engine over 1281 bars (future excluded: 0): Gap-up openings and how often they get filled[confirmed historical]; Gap-down openings and how often they get filled[unconfirmed candidate]; Heavy-volume days with flat-to-rising price (buying pressure)[confirmed historical]; Heavy-volume days with flat-to-falling price (selling pressure)[confirmed historical]; Unusually heavy volume days[confirmed historical]; After a heavy-volume day[confirmed historical]",
+   "metrics": [
+    {
+     "name": "pattern:gap:confirmed_historical",
+     "value": 1.41,
+     "unit": "%",
+     "asOf": "2021-12-15",
+     "note": "occurrences=527, success_rate=75.1%, strength=high"
+    },
+    {
+     "name": "pattern:gap:unconfirmed_candidate",
+     "value": -1.39,
+     "unit": "%",
+     "asOf": "2021-12-20",
+     "note": "occurrences=214, success_rate=63.1%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:confirmed_historical",
+     "value": 0.26,
+     "unit": "%",
+     "asOf": "2021-12-15",
+     "note": "occurrences=194, success_rate=45.3%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:confirmed_historical",
+     "value": 0.31,
+     "unit": "%",
+     "asOf": "2021-12-16",
+     "note": "occurrences=112, success_rate=58.6%, strength=high"
+    },
+    {
+     "name": "pattern:volume_spike:confirmed_historical",
+     "value": 2.68,
+     "unit": "%",
+     "asOf": "2021-12-15",
+     "note": "occurrences=109, success_rate=76.1%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": -0.38,
+     "unit": "%",
+     "asOf": "2021-12-15",
+     "note": "occurrences=109, success_rate=43.5%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": 1.8,
+     "unit": "%",
+     "asOf": "2021-12-13",
+     "note": "occurrences=59, success_rate=52.5%, strength=high"
+    },
+    {
+     "name": "pattern:key_zone:confirmed_historical",
+     "value": 6.17,
+     "unit": "%",
+     "asOf": "2021-09-03",
+     "note": "occurrences=30, success_rate=46.7%, strength=high"
+    }
+   ],
+   "sources": [
+    "src:price_patterns"
+   ]
+  },
+  "volatilityContext": {
+   "status": "verified",
+   "summary": "Realized-only research context: 20d ann. vol 71.1%, 60d 59.9%, BBW 23.97%. No implied volatility exists for PSX (no listed options market data) — realized vol is NEVER implied vol.",
+   "metrics": [
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 71.14712782384062,
+     "asOf": "2021-12-20"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 59.902945754210734,
+     "asOf": "2021-12-20"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 23.970001303428475,
+     "asOf": "2021-12-20"
+    }
+   ],
+   "sources": [
+    "src:volatility_local",
+    "src:ohlcv_db"
+   ]
+  },
+  "marketContext": {
+   "status": "verified",
+   "summary": "17/25 pilot-25 symbols above their SMA30",
+   "metrics": [
+    {
+     "name": "universe_pct_above_ma30",
+     "value": 68,
+     "asOf": "2026-11-23"
+    },
+    {
+     "name": "universe_size",
+     "value": 909,
+     "asOf": "2026-11-23"
+    }
+   ],
+   "sources": [
+    "src:market_context",
+    "src:ohlcv_db"
+   ]
+  },
+  "dataQualityFlags": [
+   "fundamentals_unavailable",
+   "llm_analysis_current_only_no_historical_asof_use"
+  ],
+  "missingSources": [
+   "verified quarterly financial statements",
+   "company news"
+  ],
+  "historicalUseAllowed": false,
+  "sourceRefs": [
+   {
+    "id": "src:ohlcv_db",
+    "category": "ohlcv_db",
+    "publisher": "Latent.pk OhlcvBar (psxdata/pypsx ingest)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:technical_local",
+    "category": "technical_local",
+    "publisher": "golden-cross.ts + risk-levels.ts (deterministic, policy atr14-1.5-1-2-3)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:price_patterns",
+    "category": "price_patterns",
+    "publisher": "price-patterns.ts deterministic engine (PIT wrapper)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:volatility_local",
+    "category": "volatility_local",
+    "publisher": "realized-variance estimators (realized ONLY; no implied vol exists for PSX)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:financials_snapshot",
+    "category": "financials_snapshot",
+    "publisher": "data/financials quarterly snapshots (askanalyst results API)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": null,
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_company",
+    "category": "news_company",
+    "publisher": "AskAnalyst company news API",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_national",
+    "category": "news_national",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_international",
+    "category": "news_international",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:market_context",
+    "category": "market_context",
+    "publisher": "universe breadth (OhlcvBar + golden-cross.ts)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:43.446Z",
+    "pitSafeForHistorical": true
+   }
+  ]
+ },
+ "technical": {
+  "indicators": [
+   {
+    "name": "SMA 7",
+    "value": 6.152857142857143,
+    "window": 7,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "close above SMA7 — short-term uptrend"
+   },
+   {
+    "name": "SMA 30",
+    "value": 6.494333333333333,
+    "window": 30,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "close below SMA30 — medium-term weakness"
+   },
+   {
+    "name": "EMA 12",
+    "value": 6.212718352175662,
+    "window": 12,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "close below EMA12"
+   },
+   {
+    "name": "EMA 26",
+    "value": 6.419140906158532,
+    "window": 26,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "close below EMA26"
+   },
+   {
+    "name": "RSI (14)",
+    "value": 43.94904458598727,
+    "window": 15,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "neutral momentum band"
+   },
+   {
+    "name": "MACD (12,26,9)",
+    "value": -0.20642255398287013,
+    "window": 35,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "MACD above signal — bullish momentum"
+   },
+   {
+    "name": "MACD histogram",
+    "value": 0.08575453027296193,
+    "window": 35,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "MACD line minus signal line"
+   },
+   {
+    "name": "ATR (14)",
+    "value": 0.3835714285714286,
+    "window": 15,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "average true range ≈ 6.22% of price — used by the platform SL/TP policy (SL=1.5×ATR)"
+   },
+   {
+    "name": "Bollinger upper (20,2)",
+    "value": 6.866826872233862,
+    "window": 20,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "upper band = SMA20 + 2σ"
+   },
+   {
+    "name": "Bollinger lower (20,2)",
+    "value": 5.52117312776614,
+    "window": 20,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "lower band = SMA20 − 2σ"
+   },
+   {
+    "name": "Bollinger bandwidth %",
+    "value": 21.72511695944013,
+    "window": 20,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "(upper−lower)/mid — volatility width"
+   },
+   {
+    "name": "SMA 7 vs SMA 30",
+    "value": -0.3414761904761896,
+    "window": 30,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "SMA7 below SMA30 — dead-cross regime"
+   }
+  ],
+  "supports": [
+   10.495000000000001,
+   9.7,
+   9.476666666666668
+  ],
+  "resistances": [
+   6.16,
+   6.8,
+   7.33
+  ],
+  "volume": {
+   "name": "Volume vs 20d avg",
+   "value": 1.0736471575963675,
+   "window": 21,
+   "asOf": "2021-12-20",
+   "complete": true,
+   "interpretation": "volume near normal"
+  },
+  "trendStrength": {
+   "name": "Trend strength (EMA20 5-bar slope %)",
+   "value": 0.3414204319607189,
+   "window": 25,
+   "asOf": "2021-12-20",
+   "complete": true,
+   "interpretation": "mild uptrend"
+  },
+  "volatility": {
+   "name": "Realized volatility (20d daily σ)",
+   "value": 0.04430471542704772,
+   "window": 21,
+   "asOf": "2021-12-20",
+   "complete": true,
+   "interpretation": "high daily volatility"
+  },
+  "recentPriceAction": [
+   {
+    "date": "2021-12-07",
+    "open": 5.9,
+    "high": 6.1,
+    "low": 5.86,
+    "close": 6.06,
+    "volume": 9517000,
+    "chgPct": 3.7671232876712284
+   },
+   {
+    "date": "2021-12-08",
+    "open": 6.12,
+    "high": 6.16,
+    "low": 5.9,
+    "close": 5.92,
+    "volume": 8999000,
+    "chgPct": -2.3102310231023053
+   },
+   {
+    "date": "2021-12-09",
+    "open": 5.91,
+    "high": 5.99,
+    "low": 5.7,
+    "close": 5.82,
+    "volume": 8424000,
+    "chgPct": -1.689189189189183
+   },
+   {
+    "date": "2021-12-10",
+    "open": 5.84,
+    "high": 5.89,
+    "low": 5.62,
+    "close": 5.68,
+    "volume": 7190000,
+    "chgPct": -2.4054982817869512
+   },
+   {
+    "date": "2021-12-13",
+    "open": 5.66,
+    "high": 5.72,
+    "low": 5.56,
+    "close": 5.65,
+    "volume": 7301500,
+    "chgPct": -0.5281690140844958
+   },
+   {
+    "date": "2021-12-14",
+    "open": 5.65,
+    "high": 6.07,
+    "low": 5.57,
+    "close": 5.99,
+    "volume": 16139000,
+    "chgPct": 6.017699115044245
+   },
+   {
+    "date": "2021-12-15",
+    "open": 6.2,
+    "high": 6.82,
+    "low": 6.2,
+    "close": 6.75,
+    "volume": 34603000,
+    "chgPct": 12.687813021702835
+   },
+   {
+    "date": "2021-12-16",
+    "open": 6.7,
+    "high": 6.82,
+    "low": 6.35,
+    "close": 6.44,
+    "volume": 18967500,
+    "chgPct": -4.592592592592587
+   },
+   {
+    "date": "2021-12-17",
+    "open": 6.39,
+    "high": 6.45,
+    "low": 6.15,
+    "close": 6.39,
+    "volume": 11587000,
+    "chgPct": -0.7763975155279613
+   },
+   {
+    "date": "2021-12-20",
+    "open": 6.23,
+    "high": 6.35,
+    "low": 6.06,
+    "close": 6.17,
+    "volume": 13939000,
+    "chgPct": -3.442879499217524
+   }
+  ],
+  "asOf": "2021-12-20"
+ },
+ "monthlyPatterns": {
+  "months": [
+   {
+    "month": 1,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": 14.837626321968035,
+    "medianReturnPct": 21.08294930875576,
+    "stdevReturnPct": 10.882405842423168,
+    "positiveFreq": 0.8,
+    "avgVolRatio": 1.194645287159158,
+    "avgVolatilityPct": 7.23370707739242,
+    "sufficient": true
+   },
+   {
+    "month": 2,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": -9.745791229444402,
+    "medianReturnPct": -12.36842105263158,
+    "stdevReturnPct": 12.587185075290638,
+    "positiveFreq": 0.4,
+    "avgVolRatio": 1.087175297216967,
+    "avgVolatilityPct": 7.163321681868257,
+    "sufficient": true
+   },
+   {
+    "month": 3,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": -4.4199655974901635,
+    "medianReturnPct": -5.805687203791462,
+    "stdevReturnPct": 10.173015987320358,
+    "positiveFreq": 0.4,
+    "avgVolRatio": 1.3709637550785994,
+    "avgVolatilityPct": 10.371798841479595,
+    "sufficient": true
+   },
+   {
+    "month": 4,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": 1.8907217801645717,
+    "medianReturnPct": 2.3956194387405985,
+    "stdevReturnPct": 9.86650078901728,
+    "positiveFreq": 0.6,
+    "avgVolRatio": 0.7573103893578751,
+    "avgVolatilityPct": 9.384108873250845,
+    "sufficient": true
+   },
+   {
+    "month": 5,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": -1.7229956090290977,
+    "medianReturnPct": -7.1880650994575035,
+    "stdevReturnPct": 13.076409176191587,
+    "positiveFreq": 0.4,
+    "avgVolRatio": 1.134556191871647,
+    "avgVolatilityPct": 7.581707634137194,
+    "sufficient": true
+   },
+   {
+    "month": 6,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": -4.340151831145012,
+    "medianReturnPct": -5.196850393700789,
+    "stdevReturnPct": 4.399283610095901,
+    "positiveFreq": 0.2,
+    "avgVolRatio": 1.8282585612112139,
+    "avgVolatilityPct": 11.183416939951103,
+    "sufficient": true
+   },
+   {
+    "month": 7,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": 0.51519259139104,
+    "medianReturnPct": 6.6393442622950865,
+    "stdevReturnPct": 16.237533031683736,
+    "positiveFreq": 0.6,
+    "avgVolRatio": 0.8081771496123124,
+    "avgVolatilityPct": 9.233486328514916,
+    "sufficient": true
+   },
+   {
+    "month": 8,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": -2.7939943726751153,
+    "medianReturnPct": -5.816135084427777,
+    "stdevReturnPct": 11.074809011051602,
+    "positiveFreq": 0.4,
+    "avgVolRatio": 0.7083370285345824,
+    "avgVolatilityPct": 8.459487056708385,
+    "sufficient": true
+   },
+   {
+    "month": 9,
+    "samples": 5,
+    "firstYear": 2017,
+    "lastYear": 2021,
+    "avgReturnPct": -0.13776607035448052,
+    "medianReturnPct": 1.3203214695751828,
+    "stdevReturnPct": 16.51752751102343,
+    "positiveFreq": 0.6,
+    "avgVolRatio": 1.3311873969064647,
+    "avgVolatilityPct": 9.436772575771903,
+    "sufficient": true
+   },
+   {
+    "month": 10,
+    "samples": 5,
+    "firstYear": 2016,
+    "lastYear": 2021,
+    "avgReturnPct": 0.3008920209268968,
+    "medianReturnPct": -11.296660117878195,
+    "stdevReturnPct": 20.230423766811768,
+    "positiveFreq": 0.4,
+    "avgVolRatio": 0.5921248114083761,
+    "avgVolatilityPct": 8.421538530768547,
+    "sufficient": true
+   },
+   {
+    "month": 11,
+    "samples": 6,
+    "firstYear": 2016,
+    "lastYear": 2021,
+    "avgReturnPct": 2.018832825009456,
+    "medianReturnPct": 1.2448886152291705,
+    "stdevReturnPct": 14.940852181763601,
+    "positiveFreq": 0.5,
+    "avgVolRatio": 0.6738204117534013,
+    "avgVolatilityPct": 5.577206140772451,
+    "sufficient": true
+   },
+   {
+    "month": 12,
+    "samples": 6,
+    "firstYear": 2016,
+    "lastYear": 2021,
+    "avgReturnPct": -7.969693360791626,
+    "medianReturnPct": -7.739473036197978,
+    "stdevReturnPct": 3.8616085691646895,
+    "positiveFreq": 0,
+    "avgVolRatio": 0.7363688456466028,
+    "avgVolatilityPct": 6.631087389910362,
+    "sufficient": true
+   }
+  ],
+  "historyYears": 6,
+  "firstDate": "2016-10-21",
+  "lastDate": "2021-12-20",
+  "bestMonth": {
+   "month": 1,
+   "avgReturnPct": 14.837626321968035,
+   "samples": 5
+  },
+  "worstMonth": {
+   "month": 2,
+   "avgReturnPct": -9.745791229444402,
+   "samples": 5
+  },
+  "caveat": "Monthly statistics use 1281 bars over 6 years; a month needs at least 3 observed month-transitions before any average is shown. Whole-history daily σ ≈ 3.05%. Small samples and single-stock history make these OBSERVATIONS, not seasonality claims; no out-of-sample validation of calendar effects is implied."
+ },
+ "filings": {
+  "status": "UNAVAILABLE",
+  "count": 0,
+  "fetchedAt": null,
+  "items": [],
+  "note": "no filings snapshot for this symbol (source: askanalyst filings registry)"
+ },
+ "qualityFlags": [
+  "fundamentals_unavailable",
+  "llm_analysis_current_only_no_historical_asof_use",
+  "psx_announcements_unavailable"
+ ],
+ "packageId": "mmev_BYCO_2021-12-20_4d9138f8",
+ "contentHash": "4d9138f823466b5170e816ee54b870271557ba7112f6d837753fd42f9adaf184",
+ "content": {
+  "schemaVersion": "model_m_evidence_v1",
+  "symbol": "BYCO",
+  "dataCutoff": "2021-12-20",
+  "decisionTimestamp": "2026-11-23T22:56:44.090Z",
+  "evidence": {
+   "schemaVersion": "latent_psx_llm_evidence_v1",
+   "symbol": "BYCO",
+   "companyName": "BYCO",
+   "sector": "unknown",
+   "decisionTimestamp": "2026-11-23T22:56:43.446Z",
+   "dataCutoff": "2021-12-20",
+   "priceContext": {
+    "lastClose": 6.17,
+    "lastCloseDate": "2021-12-20",
+    "change5dPct": 9.20353982300884,
+    "change20dPct": -9.663250366032212,
+    "change60dPct": -18.386243386243383,
+    "seriesTail": [
+     {
+      "date": "2021-12-07",
+      "close": 6.06
+     },
+     {
+      "date": "2021-12-08",
+      "close": 5.92
+     },
+     {
+      "date": "2021-12-09",
+      "close": 5.82
+     },
+     {
+      "date": "2021-12-10",
+      "close": 5.68
+     },
+     {
+      "date": "2021-12-13",
+      "close": 5.65
+     },
+     {
+      "date": "2021-12-14",
+      "close": 5.99
+     },
+     {
+      "date": "2021-12-15",
+      "close": 6.75
+     },
+     {
+      "date": "2021-12-16",
+      "close": 6.44
+     },
+     {
+      "date": "2021-12-17",
+      "close": 6.39
+     },
+     {
+      "date": "2021-12-20",
+      "close": 6.17
+     }
+    ]
+   },
+   "fundamentalEvidence": {
+    "status": "unavailable",
+    "summary": "No verified quarterly financial-result snapshot for this symbol. Missing fundamentals are NOT evidence of stability.",
+    "metrics": [],
+    "sources": []
+   },
+   "financialPatternEvidence": {
+    "status": "insufficient_history",
+    "summary": "insufficient_history: 0 verified quarters available, 4 consecutive required",
+    "metrics": [],
+    "sources": []
+   },
+   "companyNewsEvidence": {
+    "status": "unavailable",
+    "summary": "No recent company news retrieved. No news found is NOT equivalent to positive news.",
+    "metrics": [
+     {
+      "name": "company_news_count",
+      "value": 0,
+      "asOf": "2026-11-23T22:56:43.446Z"
+     },
+     {
+      "name": "company_news_high_materiality",
+      "value": 0,
+      "asOf": "2026-11-23T22:56:43.446Z"
+     },
+     {
+      "name": "company_news_injection_flagged",
+      "value": 0,
+      "asOf": "2026-11-23T22:56:43.446Z",
+      "note": "untrusted text flagged; never executed"
+     }
+    ],
+    "sources": []
+   },
+   "nationalNewsEvidence": {
+    "status": "partially_verified",
+    "summary": "National snapshot (8 items, 7 high-materiality): [neutral] The State Bank of Pakistan's decision to raise the policy rate | [neutral] SBP Monetary Policy Oct 26: Sectors to Watch in Pakistan | [neutral] Economic Data",
+    "metrics": [
+     {
+      "name": "national_news_count",
+      "value": 8,
+      "asOf": "2026-11-23T22:56:43.446Z"
+     }
+    ],
+    "sources": [
+     "src:news_national"
+    ]
+   },
+   "internationalNewsEvidence": {
+    "status": "partially_verified",
+    "summary": "International snapshot (8 items, 1 high-materiality): [neutral] 2026 Market Outlook | J.P. Morgan Global Research | [neutral] Global risk appetite has helped emerging markets during | [bearish] Global Demand Shocks, Oil Futures, and Emerging",
+    "metrics": [
+     {
+      "name": "international_news_count",
+      "value": 8,
+      "asOf": "2026-11-23T22:56:43.446Z"
+     }
+    ],
+    "sources": [
+     "src:news_international"
+    ]
+   },
+   "technicalEvidence": {
+    "status": "verified",
+    "summary": "Local deterministic indicators (golden-cross.ts + risk-levels.ts policy): SMA7=6.15, SMA30=6.49, price below SMA30, ATR14=0.38, BBW(20,2)=23.97%, last cross=DEATH 26 sessions ago.",
+    "metrics": [
+     {
+      "name": "sma7",
+      "value": 6.152857142857143,
+      "asOf": "2021-12-20",
+      "note": "golden-cross.ts MA_FAST=7"
+     },
+     {
+      "name": "sma30",
+      "value": 6.494333333333333,
+      "asOf": "2021-12-20",
+      "note": "golden-cross.ts MA_SLOW=30"
+     },
+     {
+      "name": "atr14",
+      "value": 0.3835714285714286,
+      "asOf": "2021-12-20",
+      "note": "risk-levels.ts atr14-1.5-1-2-3 policy"
+     },
+     {
+      "name": "bbw_20_2_pct",
+      "value": 23.970001303428475,
+      "asOf": "2021-12-20",
+      "note": "20-session SMA, 2 stdev, width=(upper-lower)/mid"
+     },
+     {
+      "name": "realized_vol_20d_ann_pct",
+      "value": 71.14712782384062,
+      "asOf": "2021-12-20",
+      "note": "ln-return stdev x sqrt(252), annualized once"
+     },
+     {
+      "name": "realized_vol_60d_ann_pct",
+      "value": 59.902945754210734,
+      "asOf": "2021-12-20",
+      "note": "ln-return stdev x sqrt(252), annualized once"
+     },
+     {
+      "name": "change_5d_pct",
+      "value": 9.20353982300884,
+      "asOf": "2021-12-20"
+     },
+     {
+      "name": "change_20d_pct",
+      "value": -9.663250366032212,
+      "asOf": "2021-12-20"
+     },
+     {
+      "name": "change_60d_pct",
+      "value": -18.386243386243383,
+      "asOf": "2021-12-20"
+     }
+    ],
+    "sources": [
+     "src:ohlcv_db",
+     "src:technical_local"
+    ]
+   },
+   "pricePatternEvidence": {
+    "status": "verified",
+    "summary": "Deterministic pattern engine over 1281 bars (future excluded: 0): Gap-up openings and how often they get filled[confirmed historical]; Gap-down openings and how often they get filled[unconfirmed candidate]; Heavy-volume days with flat-to-rising price (buying pressure)[confirmed historical]; Heavy-volume days with flat-to-falling price (selling pressure)[confirmed historical]; Unusually heavy volume days[confirmed historical]; After a heavy-volume day[confirmed historical]",
+    "metrics": [
+     {
+      "name": "pattern:gap:confirmed_historical",
+      "value": 1.41,
+      "unit": "%",
+      "asOf": "2021-12-15",
+      "note": "occurrences=527, success_rate=75.1%, strength=high"
+     },
+     {
+      "name": "pattern:gap:unconfirmed_candidate",
+      "value": -1.39,
+      "unit": "%",
+      "asOf": "2021-12-20",
+      "note": "occurrences=214, success_rate=63.1%, strength=high"
+     },
+     {
+      "name": "pattern:pressure:confirmed_historical",
+      "value": 0.26,
+      "unit": "%",
+      "asOf": "2021-12-15",
+      "note": "occurrences=194, success_rate=45.3%, strength=high"
+     },
+     {
+      "name": "pattern:pressure:confirmed_historical",
+      "value": 0.31,
+      "unit": "%",
+      "asOf": "2021-12-16",
+      "note": "occurrences=112, success_rate=58.6%, strength=high"
+     },
+     {
+      "name": "pattern:volume_spike:confirmed_historical",
+      "value": 2.68,
+      "unit": "%",
+      "asOf": "2021-12-15",
+      "note": "occurrences=109, success_rate=76.1%, strength=high"
+     },
+     {
+      "name": "pattern:drift:confirmed_historical",
+      "value": -0.38,
+      "unit": "%",
+      "asOf": "2021-12-15",
+      "note": "occurrences=109, success_rate=43.5%, strength=high"
+     },
+     {
+      "name": "pattern:drift:confirmed_historical",
+      "value": 1.8,
+      "unit": "%",
+      "asOf": "2021-12-13",
+      "note": "occurrences=59, success_rate=52.5%, strength=high"
+     },
+     {
+      "name": "pattern:key_zone:confirmed_historical",
+      "value": 6.17,
+      "unit": "%",
+      "asOf": "2021-09-03",
+      "note": "occurrences=30, success_rate=46.7%, strength=high"
+     }
+    ],
+    "sources": [
+     "src:price_patterns"
+    ]
+   },
+   "volatilityContext": {
+    "status": "verified",
+    "summary": "Realized-only research context: 20d ann. vol 71.1%, 60d 59.9%, BBW 23.97%. No implied volatility exists for PSX (no listed options market data) — realized vol is NEVER implied vol.",
+    "metrics": [
+     {
+      "name": "realized_vol_20d_ann_pct",
+      "value": 71.14712782384062,
+      "asOf": "2021-12-20"
+     },
+     {
+      "name": "realized_vol_60d_ann_pct",
+      "value": 59.902945754210734,
+      "asOf": "2021-12-20"
+     },
+     {
+      "name": "bbw_20_2_pct",
+      "value": 23.970001303428475,
+      "asOf": "2021-12-20"
+     }
+    ],
+    "sources": [
+     "src:volatility_local",
+     "src:ohlcv_db"
+    ]
+   },
+   "marketContext": {
+    "status": "verified",
+    "summary": "17/25 pilot-25 symbols above their SMA30",
+    "metrics": [
+     {
+      "name": "universe_pct_above_ma30",
+      "value": 68,
+      "asOf": "2026-11-23"
+     },
+     {
+      "name": "universe_size",
+      "value": 909,
+      "asOf": "2026-11-23"
+     }
+    ],
+    "sources": [
+     "src:market_context",
+     "src:ohlcv_db"
+    ]
+   },
+   "dataQualityFlags": [
+    "fundamentals_unavailable",
+    "llm_analysis_current_only_no_historical_asof_use"
+   ],
+   "missingSources": [
+    "verified quarterly financial statements",
+    "company news"
+   ],
+   "historicalUseAllowed": false,
+   "sourceRefs": [
+    {
+     "id": "src:ohlcv_db",
+     "category": "ohlcv_db",
+     "publisher": "Latent.pk OhlcvBar (psxdata/pypsx ingest)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:technical_local",
+     "category": "technical_local",
+     "publisher": "golden-cross.ts + risk-levels.ts (deterministic, policy atr14-1.5-1-2-3)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:price_patterns",
+     "category": "price_patterns",
+     "publisher": "price-patterns.ts deterministic engine (PIT wrapper)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:volatility_local",
+     "category": "volatility_local",
+     "publisher": "realized-variance estimators (realized ONLY; no implied vol exists for PSX)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:financials_snapshot",
+     "category": "financials_snapshot",
+     "publisher": "data/financials quarterly snapshots (askanalyst results API)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": null,
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:news_company",
+     "category": "news_company",
+     "publisher": "AskAnalyst company news API",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:news_national",
+     "category": "news_national",
+     "publisher": "web search (via authorized z-ai SDK)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:news_international",
+     "category": "news_international",
+     "publisher": "web search (via authorized z-ai SDK)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:market_context",
+     "category": "market_context",
+     "publisher": "universe breadth (OhlcvBar + golden-cross.ts)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:43.446Z",
+     "pitSafeForHistorical": true
+    }
+   ]
+  },
+  "technical": {
+   "indicators": [
+    {
+     "name": "SMA 7",
+     "value": 6.152857142857143,
+     "window": 7,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "close above SMA7 — short-term uptrend"
+    },
+    {
+     "name": "SMA 30",
+     "value": 6.494333333333333,
+     "window": 30,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "close below SMA30 — medium-term weakness"
+    },
+    {
+     "name": "EMA 12",
+     "value": 6.212718352175662,
+     "window": 12,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "close below EMA12"
+    },
+    {
+     "name": "EMA 26",
+     "value": 6.419140906158532,
+     "window": 26,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "close below EMA26"
+    },
+    {
+     "name": "RSI (14)",
+     "value": 43.94904458598727,
+     "window": 15,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "neutral momentum band"
+    },
+    {
+     "name": "MACD (12,26,9)",
+     "value": -0.20642255398287013,
+     "window": 35,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "MACD above signal — bullish momentum"
+    },
+    {
+     "name": "MACD histogram",
+     "value": 0.08575453027296193,
+     "window": 35,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "MACD line minus signal line"
+    },
+    {
+     "name": "ATR (14)",
+     "value": 0.3835714285714286,
+     "window": 15,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "average true range ≈ 6.22% of price — used by the platform SL/TP policy (SL=1.5×ATR)"
+    },
+    {
+     "name": "Bollinger upper (20,2)",
+     "value": 6.866826872233862,
+     "window": 20,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "upper band = SMA20 + 2σ"
+    },
+    {
+     "name": "Bollinger lower (20,2)",
+     "value": 5.52117312776614,
+     "window": 20,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "lower band = SMA20 − 2σ"
+    },
+    {
+     "name": "Bollinger bandwidth %",
+     "value": 21.72511695944013,
+     "window": 20,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "(upper−lower)/mid — volatility width"
+    },
+    {
+     "name": "SMA 7 vs SMA 30",
+     "value": -0.3414761904761896,
+     "window": 30,
+     "asOf": "2021-12-20",
+     "complete": true,
+     "interpretation": "SMA7 below SMA30 — dead-cross regime"
+    }
+   ],
+   "supports": [
+    10.495000000000001,
+    9.7,
+    9.476666666666668
+   ],
+   "resistances": [
+    6.16,
+    6.8,
+    7.33
+   ],
+   "volume": {
+    "name": "Volume vs 20d avg",
+    "value": 1.0736471575963675,
+    "window": 21,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "volume near normal"
+   },
+   "trendStrength": {
+    "name": "Trend strength (EMA20 5-bar slope %)",
+    "value": 0.3414204319607189,
+    "window": 25,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "mild uptrend"
+   },
+   "volatility": {
+    "name": "Realized volatility (20d daily σ)",
+    "value": 0.04430471542704772,
+    "window": 21,
+    "asOf": "2021-12-20",
+    "complete": true,
+    "interpretation": "high daily volatility"
+   },
+   "recentPriceAction": [
+    {
+     "date": "2021-12-07",
+     "open": 5.9,
+     "high": 6.1,
+     "low": 5.86,
+     "close": 6.06,
+     "volume": 9517000,
+     "chgPct": 3.7671232876712284
+    },
+    {
+     "date": "2021-12-08",
+     "open": 6.12,
+     "high": 6.16,
+     "low": 5.9,
+     "close": 5.92,
+     "volume": 8999000,
+     "chgPct": -2.3102310231023053
+    },
+    {
+     "date": "2021-12-09",
+     "open": 5.91,
+     "high": 5.99,
+     "low": 5.7,
+     "close": 5.82,
+     "volume": 8424000,
+     "chgPct": -1.689189189189183
+    },
+    {
+     "date": "2021-12-10",
+     "open": 5.84,
+     "high": 5.89,
+     "low": 5.62,
+     "close": 5.68,
+     "volume": 7190000,
+     "chgPct": -2.4054982817869512
+    },
+    {
+     "date": "2021-12-13",
+     "open": 5.66,
+     "high": 5.72,
+     "low": 5.56,
+     "close": 5.65,
+     "volume": 7301500,
+     "chgPct": -0.5281690140844958
+    },
+    {
+     "date": "2021-12-14",
+     "open": 5.65,
+     "high": 6.07,
+     "low": 5.57,
+     "close": 5.99,
+     "volume": 16139000,
+     "chgPct": 6.017699115044245
+    },
+    {
+     "date": "2021-12-15",
+     "open": 6.2,
+     "high": 6.82,
+     "low": 6.2,
+     "close": 6.75,
+     "volume": 34603000,
+     "chgPct": 12.687813021702835
+    },
+    {
+     "date": "2021-12-16",
+     "open": 6.7,
+     "high": 6.82,
+     "low": 6.35,
+     "close": 6.44,
+     "volume": 18967500,
+     "chgPct": -4.592592592592587
+    },
+    {
+     "date": "2021-12-17",
+     "open": 6.39,
+     "high": 6.45,
+     "low": 6.15,
+     "close": 6.39,
+     "volume": 11587000,
+     "chgPct": -0.7763975155279613
+    },
+    {
+     "date": "2021-12-20",
+     "open": 6.23,
+     "high": 6.35,
+     "low": 6.06,
+     "close": 6.17,
+     "volume": 13939000,
+     "chgPct": -3.442879499217524
+    }
+   ],
+   "asOf": "2021-12-20"
+  },
+  "monthlyPatterns": {
+   "months": [
+    {
+     "month": 1,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": 14.837626321968035,
+     "medianReturnPct": 21.08294930875576,
+     "stdevReturnPct": 10.882405842423168,
+     "positiveFreq": 0.8,
+     "avgVolRatio": 1.194645287159158,
+     "avgVolatilityPct": 7.23370707739242,
+     "sufficient": true
+    },
+    {
+     "month": 2,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": -9.745791229444402,
+     "medianReturnPct": -12.36842105263158,
+     "stdevReturnPct": 12.587185075290638,
+     "positiveFreq": 0.4,
+     "avgVolRatio": 1.087175297216967,
+     "avgVolatilityPct": 7.163321681868257,
+     "sufficient": true
+    },
+    {
+     "month": 3,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": -4.4199655974901635,
+     "medianReturnPct": -5.805687203791462,
+     "stdevReturnPct": 10.173015987320358,
+     "positiveFreq": 0.4,
+     "avgVolRatio": 1.3709637550785994,
+     "avgVolatilityPct": 10.371798841479595,
+     "sufficient": true
+    },
+    {
+     "month": 4,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": 1.8907217801645717,
+     "medianReturnPct": 2.3956194387405985,
+     "stdevReturnPct": 9.86650078901728,
+     "positiveFreq": 0.6,
+     "avgVolRatio": 0.7573103893578751,
+     "avgVolatilityPct": 9.384108873250845,
+     "sufficient": true
+    },
+    {
+     "month": 5,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": -1.7229956090290977,
+     "medianReturnPct": -7.1880650994575035,
+     "stdevReturnPct": 13.076409176191587,
+     "positiveFreq": 0.4,
+     "avgVolRatio": 1.134556191871647,
+     "avgVolatilityPct": 7.581707634137194,
+     "sufficient": true
+    },
+    {
+     "month": 6,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": -4.340151831145012,
+     "medianReturnPct": -5.196850393700789,
+     "stdevReturnPct": 4.399283610095901,
+     "positiveFreq": 0.2,
+     "avgVolRatio": 1.8282585612112139,
+     "avgVolatilityPct": 11.183416939951103,
+     "sufficient": true
+    },
+    {
+     "month": 7,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": 0.51519259139104,
+     "medianReturnPct": 6.6393442622950865,
+     "stdevReturnPct": 16.237533031683736,
+     "positiveFreq": 0.6,
+     "avgVolRatio": 0.8081771496123124,
+     "avgVolatilityPct": 9.233486328514916,
+     "sufficient": true
+    },
+    {
+     "month": 8,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": -2.7939943726751153,
+     "medianReturnPct": -5.816135084427777,
+     "stdevReturnPct": 11.074809011051602,
+     "positiveFreq": 0.4,
+     "avgVolRatio": 0.7083370285345824,
+     "avgVolatilityPct": 8.459487056708385,
+     "sufficient": true
+    },
+    {
+     "month": 9,
+     "samples": 5,
+     "firstYear": 2017,
+     "lastYear": 2021,
+     "avgReturnPct": -0.13776607035448052,
+     "medianReturnPct": 1.3203214695751828,
+     "stdevReturnPct": 16.51752751102343,
+     "positiveFreq": 0.6,
+     "avgVolRatio": 1.3311873969064647,
+     "avgVolatilityPct": 9.436772575771903,
+     "sufficient": true
+    },
+    {
+     "month": 10,
+     "samples": 5,
+     "firstYear": 2016,
+     "lastYear": 2021,
+     "avgReturnPct": 0.3008920209268968,
+     "medianReturnPct": -11.296660117878195,
+     "stdevReturnPct": 20.230423766811768,
+     "positiveFreq": 0.4,
+     "avgVolRatio": 0.5921248114083761,
+     "avgVolatilityPct": 8.421538530768547,
+     "sufficient": true
+    },
+    {
+     "month": 11,
+     "samples": 6,
+     "firstYear": 2016,
+     "lastYear": 2021,
+     "avgReturnPct": 2.018832825009456,
+     "medianReturnPct": 1.2448886152291705,
+     "stdevReturnPct": 14.940852181763601,
+     "positiveFreq": 0.5,
+     "avgVolRatio": 0.6738204117534013,
+     "avgVolatilityPct": 5.577206140772451,
+     "sufficient": true
+    },
+    {
+     "month": 12,
+     "samples": 6,
+     "firstYear": 2016,
+     "lastYear": 2021,
+     "avgReturnPct": -7.969693360791626,
+     "medianReturnPct": -7.739473036197978,
+     "stdevReturnPct": 3.8616085691646895,
+     "positiveFreq": 0,
+     "avgVolRatio": 0.7363688456466028,
+     "avgVolatilityPct": 6.631087389910362,
+     "sufficient": true
+    }
+   ],
+   "historyYears": 6,
+   "firstDate": "2016-10-21",
+   "lastDate": "2021-12-20",
+   "bestMonth": {
+    "month": 1,
+    "avgReturnPct": 14.837626321968035,
+    "samples": 5
+   },
+   "worstMonth": {
+    "month": 2,
+    "avgReturnPct": -9.745791229444402,
+    "samples": 5
+   },
+   "caveat": "Monthly statistics use 1281 bars over 6 years; a month needs at least 3 observed month-transitions before any average is shown. Whole-history daily σ ≈ 3.05%. Small samples and single-stock history make these OBSERVATIONS, not seasonality claims; no out-of-sample validation of calendar effects is implied."
+  },
+  "filings": {
+   "status": "UNAVAILABLE",
+   "count": 0,
+   "fetchedAt": null,
+   "items": [],
+   "note": "no filings snapshot for this symbol (source: askanalyst filings registry)"
+  },
+  "qualityFlags": [
+   "fundamentals_unavailable",
+   "llm_analysis_current_only_no_historical_asof_use",
+   "psx_announcements_unavailable"
+  ]
+ }
+}

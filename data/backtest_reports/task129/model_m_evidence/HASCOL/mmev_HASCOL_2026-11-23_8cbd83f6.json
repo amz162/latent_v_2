@@ -1,0 +1,1856 @@
+{
+ "schemaVersion": "model_m_evidence_v1",
+ "symbol": "HASCOL",
+ "dataCutoff": "2026-11-23",
+ "decisionTimestamp": "2026-11-23T22:56:39.878Z",
+ "evidence": {
+  "schemaVersion": "latent_psx_llm_evidence_v1",
+  "symbol": "HASCOL",
+  "companyName": "HASCOL",
+  "sector": "unknown",
+  "decisionTimestamp": "2026-11-23T22:56:39.590Z",
+  "dataCutoff": "2026-11-23",
+  "priceContext": {
+   "lastClose": 16.92,
+   "lastCloseDate": "2026-11-23",
+   "change5dPct": -1.9130434782608599,
+   "change20dPct": -0.8206330597889626,
+   "change60dPct": -19.19770773638968,
+   "seriesTail": [
+    {
+     "date": "2026-11-10",
+     "close": 17.16
+    },
+    {
+     "date": "2026-11-11",
+     "close": 17.31
+    },
+    {
+     "date": "2026-11-12",
+     "close": 17.55
+    },
+    {
+     "date": "2026-11-13",
+     "close": 17.34
+    },
+    {
+     "date": "2026-11-16",
+     "close": 17.25
+    },
+    {
+     "date": "2026-11-17",
+     "close": 17.04
+    },
+    {
+     "date": "2026-11-18",
+     "close": 16.85
+    },
+    {
+     "date": "2026-11-19",
+     "close": 16.77
+    },
+    {
+     "date": "2026-11-20",
+     "close": 16.81
+    },
+    {
+     "date": "2026-11-23",
+     "close": 16.92
+    }
+   ]
+  },
+  "fundamentalEvidence": {
+   "status": "partially_verified",
+   "summary": "Latest verified quarter Q4 FY26 (period end 2026-06-30): revenue 53,522, PAT -3,564, EPS -3.56, net margin -6.7%. Filing publication timestamps are NOT point-in-time verified (Task 102/111) — usable for CURRENT research only, disabled for historical as-of backtesting.",
+   "metrics": [
+    {
+     "name": "revenue_latest",
+     "value": 53522,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "profit_after_tax_latest",
+     "value": -3564,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "eps_latest",
+     "value": -3.56,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "revenue_yoy_pct",
+     "value": 16.3,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "gross_margin_pct",
+     "value": -3.5,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "net_margin_pct",
+     "value": -6.7,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "dividend_per_share_latest",
+     "value": 0,
+     "asOf": "2026-06-30"
+    },
+    {
+     "name": "quarters_available",
+     "value": 58,
+     "asOf": "2026-11-23",
+     "note": "verified snapshot quarters"
+    },
+    {
+     "name": "sequential_revenue_change_pct",
+     "value": 10.30460409711059,
+     "asOf": "2026-06-30"
+    }
+   ],
+   "sources": [
+    "src:financials_snapshot"
+   ]
+  },
+  "financialPatternEvidence": {
+   "status": "partially_verified",
+   "summary": "4 deterministic pattern(s): revenue_trend(improving); revenue_growth_decelerating(deteriorating); net_margin_trend(deteriorating); earnings_stability(mixed)",
+   "metrics": [
+    {
+     "name": "fp:revenue_trend",
+     "value": 0.0639651928645145,
+     "asOf": "2026-06-30",
+     "note": "direction=improving, n=58"
+    },
+    {
+     "name": "fp:revenue_growth_decelerating",
+     "value": 0.06134262322686388,
+     "asOf": "2026-06-30",
+     "note": "direction=deteriorating, n=58"
+    },
+    {
+     "name": "fp:net_margin_trend",
+     "value": 0.1395552000984343,
+     "asOf": "2026-06-30",
+     "note": "direction=deteriorating, n=58"
+    },
+    {
+     "name": "fp:earnings_stability",
+     "value": 0,
+     "asOf": "2026-06-30",
+     "note": "direction=mixed, n=58"
+    }
+   ],
+   "sources": [
+    "src:financials_snapshot"
+   ]
+  },
+  "companyNewsEvidence": {
+   "status": "unavailable",
+   "summary": "No recent company news retrieved. No news found is NOT equivalent to positive news.",
+   "metrics": [
+    {
+     "name": "company_news_count",
+     "value": 0,
+     "asOf": "2026-11-23T22:56:39.590Z"
+    },
+    {
+     "name": "company_news_high_materiality",
+     "value": 0,
+     "asOf": "2026-11-23T22:56:39.590Z"
+    },
+    {
+     "name": "company_news_injection_flagged",
+     "value": 0,
+     "asOf": "2026-11-23T22:56:39.590Z",
+     "note": "untrusted text flagged; never executed"
+    }
+   ],
+   "sources": []
+  },
+  "nationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "National snapshot (8 items, 7 high-materiality): [neutral] The State Bank of Pakistan's decision to raise the policy rate | [neutral] SBP Monetary Policy Oct 26: Sectors to Watch in Pakistan | [neutral] Economic Data",
+   "metrics": [
+    {
+     "name": "national_news_count",
+     "value": 8,
+     "asOf": "2026-11-23T22:56:39.590Z"
+    }
+   ],
+   "sources": [
+    "src:news_national"
+   ]
+  },
+  "internationalNewsEvidence": {
+   "status": "partially_verified",
+   "summary": "International snapshot (8 items, 1 high-materiality): [neutral] 2026 Market Outlook | J.P. Morgan Global Research | [neutral] Global risk appetite has helped emerging markets during | [bearish] Global Demand Shocks, Oil Futures, and Emerging",
+   "metrics": [
+    {
+     "name": "international_news_count",
+     "value": 8,
+     "asOf": "2026-11-23T22:56:39.590Z"
+    }
+   ],
+   "sources": [
+    "src:news_international"
+   ]
+  },
+  "technicalEvidence": {
+   "status": "verified",
+   "summary": "Local deterministic indicators (golden-cross.ts + risk-levels.ts policy): SMA7=17.00, SMA30=17.07, price below SMA30, ATR14=0.63, BBW(20,2)=13.26%, last cross=DEATH 1 sessions ago.",
+   "metrics": [
+    {
+     "name": "sma7",
+     "value": 16.997142857142858,
+     "asOf": "2026-11-23",
+     "note": "golden-cross.ts MA_FAST=7"
+    },
+    {
+     "name": "sma30",
+     "value": 17.071666666666665,
+     "asOf": "2026-11-23",
+     "note": "golden-cross.ts MA_SLOW=30"
+    },
+    {
+     "name": "atr14",
+     "value": 0.6328571428571433,
+     "asOf": "2026-11-23",
+     "note": "risk-levels.ts atr14-1.5-1-2-3 policy"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 13.263381267829095,
+     "asOf": "2026-11-23",
+     "note": "20-session SMA, 2 stdev, width=(upper-lower)/mid"
+    },
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 43.22166198967995,
+     "asOf": "2026-11-23",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 34.22794614360958,
+     "asOf": "2026-11-23",
+     "note": "ln-return stdev x sqrt(252), annualized once"
+    },
+    {
+     "name": "change_5d_pct",
+     "value": -1.9130434782608599,
+     "asOf": "2026-11-23"
+    },
+    {
+     "name": "change_20d_pct",
+     "value": -0.8206330597889626,
+     "asOf": "2026-11-23"
+    },
+    {
+     "name": "change_60d_pct",
+     "value": -19.19770773638968,
+     "asOf": "2026-11-23"
+    }
+   ],
+   "sources": [
+    "src:ohlcv_db",
+    "src:technical_local"
+   ]
+  },
+  "pricePatternEvidence": {
+   "status": "verified",
+   "summary": "Deterministic pattern engine over 2498 bars (future excluded: 0): Gap-up openings and how often they get filled[unconfirmed candidate]; Gap-down openings and how often they get filled[confirmed historical]; Heavy-volume days with flat-to-rising price (buying pressure)[confirmed historical]; Unusually heavy volume days[confirmed historical]; After a heavy-volume day[confirmed historical]; Heavy-volume days with flat-to-falling price (selling pressure)[confirmed historical]",
+   "metrics": [
+    {
+     "name": "pattern:gap:unconfirmed_candidate",
+     "value": 1.69,
+     "unit": "%",
+     "asOf": "2026-11-23",
+     "note": "occurrences=1148, success_rate=73.5%, strength=high"
+    },
+    {
+     "name": "pattern:gap:confirmed_historical",
+     "value": -2.04,
+     "unit": "%",
+     "asOf": "2026-11-06",
+     "note": "occurrences=448, success_rate=59.8%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:confirmed_historical",
+     "value": 0.89,
+     "unit": "%",
+     "asOf": "2026-11-12",
+     "note": "occurrences=397, success_rate=42.3%, strength=high"
+    },
+    {
+     "name": "pattern:volume_spike:confirmed_historical",
+     "value": 3.14,
+     "unit": "%",
+     "asOf": "2026-11-12",
+     "note": "occurrences=213, success_rate=77.5%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": 0.41,
+     "unit": "%",
+     "asOf": "2026-11-12",
+     "note": "occurrences=213, success_rate=39%, strength=high"
+    },
+    {
+     "name": "pattern:pressure:confirmed_historical",
+     "value": -0.13,
+     "unit": "%",
+     "asOf": "2026-11-06",
+     "note": "occurrences=209, success_rate=57.9%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": -1.8,
+     "unit": "%",
+     "asOf": "2022-07-21",
+     "note": "occurrences=138, success_rate=38.4%, strength=high"
+    },
+    {
+     "name": "pattern:drift:confirmed_historical",
+     "value": 3,
+     "unit": "%",
+     "asOf": "2026-01-21",
+     "note": "occurrences=24, success_rate=50%, strength=high"
+    }
+   ],
+   "sources": [
+    "src:price_patterns"
+   ]
+  },
+  "volatilityContext": {
+   "status": "verified",
+   "summary": "Realized-only research context: 20d ann. vol 43.2%, 60d 34.2%, BBW 13.26%. No implied volatility exists for PSX (no listed options market data) — realized vol is NEVER implied vol.",
+   "metrics": [
+    {
+     "name": "realized_vol_20d_ann_pct",
+     "value": 43.22166198967995,
+     "asOf": "2026-11-23"
+    },
+    {
+     "name": "realized_vol_60d_ann_pct",
+     "value": 34.22794614360958,
+     "asOf": "2026-11-23"
+    },
+    {
+     "name": "bbw_20_2_pct",
+     "value": 13.263381267829095,
+     "asOf": "2026-11-23"
+    }
+   ],
+   "sources": [
+    "src:volatility_local",
+    "src:ohlcv_db"
+   ]
+  },
+  "marketContext": {
+   "status": "verified",
+   "summary": "17/25 pilot-25 symbols above their SMA30",
+   "metrics": [
+    {
+     "name": "universe_pct_above_ma30",
+     "value": 68,
+     "asOf": "2026-11-23"
+    },
+    {
+     "name": "universe_size",
+     "value": 909,
+     "asOf": "2026-11-23"
+    }
+   ],
+   "sources": [
+    "src:market_context",
+    "src:ohlcv_db"
+   ]
+  },
+  "dataQualityFlags": [
+   "financial_publication_timestamps_not_pit_verified",
+   "llm_analysis_current_only_no_historical_asof_use"
+  ],
+  "missingSources": [
+   "company news"
+  ],
+  "historicalUseAllowed": false,
+  "sourceRefs": [
+   {
+    "id": "src:ohlcv_db",
+    "category": "ohlcv_db",
+    "publisher": "Latent.pk OhlcvBar (psxdata/pypsx ingest)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:technical_local",
+    "category": "technical_local",
+    "publisher": "golden-cross.ts + risk-levels.ts (deterministic, policy atr14-1.5-1-2-3)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:price_patterns",
+    "category": "price_patterns",
+    "publisher": "price-patterns.ts deterministic engine (PIT wrapper)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:volatility_local",
+    "category": "volatility_local",
+    "publisher": "realized-variance estimators (realized ONLY; no implied vol exists for PSX)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": true
+   },
+   {
+    "id": "src:financials_snapshot",
+    "category": "financials_snapshot",
+    "publisher": "data/financials quarterly snapshots (askanalyst results API)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_company",
+    "category": "news_company",
+    "publisher": "AskAnalyst company news API",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_national",
+    "category": "news_national",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:news_international",
+    "category": "news_international",
+    "publisher": "web search (via authorized z-ai SDK)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": false
+   },
+   {
+    "id": "src:market_context",
+    "category": "market_context",
+    "publisher": "universe breadth (OhlcvBar + golden-cross.ts)",
+    "url": null,
+    "publishedAt": null,
+    "retrievedAt": "2026-11-23T22:56:39.590Z",
+    "pitSafeForHistorical": true
+   }
+  ]
+ },
+ "technical": {
+  "indicators": [
+   {
+    "name": "SMA 7",
+    "value": 16.997142857142858,
+    "window": 7,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "close below SMA7 — short-term weakness"
+   },
+   {
+    "name": "SMA 30",
+    "value": 17.071666666666665,
+    "window": 30,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "close below SMA30 — medium-term weakness"
+   },
+   {
+    "name": "EMA 12",
+    "value": 16.95149645137802,
+    "window": 12,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "close below EMA12"
+   },
+   {
+    "name": "EMA 26",
+    "value": 17.200971038975776,
+    "window": 26,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "close below EMA26"
+   },
+   {
+    "name": "RSI (14)",
+    "value": 63.49614395886892,
+    "window": 15,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "neutral momentum band"
+   },
+   {
+    "name": "MACD (12,26,9)",
+    "value": -0.24947458759775643,
+    "window": 35,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "MACD above signal — bullish momentum"
+   },
+   {
+    "name": "MACD histogram",
+    "value": 0.09478720766985294,
+    "window": 35,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "MACD line minus signal line"
+   },
+   {
+    "name": "ATR (14)",
+    "value": 0.6328571428571433,
+    "window": 15,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "average true range ≈ 3.74% of price — used by the platform SL/TP policy (SL=1.5×ATR)"
+   },
+   {
+    "name": "Bollinger upper (20,2)",
+    "value": 17.82482124793301,
+    "window": 20,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "upper band = SMA20 + 2σ"
+   },
+   {
+    "name": "Bollinger lower (20,2)",
+    "value": 15.671178752066993,
+    "window": 20,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "lower band = SMA20 − 2σ"
+   },
+   {
+    "name": "Bollinger bandwidth %",
+    "value": 12.859102554729018,
+    "window": 20,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "(upper−lower)/mid — volatility width"
+   },
+   {
+    "name": "SMA 7 vs SMA 30",
+    "value": -0.07452380952380722,
+    "window": 30,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "SMA7 below SMA30 — dead-cross regime"
+   }
+  ],
+  "supports": [
+   21.84,
+   21.35,
+   20.42
+  ],
+  "resistances": [
+   16.74,
+   17.8,
+   18.25
+  ],
+  "volume": {
+   "name": "Volume vs 20d avg",
+   "value": 0.6065141135680219,
+   "window": 21,
+   "asOf": "2026-11-23",
+   "complete": true,
+   "interpretation": "volume near normal"
+  },
+  "trendStrength": {
+   "name": "Trend strength (EMA20 5-bar slope %)",
+   "value": -0.7007861086473957,
+   "window": 25,
+   "asOf": "2026-11-23",
+   "complete": true,
+   "interpretation": "mild downtrend"
+  },
+  "volatility": {
+   "name": "Realized volatility (20d daily σ)",
+   "value": 0.026486907755143948,
+   "window": 21,
+   "asOf": "2026-11-23",
+   "complete": true,
+   "interpretation": "moderate daily volatility"
+  },
+  "recentPriceAction": [
+   {
+    "date": "2026-11-10",
+    "open": 16.82,
+    "high": 17.42,
+    "low": 16.82,
+    "close": 17.16,
+    "volume": 6058559,
+    "chgPct": 2.8160575194727313
+   },
+   {
+    "date": "2026-11-11",
+    "open": 17.22,
+    "high": 17.75,
+    "low": 17.06,
+    "close": 17.31,
+    "volume": 4921025,
+    "chgPct": 0.8741258741258658
+   },
+   {
+    "date": "2026-11-12",
+    "open": 17.4,
+    "high": 18.35,
+    "low": 17.25,
+    "close": 17.55,
+    "volume": 22959535,
+    "chgPct": 1.3864818024263548
+   },
+   {
+    "date": "2026-11-13",
+    "open": 17.7,
+    "high": 17.78,
+    "low": 17.3,
+    "close": 17.34,
+    "volume": 3932424,
+    "chgPct": -1.1965811965812014
+   },
+   {
+    "date": "2026-11-16",
+    "open": 17.45,
+    "high": 17.59,
+    "low": 17.2,
+    "close": 17.25,
+    "volume": 2425095,
+    "chgPct": -0.5190311418685113
+   },
+   {
+    "date": "2026-11-17",
+    "open": 17.3,
+    "high": 17.43,
+    "low": 16.91,
+    "close": 17.04,
+    "volume": 2069542,
+    "chgPct": -1.217391304347831
+   },
+   {
+    "date": "2026-11-18",
+    "open": 17.2,
+    "high": 17.2,
+    "low": 16.7,
+    "close": 16.85,
+    "volume": 2966878,
+    "chgPct": -1.1150234741783904
+   },
+   {
+    "date": "2026-11-19",
+    "open": 16.95,
+    "high": 17.11,
+    "low": 16.7,
+    "close": 16.77,
+    "volume": 1810095,
+    "chgPct": -0.4747774480712275
+   },
+   {
+    "date": "2026-11-20",
+    "open": 16.75,
+    "high": 16.94,
+    "low": 16.75,
+    "close": 16.81,
+    "volume": 2252040,
+    "chgPct": 0.2385211687537218
+   },
+   {
+    "date": "2026-11-23",
+    "open": 16.94,
+    "high": 17.39,
+    "low": 16.81,
+    "close": 16.92,
+    "volume": 3002875,
+    "chgPct": 0.6543723973825282
+   }
+  ],
+  "asOf": "2026-11-23"
+ },
+ "monthlyPatterns": {
+  "months": [
+   {
+    "month": 1,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": 8.636601519123834,
+    "medianReturnPct": 3.7196398144959684,
+    "stdevReturnPct": 21.633241165187314,
+    "positiveFreq": 0.6,
+    "avgVolRatio": 1.2484829725439912,
+    "avgVolatilityPct": 10.354171709968844,
+    "sufficient": true
+   },
+   {
+    "month": 2,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": -13.529355008207627,
+    "medianReturnPct": -11.78596187175043,
+    "stdevReturnPct": 11.309888248789226,
+    "positiveFreq": 0.1,
+    "avgVolRatio": 0.800921773492022,
+    "avgVolatilityPct": 13.15064982341407,
+    "sufficient": true
+   },
+   {
+    "month": 3,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": -6.511823620770421,
+    "medianReturnPct": -4.703672426486511,
+    "stdevReturnPct": 13.020051508412028,
+    "positiveFreq": 0.2,
+    "avgVolRatio": 0.7218407613007649,
+    "avgVolatilityPct": 9.573792334912913,
+    "sufficient": true
+   },
+   {
+    "month": 4,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": 2.5823488579338956,
+    "medianReturnPct": -0.06336567925109704,
+    "stdevReturnPct": 21.505172674082342,
+    "positiveFreq": 0.5,
+    "avgVolRatio": 0.806201530520999,
+    "avgVolatilityPct": 12.148815907481621,
+    "sufficient": true
+   },
+   {
+    "month": 5,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": -0.6817664363169594,
+    "medianReturnPct": -1.7021936502565826,
+    "stdevReturnPct": 12.733701459713522,
+    "positiveFreq": 0.4,
+    "avgVolRatio": 0.9610736095727409,
+    "avgVolatilityPct": 14.06068828244487,
+    "sufficient": true
+   },
+   {
+    "month": 6,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": -5.408905241399539,
+    "medianReturnPct": -8.258772016072472,
+    "stdevReturnPct": 10.660504899122607,
+    "positiveFreq": 0.2,
+    "avgVolRatio": 0.7623495957305446,
+    "avgVolatilityPct": 14.072205028477741,
+    "sufficient": true
+   },
+   {
+    "month": 7,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": -6.751991202894459,
+    "medianReturnPct": -1.4407974896590172,
+    "stdevReturnPct": 13.888601797242295,
+    "positiveFreq": 0.3,
+    "avgVolRatio": 0.7564758798707231,
+    "avgVolatilityPct": 12.22893554277595,
+    "sufficient": true
+   },
+   {
+    "month": 8,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": 10.121965074871715,
+    "medianReturnPct": 3.192283127400092,
+    "stdevReturnPct": 27.54203147392128,
+    "positiveFreq": 0.6,
+    "avgVolRatio": 1.0611966193169562,
+    "avgVolatilityPct": 11.997271755984972,
+    "sufficient": true
+   },
+   {
+    "month": 9,
+    "samples": 10,
+    "firstYear": 2017,
+    "lastYear": 2026,
+    "avgReturnPct": -6.018706411496095,
+    "medianReturnPct": -7.819755490442302,
+    "stdevReturnPct": 18.697101688671843,
+    "positiveFreq": 0.2,
+    "avgVolRatio": 1.1826658701414823,
+    "avgVolatilityPct": 10.788525486778914,
+    "sufficient": true
+   },
+   {
+    "month": 10,
+    "samples": 10,
+    "firstYear": 2016,
+    "lastYear": 2026,
+    "avgReturnPct": 2.412949816242402,
+    "medianReturnPct": -1.990138929717772,
+    "stdevReturnPct": 26.819488814785984,
+    "positiveFreq": 0.4,
+    "avgVolRatio": 1.101479323787761,
+    "avgVolatilityPct": 12.26945331546793,
+    "sufficient": true
+   },
+   {
+    "month": 11,
+    "samples": 11,
+    "firstYear": 2016,
+    "lastYear": 2026,
+    "avgReturnPct": 10.24551856748879,
+    "medianReturnPct": 5.171455786632799,
+    "stdevReturnPct": 32.463976556404475,
+    "positiveFreq": 0.6363636363636364,
+    "avgVolRatio": 1.2168117146880213,
+    "avgVolatilityPct": 10.67563701924836,
+    "sufficient": true
+   },
+   {
+    "month": 12,
+    "samples": 10,
+    "firstYear": 2016,
+    "lastYear": 2025,
+    "avgReturnPct": 0.4354875831090599,
+    "medianReturnPct": 0.05678374020843846,
+    "stdevReturnPct": 19.89676378140584,
+    "positiveFreq": 0.5,
+    "avgVolRatio": 1.3028739644969975,
+    "avgVolatilityPct": 10.697036952217909,
+    "sufficient": true
+   }
+  ],
+  "historyYears": 11,
+  "firstDate": "2016-10-21",
+  "lastDate": "2026-11-23",
+  "bestMonth": {
+   "month": 11,
+   "avgReturnPct": 10.24551856748879,
+   "samples": 11
+  },
+  "worstMonth": {
+   "month": 2,
+   "avgReturnPct": -13.529355008207627,
+   "samples": 10
+  },
+  "caveat": "Monthly statistics use 2498 bars over 11 years; a month needs at least 3 observed month-transitions before any average is shown. Whole-history daily σ ≈ 3.71%. Small samples and single-stock history make these OBSERVATIONS, not seasonality claims; no out-of-sample validation of calendar effects is implied."
+ },
+ "filings": {
+  "status": "VERIFIED",
+  "count": 116,
+  "fetchedAt": "2026-10-31T21:41:35.447855+00:00",
+  "items": [
+   {
+    "date": "2026-10-28",
+    "description": "Period Ended |Date 2026-10-28|Time 02:30|Place Karachi|Interim Dividend |Interim Dividend Percent |Interim Dividend Already |Interim Bonus Proportion |Interim Bonus Percent |Interim Bonus Issued Already PCT |Right Shares Percent |Right Discount Per Share |Proportion Shares N |Proportion Shares D |Entitlement Paid Date |Close Form |Close To |Address |Transfer Received Date |Other Entitlement Or Cor",
+    "pdf": "https://dps.psx.com.pk/download/document/287431"
+   },
+   {
+    "date": "2026-09-21",
+    "description": "Material Info Please see attached letter.",
+    "pdf": "https://dps.psx.com.pk/download/document/283111"
+   },
+   {
+    "date": "2026-09-18",
+    "description": "Subject Submission of Mandatory Shariah Disclosures|Miscellaneous Info Please see attached letter.",
+    "pdf": "https://dps.psx.com.pk/download/document/282974"
+   },
+   {
+    "date": "2026-09-09",
+    "description": "Subject Election of Directors|Miscellaneous Info Please see attached letter.",
+    "pdf": "https://dps.psx.com.pk/download/document/282422"
+   },
+   {
+    "date": "2026-08-31",
+    "description": "Subject Notice Under Section 159(4) of the Companies Act, 2017 - Election of Directors|Miscellaneous Info Please see attached letter.",
+    "pdf": "https://dps.psx.com.pk/download/document/281986"
+   },
+   {
+    "date": "2026-08-25",
+    "description": "Period Ended |Date 2026-08-25|Time 02:00|Place Karachi|Interim Dividend |Interim Dividend Percent |Interim Dividend Already |Interim Bonus Proportion |Interim Bonus Percent |Interim Bonus Issued Already PCT |Right Shares Percent |Right Discount Per Share |Proportion Shares N |Proportion Shares D |Entitlement Paid Date |Close Form |Close To |Address |Transfer Received Date |Other Entitlement Or Cor",
+    "pdf": "https://dps.psx.com.pk/download/document/281692"
+   },
+   {
+    "date": "2026-08-18",
+    "description": "Date 2026-09-08",
+    "pdf": "https://dps.psx.com.pk/download/document/281244"
+   },
+   {
+    "date": "2026-05-21",
+    "description": "Material Info Please see attached letter.",
+    "pdf": "https://dps.psx.com.pk/download/document/277648"
+   },
+   {
+    "date": "2026-04-30",
+    "description": "Period Ended |Date 2026-04-30|Time 02:30|Place Karachi|Interim Dividend |Interim Dividend Percent |Interim Dividend Already |Interim Bonus Proportion |Interim Bonus Percent |Interim Bonus Issued Already PCT |Right Shares Percent |Right Discount Per Share |Proportion Shares N |Proportion Shares D |Entitlement Paid Date |Close Form |Close To |Address |Transfer Received Date |Other Entitlement Or Cor",
+    "pdf": "https://dps.psx.com.pk/download/document/276430"
+   },
+   {
+    "date": "2026-04-27",
+    "description": "Subject Resolutions passed in the 24th Annual General Meeting|Miscellaneous Info Please see attached letter.",
+    "pdf": "https://dps.psx.com.pk/download/document/275293"
+   }
+  ],
+  "note": "most recent 10 of 116 announcements (source: PSX filings via askanalyst)"
+ },
+ "qualityFlags": [
+  "financial_publication_timestamps_not_pit_verified",
+  "llm_analysis_current_only_no_historical_asof_use"
+ ],
+ "packageId": "mmev_HASCOL_2026-11-23_8cbd83f6",
+ "contentHash": "8cbd83f68f56f6b582548c02c8f15e4c0c12582131a862c882fd19971f07c375",
+ "content": {
+  "schemaVersion": "model_m_evidence_v1",
+  "symbol": "HASCOL",
+  "dataCutoff": "2026-11-23",
+  "decisionTimestamp": "2026-11-23T22:56:39.878Z",
+  "evidence": {
+   "schemaVersion": "latent_psx_llm_evidence_v1",
+   "symbol": "HASCOL",
+   "companyName": "HASCOL",
+   "sector": "unknown",
+   "decisionTimestamp": "2026-11-23T22:56:39.590Z",
+   "dataCutoff": "2026-11-23",
+   "priceContext": {
+    "lastClose": 16.92,
+    "lastCloseDate": "2026-11-23",
+    "change5dPct": -1.9130434782608599,
+    "change20dPct": -0.8206330597889626,
+    "change60dPct": -19.19770773638968,
+    "seriesTail": [
+     {
+      "date": "2026-11-10",
+      "close": 17.16
+     },
+     {
+      "date": "2026-11-11",
+      "close": 17.31
+     },
+     {
+      "date": "2026-11-12",
+      "close": 17.55
+     },
+     {
+      "date": "2026-11-13",
+      "close": 17.34
+     },
+     {
+      "date": "2026-11-16",
+      "close": 17.25
+     },
+     {
+      "date": "2026-11-17",
+      "close": 17.04
+     },
+     {
+      "date": "2026-11-18",
+      "close": 16.85
+     },
+     {
+      "date": "2026-11-19",
+      "close": 16.77
+     },
+     {
+      "date": "2026-11-20",
+      "close": 16.81
+     },
+     {
+      "date": "2026-11-23",
+      "close": 16.92
+     }
+    ]
+   },
+   "fundamentalEvidence": {
+    "status": "partially_verified",
+    "summary": "Latest verified quarter Q4 FY26 (period end 2026-06-30): revenue 53,522, PAT -3,564, EPS -3.56, net margin -6.7%. Filing publication timestamps are NOT point-in-time verified (Task 102/111) — usable for CURRENT research only, disabled for historical as-of backtesting.",
+    "metrics": [
+     {
+      "name": "revenue_latest",
+      "value": 53522,
+      "asOf": "2026-06-30"
+     },
+     {
+      "name": "profit_after_tax_latest",
+      "value": -3564,
+      "asOf": "2026-06-30"
+     },
+     {
+      "name": "eps_latest",
+      "value": -3.56,
+      "asOf": "2026-06-30"
+     },
+     {
+      "name": "revenue_yoy_pct",
+      "value": 16.3,
+      "asOf": "2026-06-30"
+     },
+     {
+      "name": "gross_margin_pct",
+      "value": -3.5,
+      "asOf": "2026-06-30"
+     },
+     {
+      "name": "net_margin_pct",
+      "value": -6.7,
+      "asOf": "2026-06-30"
+     },
+     {
+      "name": "dividend_per_share_latest",
+      "value": 0,
+      "asOf": "2026-06-30"
+     },
+     {
+      "name": "quarters_available",
+      "value": 58,
+      "asOf": "2026-11-23",
+      "note": "verified snapshot quarters"
+     },
+     {
+      "name": "sequential_revenue_change_pct",
+      "value": 10.30460409711059,
+      "asOf": "2026-06-30"
+     }
+    ],
+    "sources": [
+     "src:financials_snapshot"
+    ]
+   },
+   "financialPatternEvidence": {
+    "status": "partially_verified",
+    "summary": "4 deterministic pattern(s): revenue_trend(improving); revenue_growth_decelerating(deteriorating); net_margin_trend(deteriorating); earnings_stability(mixed)",
+    "metrics": [
+     {
+      "name": "fp:revenue_trend",
+      "value": 0.0639651928645145,
+      "asOf": "2026-06-30",
+      "note": "direction=improving, n=58"
+     },
+     {
+      "name": "fp:revenue_growth_decelerating",
+      "value": 0.06134262322686388,
+      "asOf": "2026-06-30",
+      "note": "direction=deteriorating, n=58"
+     },
+     {
+      "name": "fp:net_margin_trend",
+      "value": 0.1395552000984343,
+      "asOf": "2026-06-30",
+      "note": "direction=deteriorating, n=58"
+     },
+     {
+      "name": "fp:earnings_stability",
+      "value": 0,
+      "asOf": "2026-06-30",
+      "note": "direction=mixed, n=58"
+     }
+    ],
+    "sources": [
+     "src:financials_snapshot"
+    ]
+   },
+   "companyNewsEvidence": {
+    "status": "unavailable",
+    "summary": "No recent company news retrieved. No news found is NOT equivalent to positive news.",
+    "metrics": [
+     {
+      "name": "company_news_count",
+      "value": 0,
+      "asOf": "2026-11-23T22:56:39.590Z"
+     },
+     {
+      "name": "company_news_high_materiality",
+      "value": 0,
+      "asOf": "2026-11-23T22:56:39.590Z"
+     },
+     {
+      "name": "company_news_injection_flagged",
+      "value": 0,
+      "asOf": "2026-11-23T22:56:39.590Z",
+      "note": "untrusted text flagged; never executed"
+     }
+    ],
+    "sources": []
+   },
+   "nationalNewsEvidence": {
+    "status": "partially_verified",
+    "summary": "National snapshot (8 items, 7 high-materiality): [neutral] The State Bank of Pakistan's decision to raise the policy rate | [neutral] SBP Monetary Policy Oct 26: Sectors to Watch in Pakistan | [neutral] Economic Data",
+    "metrics": [
+     {
+      "name": "national_news_count",
+      "value": 8,
+      "asOf": "2026-11-23T22:56:39.590Z"
+     }
+    ],
+    "sources": [
+     "src:news_national"
+    ]
+   },
+   "internationalNewsEvidence": {
+    "status": "partially_verified",
+    "summary": "International snapshot (8 items, 1 high-materiality): [neutral] 2026 Market Outlook | J.P. Morgan Global Research | [neutral] Global risk appetite has helped emerging markets during | [bearish] Global Demand Shocks, Oil Futures, and Emerging",
+    "metrics": [
+     {
+      "name": "international_news_count",
+      "value": 8,
+      "asOf": "2026-11-23T22:56:39.590Z"
+     }
+    ],
+    "sources": [
+     "src:news_international"
+    ]
+   },
+   "technicalEvidence": {
+    "status": "verified",
+    "summary": "Local deterministic indicators (golden-cross.ts + risk-levels.ts policy): SMA7=17.00, SMA30=17.07, price below SMA30, ATR14=0.63, BBW(20,2)=13.26%, last cross=DEATH 1 sessions ago.",
+    "metrics": [
+     {
+      "name": "sma7",
+      "value": 16.997142857142858,
+      "asOf": "2026-11-23",
+      "note": "golden-cross.ts MA_FAST=7"
+     },
+     {
+      "name": "sma30",
+      "value": 17.071666666666665,
+      "asOf": "2026-11-23",
+      "note": "golden-cross.ts MA_SLOW=30"
+     },
+     {
+      "name": "atr14",
+      "value": 0.6328571428571433,
+      "asOf": "2026-11-23",
+      "note": "risk-levels.ts atr14-1.5-1-2-3 policy"
+     },
+     {
+      "name": "bbw_20_2_pct",
+      "value": 13.263381267829095,
+      "asOf": "2026-11-23",
+      "note": "20-session SMA, 2 stdev, width=(upper-lower)/mid"
+     },
+     {
+      "name": "realized_vol_20d_ann_pct",
+      "value": 43.22166198967995,
+      "asOf": "2026-11-23",
+      "note": "ln-return stdev x sqrt(252), annualized once"
+     },
+     {
+      "name": "realized_vol_60d_ann_pct",
+      "value": 34.22794614360958,
+      "asOf": "2026-11-23",
+      "note": "ln-return stdev x sqrt(252), annualized once"
+     },
+     {
+      "name": "change_5d_pct",
+      "value": -1.9130434782608599,
+      "asOf": "2026-11-23"
+     },
+     {
+      "name": "change_20d_pct",
+      "value": -0.8206330597889626,
+      "asOf": "2026-11-23"
+     },
+     {
+      "name": "change_60d_pct",
+      "value": -19.19770773638968,
+      "asOf": "2026-11-23"
+     }
+    ],
+    "sources": [
+     "src:ohlcv_db",
+     "src:technical_local"
+    ]
+   },
+   "pricePatternEvidence": {
+    "status": "verified",
+    "summary": "Deterministic pattern engine over 2498 bars (future excluded: 0): Gap-up openings and how often they get filled[unconfirmed candidate]; Gap-down openings and how often they get filled[confirmed historical]; Heavy-volume days with flat-to-rising price (buying pressure)[confirmed historical]; Unusually heavy volume days[confirmed historical]; After a heavy-volume day[confirmed historical]; Heavy-volume days with flat-to-falling price (selling pressure)[confirmed historical]",
+    "metrics": [
+     {
+      "name": "pattern:gap:unconfirmed_candidate",
+      "value": 1.69,
+      "unit": "%",
+      "asOf": "2026-11-23",
+      "note": "occurrences=1148, success_rate=73.5%, strength=high"
+     },
+     {
+      "name": "pattern:gap:confirmed_historical",
+      "value": -2.04,
+      "unit": "%",
+      "asOf": "2026-11-06",
+      "note": "occurrences=448, success_rate=59.8%, strength=high"
+     },
+     {
+      "name": "pattern:pressure:confirmed_historical",
+      "value": 0.89,
+      "unit": "%",
+      "asOf": "2026-11-12",
+      "note": "occurrences=397, success_rate=42.3%, strength=high"
+     },
+     {
+      "name": "pattern:volume_spike:confirmed_historical",
+      "value": 3.14,
+      "unit": "%",
+      "asOf": "2026-11-12",
+      "note": "occurrences=213, success_rate=77.5%, strength=high"
+     },
+     {
+      "name": "pattern:drift:confirmed_historical",
+      "value": 0.41,
+      "unit": "%",
+      "asOf": "2026-11-12",
+      "note": "occurrences=213, success_rate=39%, strength=high"
+     },
+     {
+      "name": "pattern:pressure:confirmed_historical",
+      "value": -0.13,
+      "unit": "%",
+      "asOf": "2026-11-06",
+      "note": "occurrences=209, success_rate=57.9%, strength=high"
+     },
+     {
+      "name": "pattern:drift:confirmed_historical",
+      "value": -1.8,
+      "unit": "%",
+      "asOf": "2022-07-21",
+      "note": "occurrences=138, success_rate=38.4%, strength=high"
+     },
+     {
+      "name": "pattern:drift:confirmed_historical",
+      "value": 3,
+      "unit": "%",
+      "asOf": "2026-01-21",
+      "note": "occurrences=24, success_rate=50%, strength=high"
+     }
+    ],
+    "sources": [
+     "src:price_patterns"
+    ]
+   },
+   "volatilityContext": {
+    "status": "verified",
+    "summary": "Realized-only research context: 20d ann. vol 43.2%, 60d 34.2%, BBW 13.26%. No implied volatility exists for PSX (no listed options market data) — realized vol is NEVER implied vol.",
+    "metrics": [
+     {
+      "name": "realized_vol_20d_ann_pct",
+      "value": 43.22166198967995,
+      "asOf": "2026-11-23"
+     },
+     {
+      "name": "realized_vol_60d_ann_pct",
+      "value": 34.22794614360958,
+      "asOf": "2026-11-23"
+     },
+     {
+      "name": "bbw_20_2_pct",
+      "value": 13.263381267829095,
+      "asOf": "2026-11-23"
+     }
+    ],
+    "sources": [
+     "src:volatility_local",
+     "src:ohlcv_db"
+    ]
+   },
+   "marketContext": {
+    "status": "verified",
+    "summary": "17/25 pilot-25 symbols above their SMA30",
+    "metrics": [
+     {
+      "name": "universe_pct_above_ma30",
+      "value": 68,
+      "asOf": "2026-11-23"
+     },
+     {
+      "name": "universe_size",
+      "value": 909,
+      "asOf": "2026-11-23"
+     }
+    ],
+    "sources": [
+     "src:market_context",
+     "src:ohlcv_db"
+    ]
+   },
+   "dataQualityFlags": [
+    "financial_publication_timestamps_not_pit_verified",
+    "llm_analysis_current_only_no_historical_asof_use"
+   ],
+   "missingSources": [
+    "company news"
+   ],
+   "historicalUseAllowed": false,
+   "sourceRefs": [
+    {
+     "id": "src:ohlcv_db",
+     "category": "ohlcv_db",
+     "publisher": "Latent.pk OhlcvBar (psxdata/pypsx ingest)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:technical_local",
+     "category": "technical_local",
+     "publisher": "golden-cross.ts + risk-levels.ts (deterministic, policy atr14-1.5-1-2-3)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:price_patterns",
+     "category": "price_patterns",
+     "publisher": "price-patterns.ts deterministic engine (PIT wrapper)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:volatility_local",
+     "category": "volatility_local",
+     "publisher": "realized-variance estimators (realized ONLY; no implied vol exists for PSX)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": true
+    },
+    {
+     "id": "src:financials_snapshot",
+     "category": "financials_snapshot",
+     "publisher": "data/financials quarterly snapshots (askanalyst results API)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:news_company",
+     "category": "news_company",
+     "publisher": "AskAnalyst company news API",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:news_national",
+     "category": "news_national",
+     "publisher": "web search (via authorized z-ai SDK)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:news_international",
+     "category": "news_international",
+     "publisher": "web search (via authorized z-ai SDK)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": false
+    },
+    {
+     "id": "src:market_context",
+     "category": "market_context",
+     "publisher": "universe breadth (OhlcvBar + golden-cross.ts)",
+     "url": null,
+     "publishedAt": null,
+     "retrievedAt": "2026-11-23T22:56:39.590Z",
+     "pitSafeForHistorical": true
+    }
+   ]
+  },
+  "technical": {
+   "indicators": [
+    {
+     "name": "SMA 7",
+     "value": 16.997142857142858,
+     "window": 7,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "close below SMA7 — short-term weakness"
+    },
+    {
+     "name": "SMA 30",
+     "value": 17.071666666666665,
+     "window": 30,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "close below SMA30 — medium-term weakness"
+    },
+    {
+     "name": "EMA 12",
+     "value": 16.95149645137802,
+     "window": 12,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "close below EMA12"
+    },
+    {
+     "name": "EMA 26",
+     "value": 17.200971038975776,
+     "window": 26,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "close below EMA26"
+    },
+    {
+     "name": "RSI (14)",
+     "value": 63.49614395886892,
+     "window": 15,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "neutral momentum band"
+    },
+    {
+     "name": "MACD (12,26,9)",
+     "value": -0.24947458759775643,
+     "window": 35,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "MACD above signal — bullish momentum"
+    },
+    {
+     "name": "MACD histogram",
+     "value": 0.09478720766985294,
+     "window": 35,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "MACD line minus signal line"
+    },
+    {
+     "name": "ATR (14)",
+     "value": 0.6328571428571433,
+     "window": 15,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "average true range ≈ 3.74% of price — used by the platform SL/TP policy (SL=1.5×ATR)"
+    },
+    {
+     "name": "Bollinger upper (20,2)",
+     "value": 17.82482124793301,
+     "window": 20,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "upper band = SMA20 + 2σ"
+    },
+    {
+     "name": "Bollinger lower (20,2)",
+     "value": 15.671178752066993,
+     "window": 20,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "lower band = SMA20 − 2σ"
+    },
+    {
+     "name": "Bollinger bandwidth %",
+     "value": 12.859102554729018,
+     "window": 20,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "(upper−lower)/mid — volatility width"
+    },
+    {
+     "name": "SMA 7 vs SMA 30",
+     "value": -0.07452380952380722,
+     "window": 30,
+     "asOf": "2026-11-23",
+     "complete": true,
+     "interpretation": "SMA7 below SMA30 — dead-cross regime"
+    }
+   ],
+   "supports": [
+    21.84,
+    21.35,
+    20.42
+   ],
+   "resistances": [
+    16.74,
+    17.8,
+    18.25
+   ],
+   "volume": {
+    "name": "Volume vs 20d avg",
+    "value": 0.6065141135680219,
+    "window": 21,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "volume near normal"
+   },
+   "trendStrength": {
+    "name": "Trend strength (EMA20 5-bar slope %)",
+    "value": -0.7007861086473957,
+    "window": 25,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "mild downtrend"
+   },
+   "volatility": {
+    "name": "Realized volatility (20d daily σ)",
+    "value": 0.026486907755143948,
+    "window": 21,
+    "asOf": "2026-11-23",
+    "complete": true,
+    "interpretation": "moderate daily volatility"
+   },
+   "recentPriceAction": [
+    {
+     "date": "2026-11-10",
+     "open": 16.82,
+     "high": 17.42,
+     "low": 16.82,
+     "close": 17.16,
+     "volume": 6058559,
+     "chgPct": 2.8160575194727313
+    },
+    {
+     "date": "2026-11-11",
+     "open": 17.22,
+     "high": 17.75,
+     "low": 17.06,
+     "close": 17.31,
+     "volume": 4921025,
+     "chgPct": 0.8741258741258658
+    },
+    {
+     "date": "2026-11-12",
+     "open": 17.4,
+     "high": 18.35,
+     "low": 17.25,
+     "close": 17.55,
+     "volume": 22959535,
+     "chgPct": 1.3864818024263548
+    },
+    {
+     "date": "2026-11-13",
+     "open": 17.7,
+     "high": 17.78,
+     "low": 17.3,
+     "close": 17.34,
+     "volume": 3932424,
+     "chgPct": -1.1965811965812014
+    },
+    {
+     "date": "2026-11-16",
+     "open": 17.45,
+     "high": 17.59,
+     "low": 17.2,
+     "close": 17.25,
+     "volume": 2425095,
+     "chgPct": -0.5190311418685113
+    },
+    {
+     "date": "2026-11-17",
+     "open": 17.3,
+     "high": 17.43,
+     "low": 16.91,
+     "close": 17.04,
+     "volume": 2069542,
+     "chgPct": -1.217391304347831
+    },
+    {
+     "date": "2026-11-18",
+     "open": 17.2,
+     "high": 17.2,
+     "low": 16.7,
+     "close": 16.85,
+     "volume": 2966878,
+     "chgPct": -1.1150234741783904
+    },
+    {
+     "date": "2026-11-19",
+     "open": 16.95,
+     "high": 17.11,
+     "low": 16.7,
+     "close": 16.77,
+     "volume": 1810095,
+     "chgPct": -0.4747774480712275
+    },
+    {
+     "date": "2026-11-20",
+     "open": 16.75,
+     "high": 16.94,
+     "low": 16.75,
+     "close": 16.81,
+     "volume": 2252040,
+     "chgPct": 0.2385211687537218
+    },
+    {
+     "date": "2026-11-23",
+     "open": 16.94,
+     "high": 17.39,
+     "low": 16.81,
+     "close": 16.92,
+     "volume": 3002875,
+     "chgPct": 0.6543723973825282
+    }
+   ],
+   "asOf": "2026-11-23"
+  },
+  "monthlyPatterns": {
+   "months": [
+    {
+     "month": 1,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": 8.636601519123834,
+     "medianReturnPct": 3.7196398144959684,
+     "stdevReturnPct": 21.633241165187314,
+     "positiveFreq": 0.6,
+     "avgVolRatio": 1.2484829725439912,
+     "avgVolatilityPct": 10.354171709968844,
+     "sufficient": true
+    },
+    {
+     "month": 2,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": -13.529355008207627,
+     "medianReturnPct": -11.78596187175043,
+     "stdevReturnPct": 11.309888248789226,
+     "positiveFreq": 0.1,
+     "avgVolRatio": 0.800921773492022,
+     "avgVolatilityPct": 13.15064982341407,
+     "sufficient": true
+    },
+    {
+     "month": 3,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": -6.511823620770421,
+     "medianReturnPct": -4.703672426486511,
+     "stdevReturnPct": 13.020051508412028,
+     "positiveFreq": 0.2,
+     "avgVolRatio": 0.7218407613007649,
+     "avgVolatilityPct": 9.573792334912913,
+     "sufficient": true
+    },
+    {
+     "month": 4,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": 2.5823488579338956,
+     "medianReturnPct": -0.06336567925109704,
+     "stdevReturnPct": 21.505172674082342,
+     "positiveFreq": 0.5,
+     "avgVolRatio": 0.806201530520999,
+     "avgVolatilityPct": 12.148815907481621,
+     "sufficient": true
+    },
+    {
+     "month": 5,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": -0.6817664363169594,
+     "medianReturnPct": -1.7021936502565826,
+     "stdevReturnPct": 12.733701459713522,
+     "positiveFreq": 0.4,
+     "avgVolRatio": 0.9610736095727409,
+     "avgVolatilityPct": 14.06068828244487,
+     "sufficient": true
+    },
+    {
+     "month": 6,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": -5.408905241399539,
+     "medianReturnPct": -8.258772016072472,
+     "stdevReturnPct": 10.660504899122607,
+     "positiveFreq": 0.2,
+     "avgVolRatio": 0.7623495957305446,
+     "avgVolatilityPct": 14.072205028477741,
+     "sufficient": true
+    },
+    {
+     "month": 7,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": -6.751991202894459,
+     "medianReturnPct": -1.4407974896590172,
+     "stdevReturnPct": 13.888601797242295,
+     "positiveFreq": 0.3,
+     "avgVolRatio": 0.7564758798707231,
+     "avgVolatilityPct": 12.22893554277595,
+     "sufficient": true
+    },
+    {
+     "month": 8,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": 10.121965074871715,
+     "medianReturnPct": 3.192283127400092,
+     "stdevReturnPct": 27.54203147392128,
+     "positiveFreq": 0.6,
+     "avgVolRatio": 1.0611966193169562,
+     "avgVolatilityPct": 11.997271755984972,
+     "sufficient": true
+    },
+    {
+     "month": 9,
+     "samples": 10,
+     "firstYear": 2017,
+     "lastYear": 2026,
+     "avgReturnPct": -6.018706411496095,
+     "medianReturnPct": -7.819755490442302,
+     "stdevReturnPct": 18.697101688671843,
+     "positiveFreq": 0.2,
+     "avgVolRatio": 1.1826658701414823,
+     "avgVolatilityPct": 10.788525486778914,
+     "sufficient": true
+    },
+    {
+     "month": 10,
+     "samples": 10,
+     "firstYear": 2016,
+     "lastYear": 2026,
+     "avgReturnPct": 2.412949816242402,
+     "medianReturnPct": -1.990138929717772,
+     "stdevReturnPct": 26.819488814785984,
+     "positiveFreq": 0.4,
+     "avgVolRatio": 1.101479323787761,
+     "avgVolatilityPct": 12.26945331546793,
+     "sufficient": true
+    },
+    {
+     "month": 11,
+     "samples": 11,
+     "firstYear": 2016,
+     "lastYear": 2026,
+     "avgReturnPct": 10.24551856748879,
+     "medianReturnPct": 5.171455786632799,
+     "stdevReturnPct": 32.463976556404475,
+     "positiveFreq": 0.6363636363636364,
+     "avgVolRatio": 1.2168117146880213,
+     "avgVolatilityPct": 10.67563701924836,
+     "sufficient": true
+    },
+    {
+     "month": 12,
+     "samples": 10,
+     "firstYear": 2016,
+     "lastYear": 2025,
+     "avgReturnPct": 0.4354875831090599,
+     "medianReturnPct": 0.05678374020843846,
+     "stdevReturnPct": 19.89676378140584,
+     "positiveFreq": 0.5,
+     "avgVolRatio": 1.3028739644969975,
+     "avgVolatilityPct": 10.697036952217909,
+     "sufficient": true
+    }
+   ],
+   "historyYears": 11,
+   "firstDate": "2016-10-21",
+   "lastDate": "2026-11-23",
+   "bestMonth": {
+    "month": 11,
+    "avgReturnPct": 10.24551856748879,
+    "samples": 11
+   },
+   "worstMonth": {
+    "month": 2,
+    "avgReturnPct": -13.529355008207627,
+    "samples": 10
+   },
+   "caveat": "Monthly statistics use 2498 bars over 11 years; a month needs at least 3 observed month-transitions before any average is shown. Whole-history daily σ ≈ 3.71%. Small samples and single-stock history make these OBSERVATIONS, not seasonality claims; no out-of-sample validation of calendar effects is implied."
+  },
+  "filings": {
+   "status": "VERIFIED",
+   "count": 116,
+   "fetchedAt": "2026-10-31T21:41:35.447855+00:00",
+   "items": [
+    {
+     "date": "2026-10-28",
+     "description": "Period Ended |Date 2026-10-28|Time 02:30|Place Karachi|Interim Dividend |Interim Dividend Percent |Interim Dividend Already |Interim Bonus Proportion |Interim Bonus Percent |Interim Bonus Issued Already PCT |Right Shares Percent |Right Discount Per Share |Proportion Shares N |Proportion Shares D |Entitlement Paid Date |Close Form |Close To |Address |Transfer Received Date |Other Entitlement Or Cor",
+     "pdf": "https://dps.psx.com.pk/download/document/287431"
+    },
+    {
+     "date": "2026-09-21",
+     "description": "Material Info Please see attached letter.",
+     "pdf": "https://dps.psx.com.pk/download/document/283111"
+    },
+    {
+     "date": "2026-09-18",
+     "description": "Subject Submission of Mandatory Shariah Disclosures|Miscellaneous Info Please see attached letter.",
+     "pdf": "https://dps.psx.com.pk/download/document/282974"
+    },
+    {
+     "date": "2026-09-09",
+     "description": "Subject Election of Directors|Miscellaneous Info Please see attached letter.",
+     "pdf": "https://dps.psx.com.pk/download/document/282422"
+    },
+    {
+     "date": "2026-08-31",
+     "description": "Subject Notice Under Section 159(4) of the Companies Act, 2017 - Election of Directors|Miscellaneous Info Please see attached letter.",
+     "pdf": "https://dps.psx.com.pk/download/document/281986"
+    },
+    {
+     "date": "2026-08-25",
+     "description": "Period Ended |Date 2026-08-25|Time 02:00|Place Karachi|Interim Dividend |Interim Dividend Percent |Interim Dividend Already |Interim Bonus Proportion |Interim Bonus Percent |Interim Bonus Issued Already PCT |Right Shares Percent |Right Discount Per Share |Proportion Shares N |Proportion Shares D |Entitlement Paid Date |Close Form |Close To |Address |Transfer Received Date |Other Entitlement Or Cor",
+     "pdf": "https://dps.psx.com.pk/download/document/281692"
+    },
+    {
+     "date": "2026-08-18",
+     "description": "Date 2026-09-08",
+     "pdf": "https://dps.psx.com.pk/download/document/281244"
+    },
+    {
+     "date": "2026-05-21",
+     "description": "Material Info Please see attached letter.",
+     "pdf": "https://dps.psx.com.pk/download/document/277648"
+    },
+    {
+     "date": "2026-04-30",
+     "description": "Period Ended |Date 2026-04-30|Time 02:30|Place Karachi|Interim Dividend |Interim Dividend Percent |Interim Dividend Already |Interim Bonus Proportion |Interim Bonus Percent |Interim Bonus Issued Already PCT |Right Shares Percent |Right Discount Per Share |Proportion Shares N |Proportion Shares D |Entitlement Paid Date |Close Form |Close To |Address |Transfer Received Date |Other Entitlement Or Cor",
+     "pdf": "https://dps.psx.com.pk/download/document/276430"
+    },
+    {
+     "date": "2026-04-27",
+     "description": "Subject Resolutions passed in the 24th Annual General Meeting|Miscellaneous Info Please see attached letter.",
+     "pdf": "https://dps.psx.com.pk/download/document/275293"
+    }
+   ],
+   "note": "most recent 10 of 116 announcements (source: PSX filings via askanalyst)"
+  },
+  "qualityFlags": [
+   "financial_publication_timestamps_not_pit_verified",
+   "llm_analysis_current_only_no_historical_asof_use"
+  ]
+ }
+}

@@ -1,0 +1,31 @@
+{
+  "job_name": "eod_pipeline",
+  "post_market_time_pkt": "17:30",
+  "retry_interval_min": 15,
+  "max_retry_window_min": 120,
+  "retry_in_process": false,
+  "universe": "pilot25",
+  "extra_symbols": [],
+  "overlap_days": 7,
+  "rate_delay_s": 0.35,
+  "holidays": [],
+  "stale_symbol_policy": "skip_and_record",
+  "stages": {
+    "indicators": true,
+    "results_patterns": true,
+    "maturity": true,
+    "lifecycle": true,
+    "modelm_cache": true,
+    "monitoring": true,
+    "glm": false
+  },
+  "_notes": {
+    "timezone": "Asia/Karachi (PKT, UTC+5)",
+    "post_market_time_pkt": "scheduler fires after this PKT time on trading weekdays; daemon sleeps until it, cron entries use the UTC equivalent",
+    "universe": "pilot25 = the 25-symbol shadow universe; 'all' = every symbol in OhlcvBar (~909); a comma list is also accepted via --symbols",
+    "holidays": "explicit non-trading weekday dates (ISO) — provider absence of a new session is otherwise treated as 'eod not published yet' and retried",
+    "retry": "if the provider has not published the session's final EOD data, run marks the attempt retryable (exit 2, status FAILED 'eod_not_published_or_provider_unavailable'); the daemon retries every retry_interval_min for up to max_retry_window_min",
+    "stages.glm": "disabled by default — GLM-4.6 generation needs z-ai SDK credentials (host only); enable via --glm or here",
+    "overlap_days": "re-fetch window used to reconcile provider bars against stored rows; conflicts are quarantined, never overwritten"
+  }
+}

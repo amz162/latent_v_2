@@ -22,7 +22,10 @@
 # survive a sandbox recycle (the platform kills every process), but
 # scripts/start_server.sh restores everything with one command.
 set -u
-APP_DIR="/home/z/my-project"
+# Task 129 fix: resolve the app directory from THIS script's location instead
+# of the stale hard-coded "/home/z/my-project" workspace root (the app lives
+# in repo_latent_v_2; the old value made the supervisor run the wrong tree).
+APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PORT=3000
 CHECK_INTERVAL=20
 RUNTIME="${LATENT_RUNTIME:-prod}"

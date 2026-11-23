@@ -7,7 +7,8 @@
 # the full health check. In prod mode the supervisor builds if .next is
 # missing and serves `next start` (no per-request compiles).
 set -u
-APP_DIR="/home/z/my-project"
+# Task 129 fix: resolve from script location (was stale "/home/z/my-project").
+APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RUNTIME="${LATENT_RUNTIME:-prod}"
 cd "$APP_DIR" || exit 1
 

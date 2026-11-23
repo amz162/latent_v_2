@@ -32,6 +32,7 @@ import {
   Waves,
   ListChecks,
   FileBarChart,
+  Sparkles,
 } from "lucide-react";
 
 // Sidebar items: Dashboard prepended at the top; research tabs (LLM Signals,
@@ -54,6 +55,7 @@ const NAV_ITEMS: { view: LatentView; key: string; icon: React.ComponentType<{ cl
   { view: "volatility_analytics", key: "nav.volatility_analytics", icon: Waves },
   { view: "llm_signals", key: "nav.llm_signals", icon: ListChecks },
   { view: "model_report", key: "nav.model_report", icon: FileBarChart },
+  { view: "model_m", key: "nav.model_m", icon: Sparkles }, // Task 129
 ];
 
 export function AppSidebar() {

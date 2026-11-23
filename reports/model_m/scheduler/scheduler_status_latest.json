@@ -1,0 +1,185 @@
+{
+ "scheduler": "task129_eod_scheduler",
+ "config": {
+  "post_market_time_pkt": "17:30",
+  "universe": "pilot25",
+  "holidays_configured": 0
+ },
+ "frontier_date": "2026-11-23",
+ "candidate_session": "2026-11-23",
+ "candidate_reason": "session_state",
+ "next_scheduled_run": " weekdays 17:30 PKT (cron) / daemon loop",
+ "session_state": {
+  "now_pkt": "2026-11-24 03:58:06 UTC+05:00",
+  "is_weekend": false,
+  "regular_session_ended_today": false,
+  "candidate_session_date": "2026-11-23",
+  "note": "weekends treated as non-sessions; holidays undetectable without an official calendar \u2014 provider data decides"
+ },
+ "provider_health": {
+  "state": "healthy",
+  "consecutive_failures": 0,
+  "transitions": [
+   {
+    "at": "2026-11-08T20:38:31Z",
+    "from": "unknown",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-08T20:42:15Z",
+    "from": "healthy",
+    "to": "rate_limited",
+    "code": 429
+   },
+   {
+    "at": "2026-11-08T20:44:18Z",
+    "from": "rate_limited",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-08T20:45:09Z",
+    "from": "healthy",
+    "to": "rate_limited",
+    "code": 429
+   },
+   {
+    "at": "2026-11-08T20:45:12Z",
+    "from": "rate_limited",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-08T20:46:35Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 0
+   },
+   {
+    "at": "2026-11-08T20:46:40Z",
+    "from": "degraded",
+    "to": "unavailable",
+    "code": 0
+   },
+   {
+    "at": "2026-11-08T20:46:51Z",
+    "from": "unavailable",
+    "to": "rate_limited",
+    "code": 429
+   },
+   {
+    "at": "2026-11-08T21:50:39Z",
+    "from": "rate_limited",
+    "to": "unavailable",
+    "code": 0
+   },
+   {
+    "at": "2026-11-08T21:53:46Z",
+    "from": "unavailable",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-09T12:22:04Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 404
+   },
+   {
+    "at": "2026-11-09T12:22:04Z",
+    "from": "degraded",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-09T18:52:35Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 404
+   },
+   {
+    "at": "2026-11-09T18:52:36Z",
+    "from": "degraded",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-10T11:57:39Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 404
+   },
+   {
+    "at": "2026-11-10T11:57:39Z",
+    "from": "degraded",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-11T11:36:40Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 404
+   },
+   {
+    "at": "2026-11-11T11:36:40Z",
+    "from": "degraded",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-12T12:00:03Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 404
+   },
+   {
+    "at": "2026-11-12T12:00:03Z",
+    "from": "degraded",
+    "to": "healthy",
+    "code": 200
+   },
+   {
+    "at": "2026-11-13T11:44:37Z",
+    "from": "healthy",
+    "to": "degraded",
+    "code": 404
+   },
+   {
+    "at": "2026-11-13T11:44:37Z",
+    "from": "degraded",
+    "to": "healthy",
+    "code": 200
+   }
+  ],
+  "last_success_at": "2026-11-23T22:56:02Z",
+  "last_error": "",
+  "last_http_code": 200,
+  "last_failure_at": "2026-11-13T11:44:37Z"
+ },
+ "recent_runs": [
+  {
+   "runKey": "eod_pipeline:2026-11-23",
+   "status": "COMPLETED",
+   "startedAt": "2026-11-23T22:56:02.288Z",
+   "finishedAt": "2026-11-23T22:57:09.597Z",
+   "rowsInserted": 16,
+   "symbolsUpdated": 1,
+   "symbolsFailed": 0,
+   "dataCutoffDate": "2026-11-23",
+   "trigger": "e2e"
+  },
+  {
+   "runKey": "eod_recover:2026-11-23:4b02669fa0",
+   "status": "COMPLETED",
+   "startedAt": "2026-11-23T22:40:53.099Z",
+   "finishedAt": "2026-11-23T22:40:56.894Z",
+   "rowsInserted": 16,
+   "symbolsUpdated": 1,
+   "symbolsFailed": 0,
+   "dataCutoffDate": "2026-11-23",
+   "trigger": "manual"
+  }
+ ]
+}

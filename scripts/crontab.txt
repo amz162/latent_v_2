@@ -1,34 +1,43 @@
 #!/bin/bash
-# PSX Data Update Cron Jobs
+# PSX Data Update Cron Jobs — Task 129 authoritative schedule
 # Install: crontab scripts/crontab.txt  (from the repository root)
 #
-# Task 123 path fix: the entries below previously pointed at /home/z/my-project
-# (the workspace root) while the repository lives at
-# /home/z/my-project/repo_latent_v_2 — a root cause of the 2026-11-03 EOD stall.
-# Adjust REPO if the repository moves again.
+# Schedule history:
+#   - Task 123: entries pointed at /home/z/my-project (workspace root) while
+#     the repo lives at /home/z/my-project/repo_latent_v_2 (fixed in Task 123).
+#   - Task 129: ONE authoritative post-market entry. The old 17:10 PKT
+#     task107_daily_ingest entry and the 17:30 PKT task123_daily_pipeline.sh
+#     entry are SUBSUMED by scripts/task129_eod_pipeline.sh (which runs the
+#     task129 EOD scheduler: fetch → validate → persist → integrity →
+#     indicators → results patterns → maturity → lifecycle → Model M cache →
+#     monitoring, then host-only GLM-4.6 generation). Do NOT re-add the old
+#     entries — that would double-execute (the SchedulerRun runKey also guards).
+#
+# AUTHORITATIVE: 17:30 PKT Mon-Fri task129_eod_pipeline.sh (post-market EOD).
+# FALLBACK (CI): .github/workflows/daily-psx-pipeline.yml — cron 16:30 PKT,
+#   runs ingest/shadow/maturity/lifecycle/reports in CI; idempotent w.r.t. the
+#   host run (SchedulerRun runKey + INSERT OR IGNORE).
+# TERTIARY (in-process): src/instrumentation*.ts 17:00-17:04 PKT refresh —
+#   insert-only upserts only; never runs the lifecycle.
+#
+# Timezone: Pakistan Standard Time = UTC+5. All entries below are UTC.
 
 REPO=/home/z/my-project/repo_latent_v_2
 
-# Schedule (Pakistan Standard Time = UTC+5):
-# - 5:00 PM PKT Mon-Fri: incremental CSV refresh (training store)
-# - 5:10 PM PKT Mon-Fri: authoritative DB ingest (pilot-25, (symbol,date) dedup,
-#   validation + revision quarantine + automatic pre-promotion backup)
-# - 5:30 PM PKT Mon-Fri: full daily pipeline — lifecycle fills/exits/outcomes,
-#   GLM-4.6 research generation (research-only), outcome tracker, health report
-# - 9:00 AM - 4:30 PM PKT (every 5 min during market hours): live prices are
-#   fetched on-demand via /api/psx/live (no cron needed)
-
-# 5:00 PM PKT = 12:00 UTC — daily incremental CSV fetch
+# 5:00 PM PKT = 12:00 UTC Mon-Fri — incremental CSV refresh (training store)
 0 12 * * 1-5 cd $REPO && python3 scripts/update_daily_ohlcv.py >> $REPO/data/update_log.txt 2>&1
 
-# 5:10 PM PKT = 12:10 UTC — authoritative DB ingest (Task 107, idempotent)
-10 12 * * 1-5 cd $REPO && python3 scripts/task107_daily_ingest.py >> $REPO/data/task107_ingest_cron.log 2>&1
+# 5:30 PM PKT = 12:30 UTC Mon-Fri — AUTHORITATIVE post-market EOD pipeline
+30 12 * * 1-5 cd $REPO && bash scripts/task129_eod_pipeline.sh >> $REPO/data/task129_pipeline_cron.log 2>&1
 
-# 5:30 PM PKT = 12:30 UTC — full daily pipeline (Task 123)
-30 12 * * 1-5 cd $REPO && bash scripts/task123_daily_pipeline.sh >> $REPO/data/task123_pipeline_cron.log 2>&1
-
-# 9:00 AM PKT = 4:00 AM UTC — pre-market warm-up (fetch any overnight data)
+# 9:00 AM PKT = 4:00 AM UTC Mon-Fri — pre-market warm-up (overnight data)
 0 4 * * 1-5 cd $REPO && python3 scripts/update_daily_ohlcv.py --symbol KSE100 >> $REPO/data/update_log.txt 2>&1
 
-# Weekly full refresh (Sunday 6 PM PKT = 13:00 UTC) — re-download all data
+# Weekly full refresh (Sunday 6 PM PKT = 13:00 UTC) — re-download all CSVs
 0 13 * * 0 cd $REPO && python3 scripts/update_daily_ohlcv.py --full-refresh >> $REPO/data/update_log.txt 2>&1
+
+# Manual recovery (never scheduled):
+#   python3 scripts/task129_eod_scheduler.py run --force
+#   python3 scripts/task129_eod_scheduler.py recover --symbols ENGRO,SYS,BYCO
+#   python3 scripts/task129_eod_scheduler.py backfill --start 2026-10-30 --end 2026-11-23
+#   python3 scripts/task129_eod_scheduler.py status

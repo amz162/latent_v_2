@@ -608,3 +608,96 @@ model InvitationEvent {
   actorId   String?
   detailJson String?
 }
+
+// ============================================================================
+// Task 129 — post-market EOD scheduler + Model M
+// ============================================================================
+
+// Scheduler execution ledger. One row per scheduled/manual run; the unique
+// runKey (jobName + session date) is the idempotency key that prevents the
+// same trading session from being processed twice by overlapping schedulers
+// (CI pipeline, host cron, in-process fallback).
+model SchedulerRun {
+  id               String    @id @default(cuid())
+  runKey           String    @unique // e.g. "eod_pipeline:2026-11-23"
+  jobName          String    // eod_pipeline | eod_recover | eod_backfill
+  scheduledFor     String?   // intended PKT execution time (ISO, informational)
+  startedAt        DateTime  @default(now())
+  finishedAt       DateTime?
+  status           String    @default("RUNNING") // RUNNING | COMPLETED | PARTIAL | FAILED | NO_SESSION
+  sessionDetected  Boolean   @default(false) // provider confirmed a new trading session
+  symbolsAttempted Int       @default(0)
+  symbolsUpdated   Int       @default(0)
+  symbolsFailed    Int       @default(0)
+  rowsInserted     Int       @default(0)
+  rowsUpdated      Int       @default(0)
+  rowsSkipped      Int       @default(0)
+  rowsRejected     Int       @default(0)
+  missingSymbols   String    @default("[]") // JSON: symbols with no provider bar for the session
+  failedSymbols    String    @default("[]") // JSON: [{symbol, reason}]
+  errorDetails     String?
+  dataCutoffDate   String?   // latest stored trading date after this run
+  providerHealth   String?
+  executionMs      Int?
+  stages           String?   // JSON: [{stage, rc, ms, note}]
+  trigger          String    @default("manual") // manual | cron | ci | daemon | retry
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([status])
+  @@index([startedAt])
+}
+
+// Model M evidence-package registry: content-only hash + dedup by
+// (symbol, dataCutoff). Packages live as JSON files under
+// data/backtest_reports/task129/model_m_evidence/; this table is the
+// verifiable index (hash recomputation + evidenceRef is never null).
+model ModelMEvidencePackage {
+  id            String   @id @default(cuid())
+  packageId     String   @unique // mmev_{symbol}_{cutoff}_{hash8}
+  symbol        String
+  dataCutoff    String   // latest completed trading session used
+  contentHash   String   // sha256 of the canonical content-only JSON
+  schemaVersion String   // model_m_evidence_v1
+  filePath      String
+  categories    String   @default("[]") // JSON: category ids present
+  qualityFlags  String   @default("[]") // JSON: data-quality warnings
+  createdAt     DateTime @default(now())
+
+  @@unique([symbol, dataCutoff, contentHash])
+  @@index([symbol, dataCutoff])
+}
+
+// Model M analysis history — append-only. A new analysis NEVER overwrites an
+// older one; comparisons are done client-side by loading multiple rows.
+model ModelMAnalysis {
+  id                  String   @id @default(cuid())
+  symbol              String
+  decision            String   // BUY | SELL | HOLD | NO_TRADE | SELL_RESEARCH_ONLY
+  engineVersion       String   // model-m engine + prompt version
+  analysisTs          DateTime
+  dataCutoff          String   // latest completed trading session used
+  dataFreshness       String   // VERIFIED | PARTIAL | STALE | UNAVAILABLE | FAILED
+  entryPrice          Float?
+  entryCondition      String?
+  stopLoss            Float?
+  tp1                 Float?
+  tp2                 Float?
+  tp3                 Float?
+  riskReward          Float?
+  atr14               Float?
+  reasoning           String?
+  evidencePackageId   String?
+  evidenceHash        String?
+  indicatorSnapshot   String?  // JSON
+  fundamentalSnapshot String?  // JSON
+  patternFindings     String?  // JSON
+  newsRefs            String?  // JSON
+  modelInfo           String?  // JSON {model, promptVersion, schemaVersion}
+  warnings            String?  // JSON: data-quality warnings
+  decisionJson        String   // full structured decision (source of truth)
+  createdAt           DateTime @default(now())
+
+  @@index([symbol, createdAt])
+  @@index([decision])
+}

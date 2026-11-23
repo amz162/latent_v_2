@@ -38,6 +38,7 @@ const REGISTRY: RegistryEntry[] = [
   { key: "tab.volatility_analytics", category: "tab", label: "Volatility Analytics", description: "Realized-vol research analytics.", sortOrder: 17, defaultEffect: "DENY" },
   { key: "tab.llm_signals", category: "tab", label: "LLM Signals", description: "Frozen GLM-4.6 shadow signal history (research-only).", sortOrder: 18, defaultEffect: "DENY", interactKey: "feature.llm_interact" },
   { key: "tab.model_report", category: "tab", label: "Model Performance", description: "Model/strategy performance report (task 113/114).", sortOrder: 19, defaultEffect: "DENY", interactKey: "feature.reports_export" },
+  { key: "tab.model_m", category: "tab", label: "Model M", description: "Model M research tab: GLM-4.6 evidence-based decisions, technical/fundamental/pattern analysis (task 129).", sortOrder: 20, defaultEffect: "DENY", interactKey: "feature.llm_interact" },
 
   { key: "feature.profile", category: "feature", label: "Manage Own Profile", description: "Self-service profile and account settings.", sortOrder: 20, defaultEffect: "ALLOW", isCore: true },
   { key: "feature.feedback", category: "feature", label: "Submit Feedback", description: "Submit own feedback to the operators.", sortOrder: 21, defaultEffect: "ALLOW" },
@@ -69,6 +70,7 @@ const STANDARD_ALLOW = [
   "tab.fundamental_news", "tab.technical_analysis", "tab.signals_v2", "tab.signal_detail",
   "tab.ai_model_signals", "tab.llm_signals", "tab.model_report", "tab.calculators",
   "tab.pattern_finder", "tab.pattern_finder_financial", "tab.dividends", "tab.strategy",
+  "tab.model_m",
   "feature.signal_data", "feature.backtest_reports", "feature.llm_interact", "feature.reports_export",
 ];
 const PREMIUM_ALLOW = [

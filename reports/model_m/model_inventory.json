@@ -1,0 +1,1654 @@
+{
+ "task": "129 Phase 0 \u2014 model inventory reconciliation",
+ "generated_at": "2026-11-23T22:27:14Z",
+ "repository": "/home/z/my-project/repo_latent_v_2",
+ "summary": {
+  "claim": {
+   "claimed_trained_models": 52,
+   "interpretation": "52 = ALL_MODELS registry entries with trained:true (the flag exists for rule engines too)"
+  },
+  "registry": {
+   "canonical_entries": 58,
+   "trained_flag_true": 52,
+   "trained_flag_false": 6,
+   "runtime_model_keys": 65,
+   "runtime_duplicate_x_keys": [
+    "Trend Multi-TF",
+    "Breakout RelVol",
+    "Trend Pullback",
+    "RSI Divergence",
+    "BB Mean Reversion",
+    "Vol Contraction",
+    "Relative Strength",
+    "Market Regime",
+    "Meta-Label CG",
+    "Triple Barrier Dyn"
+   ],
+   "ensemble_keys": 13,
+   "unique_names": 58
+  },
+  "verified_counts": {
+   "trained_ml_entries": 35,
+   "trained_ml_unique_implementations": 31,
+   "duplicate_alias_entries": 4,
+   "rule_based_entries": 17,
+   "foundation_blocked": 4,
+   "untrained_placeholder": 2,
+   "actually_trained_with_artifacts_or_per_stock_store": 34,
+   "oos_evaluated_entries_task84": 34,
+   "models_with_true_oos_skill": "0 \u2014 task128: no classical model beats the zero-return baseline; all R\u00b2<0; best dir-acc RF h5 0.595 CI[0.546,0.642] (marginal after correction); nothing promotable"
+  },
+  "classification_counts": {
+   "trained_ml": 35,
+   "foundation_blocked": 4,
+   "untrained_placeholder": 2,
+   "rule_based_engine": 16,
+   "rule_based_meta": 1
+  },
+  "task84_status_counts": {
+   "evaluated": 44,
+   "failed": 3,
+   "blocked": 9,
+   "alias": 4
+  }
+ },
+ "claim_sources": [
+  {
+   "claim": "58 canonical / 9 supplemental / 67 unique",
+   "location": "README.md:31"
+  },
+  {
+   "claim": "65-model ensemble across 10 tiers (stale)",
+   "location": "README.md:47,115,186"
+  },
+  {
+   "claim": "52 trained",
+   "location": "src/lib/latent/ensemble.ts \u2014 52 of 58 ALL_MODELS entries have trained:true"
+  },
+  {
+   "claim": "36 models per stock (per-stock trainable tier)",
+   "location": "scripts/force_train_all_fast.py:4,62,64,74"
+  },
+  {
+   "claim": "registry 58 canonical / 13 supplemental / 71 unique",
+   "location": "worklog.md:4505 (Task 101)"
+  }
+ ],
+ "runtime_truth": {
+  "note": "src/lib/latent/fallback-predictions.ts:strategyConfigFor() maps EVERY model key to one of 12 deterministic indicator families (seeded mulberry32 thresholds); strategySignal() produces the runtime signal",
+  "implication": "All 65 runtime model keys serve deterministic indicator-strategy signals at request time; trained parameters are used offline (walk-forward/paper cohorts), not for live inference.",
+  "all_model_keys": [
+   "XGBoost",
+   "LightGBM",
+   "CatBoost",
+   "Random Forest",
+   "Ridge Regression",
+   "ARIMA",
+   "Holt-Winters",
+   "GARCH",
+   "Prophet",
+   "Kalman Filter",
+   "GRU",
+   "Chronos (Amazon)",
+   "Lag-Llama",
+   "Moirai (Salesforce)",
+   "Time-LLM",
+   "LSTM",
+   "CNN-LSTM",
+   "Transformer-LSTM",
+   "PatchTST",
+   "N-BEATS",
+   "TimesNet",
+   "Informer",
+   "LightGBM-A (CL-2)",
+   "LightGBM-B (CL-2)",
+   "HistGBM (CL-2)",
+   "ExtraTrees (CL-2)",
+   "RandomForest (CL-2)",
+   "Logistic (CL-2)",
+   "MLP (CL-2)",
+   "Linear Regression (PI)",
+   "Logistic Regression (PI)",
+   "Pattern Matcher KNN (PI)",
+   "Neural Network (PI)",
+   "Technical Engine (GM)",
+   "Announcements Engine (GM)",
+   "Fundamental Engine (GM)",
+   "Macro Engine (GM)",
+   "LightGBM (CG)",
+   "XGBoost (CG)",
+   "Trend Multi-TF (X)",
+   "Breakout RelVol (X)",
+   "Trend Pullback (X)",
+   "RSI Divergence (X)",
+   "BB Mean Reversion (X)",
+   "Vol Contraction (X)",
+   "Relative Strength (X)",
+   "Market Regime (X)",
+   "Meta-Label CG (X)",
+   "Triple Barrier Dyn (X)",
+   "Gian-Ensemble (GIAN)",
+   "Gian-Extender (GIAN-EXT)",
+   "M-Ensemble (M)",
+   "XGBoost (CL)",
+   "LightGBM (CL)",
+   "Random Forest (CL)",
+   "Trend Multi-TF",
+   "Breakout RelVol",
+   "Trend Pullback",
+   "RSI Divergence",
+   "BB Mean Reversion",
+   "Vol Contraction",
+   "Relative Strength",
+   "Market Regime",
+   "Meta-Label CG",
+   "Triple Barrier Dyn"
+  ],
+  "ensemble_keys": [
+   "majority_vote",
+   "probability_weighted",
+   "tier_weighted",
+   "cl_ensemble",
+   "cl_extender",
+   "cl2_ensemble",
+   "pi_ensemble",
+   "gm_model",
+   "cg_ensemble",
+   "x_ensemble",
+   "gian_ensemble",
+   "gian_extender",
+   "m_ensemble"
+  ],
+  "deterministic_families_found": []
+ },
+ "per_stock_training_store": {
+  "file": "data/ml_predictions_multi.json",
+  "trained_at": "2026-10-23T01:48:34.117948",
+  "stocks": 908,
+  "model_keys": 65,
+  "untrained_in_store": {
+   "TabNet": "Data type issue",
+   "FinGPT": "Requires BloombergGPT"
+  },
+  "ensemble_backtest_trained_at": "2026-10-23T02:07:46.173846"
+ },
+ "artifacts": {
+  "xgboost_serialized": {
+   "path": "models/xgboost_signal.json",
+   "bytes": 25376
+  },
+  "feature_schema": {
+   "path": "models/feature_schema.json",
+   "bytes": 1183
+  },
+  "cl2_calibrator": {
+   "path": "data/cl2_cache/calib.pkl",
+   "bytes": 989
+  },
+  "pi_calibrator": {
+   "path": "data/pi_cache/calib.pkl",
+   "bytes": 965
+  },
+  "walk_forward_report": {
+   "path": "data/walk_forward_backtesting.json",
+   "bytes": 9727
+  },
+  "backtest_report_8model": {
+   "path": "data/backtest_report.json",
+   "bytes": 7024
+  },
+  "ml_predictions_multi_store": {
+   "path": "data/ml_predictions_multi.json",
+   "bytes": 14722716
+  },
+  "task79_joblibs": [
+   "data/backtest_reports/task79_models/ElasticNet_10d.joblib",
+   "data/backtest_reports/task79_models/ElasticNet_21d.joblib",
+   "data/backtest_reports/task79_models/ElasticNet_5d.joblib",
+   "data/backtest_reports/task79_models/ExtraTrees_10d.joblib",
+   "data/backtest_reports/task79_models/ExtraTrees_21d.joblib",
+   "data/backtest_reports/task79_models/ExtraTrees_5d.joblib",
+   "data/backtest_reports/task79_models/HistGradientBoosting_10d.joblib",
+   "data/backtest_reports/task79_models/HistGradientBoosting_21d.joblib",
+   "data/backtest_reports/task79_models/HistGradientBoosting_5d.joblib",
+   "data/backtest_reports/task79_models/HuberRegressor_10d.joblib",
+   "data/backtest_reports/task79_models/HuberRegressor_21d.joblib",
+   "data/backtest_reports/task79_models/HuberRegressor_5d.joblib",
+   "data/backtest_reports/task79_models/SVR_10d.joblib",
+   "data/backtest_reports/task79_models/SVR_21d.joblib",
+   "data/backtest_reports/task79_models/SVR_5d.joblib"
+  ],
+  "task99_pytorch_checkpoints": [
+   "data/backtest_reports/task99/checkpoints/jw_reference_cnn_lstm__reference_full_config__pilot25_h5_10_21.pt",
+   "data/backtest_reports/task99/checkpoints/jw_reference_lstm__reference_cpu_compact__canonical8_h1_repro.pt",
+   "data/backtest_reports/task99/checkpoints/jw_reference_lstm__reference_full_config__pilot25_h5_10_21.pt"
+  ]
+ },
+ "xgboost_serialized_artifact": {
+  "trained_at": "2026-10-02T01:23:49.523161",
+  "metrics": {
+   "accuracy": 0.5466666666666666,
+   "precision": 0.5576271186440678,
+   "recall": 0.8796791443850267,
+   "f1": 0.6825726141078838,
+   "roc_auc": 0.4022021070584682
+  }
+ },
+ "database_state": {
+  "file": "db/custom.db",
+  "ohlcv_rows": 1043209,
+  "ohlcv_min_date": "2016-10-21",
+  "ohlcv_max_date": "2026-11-23",
+  "ohlcv_symbols": 909,
+  "duplicate_symbol_date_pairs": 0,
+  "model_prediction_cache_rows": 8,
+  "model_backtest_cache_rows": 0,
+  "prediction_history_rows": 375,
+  "prediction_outcome_rows": 375,
+  "prospective_paper_trades": 114,
+  "paper_trade_legs": 86,
+  "lagging_symbols_sample": [
+   {
+    "symbol": "ADTM",
+    "max_date": "2017-01-26"
+   },
+   {
+    "symbol": "ICCT",
+    "max_date": "2017-01-26"
+   },
+   {
+    "symbol": "PGIC",
+    "max_date": "2017-01-26"
+   },
+   {
+    "symbol": "SEPCO",
+    "max_date": "2017-01-26"
+   },
+   {
+    "symbol": "AQTM",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "ASRL",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "AYZT",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "AZTM",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "BEEM",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "COST",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "COTT",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "DCM",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "FDMF",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "GENP",
+    "max_date": "2017-01-27"
+   },
+   {
+    "symbol": "GOEM",
+    "max_date": "2017-01-27"
+   }
+  ],
+  "pilot25_max_dates": [
+   {
+    "symbol": "ANL",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   },
+   {
+    "symbol": "BOP",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "BYCO",
+    "max_date": "2021-12-20",
+    "bars": 1281
+   },
+   {
+    "symbol": "CNERGY",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "ENGRO",
+    "max_date": "2025-01-03",
+    "bars": 2033
+   },
+   {
+    "symbol": "FCCL",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "HASCOL",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   },
+   {
+    "symbol": "HUBC",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   },
+   {
+    "symbol": "HUMNL",
+    "max_date": "2026-11-23",
+    "bars": 2494
+   },
+   {
+    "symbol": "KEL",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "LOTCHEM",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "LUCK",
+    "max_date": "2026-11-23",
+    "bars": 2490
+   },
+   {
+    "symbol": "MEBL",
+    "max_date": "2026-11-23",
+    "bars": 2477
+   },
+   {
+    "symbol": "MLCF",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "OGDC",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   },
+   {
+    "symbol": "PAEL",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "PIBTL",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "PPL",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   },
+   {
+    "symbol": "PRL",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   },
+   {
+    "symbol": "PSO",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   },
+   {
+    "symbol": "SYS",
+    "max_date": "2026-11-03",
+    "bars": 2469
+   },
+   {
+    "symbol": "TELE",
+    "max_date": "2026-11-23",
+    "bars": 2496
+   },
+   {
+    "symbol": "TRG",
+    "max_date": "2026-11-23",
+    "bars": 2495
+   },
+   {
+    "symbol": "UNITY",
+    "max_date": "2026-11-23",
+    "bars": 2259
+   },
+   {
+    "symbol": "WTL",
+    "max_date": "2026-11-23",
+    "bars": 2498
+   }
+  ]
+ },
+ "models": [
+  {
+   "name": "PatchTST",
+   "tier": "TIER_1",
+   "tierLabel": "Tier 1: SOTA Deep Learning",
+   "category": "Transformer-based time-series",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 90,
+    "winRate": 25.1,
+    "avgReturnPct": -2.62,
+    "maxReturnPct": 50.88,
+    "minReturnPct": -53.6
+   }
+  },
+  {
+   "name": "N-BEATS",
+   "tier": "TIER_1",
+   "tierLabel": "Tier 1: SOTA Deep Learning",
+   "category": "Deep residual stacks",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 90,
+    "winRate": 25.1,
+    "avgReturnPct": -2.62,
+    "maxReturnPct": 50.88,
+    "minReturnPct": -53.6
+   }
+  },
+  {
+   "name": "TimesNet",
+   "tier": "TIER_1",
+   "tierLabel": "Tier 1: SOTA Deep Learning",
+   "category": "2D variation of 1D time series",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 90,
+    "winRate": 25.1,
+    "avgReturnPct": -2.62,
+    "maxReturnPct": 50.88,
+    "minReturnPct": -53.6
+   }
+  },
+  {
+   "name": "Informer",
+   "tier": "TIER_1",
+   "tierLabel": "Tier 1: SOTA Deep Learning",
+   "category": "Efficient attention",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 90,
+    "winRate": 25.1,
+    "avgReturnPct": -2.62,
+    "maxReturnPct": 50.88,
+    "minReturnPct": -53.6
+   }
+  },
+  {
+   "name": "Chronos (Amazon)",
+   "tier": "TIER_2",
+   "tierLabel": "Tier 2: Foundation Models",
+   "category": "T5-tokenized foundation",
+   "registry_trained_flag": false,
+   "untrained_reason": "Requires chronos-forecasting package",
+   "classification": "foundation_blocked",
+   "implementation_status": "requires external weights/dependencies; registry trained:false",
+   "task84_status": "dependency_blocked_after_attempts",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 95,
+    "winRate": 26.5,
+    "avgReturnPct": -2.01,
+    "maxReturnPct": 52.37,
+    "minReturnPct": -50.35
+   }
+  },
+  {
+   "name": "Lag-Llama",
+   "tier": "TIER_2",
+   "tierLabel": "Tier 2: Foundation Models",
+   "category": "Open-source foundation",
+   "registry_trained_flag": false,
+   "untrained_reason": "Requires custom repo",
+   "classification": "foundation_blocked",
+   "implementation_status": "requires external weights/dependencies; registry trained:false",
+   "task84_status": "dependency_blocked_after_attempts",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 152,
+    "winRate": 42.3,
+    "avgReturnPct": 0.11,
+    "maxReturnPct": 52.3,
+    "minReturnPct": -46.4
+   }
+  },
+  {
+   "name": "Moirai (Salesforce)",
+   "tier": "TIER_2",
+   "tierLabel": "Tier 2: Foundation Models",
+   "category": "Universal forecasting",
+   "registry_trained_flag": false,
+   "untrained_reason": "Requires uni2ts",
+   "classification": "foundation_blocked",
+   "implementation_status": "requires external weights/dependencies; registry trained:false",
+   "task84_status": "dependency_blocked_after_attempts",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 191,
+    "winRate": 53.2,
+    "avgReturnPct": 9.74,
+    "maxReturnPct": 1318.38,
+    "minReturnPct": -435.97
+   }
+  },
+  {
+   "name": "Time-LLM",
+   "tier": "TIER_2",
+   "tierLabel": "Tier 2: Foundation Models",
+   "category": "LLM-reformatted",
+   "registry_trained_flag": false,
+   "untrained_reason": "Requires LLM pipeline",
+   "classification": "foundation_blocked",
+   "implementation_status": "requires external weights/dependencies; registry trained:false",
+   "task84_status": "dependency_blocked_after_attempts",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 95,
+    "winRate": 26.5,
+    "avgReturnPct": -2.49,
+    "maxReturnPct": 48.19,
+    "minReturnPct": -53.48
+   }
+  },
+  {
+   "name": "XGBoost",
+   "tier": "TIER_3",
+   "tierLabel": "Tier 3: Classical ML",
+   "category": "Gradient-boosted trees regressor",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 380,
+    "winRate": 56.4,
+    "avgReturnPct": 3.8,
+    "maxReturnPct": 735.51,
+    "minReturnPct": -30.78
+   }
+  },
+  {
+   "name": "LightGBM",
+   "tier": "TIER_3",
+   "tierLabel": "Tier 3: Classical ML",
+   "category": "Light GBT regressor",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 372,
+    "winRate": 55.2,
+    "avgReturnPct": 2.58,
+    "maxReturnPct": 254.3,
+    "minReturnPct": -30.67
+   }
+  },
+  {
+   "name": "CatBoost",
+   "tier": "TIER_3",
+   "tierLabel": "Tier 3: Classical ML",
+   "category": "Categorical-boosted regressor",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 378,
+    "winRate": 56.1,
+    "avgReturnPct": 3.01,
+    "maxReturnPct": 581.68,
+    "minReturnPct": -32.83
+   }
+  },
+  {
+   "name": "Random Forest",
+   "tier": "TIER_3",
+   "tierLabel": "Tier 3: Classical ML",
+   "category": "Decision tree ensemble",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 381,
+    "winRate": 56.5,
+    "avgReturnPct": 1.97,
+    "maxReturnPct": 152.07,
+    "minReturnPct": -26.5
+   }
+  },
+  {
+   "name": "LSTM",
+   "tier": "TIER_3",
+   "tierLabel": "Tier 3: Classical ML",
+   "category": "LSTM neural net (PyTorch)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 158,
+    "winRate": 44.0,
+    "avgReturnPct": 0.11,
+    "maxReturnPct": 44.61,
+    "minReturnPct": -43.58
+   }
+  },
+  {
+   "name": "CNN-LSTM",
+   "tier": "TIER_4",
+   "tierLabel": "Tier 4: Hybrid + Specialized",
+   "category": "CNN+LSTM hybrid",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 154,
+    "winRate": 42.9,
+    "avgReturnPct": 0.1,
+    "maxReturnPct": 38.84,
+    "minReturnPct": -41.46
+   }
+  },
+  {
+   "name": "Transformer-LSTM",
+   "tier": "TIER_4",
+   "tierLabel": "Tier 4: Hybrid + Specialized",
+   "category": "Transformer+LSTM hybrid",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 359,
+    "wins": 152,
+    "winRate": 42.3,
+    "avgReturnPct": 0.09,
+    "maxReturnPct": 33.07,
+    "minReturnPct": -39.35
+   }
+  },
+  {
+   "name": "TabNet",
+   "tier": "TIER_4",
+   "tierLabel": "Tier 4: Hybrid + Specialized",
+   "category": "Attention-based tabular",
+   "registry_trained_flag": false,
+   "untrained_reason": "Data type issue",
+   "classification": "untrained_placeholder",
+   "implementation_status": "registry trained:false ('Data type issue'); task84 marks evaluated \u2014 status conflict, no reproducible artifact",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": false,
+   "store_version": null,
+   "runtime_backtest_stats": null
+  },
+  {
+   "name": "FinGPT",
+   "tier": "TIER_4",
+   "tierLabel": "Tier 4: Hybrid + Specialized",
+   "category": "LLM fine-tuned for finance",
+   "registry_trained_flag": false,
+   "untrained_reason": "Requires BloombergGPT",
+   "classification": "untrained_placeholder",
+   "implementation_status": "requires BloombergGPT-style weights; registry trained:false",
+   "task84_status": "dependency_blocked_after_attempts",
+   "in_per_stock_training_store": false,
+   "store_version": null,
+   "runtime_backtest_stats": null
+  },
+  {
+   "name": "ARIMA",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "ARIMA classic baseline for daily price series",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "failed_after_attempts",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 347,
+    "winRate": 51.6,
+    "avgReturnPct": 0.12,
+    "maxReturnPct": 11.79,
+    "minReturnPct": -6.1
+   }
+  },
+  {
+   "name": "Holt-Winters",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Exponential smoothing trend/seasonality",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 306,
+    "winRate": 45.5,
+    "avgReturnPct": -0.04,
+    "maxReturnPct": 17.33,
+    "minReturnPct": -14.44
+   }
+  },
+  {
+   "name": "GARCH",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Volatility forecast model",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 673,
+    "winRate": 100.0,
+    "avgReturnPct": 3.03,
+    "maxReturnPct": 26.89,
+    "minReturnPct": 0.02
+   }
+  },
+  {
+   "name": "Ridge Regression",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Linear regression on indicators (RSI, MACD, MA, volume)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 314,
+    "winRate": 46.6,
+    "avgReturnPct": 0.04,
+    "maxReturnPct": 219.21,
+    "minReturnPct": -123.3
+   }
+  },
+  {
+   "name": "Kalman Filter",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Real-time state estimation filter",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 204,
+    "winRate": 30.3,
+    "avgReturnPct": -4.13,
+    "maxReturnPct": 66.8,
+    "minReturnPct": -178.89
+   }
+  },
+  {
+   "name": "Prophet",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Facebook Prophet trend/seasonality forecasting",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "failed_after_attempts",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 483,
+    "winRate": 71.8,
+    "avgReturnPct": 2.87,
+    "maxReturnPct": 107.57,
+    "minReturnPct": -51.51
+   }
+  },
+  {
+   "name": "GRU",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Small GRU (1-2 layers, daily data)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "3.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 358,
+    "wins": 152,
+    "winRate": 42.5,
+    "avgReturnPct": 0.13,
+    "maxReturnPct": 52.3,
+    "minReturnPct": -46.4
+   }
+  },
+  {
+   "name": "XGBoost (CL)",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Best accuracy-per-cost (copied from Tier 3)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "duplicate_alias_reused",
+   "in_per_stock_training_store": true,
+   "store_version": null,
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 378,
+    "winRate": 56.2,
+    "avgReturnPct": 5.6,
+    "maxReturnPct": 1430.8,
+    "minReturnPct": -42.55
+   }
+  },
+  {
+   "name": "LightGBM (CL)",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Light GBT (copied from Tier 3)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "duplicate_alias_reused",
+   "in_per_stock_training_store": true,
+   "store_version": null,
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 377,
+    "winRate": 56.0,
+    "avgReturnPct": 2.95,
+    "maxReturnPct": 293.26,
+    "minReturnPct": -32.89
+   }
+  },
+  {
+   "name": "Random Forest (CL)",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Decision tree ensemble (copied from Tier 3)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "duplicate_alias_reused",
+   "in_per_stock_training_store": true,
+   "store_version": null,
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 384,
+    "winRate": 57.1,
+    "avgReturnPct": 3.52,
+    "maxReturnPct": 868.58,
+    "minReturnPct": -37.54
+   }
+  },
+  {
+   "name": "LSTM (CL)",
+   "tier": "TIER_CL",
+   "tierLabel": "CL Tier: Classical/Linear",
+   "category": "Small LSTM (copied from Tier 3)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "duplicate_alias_reused",
+   "in_per_stock_training_store": false,
+   "store_version": null,
+   "runtime_backtest_stats": null
+  },
+  {
+   "name": "LightGBM-A (CL-2)",
+   "tier": "TIER_CL_2",
+   "tierLabel": "CL-2 Tier: Calibrated Classifier Ensemble",
+   "category": "LightGBM classifier (config A: 100 trees, depth 3)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 262,
+    "winRate": 38.9,
+    "avgReturnPct": -5.0,
+    "maxReturnPct": 50.0,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "LightGBM-B (CL-2)",
+   "tier": "TIER_CL_2",
+   "tierLabel": "CL-2 Tier: Calibrated Classifier Ensemble",
+   "category": "LightGBM classifier (config B: 60 trees, depth 5)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 266,
+    "winRate": 39.5,
+    "avgReturnPct": -4.58,
+    "maxReturnPct": 49.98,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "HistGBM (CL-2)",
+   "tier": "TIER_CL_2",
+   "tierLabel": "CL-2 Tier: Calibrated Classifier Ensemble",
+   "category": "sklearn HistGradientBoosting classifier",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 264,
+    "winRate": 39.2,
+    "avgReturnPct": -5.31,
+    "maxReturnPct": 49.99,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "ExtraTrees (CL-2)",
+   "tier": "TIER_CL_2",
+   "tierLabel": "CL-2 Tier: Calibrated Classifier Ensemble",
+   "category": "ExtraTrees classifier",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 670,
+    "wins": 153,
+    "winRate": 22.8,
+    "avgReturnPct": -3.91,
+    "maxReturnPct": 49.63,
+    "minReturnPct": -48.54
+   }
+  },
+  {
+   "name": "RandomForest (CL-2)",
+   "tier": "TIER_CL_2",
+   "tierLabel": "CL-2 Tier: Calibrated Classifier Ensemble",
+   "category": "RandomForest classifier",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 670,
+    "wins": 218,
+    "winRate": 32.5,
+    "avgReturnPct": -3.69,
+    "maxReturnPct": 49.99,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "Logistic (CL-2)",
+   "tier": "TIER_CL_2",
+   "tierLabel": "CL-2 Tier: Calibrated Classifier Ensemble",
+   "category": "Logistic regression baseline",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 670,
+    "wins": 180,
+    "winRate": 26.9,
+    "avgReturnPct": -5.45,
+    "maxReturnPct": 50.0,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "MLP (CL-2)",
+   "tier": "TIER_CL_2",
+   "tierLabel": "CL-2 Tier: Calibrated Classifier Ensemble",
+   "category": "Small MLP (32-unit hidden layer)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 215,
+    "winRate": 31.9,
+    "avgReturnPct": -4.39,
+    "maxReturnPct": 49.99,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "Linear Regression (PI)",
+   "tier": "TIER_PI",
+   "tierLabel": "PI Tier: Pattern & Indicator Models",
+   "category": "Linear regression on 20 indicators (predicts realized 5-day return)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 304,
+    "winRate": 45.2,
+    "avgReturnPct": -0.01,
+    "maxReturnPct": 174.54,
+    "minReturnPct": -102.81
+   }
+  },
+  {
+   "name": "Logistic Regression (PI)",
+   "tier": "TIER_PI",
+   "tierLabel": "PI Tier: Pattern & Indicator Models",
+   "category": "Logistic regression (predicts P(TP1 hit before SL) in 5 days)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "unknown",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 354,
+    "wins": 3,
+    "winRate": 0.8,
+    "avgReturnPct": -29.19,
+    "maxReturnPct": 18.45,
+    "minReturnPct": -96.96
+   }
+  },
+  {
+   "name": "Pattern Matcher KNN (PI)",
+   "tier": "TIER_PI",
+   "tierLabel": "PI Tier: Pattern & Indicator Models",
+   "category": "KNN classifier (k=15, distance-weighted) \u2014 pattern matching",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 354,
+    "wins": 37,
+    "winRate": 10.5,
+    "avgReturnPct": -32.74,
+    "maxReturnPct": 47.58,
+    "minReturnPct": -100.0
+   }
+  },
+  {
+   "name": "Neural Network (PI)",
+   "tier": "TIER_PI",
+   "tierLabel": "PI Tier: Pattern & Indicator Models",
+   "category": "MLPClassifier (64-32 hidden, tanh) \u2014 distinct from CL-2's MLP",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 354,
+    "wins": 1,
+    "winRate": 0.3,
+    "avgReturnPct": -41.99,
+    "maxReturnPct": 60.76,
+    "minReturnPct": -99.45
+   }
+  },
+  {
+   "name": "Technical Engine (GM)",
+   "tier": "TIER_GM",
+   "tierLabel": "GM Tier: 4-Pillar Weighted Framework",
+   "category": "MA Trend + RSI/MACD + Bollinger Bands + OBV (35% weight)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (4-pillar weighted rule engine; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 567,
+    "winRate": 84.1,
+    "avgReturnPct": 1.18,
+    "maxReturnPct": 3.0,
+    "minReturnPct": -57.1
+   }
+  },
+  {
+   "name": "Announcements Engine (GM)",
+   "tier": "TIER_GM",
+   "tierLabel": "GM Tier: 4-Pillar Weighted Framework",
+   "category": "YoY EPS growth + dividend yield + EPS surprise (30% weight)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (4-pillar weighted rule engine; NOT trained ML)",
+   "task84_status": "data_blocked",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 198,
+    "winRate": 29.4,
+    "avgReturnPct": -1.03,
+    "maxReturnPct": 203.03,
+    "minReturnPct": -86.98
+   }
+  },
+  {
+   "name": "Fundamental Engine (GM)",
+   "tier": "TIER_GM",
+   "tierLabel": "GM Tier: 4-Pillar Weighted Framework",
+   "category": "P/E + gross/net margin + interest coverage (20% weight)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (4-pillar weighted rule engine; NOT trained ML)",
+   "task84_status": "data_blocked",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 28,
+    "winRate": 4.2,
+    "avgReturnPct": -3.48,
+    "maxReturnPct": 12.42,
+    "minReturnPct": -30.0
+   }
+  },
+  {
+   "name": "Macro Engine (GM)",
+   "tier": "TIER_GM",
+   "tierLabel": "GM Tier: 4-Pillar Weighted Framework",
+   "category": "KSE-100 trend + KIBOR + USD/PKR + Brent (15% weight)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (4-pillar weighted rule engine; NOT trained ML)",
+   "task84_status": "data_blocked",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 674,
+    "wins": 194,
+    "winRate": 28.8,
+    "avgReturnPct": -1.27,
+    "maxReturnPct": 331.22,
+    "minReturnPct": -96.49
+   }
+  },
+  {
+   "name": "LightGBM (CG)",
+   "tier": "TIER_CG",
+   "tierLabel": "CG Tier: Swing-Trading Classifier Ensemble",
+   "category": "LightGBM primary classifier \u2014 triple-barrier, 10-day horizon, TP1=1R",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 300,
+    "winRate": 44.6,
+    "avgReturnPct": -1.85,
+    "maxReturnPct": 50.0,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "XGBoost (CG)",
+   "tier": "TIER_CG",
+   "tierLabel": "CG Tier: Swing-Trading Classifier Ensemble",
+   "category": "XGBoost challenger \u2014 same target/horizon as LightGBM (CG)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "trained_ml",
+   "implementation_status": "implemented; per-stock parameters stored in data/ml_predictions_multi.json",
+   "task84_status": "trained_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 668,
+    "wins": 324,
+    "winRate": 48.5,
+    "avgReturnPct": -0.86,
+    "maxReturnPct": 49.99,
+    "minReturnPct": -50.0
+   }
+  },
+  {
+   "name": "Trend Multi-TF (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Multi-timeframe trend (price > EMA20 > EMA50 > SMA200 + EMA separation > 0.5%)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 29,
+    "winRate": 8.2,
+    "avgReturnPct": 8.17,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Breakout RelVol (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Breakout + relative volume (close > 20-day high AND vol > 1.5\u00d7 50d avg)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 11,
+    "winRate": 3.1,
+    "avgReturnPct": 3.1,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Trend Pullback (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Trend pullback to EMA20 (price > EMA50, low touches EMA20 within 2%)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 39,
+    "winRate": 11.0,
+    "avgReturnPct": 10.99,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "RSI Divergence (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "RSI bullish divergence (price lower-low + RSI higher-low + RSI<35)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 6,
+    "winRate": 1.7,
+    "avgReturnPct": 1.69,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "BB Mean Reversion (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Bollinger Band mean reversion (below lower band + range-bound)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 1,
+    "winRate": 0.3,
+    "avgReturnPct": 0.28,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Vol Contraction (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Volatility contraction-then-expansion (BB width pattern)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 33,
+    "winRate": 9.3,
+    "avgReturnPct": 9.3,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Relative Strength (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Relative strength (stock 50d return > KSE-100 50d return + 2%)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 131,
+    "winRate": 36.9,
+    "avgReturnPct": 36.9,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Market Regime (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Market regime filter (KSE-100 50d return > 2% \u2192 bull regime)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 12,
+    "winRate": 3.4,
+    "avgReturnPct": 3.38,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Meta-Label CG (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Meta-label of CG-Ensemble predictions (raw_prob >= 0.55)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_meta",
+   "implementation_status": "implemented (meta-label rule over CG ensemble probabilities)",
+   "task84_status": "data_blocked",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 8,
+    "winRate": 2.3,
+    "avgReturnPct": 2.25,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Triple Barrier Dyn (X)",
+   "tier": "TIER_X",
+   "tierLabel": "X Tier: 10-Strategy Meta-Labeling Ensemble",
+   "category": "Triple-barrier dynamic (ATR/price < 5% + price > EMA50 = low-vol uptrend)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (deterministic rule strategy; NOT trained ML)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 355,
+    "wins": 42,
+    "winRate": 11.8,
+    "avgReturnPct": 11.83,
+    "maxReturnPct": 100.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Gian-Ensemble (GIAN)",
+   "tier": "TIER_GIAN",
+   "tierLabel": "Gian Tier: Square-Root S/R Strategy",
+   "category": "Square-root support/resistance with odd-number rule (BUY near S1/S2/S3, SELL near R1/R2/R3)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (square-root S/R / GANN grid / ATR-cluster S/R rules)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 0,
+    "winRate": 0.0,
+    "avgReturnPct": 0.0,
+    "maxReturnPct": 0.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "Gian-Extender (GIAN-EXT)",
+   "tier": "TIER_GIAN",
+   "tierLabel": "Gian Tier: Square-Root S/R Strategy",
+   "category": "Fixed GANN square-of-9 levels (1, 9, 25, 49, 81, 121, 169, 225, 289, 361, 441, 529, 625, ...)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (square-root S/R / GANN grid / ATR-cluster S/R rules)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 0,
+    "winRate": 0.0,
+    "avgReturnPct": 0.0,
+    "maxReturnPct": 0.0,
+    "minReturnPct": 0.0
+   }
+  },
+  {
+   "name": "M-Ensemble (M)",
+   "tier": "TIER_GIAN",
+   "tierLabel": "Gian Tier: Square-Root S/R Strategy",
+   "category": "Historical price-touch S/R with ATR clustering (scan all highs/lows, cluster within 1\u00d7ATR, pick top 3)",
+   "registry_trained_flag": true,
+   "untrained_reason": null,
+   "classification": "rule_based_engine",
+   "implementation_status": "implemented (square-root S/R / GANN grid / ATR-cluster S/R rules)",
+   "task84_status": "rule_based_optimized_oos_evaluated",
+   "in_per_stock_training_store": true,
+   "store_version": "1.0.0",
+   "runtime_backtest_stats": {
+    "totalTrades": 673,
+    "wins": 0,
+    "winRate": 0.0,
+    "avgReturnPct": 0.0,
+    "maxReturnPct": 0.0,
+    "minReturnPct": 0.0
+   }
+  }
+ ],
+ "glm_46": {
+  "classification": "LLM analyst / inference engine (NOT a trained PSX forecasting model)",
+  "provider": "z-ai-web-dev-sdk, model glm-4.6 (src/lib/latent/llm/llm-provider.ts)",
+  "storage": "append-only file store data/backtest_reports/task112/llm_signal_history/ + evidence packages; 0 rows in any DB table",
+  "matured_outcomes": 0,
+  "excluded_from_model_counts": true
+ },
+ "limitations": [
+  "Runtime predictions for every model key are deterministic indicator strategies (fallback-predictions.ts), so 'inference operational' does not imply model-weight inference.",
+  "The trained:true registry flag is set for 17 rule-based entries (GM 4, X 10, GIAN 3) \u2014 these are NOT trained models.",
+  "task84 marks TabNet as evaluated while the registry and training store both list it untrained \u2014 status conflict; no reproducible artifact was found.",
+  "Only serialized ML artifacts are xgboost_signal.json, 15 task79 joblibs (models beyond this registry) and 3 task99 PyTorch reference checkpoints; per-stock parameters for the 65 keys live only inside ml_predictions_multi.json.",
+  "No model has verified positive out-of-sample skill after costs; task128 ranks everything at or below the zero-return baseline.",
+  "GLM-4.6 has 0 matured outcome rows \u2014 its cohort is still pending; it must not be counted as a forecasting model."
+ ]
+}
