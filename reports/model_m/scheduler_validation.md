@@ -106,3 +106,13 @@ partial-failure accounting and the complete downstream ordering are all
 verified by automated tests plus three live E2E runs (recovery, single-symbol
 full pipeline, FULL-UNIVERSE) against the real provider and database.
 Production scheduling verification remains a deployment step, not a code task.
+
+## 3c. Task 130 harvest stages (E2E-D, 2026-11-24)
+
+`run --session 2026-11-23 --trigger e2e --force` (universe all): market data
+NO_SESSION (frontier current) → harvest stages executed anyway (rc=0):
+news_scrape (investify 16 news + 28 announcements; askanalyst 87 news +
+3,339 filings) and company_results (253 symbols, 19,798 rows, 0 dup keys).
+Ledger: `[(market_data,0),(news_scrape,0),(company_results,0)]`. Unit suite
+39/39, tsc clean. The NO_SESSION harvest behavior is the design fix for
+"news/results arrive independently of the OHLCV session".

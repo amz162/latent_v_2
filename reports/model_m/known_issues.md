@@ -50,6 +50,11 @@ The secondary provider (`api.askanalyst.com.pk`) remains broken for ENGRO
 - Paper-trading V2 cost transition: only NEW books use
   `psx_user_schedule_v2`; the historical cohort remains on
   `legacy_standard_psx_v1` (deliberate, per the no-silent-rewrite rule).
+- Task 130 harvest: askanalyst news/filings limited to the pilot25 universe
+  (rate limits + payload size); 108 of 361 listed symbols have no provider
+  financials (fetch fail or empty statement — skipped, never fabricated);
+  investify.pk selectors can break on a site redesign (counts honestly zero);
+  ratios/valuation endpoints not persisted (no tables).
 - Zero-volume sessions: the canonical task107 bar validator rejects
   volume=0 bars, so legitimate no-trade sessions for illiquid symbols are
   not persisted by the scheduler (1,163 rejections in the 2026-11-23

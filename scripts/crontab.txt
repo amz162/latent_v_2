@@ -1,34 +1,44 @@
 #!/bin/bash
-# PSX Data Update Cron Jobs — Task 129 authoritative schedule
+# PSX Data Update Cron Jobs — Task 130 authoritative schedule (5 PM PKT harvest)
 # Install: crontab scripts/crontab.txt  (from the repository root)
 #
 # Schedule history:
 #   - Task 123: entries pointed at /home/z/my-project (workspace root) while
 #     the repo lives at /home/z/my-project/repo_latent_v_2 (fixed in Task 123).
-#   - Task 129: ONE authoritative post-market entry. The old 17:10 PKT
-#     task107_daily_ingest entry and the 17:30 PKT task123_daily_pipeline.sh
-#     entry are SUBSUMED by scripts/task129_eod_pipeline.sh (which runs the
-#     task129 EOD scheduler: fetch → validate → persist → integrity →
-#     indicators → results patterns → maturity → lifecycle → Model M cache →
-#     monitoring, then host-only GLM-4.6 generation). Do NOT re-add the old
-#     entries — that would double-execute (the SchedulerRun runKey also guards).
+#   - Task 129: ONE authoritative post-market entry (17:30 PKT). The old
+#     17:10 PKT task107_daily_ingest entry and the 17:30 PKT
+#     task123_daily_pipeline.sh entry were SUBSUMED by
+#     scripts/task129_eod_pipeline.sh. Do NOT re-add the old entries —
+#     that would double-execute (the SchedulerRun runKey also guards).
+#   - Task 130: the authoritative pipeline moved to 5:00 PM PKT (user
+#     requirement) and now harvests EVERYTHING in one run: market data
+#     (psxdata provider), the app scrapers (investify.pk news +
+#     announcements), askanalyst news/filings (pilot25), askanalyst company
+#     results (income statements for every listed symbol), then the full
+#     downstream analysis chain. Legacy CSV training-store refresh moved to
+#     17:15 PKT so it never collides with the harvest's DB writes.
 #
-# AUTHORITATIVE: 17:30 PKT Mon-Fri task129_eod_pipeline.sh (post-market EOD).
-# FALLBACK (CI): .github/workflows/daily-psx-pipeline.yml — cron 16:30 PKT,
-#   runs ingest/shadow/maturity/lifecycle/reports in CI; idempotent w.r.t. the
-#   host run (SchedulerRun runKey + INSERT OR IGNORE).
+# AUTHORITATIVE: 17:00 PKT Mon-Fri task129_eod_pipeline.sh (full harvest).
+# FALLBACK (CI): .github/workflows/daily-psx-pipeline.yml — cron 18:00 PKT,
+#   runs the same pipeline in CI as a safety net AFTER the host window;
+#   idempotent w.r.t. the host run (SchedulerRun runKey + INSERT OR IGNORE).
 # TERTIARY (in-process): src/instrumentation*.ts 17:00-17:04 PKT refresh —
-#   insert-only upserts only; never runs the lifecycle.
+#   insert-only market-data upserts only; never runs the harvest stages.
+#   Races with the host entry are harmless: the SchedulerRun runKey ledger
+#   refuses concurrent/duplicate processing of the same session.
 #
 # Timezone: Pakistan Standard Time = UTC+5. All entries below are UTC.
 
 REPO=/home/z/my-project/repo_latent_v_2
 
-# 5:00 PM PKT = 12:00 UTC Mon-Fri — incremental CSV refresh (training store)
-0 12 * * 1-5 cd $REPO && python3 scripts/update_daily_ohlcv.py >> $REPO/data/update_log.txt 2>&1
+# 5:00 PM PKT = 12:00 UTC Mon-Fri — AUTHORITATIVE full-harvest EOD pipeline
+# (market data → investify scraper → askanalyst news/filings → company
+# results → indicators → results patterns → maturity → lifecycle → Model M
+# cache → monitoring; then host-only GLM-4.6 generation as wrapper step 2)
+0 12 * * 1-5 cd $REPO && bash scripts/task129_eod_pipeline.sh >> $REPO/data/task129_pipeline_cron.log 2>&1
 
-# 5:30 PM PKT = 12:30 UTC Mon-Fri — AUTHORITATIVE post-market EOD pipeline
-30 12 * * 1-5 cd $REPO && bash scripts/task129_eod_pipeline.sh >> $REPO/data/task129_pipeline_cron.log 2>&1
+# 5:15 PM PKT = 12:15 UTC Mon-Fri — legacy CSV refresh (training store only)
+15 12 * * 1-5 cd $REPO && python3 scripts/update_daily_ohlcv.py >> $REPO/data/update_log.txt 2>&1
 
 # 9:00 AM PKT = 4:00 AM UTC Mon-Fri — pre-market warm-up (overnight data)
 0 4 * * 1-5 cd $REPO && python3 scripts/update_daily_ohlcv.py --symbol KSE100 >> $REPO/data/update_log.txt 2>&1

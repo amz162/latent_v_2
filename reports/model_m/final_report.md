@@ -100,9 +100,10 @@ the real provider and database (COMPLETED run with all 8 downstream stages).
 
 ## 8. What exact time does it run in PKT?
 
-**17:30 PKT (Asia/Karachi, UTC+5) Mon–Fri** — configurable in
-`config/eod_scheduler.json` without code changes. Cron expression: `30 12 * * 1-5` UTC.
-CI fallback: 16:30 PKT (`30 11 * * 1-5` UTC). In-process fallback: 17:00–17:04 PKT (insert-only refresh).
+**17:00 PKT (Asia/Karachi, UTC+5) Mon–Fri** (Task 130 moved the authoritative
+run from 17:30 to the 5 PM full-harvest slot) — configurable in
+`config/eod_scheduler.json` without code changes. Cron expression: `0 12 * * 1-5` UTC.
+CI fallback: 18:00 PKT (`0 13 * * 1-5` UTC, after the host window). In-process fallback: 17:00–17:04 PKT (insert-only market-data refresh; the SchedulerRun ledger makes races harmless).
 
 ## 9. What data provider does it use?
 
@@ -265,3 +266,21 @@ evidence-backed, research-only GLM-4.6 decisions with honest disclosure of
 missing/stale data; 72/72 automated tests pass; tsc clean; production build
 and live server verified. What remains is deployment verification on a
 production host (K1–K4), which is outside what this sandbox can claim.
+
+## 22. Task 130 addendum — 5 PM PKT full-harvest scheduler (2026-11-24)
+
+The scheduler was extended into a **full-harvest pipeline at 17:00 PKT**: market
+data (psxdata, universe `all`) → **news_scrape** (investify.pk news +
+announcements via the shared scraper lib `src/lib/latent/scrape/investify.ts`
+extracted from the never-persisting API routes, plus askanalyst news/filings
+for pilot25) → **company_results** (askanalyst income statements for every
+listed symbol) → the unchanged Task 129 analysis chain. Three new tables
+(`NewsArticle`, `CompanyAnnouncement`, `CompanyResult`; 36 → 39 tables) are
+idempotently upserted by URL / (symbol, periodEnd, source). Verified live
+(`reports/model_m/task130_harvest_report.md`): 103 news + 3,367 announcements +
+19,798 result rows across 253 symbols, 0 duplicate keys, all stages rc=0,
+integrity clean, 39/39 tests, tsc clean. Harvest stages run even when market
+data is already current (NO_SESSION) — news and results arrive independently
+of the OHLCV session. Honest gaps: 108 listed symbols without provider
+financials (skipped, never fabricated), askanalyst news/filings limited to
+pilot25, ratios/valuation endpoints not persisted.

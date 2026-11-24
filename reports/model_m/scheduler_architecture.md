@@ -11,14 +11,14 @@ run pending). Everything below describes the implemented system.
 | Orchestrator | `scripts/task129_eod_scheduler.py` | fetch → validate → persist → integrity → downstream stages; run/recover/backfill/status/daemon modes |
 | Config | `config/eod_scheduler.json` | schedule time, retry policy, universe, holidays, stage toggles |
 | Host wrapper | `scripts/task129_eod_pipeline.sh` | cron entry: scheduler run + bounded retry window + host-only GLM generation + status snapshot |
-| Crontab | `scripts/crontab.txt` | ONE authoritative 17:30 PKT Mon–Fri entry (UTC 12:30) |
+| Crontab | `scripts/crontab.txt` | ONE authoritative 17:00 PKT Mon–Fri entry (UTC 12:00, Task 130) |
 | Run ledger | `SchedulerRun` table (Prisma model, raw-SQL writes) | idempotency key `runKey = jobName:session`, statuses, per-symbol counters, stage rc list |
 | CI automation | `.github/workflows/daily-psx-pipeline.yml` | 16:30 PKT Mon–Fri: ingest → shadow → maturity → **lifecycle (new)** → reports |
 | In-process fallback | `src/instrumentation*.ts` | 17:00–17:04 PKT insert-only OHLCV refresh (tertiary; never runs lifecycle) |
 
 ## 2. Exact schedule and timezone
 
-- **Authoritative:** 17:30 PKT (Asia/Karachi, UTC+5) Mon–Fri = `30 12 * * 1-5` UTC.
+- **Authoritative:** 17:00 PKT (Asia/Karachi, UTC+5) Mon–Fri = `0 12 * * 1-5` UTC (Task 130: moved from 17:30 to the 5 PM full-harvest slot; legacy CSV refresh moved to 17:15).
 - Configurable without code changes via `config/eod_scheduler.json`
   (`post_market_time_pkt`, `retry_interval_min` 15, `max_retry_window_min` 120).
 - Daemon mode sleeps until the configured PKT time, skips weekends, retries a
@@ -61,13 +61,20 @@ persistent provider-health tracking. No new source introduced.
    Conflicts with stored history are quarantined to `price_revisions.jsonl`.
 4. **integrity** — duplicate-pair count, `PRAGMA quick_check`, frontier
    advance check. Failure → downstream BLOCKED (rc 4 recorded).
-5. **downstream (only when new rows persisted)** — in order:
+5. **downstream (only when new rows persisted or --force)** — in order:
+   `news_scrape` (task130_news_persist.ts: investify.pk news + announcements
+   via the shared scraper lib `src/lib/latent/scrape/investify.ts`, plus
+   askanalyst news/filings for the pilot25 universe → `NewsArticle` /
+   `CompanyAnnouncement` tables) → `company_results` (task130_company_results.ts:
+   askanalyst income statements for every listed symbol in the universe →
+   `CompanyResult`, idempotent upsert on symbol+periodEnd+source) →
    `indicators` (precompute_price_patterns.ts) → `results_patterns`
    (task129_warm_result_patterns.ts, only when financials changed) →
    `maturity` (task107_maturity.py) → `lifecycle`
    (prospective_paper_trading.ts) → `modelm_cache`
    (task129_model_m_cache.ts) → optional `glm` (host only) → `monitoring`
-   (task112 + task127 + task123_health).
+   (task112 + task127 + task123_health). Harvest stages run FIRST so the
+   Model M evidence cache sees the freshest news and results.
 6. **ledger** — run row finalized: COMPLETED (all stages ok, zero symbol
    failures) / PARTIAL (any failure, with failed symbols + reasons) /
    FAILED (retryable) / NO_SESSION.

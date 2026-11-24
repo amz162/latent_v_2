@@ -14,7 +14,7 @@ name: Daily PSX pipeline
 
 on:
   schedule:
-    - cron: "30 11 * * 1-5"
+    - cron: "0 13 * * 1-5"  # Task 130: CI fallback 18:00 PKT, AFTER the 17:00 PKT authoritative host run
   workflow_dispatch:
     inputs:
       dry_run:

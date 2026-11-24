@@ -701,3 +701,70 @@ model ModelMAnalysis {
   @@index([symbol, createdAt])
   @@index([decision])
 }
+
+// ── Task 130: 5 PM PKT harvest scheduler persistence ──────────────────────────
+// News scraped from the app scrapers (investify.pk) and the askanalyst API.
+model NewsArticle {
+  id           String    @id @default(cuid())
+  symbol       String? // null = market-wide / macro news
+  source       String // "investify" | "askanalyst"
+  category     String // national | international | market | company
+  title        String
+  url          String @unique
+  summary      String?
+  publishedAt  DateTime?
+  publishedRaw String? // raw date text when not parseable
+  fetchedAt    DateTime  @default(now())
+  runKey       String? // SchedulerRun runKey that harvested it
+  createdAt    DateTime  @default(now())
+
+  @@index([symbol, publishedAt])
+  @@index([source, fetchedAt])
+  @@index([fetchedAt])
+}
+
+// Announcements/filings (investify announcements + askanalyst filings):
+// results, dividends, AGMs, other PSX filings.
+model CompanyAnnouncement {
+  id           String    @id @default(cuid())
+  symbol       String?
+  company      String?
+  source       String // "investify" | "askanalyst"
+  kind         String // result | dividend | agm | news | other
+  title        String
+  url          String @unique
+  summary      String?
+  pdfUrl       String?
+  publishedAt  DateTime?
+  publishedRaw String?
+  fetchedAt    DateTime  @default(now())
+  runKey       String?
+  createdAt    DateTime  @default(now())
+
+  @@index([symbol, kind])
+  @@index([fetchedAt])
+  @@index([kind, fetchedAt])
+}
+
+// Quarterly/annual company results (income statement) from the askanalyst API.
+model CompanyResult {
+  id              String   @id @default(cuid())
+  symbol          String
+  periodEnd       String // period end date as reported (YYYY-MM-DD or raw)
+  periodLabel     String? // e.g. "Q1 FY2026", "Year ended 30-Jun-2026"
+  fiscalYear      String?
+  quarter         String?
+  revenue         Float?
+  grossProfit     Float?
+  operatingProfit Float?
+  netProfit       Float?
+  eps             Float?
+  source          String   @default("askanalyst")
+  rawJson         String? // full period record (auditability)
+  fetchedAt       DateTime @default(now())
+  runKey          String?
+  createdAt       DateTime @default(now())
+
+  @@unique([symbol, periodEnd, source])
+  @@index([symbol, periodEnd])
+}

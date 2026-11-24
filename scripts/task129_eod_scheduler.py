@@ -79,7 +79,7 @@ def now_iso() -> str:
 def load_config() -> dict:
     cfg = {
         "job_name": "eod_pipeline",
-        "post_market_time_pkt": "17:30",
+        "post_market_time_pkt": "17:00",
         "retry_interval_min": 15,
         "max_retry_window_min": 120,
         "retry_in_process": False,
@@ -89,6 +89,7 @@ def load_config() -> dict:
         "rate_delay_s": 0.35,
         "holidays": [],
         "stages": {
+            "news_scrape": True, "company_results": True,
             "indicators": True, "results_patterns": True, "maturity": True,
             "lifecycle": True, "modelm_cache": True, "monitoring": True, "glm": False,
         },
@@ -321,6 +322,9 @@ def backup_db() -> str | None:
 
 # ─────────────────────────────── downstream stages ────────────────────────────
 
+CURRENT_RUN_KEY = "eod_harvest:manual"  # set by cmd_run; exported to stage envs
+
+
 def run_stage(name: str, cmd: list[str], timeout: int, stages: list, bun_ok: bool) -> int:
     t0 = time.time()
     if cmd[0] == "bun" and not bun_ok:
@@ -330,7 +334,8 @@ def run_stage(name: str, cmd: list[str], timeout: int, stages: list, bun_ok: boo
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT, timeout=timeout,
                            env={**__import__("os").environ,
-                                "DATABASE_URL": f"file:{ROOT}/db/custom.db"})
+                                "DATABASE_URL": f"file:{ROOT}/db/custom.db",
+                                "HARVEST_RUN_KEY": CURRENT_RUN_KEY})
         rc = r.returncode
         tail = ((r.stdout or r.stderr).strip().splitlines() or [""])[-1][:140]
         note = ""
@@ -341,10 +346,30 @@ def run_stage(name: str, cmd: list[str], timeout: int, stages: list, bun_ok: boo
     return rc
 
 
-def downstream_stages(cfg: dict, stages: list, glm: bool, bun_ok: bool) -> bool:
-    """Returns True when every mandatory stage passed (rc 0/2)."""
+def downstream_stages(cfg: dict, stages: list, glm: bool, bun_ok: bool,
+                      harvest_only: bool = False) -> bool:
+    """Returns True when every mandatory stage passed (rc 0/2).
+
+    harvest_only=True runs just the Task 130 harvest stages (news_scrape +
+    company_results) — used when market data is already current (NO_SESSION):
+    news/announcements/company results arrive independently of OHLCV and must
+    still refresh on every scheduled run. NOT run on FAILED/retryable attempts
+    (provider down likely affects every API; retry semantics re-run anyway).
+    """
     st = cfg.get("stages", {})
     ok = True
+    # Task 130 harvest stages run FIRST so downstream analysis (Model M
+    # evidence cache) sees the freshest news and results.
+    if st.get("news_scrape", True):
+        rc = run_stage("news_scrape",
+                       ["bun", "scripts/task130_news_persist.ts"], 600, stages, bun_ok)
+        ok &= rc in (0, 2)
+    if st.get("company_results", True):
+        rc = run_stage("company_results",
+                       ["bun", "scripts/task130_company_results.ts"], 1800, stages, bun_ok)
+        ok &= rc in (0, 2)
+    if harvest_only:
+        return ok
     if st.get("indicators", True):
         rc = run_stage("indicators", ["bun", "scripts/precompute_price_patterns.ts", "--limit", "100"],
                        900, stages, bun_ok)
@@ -461,7 +486,9 @@ def cmd_run(cfg: dict, args) -> int:
         print(json.dumps({"status": "NO_SESSION", "reason": reason}))
         return 0
     symbols = resolve_universe(cfg, args.symbols)
+    global CURRENT_RUN_KEY
     run_key = f"{cfg.get('job_name','eod_pipeline')}:{session}"
+    CURRENT_RUN_KEY = run_key
     db = db_rw()
     try:
         rid, refusal = adopt_or_create_run(db, run_key, cfg.get("job_name", "eod_pipeline"),
@@ -537,7 +564,13 @@ def cmd_run(cfg: dict, args) -> int:
         return 2  # retryable
 
     if summary["rows_inserted"] == 0 and summary["symbols_updated"] == 0 and summary["symbols_failed"] == 0:
-        # provider healthy, universe already up to date for this session
+        # provider healthy, universe already up to date for this session.
+        # Task 130: the harvest stages STILL run — news, announcements and
+        # company results arrive independently of the OHLCV session.
+        stages.append({"stage": "market_data", "rc": 0, "ms": 0,
+                       "note": "no new bars — universe already at frontier"})
+        harvest_ok = downstream_stages(cfg, stages, False,
+                                       shutil.which("bun") is not None, harvest_only=True)
         db = db_rw()
         try:
             finish_run(db, rid, status="NO_SESSION", finishedAt=now_iso(), sessionDetected=0,
@@ -550,8 +583,9 @@ def cmd_run(cfg: dict, args) -> int:
                        providerHealth=json.dumps(LB.provider_health_state()))
         finally:
             db.close()
-        print(json.dumps({"status": "NO_SESSION", "note": "no new bars — already up to date",
-                          "frontier": frontier_after}))
+        print(json.dumps({"status": "NO_SESSION", "note": "no new bars — already up to date; "
+                          "harvest stages (news, company results) executed",
+                          "harvest_ok": harvest_ok, "frontier": frontier_after}))
         return 0
 
     # persisted something (or partial symbol failures) → integrity + downstream
