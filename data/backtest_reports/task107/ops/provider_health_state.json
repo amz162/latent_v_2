@@ -1,6 +1,6 @@
 {
- "state": "healthy",
- "consecutive_failures": 0,
+ "state": "unavailable",
+ "consecutive_failures": 72,
  "transitions": [
   {
    "at": "2026-11-08T20:38:31Z",
@@ -133,10 +133,22 @@
    "from": "degraded",
    "to": "healthy",
    "code": 200
+  },
+  {
+   "at": "2026-11-26T13:23:16Z",
+   "from": "healthy",
+   "to": "degraded",
+   "code": 503
+  },
+  {
+   "at": "2026-11-26T13:23:26Z",
+   "from": "degraded",
+   "to": "unavailable",
+   "code": 503
   }
  ],
  "last_success_at": "2026-11-25T13:45:13Z",
- "last_error": "",
- "last_http_code": 200,
- "last_failure_at": "2026-11-13T11:44:37Z"
+ "last_error": "HTTP 503",
+ "last_http_code": 503,
+ "last_failure_at": "2026-11-26T13:31:33Z"
 }
